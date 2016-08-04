@@ -55,18 +55,18 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
 {
   // Extract the energies for which knock-on sampling tables are given
   Teuchos::Array<double> table_energy_grid( raw_electroionization_data(
-                                            table_info_location,
-                                            number_of_tables ) );
+                                         table_info_location,
+                                         number_of_tables ) );
 
   // Extract the length of the knock-on sampling tables
   Teuchos::Array<double> table_length( raw_electroionization_data(
-                                       table_info_location + number_of_tables,
-                                       number_of_tables ) );
+                                    table_info_location + number_of_tables,
+                                    number_of_tables ) );
 
   // Extract the offset of the knock-on sampling tables
   Teuchos::Array<double> table_offset( raw_electroionization_data(
-                                       table_info_location + 2*number_of_tables,
-                                       number_of_tables ) );
+                                    table_info_location + 2*number_of_tables,
+                                    number_of_tables ) );
 
   for( unsigned n = 0; n < number_of_tables; ++n )
   {

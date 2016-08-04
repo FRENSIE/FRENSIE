@@ -96,6 +96,26 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMaxIncomingEn
   return 0.0;
 }
 
+// Evaluate the PDF value for a given incoming and knock-on energy (efficient)
+double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
+                    const unsigned lower_bin_index,
+                    const double incoming_energy,
+                    const double knock_on_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( lower_bin_index >= 0 );
+  testPrecondition( lower_bin_index <
+                    d_electroionization_subshell_scattering_distribution.size() );
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( knock_on_energy > 0.0 );
+
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<ElectroionizationSubshellDistribution, InterpolationPolicy>(
+            lower_bin_index,
+            incoming_energy,
+            knock_on_energy,
+            d_electroionization_subshell_scattering_distribution );
+}
+
 // Evaluate the PDF value for a given incoming and knock-on energy
 double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
                      const double incoming_energy,
@@ -104,8 +124,9 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   // Make sure the energies are valid
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( knock_on_energy > 0.0 );
+  testPrecondition( incoming_energy > knock_on_energy );
 
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<ElectroionizationSubshellDistribution>(
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<ElectroionizationSubshellDistribution, InterpolationPolicy>(
                          incoming_energy,
                          knock_on_energy,
                          d_electroionization_subshell_scattering_distribution );

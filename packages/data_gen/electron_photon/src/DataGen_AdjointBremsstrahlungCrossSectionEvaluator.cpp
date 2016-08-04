@@ -19,7 +19,7 @@ namespace DataGen{
 
 // Constructor
 AdjointBremsstrahlungCrossSectionEvaluator::AdjointBremsstrahlungCrossSectionEvaluator(
-    const std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >&
+    const std::shared_ptr<BremsstrahlungReaction>&
         bremsstrahlung_reaction,
     const std::vector<double>& integration_points )
   : d_bremsstrahlung_reaction( bremsstrahlung_reaction ),
@@ -52,7 +52,7 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateAdjointPDF(
                     precision );
 }
 
-// Evaluate the adjoint differential bremsstrahlung cross section
+// Evaluate the adjoint PDF
 double AdjointBremsstrahlungCrossSectionEvaluator::evaluateAdjointPDF(
         const double adjoint_cross_section,
         const double incoming_adjoint_energy,

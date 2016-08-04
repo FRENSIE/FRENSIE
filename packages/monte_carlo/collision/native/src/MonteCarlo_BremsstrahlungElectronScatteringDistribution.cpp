@@ -140,7 +140,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<BremsstrahlungDistribution, InterpolationPolicy>(
             lower_bin_index,
             incoming_energy,
-            photon_energy ,
+            photon_energy,
             d_bremsstrahlung_scattering_distribution );
 }
 

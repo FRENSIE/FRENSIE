@@ -32,13 +32,13 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<const DataGen::StandardElectronPhotonRelaxationDataGenerator>
+std::shared_ptr<const DataGen::StandardElectronPhotonRelaxationDataGenerator>
   data_generator_h, data_generator_c;
 
-Teuchos::RCP<Data::XSSEPRDataExtractor>
+std::shared_ptr<Data::XSSEPRDataExtractor>
   h_xss_data_extractor, c_xss_data_extractor;
 
-Teuchos::RCP<Data::ENDLDataContainer>
+std::shared_ptr<Data::ENDLDataContainer>
   h_endl_data_container, c_endl_data_container;
 
 //---------------------------------------------------------------------------//
@@ -2454,7 +2454,7 @@ int main( int argc, char** argv )
 
   {
     // Create the file handler and data extractor for hydrogen
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 			       new Data::ACEFileHandler( test_h_ace_file_name,
 							 test_h_ace_table_name,
 							 1u ) );
@@ -2468,7 +2468,7 @@ int main( int argc, char** argv )
 
   {
     // Create the file handler and data extractor for carbon
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 			       new Data::ACEFileHandler( test_c_ace_file_name,
 							 test_c_ace_table_name,
 							 1u ) );

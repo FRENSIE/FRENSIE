@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Std Lib Includes
-#include <limits>
-
 // Boost Includes
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -16,99 +13,136 @@
 // FRENSIE Includes
 #include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
-#include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace DataGen{
-/*
+
 // Constructor
 AdjointElectroionizationSubshellCrossSectionEvaluator::AdjointElectroionizationSubshellCrossSectionEvaluator(
-    const double& binding_energy,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
+    const std::shared_ptr<ElectroionizationSubshellReaction>&
         electroionization_subshell_reaction,
-    const std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>&
-        knock_on_distribution )
-  : d_binding_energy( binding_energy ),
-    d_electroionization_subshell_reaction( electroionization_subshell_reaction ),
-    d_knock_on_distribution( knock_on_distribution )
+    const std::vector<double>& integration_points )
+  : d_electroionization_subshell_reaction( electroionization_subshell_reaction ),
+    d_integration_points( integration_points )
 {
-  // Make sure the data is valid
-  testPrecondition( !d_electroionization_subshell_reaction.is_null() );
-  testPrecondition( d_knock_on_distribution.use_count() > 0 );
+  // Make sure the reaction is valid
+  testPrecondition( electroionization_subshell_reaction.use_count() > 0 );
+
+  // Make sure the integration points are valid
+  testPrecondition( integration_points.size() > 0 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+						integration_points.begin(),
+						integration_points.end() ) );
 }
 
-// Evaluate the differential adjoint electroionization subshell cross section (dc/dx)
-double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferentialCrossSection(
-	  const double incoming_energy,
-          const double outgoing_energy ) const
-{
-  // Make sure the energies are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( outgoing_energy > 0.0 );
 
-  // Evaluate the forward cross section at the incoming energy
-  double forward_cs = d_electroionization_subshell_reaction->getCrossSection(
-                                                              incoming_energy );
-
-  // Evaluate the knock on electron pdf value at a given incoming and outgoing energy
-  double knock_on_pdf = d_knock_on_distribution->evaluatePDF( incoming_energy,
-                                                              outgoing_energy );
-
-  /* Calculate the energy of a knock on electron from a primary electron with
-     outgoing energy = outgoing_energy *//*
-  double knock_on_energy = incoming_energy - outgoing_energy - d_binding_energy;
-
-  // Evaluate the primary electron pdf value at a given incoming and outgoing energy
-  double primary_pdf = d_knock_on_distribution->evaluatePDF( incoming_energy,
-                                                             knock_on_energy );
-
-  return forward_cs*( knock_on_pdf + primary_pdf );
-}
-
-// Return the cross section value at a given energy
-double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSection(
-        const double energy,
+// Evaluate the adjoint PDF
+double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateAdjointPDF(
+        const double incoming_adjoint_energy,
+        const double outgoing_adjoint_energy,
         const double precision ) const
 {
-  // Make sure the energies are valid
-  testPrecondition( energy > 0.0 );
 
-  double cross_section = 0.0;
+  double adjoint_cross_section =
+    this->evaluateAdjointCrossSection( incoming_adjoint_energy, precision );
+
+  return this->evaluateAdjointPDF(
+                    adjoint_cross_section,
+                    incoming_adjoint_energy,
+                    outgoing_adjoint_energy,
+                    precision );
+}
+
+// Evaluate the adjoint PDF
+double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateAdjointPDF(
+        const double adjoint_cross_section,
+        const double incoming_adjoint_energy,
+        const double outgoing_adjoint_energy,
+        const double precision ) const
+{
+  double forward_differential_cs =
+    d_electroionization_subshell_reaction->getDifferentialCrossSection(
+        outgoing_adjoint_energy,
+        incoming_adjoint_energy );
+
+  if ( forward_differential_cs > 0.0 )
+    return forward_differential_cs/adjoint_cross_section;
+  else
+    return 0.0;
+}
+
+// Return the adjoint cross section value at a given energy
+double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateAdjointCrossSection(
+    const double incoming_adjoint_energy,
+    const double precision ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_adjoint_energy > 0.0 );
+
+  long double cross_section = 0.0L;
 
   // Create boost rapper function for the adjoint electroionization subshell differential cross section
-  boost::function<double (double x)> diff_adjoint_subshell_wrapper =
-    boost::bind<double>( &AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferentialCrossSection,
-                         boost::cref( *this ),
+  boost::function<double (unsigned x, double y)> diff_adjoint_ionization_wrapper =
+    boost::bind( &ConstElectroionizationSubshellReaction::getDifferentialCrossSection,
+                         boost::cref( *d_electroionization_subshell_reaction ),
                          _1,
-                         energy );
+                         _2,
+                         incoming_adjoint_energy );
 
-    double abs_error;
+  long double cross_section_k, abs_error;
 
-    Utility::GaussKronrodIntegrator<double> integrator( precision );
+  Utility::GaussKronrodIntegrator<long double>
+    integrator( precision, 0.0, 1000, true );
+
+  // Find the integration point above the given incoming_adjoint_energy
+  unsigned start_index =
+    Utility::Search::binaryUpperBoundIndex(
+              d_integration_points.begin(),
+              d_integration_points.end(),
+              incoming_adjoint_energy );
+
+  // Integrate from the given energy to the next highest energy bin (if necessary)
+  if( d_integration_points[start_index] != incoming_adjoint_energy )
+  {
+    cross_section_k = 0.0L;
+    abs_error = 0.0L;
 
     integrator.integrateAdaptively<15>(
-					diff_adjoint_subshell_wrapper,
-					d_knock_on_distribution->getMinEnergy(),
-					d_knock_on_distribution->getMaxEnergy(),
-					cross_section,
-					abs_error );
-/*
-    integrator.integrateAdaptively<15>(
-					diff_adjoint_subshell_wrapper,
-					d_knock_on_distribution.front().first,
-					d_knock_on_distribution.back().first,
-					cross_section,
-					abs_error );
-*//*
-}
+        diff_adjoint_ionization_wrapper,
+        start_index-1,
+        (long double)incoming_adjoint_energy,
+        (long double)d_integration_points[start_index],
+        cross_section_k,
+        abs_error );
 
-// Return the max outgoing adjoint energy for a given energy
-double AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy(
-                                const double energy )
-{
-  return d_knock_on_distribution->getMaxIncomingEnergyAtOutgoingEnergy( energy );
+    cross_section += cross_section_k;
+  }
+  
+  unsigned lower_bin_index = start_index;
+  ++start_index;
+
+  // Integrate through the energy bins above the given energy and below the max energy
+  for ( start_index; start_index < d_integration_points.size(); start_index++ )
+  {
+    cross_section_k = 0.0L;
+    abs_error = 0.0L;
+
+    if ( d_integration_points[lower_bin_index] < d_integration_points[start_index-1] )
+      ++lower_bin_index;
+
+    integrator.integrateAdaptively<15>(
+        diff_adjoint_ionization_wrapper,
+        lower_bin_index,
+        (long double)d_integration_points[start_index-1],
+        (long double)d_integration_points[start_index],
+        cross_section_k,
+        abs_error );
+
+    cross_section += cross_section_k;
+  }
+
+  return (double) cross_section;
 }
-*/
 
 } // end DataGen namespace
 

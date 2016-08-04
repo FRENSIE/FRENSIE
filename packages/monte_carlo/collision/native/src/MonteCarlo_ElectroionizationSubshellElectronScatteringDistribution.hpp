@@ -32,6 +32,9 @@ public:
   //! Typedef for the  electroionization subshell distribution
   typedef MonteCarlo::TwoDDistribution ElectroionizationSubshellDistribution;
 
+  //! Typedef for interpolation policy
+  typedef Utility::LinLog InterpolationPolicy;
+
   //! Constructor
   ElectroionizationSubshellElectronScatteringDistribution(
     const ElectroionizationSubshellDistribution&
@@ -58,6 +61,11 @@ public:
   double evaluate( const double incoming_energy,
                    const double scattering_angle ) const
   { /* ... */ }
+
+  //! Evaluate the PDF value for a given incoming and knock-on energy (efficient)
+  double evaluatePDF( const unsigned lower_bin_index,
+                      const double incoming_energy,
+                      const double knock_on_energy ) const;
 
   //! Evaluate the PDF value for a given incoming and knock-on energy
   double evaluatePDF( const double incoming_energy,

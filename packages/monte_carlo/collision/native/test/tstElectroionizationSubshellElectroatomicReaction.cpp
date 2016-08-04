@@ -28,9 +28,8 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ace_first_subshell_reaction;
-
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ace_last_subshell_reaction;
+std::shared_ptr<MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin> >
+    ace_first_subshell_reaction, ace_last_subshell_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -156,86 +155,142 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, react_ace )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the hydrogen adjoint differential cross section can be evaluated for the first subshell
+// Check that the hydrogen differential cross section can be evaluated for the first subshell
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
-		   evaluateAdjointDifferentialCrossSection )
+                   getDifferentialCrossSection )
 {
- /*
+
   double diff_cross_section =
-    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E-04,
-						    1.584900000000E-05 );
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        8.829E-02,
+        1.0E-08 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  6.582854525864990E+11,
-				  1e-12 );
-
-  diff_cross_section =
-    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E-04,
-						    7.054100000000E-05 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  6.582854525864990E+11,
-				  1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        0.0,
+        1e-12 );
 
   diff_cross_section =
-    adjoint_h_cs->evaluateDifferentialCrossSection( 6.309570000000E-02,
-						    1.009140000000E-03 );
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        8.829E-02,
+        0.0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  9.362881076230510E+05,
-				  1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        0.0,
+        1e-12 );
+
 
   diff_cross_section =
-    adjoint_h_cs->evaluateDifferentialCrossSection( 6.309570000000E-02,
-						    3.154110000000E-02 );
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        1.0,
+        9.7163E-02 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  2.802751399940720E+03,
-				  1e-12 );
-
-  diff_cross_section =
-    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E+05,
-						    1.042750000000E+01 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  1.959197477405080E-03,
-				  1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        2.143341410953940E+01,
+        1e-12 );
 
   diff_cross_section =
-    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E+05,
-						    9.999999510161E+04 );
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        1.0,
+        8.145469E-01 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  9.534573269680380E+03,
-				  1e-12 );
-*/
-}
-
-//---------------------------------------------------------------------------//
-// Check that the hydrogen adjoint cross section can be evaluated for the first subshell
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
-		   evaluateAdjointCrossSection )
-{/*
-  double cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 0.001 );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 1e-4);
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        2.143341410953940E+01,
+        1e-12 );
 
 
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        1.0E+05,
+        1.75297E+02 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				  2.050,
-  				  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        1.605436200739700E-05,
+        1e-12 );
 
-  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001,
-  						      0.0010039292814978508 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        1.0E+05,
+        9.982461471000E+04 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        1.605436200739700E-05,
+        1e-12 );
 
 
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				  8.523,
-  				  1e-15 );
-  				  */
+  // Test the efficient method
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        0,
+        8.829E-02,
+        1.0E-08 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        0.0,
+        1e-12 );
+
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        0,
+        8.829E-02,
+        0.0 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        0.0,
+        1e-12 );
+
+
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        2,
+        1.0,
+        9.7163E-02 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        2.143341410953940E+01,
+        1e-12 );
+
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        2,
+        1.0,
+        8.145469E-01 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        2.143341410953940E+01,
+        1e-12 );
+
+
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        4,
+        1.0E+05,
+        1.75297E+02 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        1.605436200739700E-05,
+        1e-12 );
+
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        4,
+        1.0E+05,
+        9.982461471000E+04 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        1.605436200739700E-05,
+        1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -266,11 +321,11 @@ int main( int argc, char** argv )
   }
 
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),

@@ -29,13 +29,13 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
+std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
   ace_dipole_bremsstrahlung_reaction;
 
-Teuchos::RCP<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
+std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
   ace_tabular_bremsstrahlung_reaction;
 
-Teuchos::RCP<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
+std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
   ace_twobs_bremsstrahlung_reaction;
 
 //---------------------------------------------------------------------------//

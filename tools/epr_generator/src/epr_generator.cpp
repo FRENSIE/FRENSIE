@@ -31,7 +31,7 @@
 
 int main( int argc, char** argv )
 {
-  Teuchos::RCP<const DataGen::ElectronPhotonRelaxationDataGenerator>
+  std::shared_ptr<const DataGen::ElectronPhotonRelaxationDataGenerator>
     epr_generator;
 
   Teuchos::RCP<Teuchos::FancyOStream> out =
@@ -172,7 +172,7 @@ int main( int argc, char** argv )
 					   data_file_start_line,
 					   true );
 
-    Teuchos::RCP<const Data::XSSEPRDataExtractor> ace_epr_extractor(
+    std::shared_ptr<const Data::XSSEPRDataExtractor> ace_epr_extractor(
 				new const Data::XSSEPRDataExtractor(
 				       ace_file_handler.getTableNXSArray(),
 				       ace_file_handler.getTableJXSArray(),
@@ -187,7 +187,7 @@ int main( int argc, char** argv )
     endl_file_path += "endldata/";
     endl_file_path += oss.str();
 
-    Teuchos::RCP<Data::ENDLDataContainer> endl_data_container(
+    std::shared_ptr<Data::ENDLDataContainer> endl_data_container(
         new Data::ENDLDataContainer(
             endl_file_path,
             Utility::ArchivableObject::XML_ARCHIVE ) );

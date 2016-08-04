@@ -33,8 +33,8 @@ const double StandardElectronPhotonRelaxationDataGenerator::s_threshold_energy_n
 // Constructor
 StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationDataGenerator(
         const unsigned atomic_number,
-        const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-        const Teuchos::RCP<const Data::ENDLDataContainer>& endl_data_container,
+        const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+        const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
         const double min_photon_energy,
         const double max_photon_energy,
         const double min_electron_energy,
@@ -64,8 +64,8 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
 // Target Constructor with moment preserving data
 StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationDataGenerator(
         const unsigned atomic_number,
-        const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-        const Teuchos::RCP<const Data::ENDLDataContainer>& endl_data_container,
+        const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+        const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
         const double min_photon_energy,
         const double max_photon_energy,
         const double min_electron_energy,
@@ -95,9 +95,9 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
   // Make sure the ace data is valid
-  testPrecondition( !ace_epr_data.is_null() );
+  testPrecondition( ace_epr_data.use_count() > 0 );
   // Make sure the endl data is valid
-  testPrecondition( !endl_data_container.is_null() );
+  testPrecondition( endl_data_container.use_count() > 0 );
   // Make sure the photon energy limits are valid
   testPrecondition( min_photon_energy > 0.0 );
   testPrecondition( min_photon_energy < max_photon_energy );
@@ -115,9 +115,9 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
 void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
-  testPrecondition( !d_ace_epr_data.is_null() );
+  testPrecondition( d_ace_epr_data.use_count() > 0 );
   // Make sure the endl data is valid
-  testPrecondition( !d_endl_data_container.is_null() );
+  testPrecondition( d_endl_data_container.use_count() > 0 );
   // Make sure the photon energy limits are valid
 
   // Set the table data
@@ -451,7 +451,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
   for( unsigned i = 0; i < scaled_recoil_momentum.size(); ++i )
     scaled_recoil_momentum[i] *= 1e8;
 
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function_dist(
+  std::shared_ptr<Utility::OneDDistribution> scattering_function_dist(
               new Utility::TabularDistribution<Utility::LogLog>(
 						   scaled_recoil_momentum,
 						   raw_scattering_function ) );
@@ -517,7 +517,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
   for( unsigned i = 0; i < scaled_recoil_momentum.size(); ++i )
     scaled_recoil_momentum[i] *= 1e8;
 
-  Teuchos::RCP<Utility::OneDDistribution> form_factor_dist(
+  std::shared_ptr<Utility::OneDDistribution> form_factor_dist(
 			    new Utility::TabularDistribution<Utility::LogLog>(
 						        scaled_recoil_momentum,
 							raw_form_factor ) );
@@ -604,7 +604,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 					   subshell_photoelectric_effect_css );
 
   // Create the impulse approx. incoherent cross section evaluators
-  Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >
+  Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >
     impulse_approx_incoherent_cs_evaluators;
 
   this->createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
@@ -1372,7 +1372,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
     d_ace_epr_data->extractSWDBlock();
 
   // Create the Compton profile subshell converter for this
-  Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
 
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 						     converter,
@@ -1445,7 +1445,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectric
 // Create the subshell impulse approx incoherent cross section evaluators
 void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const
+     Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const
 {
   Teuchos::ArrayView<const double> subshell_ordering =
     d_ace_epr_data->extractSubshellENDFDesignators();
@@ -1581,7 +1581,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEne
 // Create the cross section on the union energy grid
 void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
 	     const std::list<double>& union_energy_grid,
-	     const Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>&
+	     const std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>&
 	     original_cross_section,
 	     std::vector<double>& cross_section,
 	     unsigned& threshold_index ) const

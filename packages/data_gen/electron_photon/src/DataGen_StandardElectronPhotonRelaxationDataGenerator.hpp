@@ -13,7 +13,6 @@
 #include <utility>
 
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
@@ -36,8 +35,8 @@ public:
   //! Constructor 
   StandardElectronPhotonRelaxationDataGenerator(
 	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-       const Teuchos::RCP<const Data::ENDLDataContainer>& endl_data_container,
+	   const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+       const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
 	   const double min_photon_energy,
 	   const double max_photon_energy,
        const double min_electron_energy,
@@ -51,8 +50,8 @@ public:
   //! Target Constructor with moment preserving data
   StandardElectronPhotonRelaxationDataGenerator(
 	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-       const Teuchos::RCP<const Data::ENDLDataContainer>& endl_data_container,
+	   const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+       const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
 	   const double min_photon_energy,
 	   const double max_photon_energy,
        const double min_electron_energy,
@@ -172,7 +171,7 @@ private:
   // Create the subshell impulse approx incoherent cross section evaluators
   void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
+     Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
 
   // Initialize the photon union energy grid
   void initializePhotonUnionEnergyGrid(
@@ -189,7 +188,7 @@ private:
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
 	     const std::list<double>& union_energy_grid,
-	     const Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>&
+	     const std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>&
 	     original_cross_section,
 	     std::vector<double>& cross_section,
 	     unsigned& threshold_index ) const;
@@ -247,13 +246,13 @@ private:
   static const double s_threshold_energy_nudge_factor;
 
   // The ACE data
-  Teuchos::RCP<const Data::XSSEPRDataExtractor> d_ace_epr_data;
+  std::shared_ptr<const Data::XSSEPRDataExtractor> d_ace_epr_data;
 
   // The ENDL data
-  Teuchos::RCP<const Data::ENDLDataContainer> d_endl_data_container;
+  std::shared_ptr<const Data::ENDLDataContainer> d_endl_data_container;
 
   // The Native data
-  Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer> d_native_epr_data;
+  std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer> d_native_epr_data;
 
   // The min photon energy
   double d_min_photon_energy;

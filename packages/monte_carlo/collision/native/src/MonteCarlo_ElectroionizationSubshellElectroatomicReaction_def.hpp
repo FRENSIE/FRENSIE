@@ -84,27 +84,88 @@ double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cro
 {
   // Make sure the energies are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( outgoing_energy > 0.0 );
+  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy <= incoming_energy );
 
   // Evaluate the forward cross section at the incoming energy
   double forward_cs = this->getCrossSection( incoming_energy );
 
-  // Evaluate the knock on electron pdf value at a given incoming and outgoing energy
-  double knock_on_pdf =
-    d_electroionization_subshell_distribution->evaluatePDF( incoming_energy,
-                                                            outgoing_energy );
+  double pdf;
 
+  // If reaction is energetically impossible return zero
+  if ( incoming_energy - outgoing_energy <=
+       d_electroionization_subshell_distribution->getBindingEnergy() )
+    return 0.0;
+
+  if ( outgoing_energy < incoming_energy*0.5 )
+  {
+    // Take the outgoing energy as the energy of the knock-on electron
+    pdf =
+      d_electroionization_subshell_distribution->evaluatePDF( incoming_energy,
+                                                              outgoing_energy );
+  }
+  else
+  {
   /* Calculate the energy of a knock on electron from a primary electron with
      outgoing energy = outgoing_energy */
   double knock_on_energy = incoming_energy - outgoing_energy -
     d_electroionization_subshell_distribution->getBindingEnergy();
 
-  // Evaluate the primary electron pdf value at a given incoming and outgoing energy
-  double primary_pdf =
+  // Get the pdf for the incoming_energy and knock_on_energy
+  pdf =
     d_electroionization_subshell_distribution->evaluatePDF( incoming_energy,
                                                             knock_on_energy );
+  }
 
-  return forward_cs*( knock_on_pdf + primary_pdf );
+  return forward_cs*pdf;
+}
+
+// Return the differential cross section (efficient)
+template<typename InterpPolicy, bool processed_cross_section>
+double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+    const unsigned incoming_energy_bin,
+    const double incoming_energy,
+    const double outgoing_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy_bin >= 0 );
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy <= incoming_energy );
+
+  // Evaluate the forward cross section at the incoming energy
+  double forward_cs = this->getCrossSection( incoming_energy );
+
+  double pdf;
+
+  // If reaction is energetically impossible return zero
+  if ( incoming_energy - outgoing_energy <=
+       d_electroionization_subshell_distribution->getBindingEnergy() )
+    return 0.0;
+
+  if ( outgoing_energy < incoming_energy*0.5 )
+  {
+    // Take the outgoing energy as the energy of the knock-on electron
+    pdf =
+      d_electroionization_subshell_distribution->evaluatePDF( incoming_energy_bin,
+                                                              incoming_energy,
+                                                              outgoing_energy );
+  }
+  else
+  {
+  /* Calculate the energy of a knock on electron from a primary electron with
+     outgoing energy = outgoing_energy */
+  double knock_on_energy = incoming_energy - outgoing_energy -
+    d_electroionization_subshell_distribution->getBindingEnergy();
+
+  // Get the pdf for the incoming_energy and knock_on_energy
+  pdf =
+      d_electroionization_subshell_distribution->evaluatePDF( incoming_energy_bin,
+                                                              incoming_energy,
+                                                              knock_on_energy );
+  }
+
+  return forward_cs*pdf;
 }
 
 // Simulate the reaction
