@@ -20,6 +20,9 @@ KleinNishinaAdjointPhotonScatteringDistribution::KleinNishinaAdjointPhotonScatte
 { /* ... */ }
 
 // Evaluate the distribution
+/*! \details The adjoint Klein-Nishina cross section (b) differential in the 
+ * scattering angle cosine is returned from this function.
+ */
 double KleinNishinaAdjointPhotonScatteringDistribution::evaluate( 
 				   const double incoming_energy,
 				   const double max_energy,
@@ -39,7 +42,7 @@ double KleinNishinaAdjointPhotonScatteringDistribution::evaluate(
 						scattering_angle_cosine );
 }
   
-// Evaluate the integrated cross section (cm^2)
+// Evaluate the integrated cross section (b)
 double KleinNishinaAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
 					         const double incoming_energy,
 						 const double max_energy,

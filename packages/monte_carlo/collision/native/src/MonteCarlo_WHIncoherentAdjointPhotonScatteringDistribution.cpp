@@ -205,6 +205,7 @@ bool WHIncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWin
   testPrecondition( initial_energy > 0.0 );
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
+  testPrecondition( energy_of_interest <= this->getMaxEnergy() );
 
   return initial_energy >= energy_of_interest;
 }

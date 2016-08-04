@@ -31,6 +31,7 @@ Teuchos::RCP<MonteCarlo::AdjointPhotonScatteringDistribution> distribution;
 TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   evaluate )
 {
+  // Incoming energy = 0.1 MeV
   double dist_value = distribution->evaluate( 0.1, -1.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 0.5617250013852311, 1e-15 );
@@ -43,6 +44,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
+  // Incoming energy = 1.0 MeV
   dist_value = distribution->evaluate( 1.0, 0.5145510353765 );
 
   TEST_FLOATING_EQUALITY( dist_value, 4.818399835538855, 1e-15 );
@@ -55,6 +57,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
+  // Incoming energy = 10.0 MeV
   dist_value = distribution->evaluate( 10.0, 0.9744500544935 );
   
   TEST_FLOATING_EQUALITY( dist_value, 0.6110831116179009, 1e-15 );
@@ -73,6 +76,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   evaluatePDF )
 {
+  // Incoming energy = 0.1 MeV
   double pdf = distribution->evaluatePDF( 0.1, -1.0 );
 
   TEST_FLOATING_EQUALITY( pdf, 0.8005229502046525, 1e-14 );
@@ -85,6 +89,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( pdf, 0.7110391044282447, 1e-14 );
 
+  // Incoming energy = 1.0 MeV
   pdf = distribution->evaluatePDF( 1.0, 0.5145510353765 );
 
   TEST_FLOATING_EQUALITY( pdf, 12.161802488005854, 1e-15 );
@@ -97,6 +102,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( pdf, 1.2593271410147135, 1e-15 );
 
+  // Incoming energy = 10.0 MeV
   pdf = distribution->evaluatePDF( 10.0, 0.9744500544935 );
 
   TEST_FLOATING_EQUALITY( pdf, 45.41678914783313, 1e-15 );
@@ -278,13 +284,14 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
   Data::SubshellType shell_of_interaction;
 
   // Set the fake stream
-  std::vector<double> fake_stream( 12 );
+  std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.15; // branch 1
   fake_stream[1] = 0.4721647344828152; // select x = 0.9
   fake_stream[2] = 0.55; // reject
   fake_stream[3] = 0.15; // branch 1
   fake_stream[4] = 0.22986680137273696; // select x = 0.95
-  fake_stream[5] = 0.0;
+  fake_stream[5] = 0.0; // accept
+  fake_stream[6] = 0.0; // azimuthal angle = 0.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 

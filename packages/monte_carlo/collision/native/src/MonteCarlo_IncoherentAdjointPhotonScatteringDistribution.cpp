@@ -198,8 +198,8 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWindo
 }				     
 
 // Evaluate the adjoint Klein-Nishina distribution
-/*! The adjoint Klein-Nishina cross section (b) differential in the scattering 
- * angle cosine is returned from this function.
+/*! \details The adjoint Klein-Nishina cross section (b) differential in the
+ * scattering angle cosine is returned from this function.
  */
 double IncoherentAdjointPhotonScatteringDistribution::evaluateAdjointKleinNishinaDist( 
 				   const double incoming_energy,

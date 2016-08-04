@@ -101,12 +101,6 @@ protected:
   
 private:
 
-  // Calculate the occupation number upper argument
-  double calculateOccupationNumberUpperArgument(
-                                  const double incoming_energy,
-                                  const double max_energy,
-                                  const double scattering_angle_cosine ) const;
-
   // The interaction subshell
   Data::SubshellType d_subshell;
 

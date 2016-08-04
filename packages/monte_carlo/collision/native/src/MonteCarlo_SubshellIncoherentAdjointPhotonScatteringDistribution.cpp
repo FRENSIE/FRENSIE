@@ -63,6 +63,9 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::getSubshellBinding
 }
 
 // Evaluate the distribution
+/*! \details The adjoint incoherent cross section (b) differential in the 
+ * scattering angle cosine is returned from this function.
+ */
 double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluate(
                                    const double incoming_energy,
                                    const double max_energy,
@@ -70,22 +73,32 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluate(
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= max_energy - d_binding_energy );
+  testPrecondition( incoming_energy <= max_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >=
                     calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double adjoint_occupation_number =
-    this->evaluateAdjointOccupationNumber(
+  double cross_section;
+
+  if( incoming_energy < max_energy - d_binding_energy )
+  {
+    const double adjoint_occupation_number =
+      this->evaluateAdjointOccupationNumber(
                         incoming_energy, max_energy, scattering_angle_cosine );
 
-  const double diff_kn_cross_section =
-    this->evaluateAdjointKleinNishinaDist( incoming_energy,
-                                           max_energy,
-                                           scattering_angle_cosine );
+    const double diff_kn_cross_section =
+      this->evaluateAdjointKleinNishinaDist( incoming_energy,
+                                             max_energy,
+                                             scattering_angle_cosine );
+  
+    cross_section = d_num_electrons_in_subshell*adjoint_occupation_number*
+      diff_kn_cross_section;
+  }
+  else
+    cross_section = 0.0;
 
-  return d_num_electrons_in_subshell*adjoint_occupation_number*diff_kn_cross_section;
+  return cross_section;
 }
 
 // Evaluate the integrated cross section (b)
@@ -96,7 +109,7 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateIntegrated
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= max_energy - d_binding_energy );
+  testPrecondition( incoming_energy <= max_energy );
 
   // Evaluate the integrated cross section
   std::function<double (double x)> diff_cs_wrapper =
@@ -153,19 +166,8 @@ void SubshellIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrial
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( incoming_energy <= this->getMaxEnergy()-d_binding_energy );
-
-  // Evaluate the maximum adjoint occupation number
-  const double min_scattering_angle_cosine =
-    calculateMinScatteringAngleCosine( incoming_energy,
-                                       this->getMaxEnergy() );
-
-  const double max_pz_max =
-    this->calculateOccupationNumberUpperArgument( incoming_energy,
-                                                  this->getMaxEnergy(),
-                                                  min_scattering_angle_cosine);
-
-  const double max_occupation_number =
-    this->evaluateOccupationNumber( max_pz_max );
+  remember( double min_scattering_angle_cosine =
+            calculateMinScatteringAngleCosine( incoming_energy, this->getMaxEnergy() ) );
 
   while( true )
   {
@@ -179,10 +181,10 @@ void SubshellIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrial
                                              this->getMaxEnergy(),
                                              scattering_angle_cosine );
 
-    const double scaled_random_number = max_occupation_number*
+    const double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-    if( scaled_random_number <= adjoint_occupation_number )
+    if( random_number <= adjoint_occupation_number )
       break;
   }
 
@@ -200,7 +202,7 @@ void SubshellIncoherentAdjointPhotonScatteringDistribution::scatterAdjointPhoton
                                Data::SubshellType& shell_of_interaction ) const
 {
   // Make sure the adjoint photon energy is valid
-  testPrecondition( adjoint_photon.getEnergy() <= this->getMaxEnergy() );
+  testPrecondition( adjoint_photon.getEnergy() <= this->getMaxEnergy() - d_binding_energy );
 
   // Generate probe particles
   this->createProbeParticles( adjoint_photon, bank );
@@ -232,8 +234,9 @@ bool SubshellIncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatter
   testPrecondition( initial_energy > 0.0 );
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
+  testPrecondition( energy_of_interest <= this->getMaxEnergy() );
 
-  return initial_energy >= energy_of_interest - this->getMaxEnergy();
+  return initial_energy > energy_of_interest - d_binding_energy;
 }
 
 // Calculate the occupation number arguments
@@ -252,14 +255,14 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::calculateOccupatio
                     calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  pz_max = this->calculateOccupationNumberUpperArgument(
+  pz_max = calculateMaxElectronMomentumProjectionAdjoint(
                                                      incoming_energy,
-                                                     max_energy,
+                                                     d_binding_energy,
                                                      scattering_angle_cosine );
 
   pz_min = calculateMinElectronMomentumProjectionAdjoint(
                                                      incoming_energy,
-                                                     d_binding_energy,
+                                                     max_energy,
                                                      scattering_angle_cosine );
 
   // Note: pz_max has no bound. We therefore limit it to the maximum pz
@@ -299,7 +302,7 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOcc
 
   const double lower_occupation_number_value =
     this->evaluateOccupationNumber( pz_min );
-
+  
   // Evaluate the adjoint occupation number
   const double adjoint_occupation_number =
     upper_occupation_number_value - lower_occupation_number_value;
@@ -309,24 +312,6 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOcc
   testPrecondition( adjoint_occupation_number <= 1.0 );
 
   return adjoint_occupation_number;
-}
-
-// Calculate the occupation number upper argument
-double SubshellIncoherentAdjointPhotonScatteringDistribution::calculateOccupationNumberUpperArgument(
-                                   const double incoming_energy,
-                                   const double max_energy,
-                                   const double scattering_angle_cosine ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >=
-                    calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  return calculateMaxElectronMomentumProjectionAdjoint( incoming_energy,
-                                                        d_binding_energy,
-                                                        scattering_angle_cosine );
 }
   
 } // end MonteCarlo namespace
