@@ -9,14 +9,8 @@
 #ifndef DATA_GEN_ADJOINT_ELECTROIONIZATION_SUBSHELL_CROSS_SECTION_EVALUATOR_HPP
 #define DATA_GEN_ADJOINT_ELECTROIONIZATION_SUBSHELL_CROSS_SECTION_EVALUATOR_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
-#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 
 
 namespace DataGen{
@@ -30,18 +24,50 @@ public:
   //! Typedef for the electroionization subshell distribution
   typedef MonteCarlo::TwoDDistribution ElectroionizationSubshellDistribution;
 
+  //! Typedef for the electroionization subshell reaction
+  typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>
+    ElectroionizationSubshellReaction;
+
+  //! Typedef for the const electroionization subshell reaction
+  typedef const ElectroionizationSubshellReaction
+    ConstElectroionizationSubshellReaction;
+/*
   //! Constructor
   AdjointElectroionizationSubshellCrossSectionEvaluator(
     const double& binding_energy,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
-                               electroionization_subshell_reaction,
+    const std::shared_ptr<ElectroionizationSubshellReaction>&
+        electroionization_subshell_reaction,
     const std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>&
-                               knock_on_distribution );
+        knock_on_distribution );
+*/
+  //! Constructor
+  AdjointElectroionizationSubshellCrossSectionEvaluator(
+    const std::shared_ptr<ElectroionizationSubshellReaction>&
+        electroionization_subshell_reaction,
+    const std::vector<double>& integration_points );
 
   //! Destructor
   ~AdjointElectroionizationSubshellCrossSectionEvaluator()
   { /* ... */ }
 
+  //! Evaluate the adjoint PDF value
+  double evaluateAdjointPDF(
+        const double incoming_adjoint_energy,
+        const double outgoing_adjoint_energy,
+        const double precision = 1e-6 ) const;
+
+  //! Evaluate the adjoint PDF value
+  double evaluateAdjointPDF(
+        const double adjoint_cross_section,
+        const double incoming_adjoint_energy,
+        const double outgoing_adjoint_energy,
+        const double precision ) const;
+
+  //! Return the cross section value at a given energy
+  double evaluateAdjointCrossSection(
+        const double adjoint_energy,
+        const double precision = 1e-6 ) const;
+/*
   //! Evaluate the differential adjoint electroionization subshell cross section (dc/dx)
   double evaluateDifferentialCrossSection(
             const double incoming_energy,
@@ -53,18 +79,23 @@ public:
 
   //! Return the max outgoing adjoint energy for a given energy
   double getMaxOutgoingEnergyAtEnergy( const double energy );
-
+*/
 private:
 
-  // The forward reaction data
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_electroionization_subshell_reaction;
+  // The forward electroionization subshell reaction
+  Teuchos::RCP<ElectroionizationSubshellReaction>
+    d_electroionization_subshell_reaction;
 
+  // The energies used as integration points
+  std::vector<double> d_integration_points;
+
+/*
   // The knock on energy distribution
   std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
                                          d_knock_on_distribution;
 
   // The subshell binding energy
-  double d_binding_energy;
+  double d_binding_energy;*/
 };
 
 } // end DataGen namespace

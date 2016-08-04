@@ -24,12 +24,15 @@ public:
   typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
 
   //! Typedef for the bremsstrahlung distribution
-  typedef const MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>
+  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>
     BremsstrahlungReaction;
+
+  //! Typedef for the const bremsstrahlung distribution
+  typedef const BremsstrahlungReaction ConstBremsstrahlungReaction;
 
   //! Constructor
   AdjointBremsstrahlungCrossSectionEvaluator(
-    const std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >&
+    const std::shared_ptr<BremsstrahlungReaction>&
         bremsstrahlung_reaction,
     const std::vector<double>& integration_points );
 
@@ -58,10 +61,9 @@ public:
 private:
 
   // The forward bremsstrahlung reaction
-  std::shared_ptr<const MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
-    d_bremsstrahlung_reaction;
+  std::shared_ptr<BremsstrahlungReaction> d_bremsstrahlung_reaction;
 
-  // The energy used as integration points
+  // The energies used as integration points
   std::vector<double> d_integration_points;
 };
 

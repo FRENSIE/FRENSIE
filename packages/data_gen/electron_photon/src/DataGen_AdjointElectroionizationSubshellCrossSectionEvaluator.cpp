@@ -20,14 +20,14 @@
 #include "Utility_ContractException.hpp"
 
 namespace DataGen{
-
+/*
 // Constructor
 AdjointElectroionizationSubshellCrossSectionEvaluator::AdjointElectroionizationSubshellCrossSectionEvaluator(
     const double& binding_energy,
     const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
-                                     electroionization_subshell_reaction,
+        electroionization_subshell_reaction,
     const std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>&
-                                     knock_on_distribution )
+        knock_on_distribution )
   : d_binding_energy( binding_energy ),
     d_electroionization_subshell_reaction( electroionization_subshell_reaction ),
     d_knock_on_distribution( knock_on_distribution )
@@ -55,7 +55,7 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferenti
                                                               outgoing_energy );
 
   /* Calculate the energy of a knock on electron from a primary electron with
-     outgoing energy = outgoing_energy */
+     outgoing energy = outgoing_energy *//*
   double knock_on_energy = incoming_energy - outgoing_energy - d_binding_energy;
 
   // Evaluate the primary electron pdf value at a given incoming and outgoing energy
@@ -67,8 +67,8 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferenti
 
 // Return the cross section value at a given energy
 double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSection(
-                               const double energy,
-			       const double precision ) const
+        const double energy,
+        const double precision ) const
 {
   // Make sure the energies are valid
   testPrecondition( energy > 0.0 );
@@ -99,7 +99,7 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSecti
 					d_knock_on_distribution.back().first,
 					cross_section,
 					abs_error );
-*/
+*//*
 }
 
 // Return the max outgoing adjoint energy for a given energy
@@ -108,7 +108,7 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEner
 {
   return d_knock_on_distribution->getMaxIncomingEnergyAtOutgoingEnergy( energy );
 }
-
+*/
 
 } // end DataGen namespace
 

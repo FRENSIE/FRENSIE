@@ -48,7 +48,7 @@ public:
 	   const double grid_absolute_diff_tol = 1e-13,
 	   const double grid_distance_tol = 1e-13 );
 
-  //! Constructor with moment preserving data
+  //! Target Constructor with moment preserving data
   StandardElectronPhotonRelaxationDataGenerator(
 	   const unsigned atomic_number,
 	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,

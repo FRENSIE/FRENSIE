@@ -82,19 +82,12 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateAdjointCrossSection(
 
   // Create boost rapper function for the adjoint Bremsstahlung differential cross section
   boost::function<double (unsigned x, double y)> diff_adjoint_brem_wrapper =
-    boost::bind( &BremsstrahlungReaction::getDifferentialCrossSection,
+    boost::bind( &ConstBremsstrahlungReaction::getDifferentialCrossSection,
                          boost::cref( *d_bremsstrahlung_reaction ),
                          _1,
                          _2,
                          incoming_adjoint_energy );
-/*
-  // Create boost rapper function for the adjoint Bremsstahlung differential cross section
-  boost::function<double (double x)> diff_adjoint_brem_wrapper =
-    boost::bind( &BremsstrahlungReaction::getDifferentialCrossSection,
-                         boost::cref( *d_bremsstrahlung_reaction ),
-                         _1,
-                         incoming_adjoint_energy );
-*/
+
   long double cross_section_k, abs_error;
 
   Utility::GaussKronrodIntegrator<long double>
@@ -121,14 +114,6 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateAdjointCrossSection(
         cross_section_k,
         abs_error );
 
-/*
-    integrator.integrateAdaptively<15>(
-        diff_adjoint_brem_wrapper,
-        (long double)incoming_adjoint_energy,
-        (long double)d_integration_points[start_index],
-        cross_section_k,
-        abs_error );
-*/
     cross_section += cross_section_k;
   }
   
@@ -151,14 +136,7 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateAdjointCrossSection(
         (long double)d_integration_points[start_index],
         cross_section_k,
         abs_error );
-/*
-    integrator.integrateAdaptively<15>(
-        diff_adjoint_brem_wrapper,
-        (long double)d_integration_points[start_index-1],
-        (long double)d_integration_points[start_index],
-        cross_section_k,
-        abs_error );
-*/
+
     cross_section += cross_section_k;
   }
 

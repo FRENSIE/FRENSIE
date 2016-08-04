@@ -32,23 +32,7 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator : public AdjointElect
 
 public:
 
-  //! Constructor from native data
-  StandardAdjointElectronPhotonRelaxationDataGenerator(
-        const unsigned atomic_number,
-        const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
-        const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& forward_native_data,
-        const double min_photon_energy,
-        const double max_photon_energy,
-        const double min_electron_energy,
-        const double max_electron_energy,
-        const double cutoff_angle_cosine = 1.0,
-        const unsigned number_of_moment_preserving_angles = 0,
-        const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
-        const double grid_convergence_tol = 0.001,
-        const double grid_absolute_diff_tol = 1e-13,
-        const double grid_distance_tol = 1e-13 );
-
-  //! Constructor from ENDL data
+  //! Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
         const unsigned atomic_number,
         const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
@@ -208,12 +192,6 @@ private:
 
   // The EDNL forward epr data
   std::shared_ptr<const Data::ENDLDataContainer> d_forward_endl_data;
-
-  // The Native forward epr data
-  std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer> d_forward_native_data;
-
-  // The Native adjoint epr data
-  std::shared_ptr<const Data::AdjointElectronPhotonRelaxationDataContainer> d_adjoint_native_data;
 
   // The min photon energy
   double d_min_photon_energy;

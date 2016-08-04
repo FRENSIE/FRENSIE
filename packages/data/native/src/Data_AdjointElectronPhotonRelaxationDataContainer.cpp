@@ -1034,7 +1034,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationCro
   // Make sure the atomic excitation cross section is valid
   testPrecondition( adjoint_atomic_excitation_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( adjoint_atomic_excitation_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( adjoint_atomic_excitation_cross_section );
 
   d_adjoint_atomic_excitation_cross_section =
     adjoint_atomic_excitation_cross_section;

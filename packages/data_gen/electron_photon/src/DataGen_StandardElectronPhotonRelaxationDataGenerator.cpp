@@ -44,36 +44,24 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
         const double grid_convergence_tol,
         const double grid_absolute_diff_tol,
         const double grid_distance_tol )
-  : ElectronPhotonRelaxationDataGenerator( atomic_number ),
-    d_ace_epr_data( ace_epr_data ),
-    d_endl_data_container( endl_data_container ),
-    d_min_photon_energy( min_photon_energy ),
-    d_max_photon_energy( max_photon_energy ),
-    d_min_electron_energy( min_electron_energy ),
-    d_max_electron_energy( max_electron_energy ),
-    d_occupation_number_evaluation_tolerance( occupation_number_evaluation_tolerance ),
-    d_subshell_incoherent_evaluation_tolerance( subshell_incoherent_evaluation_tolerance ),
-    d_cutoff_angle_cosine( 1.0 ),
-    d_number_of_moment_preserving_angles( 0 ),
-    d_grid_convergence_tol( grid_convergence_tol ),
-    d_grid_absolute_diff_tol( grid_absolute_diff_tol ),
-    d_grid_distance_tol( grid_distance_tol )
-{
-  // Make sure the atomic number is valid
-  testPrecondition( atomic_number <= 100u );
-  // Make sure the ace data is valid
-  testPrecondition( !ace_epr_data.is_null() );
-  // Make sure the endl data is valid
-  testPrecondition( !endl_data_container.is_null() );
-  // Make sure the photon energy limits are valid
-  testPrecondition( min_photon_energy > 0.0 );
-  testPrecondition( min_photon_energy < max_photon_energy );
-  // Make sure the electron energy limits are valid
-  testPrecondition( min_electron_energy > 0.0 );
-  testPrecondition( min_electron_energy < max_electron_energy );
-}
+  : StandardElectronPhotonRelaxationDataGenerator(
+        atomic_number,
+        ace_epr_data,
+        endl_data_container,
+        min_photon_energy,
+        max_photon_energy,
+        min_electron_energy,
+        max_electron_energy,
+        occupation_number_evaluation_tolerance,
+        subshell_incoherent_evaluation_tolerance,
+        1.0,
+        0,
+        grid_convergence_tol,
+        grid_absolute_diff_tol,
+        grid_distance_tol )
+{ /* ... */ }
 
-// Constructor with moment preserving data
+// Target Constructor with moment preserving data
 StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationDataGenerator(
         const unsigned atomic_number,
         const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
