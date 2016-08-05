@@ -8,10 +8,10 @@
 
 #ifndef FRENSIE_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 #define FRENSIE_PARTICLE_SIMULATION_MANAGER_DEF_HPP
-
+#include <iostream>
 // Boost Includes
 #include <boost/bind.hpp>
-
+#include <iostream>
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
@@ -201,6 +201,7 @@ void ParticleSimulationManager<GeometryHandler,
     #pragma omp for
     for( unsigned long long history = batch_start_history; history < batch_end_history; ++history )
     {
+      std::cout << "HISTORY: " << history << std::endl;
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
       if( !d_end_simulation )
@@ -312,7 +313,8 @@ void ParticleSimulationManager<GeometryHandler,
     while( true )
     {
       // Fire a ray at the cell currently containing the particle
-      try{
+      try
+      {
         distance_to_surface_hit = GMI::fireInternalRay( surface_hit );
       }
       CATCH_LOST_PARTICLE_AND_BREAK( particle );
@@ -324,19 +326,19 @@ void ParticleSimulationManager<GeometryHandler,
       	  CMI::getMacroscopicTotalCrossSection( particle );
       }
       else
-  	cell_total_macro_cross_section = 0.0;
+  	    cell_total_macro_cross_section = 0.0;
 
       // Convert the distance to the surface to optical path
       op_to_surface_hit = 
-  	distance_to_surface_hit*cell_total_macro_cross_section;
+  	    distance_to_surface_hit*cell_total_macro_cross_section;
 
       // Get the start time of this subtrack
       subtrack_start_time = particle.getTime();
 
       if( op_to_surface_hit < remaining_subtrack_op )
       {
-  	// Advance the particle to the cell boundary
-  	particle.advance( distance_to_surface_hit );
+  	    // Advance the particle to the cell boundary
+  	    particle.advance( distance_to_surface_hit );
 
         // Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
@@ -376,41 +378,41 @@ void ParticleSimulationManager<GeometryHandler,
         }
 
         // Find the cell on the other side of the surface hit
-  	try{
-  	  cell_entering = GMI::findCellContainingInternalRay();
-  	}
-  	CATCH_LOST_PARTICLE_AND_BREAK( particle );
+  	    try
+  	    {
+  	      cell_entering = GMI::findCellContainingInternalRay();
+  	    }
+  	    CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
-  	particle.setCell( cell_entering );
+  	    particle.setCell( cell_entering );
 
         // Update the observers: particle entering cell event
         EMI::updateObserversFromParticleEnteringCellEvent( particle,
                                                            cell_entering );
 
-  	// Check if a termination cell was encountered
-  	if( GMI::isTerminationCell( particle.getCell() ) )
-  	{
-  	  particle.setAsGone();
+  	    // Check if a termination cell was encountered
+  	    if( GMI::isTerminationCell( particle.getCell() ) )
+  	    {
+  	      particle.setAsGone();
+          break;
+  	    }
 
-  	  break;
-  	}
-
-  	// Update the remaining subtrack mfp
-  	remaining_subtrack_op -= op_to_surface_hit;
+  	    // Update the remaining subtrack mfp
+  	    remaining_subtrack_op -= op_to_surface_hit;
       } 
       
       // A collision occurs in this cell
       else
       {
-  	// Advance the particle to the collision site
-  	double distance_to_collision = 
+  	    // Advance the particle to the collision site
+  	    double distance_to_collision = 
           remaining_subtrack_op/cell_total_macro_cross_section;
 	
-  	particle.advance( distance_to_collision );
+  	    particle.advance( distance_to_collision );
 
         GMI::advanceInternalRayBySubstep( distance_to_collision );
 
-	// Update the observers: particle subtrack ending in cell event
+	      // Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
                                                        particle,
                                                        particle.getCell(),
@@ -422,32 +424,35 @@ void ParticleSimulationManager<GeometryHandler,
                                           particle,
                                           1.0/cell_total_macro_cross_section );
         
-  	// Update the global observers: particle subtrack ending global event
-  	EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
-  						      particle,
-  						      ray_start_point,
-  						      particle.getPosition() );
+  	    // Update the global observers: particle subtrack ending global event
+  	    EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
+  						                                                  particle,
+  						                                                  ray_start_point,
+  						                                                  particle.getPosition() );
 
-  	// Undergo a collision with the material in the cell
-  	CMI::collideWithCellMaterial( particle, bank, true );
+        // Undergo a collision with the material in the cell
+        CMI::collideWithCellMaterial( particle, bank, true );
 
         GMI::changeInternalRayDirection( particle.getDirection() );
 
-  	// Cache the current position of the new ray
-  	ray_start_point[0] = particle.getXPosition();
-  	ray_start_point[1] = particle.getYPosition();
-  	ray_start_point[2] = particle.getZPosition();
+  	    // Cache the current position of the new ray
+  	    ray_start_point[0] = particle.getXPosition();
+  	    ray_start_point[1] = particle.getYPosition();
+  	    ray_start_point[2] = particle.getZPosition();
 
-  	// Make sure the energy is above the cutoff
-  	if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
-  	  particle.setAsGone();
+  	    // Make sure the energy is above the cutoff
+  	    if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
+  	      particle.setAsGone();
 
-  	// This subtrack is finished
-  	break;
+  	    // This subtrack is finished
+  	    break;
       }
     }	     
   }
-
+  std::cout << std::endl;
+  std::cout << "END POINT AND START POINT" << std::endl;
+  std::cout << "START POINT: " << ray_start_point[0] << ", " << ray_start_point[1] << ", " << ray_start_point[2] << std::endl;
+  std::cout << "END POINT: " << particle.getPosition()[0] << ", " << particle.getPosition()[1] << ", " << particle.getPosition()[2] << std::endl;
   // Update the global observers: particle subtrack ending global event
   EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
   						      particle,

@@ -207,7 +207,21 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setResponseF
 template<typename ContributionMultiplierPolicy>
 void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setParticleTypes( const Teuchos::Array<ParticleType>& particle_types )
 {
-  Estimator::setParticleTypes( particle_types );
+  if( particle_types.size() > 1 )
+  {
+    std::cerr << "Warning: Tet mesh estimators can only have one "
+	      << "particle type contribute. All but the first particle type "
+	      << "requested in estimator " << this->getId() 
+	      << " will be ignored."
+	      << std::endl;
+    
+    Teuchos::Array<ParticleType> valid_particle_types( 1 );
+    valid_particle_types[0] = particle_types.front();
+    
+    Estimator::setParticleTypes( valid_particle_types );
+  }
+  else
+    Estimator::setParticleTypes( particle_types );
 }
 
 // Add current history estimator contribution
@@ -289,6 +303,10 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 	
 	ray_tet_intersections.push_back( track_length );
       }
+
+      // Calculate the contribution multiplier
+      double contribution_mult =
+        ContributionMultiplierPolicy::multiplier( particle );
       
       // Compute and add the partial history contribution to appropriate tet
       for( unsigned int i = 0; i < ray_tet_intersections.size(); ++i )
@@ -323,6 +341,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 
 
             double tet_contribution = tet_track_length*contribution_mult;
+
             
 	    // Add partial history contribution
 	    this->addPartialHistoryContribution( tet,
@@ -863,18 +882,16 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
   if( bin_boundaries->getDimension() == COSINE_DIMENSION )
   {
     std::cerr << "Warning: " << bin_boundaries->getDimensionName()
-    	      << " bins cannot be set for standard cell estimators. The bins "
-     	      << "requested for tetrahedral mesh flux estimator " << this->getId()
-    	      << " will be ignored."
-    	      << std::endl;
+    	      << " bins cannot be set for tet mesh track length flux "
+              << "estimators. The bins requested for estimator "
+              << this->getId() << " will be ignored." << std::endl;
   }
   else if( bin_boundaries->getDimension() == TIME_DIMENSION )
   {
     std::cerr << "Warning: " << bin_boundaries->getDimensionName()
-    	      << " bins cannot be set for standard cell estimators. The bins "
-     	      << "requested for tetrahedral mesh flux estimator " << this->getId()
-    	      << " will be ignored."
-    	      << std::endl;
+    	      << " bins cannot be set for tet mesh track length flux "
+              << "estimators yet. The bins requested for estimator "
+              << this->getId() << " will be ignored." << std::endl;
   }
   else
   {

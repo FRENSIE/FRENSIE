@@ -5,7 +5,7 @@
 //! \brief  The particle history observer class definition
 //!
 //---------------------------------------------------------------------------//
-
+#include <iostream>
 // FRENSIE Includes
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "Utility_ContractException.hpp"
@@ -60,7 +60,7 @@ double ParticleHistoryObserver::getElapsedTime()
 // Constructor
 ParticleHistoryObserver::ParticleHistoryObserver( const idType id )
   : d_id( id )
-{ /* ... */ }
+{ std::cout << "PARTICLE HISTORY OBSERVER ID: " << id << std::endl;/* ... */ }
 
 } // end MonteCarlo namespace
 
