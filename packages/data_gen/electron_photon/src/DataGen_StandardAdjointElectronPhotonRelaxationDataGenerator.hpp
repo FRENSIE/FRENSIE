@@ -17,12 +17,14 @@
 
 // FRENSIE Includes
 #include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp"
-#include "DataGen_AdjointBremsstrahlungCrossSectionEvaluator.hpp"
+#include "DataGen_AdjointElectronCrossSectionEvaluator.hpp"
 #include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
+#include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 
 namespace DataGen{
 
@@ -31,6 +33,12 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator : public AdjointElect
 {
 
 public:
+
+  typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>
+    ElectroionizationReaction;
+
+  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> 
+    BremsstrahlungReaction;
 
   //! Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
@@ -110,20 +118,24 @@ private:
    unsigned& threshold_index ) const;
 
   // Create the cross section on the union energy grid
+  template <typename ElectroatomicReaction>
   void createAdjointCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
-   const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
-        adjoint_bremsstrahlung_cs_evaluator,
+   const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> >
+        adjoint_electron_cs_evaluator,
+   const double evaluation_tolerance,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const;
 
   // Create the cross section on the union energy grid
+  template <typename ElectroatomicReaction>
   void createAdjointCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
    const std::list<double>& old_union_energy_grid,
    const std::vector<double>& old_cross_section,
-   const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
-        adjoint_bremsstrahlung_cs_evaluator,
+   const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> >
+        adjoint_electron_cs_evaluator,
+   const double evaluation_tolerance,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const;
 
@@ -163,7 +175,7 @@ private:
   // Create the adjoint bremsstrahlung cross section evaluator
   void createAdjointBremsstrahlungCrossSectionEvaluator(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>&
+    std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >&
         adjoint_bremsstrahlung_cs_evaluator ) const;
 
   // Generate adjoint bremsstrahlung photon energy distribution
@@ -173,7 +185,7 @@ private:
     const unsigned threshold_energy_index,
     const Teuchos::ArrayRCP<const double>& adjoint_cross_section,
     const Teuchos::ArrayRCP<const double>& adjoint_electron_energy_grid,
-    const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
+    const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
         adjoint_bremsstrahlung_cs_evaluator,
     const std::vector<double>& adjoint_bremsstrahlung_photon_energy,
     std::vector<double>& adjoint_bremsstrahlung_pdf ) const;
@@ -181,8 +193,8 @@ private:
   // Create the adjoint electroionization subshell cross section evaluator
   void createAdjointElectroionizationSubshellCrossSectionEvaluator(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator>&
-        adjoint_electroionization_cs_evaluator ) const;
+    std::vector<std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
+        adjoint_electroionization_cs_evaluators ) const;
 
   // The threshold energy nudge factor
   static const double s_threshold_energy_nudge_factor;
@@ -222,10 +234,6 @@ private:
 
   // The evaluation tolerance for the adjoint bremsstrahlung cross sections
   double d_adjoint_bremsstrahlung_evaluation_tolerance;
-
-  // The adjoint bremsstrahlung cross section evaluator
-  std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
-    d_adjoint_bremsstrahlung_cs_evaluator;
 };
 
 // Test if a value is greater than or equal to one

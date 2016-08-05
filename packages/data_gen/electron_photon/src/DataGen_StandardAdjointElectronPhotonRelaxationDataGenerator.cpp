@@ -279,12 +279,23 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Create The Adjoint Bremsstrahlung Cross Section Evaluator
   //---------------------------------------------------------------------------//
   // The adjoint bremsstrahlung cross section evaluator
-  std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
+  std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
     adjoint_bremsstrahlung_cs_evaluator;
 
   this->createAdjointBremsstrahlungCrossSectionEvaluator(
           data_container,
           adjoint_bremsstrahlung_cs_evaluator );
+
+  //---------------------------------------------------------------------------//
+  // Create The Adjoint Electroionization Subshell Cross Section Evaluator
+  //---------------------------------------------------------------------------//
+  // The adjoint electroionization subshell cross section evaluator
+  std::vector<std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >
+    adjoint_electroionization_cs_evaluators;
+
+  this->createAdjointElectroionizationSubshellCrossSectionEvaluator(
+          data_container,
+          adjoint_electroionization_cs_evaluators );
 /*
   //---------------------------------------------------------------------------//
   // Get Electroionization Data Cross Section Data
@@ -381,7 +392,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
 
   grid_function = 
-    boost::bind( &DataGen::AdjointBremsstrahlungCrossSectionEvaluator::evaluateAdjointCrossSection,
+    boost::bind( &DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>::evaluateAdjointCrossSection,
                  boost::cref( *adjoint_bremsstrahlung_cs_evaluator ),
                  _1,
                  d_adjoint_bremsstrahlung_evaluation_tolerance );
@@ -504,6 +515,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       old_adjoint_bremsstrahlung_union_energy_grid,
       old_adjoint_bremsstrahlung_cs,  
       adjoint_bremsstrahlung_cs_evaluator,
+      d_adjoint_bremsstrahlung_evaluation_tolerance,
       cross_section,
       threshold );
 
@@ -963,11 +975,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSec
 
   threshold_index = std::distance( raw_cross_section.begin(), start );
 }
-
+/*
 // Create the cross section on the union energy grid
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
-   const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
+   const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
         adjoint_bremsstrahlung_cs_evaluator,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const
@@ -1004,7 +1016,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSec
    const std::list<double>& union_energy_grid,
    const std::list<double>& old_union_energy_grid,
    const std::vector<double>& old_cross_section,
-   const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
+   const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
         adjoint_bremsstrahlung_cs_evaluator,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const
@@ -1048,7 +1060,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSec
 
   threshold_index = std::distance( raw_cross_section.begin(), start );
 }
-
+*/
 // Calculate the elastic anglular distribution for the angle cosine
 void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
     const std::vector<double>& raw_elastic_angle,
@@ -1155,7 +1167,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointMoment
 // Create the adjoint bremsstrahlung cross section evaluator
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstrahlungCrossSectionEvaluator(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>&
+    std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >&
         adjoint_bremsstrahlung_cs_evaluator ) const
 {
   // Extract the forward electron energy grid
@@ -1275,7 +1287,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
             bremsstrahlung_distribution ) );
 
   adjoint_bremsstrahlung_cs_evaluator.reset(
-    new DataGen::AdjointBremsstrahlungCrossSectionEvaluator(
+    new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
         bremsstrahlung_reaction,
         adjoint_bremsstrahlung_energy_grid ) );
 
@@ -1296,7 +1308,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointBremss
     const unsigned threshold_energy_index,
     const Teuchos::ArrayRCP<const double>& adjoint_cross_section,
     const Teuchos::ArrayRCP<const double>& adjoint_electron_energy_grid,
-    const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
+    const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
         adjoint_bremsstrahlung_cs_evaluator,
     const std::vector<double>& adjoint_bremsstrahlung_photon_energy,
     std::vector<double>& adjoint_bremsstrahlung_pdf ) const
@@ -1335,8 +1347,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointBremss
 // Create the adjoint electroionization subshell cross section evaluator
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroionizationSubshellCrossSectionEvaluator(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator>&
-        adjoint_electroionization_cs_evaluator ) const
+    std::vector<std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
+        adjoint_electroionization_cs_evaluators ) const
 {
 
 }
