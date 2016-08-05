@@ -250,7 +250,7 @@ double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // Calculate the absolute error and the integrated cross section
   double abs_error, diff_cs;
   
-  Utility::GaussKronrodIntegrator quadrature_set( precision );
+  Utility::GaussKronrodIntegrator<double> quadrature_set( precision );
 
   if( pz_min < pz_max )
   {

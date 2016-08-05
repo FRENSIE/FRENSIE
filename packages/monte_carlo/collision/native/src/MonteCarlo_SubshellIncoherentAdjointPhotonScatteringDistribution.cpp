@@ -121,7 +121,7 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateIntegrated
 
   double abs_error, integrated_cs;
 
-  Utility::GaussKronrodIntegrator quadrature_gkq_int( precision );
+  Utility::GaussKronrodIntegrator<double> quadrature_gkq_int( precision );
 
   const double min_scattering_angle_cosine =
     calculateMinScatteringAngleCosine( incoming_energy, max_energy );

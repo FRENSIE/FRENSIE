@@ -482,11 +482,6 @@ ADD_TEST(DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution_t
 ##      electron class tests                                                  
 ##---------------------------------------------------------------------------##
 ##      electron distribution tests                                           
-ADD_EXECUTABLE(tstHardElasticElectronScatteringDistribution
-  tstHardElasticElectronScatteringDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstHardElasticElectronScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(HardElasticElectronScatteringDistribution_test tstHardElasticElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-
 ADD_EXECUTABLE(tstCutoffElasticElectronScatteringDistribution
   tstCutoffElasticElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstCutoffElasticElectronScatteringDistribution monte_carlo_collision_native)
