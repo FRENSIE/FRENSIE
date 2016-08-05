@@ -3,18 +3,6 @@ TARGET_LINK_LIBRARIES(tstOccupationNumberEvaluator data_gen_electron_photon)
 ADD_TEST(OccupatioNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
 SET_PROPERTY(TEST OccupatioNumberEvaluator_test PROPERTY LABELS data_gen_electron_photon)
 
-ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator
-    tstStandardElectronPhotonRelaxationDataGenerator.cpp)
-TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml" --test_c_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml")
-SET_PROPERTY(TEST StandardElectronPhotonRelaxationDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron photon relaxation)
-
-ADD_EXECUTABLE(tstStandardAdjointElectronPhotonRelaxationDataGenerator
-    tstStandardAdjointElectronPhotonRelaxationDataGenerator.cpp)
-TARGET_LINK_LIBRARIES(tstStandardAdjointElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardAdjointElectronPhotonRelaxationDataGenerator_test tstStandardAdjointElectronPhotonRelaxationDataGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml" --test_c_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml")
-SET_PROPERTY(TEST StandardAdjointElectronPhotonRelaxationDataGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron photon relaxation)
-
 ADD_EXECUTABLE(tstAdjointBremsstrahlungCrossSectionEvaluator
   tstAdjointBremsstrahlungCrossSectionEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstAdjointBremsstrahlungCrossSectionEvaluator data_gen_electron_photon)
@@ -65,3 +53,15 @@ ADD_EXECUTABLE(tstStandardMomentPreservingElectronDataGenerator
 TARGET_LINK_LIBRARIES(tstStandardMomentPreservingElectronDataGenerator data_gen_electron_photon)
 ADD_TEST(StandardMomentPreservingElectronDataGenerator_test tstStandardMomentPreservingElectronDataGenerator --test_h_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_pb_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_al_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
 SET_PROPERTY(TEST StandardMomentPreservingElectronDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron)
+
+ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator
+    tstStandardElectronPhotonRelaxationDataGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
+ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml" --test_c_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml")
+SET_PROPERTY(TEST StandardElectronPhotonRelaxationDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron photon relaxation)
+
+ADD_EXECUTABLE(tstStandardAdjointElectronPhotonRelaxationDataGenerator
+    tstStandardAdjointElectronPhotonRelaxationDataGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstStandardAdjointElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
+ADD_TEST(StandardAdjointElectronPhotonRelaxationDataGenerator_test tstStandardAdjointElectronPhotonRelaxationDataGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml" --test_c_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml")
+SET_PROPERTY(TEST StandardAdjointElectronPhotonRelaxationDataGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron photon relaxation)

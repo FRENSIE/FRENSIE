@@ -12,46 +12,43 @@
 // std Includes
 #include <vector>
 
-// Boost Includes
-#include <boost/multiprecision/cpp_dec_float.hpp>
-
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
 
 namespace Utility{
 
-typedef boost::multiprecision::cpp_dec_float_50 long_float;
+//typedef boost::multiprecision::cpp_dec_float_50 long_float;
 
-  //! Gauss-Kronrod quadrature set traits
-  template<int Points>
-  struct GaussKronrodQuadratureSetTraits
-  {
-    //! Valid rule
-    static const bool valid_rule = false;
+//! Gauss-Kronrod quadrature set traits
+template<int Points, typename FloatType, typename Enabled = void>
+struct GaussKronrodQuadratureSetTraits
+{
+  //! Valid rule
+  static const bool valid_rule = false;
+  
+  //! Gauss quadrature weights
+  static const std::vector<FloatType> gauss_weights;
+  
+  //! Kronrad quadrature weights
+  static const std::vector<FloatType> kronrod_weights;
+  
+  //! Kronrad quadrature abscissae
+  static const std::vector<FloatType> kronrod_abscissae;
+  
+private:
+  
+  // Initialize the gauss weight array
+  static inline std::vector<FloatType> initializeGaussWeights()
+  { return std::vector<FloatType>(); }
 
-    //! Gauss quadrature weights
-    static const std::vector<long_float> gauss_weights;
+  // Initialize the kronrod weight array
+  static inline std::vector<FloatType> initializeKronrodWeights()
+  { return std::vector<FloatType>(); }
 
-    //! Kronrad quadrature weights
-    static const std::vector<long_float> kronrod_weights;
-
-    //! Kronrad quadrature abscissae
-    static const std::vector<long_float> kronrod_abscissae;
-
-    private:
-
-    // Initialize the gauss weight array
-    static inline std::vector<long_float> initializeGaussWeights()
-    { return std::vector<long_float>(); }
-
-    // Initialize the kronrod weight array
-    static inline std::vector<long_float> initializeKronrodWeights()
-    { return std::vector<long_float>(); }
-
-    // Initialize the gauss weight array
-    static inline std::vector<long_float> initializeKronrodAbscissae()
-    { return std::vector<long_float>(); }
-  };
+  // Initialize the gauss weight array
+  static inline std::vector<FloatType> initializeKronrodAbscissae()
+  { return std::vector<FloatType>(); }
+};
 
 } // end Utility namespace
 
