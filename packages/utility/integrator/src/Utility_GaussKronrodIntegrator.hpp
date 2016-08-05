@@ -297,7 +297,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_GUASS_KRONROD_INTEGRATOR_HPP
+#endif // end UTILITY_GAUSS_KRONROD_INTEGRATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_GaussKronrodIntegrator.hpp
