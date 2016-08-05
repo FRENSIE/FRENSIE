@@ -27,11 +27,12 @@ namespace DataGen{
 // Constructor
 template<typename TwoDInterpPolicy>
 StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::StandardAdjointIncoherentGridGenerator(
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
+      const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& adjoint_incoherent_cross_section,
       const double convergence_tol,
       const double absolute_diff_tol,
       const double distance_tol )
-  : d_verbose( false ),
+  : AdjointIncoherentGridGenerator(),
+    d_verbose( false ),
     d_precision( 1e-3 ),
     d_convergence_tol( convergence_tol ),
     d_absolute_diff_tol( absolute_diff_tol ),
@@ -39,10 +40,12 @@ StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::StandardAdjointIncoher
     d_max_energy_grid_generator( convergence_tol, 
 				 absolute_diff_tol,
 				 distance_tol ),
-    d_adjoint_incoherent_cross_section( 20.0, scattering_function )
+    d_adjoint_incoherent_cross_section( adjoint_incoherent_cross_section )
 {
-  // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
+  // Make sure the adjoint incoherent cross section is valid
+  testPrecondition( adjoint_incoherent_cross_section.get() );
+  testPrecondition( adjoint_incoherent_cross_section->getMaxEnergy() ==
+                    this->getMaxTableEnergy() )
   // Make sure the tolerances are valid
   testPrecondition( convergence_tol > 0.0 );
   testPrecondition( convergence_tol <= 1.0 );
@@ -244,8 +247,8 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::generate(
 
   // Create the boost function that returns the processed cross section
   boost::function<double (double max_energy)> grid_function = 
-    boost::bind( &MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection,
-		 boost::cref( d_adjoint_incoherent_cross_section ),
+    boost::bind( &MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection,
+		 boost::cref( *d_adjoint_incoherent_cross_section ),
 		 energy,
 		 _1,
 		 d_precision );
@@ -363,7 +366,7 @@ StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::hasGridConverged(
 					   cross_section_1.end() );
     
 	double true_cross_section = 
-	  d_adjoint_incoherent_cross_section.evaluateIntegratedCrossSection(
+	  d_adjoint_incoherent_cross_section->evaluateIntegratedCrossSection(
 							intermediate_energy,
 							max_energy_mid_point,
 							d_precision );
