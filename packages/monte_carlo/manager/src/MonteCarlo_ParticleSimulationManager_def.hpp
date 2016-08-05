@@ -8,7 +8,7 @@
 
 #ifndef FRENSIE_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 #define FRENSIE_PARTICLE_SIMULATION_MANAGER_DEF_HPP
-
+#include <iostream>
 // Boost Includes
 #include <boost/bind.hpp>
 #include <iostream>
@@ -448,7 +448,10 @@ void ParticleSimulationManager<GeometryHandler,
       }
     }	     
   }
-
+  std::cout << std::endl;
+  std::cout << "END POINT AND START POINT" << std::endl;
+  std::cout << "START POINT: " << ray_start_point[0] << ", " << ray_start_point[1] << ", " << ray_start_point[2] << std::endl;
+  std::cout << "END POINT: " << particle.getPosition()[0] << ", " << particle.getPosition()[1] << ", " << particle.getPosition()[2] << std::endl;
   // Update the global observers: particle subtrack ending global event
   EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
   						      particle,

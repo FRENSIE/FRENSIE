@@ -112,7 +112,7 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, isPointInMesh)
   TEST_ASSERT( hex_mesh->isPointInMesh(point3) );
   TEST_ASSERT( hex_mesh->isPointInMesh(point4) );
   
-  //points not inside mesh but inside boundary region (should still return true)
+  //points not inside mesh but inside boundary region (should return false)
   //points on upper dimension boundaries
   double point5[3] {1.0 + 1e-13, 0.5, 0.5};
   double point6[3] {0.5, 1.0 + 1e-13, 0.5};
@@ -122,12 +122,12 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, isPointInMesh)
   double point9[3] {0.5, -1e-13, 0.5};
   double point10[3] {0.5, 0.5, -1e-13};
 
-  TEST_ASSERT( hex_mesh->isPointInMesh(point5) );
-  TEST_ASSERT( hex_mesh->isPointInMesh(point6) );
-  TEST_ASSERT( hex_mesh->isPointInMesh(point7) );
-  TEST_ASSERT( hex_mesh->isPointInMesh(point8) );
-  TEST_ASSERT( hex_mesh->isPointInMesh(point9) );
-  TEST_ASSERT( hex_mesh->isPointInMesh(point10) );
+  TEST_ASSERT( !hex_mesh->isPointInMesh(point5) );
+  TEST_ASSERT( !hex_mesh->isPointInMesh(point6) );
+  TEST_ASSERT( !hex_mesh->isPointInMesh(point7) );
+  TEST_ASSERT( !hex_mesh->isPointInMesh(point8) );
+  TEST_ASSERT( !hex_mesh->isPointInMesh(point9) );
+  TEST_ASSERT( !hex_mesh->isPointInMesh(point10) );
 
   //points outside of mesh
   //points on upper dimension boundaries
@@ -535,9 +535,9 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_ASSERT(contribution1.size() == 1);
-  TEST_ASSERT(contribution1[0].first == 0);
-  TEST_ASSERT(contribution1[0].second == 0.25);
+  TEST_EQUALITY(contribution1.size(), 1);
+  TEST_EQUALITY(contribution1[0].first, 0);
+  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.25, 1e-12);
 
   //particle starts outside mesh,crosses multiple planes inside mesh, and dies inside mesh
   start_point[0] = -0.25;
@@ -600,7 +600,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
 
   TEST_EQUALITY(contribution3.size(), 1);
   TEST_EQUALITY(contribution3[0].first, 2);
-  TEST_FLOATING_EQUALITY(contribution3[0].second, 0.030167187001735, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution3[0].second, 0.030167187001735, 1e-12);
   
   //particle starts outside mesh, enters mesh, and then exits mesh
   start_point[0] = 1.2;
@@ -628,8 +628,8 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
   TEST_EQUALITY(contribution4.size(), 2);
   TEST_EQUALITY(contribution4[0].first, 7);
   TEST_EQUALITY(contribution4[1].first, 5);
-  TEST_FLOATING_EQUALITY(contribution4[0].second, 0.198729768889349, 1e-10);
-  TEST_FLOATING_EQUALITY(contribution4[1].second, 0.535041685471324, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution4[0].second, 0.198729768889349, 1e-12);
+  TEST_FLOATING_EQUALITY(contribution4[1].second, 0.535041685471324, 1e-12);
 
 }
 
@@ -804,7 +804,8 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_stays_in_region)
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution4.size(), 0);
+  TEST_EQUALITY(contribution4.size(), 1);
+  TEST_FLOATING_EQUALITY(contribution4[0].second, 0.0, 1e-12);
 }
 
 //---------------------------------------------------------------------------//
@@ -836,13 +837,12 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_enters_mesh)
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution1.size(), 2);
+  TEST_EQUALITY(contribution1.size(), 3);
   TEST_EQUALITY(contribution1[0].first, 1);
   TEST_EQUALITY(contribution1[1].first, 3);
-  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.35355339059345, 1e-12);
-  TEST_FLOATING_EQUALITY(contribution1[1].second, 0.35355339059345, 1e-12);
-
-
+  TEST_EQUALITY(contribution1[2].first, 2);
+  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.353553390592743, 1e-12);
+  TEST_FLOATING_EQUALITY(contribution1[1].second, 0.353553390593451, 1e-12);
 }
 
 //---------------------------------------------------------------------------//

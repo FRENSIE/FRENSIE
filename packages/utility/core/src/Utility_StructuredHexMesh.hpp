@@ -62,11 +62,6 @@ public:
                               const double start_point[3],
                               const double end_point[3] );
   
-  //! Returns a pair where the first member is true if the ray intersects with the mesh and the second is the distance to the intersection point
-  std::tuple<bool, Dimension, double> doesRayIntersectMesh( const double point[3],
-                                                            const double direction[3],
-                                                            const double track_length) const;
-  
   //! Get the start iterator of the hex element list.
   /*! \details returns the iterator that points to the first element in the list containing
    *           all of the hex ID elements */
@@ -103,18 +98,36 @@ public:
   
 private:
   // enumeration type converting dimensions to integers
-  enum Dimension{ X_DIMENSION = 0,
-                  Y_DIMENSION = 1,
-                  Z_DIMENSION = 2 };
+  enum Dimension: unsigned{ X_DIMENSION = 0,
+                            Y_DIMENSION = 1,
+                            Z_DIMENSION = 2 };
+
+  // Returns a pair where the first member is true if the ray intersects with the mesh and the second is the distance to the intersection point
+  std::tuple<bool, Dimension, double> doesRayIntersectMesh( const double point[3],
+                                                            const double direction[3],
+                                                            const double track_length) const;
 
   // Trace particle path through mesh until it dies or leaves mesh
   Teuchos::Array<std::pair<HexIndex,double>> traceThroughMesh( double point[3],
                                                                const double direction[3],
-                                                               const double track_length ) const;
+                                                               const double track_length );
 
   // Find the interaction planes that a particle will interact with
   Teuchos::Array<std::pair<Dimension, PlaneIndex>> findInteractionPlanes( const double point[3],
-                                                                          const double direction[3] );
+                                                                          const double direction[3] ) const;
+
+  // Find the intersection distance along the path of the particle with the next hex
+  std::pair<Dimension, double> findIntersectionDistance( const double point[3],
+                                                         const double direction[3],
+                                                         const Teuchos::Array<std::pair<Dimension, PlaneIndex>>& interaction_planes) const;
+
+  // Calculate distance to a plane from a ray along its direction
+  double findDistanceToInteractionPlane( const double interaction_plane_location,
+                                         const double position_component,
+                                         const double direction_component ) const;
+
+  // Find the shortest distance to the respective interaction planes along a particle path
+  std::pair<Dimension, double> findShortestDistance( const Teuchos::Array<std::pair<Dimension, double>>& distance_array ) const;
 
   // Form the incrementer so that the particle increments over the planes in the correct direction
   void setIncrementer( unsigned incrementer[3],
@@ -140,7 +153,7 @@ private:
   void checkPlaneSet( const Teuchos::Array<double>& plane_set,
                       const double position_component,
                       const double direction_component,
-                      const Teuchos::Array<std::pair<Dimension, double>>& boundary_planes,
+                      Teuchos::Array<std::pair<Dimension, double>>& boundary_planes,
                       const Dimension plane_dimension ) const;
 
   // Returns whether or not a particle actually hit the mesh surface
@@ -183,9 +196,13 @@ private:
                                          const Teuchos::Array<double>& plane_set,
                                          Teuchos::Array<std::pair<Dimension,PlaneIndex>>& interaction_planes ) const;
   // Compute hex index from plane indices
-  unsigned long findIndex( unsigned i,
-                           unsigned j,
-                           unsigned k ) const;
+  unsigned long findIndex( const unsigned i,
+                           const unsigned j,
+                           const unsigned k ) const;
+
+  // Compute hex index from plane indices
+  unsigned long findIndex( const unsigned indices[3] ) const;
+
   // The tolerance used for geometric tests
   static const double s_tol;
 
@@ -198,7 +215,7 @@ private:
   std::list<HexIndex> d_hex_elements;
   
   // indices of the planes that are used to form the index for the hex element a particle is in
-  unsigned d_hex_plane_indices[3];  
+  PlaneIndex d_hex_plane_indices[3];  
                             
 };
 
