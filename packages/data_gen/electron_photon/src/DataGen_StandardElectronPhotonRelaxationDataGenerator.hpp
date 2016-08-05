@@ -23,6 +23,7 @@
 #include "Data_MomentPreservingElectronDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_GaussKronrodBasicIntegrator.hpp"
 
 namespace DataGen{
 
