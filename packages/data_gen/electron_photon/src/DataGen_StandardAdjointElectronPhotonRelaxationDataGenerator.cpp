@@ -729,6 +729,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
     std::vector<double> adjoint_bremsstrahlung_photon_energies;
 
+    // When possible use the same photon energies as the forward data
     if ( d_forward_endl_data->getBremsstrahlungPhotonEnergy().count(
             adjoint_bremsstrahlung_energy_grid.at(i) ) )
     {
@@ -742,9 +743,24 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     }
     else if( adjoint_bremsstrahlung_energy_grid.at(i) == d_min_electron_energy )
     {
+      /* If the min_electron_energy falls between two energies on the forward
+         bremsstrahlung energy grid a new set of photon energies must be chosen.
+         This is done by taking the set of photon energies for the forward
+         energy grid point above the min energy and substracting the photon
+         energies above the min electron energy.
+       */
       adjoint_bremsstrahlung_photon_energies =
         d_forward_endl_data->getBremsstrahlungPhotonEnergyAtEnergy(
-            adjoint_bremsstrahlung_energy_grid[i+1] );
+            adjoint_bremsstrahlung_energy_grid.at(i+1) );
+
+      // Eliminate photon energies above the min electron energy
+      while ( adjoint_bremsstrahlung_photon_energies.back() >= d_min_electron_energy )
+      {
+        adjoint_bremsstrahlung_photon_energies.pop_back();
+      }
+
+      // Add the min electron energy as the max photon energy
+      adjoint_bremsstrahlung_photon_energies.push_back( d_min_electron_energy );
 
       data_container.setAdjointBremsstrahlungPhotonEnergyAtIncomingEnergy(
         d_min_electron_energy,
@@ -764,8 +780,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // The PDF for the max incoming energy is always zero
   std::vector<double> photon_energy( 2 );
-  photon_energy[0] = 1.0e-7;
-  photon_energy[1] = d_max_electron_energy;
+  photon_energy[0] = d_min_photon_energy;
+  photon_energy[1] = d_max_photon_energy;
 
   data_container.setAdjointBremsstrahlungPhotonEnergyAtIncomingEnergy(
     d_max_electron_energy,

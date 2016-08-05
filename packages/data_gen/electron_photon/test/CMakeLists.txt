@@ -35,11 +35,11 @@ TARGET_LINK_LIBRARIES(tstAdjointIncoherentGridGenerator data_gen_electron_photon
 ADD_TEST(AdjointIncoherentGridGenerator_test tstAdjointIncoherentGridGenerator)
 SET_PROPERTY(TEST AdjointIncoherentGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint photon)
 
-# ADD_EXECUTABLE(tstStandardAdjointIncoherentGridGenerator
-#   tstStandardAdjointIncoherentGridGenerator.cpp)
-# TARGET_LINK_LIBRARIES(tstStandardAdjointIncoherentGridGenerator data_gen_electron_photon)
-# ADD_TEST(StandardAdjointIncoherentGridGenerator_test tstStandardAdjointIncoherentGridGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
-# SET_PROPERTY(TEST StandardAdjointIncoherentGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint photon)
+ADD_EXECUTABLE(tstStandardAdjointIncoherentGridGenerator
+  tstStandardAdjointIncoherentGridGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstStandardAdjointIncoherentGridGenerator data_gen_electron_photon)
+ADD_TEST(StandardAdjointIncoherentGridGenerator_test tstStandardAdjointIncoherentGridGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+SET_PROPERTY(TEST StandardAdjointIncoherentGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint photon)
 
 ADD_EXECUTABLE(tstElasticElectronMomentsEvaluator
   tstElasticElectronMomentsEvaluator.cpp)
