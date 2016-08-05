@@ -76,7 +76,7 @@ module utility_fortran_file_helpers
            file_name_size )
 
       inquire(file=file_name_fortran, read=read_message)
-      
+
       if(read_message(1:3) == 'YES') then
          file_is_readable_test = 1
       else
@@ -120,7 +120,7 @@ module utility_fortran_file_helpers
       integer(c_int), intent(in), value :: file_id
       integer :: success
       character(file_name_size) :: file_name_fortran
-   
+
 
       ! Convert the file name character array to a fortran character array
       call convert_c_string_to_fortran( file_name, file_name_fortran, &
@@ -133,7 +133,7 @@ module utility_fortran_file_helpers
       if( success /= 0 ) then
          write(*,*) 'Error when opening file ' , file_name_fortran
          stop
-      endif 
+      endif
 
 
     end subroutine open_file_using_fortran
@@ -152,7 +152,7 @@ module utility_fortran_file_helpers
       if( success /= 0 ) then
          write(*,*) 'Error when closing file attached to file id ' , file_id
          stop
-      endif 
+      endif
 
     end subroutine close_file_using_fortran
 
@@ -167,14 +167,14 @@ module utility_fortran_file_helpers
       integer :: success
 
       ! Move to the beginning of the file
-      rewind(file_id,iostat=success) 
+      rewind(file_id,iostat=success)
 
       if( success /= 0 ) then
          write(*,*) 'Error when rewinding file attached to file id ' , file_id
          stop
-      endif 
+      endif
 
-    end subroutine rewind_file_using_fortran 
+    end subroutine rewind_file_using_fortran
 
     !> Move to the desired line number in the file
     !> \detials The indexing for the start line should follow FORTRAN

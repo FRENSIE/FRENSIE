@@ -58,7 +58,7 @@ void ParticleBank::pop( SmartPointer<ParticleState>& particle )
 {
   // Make sure the bank is not empty
   testPrecondition( !this->isEmpty() );
-  
+
   particle.reset( this->top().clone() );
 
   this->pop();

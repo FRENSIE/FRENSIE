@@ -16,10 +16,10 @@
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
-  
+
 // Constructor
 template<typename OutgoingParticleType>
-PhotonuclearReaction<OutgoingParticleType>::PhotonuclearReaction( 
+PhotonuclearReaction<OutgoingParticleType>::PhotonuclearReaction(
 		   const PhotonuclearReactionType reaction_type,
 		   const double q_value,
 		   const unsigned threshold_energy_index,
@@ -38,7 +38,7 @@ PhotonuclearReaction<OutgoingParticleType>::PhotonuclearReaction(
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 
   // Make sure the incoming energy grid is valid
-  testPrecondition( Utility::Sort::isSortedAscending( 
+  testPrecondition( Utility::Sort::isSortedAscending(
 					        incoming_energy_grid.begin(),
 						incoming_energy_grid.end() ) );
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -49,7 +49,7 @@ PhotonuclearReaction<OutgoingParticleType>::PhotonuclearReaction(
 
 // Return the reaction type
 template<typename OutgoingParticleType>
-PhotonuclearReactionType 
+PhotonuclearReactionType
 PhotonuclearReaction<OutgoingParticleType>::getReactionType() const
 {
   return d_reaction_type;
@@ -64,23 +64,23 @@ double PhotonuclearReaction<OutgoingParticleType>::getQValue() const
 
 // Return the cross section value at a given energy
 template<typename OutgoingParticleType>
-double PhotonuclearReaction<OutgoingParticleType>::getCrossSection( 
+double PhotonuclearReaction<OutgoingParticleType>::getCrossSection(
 						    const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
-  
+
   if( energy >= this->getThresholdEnergy() &&
       energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
   {
-    unsigned energy_index = 
+    unsigned energy_index =
       Utility::Search::binaryLowerBoundIndex( d_incoming_energy_grid.begin(),
 					      d_incoming_energy_grid.end(),
 					      energy );
-    
+
     unsigned cs_index = energy_index - d_threshold_energy_index;
-    
-    return Utility::LinLin::interpolate( 
+
+    return Utility::LinLin::interpolate(
 					d_incoming_energy_grid[energy_index],
 					d_incoming_energy_grid[energy_index+1],
 					energy,
@@ -92,7 +92,7 @@ double PhotonuclearReaction<OutgoingParticleType>::getCrossSection(
   else if( energy == d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
     return d_cross_section[d_cross_section.size()-1];
   else // energy > this->getThresholdEnergy()
-    return 0.0;    
+    return 0.0;
 }
 
 } // end MonteCarlo namespace

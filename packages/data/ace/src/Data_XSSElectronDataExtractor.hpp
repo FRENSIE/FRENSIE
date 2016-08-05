@@ -20,7 +20,7 @@ namespace Data{
  * \ingroup ace_table
  * \todo Add reference for table layout.
  *
- * After a continuous energy EL03 table has been read by the 
+ * After a continuous energy EL03 table has been read by the
  * Data::ACEFileHandler the individual data blocks must be extracted from the
  * XSS array using the Data::XSSElectronDataExtractor. Both the NXS array
  * and the JXS array are required to successfully extract the blocks. The NXS
@@ -30,9 +30,9 @@ namespace Data{
  *  <li> NXS[1] = Z</li>
  *  <li> NXS[2] = number of radiation stopping power interpolation points</li>
  *  <li> NXS[3] = number of mott scattering cross section corrections</li>
- *  <li> NXS[4] = number of electron energy points for bremsstrahlung 
+ *  <li> NXS[4] = number of electron energy points for bremsstrahlung
                   interpolation</li>
- *  <li> NXS[5] = number of photon ration points for bremsstrahlung 
+ *  <li> NXS[5] = number of photon ration points for bremsstrahlung
                   interpolation</li>
  *  <li> NXS[6] = unused</li>
  *  <li> NXS[7] = unused</li>
@@ -68,7 +68,7 @@ namespace Data{
  */
 class XSSElectronDataExtractor
 {
-  
+
 public:
 
   //! Constructor
@@ -91,10 +91,10 @@ public:
 
   //! Extract the radiation stopping power interpolation data block
   Teuchos::ArrayView<const double> extractStoppingPowersBlock() const;
-  
+
   //! Extract the Mott scattering correction points data block
   Teuchos::ArrayView<const double> extractMottScatteringCorrectionBlock() const;
-  
+
   //! Extract the Riley scattering cross section data block
   Teuchos::ArrayView<const double> extractRileyBlock() const;
 

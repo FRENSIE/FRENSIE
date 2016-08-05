@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( HashBasedGridGenerator, findLowerBinIndex )
   TEST_EQUALITY_CONST( grid_index, 99u );
 
   grid_index = grid_searcher->findLowerBinIndex( 100.5 );
-  
+
   TEST_EQUALITY_CONST( grid_index, 99u );
 
   grid_index = grid_searcher->findLowerBinIndex( 1000.0 );
@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( HashBasedGridGenerator, findLowerBinIndex_processed )
   TEST_EQUALITY_CONST( grid_index, 99u );
 
   grid_index = processed_grid_searcher->findLowerBinIndex( 100.5 );
-  
+
   TEST_EQUALITY_CONST( grid_index, 99u );
 
   grid_index = processed_grid_searcher->findLowerBinIndex( 1000.0 );
@@ -120,10 +120,10 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -141,15 +141,15 @@ int main( int argc, char** argv )
 
       processed_grid[i] = log( i+1 );
     }
-    
-    grid_searcher.reset( 
+
+    grid_searcher.reset(
 	new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double> >(
 						       grid,
 						       grid[0],
 						       grid[grid.size()-1],
 						       100 ) );
-    
-    processed_grid_searcher.reset( 
+
+    processed_grid_searcher.reset(
     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,true>(
 				       processed_grid,
 				       processed_grid[0],
@@ -169,7 +169,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

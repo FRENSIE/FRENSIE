@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The decoupled standard complete Doppler broadened photon energy 
+//! \brief  The decoupled standard complete Doppler broadened photon energy
 //!         dist. decl.
 //!
 //---------------------------------------------------------------------------//
@@ -29,7 +29,7 @@ class DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution : public
 {
 
 public:
-  
+
   //! Constructor
   DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
    const Teuchos::Array<double>& endf_subshell_occupancies,
@@ -47,7 +47,7 @@ public:
 
   //! Return the binding energy of a subshell
   double getSubshellBindingEnergy( const Data::SubshellType subshell ) const;
-  
+
   //! Return the occupancy of a subshell (default is the ENDF occupacy)
   double getSubshellOccupancy( const Data::SubshellType subshell ) const;
 

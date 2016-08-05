@@ -3,7 +3,7 @@
 //! \file   Utility_TetrahedronHelpers.cpp
 //! \author Alex Robinson, Eli Moll
 //! \brief  Tetrahedron helper functions
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -34,7 +34,7 @@ double calculateTetrahedronVolume( const double vertex_a[3],
   double c1 = vertex_c[0] - reference_vertex[0];
   double c2 = vertex_c[1] - reference_vertex[1];
   double c3 = vertex_c[2] - reference_vertex[2];
-  
+
   double volume =
     fabs( a1*(b2*c3-b3*c2) + a2*(b3*c1-b1*c3) + a3*(b1*c2-b2*c1) )/6.0;
 
@@ -44,9 +44,9 @@ double calculateTetrahedronVolume( const double vertex_a[3],
   return volume;
 }
 
-// Calculate tetrahedron barycentric transform matrix                        
+// Calculate tetrahedron barycentric transform matrix
 template<>
-void calculateBarycentricTransformMatrix<moab::Matrix3>( 
+void calculateBarycentricTransformMatrix<moab::Matrix3>(
 					       const double vertex_a[3],
 					       const double vertex_b[3],
 					       const double vertex_c[3],
@@ -62,12 +62,12 @@ void calculateBarycentricTransformMatrix<moab::Matrix3>(
   matrix( 2, 0 ) = vertex_a[2] - reference_vertex[2];
   matrix( 2, 1 ) = vertex_b[2] - reference_vertex[2];
   matrix( 2, 2 ) = vertex_c[2] - reference_vertex[2];
-  
+
   // Check that the tet is valid (non-singular transform matrix)
   bool is_tet_valid = matrix.invert();
 
   testPrecondition( is_tet_valid );
-} 
+}
 
 } // end Utility namespace
 

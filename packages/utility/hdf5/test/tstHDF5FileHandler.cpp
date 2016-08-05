@@ -70,7 +70,7 @@
   typedef Utility::Quad<double,unsigned,double,unsigned> quad_d_u_d_u;	\
   typedef Utility::Quad<double,unsigned,unsigned,double> quad_d_u_u_d;	\
   typedef Utility::Quad<double,unsigned,unsigned,unsigned> quad_d_u_u_u; \
-  
+
 #define ARRAY_TYPEDEFS( space, array )					\
   typedef space::array<float> array##_f;				\
   typedef space::array<double> array##_d;				\
@@ -134,7 +134,7 @@
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_u_u_u ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_d_d_d_d ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_i_i_i_i ) \
-  
+
 #define UNIT_TEST_INSTANTIATION( type, name )				\
   TUPLE_TYPEDEFS()							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )		\
@@ -155,13 +155,13 @@ public:
   TestingHDF5FileHandler()
     : HDF5FileHandler()
   { /* ... */ }
-  
+
   virtual ~TestingHDF5FileHandler()
   { /* ... */ }
 
   using Utility::HDF5FileHandler::createParentGroups;
 
-};  
+};
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -172,7 +172,7 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, openHDF5FileAndOverwrite )
   Utility::HDF5FileHandler hdf5_file_handler;
 
   // If the file is not opened successfully, an exception will be thrown
-  // and caught inside the member function, causing a program exit. 
+  // and caught inside the member function, causing a program exit.
   // Therefore, no TEST macro is needed.
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
@@ -186,7 +186,7 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, openHDF5FileAndAppend )
   Utility::HDF5FileHandler hdf5_file_handler;
 
   // If the file is not opened successfully, an exception will be thrown
-  // and caught inside the member function, causing a program exit. 
+  // and caught inside the member function, causing a program exit.
   // Therefore, no TEST macro is needed.
   hdf5_file_handler.openHDF5FileAndAppend( HDF5_TEST_FILE_NAME );
 
@@ -200,7 +200,7 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, openHDF5FileAndReadOnly )
   Utility::HDF5FileHandler hdf5_file_handler;
 
   // If the file is not opened successfully, an exception will be thrown
-  // and caught inside the member function, causing a program exit. 
+  // and caught inside the member function, causing a program exit.
   // Therefore, no TEST macro is needed.
   hdf5_file_handler.openHDF5FileAndReadOnly( HDF5_TEST_FILE_NAME );
 
@@ -230,12 +230,12 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, createParentGroups )
   TestingHDF5FileHandler hdf5_file_handler;
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
-  
+
   // If the groups are not made successfully, an exception will be thrown
   // and caught inside of the member function, causing a program exit.
   // Therefore, no TEST macro is needed.
   hdf5_file_handler.createParentGroups( DATASET_NAME );
-  
+
   hdf5_file_handler.createParentGroups( CHILD_GROUP );
 
   hdf5_file_handler.closeHDF5File();
@@ -250,7 +250,7 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, doesGroupExist )
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   hdf5_file_handler.createParentGroups( "/data/test" );
-  
+
   TEST_ASSERT( hdf5_file_handler.doesGroupExist( "/data" ) );
   TEST_ASSERT( !hdf5_file_handler.doesGroupExist( "/bad_group" ) );
 
@@ -283,7 +283,7 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, doesDataSetExist )
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   Teuchos::Array<double> raw_data( 100, 1.0 );
-  
+
   hdf5_file_handler.writeArrayToDataSet( raw_data, "/data/test" );
 
   TEST_ASSERT( hdf5_file_handler.doesDataSetExist( "/data/test" ) );
@@ -318,9 +318,9 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, doesDataSetAttributeExist )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the HDF5FileHandler can write an Array of Type to a dataset in 
+// Check that the HDF5FileHandler can write an Array of Type to a dataset in
 // an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 				   writeArrayToDataSet,
 				   array )
 {
@@ -330,11 +330,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   typedef typename Utility::ArrayTraits<array>::value_type value_type;
-  
+
   value_type test_value = Utility::HDF5TypeTraits<value_type>::zero();
 
   Teuchos::Array<value_type> raw_data( 100, test_value );
-  
+
   array data;
   Utility::copyArrayView( data, raw_data() );
 
@@ -352,24 +352,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.closeHDF5File();
 }
 
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
-				       writeArrayToDataSet, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
+				       writeArrayToDataSet,
 				       Array );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
-				       writeArrayToDataSet, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
+				       writeArrayToDataSet,
 				       ArrayRCP );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
-				       writeArrayToDataSet, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
+				       writeArrayToDataSet,
 				       TwoDArray );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
-				       writeArrayToDataSet, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
+				       writeArrayToDataSet,
 				       ArrayView );
 UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler, writeArrayToDataSet );
 
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can read an Array of Type from a dataset
 // in an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 				   readArrayFromDataSet,
 				   array )
 {
@@ -378,11 +378,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   typedef typename Utility::ArrayTraits<array>::value_type value_type;
-  
+
   value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
   Teuchos::Array<value_type> raw_data( 100, test_value );
-  
+
   array data_original;
   Utility::copyArrayView( data_original, raw_data() );
 
@@ -398,13 +398,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.closeHDF5File();
 }
 
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       readArrayFromDataSet,
 				       Array );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       readArrayFromDataSet,
 				       ArrayRCP );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       readArrayFromDataSet,
 				       TwoDArray );
 UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler, readArrayFromDataSet );
@@ -412,7 +412,7 @@ UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler, readArrayFromDataSet );
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can write an Array of Type to a dataset
 // attribute in an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 				   writeArrayToDataSetAttribute,
 				   array )
 {
@@ -426,7 +426,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
   Teuchos::Array<value_type> raw_data( 100, test_value );
-  array set_data; 
+  array set_data;
   Utility::copyArrayView( set_data, raw_data() );
 
   hdf5_file_handler.writeArrayToDataSet( set_data,
@@ -437,11 +437,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   TEST_ASSERT( !hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
 							     ATTRIBUTE_NAME ));
-  TEST_NOTHROW( hdf5_file_handler.writeArrayToDataSetAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToDataSetAttribute(
 							    data,
 							    DATASET_NAME,
 							    ATTRIBUTE_NAME ) );
-  
+
   hdf5_file_handler.closeHDF5File();
 
   // Write data to an existing data set attribute
@@ -449,7 +449,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   TEST_ASSERT( hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
 							    ATTRIBUTE_NAME ) );
-  TEST_NOTHROW( hdf5_file_handler.writeArrayToDataSetAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToDataSetAttribute(
 							    data,
 							    DATASET_NAME,
 							    ATTRIBUTE_NAME ) );
@@ -457,25 +457,25 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.closeHDF5File();
 }
 
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       writeArrayToDataSetAttribute,
 				       Array );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       writeArrayToDataSetAttribute,
 				       ArrayRCP );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       writeArrayToDataSetAttribute,
 				       TwoDArray );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       writeArrayToDataSetAttribute,
 				       ArrayView );
-UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler,
 				    writeArrayToDataSetAttribute );
 
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can read an Array of Type from a dataset
 // attribute in an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 				   readArrayFromDataSetAttribute,
 				   array )
 {
@@ -496,7 +496,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   array data_original;
   Utility::copyArrayView( data_original, raw_data() );
-  
+
   hdf5_file_handler.writeArrayToDataSetAttribute( data_original,
 						  DATASET_NAME,
 						  ATTRIBUTE_NAME );
@@ -505,29 +505,29 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.readArrayFromDataSetAttribute( data,
 						   DATASET_NAME,
 						   ATTRIBUTE_NAME );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( data_original, data );
-  
+
   hdf5_file_handler.closeHDF5File();
 }
 
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       readArrayFromDataSetAttribute,
 				       Array );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       readArrayFromDataSetAttribute,
 				       ArrayRCP );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       readArrayFromDataSetAttribute,
 				       TwoDArray );
-UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler,
 				    readArrayFromDataSetAttribute );
-				    
+
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can write a single value to a dataset
 // attribute in an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
-				   writeValueToDataSetAttribute, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
+				   writeValueToDataSetAttribute,
 				   Type )
 {
   Utility::HDF5FileHandler hdf5_file_handler;
@@ -537,14 +537,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   Type test_value = Utility::HDF5TypeTraits<Type>::one();
 
-  Teuchos::Array<Type> data( 100, test_value ); 
-  
+  Teuchos::Array<Type> data( 100, test_value );
+
   hdf5_file_handler.writeArrayToDataSet( data,
 					 DATASET_NAME );
 
   TEST_ASSERT( !hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
 							     ATTRIBUTE_NAME ));
-  TEST_NOTHROW( hdf5_file_handler.writeValueToDataSetAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeValueToDataSetAttribute(
 							    test_value,
 							    DATASET_NAME,
 							    ATTRIBUTE_NAME ) );
@@ -556,7 +556,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   TEST_ASSERT( hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
 							    ATTRIBUTE_NAME ) );
-  TEST_NOTHROW( hdf5_file_handler.writeValueToDataSetAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeValueToDataSetAttribute(
 							    test_value,
 							    DATASET_NAME,
 							    ATTRIBUTE_NAME ) );
@@ -569,8 +569,8 @@ UNIT_TEST_INSTANTIATION( HDF5FileHandler, writeValueToDataSetAttribute );
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can read a single value from a dataset
 // attribute in an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
-				   readValueFromDataSetAttribute, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
+				   readValueFromDataSetAttribute,
 				   Type )
 {
   Utility::HDF5FileHandler hdf5_file_handler;
@@ -578,8 +578,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   Type test_value_original = Utility::HDF5TypeTraits<Type>::one();
-  
-  Teuchos::Array<Type> data( 100, test_value_original ); 
+
+  Teuchos::Array<Type> data( 100, test_value_original );
 
   hdf5_file_handler.writeArrayToDataSet( data,
 					 DATASET_NAME );
@@ -587,7 +587,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.writeValueToDataSetAttribute( test_value_original,
 						  DATASET_NAME,
 						  ATTRIBUTE_NAME );
-  
+
   Type test_value;
   hdf5_file_handler.readValueFromDataSetAttribute( test_value,
 						   DATASET_NAME,
@@ -603,7 +603,7 @@ UNIT_TEST_INSTANTIATION( HDF5FileHandler, readValueFromDataSetAttribute );
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can write an Array of Type to a group
 // attribute in an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 				   writeArrayToGroupAttribute,
 				   array )
 {
@@ -622,7 +622,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   TEST_ASSERT( !hdf5_file_handler.doesGroupAttributeExist( CHILD_GROUP,
 							   ATTRIBUTE_NAME ) );
-  TEST_NOTHROW( hdf5_file_handler.writeArrayToGroupAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToGroupAttribute(
 							    data,
 							    CHILD_GROUP,
 							    ATTRIBUTE_NAME ) );
@@ -634,7 +634,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   TEST_ASSERT( hdf5_file_handler.doesGroupAttributeExist( CHILD_GROUP,
 							  ATTRIBUTE_NAME ) );
-  TEST_NOTHROW( hdf5_file_handler.writeArrayToGroupAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToGroupAttribute(
 							    data,
 							    CHILD_GROUP,
 							    ATTRIBUTE_NAME ) );
@@ -642,25 +642,25 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.closeHDF5File();
 }
 
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       writeArrayToGroupAttribute,
 				       Array );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       writeArrayToGroupAttribute,
 				       ArrayRCP );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       writeArrayToGroupAttribute,
 				       TwoDArray );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       writeArrayToGroupAttribute,
 				       ArrayView );
-UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler,
 				    writeArrayToGroupAttribute );
 
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can read an Array of Type from a group
 // attribute in an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 				   readArrayFromGroupAttribute,
 				   array )
 {
@@ -671,11 +671,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   typedef typename Utility::ArrayTraits<array>::value_type value_type;
 
   value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
- 
+
   Teuchos::Array<value_type> raw_data( 100, test_value );
   array data_original;
   Utility::copyArrayView( data_original, raw_data() );
-  
+
   hdf5_file_handler.writeArrayToGroupAttribute( data_original,
 						CHILD_GROUP,
 						ATTRIBUTE_NAME );
@@ -690,23 +690,23 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.closeHDF5File();
 }
 
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       readArrayFromGroupAttribute,
 				       Array );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       readArrayFromGroupAttribute,
 				       ArrayRCP );
-UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       readArrayFromGroupAttribute,
 				       TwoDArray );
-UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler, 
+UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler,
 				    readArrayFromGroupAttribute );
 
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can write a single value to a group
 // attribute in an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
-				   writeValueToGroupAttribute, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
+				   writeValueToGroupAttribute,
 				   Type )
 {
   Utility::HDF5FileHandler hdf5_file_handler;
@@ -715,34 +715,34 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   Type test_value = Utility::HDF5TypeTraits<Type>::one();
- 
+
   TEST_ASSERT( !hdf5_file_handler.doesGroupAttributeExist( ROOT_GROUP,
 							   ATTRIBUTE_NAME ) );
-  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute(
 							    test_value,
 							    ROOT_GROUP,
 							    ATTRIBUTE_NAME ) );
   TEST_ASSERT( !hdf5_file_handler.doesGroupAttributeExist( CHILD_GROUP,
 							   ATTRIBUTE_NAME ) );
-  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute(
 							    test_value,
 							    CHILD_GROUP,
 							    ATTRIBUTE_NAME ) );
 
   hdf5_file_handler.closeHDF5File();
-  
+
   // Write value to existing group attribute
   hdf5_file_handler.openHDF5FileAndAppend( HDF5_TEST_FILE_NAME );
 
   TEST_ASSERT( hdf5_file_handler.doesGroupAttributeExist( ROOT_GROUP,
 							  ATTRIBUTE_NAME ) );
-  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute(
 							    test_value,
 							    ROOT_GROUP,
 							    ATTRIBUTE_NAME ) );
   TEST_ASSERT( hdf5_file_handler.doesGroupAttributeExist( CHILD_GROUP,
 							  ATTRIBUTE_NAME ) );
-  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute( 
+  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute(
 							    test_value,
 							    CHILD_GROUP,
 							    ATTRIBUTE_NAME ) );
@@ -753,8 +753,8 @@ UNIT_TEST_INSTANTIATION( HDF5FileHandler, writeValueToGroupAttribute );
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can read a single value from a group
 // attribute in an HDF5 file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
-				   readValueFromGroupAttribute, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
+				   readValueFromGroupAttribute,
 				   Type )
 {
   Utility::HDF5FileHandler hdf5_file_handler;
@@ -776,7 +776,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   						 ATTRIBUTE_NAME );
 
   UTILITY_TEST_EQUALITY( test_value_original, test_value );
-  
+
   hdf5_file_handler.readValueFromGroupAttribute( test_value,
 						 CHILD_GROUP,
 						 ATTRIBUTE_NAME );

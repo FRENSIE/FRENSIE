@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstDistributedCachedStateParticleSource.cpp
 //! \author Alex Robinson
 //! \brief  Cached state particle source unit tests.
@@ -45,7 +45,7 @@ TEUCHOS_UNIT_TEST( DistributedCachedStateParticleSource, reduceData )
   MonteCarlo::ParticleBank bank;
 
   source->sampleParticleState( bank, Teuchos::GlobalMPISession::getRank() );
-  
+
   if( Teuchos::GlobalMPISession::getRank() == 0 )
   {
     TEST_EQUALITY_CONST( source->getNumberOfTrials(), 2 );
@@ -59,9 +59,9 @@ TEUCHOS_UNIT_TEST( DistributedCachedStateParticleSource, reduceData )
     TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
   }
 
-  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm =
     Teuchos::DefaultComm<unsigned long long>::getComm();
-  
+
   comm->barrier();
 
   source->reduceData( comm, 0 );
@@ -89,10 +89,10 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -109,42 +109,42 @@ int main( int argc, char** argv )
   // Initialize the source
   {
     MonteCarlo::ParticleBank bank;
-    
-    boost::shared_ptr<MonteCarlo::ParticleState> particle( 
+
+    boost::shared_ptr<MonteCarlo::ParticleState> particle(
 					 new MonteCarlo::PhotonState( 1ull ) );
 
     bank.push( *particle );
-    
+
     particle.reset( new MonteCarlo::NeutronState( 10ull ) );
-    
+
     bank.push( *particle );
-    
+
     particle.reset( new MonteCarlo::PhotonState( 1ull ) );
-    
+
     bank.push( *particle );
-    
+
     particle.reset( new MonteCarlo::ElectronState( 11ull ) );
-    
+
     bank.push( *particle );
 
     particle.reset( new MonteCarlo::NeutronState( 12ull ) );
-  
+
     bank.push( *particle );
-  
+
     particle.reset( new MonteCarlo::PhotonState( 13ull ) );
-    
+
     bank.push( *particle );
-    
+
     particle.reset( new MonteCarlo::ElectronState( 14ull ) );
-    
+
     bank.push( *particle );
-    
+
     particle.reset( new MonteCarlo::NeutronState( 15ull ) );
-    
+
     bank.push( *particle );
-    
+
     particle.reset( new MonteCarlo::PhotonState( 16ull ) );
-    
+
     bank.push( *particle );
 
     std::ostringstream oss;
@@ -155,9 +155,9 @@ int main( int argc, char** argv )
 
     {
       std::ofstream ofs( oss.str().c_str() );
-    
+
       boost::archive::xml_oarchive ar(ofs);
-      ar << boost::serialization::make_nvp( bank_name_in_archive.c_str(), 
+      ar << boost::serialization::make_nvp( bank_name_in_archive.c_str(),
                                             bank );
     }
 
@@ -166,13 +166,13 @@ int main( int argc, char** argv )
                                     bank_name_in_archive,
                                     Utility::ArchivableObject::XML_ARCHIVE ) );
   }
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
 
   mpiSession.barrier();

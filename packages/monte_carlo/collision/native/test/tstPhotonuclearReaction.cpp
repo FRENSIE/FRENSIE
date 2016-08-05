@@ -44,7 +44,7 @@ template<typename OutgoingParticleType>
 class TestPhotonuclearReaction : public MonteCarlo::PhotonuclearReaction<OutgoingParticleType>
 {
 public:
-  TestPhotonuclearReaction( 
+  TestPhotonuclearReaction(
 		   const MonteCarlo::PhotonuclearReactionType reaction_type,
 		   const double q_value,
 		   const unsigned threshold_energy_index,
@@ -60,7 +60,7 @@ public:
 
   ~TestPhotonuclearReaction()
   { /* ... */ }
-  
+
   unsigned getNumberOfEmittedParticles( const double energy ) const
   { return 0u; }
 
@@ -80,14 +80,14 @@ void initializeOutGammaReaction()
    new Data::XSSPhotonuclearDataExtractor( h2_ace_file_handler->getTableNXSArray(),
 				      h2_ace_file_handler->getTableJXSArray(),
 				      h2_ace_file_handler->getTableXSSArray()));
-   
+
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( h2_xss_data_extractor->extractESZBlock() );
 
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.deepCopy( h2_xss_data_extractor->extractTOTBlock() );
 
-  h2_photonuclear_reaction.reset( new TestPhotonuclearReaction<MonteCarlo::PhotonState>( 
+  h2_photonuclear_reaction.reset( new TestPhotonuclearReaction<MonteCarlo::PhotonState>(
 			               MonteCarlo::GAMMA__ANYTHING_REACTION,
 				       0,
 				       0u,
@@ -104,14 +104,14 @@ void initializeOutNeutronReaction()
    new Data::XSSPhotonuclearDataExtractor( c12_ace_file_handler->getTableNXSArray(),
   				      c12_ace_file_handler->getTableJXSArray(),
   				      c12_ace_file_handler->getTableXSSArray()));
-   
+
   Teuchos::ArrayRCP<double> energy_grid;
    energy_grid.deepCopy( c12_xss_data_extractor->extractESZBlock() );
- 
+
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.deepCopy( c12_xss_data_extractor->extractTOTBlock() );
 
-  c12_photonuclear_reaction.reset( new TestPhotonuclearReaction<MonteCarlo::NeutronState>( 
+  c12_photonuclear_reaction.reset( new TestPhotonuclearReaction<MonteCarlo::NeutronState>(
   			       MonteCarlo::GAMMA__N_EXCITED_STATE_0_REACTION,
   				       0,
   				       0u,
@@ -125,9 +125,9 @@ void initializeOutNeutronReaction()
 // Check that the reaction type of an elastic reaction can be returned
 TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getReactionType )
 {
-    TEST_EQUALITY_CONST( h2_photonuclear_reaction->getReactionType(), 
+    TEST_EQUALITY_CONST( h2_photonuclear_reaction->getReactionType(),
   		       MonteCarlo::GAMMA__ANYTHING_REACTION );
-    TEST_EQUALITY_CONST( c12_photonuclear_reaction->getReactionType(), 
+    TEST_EQUALITY_CONST( c12_photonuclear_reaction->getReactionType(),
 		       MonteCarlo::GAMMA__N_EXCITED_STATE_0_REACTION );
 }
 
@@ -135,7 +135,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getReactionType )
 // Check that the Q value can be returned
 TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getQValue )
 {
- 
+
    TEST_EQUALITY_CONST( h2_photonuclear_reaction->getQValue(), 0 );
 
    TEST_EQUALITY_CONST( c12_photonuclear_reaction->getQValue(), 0 );
@@ -145,7 +145,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getQValue )
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( h2_photonuclear_reaction->getThresholdEnergy(), 
+  TEST_EQUALITY_CONST( h2_photonuclear_reaction->getThresholdEnergy(),
   		       2.2246 );
 
   TEST_EQUALITY_CONST( c12_photonuclear_reaction->getThresholdEnergy(),
@@ -185,7 +185,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getCrossSection )
 
 
   // C-12 CrossSection Test
-  double c12_cross_section = 
+  double c12_cross_section =
     c12_photonuclear_reaction->getCrossSection( 7.336593);
 
    TEST_EQUALITY_CONST( c12_cross_section , 0 );
@@ -235,10 +235,10 @@ int main( int argc, char** argv )
   		 &c12_ace_table_name,
   		 "Test basic ACE table name in basic ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -259,7 +259,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1); 
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

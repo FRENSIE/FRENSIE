@@ -23,7 +23,7 @@ class CrossSectionsXMLProperties
 {
 
 public:
-  
+
   static const std::string nuclear_file_path_prop;
   static const std::string nuclear_file_type_prop;
   static const std::string nuclear_table_name_prop;
@@ -52,6 +52,7 @@ public:
   static const std::string ace_file;
   static const std::string endl_file;
   static const std::string native_file;
+  static const std::string moment_preserving_file;
 
   //! Extract the table info from the photoatom table info parameter list
   static void extractInfoFromPhotoatomTableInfoParameterList(

@@ -37,17 +37,17 @@ std::string test_root_geom_file_name;
 // Check the default property names
 TEUCHOS_UNIT_TEST( Root, default_property_names )
 {
-  std::string default_property = 
+  std::string default_property =
     Geometry::Root::getMaterialPropertyName();
 
   TEST_EQUALITY_CONST( default_property, "mat" );
 
-  std::string default_void_mat_name = 
+  std::string default_void_mat_name =
     Geometry::Root::getVoidMaterialName();
 
   TEST_EQUALITY_CONST( default_void_mat_name, "void" );
 
-  std::string default_terminal_mat_name = 
+  std::string default_terminal_mat_name =
     Geometry::Root::getTerminalMaterialName();
 
   TEST_EQUALITY_CONST( default_terminal_mat_name, "graveyard" );
@@ -57,13 +57,13 @@ TEUCHOS_UNIT_TEST( Root, default_property_names )
 // Check that the material property name can be set
 TEUCHOS_UNIT_TEST( Root, setMaterialPropertyName )
 {
-  std::string default_property = 
+  std::string default_property =
     Geometry::Root::getMaterialPropertyName();
 
   Geometry::Root::setMaterialPropertyName( "material" );
-    
+
   std::string new_property = Geometry::Root::getMaterialPropertyName();
-    
+
   TEST_EQUALITY_CONST( new_property, "material" );
 
   Geometry::Root::setMaterialPropertyName( default_property );
@@ -73,7 +73,7 @@ TEUCHOS_UNIT_TEST( Root, setMaterialPropertyName )
 // Check that the void material name can be set
 TEUCHOS_UNIT_TEST( Root, setVoidMaterialName )
 {
-  std::string default_void_mat_name = 
+  std::string default_void_mat_name =
     Geometry::Root::getVoidMaterialName();
 
   Geometry::Root::setVoidMaterialName( "empty" );
@@ -89,7 +89,7 @@ TEUCHOS_UNIT_TEST( Root, setVoidMaterialName )
 // Check that the terminal material name can be set
 TEUCHOS_UNIT_TEST( Root, setTerminalMaterialName )
 {
-  std::string default_terminal_mat_name = 
+  std::string default_terminal_mat_name =
     Geometry::Root::getTerminalMaterialName();
 
   Geometry::Root::setTerminalMaterialName( "terminal_mat" );
@@ -131,7 +131,7 @@ TEUCHOS_UNIT_TEST( Root, doesCellExist )
   TEST_ASSERT( Geometry::Root::doesCellExist( 1 ) );
   TEST_ASSERT( Geometry::Root::doesCellExist( 2 ) );
   TEST_ASSERT( Geometry::Root::doesCellExist( 3 ) );
-  
+
   TEST_ASSERT( !Geometry::Root::doesCellExist( 4 ) );
 }
 
@@ -139,15 +139,15 @@ TEUCHOS_UNIT_TEST( Root, doesCellExist )
 // Get if the cell volume
 TEUCHOS_UNIT_TEST( Root, getCellVolume )
 {
-  TEST_FLOATING_EQUALITY( Geometry::Root::getCellVolume( 1 ), 
+  TEST_FLOATING_EQUALITY( Geometry::Root::getCellVolume( 1 ),
                           934.550153050213,
                           1e-9 );
 
-  TEST_FLOATING_EQUALITY( Geometry::Root::getCellVolume( 2 ), 
+  TEST_FLOATING_EQUALITY( Geometry::Root::getCellVolume( 2 ),
                           65.4498469497874,
                           1e-9 );
 
-  TEST_FLOATING_EQUALITY( Geometry::Root::getCellVolume( 3 ), 
+  TEST_FLOATING_EQUALITY( Geometry::Root::getCellVolume( 3 ),
                           1744.0,
                           1e-9 );
 }
@@ -178,7 +178,7 @@ TEUCHOS_UNIT_TEST( Root, getCells )
 
   // Get all cells except the termination cells
   Geometry::Root::getCells( cells );
-  
+
   TEST_EQUALITY_CONST( cells.size(), 2 );
   TEST_ASSERT( cells.count( 1 ) );
   TEST_ASSERT( cells.count( 2 ) );
@@ -267,7 +267,7 @@ TEUCHOS_UNIT_TEST( Root, getCellDensities )
 TEUCHOS_UNIT_TEST( Root, getPointLocation )
 {
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> 
+  std::shared_ptr<Geometry::Ray>
     ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
 
   // Point inside of cell 2
@@ -320,7 +320,7 @@ TEUCHOS_UNIT_TEST( Root, getPointLocation )
   location = Geometry::Root::getPointLocation( ray->getPosition(), 2 );
 
   TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
-  
+
   location = Geometry::Root::getPointLocation( ray->getPosition(), 1 );
 
   TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
@@ -350,7 +350,7 @@ TEUCHOS_UNIT_TEST( Root, getPointLocation )
 TEUCHOS_UNIT_TEST( Root, findCellContainingExternalRay )
 {
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> 
+  std::shared_ptr<Geometry::Ray>
     ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::ModuleTraits::InternalCellHandle cell;
@@ -394,26 +394,26 @@ TEUCHOS_UNIT_TEST( Root, external_ray_trace )
   // Initialize the ray
   Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
 
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::Root::findCellContainingExternalRay( ray );
-  
+
   TEST_EQUALITY_CONST( cell, 2 );
 
   // Fire a ray through the geometry
   double distance_to_boundary = Geometry::Root::fireExternalRay( ray );
- 
+
   ray.advanceHead( distance_to_boundary );
-  
+
   // Find the new cell
   cell = Geometry::Root::findCellContainingExternalRay( ray );
-  
+
   TEST_EQUALITY_CONST( cell, 1 );
 
   // Fire a ray through the geometry
   distance_to_boundary = Geometry::Root::fireExternalRay( ray );
 
   ray.advanceHead( distance_to_boundary );
-  
+
   // Find the new cell
   cell = Geometry::Root::findCellContainingExternalRay( ray );
 
@@ -424,7 +424,7 @@ TEUCHOS_UNIT_TEST( Root, external_ray_trace )
 // Check that the internal ray can be set
 TEUCHOS_UNIT_TEST( Root, setInternalRay )
 {
-  std::shared_ptr<Geometry::Ray> 
+  std::shared_ptr<Geometry::Ray>
     ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::Root::setInternalRay( *ray );
@@ -458,7 +458,7 @@ TEUCHOS_UNIT_TEST( Root, isInternalRaySet )
   Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
 
   // Use external ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::Root::findCellContainingExternalRay( ray );
 
   TEST_ASSERT( !Geometry::Root::isInternalRaySet() );
@@ -470,7 +470,7 @@ TEUCHOS_UNIT_TEST( Root, isInternalRaySet )
 
   // Fire an external ray
   double distance_to_boundary = Geometry::Root::fireExternalRay( ray );
- 
+
   TEST_ASSERT( !Geometry::Root::isInternalRaySet() );
 
   // Set the internal ray
@@ -486,10 +486,10 @@ TEUCHOS_UNIT_TEST( Root, changeInternalRayDirection )
   // Initailize the ray
   {
     Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
-    
+
     Geometry::Root::setInternalRay( ray );
   }
-  
+
   Geometry::Root::changeInternalRayDirection( 1.0, 0.0, 0.0 );
 
   TEST_EQUALITY_CONST( Geometry::Root::getInternalRayDirection()[0], 1.0 );
@@ -512,7 +512,7 @@ TEUCHOS_UNIT_TEST( Root, changeInternalRayDirection )
 TEUCHOS_UNIT_TEST( Root, findCellContainingInternalRay )
 {
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> 
+  std::shared_ptr<Geometry::Ray>
     ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::Root::setInternalRay( *ray );
@@ -568,22 +568,22 @@ TEUCHOS_UNIT_TEST( Root, internal_ray_trace )
     Geometry::Root::setInternalRay( ray );
   }
 
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::Root::findCellContainingInternalRay();
-  
+
   TEST_EQUALITY_CONST( cell, 2 );
 
   // Fire a ray through the geometry
   double distance_to_boundary = Geometry::Root::fireInternalRay();
 
   TEST_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-9 );
- 
+
   // Advance the ray to the cell boundary
   Geometry::Root::advanceInternalRayToCellBoundary();
 
   // Find the new cell
   cell = Geometry::Root::findCellContainingInternalRay();
-  
+
   TEST_EQUALITY_CONST( cell, 1 );
 
   // Fire a ray through the geometry
@@ -604,7 +604,7 @@ TEUCHOS_UNIT_TEST( Root, internal_ray_trace )
 
   // Advance the ray to the cell boundary
   Geometry::Root::advanceInternalRayToCellBoundary();
-  
+
   // Find the new cell
   cell = Geometry::Root::findCellContainingInternalRay();
 
@@ -622,10 +622,10 @@ int main( int argc, char** argv )
 		 &test_root_geom_file_name,
 		 "Test root geometry file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -638,9 +638,9 @@ int main( int argc, char** argv )
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
   out->setOutputToRootOnly( 0 );
-  
+
   mpiSession.barrier();
-  
+
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 

@@ -16,15 +16,15 @@ namespace DataGen{
 // Initialize the static member data
 double AdjointIncoherentGridGenerator::s_min_table_energy = 0.0001;
 double AdjointIncoherentGridGenerator::s_max_table_energy = 20;
-const double AdjointIncoherentGridGenerator::s_max_table_energy_nudge_factor = 
+const double AdjointIncoherentGridGenerator::s_max_table_energy_nudge_factor =
   0.01;
-double AdjointIncoherentGridGenerator::s_nudged_max_table_energy = 
+double AdjointIncoherentGridGenerator::s_nudged_max_table_energy =
   s_max_table_energy*(1.0+s_max_table_energy_nudge_factor);
-double AdjointIncoherentGridGenerator::s_energy_to_max_energy_nudge_factor = 
+double AdjointIncoherentGridGenerator::s_energy_to_max_energy_nudge_factor =
   1e-6;
 
 //! Set the min table energy (default is 0.0001 MeV)
-void AdjointIncoherentGridGenerator::setMinTableEnergy( 
+void AdjointIncoherentGridGenerator::setMinTableEnergy(
 						      const double min_energy )
 {
   // Make sure the min energy is valid
@@ -41,7 +41,7 @@ double AdjointIncoherentGridGenerator::getMinTableEnergy()
 }
 
 // Set the max table energy (default is 20.0 MeV)
-void AdjointIncoherentGridGenerator::setMaxTableEnergy( 
+void AdjointIncoherentGridGenerator::setMaxTableEnergy(
 						      const double max_energy )
 {
   // Make sure the max energy is valid
@@ -49,7 +49,7 @@ void AdjointIncoherentGridGenerator::setMaxTableEnergy(
   testPrecondition( max_energy > s_min_table_energy );
 
   s_max_table_energy = max_energy;
-  s_nudged_max_table_energy = 
+  s_nudged_max_table_energy =
     s_max_table_energy*(1.0+s_max_table_energy_nudge_factor);
 }
 
@@ -73,7 +73,7 @@ double AdjointIncoherentGridGenerator::getNudgedMaxTableEnergy()
  * slightly above the corresponding energy with this factor, that problem
  * can be avoided (usually leading to smaller grids that converge faster).
  */
-void AdjointIncoherentGridGenerator::setEnergyToMaxEnergyNudgeFactor( 
+void AdjointIncoherentGridGenerator::setEnergyToMaxEnergyNudgeFactor(
 							  const double factor )
 {
   // Make sure the factor is valid

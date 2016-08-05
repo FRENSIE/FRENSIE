@@ -32,7 +32,7 @@ double KleinNishinaAdjointPhotonScatteringDistribution::evaluate(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( incoming_energy <= max_energy );
   // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= 
+  testPrecondition( scattering_angle_cosine >=
 		    calculateMinScatteringAngleCosine( incoming_energy,
 						       max_energy ));
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -52,18 +52,18 @@ double KleinNishinaAdjointPhotonScatteringDistribution::evaluateIntegratedCrossS
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( incoming_energy <= max_energy );
 
-  const double alpha = 
+  const double alpha =
     incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
 
   const double alpha_sqr = alpha*alpha;
-  
-  const double x_min = 
+
+  const double x_min =
     calculateMinInverseEnergyGainRatio( incoming_energy, max_energy );
 
   const double x_min_sqr = x_min*x_min;
 
   const double term_1 = (1.0 - x_min_sqr*x_min)/(3.0*alpha_sqr);
-  
+
   const double term_2 = 0.5*(1.0 + 2*(alpha-1.0)/alpha_sqr)*(1.0-x_min_sqr);
 
   const double term_3 = (1.0 - 2*alpha)*(1-x_min)/alpha_sqr;
@@ -80,9 +80,9 @@ double KleinNishinaAdjointPhotonScatteringDistribution::evaluateIntegratedCrossS
 
   return cross_section;
 }
-  
+
 // Sample an outgoing energy and direction from the distribution
-void KleinNishinaAdjointPhotonScatteringDistribution::sample( 
+void KleinNishinaAdjointPhotonScatteringDistribution::sample(
 					const double incoming_energy,
 					double& outgoing_energy,
 					double& scattering_angle_cosine ) const
@@ -96,11 +96,11 @@ void KleinNishinaAdjointPhotonScatteringDistribution::sample(
   this->sampleAndRecordTrialsAdjointKleinNishina( incoming_energy,
 						  outgoing_energy,
 						  scattering_angle_cosine,
-						  trial_dummy );	 
+						  trial_dummy );
 }
-  
+
 // Sample an outgoing energy and direction and record the number of trials
-void KleinNishinaAdjointPhotonScatteringDistribution::sampleAndRecordTrials( 
+void KleinNishinaAdjointPhotonScatteringDistribution::sampleAndRecordTrials(
 					       const double incoming_energy,
 					       double& outgoing_energy,
 					       double& scattering_angle_cosine,
@@ -115,22 +115,22 @@ void KleinNishinaAdjointPhotonScatteringDistribution::sampleAndRecordTrials(
 						  scattering_angle_cosine,
 						  trials );
 }
-  
+
 // Randomly scatter the photon and return the shell that was interacted with
-void KleinNishinaAdjointPhotonScatteringDistribution::scatterAdjointPhoton( 
+void KleinNishinaAdjointPhotonScatteringDistribution::scatterAdjointPhoton(
 				     AdjointPhotonState& adjoint_photon,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
   // Make sure the adjoint photon energy is valid
   testPrecondition( adjoint_photon.getEnergy() <= this->getMaxEnergy() );
-  
+
   // Generate probe particles
   this->createProbeParticles( adjoint_photon, bank );
 
   // Scattering the adjoint photon
   double outgoing_energy, scattering_angle_cosine;
-  
+
   this->sample( adjoint_photon.getEnergy(),
 		outgoing_energy,
 		scattering_angle_cosine );

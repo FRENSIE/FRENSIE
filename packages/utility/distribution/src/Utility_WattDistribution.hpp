@@ -38,7 +38,7 @@ class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUn
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
 
 private:
-  
+
   // The distribution multiplier quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DistMultiplierQuantity;
 
@@ -53,7 +53,7 @@ private:
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
   typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
-  
+
   // Typedef for QuantityTraits<DepQuantity>
   typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
@@ -67,7 +67,7 @@ public:
 
   //! The independent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
-  
+
   //! The inverse independent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
 
@@ -79,20 +79,20 @@ public:
 	   typename InputIndepQuantityB = IndepQuantity,
 	   typename InputInverseIndepQuantity = InverseIndepQuantity,
 	   typename InputIndepQuantityC = IndepQuantity>
-  UnitAwareWattDistribution( const InputIndepQuantityA incident_energy = 
+  UnitAwareWattDistribution( const InputIndepQuantityA incident_energy =
                              QuantityTraits<InputIndepQuantityA>::one(),
-                             const InputIndepQuantityB a_parameter = 
+                             const InputIndepQuantityB a_parameter =
                              QuantityTraits<InputIndepQuantityB>::one(),
                              const InputInverseIndepQuantity b_parameter =
                              QuantityTraits<InputInverseIndepQuantity>::one(),
-                             const InputIndepQuantityC restriction_energy = 
+                             const InputIndepQuantityC restriction_energy =
                              QuantityTraits<InputIndepQuantityC>::zero(),
 			    const double constant_multiplier = 1.0 );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
   UnitAwareWattDistribution( const UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
-  
+
   //! Construct distribution from a unitless dist. (potentially dangerous)
   static UnitAwareWattDistribution fromUnitlessDistribution( const UnitAwareWattDistribution<void,void>& unitless_distribution );
 
@@ -163,7 +163,7 @@ private:
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
   friend class UnitAwareWattDistribution;
- 
+
   // The distribution type
   static const OneDDistributionType distribution_type = WATT_DISTRIBUTION;
 
@@ -175,7 +175,7 @@ private:
 
   // The b_parameter of the distribution
   InverseIndepQuantity d_b_parameter;
-  
+
   // The restriction energy of the distribution
   IndepQuantity d_restriction_energy;
 
@@ -208,14 +208,14 @@ public:
   {
     return "Watt Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 				const Utility::WattDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareWattDistribution
  *
  * \details The name function will set the type name that must be used in

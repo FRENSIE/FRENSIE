@@ -19,13 +19,13 @@ AdjointPhotonState::AdjointPhotonState()
 { /* ... */ }
 
 // Constructor
-AdjointPhotonState::AdjointPhotonState( 
+AdjointPhotonState::AdjointPhotonState(
 		        const ParticleState::historyNumberType history_number )
   : MasslessParticleState( history_number, ADJOINT_PHOTON )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointPhotonState::AdjointPhotonState( 
+AdjointPhotonState::AdjointPhotonState(
 				      const ParticleState& existing_base_state,
 				      const bool increment_generation_number,
 				      const bool reset_collision_number )
@@ -36,7 +36,7 @@ AdjointPhotonState::AdjointPhotonState(
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointPhotonState::AdjointPhotonState( 
+AdjointPhotonState::AdjointPhotonState(
 				 const AdjointPhotonState& existing_base_state,
 				 const bool increment_generation_number,
 				 const bool reset_collision_number )
@@ -47,14 +47,14 @@ AdjointPhotonState::AdjointPhotonState(
 { /* ... */ }
 
 // Probe constructor
-AdjointPhotonState::AdjointPhotonState( 
+AdjointPhotonState::AdjointPhotonState(
 			 const ParticleState::historyNumberType history_number,
 			 const ParticleType probe_type )
-  : MasslessParticleState( history_number, probe_type ) 
+  : MasslessParticleState( history_number, probe_type )
 { /* ... */ }
 
 // Probe copy constructor
-AdjointPhotonState::AdjointPhotonState( 
+AdjointPhotonState::AdjointPhotonState(
 				     const ParticleState& existing_base_state,
 				     const ParticleType probe_type,
 				     const bool increment_generation_number,
@@ -81,7 +81,7 @@ AdjointPhotonState* AdjointPhotonState::clone() const
 void AdjointPhotonState::print( std::ostream& os ) const
 {
   os << "Particle Type: Adjoint Photon" << std::endl;
-  
+
   this->printImplementation<AdjointPhotonState>( os );
 }
 

@@ -24,9 +24,9 @@ enum ThreeSpaceObjectType{
 //! Base class for all objects that reside in three space
 class ThreeSpaceObject
 {
-  
-public: 
-  
+
+public:
+
   //! Constructor
   ThreeSpaceObject( ThreeSpaceObjectType object_type )
   : d_object_type( object_type )
@@ -41,7 +41,7 @@ public:
   { return d_object_type; }
 
 private:
-  
+
   ThreeSpaceObjectType d_object_type;
 };
 

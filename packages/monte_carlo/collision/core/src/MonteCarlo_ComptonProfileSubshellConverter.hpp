@@ -23,13 +23,13 @@ public:
   //! Default Constructor
   ComptonProfileSubshellConverter()
   { /* ... */ }
-  
+
   //! Destructor
   ~ComptonProfileSubshellConverter()
   { /* ... */ }
 
   //! Convert a subshell enum to a compton profile subshell index
-  virtual unsigned convertSubshellToIndex( 
+  virtual unsigned convertSubshellToIndex(
 				       const Data::SubshellType subshell ) const = 0;
 
   //! Test if a subshell enum is valid
@@ -37,15 +37,15 @@ public:
 };
 
 // Test if a subshell enum is valid
-/*! \details The default implementation assumes that the 
+/*! \details The default implementation assumes that the
  * convertSubshellToIndex implementation will throw a std::logic_error when
  * the subshell is invalid.
  */
-inline bool ComptonProfileSubshellConverter::isSubshellValid( 
+inline bool ComptonProfileSubshellConverter::isSubshellValid(
 					    const Data::SubshellType subshell ) const
 {
   bool valid_shell = true;
-  
+
   try{
     this->convertSubshellToIndex( subshell );
   }

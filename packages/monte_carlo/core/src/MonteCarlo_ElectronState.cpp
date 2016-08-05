@@ -20,7 +20,7 @@ ElectronState::ElectronState()
 { /* ... */ }
 
 // Constructor
-ElectronState::ElectronState( 
+ElectronState::ElectronState(
 		        const ParticleState::historyNumberType history_number )
   : MassiveParticleState( history_number, ELECTRON )
 { /* ... */ }
@@ -29,7 +29,7 @@ ElectronState::ElectronState(
 ElectronState::ElectronState( const ElectronState& existing_electron_state,
                               const bool increment_generation_number,
                               const bool reset_collision_number )
-  : MassiveParticleState(existing_electron_state, 
+  : MassiveParticleState(existing_electron_state,
 			 ELECTRON,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 increment_generation_number,
@@ -40,7 +40,7 @@ ElectronState::ElectronState( const ElectronState& existing_electron_state,
 ElectronState::ElectronState( const ParticleState& existing_base_state,
                               const bool increment_generation_number,
                               const bool reset_collision_number )
-  : MassiveParticleState(existing_base_state, 
+  : MassiveParticleState(existing_base_state,
 			 ELECTRON,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 increment_generation_number,
@@ -65,7 +65,7 @@ void ElectronState::print( std::ostream& os ) const
   os << "Particle Type: Electron" << std::endl;
 
   this->printImplementation<ElectronState>( os );
-}			    
+}
 
 } // end MonteCarlo namespace
 

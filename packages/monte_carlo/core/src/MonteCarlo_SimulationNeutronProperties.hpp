@@ -20,7 +20,7 @@ namespace MonteCarlo{
  */
 class SimulationNeutronProperties
 {
-  
+
 public:
 
   //! Set the free gas thermal treatment temperature threshold

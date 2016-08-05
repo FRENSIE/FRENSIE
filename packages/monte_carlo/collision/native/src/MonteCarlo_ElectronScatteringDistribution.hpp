@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"

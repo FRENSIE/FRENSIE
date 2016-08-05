@@ -31,7 +31,7 @@ namespace MonteCarlo{
  */
 class ParticleSubtrackEndingInCellEventObserver
 {
-  
+
 public:
 
   //! The event tag type

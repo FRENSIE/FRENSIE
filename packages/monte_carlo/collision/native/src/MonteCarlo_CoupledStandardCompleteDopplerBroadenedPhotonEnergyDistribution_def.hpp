@@ -36,7 +36,7 @@ CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 {
   // Make sure the shell interaction data is valid
   testPrecondition( subshell_occupancies.size() > 0 );
-  testPrecondition( subshell_order.size() == 
+  testPrecondition( subshell_order.size() ==
 		    subshell_occupancies.size() );
   testPrecondition( subshell_binding_energies.size() ==
 		    subshell_occupancies.size() );
@@ -44,7 +44,7 @@ CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 
 // Return the binding energy of a subshell
 template<typename ComptonProfilePolicy>
-double CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy( 
+double CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy(
                                             const Data::SubshellType subshell ) const
 {
   // Make sure the subshell is valid
@@ -60,7 +60,7 @@ double CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonPr
  * and the binding energy is the same as the subshell (i.e. they are coupled).
  */
 template<typename ComptonProfilePolicy>
-void CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
+void CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell(
                                                unsigned& old_subshell_index,
                                                double& subshell_binding_energy,
                                                Data::SubshellType& subshell ) const
@@ -68,7 +68,7 @@ void CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProf
   subshell = this->sampleENDFInteractionSubshell();
 
   subshell_binding_energy = this->getSubshellBindingEnergy( subshell );
-  
+
   old_subshell_index = this->getOldSubshellIndex( subshell );
 }
 

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_ComptonProfileSubshellConverterFactory.hpp
 //! \author Alex Robinson
 //! \brief  Compton profile subshell-to-index converter factory decl.
@@ -24,7 +24,7 @@ public:
 
   //! Create the converter
   template<template<typename> class SmartPointer>
-  static void createConverter( 
+  static void createConverter(
 		      SmartPointer<ComptonProfileSubshellConverter>& converter,
 		      const unsigned atomic_number );
 

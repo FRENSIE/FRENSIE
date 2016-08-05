@@ -15,9 +15,9 @@ namespace MonteCarlo{
 // Constructor
 PhaseSpaceResponseFunction::PhaseSpaceResponseFunction(
      const unsigned id,
-     const std::string& name,			      
+     const std::string& name,
      const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
-     const std::shared_ptr<Utility::DirectionalDistribution>& 
+     const std::shared_ptr<Utility::DirectionalDistribution>&
      directional_distribution,
      const std::shared_ptr<Utility::OneDDistribution>& energy_distribution,
      const std::shared_ptr<Utility::OneDDistribution>& time_distribution )
@@ -40,19 +40,19 @@ PhaseSpaceResponseFunction::PhaseSpaceResponseFunction(
 }
 
 // Evaluate the response function at the desired phase space point
-double PhaseSpaceResponseFunction::evaluate( 
+double PhaseSpaceResponseFunction::evaluate(
 				          const ParticleState& particle ) const
 {
-  double spatial_response = 
+  double spatial_response =
     d_spatial_distribution->evaluate( particle.getPosition() );
-  
-  double directional_response = 
+
+  double directional_response =
     d_directional_distribution->evaluate( particle.getDirection() );
 
-  double energy_response = 
+  double energy_response =
     d_energy_distribution->evaluate( particle.getEnergy() );
 
-  double time_response = 
+  double time_response =
     d_time_distribution->evaluate( particle.getTime() );
 
   return spatial_response*directional_response*energy_response*time_response;

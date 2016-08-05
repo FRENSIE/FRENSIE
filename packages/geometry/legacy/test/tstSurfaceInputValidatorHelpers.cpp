@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceType )
 TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceDefinition )
 {
   std::string name = "test_surface";
-  
+
   std::string x_plane = "x plane";
   Teuchos::Array<double> x_plane_valid_parameters( 1 );
   Teuchos::Array<double> x_plane_invalid_parameters( 2 );
@@ -127,21 +127,21 @@ TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceDefinition )
 						 z_plane,
 						 name ),
 	      std::invalid_argument );
-  
+
   std::string general_plane = "general plane";
   Teuchos::Array<double> general_plane_valid_parameters( 4 );
   Teuchos::Array<double> general_plane_invalid_parameters( 3 );
 
-  TEST_NOTHROW( Geometry::validateSurfaceDefinition( 
+  TEST_NOTHROW( Geometry::validateSurfaceDefinition(
 						general_plane_valid_parameters,
 						general_plane,
 						name ) );
-  TEST_THROW( Geometry::validateSurfaceDefinition( 
+  TEST_THROW( Geometry::validateSurfaceDefinition(
 					      general_plane_invalid_parameters,
 					      general_plane,
 					      name ),
 	      std::invalid_argument );
-  
+
   std::string x_cylinder = "x cylinder";
   Teuchos::Array<double> x_cylinder_valid_parameters( 3 );
   Teuchos::Array<double> x_cylinder_invalid_parameters( 4 );
@@ -165,7 +165,7 @@ TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceDefinition )
 						 y_cylinder,
 						 name ),
 	      std::invalid_argument );
-  
+
   std::string z_cylinder = "z cylinder";
   Teuchos::Array<double> z_cylinder_valid_parameters( 3 );
   Teuchos::Array<double> z_cylinder_invalid_parameters( 4 );
@@ -177,7 +177,7 @@ TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceDefinition )
 						 z_cylinder,
 						 name ),
 	      std::invalid_argument );
-  
+
   std::string sphere = "sphere";
   Teuchos::Array<double> sphere_valid_parameters( 4 );
   Teuchos::Array<double> sphere_invalid_parameters( 3 );
@@ -189,16 +189,16 @@ TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceDefinition )
 						 sphere,
 						 name ),
 	      std::invalid_argument );
-  
+
   std::string general_surface = "general surface";
   Teuchos::Array<double> general_surface_valid_parameters( 10 );
   Teuchos::Array<double> general_surface_invalid_parameters( 9 );
 
-  TEST_NOTHROW( Geometry::validateSurfaceDefinition( 
+  TEST_NOTHROW( Geometry::validateSurfaceDefinition(
 					      general_surface_valid_parameters,
 					      general_surface,
 					      name ) );
-  TEST_THROW( Geometry::validateSurfaceDefinition( 
+  TEST_THROW( Geometry::validateSurfaceDefinition(
 					    general_surface_invalid_parameters,
 					    general_surface,
 					    name ),
@@ -207,16 +207,16 @@ TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceDefinition )
 
 //---------------------------------------------------------------------------//
 // Check that the surface special attribute can be validated
-TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, 
+TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers,
 		   validateSurfaceSpecialAttribute )
 {
   std::string valid_surface_attribute = "reflecting";
   std::string invalid_surface_attribute = "white";
 
-  TEST_NOTHROW( Geometry::validateSurfaceSpecialAttribute( 
+  TEST_NOTHROW( Geometry::validateSurfaceSpecialAttribute(
 						       valid_surface_attribute,
 						       "test:surface" ) );
-  TEST_THROW( Geometry::validateSurfaceSpecialAttribute( 
+  TEST_THROW( Geometry::validateSurfaceSpecialAttribute(
 						     invalid_surface_attribute,
 						     "test|surface" ),
 	      std::invalid_argument );

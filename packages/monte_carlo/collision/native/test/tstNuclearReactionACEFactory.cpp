@@ -37,7 +37,7 @@ Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> o16_reaction_factory;
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
-void initializeReactionFactory( 
+void initializeReactionFactory(
 		  Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory>& factory,
 		  const std::string& ace_file_name,
 		  const std::string& ace_table_name )
@@ -54,7 +54,7 @@ void initializeReactionFactory(
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  factory.reset( new MonteCarlo::NuclearReactionACEFactory( 
+  factory.reset( new MonteCarlo::NuclearReactionACEFactory(
 			      ace_table_name,
 			      ace_file_handler->getTableAtomicWeightRatio(),
 			      ace_file_handler->getTableTemperature(),
@@ -70,14 +70,14 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createScatteringReactions
 {
   boost::unordered_map<MonteCarlo::NuclearReactionType,
 		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
-  
+
   h1_reaction_factory->createScatteringReactions( reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 1 );
 
   Teuchos::RCP<MonteCarlo::NuclearReaction>& elastic_reaction =
     reactions.find( MonteCarlo::N__N_ELASTIC_REACTION )->second;
-  
+
   TEST_EQUALITY_CONST( elastic_reaction->getReactionType(),
 		       MonteCarlo::N__N_ELASTIC_REACTION );
   TEST_EQUALITY_CONST( elastic_reaction->getQValue(), 0.0 );
@@ -95,12 +95,12 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createAbsorptionReactions
 {
   boost::unordered_map<MonteCarlo::NuclearReactionType,
 		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
-  
+
   h1_reaction_factory->createAbsorptionReactions( reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 3 );
 
-  Teuchos::RCP<MonteCarlo::NuclearReaction>& n_gamma_reaction = 
+  Teuchos::RCP<MonteCarlo::NuclearReaction>& n_gamma_reaction =
     reactions.find( MonteCarlo::N__GAMMA_REACTION )->second;
 
   TEST_EQUALITY_CONST( n_gamma_reaction->getReactionType(),
@@ -113,7 +113,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createAbsorptionReactions
   TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 2.0e1 ),
 		       2.722354e-5 );
 
-  Teuchos::RCP<MonteCarlo::NuclearReaction>& d_production_reaction = 
+  Teuchos::RCP<MonteCarlo::NuclearReaction>& d_production_reaction =
     reactions.find( MonteCarlo::N__TOTAL_D_PRODUCTION )->second;
 
   TEST_EQUALITY_CONST( d_production_reaction->getReactionType(),
@@ -127,7 +127,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createAbsorptionReactions
   TEST_EQUALITY_CONST( d_production_reaction->getCrossSection( 2.0e1 ),
 		       2.722354e-5 );
 
-  Teuchos::RCP<MonteCarlo::NuclearReaction>& dpa_reaction = 
+  Teuchos::RCP<MonteCarlo::NuclearReaction>& dpa_reaction =
     reactions.find( MonteCarlo::N__DPA )->second;
 
   TEST_EQUALITY_CONST( dpa_reaction->getReactionType(),
@@ -145,7 +145,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, createScatteringReactions )
 {
   boost::unordered_map<MonteCarlo::NuclearReactionType,
 		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
-  
+
   o16_reaction_factory->createScatteringReactions( reactions );
 
   typedef boost::unordered_map<MonteCarlo::NuclearReactionType,
@@ -160,7 +160,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, createScatteringReactions )
 
   Teuchos::RCP<MonteCarlo::NuclearReaction>& elastic_reaction =
     reactions.find( MonteCarlo::N__N_ELASTIC_REACTION )->second;
-  
+
   TEST_EQUALITY_CONST( elastic_reaction->getReactionType(),
 		       MonteCarlo::N__N_ELASTIC_REACTION );
   TEST_EQUALITY_CONST( elastic_reaction->getQValue(), 0.0 );
@@ -171,14 +171,14 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, createScatteringReactions )
   TEST_EQUALITY_CONST( elastic_reaction->getCrossSection( 150.0 ),
 		       1.48000000000e-01 );
 
-  Teuchos::RCP<MonteCarlo::NuclearReaction>& inelastic_level_1_reaction = 
+  Teuchos::RCP<MonteCarlo::NuclearReaction>& inelastic_level_1_reaction =
     reactions.find( MonteCarlo::N__N_EXCITED_STATE_1_REACTION )->second;
-  TEST_EQUALITY_CONST( inelastic_level_1_reaction->getQValue(), 
+  TEST_EQUALITY_CONST( inelastic_level_1_reaction->getQValue(),
 		       -6.04940000000e+00 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		 inelastic_level_1_reaction->getNumberOfEmittedNeutrons( 0.0 ),
 		 1 );
-  TEST_EQUALITY_CONST( inelastic_level_1_reaction->getThresholdEnergy(), 
+  TEST_EQUALITY_CONST( inelastic_level_1_reaction->getThresholdEnergy(),
 		       6.43088600000e+00 );
   TEST_EQUALITY_CONST(
 		      inelastic_level_1_reaction->getCrossSection( 1.0e-11 ),
@@ -188,14 +188,14 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, createScatteringReactions )
   TEST_EQUALITY_CONST( inelastic_level_1_reaction->getCrossSection( 150.0 ),
 		       0.0 );
 
-  Teuchos::RCP<MonteCarlo::NuclearReaction>& inelastic_continuum_reaction = 
+  Teuchos::RCP<MonteCarlo::NuclearReaction>& inelastic_continuum_reaction =
     reactions.find( MonteCarlo::N__N_CONTINUUM_REACTION )->second;
-  TEST_EQUALITY_CONST( inelastic_continuum_reaction->getQValue(), 
+  TEST_EQUALITY_CONST( inelastic_continuum_reaction->getQValue(),
 		       -9.58500000000e+00 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 	       inelastic_continuum_reaction->getNumberOfEmittedNeutrons( 0.0 ),
 	       1);
-  TEST_EQUALITY_CONST( inelastic_continuum_reaction->getThresholdEnergy(), 
+  TEST_EQUALITY_CONST( inelastic_continuum_reaction->getThresholdEnergy(),
 		       1.01894600000e+01 );
   TEST_EQUALITY_CONST(
 	    inelastic_continuum_reaction->getCrossSection( 1.01894600000e+01 ),
@@ -206,7 +206,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, createScatteringReactions )
 
 //---------------------------------------------------------------------------//
 // Check that the absorption reactions can be created
-TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, 
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen,
 		   createAbsorptionReactions )
 {
   boost::unordered_map<MonteCarlo::NuclearReactionType,
@@ -227,7 +227,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen,
 
   TEST_EQUALITY_CONST( reactions.size(), 51 );
 
-  Teuchos::RCP<MonteCarlo::NuclearReaction>& n_gamma_reaction = 
+  Teuchos::RCP<MonteCarlo::NuclearReaction>& n_gamma_reaction =
     reactions.find( MonteCarlo::N__GAMMA_REACTION )->second;
 
   TEST_EQUALITY_CONST( n_gamma_reaction->getReactionType(),
@@ -239,7 +239,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen,
 		       9.55754000000e-03 );
   TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 150.0 ), 0.0 );
 
- Teuchos::RCP<MonteCarlo::NuclearReaction>& n_alpha_ex_3_reaction = 
+ Teuchos::RCP<MonteCarlo::NuclearReaction>& n_alpha_ex_3_reaction =
     reactions.find( MonteCarlo::N__ALPHA_EXCITED_STATE_3_REACTION )->second;
 
   TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getReactionType(),
@@ -247,12 +247,12 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen,
   TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getQValue(), -6.06940000000e+00);
   TEST_EQUALITY_CONST(n_alpha_ex_3_reaction->getNumberOfEmittedNeutrons( 0.0 ),
 		      0);
-  TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getThresholdEnergy(), 
+  TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getThresholdEnergy(),
 		       6.45214700000e+00 );
   TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getCrossSection( 1.0e-11 ),
 		       0.0 );
   TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getCrossSection( 150.0 ),
-		       0.0 ); 
+		       0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -276,17 +276,17 @@ int main( int argc, char** argv )
 		 &test_o16_ace_table_name,
 		 "Test ACE table name in o16 ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Initialize nuclear reaction factories
   initializeReactionFactory( h1_reaction_factory,
 			     test_h1_ace_file_name,
@@ -308,7 +308,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

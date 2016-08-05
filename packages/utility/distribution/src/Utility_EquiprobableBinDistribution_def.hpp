@@ -26,7 +26,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 
 // Basic constructor
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution( 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
 				 const Teuchos::Array<double>& bin_boundaries )
   : d_bin_boundaries( bin_boundaries.size() )
 {
@@ -36,7 +36,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 // Constructor
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution( 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
 	           const Teuchos::Array<InputIndepQuantity>& bin_boundaries )
   : d_bin_boundaries( bin_boundaries.size() )
 {
@@ -44,10 +44,10 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 }
 
 // Copy constructor
-/*! \details Just like boost::units::quantity objects, the unit-aware 
+/*! \details Just like boost::units::quantity objects, the unit-aware
  * distribution can be explicitly cast to a distribution with compatible
  * units. If the units are not compatible, this function will not compile. Note
- * that this allows distributions to be scaled safely (unit conversions 
+ * that this allows distributions to be scaled safely (unit conversions
  * are completely taken care of by boost::units)!
  */
 template<typename IndependentUnit, typename DependentUnit>
@@ -55,13 +55,13 @@ template<typename InputIndepUnit, typename InputDepUnit>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
   const UnitAwareEquiprobableBinDistribution<InputIndepUnit,InputDepUnit>& dist_instance )
   : d_bin_boundaries()
-{ 
+{
   this->initializeDistribution( dist_instance.d_bin_boundaries );
 }
 
 // Copy constructor (copying from unitless distribution only)
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution( 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
  const UnitAwareEquiprobableBinDistribution<void,void>& unitless_dist_instance, int )
   : d_bin_boundaries()
 {
@@ -69,15 +69,15 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
-/*! \details Constructing a unit-aware distribution from a unitless 
+/*! \details Constructing a unit-aware distribution from a unitless
  * distribution is potentially dangerous. By forcing users to construct objects
  * using this method instead of a standard constructor we are trying to make
- * sure users are aware of the danger. This is designed to mimic the interface 
- * of the boost::units::quantity, which also has to deal with this issue. 
+ * sure users are aware of the danger. This is designed to mimic the interface
+ * of the boost::units::quantity, which also has to deal with this issue.
  */
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> 
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution(
  const UnitAwareEquiprobableBinDistribution<void,void>& unitless_distribution )
 {
   return ThisType( unitless_distribution, 0 );
@@ -85,7 +85,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromUnitles
 
 // Assignment operator
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>& 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>&
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::operator=(
 		             const UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
@@ -99,7 +99,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::operator=(
 // Evaulate the distribution
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::DepQuantity
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::evaluate( 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::evaluate(
   const typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   return QuantityTraits<DepQuantity>::initializeQuantity(
@@ -120,11 +120,11 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::evaluatePDF
   {
     typename Teuchos::Array<IndepQuantity>::const_iterator lower_bin_boundary,
       upper_bin_boundary;
-    
+
     if( indep_var_value >= d_bin_boundaries.front() &&
 	indep_var_value < d_bin_boundaries.back() )
     {
-      lower_bin_boundary = 
+      lower_bin_boundary =
 	Search::binaryLowerBound( d_bin_boundaries.begin(),
 				  d_bin_boundaries.end(),
 				  indep_var_value );
@@ -136,11 +136,11 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::evaluatePDF
     {
       upper_bin_boundary = d_bin_boundaries.end();
       --upper_bin_boundary;
-      
+
       lower_bin_boundary = upper_bin_boundary;
       --lower_bin_boundary;
     }
-    
+
     return (1.0/(d_bin_boundaries.size()-1))/
       (*upper_bin_boundary - *lower_bin_boundary);
   }
@@ -148,7 +148,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::evaluatePDF
 
 // Evaluate the CDF
 template<typename IndependentUnit, typename DependentUnit>
-double UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::evaluateCDF( 
+double UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::evaluateCDF(
    const typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < d_bin_boundaries.front() )
@@ -157,13 +157,13 @@ double UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::eval
     return 1.0;
   else
   {
-    unsigned bin_index = 
+    unsigned bin_index =
       Search::binaryLowerBoundIndex( d_bin_boundaries.begin(),
 				     d_bin_boundaries.end(),
 				     indep_var_value );
 
     unsigned bins = d_bin_boundaries.size()-1;
-    
+
     double bin_contribution = (indep_var_value - d_bin_boundaries[bin_index])/
       (d_bin_boundaries[bin_index+1] - d_bin_boundaries[bin_index]);
 
@@ -173,7 +173,7 @@ double UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::eval
 
 // Return a random sample from the distribution
 template<typename IndependentUnit, typename DependentUnit>
-typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
+typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -193,10 +193,10 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleAndRe
   return this->sample();
 }
 
-// Return a random sample from the distribution and the sampled index 
+// Return a random sample from the distribution and the sampled index
 template<typename IndependentUnit, typename DependentUnit>
-typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex( 
+typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
 					    unsigned& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -207,7 +207,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleAndRe
 // Return a random sample from the distribution at the given CDF value
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumber( 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumber(
 					     const double random_number ) const
 {
   // Make sure the random number is valid
@@ -222,7 +222,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithR
 // Return a random sample from the distribution in a subrange
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleInSubrange( 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleInSubrange(
  const typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the max independent variable is valid
@@ -237,7 +237,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleInSub
 // Return a random sample using the random number and record the bin index
 template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleImplementation( 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleImplementation(
 				            double random_number,
 				            unsigned& sampled_bin_index ) const
 {
@@ -246,10 +246,10 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleImple
   testPrecondition( random_number <= 1.0 );
 
   double bin_location = random_number*(d_bin_boundaries.size()-1);
-  
+
   sampled_bin_index = (unsigned)floor(bin_location);
-  
-  return d_bin_boundaries[sampled_bin_index] + 
+
+  return d_bin_boundaries[sampled_bin_index] +
     (bin_location - sampled_bin_index)*(d_bin_boundaries[sampled_bin_index+1]-
 					d_bin_boundaries[sampled_bin_index]);
 }
@@ -257,7 +257,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleImple
 // Return a random sample from the distribution at the given CDF value in a subrange
 template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange(
      const double random_number,
      const typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
@@ -268,7 +268,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithR
   testPrecondition( max_indep_var >= d_bin_boundaries.front() );
 
   // Compute the scaled random number
-  double scaled_random_number = 
+  double scaled_random_number =
     random_number*this->evaluateCDF( max_indep_var );
 
   unsigned dummy_index;
@@ -325,7 +325,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromSt
   std::string bin_boundaries_rep;
   std::getline( is, bin_boundaries_rep, '}' );
   bin_boundaries_rep += "}";
-  
+
   // Parse special characters
   try{
     ArrayString::locateAndReplacePi( bin_boundaries_rep );
@@ -348,16 +348,16 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromSt
 			      "cannot be constructed because the "
 			      "representation is not valid (see details "
 			      "below)!\n" );
-  
+
   TEST_FOR_EXCEPTION( d_bin_boundaries.size() <= 1,
-		      InvalidDistributionStringRepresentation, 
+		      InvalidDistributionStringRepresentation,
 		      "Error: the equiprobable bin distribution cannot be "
 		      "constructed because at least one bin (two boundaries) "
 		      "is required!\n" );
 
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( d_bin_boundaries.begin(),
 						d_bin_boundaries.end() ),
-		      InvalidDistributionStringRepresentation, 
+		      InvalidDistributionStringRepresentation,
 		      "Error: the equiprobable bin distribution cannot be "
 		      "constructed because the bin boundaries "
 		      << bin_boundaries_rep << " are not sorted!" );
@@ -365,7 +365,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromSt
 
 // Method for testing if two objects are equivalent
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::isEqual( 
+bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::isEqual(
 		      const UnitAwareEquiprobableBinDistribution& other ) const
 {
   return d_bin_boundaries == other.d_bin_boundaries;
@@ -373,7 +373,7 @@ bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::isEqua
 
 // Initialize the distribution
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initializeDistribution( 
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
 				 const Teuchos::Array<double>& bin_boundaries )
 {
   // Make sure there is at least one bin
@@ -381,11 +381,11 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initia
   // Make sure that the bins are sorted
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
 					     bin_boundaries.end() ) );
-  
+
   // Resize the bin boundaries array
   d_bin_boundaries.resize( bin_boundaries.size() );
 
-  // Copy the bin boundaries 
+  // Copy the bin boundaries
   for( unsigned i = 0; i < bin_boundaries.size(); ++i )
     setQuantity( d_bin_boundaries[i], bin_boundaries[i] );
 }
@@ -393,7 +393,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initia
 // Initialize the distribution
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
-void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initializeDistribution( 
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
 		     const Teuchos::Array<InputIndepQuantity>& bin_boundaries )
 {
   // Make sure there is at least one bin

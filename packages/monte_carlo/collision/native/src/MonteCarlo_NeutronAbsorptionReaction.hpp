@@ -5,7 +5,7 @@
 //! \brief  The neuton absorption reaction class declaration
 //!
 //---------------------------------------------------------------------------//
- 
+
 #ifndef MONTE_CARLO_NEUTRON_ABSORPTION_REACTION_HPP
 #define MONTE_CARLO_NEUTRON_ABSORPTION_REACTION_HPP
 
@@ -26,7 +26,7 @@ private:
 public:
 
   //! Constructor
-  NeutronAbsorptionReaction( 
+  NeutronAbsorptionReaction(
 		   const NuclearReactionType reaction_type,
 		   const double temperature,
 		   const double q_value,

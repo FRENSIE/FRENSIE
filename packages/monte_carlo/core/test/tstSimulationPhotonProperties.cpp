@@ -28,9 +28,9 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, defaults )
 		       1e-3 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy(),
                        20.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                 MonteCarlo::SimulationPhotonProperties::getAbsoluteMaxPhotonEnergy(),
-                20.0 );    
+                20.0 );
   TEST_EQUALITY_CONST(
 	       MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
 	       3.0 );
@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, defaults )
 // Test that the min photon energy can be set
 TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setMinPhotonEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationPhotonProperties::getMinPhotonEnergy();
 
   MonteCarlo::SimulationPhotonProperties::setMinPhotonEnergy( 1e-2 );
@@ -67,7 +67,7 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setMinPhotonEnergy )
 // Test that the max photon energy can be set
 TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setMaxPhotonEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy();
 
   MonteCarlo::SimulationPhotonProperties::setMaxPhotonEnergy( 15.0 );
@@ -85,20 +85,20 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setMaxPhotonEnergy )
 // Test that the Kahn sampling cutoff energy can be set
 TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setKahnSamplingCutoffEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy();
 
   MonteCarlo::SimulationPhotonProperties::setKahnSamplingCutoffEnergy( 2.5 );
 
-  TEST_ASSERT( 
+  TEST_ASSERT(
 	    MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy() !=
 	    default_value );
   TEST_EQUALITY_CONST(
 	      MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
 	      2.5 );
-  
+
   // Reset the default value
-  MonteCarlo::SimulationPhotonProperties::setKahnSamplingCutoffEnergy( 
+  MonteCarlo::SimulationPhotonProperties::setKahnSamplingCutoffEnergy(
 							       default_value );
 }
 
@@ -106,18 +106,18 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setKahnSamplingCutoffEnergy )
 // Test that the number of photon hash grid bins can be set
 TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setNumberOfPhotonHashGridBins )
 {
-  unsigned default_value = 
+  unsigned default_value =
     MonteCarlo::SimulationPhotonProperties::getNumberOfPhotonHashGridBins();
 
   MonteCarlo::SimulationPhotonProperties::setNumberOfPhotonHashGridBins( 500 );
 
-  TEST_ASSERT( 
+  TEST_ASSERT(
 	  MonteCarlo::SimulationPhotonProperties::getNumberOfPhotonHashGridBins() !=
 	  default_value );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 	     MonteCarlo::SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
 	     500 );
-  
+
   // Reset the default value
   MonteCarlo::SimulationPhotonProperties::setNumberOfPhotonHashGridBins( default_value );
 }
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setNumberOfPhotonHashGridBins )
 // Test that the incoherent model type can be set
 TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setIncoherentModelType )
 {
-  MonteCarlo::IncoherentModelType default_model = 
+  MonteCarlo::IncoherentModelType default_model =
     MonteCarlo::SimulationPhotonProperties::getIncoherentModelType();
 
   MonteCarlo::SimulationPhotonProperties::setIncoherentModelType(
@@ -137,7 +137,7 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setIncoherentModelType )
   TEST_EQUALITY_CONST(
 		    MonteCarlo::SimulationPhotonProperties::getIncoherentModelType(),
 		    MonteCarlo::KN_INCOHERENT_MODEL );
-  
+
   // Reset the default model
   MonteCarlo::SimulationPhotonProperties::setIncoherentModelType( default_model );
 }
@@ -147,7 +147,7 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setIncoherentModelType )
 TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setAtomicRelaxationModeOff )
 {
   TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isAtomicRelaxationModeOn() );
-  
+
   MonteCarlo::SimulationPhotonProperties::setAtomicRelaxationModeOff();
 
   TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isAtomicRelaxationModeOn() );
@@ -158,7 +158,7 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setAtomicRelaxationModeOff )
 TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setDetailedPairProductionModeOn )
 {
   TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isDetailedPairProductionModeOn() );
-  
+
   MonteCarlo::SimulationPhotonProperties::setDetailedPairProductionModeOn();
 
   TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isDetailedPairProductionModeOn() );
@@ -169,7 +169,7 @@ TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setDetailedPairProductionModeOn )
 TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setPhotonuclearInteractionModeOn )
 {
   TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
-  
+
   MonteCarlo::SimulationPhotonProperties::setPhotonuclearInteractionModeOn();
 
   TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );

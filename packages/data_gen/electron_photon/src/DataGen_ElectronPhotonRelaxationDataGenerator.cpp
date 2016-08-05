@@ -22,11 +22,11 @@ ElectronPhotonRelaxationDataGenerator::ElectronPhotonRelaxationDataGenerator(
 }
 
 // Set the atomic number
-void ElectronPhotonRelaxationDataGenerator::setAtomicNumber( 
+void ElectronPhotonRelaxationDataGenerator::setAtomicNumber(
 			   Data::ElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const
 {
-  data_container.setAtomicNumber( d_atomic_number ); 
+  data_container.setAtomicNumber( d_atomic_number );
 }
 
 // Get the atomic number
@@ -34,7 +34,7 @@ unsigned ElectronPhotonRelaxationDataGenerator::getAtomicNumber() const
 {
   return d_atomic_number;
 }
-			    
+
 
 } // end DataGen
 

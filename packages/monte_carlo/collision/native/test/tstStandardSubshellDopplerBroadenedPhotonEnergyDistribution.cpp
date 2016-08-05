@@ -10,7 +10,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
-  
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -58,7 +58,7 @@ TEUCHOS_UNIT_TEST( SubshellDopplerBroadenedPhotonEnergyDistribution,
 			shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
-  
+
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.4982681851517501, 1e-12 );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
@@ -76,13 +76,13 @@ int main( int argc, char** argv )
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
@@ -90,32 +90,32 @@ int main( int argc, char** argv )
 
   {
     // Create the native data file container
-    Data::ElectronPhotonRelaxationDataContainer 
+    Data::ElectronPhotonRelaxationDataContainer
       data_container( test_native_file_name );
-    
+
     // Extract the Compton profile and occupation number for the first subshell
-    const std::vector<double>& compton_profile_grid_s1 = 
+    const std::vector<double>& compton_profile_grid_s1 =
       data_container.getComptonProfileMomentumGrid( 1 );
-    
-    const std::vector<double>& compton_profile_s1 = 
+
+    const std::vector<double>& compton_profile_s1 =
       data_container.getComptonProfile( 1 );
-    
-    const std::vector<double>& occupation_number_grid_s1 = 
+
+    const std::vector<double>& occupation_number_grid_s1 =
       data_container.getOccupationNumberMomentumGrid( 1 );
-    
-    const std::vector<double>& occupation_number_s1 = 
+
+    const std::vector<double>& occupation_number_s1 =
       data_container.getOccupationNumber( 1 );
-    
+
     // Create the Compton profile and occupation number distributions
     std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
                                                        compton_profile_grid_s1,
 						       compton_profile_s1 ) );
 
-    std::shared_ptr<MonteCarlo::ComptonProfile> compton_profile_s1_dist( 
+    std::shared_ptr<MonteCarlo::ComptonProfile> compton_profile_s1_dist(
            new MonteCarlo::StandardComptonProfile<Utility::Units::MeCMomentum>(
                                                        raw_compton_profile ) );
-   
+
     // Create the Doppler broadened energy distribution
     distribution.reset( new MonteCarlo::StandardSubshellDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
 		    Data::convertENDFDesignatorToSubshellEnum( 1 ),
@@ -126,7 +126,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -139,7 +139,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

@@ -76,13 +76,13 @@ struct UnitTraits<void>
 
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetUnitToPowerType
-  { 
+  {
     typedef void type;
   };
 
   template<typename OtherUnit>
   struct GetMultipliedUnitType
-  { 
+  {
     typedef OtherUnit type;
   };
 

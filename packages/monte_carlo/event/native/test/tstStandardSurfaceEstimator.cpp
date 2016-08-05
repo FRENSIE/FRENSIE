@@ -23,13 +23,13 @@
 class TestStandardSurfaceEstimator : public MonteCarlo::StandardSurfaceEstimator
 {
 public:
-  TestStandardSurfaceEstimator( 
+  TestStandardSurfaceEstimator(
 	 const unsigned long long id,
 	 const double multiplier,
          const Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType>&
 	 entity_ids,
 	 const Teuchos::Array<double>& entity_norm_constants )
-    : MonteCarlo::StandardSurfaceEstimator( id, 
+    : MonteCarlo::StandardSurfaceEstimator( id,
 					multiplier,
 					entity_ids,
 					entity_norm_constants )
@@ -54,7 +54,7 @@ public:
 // Check that particle types can be assigned
 TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, setParticleType )
 {
-  Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType> 
+  Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType>
     surface_ids( 2 );
   surface_ids[0] = 0;
   surface_ids[1] = 1;
@@ -62,21 +62,21 @@ TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, setParticleType )
   Teuchos::Array<double> surface_norm_consts( 2 );
   surface_norm_consts[0] = 1.0;
   surface_norm_consts[1] = 2.0;
-  
+
   Teuchos::RCP<TestStandardSurfaceEstimator> estimator(
 	  new TestStandardSurfaceEstimator( 0ull,
 					    2.0,
 					    surface_ids,
 					    surface_norm_consts ) );
-					    
+
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 4 );
   particle_types[0] = MonteCarlo::PHOTON;
   particle_types[1] = MonteCarlo::NEUTRON;
   particle_types[2] = MonteCarlo::ADJOINT_PHOTON;
   particle_types[3] = MonteCarlo::ADJOINT_NEUTRON;
-  
+
   estimator->setParticleTypes( particle_types );
-  
+
   TEST_ASSERT( estimator->isParticleTypeAssigned( MonteCarlo::PHOTON ) );
   TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_PHOTON ) );
@@ -97,7 +97,7 @@ TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, setParticleType )
 // Check that the estimator data can be exported
 TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, exportData )
 {
-  Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType> 
+  Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType>
     surface_ids( 2 );
   surface_ids[0] = 0;
   surface_ids[1] = 1;
@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, exportData )
   Teuchos::Array<double> surface_norm_consts( 2 );
   surface_norm_consts[0] = 1.0;
   surface_norm_consts[1] = 2.0;
-  
+
   Teuchos::RCP<MonteCarlo::Estimator> estimator(
 	  new TestStandardSurfaceEstimator( 0ull,
 					    2.0,
@@ -136,7 +136,7 @@ TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, exportData )
   hdf5_file_handler.getEstimatorDimensionOrdering( 0u, dimension_ordering );
 
   TEST_EQUALITY_CONST( dimension_ordering.size(), 0u );
-}  
+}
 
 //---------------------------------------------------------------------------//
 // end tstStandardSurfaceEstimator.cpp

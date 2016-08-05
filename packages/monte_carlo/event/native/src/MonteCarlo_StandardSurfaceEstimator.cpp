@@ -18,9 +18,9 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
     const double multiplier,
     const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
     const Teuchos::Array<double>& surface_areas )
-  : StandardEntityEstimator<surfaceIdType>( id, 
-					    multiplier, 
-					    surface_ids, 
+  : StandardEntityEstimator<surfaceIdType>( id,
+					    multiplier,
+					    surface_ids,
 					    surface_areas ),
     ParticleCrossingSurfaceEventObserver()
 { /* ... */ }
@@ -36,23 +36,23 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
 
 // Set the particle types that can contribute to the estimator
 /*! \details Photons, electrons and neutrons (or their adjoint
- * couterparts) can contribute to the estimator. Combinations are not 
+ * couterparts) can contribute to the estimator. Combinations are not
  * allowed.
  */
-void StandardSurfaceEstimator::setParticleTypes( 
+void StandardSurfaceEstimator::setParticleTypes(
 			   const Teuchos::Array<ParticleType>& particle_types )
 {
   if( particle_types.size() > 1 )
   {
     std::cerr << "Warning: Standard surface estimators can only have one "
 	      << "particle type contribute. All but the first particle type "
-	      << "requested in estimator " << this->getId() 
+	      << "requested in estimator " << this->getId()
 	      << " will be ignored."
 	      << std::endl;
-    
+
     Teuchos::Array<ParticleType> valid_particle_types( 1 );
     valid_particle_types[0] = particle_types.front();
-    
+
     Estimator::setParticleTypes( valid_particle_types );
   }
   else
@@ -60,12 +60,12 @@ void StandardSurfaceEstimator::setParticleTypes(
 }
 
 // Export the estimator data
-void StandardSurfaceEstimator::exportData( 
+void StandardSurfaceEstimator::exportData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const bool process_data ) const
 {
   // Export the lower level data first
-  StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>::exportData( 
+  StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>::exportData(
 								hdf5_file,
 								process_data );
 

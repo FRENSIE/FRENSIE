@@ -24,12 +24,12 @@ EfficientCoherentScatteringDistribution::EfficientCoherentScatteringDistribution
 // Sample an outgoing energy and direction and record the number of trials
 /*! \details The sampling routine is set to ignore coherent scattering if the
  * recoil electron momentum (form factor function independent variable with
- * units of inverse cm^2) is greater than the data table provided 
- * (ie: for high energy photons). This is due to the fact that coherent 
- * scattering becomes very forward peaked at high energies and their effect on 
+ * units of inverse cm^2) is greater than the data table provided
+ * (ie: for high energy photons). This is due to the fact that coherent
+ * scattering becomes very forward peaked at high energies and their effect on
  * the photon path can be ignored.
  */
-void EfficientCoherentScatteringDistribution::sampleAndRecordTrialsImpl( 
+void EfficientCoherentScatteringDistribution::sampleAndRecordTrialsImpl(
 					       const double incoming_energy,
 					       double& scattering_angle_cosine,
 					       unsigned& trials ) const
@@ -50,32 +50,32 @@ void EfficientCoherentScatteringDistribution::sampleAndRecordTrialsImpl(
   // The sampled form factor argument squared
   double form_factor_arg_squared;
 
-  if( max_form_factor_arg_squared <= 
+  if( max_form_factor_arg_squared <=
       getFormFactorSquaredDistribution()->getUpperBoundOfIndepVar() )
   {
     while( true )
     {
       // Increment the number of trials
       ++trials;
-      
+
       // Randomly sample the form factor squared
-      form_factor_arg_squared = 
-	getFormFactorSquaredDistribution()->sampleInSubrange( 
+      form_factor_arg_squared =
+	getFormFactorSquaredDistribution()->sampleInSubrange(
 						 max_form_factor_arg_squared );
-      
-      // Calc. the outgoing photon angle cosine from the sampled form factor 
-      scattering_angle_cosine = 
+
+      // Calc. the outgoing photon angle cosine from the sampled form factor
+      scattering_angle_cosine =
 	1.0 - 2.0*wavelength_sqr*form_factor_arg_squared;
-      
-      double random_number = 
+
+      double random_number =
 	Utility::RandomNumberGenerator::getRandomNumber<double>();
-      
+
       if( random_number <=
 	  0.5*( 1.0 + scattering_angle_cosine*scattering_angle_cosine ) )
 	break;
     }
   }
-  // Ignore coherent scattering at energies where scattering is 
+  // Ignore coherent scattering at energies where scattering is
   // highly forward peaked
   else
     scattering_angle_cosine = 1.0;
@@ -83,7 +83,7 @@ void EfficientCoherentScatteringDistribution::sampleAndRecordTrialsImpl(
   // Check for roundoff error
   if( fabs( scattering_angle_cosine ) > 1.0 )
     scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
-    
+
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );

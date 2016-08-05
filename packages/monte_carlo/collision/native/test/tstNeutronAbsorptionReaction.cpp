@@ -43,14 +43,14 @@ void initializeAbsorptionReaction(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				        ace_file_handler->getTableJXSArray(),
 				        ace_file_handler->getTableXSSArray()));
-   
+
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.deepCopy( xss_data_extractor->extractElasticCrossSection() );
 
-  nuclear_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction( 
+  nuclear_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction(
 				       MonteCarlo::N__N_ELASTIC_REACTION,
 			               ace_file_handler->getTableTemperature(),
 				       0.0,
@@ -63,30 +63,30 @@ void initializeAbsorptionReaction(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the number of emitted neutrons can be returned
-TEUCHOS_UNIT_TEST( NeutronAbsorptionReaction, 
+TEUCHOS_UNIT_TEST( NeutronAbsorptionReaction,
 		   getNumberOfEmittedNeutrons )
 {
   initializeAbsorptionReaction( nuclear_reaction );
-  
+
   TEST_EQUALITY_CONST( nuclear_reaction->getNumberOfEmittedNeutrons( 0.0 ), 0);
 }
 
 //---------------------------------------------------------------------------//
 // Check that the reaction can be simulated
-TEUCHOS_UNIT_TEST( NeutronAbsorptionReaction, 
+TEUCHOS_UNIT_TEST( NeutronAbsorptionReaction,
 		   react )
 {
   MonteCarlo::ParticleBank bank;
-  
+
   {
     Teuchos::RCP<MonteCarlo::NeutronState> neutron( new MonteCarlo::NeutronState(0ull) );
-  
+
     neutron->setDirection( 0.0, 0.0, 1.0 );
     neutron->setEnergy( 1.0 );
 
     bank.push( neutron );
   }
-  
+
   nuclear_reaction->react( dynamic_cast<MonteCarlo::NeutronState&>(bank.top()),
 			   bank );
 

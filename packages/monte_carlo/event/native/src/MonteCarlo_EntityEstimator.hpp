@@ -26,7 +26,7 @@ class EntityEstimator : public Estimator
 protected:
 
   // Typedef for the map of entity ids and esimator moments array
-  typedef boost::unordered_map<EntityId,TwoEstimatorMomentsArray> 
+  typedef boost::unordered_map<EntityId,TwoEstimatorMomentsArray>
   EntityEstimatorMomentsArrayMap;
 
   // Typedef for the entity norm constants map
@@ -53,7 +53,7 @@ public:
   { /* ... */ }
 
   //! Set the response functions
-  virtual void setResponseFunctions( 
+  virtual void setResponseFunctions(
                       const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
                       response_functions );
 
@@ -72,7 +72,7 @@ public:
 	    const int root_process );
 
   //! Export the estimator data
-  virtual void exportData( 
+  virtual void exportData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const bool process_data ) const;
 
@@ -83,7 +83,7 @@ protected:
 		   const double multiplier );
 
   //! Assign entities
-  virtual void assignEntities( 
+  virtual void assignEntities(
 	       const boost::unordered_map<EntityId,double>& entity_norm_data );
 
   //! Assign bin boundaries to an estimator dimension
@@ -95,8 +95,8 @@ protected:
 
   //! Return the total normalization constant
   double getTotalNormConstant() const;
-  
-  //! Commit history contribution to a bin of an entity 
+
+  //! Commit history contribution to a bin of an entity
   void commitHistoryContributionToBinOfEntity( const EntityId& entity_id,
 					       const unsigned bin_index,
 					       const double contribution );
@@ -115,19 +115,19 @@ protected:
   //! Get the bin data for an entity
   const Estimator::TwoEstimatorMomentsArray& getEntityBinData(
 					      const EntityId entity_id ) const;
-  
+
 private:
 
   // Initialize entity estimator moments map
-  void initializeEntityEstimatorMomentsMap( 
+  void initializeEntityEstimatorMomentsMap(
 				  const Teuchos::Array<EntityId>& entity_ids );
 
   // Initialize entity norm constants map
-  void initializeEntityNormConstantsMap( 
+  void initializeEntityNormConstantsMap(
 			          const Teuchos::Array<EntityId>& entity_ids );
 
   // Initialize entity norm constants map
-  void initializeEntityNormConstantsMap( 
+  void initializeEntityNormConstantsMap(
 			 const Teuchos::Array<EntityId>& entity_ids,
 			 const Teuchos::Array<double>& entity_norm_constants );
 
@@ -159,7 +159,7 @@ private:
 
   // The estimator moments (1st,2nd) for each bin and each entity
   EntityEstimatorMomentsArrayMap d_entity_estimator_moments_map;
-  
+
   // The entity normalization constants (surface areas or cell volumes)
   EntityNormConstMap d_entity_norm_constants_map;
 };

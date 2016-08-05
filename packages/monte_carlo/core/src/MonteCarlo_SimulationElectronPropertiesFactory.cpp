@@ -16,10 +16,10 @@
 namespace MonteCarlo{
 
 //! Initialize the simulation properties
-void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties( 
+void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties(
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn )
-{  
+{
   // Get the min electron energy - optional
   if( properties.isParameter( "Min Electron Energy" ) )
   {
@@ -31,7 +31,7 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
     {
       SimulationElectronProperties::setMinElectronEnergy(
 			SimulationElectronProperties::getAbsoluteMinElectronEnergy() );
-      
+
       *os_warn << "Warning: the lowest supported electron energy is "
 		<< SimulationElectronProperties::getAbsoluteMinElectronEnergy()
 		<< ". This value will be used instead of "
@@ -50,7 +50,7 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
     {
       SimulationElectronProperties::setMaxElectronEnergy(
 			SimulationElectronProperties::getAbsoluteMaxElectronEnergy() );
-      
+
       *os_warn << "Warning: the highest supported electron energy is "
 		<< SimulationElectronProperties::getAbsoluteMaxElectronEnergy()
 		<< ". This value will be used instead of "
@@ -68,11 +68,11 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
   // Get the bremsstrahlung photon angular distribution function - optional
   if( properties.isParameter( "Bremsstrahlung Angular Distribution" ) )
   {
-    std::string raw_function = 
+    std::string raw_function =
            properties.get<std::string>( "Bremsstrahlung Angular Distribution" );
-    
+
      MonteCarlo::BremsstrahlungAngularDistributionType function;
-    
+
     if( raw_function == "Dipole" || raw_function == "dipole" || raw_function == "DIPOLE" )
       function = MonteCarlo::DIPOLE_DISTRIBUTION;
     else if( raw_function == "Tabular" || raw_function == "tabular" || raw_function == "TABULAR" )
@@ -82,14 +82,43 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
     else
     {
       THROW_EXCEPTION( std::runtime_error,
-		       "Error: bremsstrahlung angular distribution " << raw_function << 
+		       "Error: bremsstrahlung angular distribution " << raw_function <<
                " is not currently supported!" );
     }
-   
-     SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction( 
+
+     SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
                                                                      function );
   }
-  
+
+  // Get the elastic cutoff angle cosine - optional
+  if( properties.isParameter( "Elastic Cutoff Angle Cosine" ) )
+  {
+    double cutoff_angle_cosine =
+            properties.get<double>( "Elastic Cutoff Angle Cosine" );
+
+    if( cutoff_angle_cosine >= -1.0 && cutoff_angle_cosine <= 1.0 )
+    {
+      SimulationElectronProperties::setElasticCutoffAngleCosine(
+        cutoff_angle_cosine );
+    }
+    else
+    {
+      std::cerr << "Warning: the elastic cutoff angle cosine must have a "
+		<< "value between -1 and 1. The default value of "
+		<< SimulationElectronProperties::getElasticCutoffAngleCosine()
+		<< " will be used instead of " << cutoff_angle_cosine << "."
+		<< std::endl;
+    }
+  }
+
+  // Get the number of photon hash grid bins - optional
+  if( properties.isParameter( "Electron Hash Grid Bins" ) )
+  {
+    unsigned bins = properties.get<unsigned>( "Electron Hash Grid Bins" );
+
+    SimulationElectronProperties::setNumberOfElectronHashGridBins( bins );
+  }
+
   properties.unused( *os_warn );
 }
 

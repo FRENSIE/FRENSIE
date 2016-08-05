@@ -19,7 +19,7 @@ namespace DataGen{
 
 // Constructor
 template<typename STLCompliantContainer>
-SAlphaBetaXsdirEntry::SAlphaBetaXsdirEntry( 
+SAlphaBetaXsdirEntry::SAlphaBetaXsdirEntry(
 				    const STLCompliantContainer& entry_tokens )
   : XsdirEntry( entry_tokens ),
     d_alias()

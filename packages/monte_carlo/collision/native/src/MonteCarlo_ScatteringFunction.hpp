@@ -45,7 +45,7 @@ public:
 
   //! Return the lower bound of the argument
   virtual ArgumentQuantity getLowerBoundOfArgument() const = 0;
-  
+
   //! Return the upper bound of the argument
   virtual ArgumentQuantity getUpperBoundOfArgument() const = 0;
 };

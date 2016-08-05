@@ -39,7 +39,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
 				   ContributionMultiplierPolicy )
 {
   Teuchos::RCP<MonteCarlo::Estimator> estimator;
-  
+
   Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType>
     surface_ids( 2 );
   surface_ids[0] = 0;
@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
   surface_areas[0] = 1.0;
   surface_areas[1] = 2.0;
 
-  estimator.reset( 
+  estimator.reset(
 	   new MonteCarlo::SurfaceFluxEstimator<ContributionMultiplierPolicy>(
 							     0u,
 							     10.0,
@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
   energy_bin_boundaries[1] = 0.1;
   energy_bin_boundaries[2] = 1.0;
 
-  estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+  estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
 
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 2u );
@@ -76,7 +76,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
   cosine_bins[2] = 1.0;
 
   estimator->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( cosine_bins );
-  
+
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 4u );
 
   // Set the time bins
@@ -94,7 +94,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
   coll_bins[0] = 0u;
   coll_bins[1] = std::numeric_limits<unsigned>::max();
 
-  estimator->setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>( 
+  estimator->setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
 							           coll_bins );
 
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 16u );
@@ -121,20 +121,20 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     surface_ids( 2 );
     surface_ids[0] = 0;
     surface_ids[1] = 1;
-    
+
     // Set the surface areas
     Teuchos::Array<double> surface_areas( 2 );
     surface_areas[0] = 1.0;
     surface_areas[1] = 2.0;
-    
-    estimator_1.reset( 
+
+    estimator_1.reset(
 	    new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier>(
 							     0u,
 							     10.0,
 							     surface_ids,
 							     surface_areas ) );
     estimator_1_base = estimator_1;
-    
+
     estimator_2.reset(
      new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
 							     1u,
@@ -149,9 +149,9 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     energy_bin_boundaries[1] = 0.1;
     energy_bin_boundaries[2] = 1.0;
 
-    estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+    estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
-    estimator_2_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+    estimator_2_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
 
     // Set the cosine bins
@@ -160,7 +160,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     cosine_bins[1] = 0.0;
     cosine_bins[2] = 1.0;
 
-    estimator_1_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( 
+    estimator_1_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
 								 cosine_bins );
     estimator_2_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
 								 cosine_bins );
@@ -191,7 +191,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     estimator_1_base->setParticleTypes( particle_types );
     estimator_2_base->setParticleTypes( particle_types );
   }
-  
+
   TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2_base->hasUncommittedHistoryContribution() );
 
@@ -211,7 +211,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 
   // bin 1
   particle.setEnergy( 0.1 );
-  
+
   estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
   estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
 
@@ -229,7 +229,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 
   // bin 3
   particle.setEnergy( 0.1 );
-  
+
   estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
   estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
 
@@ -248,7 +248,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 
   // bin 5
   particle.setEnergy( 0.1 );
-  
+
   estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
   estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
 
@@ -266,7 +266,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 
   // bin 7
   particle.setEnergy( 0.1 );
-  
+
   estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
   estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
 
@@ -286,7 +286,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 
   // bin 9
   particle.setEnergy( 0.1 );
-  
+
   estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
   estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
 
@@ -304,7 +304,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 
   // bin 11
   particle.setEnergy( 0.1 );
-  
+
   estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
   estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
 
@@ -323,7 +323,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 
   // bin 13
   particle.setEnergy( 0.1 );
-  
+
   estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
   estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
 
@@ -341,7 +341,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 
   // bin 15
   particle.setEnergy( 0.1 );
-  
+
   estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
   estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
 
@@ -376,17 +376,17 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     raw_bin_data( 16, Utility::Pair<double,double>( 2.0, 4.0 ) ),
     raw_bin_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   0u, 0u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   0u, 1u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
@@ -399,17 +399,17 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   raw_bin_data[12]( 0.2, 0.2*0.2 );
   raw_bin_data[14]( 0.2, 0.2*0.2 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   1u, 0u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   1u, 1u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
@@ -421,7 +421,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     0u, 0u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
@@ -431,7 +431,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     0u, 1u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
@@ -449,7 +449,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     1u, 0u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
@@ -467,7 +467,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     1u, 1u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
@@ -475,10 +475,10 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   Teuchos::Array<Utility::Pair<double,double> >
     raw_total_bin_data( 16, Utility::Pair<double,double>( 4.0, 16.0 ) ),
     raw_total_bin_data_copy;
-    
+
   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
   					raw_total_bin_data_copy,
   					1e-15 );
 
@@ -492,8 +492,8 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   raw_total_bin_data[14]( 0.4, 0.16 );
 
   hdf5_file_handler.getRawEstimatorTotalBinData( 1u, raw_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
   					raw_total_bin_data_copy,
   					1e-15 );
 
@@ -502,7 +502,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     processed_total_bin_data( 16, Utility::Pair<double,double>( 40.0/3, 0.0 )),
     processed_total_bin_data_copy;
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
   					   0u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
@@ -518,7 +518,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   processed_total_bin_data[12]( 4.0/3, 0.0 );
   processed_total_bin_data[14]( 4.0/3, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
   					   1u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
@@ -526,40 +526,40 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   					1e-15 );
 
   // Retrieve the raw estimator total data for each entity
-  Utility::Quad<double,double,double,double> 
+  Utility::Quad<double,double,double,double>
     raw_moments( 32.0, 1024.0, 32768.0, 1048576.0 );
-  
+
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1, raw_moments ),
     raw_total_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 0u, 0u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
-			       
+
   hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 0u, 1u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
   raw_total_data[0]( 17.6, 309.76, 5451.776, 95951.2576 );
-  
-  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>( 
+
+  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 1u, 0u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
-			       
+
   hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 1u, 1u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
@@ -574,7 +574,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   0u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
@@ -583,16 +583,16 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   0u, 1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
   processed_total_data[0]( 176.0, 0.0, 0.0, 0.0 );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   1u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
@@ -601,7 +601,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   1u, 1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
@@ -609,41 +609,41 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   raw_total_data[0]( 64.0, 4096.0, 262144.0, 16777216.0 );
 
   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
   raw_total_data[0]( 35.2, 1239.04, 43614.208, 1535220.1216 );
 
   hdf5_file_handler.getRawEstimatorTotalData( 1u, raw_total_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
   // Retrieve the processed total data
   processed_total_data[0]( 640.0/3, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
   					       0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
   processed_total_data[0]( 352.0/3, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
   					       1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a partial history contribution can be added to the estimator - 
+// Check that a partial history contribution can be added to the estimator -
 // special case (|mu| < mu_cut)
 TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 		   updateFromParticleCrossingSurfaceEvent_special_case )
@@ -661,19 +661,19 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType>
     surface_ids( 1 );
     surface_ids[0] = 0;
-    
+
     // Set the surface areas
     Teuchos::Array<double> surface_areas( 1 );
     surface_areas[0] = 1.0;
-    
-    estimator_1.reset( 
+
+    estimator_1.reset(
 	    new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier>(
 							     0u,
 							     10.0,
 							     surface_ids,
 							     surface_areas ) );
     estimator_1_base = estimator_1;
-    
+
     estimator_2.reset(
      new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
 							     1u,
@@ -688,7 +688,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     cosine_bins[1] = 0.0;
     cosine_bins[2] = 1.0;
 
-    estimator_1_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( 
+    estimator_1_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
 								 cosine_bins );
     estimator_2_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
 								 cosine_bins );
@@ -753,20 +753,20 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     raw_bin_data( 2, Utility::Pair<double,double>( 20.0, 400.0 ) ),
     raw_bin_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   0u, 0u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
   raw_bin_data[0]( 2.0, 4.0 );
   raw_bin_data[1]( 2.0, 4.0 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   1u, 0u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
@@ -778,7 +778,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     0u, 0u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
@@ -788,7 +788,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     1u, 0u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
@@ -796,10 +796,10 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   Teuchos::Array<Utility::Pair<double,double> >
     raw_total_bin_data( 2.0, Utility::Pair<double,double>( 20.0, 400.0 ) ),
     raw_total_bin_data_copy;
-    
+
   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
   					raw_total_bin_data_copy,
   					1e-15 );
 
@@ -807,8 +807,8 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   raw_total_bin_data[1]( 2.0, 4.0 );
 
   hdf5_file_handler.getRawEstimatorTotalBinData( 1u, raw_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
   					raw_total_bin_data_copy,
   					1e-15 );
 
@@ -817,7 +817,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     processed_total_bin_data( 2, Utility::Pair<double,double>( 200.0, 0.0 )),
     processed_total_bin_data_copy;
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
   					   0u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
@@ -827,7 +827,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   processed_total_bin_data[0]( 20.0, 0.0 );
   processed_total_bin_data[1]( 20.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
   					   1u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
@@ -835,29 +835,29 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   					1e-15 );
 
   // Retrieve the raw estimator total data for each entity
-  Utility::Quad<double,double,double,double> 
+  Utility::Quad<double,double,double,double>
     raw_moments( 40.0, 1600.0, 64000, 2560000 );
-  
+
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1, raw_moments ),
     raw_total_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 0u, 0u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
-			       
+
   raw_total_data[0]( 4.0, 16.0, 64.0, 256.0 );
-  
-  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>( 
+
+  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 1u, 0u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
-			       
+
   // Retrieve the processed estimator total data for each entity
   Utility::Quad<double,double,double,double>
     processed_moments( 400.0, 0.0, 0.0, 0.0 );
@@ -869,16 +869,16 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   0u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
   processed_total_data[0]( 40.0, 0.0, 0.0, 0.0 );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   1u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
@@ -886,35 +886,35 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   raw_total_data[0]( 40.0, 1600.0, 64000, 2560000 );
 
   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
   raw_total_data[0]( 4.0, 16.0, 64.0, 256.0 );
 
   hdf5_file_handler.getRawEstimatorTotalData( 1u, raw_total_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
   // Retrieve the processed total data
   processed_total_data[0]( 400.0, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
   					       0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
   processed_total_data[0]( 40.0, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
   					       1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 }
@@ -938,20 +938,20 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     surface_ids( 2 );
     surface_ids[0] = 0;
     surface_ids[1] = 1;
-    
+
     // Set the surface areas
     Teuchos::Array<double> surface_areas( 2 );
     surface_areas[0] = 1.0;
     surface_areas[1] = 2.0;
-    
-    estimator_1.reset( 
+
+    estimator_1.reset(
 	    new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier>(
 							     0u,
 							     10.0,
 							     surface_ids,
 							     surface_areas ) );
     estimator_1_base = estimator_1;
-    
+
     estimator_2.reset(
      new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
 							     1u,
@@ -966,9 +966,9 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     energy_bin_boundaries[1] = 0.1;
     energy_bin_boundaries[2] = 1.0;
 
-    estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+    estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
-    estimator_2_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+    estimator_2_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
 
     // Set the cosine bins
@@ -977,7 +977,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     cosine_bins[1] = 0.0;
     cosine_bins[2] = 1.0;
 
-    estimator_1_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( 
+    estimator_1_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
 								 cosine_bins );
     estimator_2_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
 								 cosine_bins );
@@ -1014,11 +1014,11 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     estimator_2_base->enableThreadSupport(
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   }
-  
+
   TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2_base->hasUncommittedHistoryContribution() );
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
 
   #pragma omp parallel num_threads( threads )
@@ -1027,152 +1027,152 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     MonteCarlo::PhotonState particle( 0u );
     particle.setEnergy( 1.0 );
     particle.setTime( 2.0 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
-    
+
     // bin 1
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
-    
+
     // bin 2
     particle.setEnergy( 1.0 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
-    
+
     // bin 3
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
-    
+
     // bin 4
     particle.setEnergy( 1.0 );
     particle.setTime( 1.0 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
-    
+
     // bin 5
     particle.setEnergy( 0.1 );
-  
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
-    
+
     // bin 6
     particle.setEnergy( 1.0 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
-    
+
     // bin 7
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
-    
+
     // bin 8
     particle.setEnergy( 1.0 );
     particle.setTime( 2.0 );
     particle.incrementCollisionNumber();
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
-    
+
     // bin 9
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
-    
+
     // bin 10
     particle.setEnergy( 1.0 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
-    
+
     // bin 11
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
-    
+
     // bin 12
     particle.setEnergy( 1.0 );
     particle.setTime( 1.0 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
-    
+
     // bin 13
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 );
-    
+
     // bin 14
     particle.setEnergy( 1.0 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
-    
+
     // bin 15
     particle.setEnergy( 0.1 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 );
-    
+
     estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
     estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 );
-    
+
     // Commit the contributions
     estimator_1_base->commitHistoryContribution();
     estimator_2_base->commitHistoryContribution();
@@ -1202,17 +1202,17 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     raw_bin_data( 16, Utility::Pair<double,double>(2.0*threads, 4.0*threads) ),
     raw_bin_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   0u, 0u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   0u, 1u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
@@ -1225,17 +1225,17 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   raw_bin_data[12]( 0.2*threads, 0.2*0.2*threads );
   raw_bin_data[14]( 0.2*threads, 0.2*0.2*threads );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   1u, 0u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>(
   						   1u, 1u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					raw_bin_data_copy,
   					1e-15 );
 
@@ -1247,7 +1247,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     0u, 0u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
@@ -1257,7 +1257,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     0u, 1u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
@@ -1275,7 +1275,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     1u, 0u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
@@ -1293,19 +1293,19 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
   					     1u, 1u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
   					processed_bin_data_copy,
   					1e-15 );
 
   // Retrieve the raw total bin data
   Teuchos::Array<Utility::Pair<double,double> >
-    raw_total_bin_data(16, 
+    raw_total_bin_data(16,
 		       Utility::Pair<double,double>(4.0*threads,16.0*threads)),
     raw_total_bin_data_copy;
-    
+
   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
   					raw_total_bin_data_copy,
   					1e-15 );
 
@@ -1319,8 +1319,8 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   raw_total_bin_data[14]( 0.4*threads, 0.16*threads );
 
   hdf5_file_handler.getRawEstimatorTotalBinData( 1u, raw_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
   					raw_total_bin_data_copy,
   					1e-15 );
 
@@ -1329,7 +1329,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     processed_total_bin_data( 16, Utility::Pair<double,double>( 40.0/3, 0.0 )),
     processed_total_bin_data_copy;
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
   					   0u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
@@ -1345,7 +1345,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   processed_total_bin_data[12]( 4.0/3, 0.0 );
   processed_total_bin_data[14]( 4.0/3, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
   					   1u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
@@ -1353,46 +1353,46 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   					1e-15 );
 
   // Retrieve the raw estimator total data for each entity
-  Utility::Quad<double,double,double,double> 
-    raw_moments( 32.0*threads, 
-		 1024.0*threads, 
-		 32768.0*threads, 
+  Utility::Quad<double,double,double,double>
+    raw_moments( 32.0*threads,
+		 1024.0*threads,
+		 32768.0*threads,
 		 1048576.0*threads );
-  
+
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1, raw_moments ),
     raw_total_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>( 
+  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 0u, 0u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
-			       
+
   hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 0u, 1u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
-  raw_total_data[0]( 17.6*threads, 
-		     309.76*threads, 
-		     5451.776*threads, 
+  raw_total_data[0]( 17.6*threads,
+		     309.76*threads,
+		     5451.776*threads,
 		     95951.2576*threads );
-  
-  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>( 
+
+  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 1u, 0u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
-			       
+
   hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>(
   						 1u, 1u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
@@ -1407,7 +1407,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   0u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
@@ -1416,16 +1416,16 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   0u, 1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
   processed_total_data[0]( 176.0, 0.0, 0.0, 0.0 );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   1u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
@@ -1434,49 +1434,49 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
   					   1u, 1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
   // Retrieve the raw total data
-  raw_total_data[0]( 64.0*threads, 
-		     4096.0*threads, 
-		     262144.0*threads, 
+  raw_total_data[0]( 64.0*threads,
+		     4096.0*threads,
+		     262144.0*threads,
 		     16777216.0*threads );
 
   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
-  raw_total_data[0]( 35.2*threads, 
-		     1239.04*threads, 
-		     43614.208*threads, 
+  raw_total_data[0]( 35.2*threads,
+		     1239.04*threads,
+		     43614.208*threads,
 		     1535220.1216*threads );
 
   hdf5_file_handler.getRawEstimatorTotalData( 1u, raw_total_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
   					raw_total_data_copy,
   					1e-15 );
 
   // Retrieve the processed total data
   processed_total_data[0]( 640.0/3, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
   					       0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 
   processed_total_data[0]( 352.0/3, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
   					       1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
   					processed_total_data_copy,
   					1e-15 );
 }
@@ -1494,10 +1494,10 @@ int main( int argc, char** argv )
 		 &threads,
 		 "Number of threads to use" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {

@@ -20,7 +20,7 @@ namespace DataGen{
 
 // Constructor
 template<typename STLCompliantContainer>
-ElectronPhotonRelaxationXsdirEntry::ElectronPhotonRelaxationXsdirEntry( 
+ElectronPhotonRelaxationXsdirEntry::ElectronPhotonRelaxationXsdirEntry(
 				    const STLCompliantContainer& entry_tokens )
   : XsdirEntry( entry_tokens ),
     d_atomic_number(),

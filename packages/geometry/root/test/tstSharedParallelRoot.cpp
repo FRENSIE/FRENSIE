@@ -37,7 +37,7 @@ TEUCHOS_UNIT_TEST( Root, parallel_external_ray_trace )
                                Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle> >
     cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
     std::shared_ptr<Geometry::Ray> ray;
@@ -55,23 +55,23 @@ TEUCHOS_UNIT_TEST( Root, parallel_external_ray_trace )
     else
       ray.reset( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 ) );
 
-    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].first =
       Geometry::Root::findCellContainingExternalRay( *ray );
-    
+
     // Fire a ray through the geometry
     double distance_to_boundary = Geometry::Root::fireExternalRay( *ray );
- 
+
     ray->advanceHead( distance_to_boundary );
-  
+
     // Find the new cell
-    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].second = 
+    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].second =
       Geometry::Root::findCellContainingExternalRay( *ray );
-  
+
     // Fire a ray through the geometry
     distance_to_boundary = Geometry::Root::fireExternalRay( *ray );
 
     ray->advanceHead( distance_to_boundary );
-  
+
     // Find the new cell
     cell_ids[Utility::GlobalOpenMPSession::getThreadId()].third =
       Geometry::Root::findCellContainingExternalRay( *ray );
@@ -82,10 +82,10 @@ TEUCHOS_UNIT_TEST( Root, parallel_external_ray_trace )
                                Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle> >
     correct_cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i]( 2, 1, 3 );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
 }
 
@@ -100,10 +100,10 @@ TEUCHOS_UNIT_TEST( Root, parallel_internal_ray_trace )
 
   Teuchos::Array<Utility::Trip<double,double,double> >
     distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
-    { 
+    {
       std::shared_ptr<Geometry::Ray> ray;
       // Initialize the ray
       if( Utility::GlobalOpenMPSession::getThreadId()%6 == 0 )
@@ -122,25 +122,25 @@ TEUCHOS_UNIT_TEST( Root, parallel_internal_ray_trace )
       Geometry::Root::setInternalRay( *ray );
     }
 
-    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].first =
       Geometry::Root::findCellContainingInternalRay();
 
     // Fire a ray through the geometry
     double distance_to_boundary = Geometry::Root::fireInternalRay();
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].first =
       distance_to_boundary;
- 
+
     // Advance the ray to the cell boundary
     Geometry::Root::advanceInternalRayToCellBoundary();
-    
-    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].second = 
+
+    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].second =
       Geometry::Root::findCellContainingInternalRay();
 
     // Fire a ray through the geometry
     distance_to_boundary = Geometry::Root::fireInternalRay();
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].second = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].second =
       distance_to_boundary;
 
     // Advance the ray a substep
@@ -149,8 +149,8 @@ TEUCHOS_UNIT_TEST( Root, parallel_internal_ray_trace )
     // Change the ray direction
     double new_direction[3];
 
-    Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
-                                     0.0, 
+    Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
+                                     0.0,
                                      0.0,
                                      Geometry::Root::getInternalRayDirection(),
                                      new_direction );
@@ -160,26 +160,26 @@ TEUCHOS_UNIT_TEST( Root, parallel_internal_ray_trace )
     // Fire a ray through the geometry
     distance_to_boundary = Geometry::Root::fireInternalRay();
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].third = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].third =
       distance_to_boundary;
-  
+
     // Advance the ray to the cell boundary
     Geometry::Root::advanceInternalRayToCellBoundary();
 
     // Find the new cell
     cell_ids[Utility::GlobalOpenMPSession::getThreadId()].third =
       Geometry::Root::findCellContainingInternalRay();
-  } 
+  }
 
   // Check that each of the rays traces were successful
   Teuchos::Array<Utility::Trip<Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle> >
     correct_cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i]( 2, 1, 3 );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
 
   Teuchos::Array<Utility::Trip<double,double,double> >
@@ -209,11 +209,11 @@ int main( int argc, char** argv )
   clp.setOption( "threads",
 		 &threads,
 		 "Number of threads to use" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -234,9 +234,9 @@ int main( int argc, char** argv )
   // Set up the global OpenMP session
   if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-  
+
   mpiSession.barrier();
-  
+
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 

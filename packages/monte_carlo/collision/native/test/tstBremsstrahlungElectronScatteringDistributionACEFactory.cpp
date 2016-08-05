@@ -28,16 +28,16 @@
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 
-Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   dipole_distribution;
 
-Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   tabular_distribution;
 
-Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   twobs_distribution;
 
-Teuchos::RCP<Utility::OneDDistribution> angular_distribution;
+std::shared_ptr<Utility::OneDDistribution> angular_distribution;
 
 double upper_cutoff_energy, lower_cutoff_energy;
 
@@ -45,7 +45,7 @@ double upper_cutoff_energy, lower_cutoff_energy;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sample_DipoleBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
@@ -55,8 +55,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function 
-  
+  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 0.0009;
@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
   // sample dipole_distribution
   dipole_distribution->sample( incoming_energy,
-                               photon_energy, 
+                               photon_energy,
                                photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -76,7 +76,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials_DipoleBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
@@ -86,16 +86,16 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function 
-  
+  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   unsigned trials = 10;
   double incoming_energy = 0.0009;
   double photon_energy, photon_angle_cosine;
 
-  dipole_distribution->sampleAndRecordTrials( incoming_energy, 
-                                              photon_energy, 
+  dipole_distribution->sampleAndRecordTrials( incoming_energy,
+                                              photon_energy,
                                               photon_angle_cosine,
                                               trials );
 
@@ -103,12 +103,12 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
   TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05 , 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
-  TEST_EQUALITY_CONST( trials, 11 ); 
+  TEST_EQUALITY_CONST( trials, 11 );
 }
 /*
 //---------------------------------------------------------------------------//
 // Check that the sample() function using detailed tabular
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sample_TabularBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
@@ -121,15 +121,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function  
+  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 0.0009;
   double photon_energy, photon_angle_cosine;
 
-  tabular_distribution->sample( incoming_energy, 
-                                photon_energy, 
+  tabular_distribution->sample( incoming_energy,
+                                photon_energy,
                                 photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -140,7 +140,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function using detailed tabular
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials_TabularBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
@@ -153,7 +153,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function  
+  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -161,8 +161,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   double incoming_energy = 0.0009;
   double photon_energy, photon_angle_cosine;
 
-  tabular_distribution->sampleAndRecordTrials( incoming_energy, 
-                                               photon_energy, 
+  tabular_distribution->sampleAndRecordTrials( incoming_energy,
+                                               photon_energy,
                                                photon_angle_cosine,
                                                trials );
 
@@ -175,7 +175,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the sample() function using detailed 2BS
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sample_TwoBSBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
@@ -191,14 +191,14 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   fake_stream[3] = 0.5; // Sample a photon angle of 0.9118675275
   fake_stream[4] = 0.48; // Accept the angle
 
- 
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0;
   double photon_energy, photon_angle_cosine;
 
-  twobs_distribution->sample( incoming_energy, 
-                              photon_energy, 
+  twobs_distribution->sample( incoming_energy,
+                              photon_energy,
                               photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -209,7 +209,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function using detailed 2BS
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials_TwoBSBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
@@ -225,15 +225,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   fake_stream[3] = 0.5; // Sample a photon angle of 0.9118675275
   fake_stream[4] = 0.48; // Accept the angle
 
- 
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   unsigned trials = 0.0;
   double incoming_energy = 1.0;
   double photon_energy, photon_angle_cosine;
 
-  twobs_distribution->sampleAndRecordTrials( incoming_energy, 
-                                             photon_energy, 
+  twobs_distribution->sampleAndRecordTrials( incoming_energy,
+                                             photon_energy,
                                              photon_angle_cosine,
                                              trials );
 
@@ -251,7 +251,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
@@ -261,24 +261,24 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-  xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
+  xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -288,14 +288,14 @@ int main( int argc, char** argv )
   energy_bins[0] = 1e-6;
   energy_bins[1] = 1e-2;
   energy_bins[2] = 1e5;
-  
+
   Teuchos::Array<double> angular_distribution_values( 3 );
   angular_distribution_values[0] =  0.0;
   angular_distribution_values[1] =  0.9;
   angular_distribution_values[2] =  1.0;
 
   angular_distribution.reset(
-			    new Utility::TabularDistribution<Utility::LinLin>( 
+			    new Utility::TabularDistribution<Utility::LinLin>(
 						energy_bins,
 						angular_distribution_values ) );
 
@@ -304,7 +304,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -317,7 +317,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  					    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

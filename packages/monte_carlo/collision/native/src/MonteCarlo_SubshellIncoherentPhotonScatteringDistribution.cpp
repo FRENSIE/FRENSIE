@@ -48,12 +48,12 @@ SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteri
   testPrecondition( binding_energy > 0.0 );
   // Make sure the occupation number is valid
   testPrecondition( !occupation_number.is_null() );
-  testPrecondition( occupation_number->getLowerBoundOfIndepVar() == -1.0 );  
+  testPrecondition( occupation_number->getLowerBoundOfIndepVar() == -1.0 );
 }
 
 
 // Return the subshell
-Data::SubshellType 
+Data::SubshellType
 SubshellIncoherentPhotonScatteringDistribution::getSubshell() const
 {
   return d_subshell;
@@ -72,7 +72,7 @@ double SubshellIncoherentPhotonScatteringDistribution::getSubshellBindingEnergy(
 }
 
 // Evaluate the distribution
-double SubshellIncoherentPhotonScatteringDistribution::evaluate( 
+double SubshellIncoherentPhotonScatteringDistribution::evaluate(
 			           const double incoming_energy,
 			           const double scattering_angle_cosine ) const
 {
@@ -82,10 +82,10 @@ double SubshellIncoherentPhotonScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double occupation_number = 
+  const double occupation_number =
     this->evaluateOccupationNumber( incoming_energy, scattering_angle_cosine );
-  
-  const double diff_kn_cross_section = 
+
+  const double diff_kn_cross_section =
     this->evaluateKleinNishinaDist( incoming_energy,
 				    scattering_angle_cosine );
 
@@ -93,14 +93,14 @@ double SubshellIncoherentPhotonScatteringDistribution::evaluate(
 }
 
 // Evaluate the integrated cross section (cm^2)
-double SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
+double SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 						  const double incoming_energy,
 						  const double precision) const
 {
   if ( incoming_energy > d_binding_energy )
   {
     // Evaluate the integrated cross section
-    boost::function<double (double x)> diff_cs_wrapper = 
+    boost::function<double (double x)> diff_cs_wrapper =
       boost::bind<double>( &SubshellIncoherentPhotonScatteringDistribution::evaluate,
 	  		 boost::cref( *this ),
 			 incoming_energy,
@@ -108,7 +108,7 @@ double SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSe
 
     double abs_error, integrated_cs;
 
-    Utility::GaussKronrodIntegrator quadrature_gkq_set( precision );
+    Utility::GaussKronrodIntegrator<double> quadrature_gkq_set( precision );
 
     quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
 					     -1.0,
@@ -128,8 +128,8 @@ double SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSe
 // Sample an outgoing energy and direction from the distribution
 /*! \details This function will only sample a Compton line energy (no
  * Doppler broadening).
- */ 
-void SubshellIncoherentPhotonScatteringDistribution::sample( 
+ */
+void SubshellIncoherentPhotonScatteringDistribution::sample(
 				     const double incoming_energy,
 				     double& outgoing_energy,
 				     double& scattering_angle_cosine ) const
@@ -138,7 +138,7 @@ void SubshellIncoherentPhotonScatteringDistribution::sample(
   testPrecondition( incoming_energy > d_binding_energy );
 
   unsigned trial_dummy;
-  
+
   return this->sampleAndRecordTrials( incoming_energy,
 				      outgoing_energy,
 				      scattering_angle_cosine,
@@ -148,8 +148,8 @@ void SubshellIncoherentPhotonScatteringDistribution::sample(
 // Sample an outgoing energy and direction and record the number of trials
 /*! \details This function will only sample a Compton line energy (no
  * Doppler broadening).
- */ 
-void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials( 
+ */
+void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
@@ -159,7 +159,7 @@ void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
   testPrecondition( incoming_energy > d_binding_energy );
 
   // Evaluate the maximum occupation number
-  const double max_occupation_number = 
+  const double max_occupation_number =
     this->evaluateOccupationNumber( incoming_energy, -1.0 );
 
   while( true )
@@ -169,8 +169,8 @@ void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
 					     scattering_angle_cosine,
 					     trials );
 
-    const double occupation_number = 
-      this->evaluateOccupationNumber( incoming_energy, 
+    const double occupation_number =
+      this->evaluateOccupationNumber( incoming_energy,
 				      scattering_angle_cosine );
 
     const double scaled_random_number = max_occupation_number*
@@ -190,8 +190,8 @@ void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
   testPostcondition( outgoing_energy >= incoming_energy/(1+2*alpha) );
 }
 
-// Evaluate the occupation number 
-double 
+// Evaluate the occupation number
+double
 SubshellIncoherentPhotonScatteringDistribution::evaluateOccupationNumber(
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
@@ -201,8 +201,8 @@ SubshellIncoherentPhotonScatteringDistribution::evaluateOccupationNumber(
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
-  
-  const double occupation_number_arg = 
+
+  const double occupation_number_arg =
     this->calculateOccupationNumberArgument( incoming_energy,
 					     scattering_angle_cosine );
 
@@ -220,7 +220,7 @@ double SubshellIncoherentPhotonScatteringDistribution::calculateOccupationNumber
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double occupation_number_arg = 
+  double occupation_number_arg =
     calculateMaxElectronMomentumProjection( incoming_energy,
 					    d_binding_energy,
 					    scattering_angle_cosine );
@@ -229,7 +229,7 @@ double SubshellIncoherentPhotonScatteringDistribution::calculateOccupationNumber
     occupation_number_arg = d_occupation_number->getUpperBoundOfIndepVar();
 
   // Make sure the occupation number arg is valid
-  testPostcondition( occupation_number_arg >= 
+  testPostcondition( occupation_number_arg >=
 		     d_occupation_number->getLowerBoundOfIndepVar() );
   testPostcondition( occupation_number_arg <=
 		     d_occupation_number->getUpperBoundOfIndepVar() );
@@ -239,11 +239,11 @@ double SubshellIncoherentPhotonScatteringDistribution::calculateOccupationNumber
 
 // Randomly scatter the photon
 /*! \details The particle bank is used to store the electron that is emitted
- * from the collision. Whether or not Doppler broadening is done, the 
+ * from the collision. Whether or not Doppler broadening is done, the
  * energy and direction of the outgoing electron is calculated as if it were
  * at rest initially (feel free to update this model!).
  */
-void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton( 
+void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
 				     PhotonState& photon,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -265,16 +265,16 @@ void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
   const double azimuthal_angle = this->sampleAzimuthalAngle();
 
   // Create the ejectected electron
-  this->createEjectedElectron( photon, 
-			       scattering_angle_cosine, 
+  this->createEjectedElectron( photon,
+			       scattering_angle_cosine,
 			       azimuthal_angle,
 			       bank );
-  
+
   // Set the new energy
   if( outgoing_energy > 0.0 )
   {
     photon.setEnergy( outgoing_energy );
-    
+
     // Set the new direction
     photon.rotateDirection( scattering_angle_cosine, azimuthal_angle );
   }
@@ -285,7 +285,7 @@ void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
     photon.setAsGone();
   }
 }
- 
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

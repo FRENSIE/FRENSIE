@@ -28,7 +28,7 @@ class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<Ind
 {
 
 private:
-  
+
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
 
@@ -57,7 +57,7 @@ public:
 
   //! Default constructor
   UnitAwareUniformDistribution();
- 
+
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareUniformDistribution(const InputIndepQuantity& min_independent_value,
@@ -73,13 +73,13 @@ public:
 
   //! Assignment operator
   UnitAwareUniformDistribution& operator=( const UnitAwareUniformDistribution& dist_instance );
-  
+
   //! Destructor
   ~UnitAwareUniformDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
-  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;  
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
@@ -98,7 +98,7 @@ public:
   IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return a random sample from the distribution and record the number of trials
-  static IndepQuantity sampleAndRecordTrials( 
+  static IndepQuantity sampleAndRecordTrials(
 			        const IndepQuantity min_independent_value,
 			        const IndepQuantity max_independent_value,
 				unsigned& trials );
@@ -107,7 +107,7 @@ public:
   IndepQuantity sampleWithRandomNumber( const double random_number ) const;
 
   //! Return a random sample from the distribution at the given CDF value
-  static IndepQuantity sampleWithRandomNumber( 
+  static IndepQuantity sampleWithRandomNumber(
 				const IndepQuantity min_independent_value,
 				const IndepQuantity max_independent_value,
 				const double random_number );
@@ -119,7 +119,7 @@ public:
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  IndepQuantity sampleWithRandomNumberInSubrange( 
+  IndepQuantity sampleWithRandomNumberInSubrange(
 				     const double random_number,
 				     const IndepQuantity max_indep_var ) const;
 
@@ -163,7 +163,7 @@ private:
 
   // The min independent value
   IndepQuantity d_min_independent_value;
-  
+
   // The max independent value
   IndepQuantity d_max_independent_value;
 
@@ -196,14 +196,14 @@ public:
   {
     return "Uniform Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 			     const Utility::UniformDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareUniformDistribution
  *
  * \details The name function will set the type name that must be used in
@@ -215,7 +215,7 @@ class TypeNameTraits<Utility::UnitAwareUniformDistribution<U,V> >
 public:
   static std::string name()
   {
-    return "Unit-Aware Uniform Distribution (" + 
+    return "Unit-Aware Uniform Distribution (" +
       Utility::UnitTraits<U>::symbol() + "," +
       Utility::UnitTraits<V>::symbol() + ")";
   }
@@ -226,7 +226,7 @@ public:
   }
 };
 
-} // end Teuchos namespace 
+} // end Teuchos namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes

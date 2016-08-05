@@ -3,7 +3,7 @@
 ## Geometry.ROOT.Root class unit tests
 #  \file   tstGeometry.ROOT.Root.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Geometry.ROOT.Root class 
+#  \brief  Unit tests for the Geometry.ROOT.Root class
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -102,7 +102,7 @@ class RootPostInitTestCase(unittest.TestCase):
         self.assertEqual(len(cells), 2)
         self.assertTrue(1 in cells)
         self.assertTrue(2 in cells)
-        
+
         # All cells except void and termination cells
         cells = self.geom.getCells( False )
         self.assertEqual(len(cells), 1)
@@ -221,7 +221,7 @@ class RootPostInitTestCase(unittest.TestCase):
         ray = Geometry.Ray( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
         cell = self.geom.findCellContainingExternalRay( ray )
         self.assertEqual(cell, 2)
-        
+
         # Fire the ray
         distance = self.geom.fireExternalRay( ray )
         ray.advanceHead( distance )

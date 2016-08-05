@@ -27,9 +27,9 @@ class ElasticNeutronNuclearScatteringDistribution : public NuclearScatteringDist
 {
 
 public:
-  
+
   //! Constructor
-  ElasticNeutronNuclearScatteringDistribution( 
+  ElasticNeutronNuclearScatteringDistribution(
 		     const double atomic_weight_ratio,
                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		     angular_scattering_distribution );
@@ -37,21 +37,21 @@ public:
   //! Destructor
   ~ElasticNeutronNuclearScatteringDistribution()
   { /* ... */ }
-  
+
   //! Randomly scatter the particle
   void scatterParticle( const NeutronState& incoming_particle,
 			NeutronState& outgoing_particle,
 			const double temperature ) const;
 
 protected:
-  
+
   //! Calculate the center-of-mass velocity
   void calculateCenterOfMassVelocity(const double neutron_velocity[3],
 				     const double target_velocity[3],
 				     double center_of_mass_velocity[3] ) const;
 
   //! Transform a velocity in lab frame to the center-of-mass frame
-  void transformVelocityToCenterOfMassFrame( 
+  void transformVelocityToCenterOfMassFrame(
 				       const double center_of_mass_velocity[3],
 				       double velocity[3] ) const;
 
@@ -71,33 +71,33 @@ private:
 			    const double temperature ) const;
 
   // The incoming energy dependent angular scattering distribution
-  Teuchos::RCP<NuclearScatteringAngularDistribution> 
+  Teuchos::RCP<NuclearScatteringAngularDistribution>
   d_angular_scattering_distribution;
 };
 
 // Calculate the center-of-mass velocity
-inline void 
-ElasticNeutronNuclearScatteringDistribution::calculateCenterOfMassVelocity( 
+inline void
+ElasticNeutronNuclearScatteringDistribution::calculateCenterOfMassVelocity(
 				      const double neutron_velocity[3],
 				      const double target_velocity[3],
 				      double center_of_mass_velocity[3] ) const
 {
-  center_of_mass_velocity[0] = 
+  center_of_mass_velocity[0] =
     (neutron_velocity[0] + this->getAtomicWeightRatio()*target_velocity[0])/
     (this->getAtomicWeightRatio() + 1.0);
 
-  center_of_mass_velocity[1] = 
+  center_of_mass_velocity[1] =
     (neutron_velocity[1] + this->getAtomicWeightRatio()*target_velocity[1])/
     (this->getAtomicWeightRatio() + 1.0);
 
-  center_of_mass_velocity[2] = 
+  center_of_mass_velocity[2] =
     (neutron_velocity[2] + this->getAtomicWeightRatio()*target_velocity[2])/
     (this->getAtomicWeightRatio() + 1.0);
 }
 
 // Transform a velocity in lab frame to the center-of-mass frame
-inline void 
-ElasticNeutronNuclearScatteringDistribution::transformVelocityToCenterOfMassFrame( 
+inline void
+ElasticNeutronNuclearScatteringDistribution::transformVelocityToCenterOfMassFrame(
 				       const double center_of_mass_velocity[3],
 				       double velocity[3] ) const
 {
@@ -107,7 +107,7 @@ ElasticNeutronNuclearScatteringDistribution::transformVelocityToCenterOfMassFram
 }
 
 // Transform a velocity in the center-of-mass frame to the lab frame
-inline void ElasticNeutronNuclearScatteringDistribution::transformVelocityToLabFrame( 
+inline void ElasticNeutronNuclearScatteringDistribution::transformVelocityToLabFrame(
 				       const double center_of_mass_velocity[3],
 				       double velocity[3] ) const
 {

@@ -36,23 +36,23 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
   half_distribution;
 
-Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> 
+Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
   half_complete_distribution;
 
-Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
   full_distribution;
 
-Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> 
+Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
   full_complete_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check if the distribution is complete
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              isComplete )
 {
@@ -60,133 +60,133 @@ TEUCHOS_UNIT_TEST(
 
   TEST_ASSERT( full_distribution->isComplete() );
 }
-                  
+
 //---------------------------------------------------------------------------//
 // Check if a subshell is valid
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              isValidSubshell )
 {
   // Half distribution
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                     Data::K_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::L1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::L2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::L3_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M3_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M4_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M5_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N3_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N4_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N5_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N6_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N7_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O3_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O4_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O5_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::P1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::P2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::P3_SUBSHELL ) );
-  TEST_ASSERT( !half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !half_complete_distribution->isValidSubshell(
                                                    Data::Q3_SUBSHELL ) );
-  TEST_ASSERT( !half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !half_complete_distribution->isValidSubshell(
                                               Data::INVALID_SUBSHELL ) );
-  TEST_ASSERT( !half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !half_complete_distribution->isValidSubshell(
                                               Data::UNKNOWN_SUBSHELL ) );
 
   // Full distribution
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                     Data::K_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::L1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::L2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::L3_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M3_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M4_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M5_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N3_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N4_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N5_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N6_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N7_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O3_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O4_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O5_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::P1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::P2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::P3_SUBSHELL ) );
-  TEST_ASSERT( !full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !full_complete_distribution->isValidSubshell(
                                                    Data::Q3_SUBSHELL ) );
-  TEST_ASSERT( !full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !full_complete_distribution->isValidSubshell(
                                               Data::INVALID_SUBSHELL ) );
-  TEST_ASSERT( !full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !full_complete_distribution->isValidSubshell(
                                               Data::UNKNOWN_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the subshell binding energy can be returned
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              getSubshellBindingEnergy )
 {
-  // Half distribution 
+  // Half distribution
   TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
                                                       Data::K_SUBSHELL ),
                           0.088005,
@@ -385,7 +385,7 @@ TEUCHOS_UNIT_TEST(
 
 //---------------------------------------------------------------------------//
 // Check that the subshell occupancy can be returned
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              getSubshellOccupancy )
 {
@@ -693,7 +693,7 @@ TEUCHOS_UNIT_TEST(
                             0.5, 0.25271981255859755, 0.0, Data::M4_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( cross_section, 5.072957333261603, 1e-9 );
-  
+
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
                             0.5, 0.25271981255859755, 0.0, Data::M5_SUBSHELL );
@@ -2162,9 +2162,9 @@ TEUCHOS_UNIT_TEST(
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_ace_file",
 		 &test_ace_file_name,
 		 "Test ACE file name" );
@@ -2172,10 +2172,10 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -2184,54 +2184,54 @@ int main( int argc, char** argv )
   }
 
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
   // Create the subshell order array
-  Teuchos::ArrayView<const double> subshell_endf_des = 
+  Teuchos::ArrayView<const double> subshell_endf_des =
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<Data::SubshellType> subshell_order( 
+  Teuchos::Array<Data::SubshellType> subshell_order(
 						    subshell_endf_des.size() );
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum( 
+    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum(
 					      (unsigned)subshell_endf_des[i] );
   }
 
   // Create the Compton profile subshell converter
   std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
-  
+
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
 			           xss_data_extractor->extractAtomicNumber() );
 
   // Create the compton profile distributions
-  Teuchos::ArrayView<const double> lswd_block = 
+  Teuchos::ArrayView<const double> lswd_block =
     xss_data_extractor->extractLSWDBlock();
 
-  Teuchos::ArrayView<const double> swd_block = 
+  Teuchos::ArrayView<const double> swd_block =
     xss_data_extractor->extractSWDBlock();
 
   MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
     half_compton_profiles( lswd_block.size() ),
     full_compton_profiles( lswd_block.size() );
-  
+
   for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
   {
     unsigned shell_index = lswd_block[shell]; // ignore interp parameter
 
     unsigned num_mom_vals = swd_block[shell_index];
 
-    Teuchos::Array<double> half_momentum_grid( 
+    Teuchos::Array<double> half_momentum_grid(
 				  swd_block( shell_index + 1, num_mom_vals ) );
 
     Teuchos::Array<double> half_profile(
@@ -2274,23 +2274,23 @@ int main( int argc, char** argv )
     if( shell == 0 )
     {
       std::shared_ptr<Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile_copy = std::dynamic_pointer_cast<Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> >( raw_compton_profile );
-      
+
       raw_compton_profile_copy->toStream( std::cout );
     }
 
-    half_compton_profiles[shell].reset( 
-       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+    half_compton_profiles[shell].reset(
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>(
                                                        raw_compton_profile ) );
-    
+
     raw_compton_profile.reset(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
                                                        full_momentum_grid,
                                                        full_profile ) );
-    
-    full_compton_profiles[shell].reset( 
-       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+
+    full_compton_profiles[shell].reset(
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>(
                                                        raw_compton_profile ) );
-    
+
   }
 
   half_complete_distribution.reset(
@@ -2303,7 +2303,7 @@ int main( int argc, char** argv )
 			  half_compton_profiles ) );
 
   half_distribution = half_complete_distribution;
-  
+
   full_complete_distribution.reset(
       new MonteCarlo::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellOccupancies(),
@@ -2312,7 +2312,7 @@ int main( int argc, char** argv )
 			  xss_data_extractor->extractLNEPSBlock(),
                           converter,
 			  full_compton_profiles ) );
-  
+
   full_distribution = full_complete_distribution;
 
   // Clear setup data
@@ -2321,7 +2321,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

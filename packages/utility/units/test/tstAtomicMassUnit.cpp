@@ -45,7 +45,7 @@ TEUCHOS_UNIT_TEST( AtomicMassUnit, initialize_from_cgs_si )
 
   quantity<AtomicMass> mass_si( 1.0*si::kilogram );
 
-  TEST_FLOATING_EQUALITY( mass_cgs.value(), 
+  TEST_FLOATING_EQUALITY( mass_cgs.value(),
 			  6.0221408585491615e+23,
 			  1e-15 );
   TEST_FLOATING_EQUALITY( mass_si.value(),
@@ -61,7 +61,7 @@ TEUCHOS_UNIT_TEST( AtomicMassUnit, initialize_cgs_si )
 
   quantity<si::mass> si_mass( 1.0*amu );
 
-  TEST_FLOATING_EQUALITY( cgs_mass.value(), 
+  TEST_FLOATING_EQUALITY( cgs_mass.value(),
 			  1.660539040e-24,
 			  1e-15 );
   TEST_FLOATING_EQUALITY( si_mass.value(),

@@ -86,7 +86,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::AdjointPhotonState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonState, 
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonState,
 			 "AdjointPhotonState" );
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTON_STATE_HPP

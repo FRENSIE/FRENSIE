@@ -8,8 +8,8 @@
 
 /* Definition of geometry consisting of two volumes. The innermost volume is
  * a cube of half side length 2/sqrt(3)cm centered at (0,0,0) filled with void
- * material. The surrounding volume is a cube of half side length 5cm filled 
- * with the terminal material. 
+ * material. The surrounding volume is a cube of half side length 5cm filled
+ * with the terminal material.
  */
 void test_source_geom()
 {
@@ -28,26 +28,26 @@ void test_source_geom()
   // Define the graveyard volume and set it to the highest node
   TGeoVolume* terminal_cube = gGeoManager->MakeBox( "TERMINAL",
                                                     terminal_med,
-                                                    5.0, 
-                                                    5.0, 
+                                                    5.0,
+                                                    5.0,
                                                     5.0 );
-  
+
   gGeoManager->SetTopVolume( terminal_cube );
   terminal_cube->SetUniqueID( 1 );
 
   // Define the inner cube
-  TGeoVolume* cube = 
-    gGeoManager->MakeBox( "CUBE", 
-                          void_med, 
+  TGeoVolume* cube =
+    gGeoManager->MakeBox( "CUBE",
+                          void_med,
                           1.1547005383792517,
                           1.1547005383792517,
                           1.1547005383792517 );
   cube->SetUniqueID( 2 );
   cube->SetVisibility( kTRUE );
-  
+
   // Add the inner cube as a daughter of the graveyard
   terminal_cube->AddNode( cube, 1 );
-  
+
   // Close the geometry
   gGeoManager->CloseGeometry();
 

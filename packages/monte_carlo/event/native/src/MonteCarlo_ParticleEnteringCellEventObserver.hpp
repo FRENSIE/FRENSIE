@@ -20,7 +20,7 @@
 /*! \defgroup particle_entering_cell_event Particle Entering Cell Event
  * \ingroup entity_events
  *
- * Infrastructure used to acquire information from particle entering cell 
+ * Infrastructure used to acquire information from particle entering cell
  * events.
  */
 
@@ -31,7 +31,7 @@ namespace MonteCarlo{
  */
 class ParticleEnteringCellEventObserver
 {
-  
+
 public:
 
   //! The event tag type
@@ -49,7 +49,7 @@ public:
   { /* ... */ }
 
   //! Update the observer
-  virtual void updateFromParticleEnteringCellEvent( 
+  virtual void updateFromParticleEnteringCellEvent(
 	  const ParticleState& particle,
 	  const Geometry::ModuleTraits::InternalCellHandle cell_entering ) = 0;
 };

@@ -11,7 +11,7 @@
 
 namespace Utility{
 
-/*! \brief An empty struct used for default template parameters 
+/*! \brief An empty struct used for default template parameters
  * \ingroup hdf5_type_traits
  * \ingroup compare_policy
  */

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw11NuclearScatteringEnergyDistribution.cpp
 //! \author Eli Moll
 //! \brief  The nuclear law 11 scattering energy distribution class
@@ -23,8 +23,8 @@
 namespace MonteCarlo{
 
 // Constructor
-AceLaw11NuclearScatteringEnergyDistribution::AceLaw11NuclearScatteringEnergyDistribution( 
-						 EnergyDistribution& a_distribution, 
+AceLaw11NuclearScatteringEnergyDistribution::AceLaw11NuclearScatteringEnergyDistribution(
+						 EnergyDistribution& a_distribution,
 						 EnergyDistribution& b_distribution,
 						 double restriction_energy )
   : NuclearScatteringEnergyDistribution( 1u ),
@@ -38,27 +38,27 @@ AceLaw11NuclearScatteringEnergyDistribution::AceLaw11NuclearScatteringEnergyDist
 }
 
 // Sample a scattering energy
-double AceLaw11NuclearScatteringEnergyDistribution::sampleEnergy( 
+double AceLaw11NuclearScatteringEnergyDistribution::sampleEnergy(
 						    const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0 );
   testPrecondition( energy < std::numeric_limits<double>::infinity() );
-  
+
   double outgoing_energy;
   double a_sampled;
   double b_sampled;
-  
+
   // Sample the distribution of a(E)
-  if( energy >= d_a_distribution.front().first and 
+  if( energy >= d_a_distribution.front().first and
       energy <= d_a_distribution.back().first )
   {
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
     lower_bin_boundary = d_a_distribution.begin();
     upper_bin_boundary = d_a_distribution.end();
-    
-    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
+
+    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>(
 							    lower_bin_boundary,
 							    upper_bin_boundary,
 							    energy );
@@ -69,33 +69,33 @@ double AceLaw11NuclearScatteringEnergyDistribution::sampleEnergy(
     // Calculate the interpolation fraction
     double interpolation_fraction = (energy - lower_bin_boundary->first)/
       (upper_bin_boundary->first - lower_bin_boundary->first);
-      
+
     a_sampled = (upper_bin_boundary->second -
-                lower_bin_boundary->second)*interpolation_fraction + 
+                lower_bin_boundary->second)*interpolation_fraction +
                 lower_bin_boundary->second;
   }
-  else if( energy < d_a_distribution.front().first ) 
+  else if( energy < d_a_distribution.front().first )
   {
-    // If below the energy grid, use the lowest possible energy  
+    // If below the energy grid, use the lowest possible energy
     a_sampled = d_a_distribution.front().second;
   }
   else
-  {  
+  {
     // If above the energy grid, use the highest possible energy
     a_sampled = d_a_distribution.back().second;
   }
-  
-  
+
+
   // Sample the distribution of b(E)
-  if( energy >= d_b_distribution.front().first and 
+  if( energy >= d_b_distribution.front().first and
       energy <= d_b_distribution.back().first )
   {
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
     lower_bin_boundary = d_b_distribution.begin();
     upper_bin_boundary = d_b_distribution.end();
-    
-    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
+
+    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>(
 							    lower_bin_boundary,
 							    upper_bin_boundary,
 							    energy );
@@ -106,28 +106,28 @@ double AceLaw11NuclearScatteringEnergyDistribution::sampleEnergy(
     // Calculate the interpolation fraction
     double interpolation_fraction = (energy - lower_bin_boundary->first)/
       (upper_bin_boundary->first - lower_bin_boundary->first);
-      
+
     b_sampled = (upper_bin_boundary->second -
-                lower_bin_boundary->second)*interpolation_fraction + 
+                lower_bin_boundary->second)*interpolation_fraction +
                 lower_bin_boundary->second;
   }
-  else if( energy < d_b_distribution.front().first ) 
+  else if( energy < d_b_distribution.front().first )
   {
-    // If below the energy grid, use the lowest possible energy  
+    // If below the energy grid, use the lowest possible energy
     b_sampled = d_b_distribution.front().second;
   }
   else
-  {  
+  {
     // If above the energy grid, use the highest possible energy
     b_sampled = d_b_distribution.back().second;
-  }  
-  
-  outgoing_energy = Utility::WattDistribution::sample( 
-                                              energy, 
+  }
+
+  outgoing_energy = Utility::WattDistribution::sample(
+                                              energy,
                                               a_sampled,
                                               b_sampled,
-                                              d_restriction_energy );  
-  
+                                              d_restriction_energy );
+
   return outgoing_energy;
 }
 

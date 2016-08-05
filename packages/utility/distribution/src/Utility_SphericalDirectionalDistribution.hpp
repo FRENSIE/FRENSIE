@@ -28,21 +28,21 @@ class SphericalDirectionalDistribution : public DirectionalDistribution
 {
 
 private:
-  
+
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
 
   //! Constructor
-  SphericalDirectionalDistribution( 
+  SphericalDirectionalDistribution(
 		   const std::shared_ptr<OneDDistribution>& theta_distribution,
                    const std::shared_ptr<OneDDistribution>& mu_distribution,
                    const Axis axis = Z_AXIS );
 
   //! Destructor
   ~SphericalDirectionalDistribution()
-  { /* ... */ } 
+  { /* ... */ }
 
   //! Evaluate the directional distribution
   double evaluate( const double cartesian_point[3] ) const;
@@ -60,10 +60,10 @@ public:
   bool hasSameBounds( const DirectionalDistribution& distribution ) const;
 
 protected:
-  
+
   //! Convert a cartesian coordinate to a spherical coordinate
   void convertCartesianCoordsToSpherical( const double cartesian_point[3],
-					  double spherical_point[3] ) const; 
+					  double spherical_point[3] ) const;
 
 private:
 

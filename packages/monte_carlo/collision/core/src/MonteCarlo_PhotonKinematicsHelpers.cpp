@@ -28,7 +28,7 @@ double calculateComptonLineEnergy( const double initial_energy,
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
-  
+
   return initial_energy/
     (1.0 + initial_energy*(1.0 - scattering_angle_cosine)/
      Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -53,15 +53,15 @@ double calculateElectronMomentumProjection(
   const double numerator = final_energy - initial_energy +
     initial_energy*final_energy*(1.0 - scattering_angle_cosine)/
     Utility::PhysicalConstants::electron_rest_mass_energy;
-  
-  const double denominator = sqrt( final_energy*final_energy + 
-				   initial_energy*initial_energy - 
+
+  const double denominator = sqrt( final_energy*final_energy +
+				   initial_energy*initial_energy -
 				   2*initial_energy*final_energy*
 				   scattering_angle_cosine );
 
   // Make sure the denominator is valid
   testPrecondition( denominator > 0.0 );
-  
+
   return numerator/denominator;
 }
 
@@ -80,11 +80,11 @@ double calculateMaxElectronMomentumProjection(
   testPrecondition( initial_energy >= binding_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );  
+  testPrecondition( scattering_angle_cosine <= 1.0 );
 
   const double arg = initial_energy*(initial_energy-binding_energy)*
     (1.0 - scattering_angle_cosine);
-  
+
   double pz_max = ( -binding_energy + arg/
 		    Utility::PhysicalConstants::electron_rest_mass_energy )/
     sqrt( 2*arg + binding_energy*binding_energy );
@@ -96,7 +96,7 @@ double calculateMaxElectronMomentumProjection(
 }
 
 // Calculate the Doppler broadened energy
-/*! \details the electron momentum projection must be in me*c units. All 
+/*! \details the electron momentum projection must be in me*c units. All
  * energies must be in MeV. If the determinant that is calculated is less
  * than zero, an outgoing energy of 0.0 will be returned and the
  * energetically_possible boolean inout arg will be set to false
@@ -115,16 +115,16 @@ double calculateDopplerBroadenedEnergy(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double pz_sqr = 
+  const double pz_sqr =
     electron_momentum_projection*electron_momentum_projection;
-  const double compton_line_ratio = 
+  const double compton_line_ratio =
     1.0 + initial_energy/Utility::PhysicalConstants::electron_rest_mass_energy*
     (1.0 - scattering_angle_cosine);
-  
+
   const double a = pz_sqr - compton_line_ratio*compton_line_ratio;
   const double b = -2*(pz_sqr*scattering_angle_cosine - compton_line_ratio);
   const double c = pz_sqr - 1.0;
-  
+
   const double discriminant = b*b - 4*a*c;
 
   double final_energy;
@@ -148,7 +148,7 @@ double calculateDopplerBroadenedEnergy(
   else
   {
     final_energy = 0.0;
-    
+
     energetically_possible = false;
   }
 
@@ -156,7 +156,7 @@ double calculateDopplerBroadenedEnergy(
   testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( final_energy ));
   testPostcondition( final_energy < initial_energy );
   testPostcondition( final_energy >= 0.0 );
-  remember( (test_pz = calculateElectronMomentumProjection( 
+  remember( (test_pz = calculateElectronMomentumProjection(
 						   initial_energy,
 						   final_energy,
 						   scattering_angle_cosine )));

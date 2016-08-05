@@ -51,11 +51,11 @@ public:
   void getSimulationTime( double& simulation_time ) const;
 
   //! Set the last history simulated
-  void setLastHistorySimulated( 
+  void setLastHistorySimulated(
 			     const unsigned long long last_history_simulated );
 
   //! Get the last history simulated
-  void getLastHistorySimulated( 
+  void getLastHistorySimulated(
 			    unsigned long long& last_history_simulated ) const;
 
   //! Set the number of histories simulated

@@ -32,7 +32,7 @@ TEUCHOS_UNIT_TEST( InverseAngstromUnit, initialize )
   quantity<InverseAngstrom> inverse_angstrom_quantity( 1.0*inverse_angstrom );
 
   TEST_EQUALITY_CONST( inverse_angstrom_quantity.value(), 1.0 );
-  
+
   inverse_angstrom_quantity = 2.0*inverse_angstrom;
 
   TEST_EQUALITY_CONST( inverse_angstrom_quantity.value(), 2.0 );
@@ -45,9 +45,9 @@ TEUCHOS_UNIT_TEST( InverseAngstromUnit, initialize_from_angstrom )
   quantity<InverseAngstrom> inverse_angstrom_quantity( 1.0/angstrom );
 
   TEST_EQUALITY_CONST( inverse_angstrom_quantity.value(), 1.0 );
-  
+
   inverse_angstrom_quantity = 2.0/angstrom;
-  
+
   TEST_EQUALITY_CONST( inverse_angstrom_quantity.value(), 2.0 );
 }
 

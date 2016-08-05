@@ -22,7 +22,7 @@
 
 namespace DataGen{
 
-//! The xsdir 
+//! The xsdir
 class Xsdir
 {
 
@@ -35,7 +35,7 @@ public:
 
   //! Typedef for the id entry map
   typedef boost::unordered_map<unsigned,Teuchos::RCP<XsdirEntry> > IdEntryMap;
-  
+
   //! Constructor
   Xsdir( const std::string& xsdir_file_name );
 

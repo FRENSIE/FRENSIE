@@ -12,7 +12,7 @@
 namespace MonteCarlo{
 
 //! Calculate the adjoint Compton line energy
-double calculateAdjointComptonLineEnergy( 
+double calculateAdjointComptonLineEnergy(
 				        const double incoming_energy,
 				        const double scattering_angle_cosine );
 
@@ -25,7 +25,7 @@ double calculateMinScatteringAngleCosine( const double incoming_energy,
 					  const double max_energy );
 
 //! Calculate the absolute minimum scattering angle cosine
-double calculateAbsoluteMinScatteringAngleCosine( 
+double calculateAbsoluteMinScatteringAngleCosine(
 						const double incoming_energy );
 
 //! Calculate the min inverse energy gain ratio
@@ -33,11 +33,11 @@ double calculateMinInverseEnergyGainRatio( const double incoming_energy,
 					   const double max_energy );
 
 //! Calculate the absolute min inverse energy gain ratio
-double calculateAbsoluteMinInverseEnergyGainRatio( 
+double calculateAbsoluteMinInverseEnergyGainRatio(
 						const double incoming_energy );
 
 //! Calculate the electron momentum projection
-double calculateElectronMomentumProjectionAdjoint( 
+double calculateElectronMomentumProjectionAdjoint(
 					const double initial_energy,
 					const double final_energy,
 					const double scattering_angle_cosine );

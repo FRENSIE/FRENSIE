@@ -38,13 +38,13 @@ Teuchos::RCP<MonteCarlo::NuclearReaction> nuclear_reaction;
 //---------------------------------------------------------------------------//
 void initializeReaction()
 {
-  MonteCarlo::NeutronNuclearScatteringDistributionACEFactory 
+  MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
     factory( test_ace_table_name,
 	     ace_file_handler->getTableAtomicWeightRatio(),
 	     *xss_data_extractor );
-  
+
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
-  
+
   factory.createScatteringDistribution( MonteCarlo::N__ANYTHING_REACTION,
 					scattering_dist );
 
@@ -56,20 +56,20 @@ void initializeReaction()
 
   unsigned threshold_index = (unsigned)sig_block[0];
   unsigned num_energies = (unsigned)sig_block[1];
-  
+
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.deepCopy( sig_block( 2, num_energies ) );
 
-  Teuchos::ArrayView<const double> dlw_block = 
+  Teuchos::ArrayView<const double> dlw_block =
     xss_data_extractor->extractDLWBlock();
 
-  Teuchos::ArrayView<const double> multiplicity_energy_grid = 
+  Teuchos::ArrayView<const double> multiplicity_energy_grid =
     dlw_block( 2, (unsigned)dlw_block[1] );
 
-  Teuchos::ArrayView<const double> multiplicity = 
+  Teuchos::ArrayView<const double> multiplicity =
     dlw_block( 2 + (unsigned)dlw_block[1], (unsigned)dlw_block[1] );
 
-  nuclear_reaction.reset( 
+  nuclear_reaction.reset(
 		        new MonteCarlo::EnergyDependentNeutronMultiplicityReaction(
 				       MonteCarlo::N__ANYTHING_REACTION,
 			               ace_file_handler->getTableTemperature(),
@@ -89,14 +89,14 @@ void initializeReaction()
 TEUCHOS_UNIT_TEST( EnergyDependentNeutronMultiplicityReaction,
 		   getNumberOfEmittedNeutrons )
 {
-  unsigned number_of_emitted_neutrons = 
+  unsigned number_of_emitted_neutrons =
     nuclear_reaction->getNumberOfEmittedNeutrons( 1e-11 );
 
   TEST_EQUALITY_CONST( number_of_emitted_neutrons, 0.0 );
 
-  number_of_emitted_neutrons = 
+  number_of_emitted_neutrons =
     nuclear_reaction->getNumberOfEmittedNeutrons( 30.0 );
-  
+
   TEST_EQUALITY_CONST( number_of_emitted_neutrons, 0.0 );
 
   std::vector<double> fake_stream( 2 );
@@ -108,11 +108,11 @@ TEUCHOS_UNIT_TEST( EnergyDependentNeutronMultiplicityReaction,
     nuclear_reaction->getNumberOfEmittedNeutrons( 150.0 );
 
   TEST_EQUALITY_CONST( number_of_emitted_neutrons, 1.0 );
-  
+
   number_of_emitted_neutrons =
     nuclear_reaction->getNumberOfEmittedNeutrons( 150.0 );
 
-  TEST_EQUALITY_CONST( number_of_emitted_neutrons, 2.0 );  
+  TEST_EQUALITY_CONST( number_of_emitted_neutrons, 2.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -129,10 +129,10 @@ int main( int argc, char** argv)
 		 &test_ace_table_name,
 		 "Test basic ACE table name in basic ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {

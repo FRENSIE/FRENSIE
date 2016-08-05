@@ -12,8 +12,8 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const CollisionModuleInterface<CollisionHandler>::ExternalMaterialHandle 
-CollisionModuleInterface<CollisionHandler>::invalid_external_material_handle = 
+const CollisionModuleInterface<CollisionHandler>::ExternalMaterialHandle
+CollisionModuleInterface<CollisionHandler>::invalid_external_material_handle =
   ModuleTraits::invalid_internal_material_handle;
 
 } // end MonteCarlo namespace

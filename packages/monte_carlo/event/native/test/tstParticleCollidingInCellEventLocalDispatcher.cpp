@@ -30,7 +30,7 @@ std::shared_ptr<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultipl
 std::shared_ptr<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
     estimator_2;
 
-std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventLocalDispatcher> 
+std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventLocalDispatcher>
   dispatcher( new MonteCarlo::ParticleCollidingInCellEventLocalDispatcher( 0 ) );
 
 //---------------------------------------------------------------------------//
@@ -38,12 +38,12 @@ std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventLocalDispatcher>
 //---------------------------------------------------------------------------//
 // Initialize the estimator
 template<typename CellCollisionFluxEstimator>
-void initializeCellCollisionFluxEstimator( 
+void initializeCellCollisionFluxEstimator(
 			  const unsigned estimator_id,
 			  std::shared_ptr<CellCollisionFluxEstimator>& estimator )
-{  
+{
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> 
+  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
     cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
@@ -62,7 +62,7 @@ void initializeCellCollisionFluxEstimator(
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-  
+
   estimator->setParticleTypes( particle_types );
 }
 
@@ -77,7 +77,7 @@ TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher, getCellId )
 
 //---------------------------------------------------------------------------//
 // Check that the number of observers attached to the disp. can be returned
-TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher,
 		   getNumberOfObservers )
 {
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
@@ -91,15 +91,15 @@ TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher, attachObserver )
   initializeCellCollisionFluxEstimator( 1u, estimator_2 );
 
   std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventObserver> observer_1 =
-    std::dynamic_pointer_cast<MonteCarlo::ParticleCollidingInCellEventObserver>( 
+    std::dynamic_pointer_cast<MonteCarlo::ParticleCollidingInCellEventObserver>(
 								 estimator_1 );
   std::shared_ptr<MonteCarlo::ParticleCollidingInCellEventObserver> observer_2 =
     std::dynamic_pointer_cast<MonteCarlo::ParticleCollidingInCellEventObserver>(
 								 estimator_2 );
-  
+
   dispatcher->attachObserver( estimator_1->getId(), observer_1 );
   dispatcher->attachObserver( estimator_2->getId(), observer_2 );
-  
+
   observer_1.reset();
   observer_2.reset();
 
@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher, attachObserver )
 
 //---------------------------------------------------------------------------//
 // Check that a collision event can be dispatched
-TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher,
 		   dispatchParticleCollidingInCellEvent )
 {
   MonteCarlo::PhotonState particle( 0ull );
@@ -140,14 +140,14 @@ TEUCHOS_UNIT_TEST( ParticleCollidingInCellEventDispatcher, detachObserver )
 
   TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
   TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 
   // Remove nonexistent estimator
   dispatcher->detachObserver( 2u );
 
   TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
   TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//

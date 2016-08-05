@@ -46,7 +46,7 @@ ParticleHistoryObserverHDF5FileHandler::ParticleHistoryObserverHDF5FileHandler(
       break;
     }
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Ownership Constructor Error" );
 }
 
@@ -71,12 +71,12 @@ ParticleHistoryObserverHDF5FileHandler::~ParticleHistoryObserverHDF5FileHandler(
 }
 
 // Set the simulation time
-void ParticleHistoryObserverHDF5FileHandler::setSimulationTime( 
+void ParticleHistoryObserverHDF5FileHandler::setSimulationTime(
                                                  const double simulation_time )
 {
   // Make sure the simulation time is valid
   testPrecondition( simulation_time > 0.0 );
-  
+
   try{
     d_hdf5_file->writeValueToGroupAttribute( simulation_time,
 					     s_pho_group_loc_name,
@@ -97,7 +97,7 @@ void ParticleHistoryObserverHDF5FileHandler::getSimulationTime( double& simulati
 }
 
 // Set the last history simulated
-void ParticleHistoryObserverHDF5FileHandler::setLastHistorySimulated( 
+void ParticleHistoryObserverHDF5FileHandler::setLastHistorySimulated(
 			     const unsigned long long last_history_simulated )
 {
   try{
@@ -105,12 +105,12 @@ void ParticleHistoryObserverHDF5FileHandler::setLastHistorySimulated(
 					     s_pho_group_loc_name,
 					     "last_history_simulated" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Set Last History Simulated Error" );
 }
 
 // Get the last history simulated
-void ParticleHistoryObserverHDF5FileHandler::getLastHistorySimulated( 
+void ParticleHistoryObserverHDF5FileHandler::getLastHistorySimulated(
 			    unsigned long long& last_history_simulated ) const
 {
   try{
@@ -118,7 +118,7 @@ void ParticleHistoryObserverHDF5FileHandler::getLastHistorySimulated(
 					      s_pho_group_loc_name,
 					      "last_history_simulated" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Get Last History Simulated Error" );
 }
 
@@ -128,13 +128,13 @@ void ParticleHistoryObserverHDF5FileHandler::setNumberOfHistoriesSimulated(
 {
   // Make sure the number of histories simulated is valid
   testPrecondition( number_histories_simulated > 0ull );
-  
+
   try{
     d_hdf5_file->writeValueToGroupAttribute( number_histories_simulated,
 					     s_pho_group_loc_name,
 					     "number_of_histories_simulated" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Set Number of Histories Simulated Error" );
 }
 
@@ -147,7 +147,7 @@ void ParticleHistoryObserverHDF5FileHandler::getNumberOfHistoriesSimulated(
 					      s_pho_group_loc_name,
 					      "number_of_histories_simulated");
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Get Number of Histories Simulated Error" );
 }
 

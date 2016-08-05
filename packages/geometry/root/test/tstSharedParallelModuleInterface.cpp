@@ -44,7 +44,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, parallel_ray_trace )
 
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
-    { 
+    {
       std::shared_ptr<Geometry::Ray> ray;
       // Initialize the ray
       if( Utility::GlobalOpenMPSession::getThreadId()%6 == 0 )
@@ -64,35 +64,35 @@ TEUCHOS_UNIT_TEST( ModuleInterface, parallel_ray_trace )
         Geometry::ModuleInterface<Geometry::Root>::findCellContainingStartRay(
                                                                         *ray );
 
-      Geometry::ModuleInterface<Geometry::Root>::setInternalRay( 
+      Geometry::ModuleInterface<Geometry::Root>::setInternalRay(
                                                             *ray, start_cell );
     }
 
-    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].first =
       Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
 
     // Fire a ray through the geometry
     Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-    
-    double distance_to_boundary = 
+
+    double distance_to_boundary =
       Geometry::ModuleInterface<Geometry::Root>::fireInternalRay( surface_hit );
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].first =
       distance_to_boundary;
- 
+
     // Advance the ray to the cell boundary
     double surface_normal[3];
-    
+
     bool reflection = Geometry::ModuleInterface<Geometry::Root>::advanceInternalRayToCellBoundary( surface_normal );
-    
-    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].second = 
+
+    cell_ids[Utility::GlobalOpenMPSession::getThreadId()].second =
       Geometry::Root::findCellContainingInternalRay();
 
     // Fire a ray through the geometry
-    distance_to_boundary = 
+    distance_to_boundary =
       Geometry::ModuleInterface<Geometry::Root>::fireInternalRay( surface_hit );
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].second = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].second =
       distance_to_boundary;
 
     // Advance the ray a substep
@@ -101,8 +101,8 @@ TEUCHOS_UNIT_TEST( ModuleInterface, parallel_ray_trace )
     // Change the ray direction
     double new_direction[3];
 
-    Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
-          0.0, 
+    Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
+          0.0,
           0.0,
           Geometry::ModuleInterface<Geometry::Root>::getInternalRayDirection(),
           new_direction );
@@ -113,9 +113,9 @@ TEUCHOS_UNIT_TEST( ModuleInterface, parallel_ray_trace )
     // Fire a ray through the geometry
     distance_to_boundary = Geometry::ModuleInterface<Geometry::Root>::fireInternalRay( surface_hit );
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].third = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].third =
       distance_to_boundary;
-  
+
     // Advance the ray to the cell boundary
     reflection = Geometry::ModuleInterface<Geometry::Root>::advanceInternalRayToCellBoundary( surface_normal );
 
@@ -129,10 +129,10 @@ TEUCHOS_UNIT_TEST( ModuleInterface, parallel_ray_trace )
                                Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle> >
     correct_cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i]( 2, 1, 3 );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
 
   Teuchos::Array<Utility::Trip<double,double,double> >
@@ -163,10 +163,10 @@ int main( int argc, char** argv )
 		 &threads,
 		 "Number of threads to use" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -185,19 +185,19 @@ int main( int argc, char** argv )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
 
   // Initialize Root
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep =
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
-  
+
   Geometry::RootInstanceFactory::initializeRoot( *geom_rep );
 
   // Initialize the interface
   Geometry::ModuleInterface<Geometry::Root>::initialize();
-  
+
   // Enable thread support with the interface
   Geometry::ModuleInterface<Geometry::Root>::enableThreadSupport( threads );
-  
+
   mpiSession.barrier();
-  
+
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 

@@ -36,7 +36,7 @@ bool Xsdir::compareIdsAndVersions( const Teuchos::RCP<XsdirEntry>& entry_a,
 						     entry_a->getTableName() );
   unsigned zaid_b = XsdirEntry::extractZaidFromTableName(
 						     entry_b->getTableName() );
-  
+
   if( zaid_a < zaid_b )
     return true;
   else if( zaid_a == zaid_b )
@@ -81,15 +81,15 @@ Xsdir::Xsdir( const std::string& xsdir_file_name )
 
 	XsdirEntry::TableType table_type = entry->getTableType();
 
-	unsigned zaid = 
+	unsigned zaid =
 	  XsdirEntry::extractZaidFromTableName( entry->getTableName() );
-	
+
 	switch( table_type )
 	{
 	  case XsdirEntry::CONTINUOUS_ENERGY_NEUTRON_TABLE:
 	  {
 	    d_ce_neutron_xsdir_entries.push_back( entry );
-	    
+
 	    break;
 	  }
 	  case XsdirEntry::S_ALPHA_BETA_TABLE:
@@ -100,9 +100,9 @@ Xsdir::Xsdir( const std::string& xsdir_file_name )
 	  }
 	  case XsdirEntry::ELECTRON_PHOTON_RELAXATION_TABLE:
 	  {
-	    unsigned atomic_number = 
+	    unsigned atomic_number =
 	      XsdirEntry::extractAtomicNumberFromZaid( zaid );
-	    
+
 	    d_epr_xsdir_entries_map[atomic_number] = entry;
 
 	    d_epr_xsdir_entries.push_back( entry );
@@ -135,7 +135,7 @@ Xsdir::Xsdir( const std::string& xsdir_file_name )
 	     d_photonuclear_xsdir_entries.end(),
 	     Xsdir::compareIdsAndVersions );
 
-  IdEntriesMap::iterator zaid_entries_pair = 
+  IdEntriesMap::iterator zaid_entries_pair =
     d_photonuclear_xsdir_entries_map.begin();
 
   while( zaid_entries_pair != d_photonuclear_xsdir_entries_map.end() )
@@ -143,7 +143,7 @@ Xsdir::Xsdir( const std::string& xsdir_file_name )
     std::sort( zaid_entries_pair->second.begin(),
 	       zaid_entries_pair->second.end(),
 	       Xsdir::compareVersions );
-    
+
     ++zaid_entries_pair;
   }
 
@@ -160,28 +160,28 @@ void Xsdir::exportInfo( Teuchos::ParameterList& parameter_list ) const
   exportSAlphaBetaEntries( parameter_list );
   exportEPREntries( parameter_list );
 
-  Teuchos::ParameterList& misc_list = 
+  Teuchos::ParameterList& misc_list =
     parameter_list.sublist( "Miscellaneous" );
-  
+
   exportPhotonuclearEntries( misc_list );
 }
 
 // Export the continuous energy neutron entries
-void Xsdir::exportCENeutronEntries( 
+void Xsdir::exportCENeutronEntries(
 				 Teuchos::ParameterList& parameter_list ) const
 {
   for( unsigned i = 0; i < d_ce_neutron_xsdir_entries.size(); ++i )
   {
-    Teuchos::ParameterList& sublist = parameter_list.sublist( 
+    Teuchos::ParameterList& sublist = parameter_list.sublist(
 			      d_ce_neutron_xsdir_entries[i]->getTableAlias() );
-    
+
     d_ce_neutron_xsdir_entries[i]->addInfoToParameterList( sublist );
-    
+
     // Add the photonuclear data if there is any (use most recent - sorted)
-    unsigned zaid = XsdirEntry::extractZaidFromTableName( 
+    unsigned zaid = XsdirEntry::extractZaidFromTableName(
 			       d_ce_neutron_xsdir_entries[i]->getTableName() );
-    
-    IdEntriesMap::const_iterator zaid_entries_pair = 
+
+    IdEntriesMap::const_iterator zaid_entries_pair =
       d_photonuclear_xsdir_entries_map.find( zaid );
 
     if( zaid_entries_pair != d_photonuclear_xsdir_entries_map.end() )
@@ -190,7 +190,7 @@ void Xsdir::exportCENeutronEntries(
     // Add the photoatomic and electroatomic data
     unsigned atomic_number = XsdirEntry::extractAtomicNumberFromZaid( zaid );
 
-    IdEntryMap::const_iterator z_entries_pair = 
+    IdEntryMap::const_iterator z_entries_pair =
       d_epr_xsdir_entries_map.find( atomic_number );
 
     if( z_entries_pair != d_epr_xsdir_entries_map.end() )
@@ -199,12 +199,12 @@ void Xsdir::exportCENeutronEntries(
 }
 
 // Export the S(alpha,beta) entries
-void Xsdir::exportSAlphaBetaEntries( 
+void Xsdir::exportSAlphaBetaEntries(
 				 Teuchos::ParameterList& parameter_list ) const
 {
   for( unsigned i = 0; i < d_sab_xsdir_entries.size(); ++i )
   {
-    Teuchos::ParameterList& sab_list = 
+    Teuchos::ParameterList& sab_list =
       parameter_list.sublist( d_sab_xsdir_entries[i]->getTableAlias() );
 
     d_sab_xsdir_entries[i]->addInfoToParameterList( sab_list );
@@ -212,14 +212,14 @@ void Xsdir::exportSAlphaBetaEntries(
 }
 
 // Export the photonuclear entries
-void Xsdir::exportPhotonuclearEntries( 
+void Xsdir::exportPhotonuclearEntries(
 				  Teuchos::ParameterList& parameter_list) const
 {
   for( unsigned i = 0; i < d_photonuclear_xsdir_entries.size(); ++i )
   {
-    Teuchos::ParameterList& sublist = parameter_list.sublist( 
+    Teuchos::ParameterList& sublist = parameter_list.sublist(
 			    d_photonuclear_xsdir_entries[i]->getTableAlias() );
-    
+
     d_photonuclear_xsdir_entries[i]->addInfoToParameterList( sublist );
   }
 }

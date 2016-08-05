@@ -20,7 +20,7 @@ namespace DataGen{
 
 // Constructor
 FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
-	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  const Teuchos::RCP<Utility::OneDDistribution>&
 	  zero_temp_elastic_cross_section,
           const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	  cm_scattering_distribution,
@@ -45,12 +45,12 @@ FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
   testPrecondition( beta > Utility::calculateBetaMin( E, kT ) );
-  
+
   updateCachedValues();
 }
 
 // Set the beta and energy values
-void FreeGasElasticMarginalAlphaFunction::setIndependentVariables( 
+void FreeGasElasticMarginalAlphaFunction::setIndependentVariables(
 							     const double beta,
 							     const double E )
 {
@@ -83,24 +83,24 @@ double FreeGasElasticMarginalAlphaFunction::getNormalizationConstant() const
 }
 
 // Evaluate the marginal PDF
-double FreeGasElasticMarginalAlphaFunction::operator()( const double alpha ) 
+double FreeGasElasticMarginalAlphaFunction::operator()( const double alpha )
 {
   // Make sure the alpha value is valid
   testPrecondition( alpha >= d_alpha_min );
   testPrecondition( alpha <= d_alpha_max );
-  
+
   return d_sab_function( alpha, d_beta, d_E )/d_norm_constant;
 }
-  
+
 // Evaluate the marginal CDF
-double FreeGasElasticMarginalAlphaFunction::evaluateCDF( const double alpha ) 
+double FreeGasElasticMarginalAlphaFunction::evaluateCDF( const double alpha )
 {
   // Make sure the alpha value is valid
   testPrecondition( alpha >= d_alpha_min );
   testPrecondition( alpha <= d_alpha_max );
-  
+
   // Find nearest cached evaluation of cdf
-  std::list<Utility::Pair<double,double> >::iterator lower_cdf_point = 
+  std::list<Utility::Pair<double,double> >::iterator lower_cdf_point =
     d_cached_cdf_values.begin();
 
   lower_cdf_point = Utility::Search::binaryLowerBound<Utility::FIRST>(
@@ -116,7 +116,7 @@ double FreeGasElasticMarginalAlphaFunction::evaluateCDF( const double alpha )
 				    alpha,
 				    cdf_value,
 				    cdf_value_error );
-  
+
   cdf_value += lower_cdf_point->second;
 
   // Cache the new cdf value
@@ -142,7 +142,7 @@ void FreeGasElasticMarginalAlphaFunction::updateCachedValues()
   // Calculate the norm constant
   double norm_constant_error;
 
-  boost::function<double (double alpha)> sab_function_wrapper = 
+  boost::function<double (double alpha)> sab_function_wrapper =
     boost::bind<double>( d_sab_function, _1, d_beta, d_E );
 
   d_gkq_set.integrateAdaptively<15>( sab_function_wrapper,

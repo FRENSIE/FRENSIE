@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_EventHandler.hpp
 //! \author Alex Robinson
 //! \brief  Event handler class declaration.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_EVENT_HANDLER_HPP
@@ -34,7 +34,7 @@
 
 namespace MonteCarlo{
 
-/*! The event handler class 
+/*! The event handler class
  * \details The event handler has been designed as a mix-in class so that
  * it is easier to add new events. In addition, the individual events are
  * better abstracted and easier to maintain when there is a handler for
@@ -52,11 +52,11 @@ public:
 
   //! Constructor
   EventHandler();
- 
+
   //! Destructor
   ~EventHandler()
   { /* ... */ }
-  
+
   //! Add an entity observer to the handler
   template<typename ObserverType, typename EntityHandle>
   void addEntityEventObserver( const std::shared_ptr<ObserverType>& observer,
@@ -70,7 +70,7 @@ public:
   unsigned getNumberOfObservers() const;
 
   //! Check if an observer with the given id exists
-  bool doesObserverExist( 
+  bool doesObserverExist(
                      const ParticleHistoryObserver::idType observer_id ) const;
 
   //! Enable support for multiple threads
@@ -89,19 +89,19 @@ public:
   void resetObserverData();
 
   //! Reduce observer data on all processes in comm and collect on the root
-  void reduceObserverData( 
+  void reduceObserverData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process );
 
   //! Export the observer data and process
-  void exportObserverData( 
+  void exportObserverData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const unsigned long long last_history_number,
                     const unsigned long long histories_completed,
                     const double start_time,
                     const double end_time,
                     const bool process_data );
-  
+
 private:
 
   // Struct for iterating through all observer event tags
@@ -119,7 +119,7 @@ private:
      * BeginEventTag tag
      */
     template<typename Observer>
-    static void registerGlobalObserverWithTag( 
+    static void registerGlobalObserverWithTag(
                                    EventHandler& event_handler,
                                    const std::shared_ptr<Observer>& observer );
   };
@@ -137,7 +137,7 @@ private:
 
     //! End global registration iteration
     template<typename Observer>
-    static void registerGlobalObserverWithTag( 
+    static void registerGlobalObserverWithTag(
                                     EventHandler& event_handler,
                                     const std::shared_ptr<Observer>& observer);
   };
@@ -156,7 +156,7 @@ private:
   void registerGlobalObserver( const std::shared_ptr<Observer>& observer );
 
   // Add the register observer with tag methods from the base classes
-  // Unfortunately, base class methods with the same name will not be 
+  // Unfortunately, base class methods with the same name will not be
   // seen by the compiler unless there is a using declaration
   using ParticleCollidingInCellEventHandler::registerObserverWithTag;
   using ParticleCrossingSurfaceEventHandler::registerObserverWithTag;
@@ -167,7 +167,7 @@ private:
 
   // Typedef for the observers container
   typedef boost::unordered_map<ParticleHistoryObserver::idType,
-                               std::shared_ptr<ParticleHistoryObserver> > 
+                               std::shared_ptr<ParticleHistoryObserver> >
   ParticleHistoryObservers;
 
   // The observers

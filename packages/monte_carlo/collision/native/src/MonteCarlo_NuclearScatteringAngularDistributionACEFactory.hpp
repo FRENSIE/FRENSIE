@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp
 //! \author Alex Robinson, Alex Bennett
 //! \brief  Nuclear scattering angular distribution factory class declaration
@@ -27,13 +27,13 @@ class NuclearScatteringAngularDistributionACEFactory
 public:
 
   //! Create the angular distribution
-  static void createDistribution( 
+  static void createDistribution(
 	   const Teuchos::ArrayView<const double>& and_block_array,
 	   const unsigned and_block_array_start_index,
 	   const std::string& table_name,
 	   const unsigned reaction,
 	   Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
-  
+
   //! Create an isotropic angular distribution
   static void createIsotropicDistribution(
 	   Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
@@ -47,7 +47,7 @@ private:
   NuclearScatteringAngularDistributionACEFactory();
   
   // The default (isotropic) angle cosine distribution
-  static Teuchos::RCP<Utility::TabularOneDDistribution> 
+  static Teuchos::RCP<Utility::TabularOneDDistribution>
   isotropic_angle_cosine_dist;
   
 };

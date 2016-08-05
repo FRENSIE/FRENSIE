@@ -31,10 +31,10 @@ StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer
 template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
-ComptonProfile::ProfileQuantity 
+ComptonProfile::ProfileQuantity
 StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::evaluate( const ComptonProfile::MomentumQuantity momentum ) const
 {
-  StoredProfileQuantity stored_profile = d_raw_compton_profile->evaluate( 
+  StoredProfileQuantity stored_profile = d_raw_compton_profile->evaluate(
 				          StoredMomentumQuantity( momentum ) );
 
   return ProfileQuantity( stored_profile );
@@ -44,7 +44,7 @@ StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer
 template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
-ComptonProfile::MomentumQuantity 
+ComptonProfile::MomentumQuantity
 StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::sample() const
 {
   StoredMomentumQuantity sampled_momentum = d_raw_compton_profile->sample();
@@ -97,7 +97,7 @@ StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer
 template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
-ComptonProfile::MomentumQuantity 
+ComptonProfile::MomentumQuantity
 StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::getLowerBoundOfMomentum() const
 {
   return MomentumQuantity( d_raw_compton_profile->getLowerBoundOfIndepVar() );
@@ -107,7 +107,7 @@ StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer
 template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
-ComptonProfile::MomentumQuantity 
+ComptonProfile::MomentumQuantity
 StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::getUpperBoundOfMomentum() const
 {
   return MomentumQuantity( d_raw_compton_profile->getUpperBoundOfIndepVar() );

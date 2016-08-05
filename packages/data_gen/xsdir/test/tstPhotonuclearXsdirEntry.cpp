@@ -39,39 +39,39 @@ TEUCHOS_UNIT_TEST( PhotonuclearXsdirEntry, getTableAlias )
   Teuchos::Array<std::string> entry_tokens;
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_a, entry_tokens );
-  
+
   Teuchos::RCP<DataGen::XsdirEntry> entry(
 	                 new DataGen::PhotonuclearXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "H-2_v2" );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_b, entry_tokens );
-  
+
   entry.reset( new DataGen::PhotonuclearXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "Pb-208_v2" );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_c, entry_tokens );
-  
+
   entry.reset( new DataGen::PhotonuclearXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "Np-237_v7" );
-} 
+}
 
 //---------------------------------------------------------------------------//
 // Check that the xsdir entry can be added to a parameter list
 TEUCHOS_UNIT_TEST( PhotonuclearXsdirEntry, addInfoToParameterList )
 {
   Teuchos::ParameterList parameter_list( "Cross Sections Directory" );
-  
+
   Teuchos::Array<std::string> entry_tokens;
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_a, entry_tokens );
-  
+
   Teuchos::RCP<DataGen::XsdirEntry> entry(
 	                 new DataGen::PhotonuclearXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_a = 
+  Teuchos::ParameterList& sublist_a =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_a );
@@ -93,12 +93,12 @@ TEUCHOS_UNIT_TEST( PhotonuclearXsdirEntry, addInfoToParameterList )
 		       0 );
   TEST_EQUALITY_CONST( sublist_a.get<double>( MonteCarlo::CrossSectionsXMLProperties::atomic_weight_ratio_prop ),
 		       1.996300 );
-    
+
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_b, entry_tokens );
-  
+
   entry.reset( new DataGen::PhotonuclearXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_b = 
+  Teuchos::ParameterList& sublist_b =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_b );
@@ -122,10 +122,10 @@ TEUCHOS_UNIT_TEST( PhotonuclearXsdirEntry, addInfoToParameterList )
 		       206.190000 );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_c, entry_tokens );
-  
+
   entry.reset( new DataGen::PhotonuclearXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_c = 
+  Teuchos::ParameterList& sublist_c =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_c );

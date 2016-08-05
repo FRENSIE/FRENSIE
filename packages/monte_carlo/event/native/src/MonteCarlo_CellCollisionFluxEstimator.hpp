@@ -34,7 +34,7 @@ public:
   EventTags;
 
   //! Constructor
-  CellCollisionFluxEstimator( 
+  CellCollisionFluxEstimator(
 	     const Estimator::idType id,
 	     const double multiplier,
 	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
@@ -49,7 +49,7 @@ public:
 		     const ParticleState& particle,
 		     const StandardCellEstimator::cellIdType cell_of_collision,
 		     const double inverse_total_cross_section );
-  
+
   //! Print the estimator data summary
   void printSummary( std::ostream& os ) const;
 };

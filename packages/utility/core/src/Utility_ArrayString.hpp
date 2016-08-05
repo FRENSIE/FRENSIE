@@ -85,7 +85,7 @@ private:
 				    std::string& array_string );
 
   // replace occurances of interval operator within a substring
-  static void replaceIntervalOperatorInSubstring( 
+  static void replaceIntervalOperatorInSubstring(
 					    const std::string& left_element,
 					    std::string& middle_element,
 					    const std::string& right_element );
@@ -94,7 +94,7 @@ private:
   static const bool s_initialized;
 
   // The array representation string
-  std::string d_array_string;  
+  std::string d_array_string;
 };
 
 // Return the concrete array
@@ -111,7 +111,7 @@ const Teuchos::Array<T> ArrayString::getConcreteArray() const
 } // end Utility namespace
 
 namespace Teuchos{
-  
+
 /*! Type name traits specialization for the Utility::ArrayString
  *
  * \details The name function will set the type name that must be used in
@@ -122,7 +122,7 @@ class TypeNameTraits<Utility::ArrayString>
 {
 
 public:
-  
+
   static std::string name()
   {
     return "Array";

@@ -25,9 +25,9 @@ TEUCHOS_UNIT_TEST( CellInputValidatorHelpers, validateCellName )
   std::string bad_cell_name = "cell 1";
 
   TEST_NOTHROW( Geometry::validateCellName( good_cell_name ) );
-  
+
   TEST_THROW( Geometry::validateCellName( bad_cell_name ),
-	      std::invalid_argument );  
+	      std::invalid_argument );
 }
 
 //---------------------------------------------------------------------------//
@@ -38,7 +38,7 @@ TEUCHOS_UNIT_TEST( CellInputValidatorHelpers, validateCellMaterial )
   std::string bad_material_name = "material 1";
 
   TEST_NOTHROW( Geometry::validateCellMaterial( good_material_name, "cell-1" ) );
-  
+
   TEST_THROW( Geometry::validateCellMaterial( bad_material_name, "cell_1" ),
 	      std::invalid_argument );
 }
@@ -51,7 +51,7 @@ TEUCHOS_UNIT_TEST( CellInputValidatorHelpers, validateCellDensity )
   double bad_density = -1.0;
 
   TEST_NOTHROW( Geometry::validateCellDensity( good_density, "cell=1" ) );
-  
+
   TEST_THROW( Geometry::validateCellDensity( bad_density, "cell*1" ),
 	      std::invalid_argument );
 }
@@ -86,7 +86,7 @@ TEUCHOS_UNIT_TEST( CellInputValidatorHelpers, validateCellDefinition )
   surface_names.insert( "surface_5" );
   surface_names.insert( "surface_6" );
   surface_names.insert( "surface_7" );
-  
+
   std::string valid_cell_definition_1 = "(surface_1 n -surface_2 n surface_3 n -surface_4 n surface_5 n -surface_6) u -surface_7";
 
   std::string valid_cell_definition_2 = "surface_1 n -surface_5";

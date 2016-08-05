@@ -109,7 +109,7 @@ public:
 		       Data::SubshellType& shell_of_interaction ) const = 0;
 
   //! Sample an outgoing energy and record the number of trials
-  virtual void sampleAndRecordTrials( 
+  virtual void sampleAndRecordTrials(
 				const double incoming_energy,
 				const double scattering_angle_cosine,
 				double& outgoing_energy,
@@ -425,12 +425,12 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplier(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double term_1 = 
+  const double term_1 =
     Utility::PhysicalConstants::pi*1e24*
     Utility::PhysicalConstants::classical_electron_radius*
     Utility::PhysicalConstants::classical_electron_radius;
-  
-  const double compton_line_energy = 
+
+  const double compton_line_energy =
     calculateComptonLineEnergy( incoming_energy, scattering_angle_cosine );
 
   double term_2 = (compton_line_energy/incoming_energy);

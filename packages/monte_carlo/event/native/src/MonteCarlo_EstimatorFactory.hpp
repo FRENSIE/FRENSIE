@@ -36,7 +36,7 @@ class EstimatorFactory
 public:
 
   //! Constructor
-  EstimatorFactory( 
+  EstimatorFactory(
        const std::shared_ptr<EventHandler>& event_handler,
        const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
        response_function_id_map,
@@ -50,7 +50,7 @@ public:
   bool isEstimatorRep( const Teuchos::ParameterList& object_rep ) const;
 
   //! Create and register an estimator
-  void createAndRegisterEstimator( 
+  void createAndRegisterEstimator(
                                  const Teuchos::ParameterList& estimator_rep );
 
   /*! Create and register cached estimators
@@ -58,8 +58,8 @@ public:
    * geometry handler) will be deleted after the remaining estimators are
    * registered.
    */
-  virtual void createAndRegisterCachedEstimators() = 0;                       
-  
+  virtual void createAndRegisterCachedEstimators() = 0;
+
 protected:
 
   //! Check if an estimator type is a cell estimator
@@ -87,24 +87,24 @@ protected:
   static const std::string& getSurfaceCurrentEstimatorName();
 
   //! Verify that the estimator type is consistent with cached data
-  virtual void verifyEstimatorTypeConsistency( 
+  virtual void verifyEstimatorTypeConsistency(
                                  const unsigned estimator_id,
                                  const std::string& estimator_type ) const = 0;
 
   //! Get the estimator particle types - required
-  virtual void getEstimatorParticleType( 
+  virtual void getEstimatorParticleType(
                            Teuchos::Array<ParticleType>& particle_types,
                            const unsigned estimator_id,
                            const Teuchos::ParameterList& estimator_rep ) const;
-  
+
   //! Convert the particle type name to particle types
-  void convertParticleTypeNameToParticleTypes( 
+  void convertParticleTypeNameToParticleTypes(
                                  Teuchos::Array<ParticleType>& particle_types,
                                  const unsigned estimator_id,
                                  const std::string& particle_type_name ) const;
 
   //! Get the cells assigned to the estimator - required if cell estimator
-  void getEstimatorCells( 
+  void getEstimatorCells(
                     Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
                     assigned_cells,
                     const unsigned estimator_id,
@@ -117,18 +117,18 @@ protected:
         const unsigned estimator_id ) const = 0;
 
   //! Get the cached cells (add to set)
-  virtual void getCachedCells( 
+  virtual void getCachedCells(
        boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>& cells,
        const unsigned estimator_id ) const = 0;
 
   //! Get the cell volumes
-  virtual void getCellVolumes( 
+  virtual void getCellVolumes(
               Teuchos::Array<double>& cell_volumes,
               const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
               cells ) = 0;
 
   //! Get the surfaces assigned to the estimator - required if surface est.
-  void getEstimatorSurfaces( 
+  void getEstimatorSurfaces(
                  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
                  assigned_surfaces,
                  const unsigned estimator_id,
@@ -147,10 +147,10 @@ protected:
      const unsigned estimator_id ) const = 0;
 
   //! Get the surface areas
-  virtual void getSurfaceAreas( 
+  virtual void getSurfaceAreas(
            Teuchos::Array<double>& surface_areas,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-           surfaces ) = 0; 
+           surfaces ) = 0;
 
   //! Create and register a cell estimator
   void createAndRegisterCellEstimator(
@@ -187,7 +187,7 @@ private:
   static bool isCellPulseHeightEstimator( const std::string& estimator_name );
 
   //! Check if an estimator type is a cell track length flux estimator
-  static bool isCellTrackLengthFluxEstimator( 
+  static bool isCellTrackLengthFluxEstimator(
 					   const std::string& estimator_name );
 
   //! Check if an estimator type is a cell collision flux estimator
@@ -200,7 +200,7 @@ private:
   static bool isSurfaceCurrentEstimator( const std::string& estimator_name );
 
   //! Check if an estimator type is a tet mesh track length flux estimator
-  static bool isTetMeshTrackLengthFluxEstimator( 
+  static bool isTetMeshTrackLengthFluxEstimator(
                                            const std::string& estimator_name );
 
   //! Check if an object type is an estimator
@@ -212,25 +212,25 @@ private:
   //! Get the estimator type - required
   void getEstimatorType( std::string& estimator_type,
                          const unsigned estimator_id,
-                         const Teuchos::ParameterList& estimator_rep ) const; 
+                         const Teuchos::ParameterList& estimator_rep ) const;
 
   //! Get the estimator multiplier - optional
-  double getEstimatorMultiplier( 
+  double getEstimatorMultiplier(
                            const unsigned estimator_id,
                            const Teuchos::ParameterList& estimator_rep ) const;
 
   //! Check if energy multiplication was requested - optional
-  bool isEnergyMultiplicationRequested( 
+  bool isEnergyMultiplicationRequested(
                            const unsigned estimator_id,
                            const Teuchos::ParameterList& estimator_rep ) const;
 
   //! Get the estimator bins - optional
-  const Teuchos::ParameterList* getEstimatorBins( 
+  const Teuchos::ParameterList* getEstimatorBins(
                            const unsigned estimator_id,
                            const Teuchos::ParameterList& estimator_rep ) const;
 
   //! Get the response functions assigned to the estimator - optional
-  void getResponseFunctions( 
+  void getResponseFunctions(
         Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_functions,
         const unsigned estimator_id,
         const Teuchos::ParameterList& estimator_rep ) const;
@@ -254,7 +254,7 @@ private:
       const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
-  
+
   //! Create and register a cell collision flux estimator
   void createAndRegisterCellCollisionFluxEstimator(
       const unsigned id,
@@ -286,7 +286,7 @@ private:
       surfaces,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL ) const;
-  
+
   //! Create and register a tet mesh track length flux estimator
   void createAndRegisterTetMeshTrackLengthFluxEstimator(
       const Teuchos::ParameterList& estimator_rep,
@@ -323,17 +323,17 @@ private:
   std::shared_ptr<EventHandler> d_event_handler;
 
   // The response function id map
-  boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> > 
+  boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >
   d_response_function_id_map;
 
   // The warning output stream
-  std::ostream* d_os_warn;                               
+  std::ostream* d_os_warn;
 };
 
 //! The invalid estimator representation error
 class InvalidEstimatorRepresentation : public std::runtime_error
 {
-  
+
 public:
 
   InvalidEstimatorRepresentation( const std::string& what_arg )

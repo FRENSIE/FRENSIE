@@ -21,7 +21,7 @@ public:
   MOABException( const std::string &msg )
     : std::runtime_error( msg )
   { /* ... */ }
-  
+
   virtual ~MOABException() throw()
   { /* ... */ }
 };

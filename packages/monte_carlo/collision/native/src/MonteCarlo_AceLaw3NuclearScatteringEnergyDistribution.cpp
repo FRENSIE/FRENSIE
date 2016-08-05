@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw3NuclearScatteringEnergyDistribution.cpp
 //! \author Alex Robinson, Alex Bennett
 //! \brief  The nuclear inelastic level scattering energy distribution class
@@ -31,13 +31,13 @@ AceLaw3NuclearScatteringEnergyDistribution::AceLaw3NuclearScatteringEnergyDistri
 }
 
 // Sample a scattering energy
-double AceLaw3NuclearScatteringEnergyDistribution::sampleEnergy( 
+double AceLaw3NuclearScatteringEnergyDistribution::sampleEnergy(
 						    const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( energy >= d_param_a );
   testPrecondition( energy < std::numeric_limits<double>::infinity() );
-  
+
   return d_param_b * ( energy - d_param_a);
 }
 

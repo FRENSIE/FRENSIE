@@ -39,7 +39,7 @@ public:
   virtual bool isValidSubshell( const Data::SubshellType subshell ) const = 0;
 
   //! Return the binding energy of a subshell
-  virtual double getSubshellBindingEnergy( 
+  virtual double getSubshellBindingEnergy(
                                        const Data::SubshellType subshell ) const = 0;
 
   //! Return the occupancy of a subshell (default is the ENDF occupacy)
@@ -101,7 +101,7 @@ public:
                                    const Data::SubshellType subshell ) const;
 
   //! Evaluate the integrated cross section (b/mu)
-  virtual double evaluateSubshellIntegratedCrossSection( 
+  virtual double evaluateSubshellIntegratedCrossSection(
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  const Data::SubshellType subshell,

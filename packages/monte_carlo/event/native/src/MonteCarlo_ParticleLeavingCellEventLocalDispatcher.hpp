@@ -21,7 +21,7 @@
 
 namespace MonteCarlo{
 
-/*! The particle leaving cell event dispatcher 
+/*! The particle leaving cell event dispatcher
  * \ingroup particle_leaving_cell_event
  */
 class ParticleLeavingCellEventLocalDispatcher :

@@ -50,7 +50,7 @@ public:
   //! Create the total photoelectric photoatomic reaction
   static void createTotalPhotoelectricReaction(
        const Data::XSSEPRDataExtractor& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,	
+       const Teuchos::ArrayRCP<const double>& energy_grid,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction );
 
@@ -70,7 +70,7 @@ public:
        Teuchos::RCP<PhotoatomicReaction>& heating_reaction );
 
 protected:
-  
+
   //! Remove the zeros from a processed cross section
   static void removeZerosFromProcessedCrossSection(
 		     const Teuchos::ArrayRCP<const double>& energy_grid,

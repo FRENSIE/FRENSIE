@@ -42,7 +42,7 @@ public:
 private:
 
   // Validate a distribution representation
-  static void validateDistributionRep( 
+  static void validateDistributionRep(
 			      const Teuchos::ParameterList& distribution_rep );
 
   // Validate the axis name

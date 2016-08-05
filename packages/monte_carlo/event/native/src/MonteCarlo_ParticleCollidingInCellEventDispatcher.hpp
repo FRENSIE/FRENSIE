@@ -36,7 +36,7 @@ public:
   { /* ... */ }
 
   //! Dispatch the particle colliding in cell event to the observers
-  void dispatchParticleCollidingInCellEvent( 
+  void dispatchParticleCollidingInCellEvent(
 	    const ParticleState& particle,
 	    const Geometry::ModuleTraits::InternalCellHandle cell_of_collision,
 	    const double inverse_total_cross_section );
@@ -53,8 +53,8 @@ ParticleCollidingInCellEventDispatcher::dispatchParticleCollidingInCellEvent(
 
   if( it != this->dispatcher_map().end() )
   {
-    it->second->dispatchParticleCollidingInCellEvent( 
-						 particle, 
+    it->second->dispatchParticleCollidingInCellEvent(
+						 particle,
 						 cell_of_collision,
 						 inverse_total_cross_section );
   }

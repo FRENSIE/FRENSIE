@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PHOTOATOMIC_REACTION_ACE_FACTORY_HPP
-#define MONTE_CARLO_PHOTOATOMIC_REACTION_ACE_FACTORY_HPP
+#ifndef MONTE_CARLO_ELECTROATOMIC_REACTION_ACE_FACTORY_HPP
+#define MONTE_CARLO_ELECTROATOMIC_REACTION_ACE_FACTORY_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
@@ -29,7 +29,7 @@ public:
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
         Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-        const double lower_cutoff_angle_cosine = 0.999999 );
+        const double lower_cutoff_angle_cosine = 1.0 );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
@@ -66,7 +66,7 @@ public:
         Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction );
 
 //protected:
-  
+
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(
         const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -91,7 +91,7 @@ inline bool ElectroatomicReactionACEFactory::notEqualZero( double value )
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PHOTOATOMIC_REACTION_ACE_FACTORY_HPP
+#endif // end MONTE_CARLO_ELECTROATOMIC_REACTION_ACE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElectroatomicReactionACEFactory.hpp

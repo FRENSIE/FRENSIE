@@ -23,8 +23,8 @@ namespace Geometry{
 
 /*! The FastDagMCSurfaceHandler class
  * \details This class is optimized for performance. The conversion from
- * surface handle to surface id or surface id to surface handle is fast. The 
- * handles are stored twice to allow for the fast lookup times (extra storage 
+ * surface handle to surface id or surface id to surface handle is fast. The
+ * handles are stored twice to allow for the fast lookup times (extra storage
  * overhead).
  */
 class FastDagMCSurfaceHandler : public DagMCSurfaceHandler
@@ -46,7 +46,7 @@ public:
   bool doesSurfaceHandleExist( const moab::EntityHandle surface_handle ) const;
 
   //! Get the surface id from a surface handle
-  ModuleTraits::InternalSurfaceHandle getSurfaceId( 
+  ModuleTraits::InternalSurfaceHandle getSurfaceId(
                                const moab::EntityHandle surface_handle ) const;
 
   //! Get the surface handle from a surface id

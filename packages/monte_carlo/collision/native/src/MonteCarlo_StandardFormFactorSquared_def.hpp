@@ -26,12 +26,12 @@ StandardFormFactorSquared<StoredSqrArgUnit,SmartPointer>::StandardFormFactorSqua
 
 // Return the max form factor squared value
 template<typename StoredSqrArgUnit, template<typename> class SmartPointer>
-double StandardFormFactorSquared<StoredSqrArgUnit,SmartPointer>::evaluate( 
+double StandardFormFactorSquared<StoredSqrArgUnit,SmartPointer>::evaluate(
 				const SquaredArgumentQuantity square_arg ) const
 {
   // Make sure the square argument is valid
   testPrecondition( square_arg >= Utility::QuantityTraits<SquaredArgumentQuantity>::zero() );
-		    
+
   StoredSquaredArgumentQuantity stored_square_arg( square_arg );
 
   return d_raw_form_factor_squared->evaluate( stored_square_arg );

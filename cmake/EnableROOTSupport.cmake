@@ -1,4 +1,4 @@
-# Configure the ROOT options that will be required in this project. The 
+# Configure the ROOT options that will be required in this project. The
 # following variables are set:
 #  1.) ROOT - stores the root library names
 MACRO(ENABLE_ROOT_SUPPORT)

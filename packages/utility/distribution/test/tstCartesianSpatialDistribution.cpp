@@ -35,7 +35,7 @@ void initializeDistribution(
 		      std::shared_ptr<Utility::SpatialDistribution>& distribution )
 {
   // Delta distribution in x dimension
-  std::shared_ptr<Utility::OneDDistribution> 
+  std::shared_ptr<Utility::OneDDistribution>
     x_distribution( new Utility::DeltaDistribution( 1.0 ) );
 
   // Uniform distribution in y dimension
@@ -46,7 +46,7 @@ void initializeDistribution(
   std::shared_ptr<Utility::OneDDistribution>
     z_distribution( new Utility::UniformDistribution( 0.0, 2.0, 0.5 ) );
 
-  distribution.reset( new Utility::CartesianSpatialDistribution( 
+  distribution.reset( new Utility::CartesianSpatialDistribution(
 							    x_distribution,
 							    y_distribution,
 							    z_distribution ) );
@@ -117,12 +117,12 @@ TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, sample )
   TEST_EQUALITY_CONST( sampled_point[0], 1.0 );
   TEST_EQUALITY_CONST( sampled_point[1], 1.0 );
   TEST_EQUALITY_CONST( sampled_point[2], 1.0 );
-  
+
   spatial_distribution->sample( sampled_point );
   TEST_EQUALITY_CONST( sampled_point[0], 1.0 );
   TEST_FLOATING_EQUALITY( sampled_point[1], 2.0, 1e-15 );
   TEST_FLOATING_EQUALITY( sampled_point[2], 2.0, 1e-15 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -147,21 +147,21 @@ TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, isUniform )
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

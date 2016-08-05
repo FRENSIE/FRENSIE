@@ -24,7 +24,7 @@ namespace MonteCarlo{
 //! The coherent scattering distribution class
 class CoherentScatteringDistribution : public PhotonScatteringDistribution,
 				       public AdjointPhotonScatteringDistribution
-					 
+
 {
 
 public:
@@ -74,13 +74,13 @@ public:
 protected:
 
   //! Sample an outgoing direction from the distribution
-  virtual void sampleAndRecordTrialsImpl( 
+  virtual void sampleAndRecordTrialsImpl(
 				   const double incoming_energy,
 				   double& scattering_angle_cosine,
 				   unsigned& trials ) const = 0;
 
   //! Evaluate the form factor squared
-  double evaluateFormFactorSquared( 
+  double evaluateFormFactorSquared(
 				  const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
 
@@ -96,7 +96,7 @@ protected:
 private:
 
   // The coherent form factor function squared
-  Teuchos::RCP<const Utility::TabularOneDDistribution> 
+  Teuchos::RCP<const Utility::TabularOneDDistribution>
   d_form_factor_function_squared;
 };
 

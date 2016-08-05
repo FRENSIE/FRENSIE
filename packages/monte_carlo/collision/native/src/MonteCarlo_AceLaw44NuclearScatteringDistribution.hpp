@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw44NuclearScatteringDistribution.hpp
 //! \author Alex Bennett, Alex Robinson
 //! \brief  The law 44 scattering distribution class
@@ -37,21 +37,21 @@ class AceLaw44NuclearScatteringDistribution : public NuclearScatteringDistributi
 public:
 
   //! Typedef for the distribution
-  typedef Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> > 
+  typedef Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >
   ARDistributions;
- 
+
   //! Constructor
-  AceLaw44NuclearScatteringDistribution( 
+  AceLaw44NuclearScatteringDistribution(
 		   const double atomic_weight_ratio,
 		   const Teuchos::RCP<NuclearScatteringEnergyDistribution>&
 		   energy_scattering_distribution,
                    const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
 		   ar_distributions );
-                                              
+
   //! Destructor
   ~AceLaw44NuclearScatteringDistribution()
   { /* ... */ }
-  
+
   //! Randomly scatter the particle
   void scatterParticle( const IncomingParticleType& incoming_particle,
 			OutgoingParticleType& outgoing_particle,
@@ -60,7 +60,7 @@ public:
 private:
 
   // The energy distribution (only a law 4 distribution should be stored)
-  Teuchos::RCP<NuclearScatteringEnergyDistribution> 
+  Teuchos::RCP<NuclearScatteringEnergyDistribution>
   d_energy_scattering_distribution;
 
   // The AR distributions

@@ -46,7 +46,7 @@ public:
   virtual bool isUniform() const = 0;
 
   //! Check if the distribution has the same bounds
-  virtual bool hasSameBounds( 
+  virtual bool hasSameBounds(
 			   const SpatialDistribution& distribution ) const = 0;
 };
 

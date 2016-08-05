@@ -97,19 +97,19 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, evaluate )
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, evaluate )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
 		       2.5*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.1*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.1*MeV ),
 		       0.25/0.9*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
 		       0.0625*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 5.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 5.0*MeV ),
 		       0.05*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 10.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 10.0*MeV ),
 		       0.05*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 11.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 11.0*MeV ),
 		       0.0*si::mole );
 }
 
@@ -157,19 +157,19 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, evaluatePDF )
 // Check that the unit-aware PDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, evaluatePDF )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( -1.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( -1.0*MeV ),
 		       0.0/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ),
 		       2.5/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.1*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.1*MeV ),
 		       0.25/0.9/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*MeV ),
 		       0.0625/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 5.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 5.0*MeV ),
 		       0.05/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 10.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 10.0*MeV ),
 		       0.05/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 11.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 11.0*MeV ),
 		       0.0/MeV );
 }
 
@@ -220,19 +220,19 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, evaluateCDF )
 // Check that the unit-aware CDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, evaluateCDF )
 {
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( -1.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( -1.0*MeV ),
 		       0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*MeV ),
 		       0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.1*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.1*MeV ),
 		       0.25 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 1.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 1.0*MeV ),
 		       0.5 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 5.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 5.0*MeV ),
 		       0.75 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 10.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 10.0*MeV ),
 		       1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 11.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 11.0*MeV ),
 		       1.0 );
 }
 
@@ -244,67 +244,67 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
   // First bin
   fake_stream[0] = 0.0;      fake_stream[1] = 1.0/64;
   // Second bin
-  fake_stream[2] = 2.0/64;   fake_stream[3] = 3.0/64;   
+  fake_stream[2] = 2.0/64;   fake_stream[3] = 3.0/64;
   // Third bin
   fake_stream[4] = 4.0/64;   fake_stream[5] = 5.0/64;
   // Fourth bin
-  fake_stream[6] = 6.0/64;   fake_stream[7] = 7.0/64; 
+  fake_stream[6] = 6.0/64;   fake_stream[7] = 7.0/64;
   // Fifth bin
-  fake_stream[8] = 8.0/64;   fake_stream[9] = 9.0/64;  
+  fake_stream[8] = 8.0/64;   fake_stream[9] = 9.0/64;
   // Sixth bin
-  fake_stream[10] = 10.0/64; fake_stream[11] = 11.0/64; 
+  fake_stream[10] = 10.0/64; fake_stream[11] = 11.0/64;
   // Seventh bin
-  fake_stream[12] = 12.0/64; fake_stream[13] = 13.0/64; 
+  fake_stream[12] = 12.0/64; fake_stream[13] = 13.0/64;
   // Eighth bin
   fake_stream[14] = 14.0/64; fake_stream[15] = 15.0/64;
   // Nineth bin
   fake_stream[16] = 16.0/64; fake_stream[17] = 17.0/64;
   // Tenth bin
-  fake_stream[18] = 18.0/64; fake_stream[19] = 19.0/64; 
+  fake_stream[18] = 18.0/64; fake_stream[19] = 19.0/64;
   // Eleventh bin
-  fake_stream[20] = 20.0/64; fake_stream[21] = 21.0/64; 
+  fake_stream[20] = 20.0/64; fake_stream[21] = 21.0/64;
   // Twelfth bin
-  fake_stream[22] = 22.0/64; fake_stream[23] = 23.0/64; 
+  fake_stream[22] = 22.0/64; fake_stream[23] = 23.0/64;
   // Thirteenth bin
-  fake_stream[24] = 24.0/64; fake_stream[25] = 25.0/64; 
+  fake_stream[24] = 24.0/64; fake_stream[25] = 25.0/64;
   // Fourteenth bin
-  fake_stream[26] = 26.0/64; fake_stream[27] = 27.0/64; 
+  fake_stream[26] = 26.0/64; fake_stream[27] = 27.0/64;
   // Fifteenth bin
-  fake_stream[28] = 28.0/64; fake_stream[29] = 29.0/64; 
+  fake_stream[28] = 28.0/64; fake_stream[29] = 29.0/64;
   // Sixteenth bin
-  fake_stream[30] = 30.0/64; fake_stream[31] = 31.0/64; 
+  fake_stream[30] = 30.0/64; fake_stream[31] = 31.0/64;
   // Seventeenth bin
   fake_stream[32] = 32.0/64; fake_stream[33] = 33.0/64;
   // Eighteenth bin
-  fake_stream[34] = 34.0/64; fake_stream[35] = 35.0/64; 
+  fake_stream[34] = 34.0/64; fake_stream[35] = 35.0/64;
   // Nineteenth bin
-  fake_stream[36] = 36.0/64; fake_stream[37] = 37.0/64; 
+  fake_stream[36] = 36.0/64; fake_stream[37] = 37.0/64;
   // Twentieth bin
-  fake_stream[38] = 38.0/64; fake_stream[39] = 39.0/64; 
+  fake_stream[38] = 38.0/64; fake_stream[39] = 39.0/64;
   // Twenty-first bin
-  fake_stream[40] = 40.0/64; fake_stream[41] = 41.0/64; 
+  fake_stream[40] = 40.0/64; fake_stream[41] = 41.0/64;
   // Twenty-second bin
-  fake_stream[42] = 42.0/64; fake_stream[43] = 43.0/64; 
+  fake_stream[42] = 42.0/64; fake_stream[43] = 43.0/64;
   // Twenty-third bin
   fake_stream[44] = 44.0/64; fake_stream[45] = 45.0/64;
   // Twenty-fourth bin
-  fake_stream[46] = 46.0/64; fake_stream[47] = 47.0/64; 
+  fake_stream[46] = 46.0/64; fake_stream[47] = 47.0/64;
   // Twenty-fifth bin
-  fake_stream[48] = 48.0/64; fake_stream[49] = 49.0/64; 
+  fake_stream[48] = 48.0/64; fake_stream[49] = 49.0/64;
   // Twenty-sixth bin
-  fake_stream[50] = 50.0/64; fake_stream[51] = 51.0/64; 
+  fake_stream[50] = 50.0/64; fake_stream[51] = 51.0/64;
   // Twenty-seventh bin
-  fake_stream[52] = 52.0/64; fake_stream[53] = 53.0/64; 
+  fake_stream[52] = 52.0/64; fake_stream[53] = 53.0/64;
   // Twenty-eighth bin
-  fake_stream[54] = 54.0/64; fake_stream[55] = 55.0/64; 
+  fake_stream[54] = 54.0/64; fake_stream[55] = 55.0/64;
   // Twenty-nineth bin
-  fake_stream[56] = 56.0/64; fake_stream[57] = 57.0/64; 
+  fake_stream[56] = 56.0/64; fake_stream[57] = 57.0/64;
   // Thirtieth bin
   fake_stream[58] = 58.0/64; fake_stream[59] = 59.0/64;
   // Thirty-first bin
-  fake_stream[60] = 60.0/64; fake_stream[61] = 61.0/64; 
+  fake_stream[60] = 60.0/64; fake_stream[61] = 61.0/64;
   // Thirty-second bin
-  fake_stream[62] = 62.0/64; fake_stream[63] = 63.0/64; 
+  fake_stream[62] = 62.0/64; fake_stream[63] = 63.0/64;
   fake_stream[64] = 1.0 - 1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -312,7 +312,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
   // First bin
   double sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -16.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -15.5 );
 
@@ -326,14 +326,14 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
   // Third bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -14.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -13.5 );
 
   // Fourth bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -13.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -12.5 );
 
@@ -361,21 +361,21 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
   // Eighth bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -9.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -8.5 );
 
   // Nineth bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -8.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -7.5 );
 
   // Tenth bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -7.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -6.5 );
 
@@ -427,11 +427,11 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
 
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.25 );
-  
+
   // Eighteenth bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.5 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.25 );
 
@@ -452,7 +452,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
   // Twenty-first bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 4.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 4.5 );
 
@@ -473,7 +473,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
   // Twenty-fourth bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 7.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 7.5 );
 
@@ -487,7 +487,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
   // Twenty-sixth bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 9.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 9.5 );
 
@@ -497,7 +497,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
 
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 10.5 );
-  
+
   // Twenty-eighth bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 11.0 );
@@ -522,14 +522,14 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
   // Thirty-first bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 14.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 14.5 );
 
   // Thirty-second bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 15.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 15.5 );
 
@@ -557,7 +557,7 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, sample )
   // First bin
   quantity<MegaElectronVolt> sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.0*MeV );
-  
+
   sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.05*MeV );
 
@@ -596,67 +596,67 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   // First bin
   fake_stream[0] = 0.0;      fake_stream[1] = 1.0/64;
   // Second bin
-  fake_stream[2] = 2.0/64;   fake_stream[3] = 3.0/64;   
+  fake_stream[2] = 2.0/64;   fake_stream[3] = 3.0/64;
   // Third bin
   fake_stream[4] = 4.0/64;   fake_stream[5] = 5.0/64;
   // Fourth bin
-  fake_stream[6] = 6.0/64;   fake_stream[7] = 7.0/64; 
+  fake_stream[6] = 6.0/64;   fake_stream[7] = 7.0/64;
   // Fifth bin
-  fake_stream[8] = 8.0/64;   fake_stream[9] = 9.0/64;  
+  fake_stream[8] = 8.0/64;   fake_stream[9] = 9.0/64;
   // Sixth bin
-  fake_stream[10] = 10.0/64; fake_stream[11] = 11.0/64; 
+  fake_stream[10] = 10.0/64; fake_stream[11] = 11.0/64;
   // Seventh bin
-  fake_stream[12] = 12.0/64; fake_stream[13] = 13.0/64; 
+  fake_stream[12] = 12.0/64; fake_stream[13] = 13.0/64;
   // Eighth bin
   fake_stream[14] = 14.0/64; fake_stream[15] = 15.0/64;
   // Nineth bin
   fake_stream[16] = 16.0/64; fake_stream[17] = 17.0/64;
   // Tenth bin
-  fake_stream[18] = 18.0/64; fake_stream[19] = 19.0/64; 
+  fake_stream[18] = 18.0/64; fake_stream[19] = 19.0/64;
   // Eleventh bin
-  fake_stream[20] = 20.0/64; fake_stream[21] = 21.0/64; 
+  fake_stream[20] = 20.0/64; fake_stream[21] = 21.0/64;
   // Twelfth bin
-  fake_stream[22] = 22.0/64; fake_stream[23] = 23.0/64; 
+  fake_stream[22] = 22.0/64; fake_stream[23] = 23.0/64;
   // Thirteenth bin
-  fake_stream[24] = 24.0/64; fake_stream[25] = 25.0/64; 
+  fake_stream[24] = 24.0/64; fake_stream[25] = 25.0/64;
   // Fourteenth bin
-  fake_stream[26] = 26.0/64; fake_stream[27] = 27.0/64; 
+  fake_stream[26] = 26.0/64; fake_stream[27] = 27.0/64;
   // Fifteenth bin
-  fake_stream[28] = 28.0/64; fake_stream[29] = 29.0/64; 
+  fake_stream[28] = 28.0/64; fake_stream[29] = 29.0/64;
   // Sixteenth bin
-  fake_stream[30] = 30.0/64; fake_stream[31] = 31.0/64; 
+  fake_stream[30] = 30.0/64; fake_stream[31] = 31.0/64;
   // Seventeenth bin
   fake_stream[32] = 32.0/64; fake_stream[33] = 33.0/64;
   // Eighteenth bin
-  fake_stream[34] = 34.0/64; fake_stream[35] = 35.0/64; 
+  fake_stream[34] = 34.0/64; fake_stream[35] = 35.0/64;
   // Nineteenth bin
-  fake_stream[36] = 36.0/64; fake_stream[37] = 37.0/64; 
+  fake_stream[36] = 36.0/64; fake_stream[37] = 37.0/64;
   // Twentieth bin
-  fake_stream[38] = 38.0/64; fake_stream[39] = 39.0/64; 
+  fake_stream[38] = 38.0/64; fake_stream[39] = 39.0/64;
   // Twenty-first bin
-  fake_stream[40] = 40.0/64; fake_stream[41] = 41.0/64; 
+  fake_stream[40] = 40.0/64; fake_stream[41] = 41.0/64;
   // Twenty-second bin
-  fake_stream[42] = 42.0/64; fake_stream[43] = 43.0/64; 
+  fake_stream[42] = 42.0/64; fake_stream[43] = 43.0/64;
   // Twenty-third bin
   fake_stream[44] = 44.0/64; fake_stream[45] = 45.0/64;
   // Twenty-fourth bin
-  fake_stream[46] = 46.0/64; fake_stream[47] = 47.0/64; 
+  fake_stream[46] = 46.0/64; fake_stream[47] = 47.0/64;
   // Twenty-fifth bin
-  fake_stream[48] = 48.0/64; fake_stream[49] = 49.0/64; 
+  fake_stream[48] = 48.0/64; fake_stream[49] = 49.0/64;
   // Twenty-sixth bin
-  fake_stream[50] = 50.0/64; fake_stream[51] = 51.0/64; 
+  fake_stream[50] = 50.0/64; fake_stream[51] = 51.0/64;
   // Twenty-seventh bin
-  fake_stream[52] = 52.0/64; fake_stream[53] = 53.0/64; 
+  fake_stream[52] = 52.0/64; fake_stream[53] = 53.0/64;
   // Twenty-eighth bin
-  fake_stream[54] = 54.0/64; fake_stream[55] = 55.0/64; 
+  fake_stream[54] = 54.0/64; fake_stream[55] = 55.0/64;
   // Twenty-nineth bin
-  fake_stream[56] = 56.0/64; fake_stream[57] = 57.0/64; 
+  fake_stream[56] = 56.0/64; fake_stream[57] = 57.0/64;
   // Thirtieth bin
   fake_stream[58] = 58.0/64; fake_stream[59] = 59.0/64;
   // Thirty-first bin
-  fake_stream[60] = 60.0/64; fake_stream[61] = 61.0/64; 
+  fake_stream[60] = 60.0/64; fake_stream[61] = 61.0/64;
   // Thirty-second bin
-  fake_stream[62] = 62.0/64; fake_stream[63] = 63.0/64; 
+  fake_stream[62] = 62.0/64; fake_stream[63] = 63.0/64;
   fake_stream[64] = 1.0 - 1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -667,7 +667,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -16.0 );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -15.5 );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
@@ -685,7 +685,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -14.0 );
   TEST_EQUALITY_CONST( 5.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -13.5 );
   TEST_EQUALITY_CONST( 6.0/trials, 1.0 );
@@ -694,7 +694,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -13.0 );
   TEST_EQUALITY_CONST( 7.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -12.5 );
   TEST_EQUALITY_CONST( 8.0/trials, 1.0 );
@@ -730,7 +730,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -9.0 );
   TEST_EQUALITY_CONST( 15.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -8.5 );
   TEST_EQUALITY_CONST( 16.0/trials, 1.0 );
@@ -739,7 +739,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -8.0 );
   TEST_EQUALITY_CONST( 17.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -7.5 );
   TEST_EQUALITY_CONST( 18.0/trials, 1.0 );
@@ -748,7 +748,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -7.0 );
   TEST_EQUALITY_CONST( 19.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -6.5 );
   TEST_EQUALITY_CONST( 20.0/trials, 1.0 );
@@ -815,12 +815,12 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.25 );
   TEST_EQUALITY_CONST( 34.0/trials, 1.0 );
-  
+
   // Eighteenth bin
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.5 );
   TEST_EQUALITY_CONST( 35.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.25 );
   TEST_EQUALITY_CONST( 36.0/trials, 1.0 );
@@ -847,7 +847,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 4.0 );
   TEST_EQUALITY_CONST( 41.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 4.5 );
   TEST_EQUALITY_CONST( 42.0/trials, 1.0 );
@@ -874,7 +874,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 7.0 );
   TEST_EQUALITY_CONST( 47.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 7.5 );
   TEST_EQUALITY_CONST( 48.0/trials, 1.0 );
@@ -892,7 +892,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 9.0 );
   TEST_EQUALITY_CONST( 51.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 9.5 );
   TEST_EQUALITY_CONST( 52.0/trials, 1.0 );
@@ -905,7 +905,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 10.5 );
   TEST_EQUALITY_CONST( 54.0/trials, 1.0 );
-  
+
   // Twenty-eighth bin
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 11.0 );
@@ -937,7 +937,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 14.0 );
   TEST_EQUALITY_CONST( 61.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 14.5 );
   TEST_EQUALITY_CONST( 62.0/trials, 1.0 );
@@ -946,7 +946,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 15.0 );
   TEST_EQUALITY_CONST( 63.0/trials, 1.0 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 15.5 );
   TEST_EQUALITY_CONST( 64.0/trials, 1.0 );
@@ -958,7 +958,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 		   sampleAndRecordTrials )
 {
   std::vector<double> fake_stream( 9 );
@@ -977,11 +977,11 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
   unsigned trials = 0u;
 
   // First bin
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0*MeV );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
-  
+
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.05*MeV );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
@@ -1028,67 +1028,67 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   // First bin
   fake_stream[0] = 0.0;      fake_stream[1] = 1.0/64;
   // Second bin
-  fake_stream[2] = 2.0/64;   fake_stream[3] = 3.0/64;   
+  fake_stream[2] = 2.0/64;   fake_stream[3] = 3.0/64;
   // Third bin
   fake_stream[4] = 4.0/64;   fake_stream[5] = 5.0/64;
   // Fourth bin
-  fake_stream[6] = 6.0/64;   fake_stream[7] = 7.0/64; 
+  fake_stream[6] = 6.0/64;   fake_stream[7] = 7.0/64;
   // Fifth bin
-  fake_stream[8] = 8.0/64;   fake_stream[9] = 9.0/64;  
+  fake_stream[8] = 8.0/64;   fake_stream[9] = 9.0/64;
   // Sixth bin
-  fake_stream[10] = 10.0/64; fake_stream[11] = 11.0/64; 
+  fake_stream[10] = 10.0/64; fake_stream[11] = 11.0/64;
   // Seventh bin
-  fake_stream[12] = 12.0/64; fake_stream[13] = 13.0/64; 
+  fake_stream[12] = 12.0/64; fake_stream[13] = 13.0/64;
   // Eighth bin
   fake_stream[14] = 14.0/64; fake_stream[15] = 15.0/64;
   // Nineth bin
   fake_stream[16] = 16.0/64; fake_stream[17] = 17.0/64;
   // Tenth bin
-  fake_stream[18] = 18.0/64; fake_stream[19] = 19.0/64; 
+  fake_stream[18] = 18.0/64; fake_stream[19] = 19.0/64;
   // Eleventh bin
-  fake_stream[20] = 20.0/64; fake_stream[21] = 21.0/64; 
+  fake_stream[20] = 20.0/64; fake_stream[21] = 21.0/64;
   // Twelfth bin
-  fake_stream[22] = 22.0/64; fake_stream[23] = 23.0/64; 
+  fake_stream[22] = 22.0/64; fake_stream[23] = 23.0/64;
   // Thirteenth bin
-  fake_stream[24] = 24.0/64; fake_stream[25] = 25.0/64; 
+  fake_stream[24] = 24.0/64; fake_stream[25] = 25.0/64;
   // Fourteenth bin
-  fake_stream[26] = 26.0/64; fake_stream[27] = 27.0/64; 
+  fake_stream[26] = 26.0/64; fake_stream[27] = 27.0/64;
   // Fifteenth bin
-  fake_stream[28] = 28.0/64; fake_stream[29] = 29.0/64; 
+  fake_stream[28] = 28.0/64; fake_stream[29] = 29.0/64;
   // Sixteenth bin
-  fake_stream[30] = 30.0/64; fake_stream[31] = 31.0/64; 
+  fake_stream[30] = 30.0/64; fake_stream[31] = 31.0/64;
   // Seventeenth bin
   fake_stream[32] = 32.0/64; fake_stream[33] = 33.0/64;
   // Eighteenth bin
-  fake_stream[34] = 34.0/64; fake_stream[35] = 35.0/64; 
+  fake_stream[34] = 34.0/64; fake_stream[35] = 35.0/64;
   // Nineteenth bin
-  fake_stream[36] = 36.0/64; fake_stream[37] = 37.0/64; 
+  fake_stream[36] = 36.0/64; fake_stream[37] = 37.0/64;
   // Twentieth bin
-  fake_stream[38] = 38.0/64; fake_stream[39] = 39.0/64; 
+  fake_stream[38] = 38.0/64; fake_stream[39] = 39.0/64;
   // Twenty-first bin
-  fake_stream[40] = 40.0/64; fake_stream[41] = 41.0/64; 
+  fake_stream[40] = 40.0/64; fake_stream[41] = 41.0/64;
   // Twenty-second bin
-  fake_stream[42] = 42.0/64; fake_stream[43] = 43.0/64; 
+  fake_stream[42] = 42.0/64; fake_stream[43] = 43.0/64;
   // Twenty-third bin
   fake_stream[44] = 44.0/64; fake_stream[45] = 45.0/64;
   // Twenty-fourth bin
-  fake_stream[46] = 46.0/64; fake_stream[47] = 47.0/64; 
+  fake_stream[46] = 46.0/64; fake_stream[47] = 47.0/64;
   // Twenty-fifth bin
-  fake_stream[48] = 48.0/64; fake_stream[49] = 49.0/64; 
+  fake_stream[48] = 48.0/64; fake_stream[49] = 49.0/64;
   // Twenty-sixth bin
-  fake_stream[50] = 50.0/64; fake_stream[51] = 51.0/64; 
+  fake_stream[50] = 50.0/64; fake_stream[51] = 51.0/64;
   // Twenty-seventh bin
-  fake_stream[52] = 52.0/64; fake_stream[53] = 53.0/64; 
+  fake_stream[52] = 52.0/64; fake_stream[53] = 53.0/64;
   // Twenty-eighth bin
-  fake_stream[54] = 54.0/64; fake_stream[55] = 55.0/64; 
+  fake_stream[54] = 54.0/64; fake_stream[55] = 55.0/64;
   // Twenty-nineth bin
-  fake_stream[56] = 56.0/64; fake_stream[57] = 57.0/64; 
+  fake_stream[56] = 56.0/64; fake_stream[57] = 57.0/64;
   // Thirtieth bin
   fake_stream[58] = 58.0/64; fake_stream[59] = 59.0/64;
   // Thirty-first bin
-  fake_stream[60] = 60.0/64; fake_stream[61] = 61.0/64; 
+  fake_stream[60] = 60.0/64; fake_stream[61] = 61.0/64;
   // Thirty-second bin
-  fake_stream[62] = 62.0/64; fake_stream[63] = 63.0/64; 
+  fake_stream[62] = 62.0/64; fake_stream[63] = 63.0/64;
   fake_stream[64] = 1.0 - 1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -1099,7 +1099,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -16.0 );
   TEST_EQUALITY_CONST( bin_index, 0 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -15.5 );
   TEST_EQUALITY_CONST( bin_index, 0 );
@@ -1117,7 +1117,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -14.0 );
   TEST_EQUALITY_CONST( bin_index, 2 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -13.5 );
   TEST_EQUALITY_CONST( bin_index, 2 );
@@ -1126,7 +1126,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -13.0 );
   TEST_EQUALITY_CONST( bin_index, 3 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -12.5 );
   TEST_EQUALITY_CONST( bin_index, 3 );
@@ -1162,7 +1162,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -9.0 );
   TEST_EQUALITY_CONST( bin_index, 7 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -8.5 );
   TEST_EQUALITY_CONST( bin_index, 7 );
@@ -1171,7 +1171,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -8.0 );
   TEST_EQUALITY_CONST( bin_index, 8 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -7.5 );
   TEST_EQUALITY_CONST( bin_index, 8 );
@@ -1180,7 +1180,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -7.0 );
   TEST_EQUALITY_CONST( bin_index, 9 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -6.5 );
   TEST_EQUALITY_CONST( bin_index, 9 );
@@ -1247,12 +1247,12 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 0.25 );
   TEST_EQUALITY_CONST( bin_index, 16 );
-  
+
   // Eighteenth bin
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 0.5 );
   TEST_EQUALITY_CONST( bin_index, 17 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 1.25 );
   TEST_EQUALITY_CONST( bin_index, 17 );
@@ -1279,7 +1279,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 4.0 );
   TEST_EQUALITY_CONST( bin_index, 20 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 4.5 );
   TEST_EQUALITY_CONST( bin_index, 20 );
@@ -1306,7 +1306,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 7.0 );
   TEST_EQUALITY_CONST( bin_index, 23 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 7.5 );
   TEST_EQUALITY_CONST( bin_index, 23 );
@@ -1324,7 +1324,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 9.0 );
   TEST_EQUALITY_CONST( bin_index, 25 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 9.5 );
   TEST_EQUALITY_CONST( bin_index, 25 );
@@ -1337,7 +1337,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 10.5 );
   TEST_EQUALITY_CONST( bin_index, 26 );
-  
+
   // Twenty-eighth bin
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 11.0 );
@@ -1369,7 +1369,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 14.0 );
   TEST_EQUALITY_CONST( bin_index, 30 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 14.5 );
   TEST_EQUALITY_CONST( bin_index, 30 );
@@ -1378,7 +1378,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 15.0 );
   TEST_EQUALITY_CONST( bin_index, 31 );
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 15.5 );
   TEST_EQUALITY_CONST( bin_index, 31 );
@@ -1390,7 +1390,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 		   sampleAndRecordBinIndex )
 {
   std::vector<double> fake_stream( 9 );
@@ -1409,11 +1409,11 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
   unsigned bin_index;
 
   // First bin
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 0.0*MeV );
   TEST_EQUALITY_CONST( bin_index, 0.0 );
-  
+
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 0.05*MeV );
   TEST_EQUALITY_CONST( bin_index, 0.0 );
@@ -1459,7 +1459,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
   // First bin
   double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, -16.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 1.0/64 );
   TEST_EQUALITY_CONST( sample, -15.5 );
 
@@ -1473,14 +1473,14 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
   // Third bin
   sample = tab_distribution->sampleWithRandomNumber( 4.0/64 );
   TEST_EQUALITY_CONST( sample, -14.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 5.0/64 );
   TEST_EQUALITY_CONST( sample, -13.5 );
 
   // Fourth bin
   sample = tab_distribution->sampleWithRandomNumber( 6.0/64 );
   TEST_EQUALITY_CONST( sample, -13.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 7.0/64 );
   TEST_EQUALITY_CONST( sample, -12.5 );
 
@@ -1508,21 +1508,21 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
   // Eighth bin
   sample = tab_distribution->sampleWithRandomNumber( 14.0/64 );
   TEST_EQUALITY_CONST( sample, -9.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 15.0/64 );
   TEST_EQUALITY_CONST( sample, -8.5 );
 
   // Nineth bin
   sample = tab_distribution->sampleWithRandomNumber( 16.0/64 );
   TEST_EQUALITY_CONST( sample, -8.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 17.0/64 );
   TEST_EQUALITY_CONST( sample, -7.5 );
 
   // Tenth bin
   sample = tab_distribution->sampleWithRandomNumber( 18.0/64 );
   TEST_EQUALITY_CONST( sample, -7.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 19.0/64 );
   TEST_EQUALITY_CONST( sample, -6.5 );
 
@@ -1574,11 +1574,11 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
 
   sample = tab_distribution->sampleWithRandomNumber( 33.0/64 );
   TEST_EQUALITY_CONST( sample, 0.25 );
-  
+
   // Eighteenth bin
   sample = tab_distribution->sampleWithRandomNumber( 34.0/64 );
   TEST_EQUALITY_CONST( sample, 0.5 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 35.0/64 );
   TEST_EQUALITY_CONST( sample, 1.25 );
 
@@ -1599,7 +1599,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
   // Twenty-first bin
   sample = tab_distribution->sampleWithRandomNumber( 40.0/64 );
   TEST_EQUALITY_CONST( sample, 4.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 41.0/64 );
   TEST_EQUALITY_CONST( sample, 4.5 );
 
@@ -1620,7 +1620,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
   // Twenty-fourth bin
   sample = tab_distribution->sampleWithRandomNumber( 46.0/64 );
   TEST_EQUALITY_CONST( sample, 7.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 47.0/64 );
   TEST_EQUALITY_CONST( sample, 7.5 );
 
@@ -1634,7 +1634,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
   // Twenty-sixth bin
   sample = tab_distribution->sampleWithRandomNumber( 50.0/64 );
   TEST_EQUALITY_CONST( sample, 9.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 51.0/64 );
   TEST_EQUALITY_CONST( sample, 9.5 );
 
@@ -1644,7 +1644,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
 
   sample = tab_distribution->sampleWithRandomNumber( 53.0/64 );
   TEST_EQUALITY_CONST( sample, 10.5 );
-  
+
   // Twenty-eighth bin
   sample = tab_distribution->sampleWithRandomNumber( 54.0/64 );
   TEST_EQUALITY_CONST( sample, 11.0 );
@@ -1669,14 +1669,14 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
   // Thirty-first bin
   sample = tab_distribution->sampleWithRandomNumber( 60.0/64 );
   TEST_EQUALITY_CONST( sample, 14.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 61.0/64 );
   TEST_EQUALITY_CONST( sample, 14.5 );
 
   // Thirty-second bin
   sample = tab_distribution->sampleWithRandomNumber( 62.0/64 );
   TEST_EQUALITY_CONST( sample, 15.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 63.0/64 );
   TEST_EQUALITY_CONST( sample, 15.5 );
 
@@ -1686,14 +1686,14 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 		   sampleWithRandomNumber )
 {
   // First bin
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, 0.0*MeV );
-  
+
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.125 );
   TEST_EQUALITY_CONST( sample, 0.05*MeV );
 
@@ -1730,61 +1730,61 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleInSubrange )
   // First bin
   fake_stream[0] = 0.0;      fake_stream[1] = 1.0/12;
   // Second bin
-  fake_stream[2] = 2.0/12;   fake_stream[3] = 3.0/12;   
+  fake_stream[2] = 2.0/12;   fake_stream[3] = 3.0/12;
   // Third bin
   fake_stream[4] = 4.0/12;   fake_stream[5] = 5.0/12;
   // Fourth bin
-  fake_stream[6] = 6.0/12;   fake_stream[7] = 7.0/12; 
+  fake_stream[6] = 6.0/12;   fake_stream[7] = 7.0/12;
   // Fifth bin
-  fake_stream[8] = 8.0/12;   fake_stream[9] = 9.0/12;  
+  fake_stream[8] = 8.0/12;   fake_stream[9] = 9.0/12;
   // Sixth bin
-  fake_stream[10] = 10.0/12; fake_stream[11] = 11.0/12; 
-  fake_stream[12] = 12.0/12 - 1e-12; 
+  fake_stream[10] = 10.0/12; fake_stream[11] = 11.0/12;
+  fake_stream[12] = 12.0/12 - 1e-12;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // First bin
   double sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -16.0 );
-    
+
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -15.5 );
-  
+
   // Second bin
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -15.0 );
-  
+
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -14.5 );
-  
+
   // Third bin
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -14.0 );
-    
+
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -13.5 );
-  
+
   // Fourth bin
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -13.0 );
-    
+
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -12.5 );
-  
+
   // Fifth bin
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -12.0 );
-  
+
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -11.5 );
-  
+
   // Sixth bin
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -11.0 );
-  
+
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_EQUALITY_CONST( sample, -10.5 );
-  
+
   sample = tab_distribution->sampleInSubrange( -10.0 );
   TEST_FLOATING_EQUALITY( sample, -10.0, 1e-12 );
 }
@@ -1805,10 +1805,10 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, sampleInSubrange )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // First bin
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_tab_distribution->sampleInSubrange( 5.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*MeV );
-  
+
   sample = unit_aware_tab_distribution->sampleInSubrange( 5.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.05*MeV );
 
@@ -1834,58 +1834,58 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, sampleInSubrange )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, 
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution,
 		   sampleWithRandomNumberInSubrange )
 {
   // First bin
   double sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.0, -10.0 );
   TEST_EQUALITY_CONST( sample, -16.0 );
-    
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -15.5 );
-  
+
   // Second bin
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 2.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -15.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 3.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -14.5 );
-  
+
   // Third bin
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 4.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -14.0 );
-    
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 5.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -13.5 );
-  
+
   // Fourth bin
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 6.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -13.0 );
-    
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 7.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -12.5 );
-  
+
   // Fifth bin
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 8.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -12.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 9.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -11.5 );
-  
+
   // Sixth bin
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 10.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -11.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 11.0/12, -10.0 );
   TEST_EQUALITY_CONST( sample, -10.5 );
-  
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, -10.0 );
   TEST_FLOATING_EQUALITY( sample, -10.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 		   sampleWithRandomNumberInSubrange )
 {
   std::vector<double> fake_stream( 7 );
@@ -1898,10 +1898,10 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
   fake_stream[6] = 1.0-1e-15;
 
   // First bin
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 5.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*MeV );
-  
+
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 1.0/6, 5.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.05*MeV );
 
@@ -1924,21 +1924,21 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the distribution independent variable can be 
+// Check that the upper bound of the distribution independent variable can be
 // returned
-TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, 
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution,
 		   getUpperBoundOfIndepVar )
 {
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 16.0 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 		   getUpperBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
 		       10.0*MeV );
 }
 
@@ -1952,12 +1952,12 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the unit-aware distribution independent 
+// Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 		   getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       0.0*MeV );
 }
 
@@ -1991,7 +1991,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, isTabular )
 TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, isTabular )
 {
   TEST_ASSERT( unit_aware_distribution->isTabular() );
-}		   
+}
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is continuous
@@ -2011,27 +2011,27 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, isContinuous )
 // Check that the distribution can be written to and read from an xml file
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, toParameterList )
 {
-  Teuchos::RCP<Utility::EquiprobableBinDistribution> 
+  Teuchos::RCP<Utility::EquiprobableBinDistribution>
     true_distribution = Teuchos::rcp_dynamic_cast<Utility::EquiprobableBinDistribution>( distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Utility::EquiprobableBinDistribution>( 
+
+  parameter_list.set<Utility::EquiprobableBinDistribution>(
 							  "test distribution",
 							  *true_distribution );
 
   Teuchos::writeParameterListToXmlFile(parameter_list,
 				       "equiprobable_bin_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "equiprobable_bin_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<Utility::EquiprobableBinDistribution> 
+  Teuchos::RCP<Utility::EquiprobableBinDistribution>
     copy_distribution( new Utility::EquiprobableBinDistribution );
 
-  *copy_distribution = 
+  *copy_distribution =
     read_parameter_list->get<Utility::EquiprobableBinDistribution>(
 							  "test distribution");
 
@@ -2043,28 +2043,28 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, toParameterList )
 TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toParameterList )
 {
   typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> UnitAwareEquiprobableBinDistribution;
-  
-  Teuchos::RCP<UnitAwareEquiprobableBinDistribution> 
+
+  Teuchos::RCP<UnitAwareEquiprobableBinDistribution>
     true_distribution = Teuchos::rcp_dynamic_cast<UnitAwareEquiprobableBinDistribution>( unit_aware_distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<UnitAwareEquiprobableBinDistribution>( 
+
+  parameter_list.set<UnitAwareEquiprobableBinDistribution>(
 							  "test distribution",
 							  *true_distribution );
 
   Teuchos::writeParameterListToXmlFile(parameter_list,
 				       "unit_aware_equiprobable_bin_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "unit_aware_equiprobable_bin_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<UnitAwareEquiprobableBinDistribution> 
+  Teuchos::RCP<UnitAwareEquiprobableBinDistribution>
     copy_distribution( new UnitAwareEquiprobableBinDistribution );
 
-  *copy_distribution = 
+  *copy_distribution =
     read_parameter_list->get<UnitAwareEquiprobableBinDistribution>(
 							  "test distribution");
 
@@ -2075,14 +2075,14 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toParameterList )
 // Check that the distribution can be read from and xml file
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, fromParameterList )
 {
-  Utility::EquiprobableBinDistribution read_distribution = 
+  Utility::EquiprobableBinDistribution read_distribution =
     test_dists_list->get<Utility::EquiprobableBinDistribution>( "Distribution A" );
 
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
 		       2*Utility::PhysicalConstants::pi );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<Utility::EquiprobableBinDistribution>( "Distribution B" );
 
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), -1.0 );
@@ -2094,14 +2094,14 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, fromParameterList )
 TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromParameterList )
 {
   typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> UnitAwareEquiprobableBinDistribution;
-  
-  UnitAwareEquiprobableBinDistribution read_distribution = 
+
+  UnitAwareEquiprobableBinDistribution read_distribution =
     test_dists_list->get<UnitAwareEquiprobableBinDistribution>( "Unit-Aware Distribution A" );
 
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0*MeV );
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 10.0*MeV );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<UnitAwareEquiprobableBinDistribution>( "Unit-Aware Distribution B" );
 
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.001*MeV );
@@ -2119,10 +2119,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareEquiprobableBinDistribution,
 {
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
@@ -2134,57 +2134,57 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareEquiprobableBinDistribution,
   Utility::UnitAwareEquiprobableBinDistribution<IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 1./16);
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 1./16 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
-  DepQuantityB dep_quantity_b = 
-    Utility::QuantityTraits<DepQuantityB>::initializeQuantity( 
+  DepQuantityB dep_quantity_b =
+    Utility::QuantityTraits<DepQuantityB>::initializeQuantity(
 			     Utility::getRawQuantity( inv_indep_quantity_b ) );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
 
   Utility::setQuantity( indep_quantity_a, 17.0 );
   Utility::setQuantity( inv_indep_quantity_a, 0.0 );
-  Utility::setQuantity( dep_quantity_a, 0.0 );			
+  Utility::setQuantity( dep_quantity_a, 0.0 );
 
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
@@ -2351,11 +2351,11 @@ int main( int argc, char** argv )
   clp.setOption( "test_dists_xml_file",
 		 &test_dists_xml_file,
 		 "Test distributions xml file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -2371,7 +2371,7 @@ int main( int argc, char** argv )
 
   // Initialize the distribution
   Teuchos::Array<double> bin_boundaries( 33 );
-  
+
   bin_boundaries[0] = -16.0;
   bin_boundaries[1] = -15.0;
   bin_boundaries[2] = -14.0;
@@ -2406,9 +2406,9 @@ int main( int argc, char** argv )
   bin_boundaries[31] = 15.0;
   bin_boundaries[32] = 16.0;
 
-  tab_distribution.reset( 
+  tab_distribution.reset(
 	  new Utility::EquiprobableBinDistribution( bin_boundaries ) );
-  
+
   distribution = tab_distribution;
 
   // Initialize the unit-aware distribution
@@ -2426,7 +2426,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

@@ -2,14 +2,14 @@
 
   <ParameterList name="Cartesian Distribution Example">
     <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
-    <Parameter name="Y Distribution" type="Uniform Distribution" 
+    <Parameter name="Y Distribution" type="Uniform Distribution"
 	       value="{-1.0, 1.0, 2}"/>
-    <Parameter name="Z Distribution" type="Normal Distribution" 
+    <Parameter name="Z Distribution" type="Normal Distribution"
 	       value="{0.0, 1.0}"/>
   </ParameterList>
 
   <ParameterList name="Cylindrical Distribution Example">
-    <Parameter name="R Distribution" type="Power 1 Distribution" 
+    <Parameter name="R Distribution" type="Power 1 Distribution"
 	       value="{1.0, 0.0, 1.0}"/>
     <Parameter name="Theta Distribution" type="Uniform Distribution"
 	       value="{0,6.283185307179586,1}"/>
@@ -22,7 +22,7 @@
   </ParameterList>
 
   <ParameterList name="Spherical Distribution Example">
-    <Parameter name="R Distribution" type="Power 2 Distribution" 
+    <Parameter name="R Distribution" type="Power 2 Distribution"
 	       value="{1.0, 0.0, 1.0}"/>
     <Parameter name="Theta Distribution" type="Uniform Distribution"
 	       value="{0,6.283185307179586,1}"/>

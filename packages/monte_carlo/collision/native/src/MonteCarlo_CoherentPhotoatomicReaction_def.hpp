@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhotoatomicReaction( 
+CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhotoatomicReaction(
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const unsigned threshold_energy_index,
@@ -35,8 +35,8 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the form factor is valid
@@ -45,7 +45,7 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
 
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhotoatomicReaction( 
+CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhotoatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
@@ -66,8 +66,8 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the form factor is valid
@@ -88,7 +88,7 @@ unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getN
 
 // Return the number of electrons emitted from the rxn at the given energy
 /*! \details This does not include electrons from atomic relaxation.
- */ 
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
@@ -104,13 +104,13 @@ PhotoatomicReactionType CoherentPhotoatomicReaction<InterpPolicy,processed_cross
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react( 
+void CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     PhotonState& photon,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution->scatterPhoton( photon, 
-					    bank, 
+  d_scattering_distribution->scatterPhoton( photon,
+					    bank,
 					    shell_of_interaction );
 
   photon.incrementCollisionNumber();

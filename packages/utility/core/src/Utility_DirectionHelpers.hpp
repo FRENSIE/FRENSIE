@@ -26,7 +26,7 @@ double vectorMagnitude( const double x_component,
 double vectorMagnitude( const double vector[3] );
 
 //! Test if the direction is valid (on unit sphere)
-bool validDirection( const double x_direction, 
+bool validDirection( const double x_direction,
 		     const double y_direction,
 		     const double z_direction );
 
@@ -62,7 +62,7 @@ inline double vectorMagnitude( const double x_component,
   testPrecondition( !ST::isnaninf( x_component ) );
   testPrecondition( !ST::isnaninf( y_component ) );
   testPrecondition( !ST::isnaninf( z_component ) );
-  
+
   return sqrt( x_component*x_component + y_component*y_component +
 	       z_component*z_component );
 }

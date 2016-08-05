@@ -32,36 +32,36 @@ bool ParticleTrackerFactory::isParticleTrackerRep(
                               const Teuchos::ParameterList& object_rep ) const
 {
   bool is_ptrac_rep = false;
-  
+
   if( object_rep.isParameter( "Type" ) )
   {
     std::string object_type = object_rep.get<std::string>( "Type" );
-    
+
     if( object_type == "Particle Tracker" )
     {
       is_ptrac_rep = true;
     }
-  }   
-  
+  }
+
   return is_ptrac_rep;
 }
 
-// Create and register a particle tracker 
+// Create and register a particle tracker
 /*! \details This method is non-const because of the potential for info
  * caching in the derived classes.
  */
 void ParticleTrackerFactory::createAndRegisterParticleTracker(
                                     const Teuchos::ParameterList& ptrac_rep )
 {
-  // Make sure the parameter list is a particle tracker rep 
+  // Make sure the parameter list is a particle tracker rep
   testPrecondition( this->isParticleTrackerRep( ptrac_rep ) );
-  
+
   // Get the number of histories
   this->getNumberOfHistories( ptrac_rep );
-  
+
   // Get the particle tracker ID
   unsigned ptrac_id;
-  
+
   try{
     ptrac_id = this->getParticleTrackerID( ptrac_rep );
   }
@@ -69,15 +69,15 @@ void ParticleTrackerFactory::createAndRegisterParticleTracker(
                               InvalidParticleTrackerRepresentation,
                               "Error: could not get the particle tracker id "
                               "for estimator " << ptrac_rep.name() << "!" );
-  
+
   // Construct the new particle tracker
   std::shared_ptr<ParticleTracker> particle_tracker;
   particle_tracker.reset( new ParticleTracker( ptrac_id,
                                                d_number_histories ) );
-  
+
   std::shared_ptr<ParticleTracker>
     derived_particle_tracker = std::dynamic_pointer_cast<ParticleTracker>( particle_tracker );
-  
+
   d_event_handler->addGlobalEventObserver( derived_particle_tracker );
 }
 
@@ -99,7 +99,7 @@ unsigned ParticleTrackerFactory::getParticleTrackerID(
                       InvalidParticleTrackerRepresentation,
                       "Error: the particle tracker id was not specified "
                       "in particle tracker " << ptrac_rep.name() << "!" );
-                      
+
    return ptrac_rep.get<unsigned>( "Id" );
 }
 

@@ -48,12 +48,12 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, getNumberDensity )
 // Check that the macroscopic total cross section can be returned
 TEUCHOS_UNIT_TEST( PhotonMaterial, getMacroscopicTotalCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     material->getMacroscopicTotalCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.823831998305667e-05, 1e-12 );
 
-  cross_section = 
+  cross_section =
     material->getMacroscopicTotalCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.11970087585747362, 1e-12 );
@@ -65,15 +65,15 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, getMacroscopicAbsorptionCrossSection )
 {
   double cross_section =
     material->getMacroscopicAbsorptionCrossSection(exp( -1.381551055796E+01 ));
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-  
-  cross_section = 
+
+  cross_section =
     material->getMacroscopicAbsorptionCrossSection(exp( -1.214969212306E+01 ));
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 85114.18059425855, 1e-12 );
 
-  cross_section = 
+  cross_section =
     material->getMacroscopicAbsorptionCrossSection(exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 4.138700272111011e-08, 1e-11 );
@@ -83,12 +83,12 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, getMacroscopicAbsorptionCrossSection )
 // Check that the survival probability can be returned
 TEUCHOS_UNIT_TEST( PhotonMaterial, getSurvivalProbability )
 {
-  double survival_prob = 
+  double survival_prob =
     material->getSurvivalProbability( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( survival_prob, 1.0, 1e-12 );
 
-  survival_prob = 
+  survival_prob =
     material->getSurvivalProbability( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( survival_prob, 0.9999996542464503, 1e-12 );
@@ -117,7 +117,7 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, getMacroscopicReactionCrossSection )
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.8233859760860873e-05, 1e-12 );
-				      
+
   cross_section = material->getMacroscopicReactionCrossSection(
 				   exp( 1.151292546497E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
@@ -140,7 +140,7 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, getMacroscopicReactionCrossSection )
   cross_section = material->getMacroscopicReactionCrossSection(
 		   exp( 1.151292546497E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 3.4075097760409515e-08, 1e-12 );
 
   // Test that the P3 subshell photoelectric cross section can be returned
@@ -169,13 +169,13 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, getMacroscopicReactionCrossSection )
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
+  cross_section = material->getMacroscopicReactionCrossSection(
 			    exp( 2.480967890857E-02 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.7562829707526906e-09, 1e-12 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
+  cross_section = material->getMacroscopicReactionCrossSection(
 			    exp( 1.151292546497E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
@@ -205,7 +205,7 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, collideAnalogue )
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
@@ -241,7 +241,7 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, collideSurvivalBias )
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
@@ -259,7 +259,7 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, collideSurvivalBias )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   material->collideSurvivalBias( photon, bank );
-  
+
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getWeight(), 0.99623491442141220986, 1e-12 );
@@ -280,22 +280,22 @@ int main( int argc, char** argv )
 		 &test_cross_sections_xml_directory,
 		 "Directory where test cross_sections.xml file is located." );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   {
     // Assign the name of the cross_sections.xml file with path
     std::string cross_section_xml_file = test_cross_sections_xml_directory;
     cross_section_xml_file += "/cross_sections.xml";
-    
+
     // Read in the xml file storing the cross section table info
     Teuchos::ParameterList cross_section_table_info;
     Teuchos::updateParametersFromXmlFile(
@@ -306,11 +306,11 @@ int main( int argc, char** argv )
     atom_aliases.insert( "Pb" );
 
     // Create the factories
-    Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory> 
+    Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory>
       atomic_relaxation_model_factory(
 				new MonteCarlo::AtomicRelaxationModelFactory );
-    
-    MonteCarlo::PhotoatomFactory factory( 
+
+    MonteCarlo::PhotoatomFactory factory(
 		 test_cross_sections_xml_directory,
 		 cross_section_table_info,
 		 atom_aliases,
@@ -340,7 +340,7 @@ int main( int argc, char** argv )
 						    atom_fractions,
 						    atom_names ) );
   }
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 

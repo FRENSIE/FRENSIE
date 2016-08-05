@@ -21,11 +21,11 @@ namespace MonteCarlo{
 //! The simulation photon properties factory
 class SimulationPhotonPropertiesFactory
 {
-  
+
 public:
-  
+
   //! Initialize the simulation photon properties
-  static void initializeSimulationPhotonProperties( 
+  static void initializeSimulationPhotonProperties(
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn = &std::cerr );
 };

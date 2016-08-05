@@ -62,7 +62,7 @@ unit_aware_tab_distribution;
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLin )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLin )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLog )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLog )	
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLog )
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -72,13 +72,13 @@ template<typename InterpolationPolicy, typename BaseDistribution>
 void initialize( Teuchos::RCP<BaseDistribution>& dist )
 {
   // Use the basic constructor
-  Teuchos::Array<typename BaseDistribution::IndepQuantity> 
+  Teuchos::Array<typename BaseDistribution::IndepQuantity>
     independent_values( 4 );
   Utility::setQuantity( independent_values[0], 1e-3 );
   Utility::setQuantity( independent_values[1], 1e-2 );
   Utility::setQuantity( independent_values[2], 1e-1 );
   Utility::setQuantity( independent_values[3], 1.0 );
-  
+
   Teuchos::Array<typename BaseDistribution::DepQuantity> dependent_values( 4 );
   Utility::setQuantity( dependent_values[0], 1e2 );
   Utility::setQuantity( dependent_values[1], 1e1 );
@@ -94,7 +94,7 @@ void initialize( Teuchos::RCP<BaseDistribution>& dist )
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   evaluate,
 				   InterpolationPolicy )
 {
@@ -118,42 +118,42 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-3*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-3*MeV ),
 		       1e2*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-2*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-2*MeV ),
 		       1e1*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-1*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-1*MeV ),
 		       1.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
 		       1e-1*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV ),
 		       0.0*si::mole );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution, evaluate );
 
 //---------------------------------------------------------------------------//
-// Check that the PDF can be evaluated 
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution, 
+// Check that the PDF can be evaluated
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   evaluatePDF,
 				   InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( distribution );
 
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-3 ), 
-			  67.340006734, 
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-3 ),
+			  67.340006734,
 			  1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-2 ), 
-			  6.7340006734, 
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-2 ),
+			  6.7340006734,
 			  1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-1 ), 
-			  0.67340006734, 
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-1 ),
+			  0.67340006734,
 			  1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1.0 ), 
-			  0.067340006734, 
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1.0 ),
+			  0.067340006734,
 			  1e-6 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), 0.0 );
 }
@@ -168,50 +168,50 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ),
 		       0.0/MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( 
-			     unit_aware_distribution->evaluatePDF( 1e-3*MeV ), 
+  UTILITY_TEST_FLOATING_EQUALITY(
+			     unit_aware_distribution->evaluatePDF( 1e-3*MeV ),
 			     67.340006734/MeV,
 			     1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
-			     unit_aware_distribution->evaluatePDF( 1e-2*MeV ), 
+  UTILITY_TEST_FLOATING_EQUALITY(
+			     unit_aware_distribution->evaluatePDF( 1e-2*MeV ),
 			     6.7340006734/MeV,
 			     1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
-			     unit_aware_distribution->evaluatePDF( 1e-1*MeV ), 
+  UTILITY_TEST_FLOATING_EQUALITY(
+			     unit_aware_distribution->evaluatePDF( 1e-1*MeV ),
 			     0.67340006734/MeV,
 			     1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
-			      unit_aware_distribution->evaluatePDF( 1.0*MeV ), 
+  UTILITY_TEST_FLOATING_EQUALITY(
+			      unit_aware_distribution->evaluatePDF( 1.0*MeV ),
 			      0.067340006734/MeV,
 			      1e-6 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2.0*MeV ),
 		       0.0/MeV );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution, evaluatePDF );
 
 //---------------------------------------------------------------------------//
-// Check that the CDF can be evaluated 
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution, 
+// Check that the CDF can be evaluated
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   evaluateCDF,
 				   InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( tab_distribution );
 
   TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-3 ), 
-			  0.0000000000, 
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-3 ),
+			  0.0000000000,
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-2 ), 
-			  0.33333333333, 
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-2 ),
+			  0.33333333333,
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-1 ), 
-			  0.66666666667, 
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-1 ),
+			  0.66666666667,
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1.0 ), 
-			  1.0000000000, 
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1.0 ),
+			  1.0000000000,
 			  1e-10 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
 }
@@ -219,28 +219,28 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, evaluateCDF );
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware CDF can be evaluated 
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution, 
+// Check that the unit-aware CDF can be evaluated
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 				   evaluateCDF,
 				   InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*MeV ),
 		       0.0 );
   TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-3*MeV ),
-			  0.0000000000, 
+			  0.0000000000,
 			  1e-10 );
   TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-2*MeV ),
-			  0.33333333333, 
+			  0.33333333333,
 			  1e-10 );
   TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-1*MeV ),
-			  0.66666666667, 
+			  0.66666666667,
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1.0*MeV ), 
-			  1.0000000000, 
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1.0*MeV ),
+			  1.0000000000,
 			  1e-10 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 2.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 2.0*MeV ),
 		       1.0 );
 }
 
@@ -268,7 +268,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = distribution->sample();
   TEST_COMPARE( sample, >=, 1e-3 );
   TEST_COMPARE( sample, <=, 1.0 );
@@ -298,7 +298,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = unit_aware_distribution->sample();
   TEST_COMPARE( sample, >=, 1e-3*MeV );
   TEST_COMPARE( sample, <=, 1.0*MeV );
@@ -332,7 +332,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_COMPARE( sample, >=, 1e-3 );
   TEST_COMPARE( sample, <=, 1.0 );
@@ -357,7 +357,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 
   unsigned trials = 0;
 
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1e-3*MeV );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
@@ -368,7 +368,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_COMPARE( sample, >=, 1e-3*MeV );
   TEST_COMPARE( sample, <=, 1.0*MeV );
@@ -403,7 +403,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_COMPARE( sample, >=, 1e-3 );
   TEST_COMPARE( sample, <=, 1.0 );
@@ -427,7 +427,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 
   unsigned bin_index;
 
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 1e-3*MeV );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -438,13 +438,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_COMPARE( sample, >=, 1e-3*MeV );
   TEST_COMPARE( sample, <=, 1.0*MeV );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution, 
+UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution,
 			 sampleAndRecordBinIndex );
 
 //---------------------------------------------------------------------------//
@@ -472,7 +472,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, 1e-3*MeV );
 
@@ -480,7 +480,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution, 
+UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution,
 			 sampleWithRandomNumber );
 
 //---------------------------------------------------------------------------//
@@ -499,13 +499,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   double sample = tab_distribution->sampleInSubrange( 1e-1  );
   TEST_EQUALITY_CONST( sample, 1e-3 );
-  
+
   sample = tab_distribution->sampleInSubrange( 1e-1 );
   TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = tab_distribution->sampleInSubrange( 1e-1 );
   TEST_COMPARE( sample, >=, 1e-3 );
   TEST_COMPARE( sample, <=, 1e-1 );
@@ -527,16 +527,16 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV  );
   TEST_EQUALITY_CONST( sample, 1e-3*MeV );
-  
+
   sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV );
   TEST_COMPARE( sample, >=, 1e-3*MeV );
   TEST_COMPARE( sample, <=, 1e-1*MeV );
@@ -552,15 +552,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 {
   initialize<InterpolationPolicy>( tab_distribution );
 
-  double sample = 
+  double sample =
     tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1e-1  );
   TEST_EQUALITY_CONST( sample, 1e-3 );
-  
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 1e-1 );
   TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION( TabularDistribution, 
+UNIT_TEST_INSTANTIATION( TabularDistribution,
 			 sampleWithRandomNumberInSubrange );
 
 //---------------------------------------------------------------------------//
@@ -571,17 +571,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
-  quantity<MegaElectronVolt> sample = 
-    unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 
+  quantity<MegaElectronVolt> sample =
+    unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
 							       0.0, 1e-1*MeV );
   TEST_EQUALITY_CONST( sample, 1e-3*MeV );
-  
-  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 
+
+  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
 							       1.0, 1e-1*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution, 
+UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution,
 			 sampleWithRandomNumberInSubrange );
 
 //---------------------------------------------------------------------------//
@@ -599,7 +599,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, getUpperBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 				   getUpperBoundOfIndepVar,
@@ -607,11 +607,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
 		       1.0*MeV );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution, 
+UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution,
 			 getUpperBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
@@ -629,7 +629,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, getLowerBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the unit-aware distribution independent 
+// Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 				   getLowerBoundOfIndepVar,
@@ -637,11 +637,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       1e-3*MeV );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution, 
+UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution,
 			 getLowerBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
@@ -652,7 +652,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->getDistributionType(), 
+  TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::TABULAR_DISTRIBUTION );
 }
 
@@ -666,7 +666,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
 		       Utility::TABULAR_DISTRIBUTION );
 }
 
@@ -736,25 +736,25 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   Teuchos::RCP<Distribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Distribution>( distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Distribution>( "test distribution", 
+
+  parameter_list.set<Distribution>( "test distribution",
 				      *true_distribution );
 
   std::ostringstream xml_file_name;
-  xml_file_name << "tabular_" << InterpolationPolicy::name() 
+  xml_file_name << "tabular_" << InterpolationPolicy::name()
 		<< "_dist_test_list.xml";
-  
+
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					xml_file_name.str() );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( xml_file_name.str() );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<Distribution> 
+  Teuchos::RCP<Distribution>
     copy_distribution( new Distribution );
 
   *copy_distribution = read_parameter_list->get<Distribution>(
@@ -777,25 +777,25 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
 
   Teuchos::RCP<Distribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Distribution>( unit_aware_distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Distribution>( "test distribution", 
+
+  parameter_list.set<Distribution>( "test distribution",
 				    *true_distribution );
 
   std::ostringstream xml_file_name;
-  xml_file_name << "unit_aware_tabular_" << InterpolationPolicy::name() 
+  xml_file_name << "unit_aware_tabular_" << InterpolationPolicy::name()
 		<< "_dist_test_list.xml";
-  
+
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					xml_file_name.str() );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( xml_file_name.str() );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<Distribution> 
+  Teuchos::RCP<Distribution>
     copy_distribution( new Distribution );
 
   *copy_distribution = read_parameter_list->get<Distribution>(
@@ -810,20 +810,20 @@ UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution, toParameterList );
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( TabularDistribution, fromParameterList )
 {
-  Utility::TabularDistribution<Utility::LinLin> distribution_1 = 
+  Utility::TabularDistribution<Utility::LinLin> distribution_1 =
     test_dists_list->get<Utility::TabularDistribution<Utility::LinLin> >( "Tabular Distribution A" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001 );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(),
 		       Utility::PhysicalConstants::pi );
-  
-  distribution_1 = 
+
+  distribution_1 =
     test_dists_list->get<Utility::TabularDistribution<Utility::LinLin> >( "Tabular Distribution B" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001 );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
 
-  Utility::TabularDistribution<Utility::LogLog> distribution_2 = 
+  Utility::TabularDistribution<Utility::LogLog> distribution_2 =
     test_dists_list->get<Utility::TabularDistribution<Utility::LogLog> >( "Tabular Distribution C" );
 
   TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0.001 );
@@ -834,22 +834,22 @@ TEUCHOS_UNIT_TEST( TabularDistribution, fromParameterList )
 // Check that the unit-aware distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( UnitAwareTabularDistribution, fromParameterList )
 {
-  Utility::UnitAwareTabularDistribution<Utility::LinLin,MegaElectronVolt,si::amount> 
-    distribution_1 = 
+  Utility::UnitAwareTabularDistribution<Utility::LinLin,MegaElectronVolt,si::amount>
+    distribution_1 =
     test_dists_list->get<Utility::UnitAwareTabularDistribution<Utility::LinLin,MegaElectronVolt,si::amount> >( "Unit-Aware Tabular Distribution A" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001*MeV );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(),
 		       Utility::PhysicalConstants::pi*MeV );
-  
-  distribution_1 = 
+
+  distribution_1 =
     test_dists_list->get<Utility::UnitAwareTabularDistribution<Utility::LinLin,MegaElectronVolt,si::amount> >( "Unit-Aware Tabular Distribution B" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001*MeV );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0*MeV );
 
-  Utility::UnitAwareTabularDistribution<Utility::LogLog,MegaElectronVolt,si::amount> 
-    distribution_2 = 
+  Utility::UnitAwareTabularDistribution<Utility::LogLog,MegaElectronVolt,si::amount>
+    distribution_2 =
     test_dists_list->get<Utility::UnitAwareTabularDistribution<Utility::LogLog,MegaElectronVolt,si::amount> >( "Unit-Aware Tabular Distribution C" );
 
   TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0.001*MeV );
@@ -867,10 +867,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareTabularDistribution,
 {
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
@@ -884,55 +884,55 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareTabularDistribution,
   Utility::UnitAwareTabularDistribution<Utility::LinLin,IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.0 );
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 0.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
 
   Utility::setQuantity( indep_quantity_a, 0.1 );
   Utility::setQuantity( inv_indep_quantity_a, 0.67340006734 );
-  Utility::setQuantity( dep_quantity_a, 1.0 );			
+  Utility::setQuantity( dep_quantity_a, 1.0 );
 
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-6 );
@@ -1093,17 +1093,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularDistribution,
 int main( int argc, char** argv )
 {
   std::string test_dists_xml_file;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_dists_xml_file",
 		 &test_dists_xml_file,
 		 "Test distributions xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -1125,10 +1125,10 @@ int main( int argc, char** argv )
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareTabularLogLogDist );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

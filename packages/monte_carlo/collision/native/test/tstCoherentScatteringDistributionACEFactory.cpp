@@ -32,7 +32,7 @@ Teuchos::RCP<const MonteCarlo::CoherentScatteringDistribution> distribution;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a Thompson distribution can be created
-TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 		   createThompsonDistribution )
 {
   MonteCarlo::CoherentScatteringDistributionACEFactory::createThompsonDistribution(
@@ -73,45 +73,45 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that a basic coherent distribution can be created
-TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 		   createBasicCoherentDistribution )
 {
   MonteCarlo::CoherentScatteringDistributionACEFactory::createBasicCoherentDistribution(
 							   *xss_data_extractor,
 							   distribution );
-  
+
   // Test distribution properties
   double dist_value = distribution->evaluate( 0.1, 1.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 3.354834939813898e3, 1e-15 );
-  
+
   dist_value = distribution->evaluate( 0.1, 0.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 4.17273487105470142, 1e-15 );
-  
+
   dist_value = distribution->evaluate( 0.1, -1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 3.59244179705391486, 1e-15 );
 
   double outgoing_energy, scattering_angle_cosine;
-    
+
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.75;
   fake_stream[1] = 0.5;
   fake_stream[2] = 0.003; // reject
   fake_stream[3] = 0.7;
   fake_stream[4] = 0.8;
-  fake_stream[5] = 0.006; 
+  fake_stream[5] = 0.006;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->sample( 0.1,
 			outgoing_energy,
 			scattering_angle_cosine );
-  
+
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 
   // Test distribution properties
   double outgoing_energy, scattering_angle_cosine;
-  
+
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.942; // reject
@@ -138,7 +138,7 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
   distribution->sample( 0.1,
 			outgoing_energy,
 			scattering_angle_cosine );
-  
+
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.940007827406442842, 1e-15 );
 
@@ -161,24 +161,24 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-    xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
+    xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -186,7 +186,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

@@ -35,10 +35,10 @@ PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistribu
 
 // Return the average number of neutrons emitted
 template<typename FissionNeutronMultiplicityDistributionPolicy>
-double PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistributionPolicy>::getAverageNumberOfEmittedNeutrons( 
+double PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistributionPolicy>::getAverageNumberOfEmittedNeutrons(
 						    const double energy ) const
 {
-  return FissionNeutronMultiplicityDistributionPolicy::getTotalNuBar( 
+  return FissionNeutronMultiplicityDistributionPolicy::getTotalNuBar(
 					    d_first_multiplicity_distribution,
 					    d_second_multiplicity_distribution,
 					    energy );
@@ -46,10 +46,10 @@ double PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityD
 
 // Return the average number of prompt neutrons emitted
 template<typename FissionNeutronMultiplicityDistributionPolicy>
-double PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistributionPolicy>::getAverageNumberOfPromptNeutrons( 
+double PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistributionPolicy>::getAverageNumberOfPromptNeutrons(
 						    const double energy ) const
 {
-  return FissionNeutronMultiplicityDistributionPolicy::getPromptNuBar( 
+  return FissionNeutronMultiplicityDistributionPolicy::getPromptNuBar(
 					    d_first_multiplicity_distribution,
 					    d_second_multiplicity_distribution,
 					    energy );
@@ -57,10 +57,10 @@ double PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityD
 
 // Return the average number of delayed neutrons emitted
 template<typename FissionNeutronMultiplicityDistributionPolicy>
-double PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistributionPolicy>::getAverageNumberOfDelayedNeutrons( 
+double PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistributionPolicy>::getAverageNumberOfDelayedNeutrons(
 						    const double energy ) const
 {
-  return FissionNeutronMultiplicityDistributionPolicy::getDelayedNuBar( 
+  return FissionNeutronMultiplicityDistributionPolicy::getDelayedNuBar(
 					    d_first_multiplicity_distribution,
 					    d_second_multiplicity_distribution,
 					    energy );

@@ -29,11 +29,11 @@ module data_endl_table_helpers
   contains
 
     !> Read the first line of the table header
-    !> \detials This function will read the zaids, the incident particle type, 
-    !> the outgoing particle type, the atomic mass (amu), 
+    !> \detials This function will read the zaids, the incident particle type,
+    !> the outgoing particle type, the atomic mass (amu),
     !> the date the table was created and the interpolation flag.
-    !> The table name and date arrays must have 10 elements. It is assumed 
-    !> that the desired table has already been found in the desired ENDL 
+    !> The table name and date arrays must have 10 elements. It is assumed
+    !> that the desired table has already been found in the desired ENDL
     !> library.
     subroutine read_endl_table_header_line_1( file_id, zaids, &
          incident_particle_type, outgoing_particle_type, atomic_mass, &
@@ -58,7 +58,7 @@ module data_endl_table_helpers
     end subroutine read_endl_table_header_line_1
 
     !> Read the second line of the table header
-    !> \details This function will read the reaction descriptor,  
+    !> \details This function will read the reaction descriptor,
     !> reaction property, reaction modifier and subshell designator. It
     !> is assumed that the first line of the table has already been read.
     subroutine read_endl_table_header_line_2( file_id, reaction_descriptor, &
@@ -97,7 +97,7 @@ module data_endl_table_helpers
       do i = 1, table_size
         read(file_id, fmt='(2E11.6,49X, I1)', iostat=flag ) column_one(i), &
         column_two(i), end_of_table
-      end do 
+      end do
 
       read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
 
@@ -122,14 +122,14 @@ module data_endl_table_helpers
       do i = 1, table_size
         read(file_id, '(2E16.9,39X, I1)', iostat=flag ) column_one(i), &
         column_two(i), end_of_table
-      end do 
+      end do
 
       read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
 
     end subroutine read_epics_table_two_column
 
     !> Read a three column ENDL table
-    !> \details A three column table of data is read into three arrays, one for 
+    !> \details A three column table of data is read into three arrays, one for
     !> each column.
     subroutine read_endl_table_three_column( file_id, table_size, column_one, &
         column_two, column_three, flag ) &
@@ -149,14 +149,14 @@ module data_endl_table_helpers
       do i = 1, table_size
         read(file_id, fmt='(3E11.6,38X, I1)', iostat=flag ) column_one(i), &
         column_two(i), column_three(i), end_of_table
-      end do 
+      end do
 
       read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
 
     end subroutine read_endl_table_three_column
 
     !> Read a three column ENDL EPICS2014 table
-    !> \details A three column table of data is read into three arrays, one for 
+    !> \details A three column table of data is read into three arrays, one for
     !> each column.
     subroutine read_epics_table_three_column( file_id, table_size, column_one, &
         column_two, column_three, flag ) &
@@ -176,14 +176,14 @@ module data_endl_table_helpers
       do i = 1, table_size
         read(file_id, fmt='(3E16.9,23X, I1)', iostat=flag ) column_one(i), &
         column_two(i), column_three(i), end_of_table
-      end do 
+      end do
 
       read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
 
     end subroutine read_epics_table_three_column
 
     !> Read a four column ENDL table
-    !> \details A four column table of data is read into four arrays, one for 
+    !> \details A four column table of data is read into four arrays, one for
     !> each column.
     subroutine read_endl_table_four_column( file_id, table_size, column_one, &
         column_two, column_three, column_four, flag ) &
@@ -203,15 +203,15 @@ module data_endl_table_helpers
 
       do i = 1, table_size
         read(file_id, fmt='(4E11.6,28X)', iostat=flag) column_one(i), &
-        column_two(i), column_three(i), column_four(i) 
-      end do 
+        column_two(i), column_three(i), column_four(i)
+      end do
 
       read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
 
     end subroutine read_endl_table_four_column
 
     !> Read a four column ENDL EPICS2014 table
-    !> \details A four column table of data is read into four arrays, one for 
+    !> \details A four column table of data is read into four arrays, one for
     !> each column.
     subroutine read_epics_table_four_column( file_id, table_size, column_one, &
         column_two, column_three, column_four, flag ) &
@@ -231,13 +231,12 @@ module data_endl_table_helpers
 
       do i = 1, table_size
         read(file_id, fmt='(4E16.9, 8X)', iostat=flag) column_one(i), &
-        column_two(i), column_three(i), column_four(i) 
-      end do 
+        column_two(i), column_three(i), column_four(i)
+      end do
 
       read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
 
     end subroutine read_epics_table_four_column
-
 
     !> Skip a ENDL table
     !> \details A table of data is skipped over.
@@ -252,11 +251,11 @@ module data_endl_table_helpers
       integer :: end_of_table
 
       table_size = 0
-      do 
-        read(file_id, fmt='(71X,I1)',iostat=flag) end_of_table 
+      do
+        read(file_id, fmt='(71X,I1)',iostat=flag) end_of_table
         if (end_of_table.eq.1 ) exit
-        table_size = table_size + 1 
-      end do 
+        table_size = table_size + 1
+      end do
 
     end subroutine skip_endl_table
 
@@ -275,11 +274,11 @@ module data_endl_table_helpers
 
       ! Find the number of lines in the table
       table_size = 0
-      do 
-        read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table  
+      do
+        read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
         if (end_of_table.eq.1 ) exit
         table_size = table_size+1
-      end do 
+      end do
 
       ! Move to the beginning of the file
       rewind(file_id)

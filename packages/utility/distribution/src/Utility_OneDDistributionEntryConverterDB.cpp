@@ -14,10 +14,10 @@
 namespace Utility{
 
 // Initialize the static member data
-OneDDistributionEntryConverterDB::ConverterMap 
+OneDDistributionEntryConverterDB::ConverterMap
 OneDDistributionEntryConverterDB::master_map;
 
-const bool OneDDistributionEntryConverterDB::initialized = 
+const bool OneDDistributionEntryConverterDB::initialized =
   OneDDistributionEntryConverterDB::initialize();
 
 // Add a converter to the database
@@ -34,9 +34,9 @@ OneDDistributionEntryConverterDB::getConverter(
 		     const Teuchos::RCP<const Teuchos::ParameterEntry>& entry )
 {
   ConverterMap::const_iterator it =
-    OneDDistributionEntryConverterDB::master_map.find( 
+    OneDDistributionEntryConverterDB::master_map.find(
 						  entry->getAny().typeName() );
- 
+
   TEST_FOR_EXCEPTION( it == OneDDistributionEntryConverterDB::master_map.end(),
   		      InvalidDistributionStringName,
   		      "Error: The 1D distribution "
@@ -44,7 +44,7 @@ OneDDistributionEntryConverterDB::getConverter(
   		      << " is not currently supported!" );
 
   return *(it->second);
-} 
+}
 
 // Get the OneDDistribution from the given parameter entry
 Teuchos::RCP<OneDDistribution> OneDDistributionEntryConverterDB::convertEntryToRCP(

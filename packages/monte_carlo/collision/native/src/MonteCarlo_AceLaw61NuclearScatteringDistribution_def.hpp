@@ -23,16 +23,16 @@ namespace MonteCarlo{
 
 // Constructor
 template<typename IncomingParticleType,
-	       typename OutgoingParticleType,
-	       typename SystemConversionPolicy>
+         typename OutgoingParticleType,
+         typename SystemConversionPolicy>
 AceLaw61NuclearScatteringDistribution<
               IncomingParticleType,
-				      OutgoingParticleType,
-				      SystemConversionPolicy>::AceLaw61NuclearScatteringDistribution( 
+              OutgoingParticleType,
+              SystemConversionPolicy>::AceLaw61NuclearScatteringDistribution( 
        const double atomic_weight_ratio,
-		   const Teuchos::RCP<NuclearScatteringEnergyDistribution>& 
+       const Teuchos::RCP<NuclearScatteringEnergyDistribution>& 
 		     energy_scattering_distribution,
-		   const Teuchos::Array<Teuchos::RCP<AceLaw61AngleDistribution> >&
+       const Teuchos::Array<Teuchos::RCP<AceLaw61AngleDistribution> >&
 		     angle_distributions )
   : NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>( atomic_weight_ratio ),
      d_energy_scattering_distribution( energy_scattering_distribution ),

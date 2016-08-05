@@ -57,7 +57,7 @@ StandardHashBasedGridSearcher<STLCompliantArray,false>::StandardHashBasedGridSea
 {
   // Make sure the array type is valid
   testStaticPrecondition( (boost::is_floating_point<typename STLCompliantArray::value_type>::value) );
-  // Make sure the grid is valid 
+  // Make sure the grid is valid
   testPrecondition( std::find_if( grid.begin(),
 				  grid.end(),
 				  lessThanOrEqualToZero ) ==
@@ -93,7 +93,7 @@ StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::StandardHashBas
   testPrecondition( max_grid_value <= grid[grid.size()-1] );
   // Make sure the hash grid size is valid
   testPrecondition( hash_grid_bins > 0 );
-  
+
   this->initializeHashGrid();
 }
 
@@ -113,7 +113,7 @@ StandardHashBasedGridSearcher<STLCompliantArray,false>::StandardHashBasedGridSea
 {
   // Make sure the array type is valid
   testStaticPrecondition( (boost::is_floating_point<typename STLCompliantArray::value_type>::value) );
-  // Make sure the grid is valid 
+  // Make sure the grid is valid
   testPrecondition( std::find_if( grid.begin(),
 				  grid.end(),
 				  lessThanOrEqualToZero ) ==
@@ -125,13 +125,13 @@ StandardHashBasedGridSearcher<STLCompliantArray,false>::StandardHashBasedGridSea
   testPrecondition( max_grid_value <= grid[grid.size()-1] );
   // Make sure the hash grid size is valid
   testPrecondition( hash_grid_bins > 0 );
-  
+
   this->initializeHashGrid();
 }
 
 // Test if a value falls within the bounds of the grid
 template<typename STLCompliantArray,bool processed_grid>
-inline bool StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::isValueWithinGridBounds( 
+inline bool StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::isValueWithinGridBounds(
 						     const double value ) const
 {
   // Make sure the value is valid
@@ -139,48 +139,48 @@ inline bool StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::isV
 
   double processed_value = log( value );
 
-  return processed_value >= d_hash_grid_min && 
+  return processed_value >= d_hash_grid_min &&
          processed_value <= d_hash_grid_max;
 }
 
 // Test if a value falls within the bounds of the grid
 template<typename STLCompliantArray>
-inline bool StandardHashBasedGridSearcher<STLCompliantArray,false>::isValueWithinGridBounds( 
+inline bool StandardHashBasedGridSearcher<STLCompliantArray,false>::isValueWithinGridBounds(
 						     const double value ) const
 {
   // Make sure the value is valid
   testPrecondition( value > 0.0 );
-  
+
   return value >= d_hash_grid_min && value <= d_hash_grid_max;
 }
 
 // Return the index of the lower bin boundary that a value falls in
 template<typename STLCompliantArray,bool processed_grid>
-inline unsigned 
-StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::findLowerBinIndex( 
+inline unsigned
+StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::findLowerBinIndex(
 						     const double value ) const
 {
   // Make sure the value is valid
   testPrecondition( this->isValueWithinGridBounds( value ) );
-  
+
   double processed_value = log( value );
 
-  unsigned hash_grid_index = 
+  unsigned hash_grid_index =
     std::floor( (d_hash_grid_size-1)*(processed_value - d_hash_grid_min)/
 		d_hash_grid_length );
-  
+
   typename STLCompliantArray::const_iterator lower_bin_boundary;
 
   if( hash_grid_index < d_hash_grid_size-1 )
   {
-    lower_bin_boundary = 
+    lower_bin_boundary =
       Search::binaryLowerBound( d_hash_grid[hash_grid_index],
 				d_hash_grid[hash_grid_index+1]+2,
 				processed_value );
   }
   else
   {
-    lower_bin_boundary = 
+    lower_bin_boundary =
       Search::binaryLowerBound( d_hash_grid[hash_grid_index-1],
 				d_hash_grid[hash_grid_index]+2,
 				processed_value );
@@ -196,29 +196,29 @@ StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::findLowerBinInd
 
 // Return the index of the lower bin boundary that a value falls in
 template<typename STLCompliantArray>
-inline unsigned 
-StandardHashBasedGridSearcher<STLCompliantArray,false>::findLowerBinIndex( 
+inline unsigned
+StandardHashBasedGridSearcher<STLCompliantArray,false>::findLowerBinIndex(
 						     const double value ) const
 {
   // Make sure the value is valid
   testPrecondition( this->isValueWithinGridBounds( value ) );
-  
-  unsigned hash_grid_index = 
+
+  unsigned hash_grid_index =
     std::floor( (d_hash_grid_size-1)*( value  - d_hash_grid_min)/
 		d_hash_grid_length );
-  
+
   typename STLCompliantArray::const_iterator lower_bin_boundary;
 
   if( hash_grid_index < d_hash_grid_size-1 )
   {
-    lower_bin_boundary = 
+    lower_bin_boundary =
       Search::binaryLowerBound( d_hash_grid[hash_grid_index],
 				d_hash_grid[hash_grid_index+1]+2,
 				value );
   }
   else
   {
-    lower_bin_boundary = 
+    lower_bin_boundary =
       Search::binaryLowerBound( d_hash_grid[hash_grid_index-1],
 				d_hash_grid[hash_grid_index]+2,
 				value );
@@ -246,7 +246,7 @@ void StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::initialize
   // Construct the grid indices array (except for last element)
   for( unsigned i = 0; i < d_hash_grid_size-1; ++i )
   {
-    double hash_grid_value = d_hash_grid_min + 
+    double hash_grid_value = d_hash_grid_min +
       d_hash_grid_length*i/(d_hash_grid_size-1);
 
     d_hash_grid[i] = Search::binaryLowerBound( d_grid.begin(),
@@ -275,7 +275,7 @@ inline void StandardHashBasedGridSearcher<STLCompliantArray,false>::initializeHa
   // Construct the grid indices array (expcept for last element)
   for( unsigned i = 0; i < d_hash_grid_size-1; ++i )
   {
-    double hash_grid_value = d_hash_grid_min + 
+    double hash_grid_value = d_hash_grid_min +
       d_hash_grid_length*i/(d_hash_grid_size-1);
 
     d_hash_grid[i] = Search::binaryLowerBound( d_grid.begin(),

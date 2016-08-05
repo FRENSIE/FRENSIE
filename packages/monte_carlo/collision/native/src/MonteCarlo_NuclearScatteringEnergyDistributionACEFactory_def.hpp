@@ -38,14 +38,14 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 {
   typedef AceLaw44NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
 						typename ScatteringDistributionBaseType::OutgoingParticleState,
-						LabSystemConversionPolicy> 
+						LabSystemConversionPolicy>
     AceLaw44NuclearScatteringDistributionLab;
 
   typedef AceLaw44NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
 						typename ScatteringDistributionBaseType::OutgoingParticleState,
-						CMSystemConversionPolicy> 
+						CMSystemConversionPolicy>
     AceLaw44NuclearScatteringDistributionCM;
-						
+
   // Make sure the dlw block array is valid
   testPrecondition( dlw_block_array.size() > 0 );
 
@@ -76,21 +76,21 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
   double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies
-  Teuchos::Array<double> incoming_energies_array = 
+  Teuchos::Array<double> incoming_energies_array =
     dlw_block_array( ldat_start_index + 2,
 		     incoming_energies);
 
   // Array of distribution locations
-  Teuchos::Array<double> distribution_locations = 
+  Teuchos::Array<double> distribution_locations =
     dlw_block_array( ldat_start_index + 2 + incoming_energies,
-		     incoming_energies); 
+		     incoming_energies);
 
   // Initialize the energy distribution array
-  AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
+  AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
     energy_distribution( incoming_energies );
 
   // Initialize the AR distribution array
-  typename AceLaw44NuclearScatteringDistributionCM::ARDistributions 
+  typename AceLaw44NuclearScatteringDistributionCM::ARDistributions
     ar_distribution( incoming_energies );
 
   // Loop through the incoming energies
@@ -98,12 +98,12 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
   {
     energy_distribution[i].first = incoming_energies_array[i];
 
-    int distribution_index = static_cast<int>( distribution_locations[i] ) - 
+    int distribution_index = static_cast<int>( distribution_locations[i] ) -
       dlw_block_array_start_index - 1;
 
     int interpolation_flag = dlw_block_array[distribution_index];
 
-    // Check if discrete lines are present 
+    // Check if discrete lines are present
     TEST_FOR_EXCEPTION( interpolation_flag > 10,
 		        std::runtime_error,
 		        "Error: MT# " << reaction << " in ACE table "
@@ -112,16 +112,16 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 
     int number_points_distribution = dlw_block_array[distribution_index + 1];
 
-    Teuchos::ArrayView<const double> outgoing_energy_grid = 
+    Teuchos::ArrayView<const double> outgoing_energy_grid =
       dlw_block_array( distribution_index + 2, number_points_distribution );
 
     Teuchos::ArrayView<const double> pdf;
 
-    Teuchos::ArrayView<const double> R_array = 
+    Teuchos::ArrayView<const double> R_array =
       dlw_block_array( distribution_index + 2 + number_points_distribution*3,
 		       number_points_distribution );
 
-    Teuchos::ArrayView<const double> A_array = 
+    Teuchos::ArrayView<const double> A_array =
       dlw_block_array( distribution_index + 2 + number_points_distribution*4,
 		       number_points_distribution );
 
@@ -131,23 +131,23 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
       pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
 			     number_points_distribution - 1 );
 
-      energy_distribution[i].second.reset( 
+      energy_distribution[i].second.reset(
 		      new Utility::HistogramDistribution( outgoing_energy_grid,
 							  pdf ) );
 
-      ar_distribution[i].reset( 
+      ar_distribution[i].reset(
 	    new StandardAceLaw44ARDistribution<AceLaw44HistogramInterpolationPolicy>(
 							  outgoing_energy_grid,
 							  A_array,
 							  R_array ) );
 
       break;
- 
+
     case 2: // Linear-Linear interpolation
       pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
 			     number_points_distribution );
 
-      energy_distribution[i].second.reset( 
+      energy_distribution[i].second.reset(
 			     new Utility::TabularDistribution<Utility::LinLin>(
 						 outgoing_energy_grid, pdf ) );
 
@@ -158,26 +158,26 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 							  R_array ) );
 
       break;
- 
+
     default:
       TEST_FOR_EXCEPTION( true,
                           std::runtime_error,
                           "Unknown interpolation flag in table "
-                          << table_name << 
+                          << table_name <<
                           " for energy distribution of MT = "
                           << reaction << ": "
                           << interpolation_flag << "\n" );
-    } 
+    }
   }
 
-  Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_out_distribution; 
+  Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_out_distribution;
 
-  energy_out_distribution.reset( 
+  energy_out_distribution.reset(
       new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
 
   if( is_cm_distribution )
   {
-    distribution.reset( 
+    distribution.reset(
 	  new AceLaw44NuclearScatteringDistributionCM(
 						       atomic_weight_ratio,
 						       energy_out_distribution,
@@ -185,7 +185,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
   }
   else
   {
-    distribution.reset( 
+    distribution.reset(
 	  new AceLaw44NuclearScatteringDistributionLab(
 						       atomic_weight_ratio,
 						       energy_out_distribution,

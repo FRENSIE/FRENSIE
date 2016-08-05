@@ -30,29 +30,29 @@ class SpatialDistributionFactory
 public:
 
   //! Create the spatial distribution represented by the parameter list
-  static std::shared_ptr<SpatialDistribution> 
+  static std::shared_ptr<SpatialDistribution>
   createDistribution( const Teuchos::ParameterList& distribution_rep );
 
 private:
 
   // Validate a distribution representation
-  static void validateDistributionRep( 
+  static void validateDistributionRep(
 			      const Teuchos::ParameterList& distribution_rep );
 
   // Validate the axis name
   static void validateAxisName( const std::string& axis_name );
 
   // Create a cartesian distribution
-  static std::shared_ptr<Utility::SpatialDistribution> 
+  static std::shared_ptr<Utility::SpatialDistribution>
   createCartesianDistribution(const Teuchos::ParameterList& distribution_rep );
 
   // Create a cylindrical distribution
-  static std::shared_ptr<Utility::SpatialDistribution> 
+  static std::shared_ptr<Utility::SpatialDistribution>
   createCylindricalDistribution(
 			      const Teuchos::ParameterList& distribution_rep );
 
   // Create a spherical distribution
-  static std::shared_ptr<Utility::SpatialDistribution> 
+  static std::shared_ptr<Utility::SpatialDistribution>
   createSphericalDistribution(const Teuchos::ParameterList& distribution_rep );
 
   // Create a point distribution

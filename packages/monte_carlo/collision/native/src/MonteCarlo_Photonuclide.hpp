@@ -83,7 +83,7 @@ public:
 	       const NuclearReactionMap& standard_nuclear_scattering_reactions,
 	       const NuclearReactionMap& standard_nuclear_absorption_reactions,
 	       const PhotoatomCore& core );
-  
+
   //! Destructor
   ~Photonuclide()
   { /* ... */ }
@@ -107,7 +107,7 @@ public:
   double getNuclearAbsorptionCrossSection( const double energy ) const;
 
   //! Return the cross section for a specific photonuclear reaction
-  double getReactionCrossSection( 
+  double getReactionCrossSection(
 			       const double energy
 			       const PhotonuclearReactionType reaction ) const;
 
@@ -120,7 +120,7 @@ public:
 			    ParticleBank& bank ) const;
 
 private:
-  
+
   // The nuclide name
   std::string d_nuclide_name;
 

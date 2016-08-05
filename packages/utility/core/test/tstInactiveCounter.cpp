@@ -34,7 +34,7 @@
 // Check that the counter can be incremented
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( InactiveCounter, increment, T )
 {
-  std::shared_ptr<Utility::Counter<T> > 
+  std::shared_ptr<Utility::Counter<T> >
     counter( new Utility::InactiveCounter<T> );
 
   TEST_EQUALITY_CONST( counter->getCount(), static_cast<T>( 0 ) );
@@ -50,7 +50,7 @@ UNIT_TEST_INSTANTIATION( InactiveCounter, increment );
 // Check that the counter can be pre-incremented
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( InactiveCounter, preincrement, T )
 {
-  std::shared_ptr<Utility::Counter<T> > 
+  std::shared_ptr<Utility::Counter<T> >
     counter( new Utility::InactiveCounter<T> );
 
   TEST_EQUALITY_CONST( counter->getCount(), static_cast<T>( 0 ) );
@@ -66,7 +66,7 @@ UNIT_TEST_INSTANTIATION( InactiveCounter, preincrement );
 // Check that a value can be added to the counter
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( InactiveCounter, addToCount_raw, T )
 {
-  std::shared_ptr<Utility::Counter<T> > 
+  std::shared_ptr<Utility::Counter<T> >
     counter( new Utility::InactiveCounter<T> );
 
   TEST_EQUALITY_CONST( counter->getCount(), static_cast<T>( 0 ) );
@@ -82,7 +82,7 @@ UNIT_TEST_INSTANTIATION( InactiveCounter, addToCount_raw );
 // Check that the assignment operator can be used
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( InactiveCounter, assignment_raw, T )
 {
-  std::shared_ptr<Utility::Counter<T> > 
+  std::shared_ptr<Utility::Counter<T> >
     counter( new Utility::InactiveCounter<T> );
 
   TEST_EQUALITY_CONST( counter->getCount(), static_cast<T>( 0 ) );
@@ -98,14 +98,14 @@ UNIT_TEST_INSTANTIATION( InactiveCounter, assignment_raw );
 // Check that two counters can be added
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( InactiveCounter, addToCount, T )
 {
-  std::shared_ptr<Utility::Counter<T> > 
+  std::shared_ptr<Utility::Counter<T> >
     counter_a( new Utility::InactiveCounter<T> );
-  
-  std::shared_ptr<Utility::Counter<T> > 
+
+  std::shared_ptr<Utility::Counter<T> >
     counter_b( new Utility::InactiveCounter<T> );
-  
+
   ++(*counter_a);
-  
+
   *counter_b += static_cast<T>( 2 );
 
   counter_a->addToCount( *counter_b );
@@ -119,14 +119,14 @@ UNIT_TEST_INSTANTIATION( InactiveCounter, addToCount );
 // Check that two counters can be added
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( InactiveCounter, assignment, T )
 {
-  std::shared_ptr<Utility::Counter<T> > 
+  std::shared_ptr<Utility::Counter<T> >
     counter_a( new Utility::InactiveCounter<T> );
-  
-  std::shared_ptr<Utility::Counter<T> > 
+
+  std::shared_ptr<Utility::Counter<T> >
     counter_b( new Utility::InactiveCounter<T> );
-  
+
   ++(*counter_a);
-  
+
   *counter_b += static_cast<T>( 2 );
 
   *counter_a += *counter_b;
@@ -140,7 +140,7 @@ UNIT_TEST_INSTANTIATION( InactiveCounter, assignment );
 // Check that the implicit conversion operator can be used
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( InactiveCounter, implicit_conversion, T )
 {
-  std::shared_ptr<Utility::Counter<T> > 
+  std::shared_ptr<Utility::Counter<T> >
     counter( new Utility::InactiveCounter<T> );
 
   TEST_EQUALITY_CONST( counter->getCount(), static_cast<T>( 0 ) );

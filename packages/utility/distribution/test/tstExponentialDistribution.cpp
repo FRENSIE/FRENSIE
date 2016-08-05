@@ -43,7 +43,7 @@ namespace cgs = boost::units::cgs;
 
 Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
-Teuchos::RCP<Utility::OneDDistribution> distribution( 
+Teuchos::RCP<Utility::OneDDistribution> distribution(
 			     new Utility::ExponentialDistribution( 2.0, 3.0 ) );
 Teuchos::RCP<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 300.0/si::meter, 0.0*si::meter ) );
 
@@ -66,7 +66,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, evaluate )
 		       0.0*si::mole );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*cgs::centimeter),
 		       2.0*si::mole );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 		       unit_aware_distribution->evaluate( 1.0*cgs::centimeter),
 		       2.0*exp(-3.0)*si::mole,
 		       1e-12 );
@@ -85,10 +85,10 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, evaluatePDF )
 // Check that the unit-aware PDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, evaluatePDF )
 {
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		  unit_aware_distribution->evaluatePDF( -1.0*cgs::centimeter ),
 		  0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_distribution->evaluatePDF( 0.0*cgs::centimeter ),
 		   3.0/cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY(
@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sample_basic_static )
   fake_stream[0] = 0.0;
   fake_stream[1] = 1.0 - 1e-15;
   fake_stream[2] = 0.5;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = Utility::ExponentialDistribution::sample( 3.0 );
@@ -113,7 +113,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sample_basic_static )
 
   sample = Utility::ExponentialDistribution::sample( 3.0 );
   TEST_FLOATING_EQUALITY( sample, 11.5131919974469596, 1e-15 );
-  
+
   sample = Utility::ExponentialDistribution::sample( 3.0 );
   TEST_FLOATING_EQUALITY( sample, -log(0.5)/3.0, 1e-12 );
 
@@ -128,21 +128,21 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, sample_basic_static )
   fake_stream[0] = 0.0;
   fake_stream[1] = 1.0 - 1e-15;
   fake_stream[2] = 0.5;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  quantity<cgs::length> sample = 
+  quantity<cgs::length> sample =
     Utility::UnitAwareExponentialDistribution<cgs::length>::sample( 3.0/cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = Utility::UnitAwareExponentialDistribution<cgs::length>::sample( 3.0/cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  11.5131919974469596*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  11.5131919974469596*cgs::centimeter,
 				  1e-15 );
-  
+
   sample = Utility::UnitAwareExponentialDistribution<cgs::length>::sample( 3.0/cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -log(0.5)/3.0*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -log(0.5)/3.0*cgs::centimeter,
 				  1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -158,7 +158,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sample_static )
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.5;
   fake_stream[4] = 0.5;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double inf = std::numeric_limits<double>::infinity();
@@ -168,7 +168,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sample_static )
 
   sample = Utility::ExponentialDistribution::sample( 3.0, 0.0, inf );
   TEST_FLOATING_EQUALITY( sample, 11.5131919974469596, 1e-15 );
-  
+
   sample = Utility::ExponentialDistribution::sample( 3.0, 0.0, inf );
   TEST_FLOATING_EQUALITY( sample, -log(0.5)/3.0, 1e-12 );
 
@@ -189,30 +189,30 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, sample_static )
   fake_stream[0] = 0.0;
   fake_stream[1] = 1.0 - 1e-15;
   fake_stream[2] = 0.5;
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  quantity<cgs::length> inf = 
+  quantity<cgs::length> inf =
     Utility::QuantityTraits<quantity<cgs::length> >::inf();
 
-  quantity<cgs::length> sample = 
-    Utility::UnitAwareExponentialDistribution<cgs::length>::sample( 
+  quantity<cgs::length> sample =
+    Utility::UnitAwareExponentialDistribution<cgs::length>::sample(
 			       3.0/cgs::centimeter, 0.0*cgs::centimeter, inf );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = Utility::UnitAwareExponentialDistribution<cgs::length>::sample( 
+  sample = Utility::UnitAwareExponentialDistribution<cgs::length>::sample(
 			       3.0/cgs::centimeter, 0.0*cgs::centimeter, inf );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
 				  11.5131919974469596*cgs::centimeter,
 				  1e-15 );
-  
-  sample = Utility::UnitAwareExponentialDistribution<cgs::length>::sample( 
+
+  sample = Utility::UnitAwareExponentialDistribution<cgs::length>::sample(
 			       3.0/cgs::centimeter, 0.0*cgs::centimeter, inf );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -log(0.5)/3.0*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -log(0.5)/3.0*cgs::centimeter,
 				  1e-12 );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();  
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -225,14 +225,14 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sample )
   fake_stream[2] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
-  sample = distribution->sample(); 
+
+  sample = distribution->sample();
   TEST_FLOATING_EQUALITY( sample, 11.5131919974469596, 1e-15 );
 
-  sample = distribution->sample(); 
+  sample = distribution->sample();
   TEST_FLOATING_EQUALITY( sample, -log(0.5)/3.0, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -248,18 +248,18 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, sample )
   fake_stream[2] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   quantity<cgs::length> sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  
-  sample = unit_aware_distribution->sample(); 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  11.5131919974469596*cgs::centimeter, 
+
+  sample = unit_aware_distribution->sample();
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  11.5131919974469596*cgs::centimeter,
 				  1e-15 );
 
-  sample = unit_aware_distribution->sample(); 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -log(0.5)/3.0*cgs::centimeter, 
+  sample = unit_aware_distribution->sample();
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -log(0.5)/3.0*cgs::centimeter,
 				  1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -275,18 +275,18 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sampleAndRecordTrials )
   fake_stream[2] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   unsigned trials = 0;
-  
+
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 1 );
 
-  sample = distribution->sampleAndRecordTrials( trials ); 
+  sample = distribution->sampleAndRecordTrials( trials );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 11.5131919974469596, 1e-15 );
   TEST_EQUALITY_CONST( trials, 2 );
 
-  sample = distribution->sampleAndRecordTrials( trials ); 
+  sample = distribution->sampleAndRecordTrials( trials );
   TEST_FLOATING_EQUALITY( sample, -log(0.5)/3.0, 1e-12 );
   TEST_EQUALITY_CONST( trials, 3 );
 
@@ -303,23 +303,23 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, sampleAndRecordTrials )
   fake_stream[2] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   unsigned trials = 0;
-  
-  quantity<cgs::length> sample = 
+
+  quantity<cgs::length> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
   TEST_EQUALITY_CONST( trials, 1 );
 
-  sample = unit_aware_distribution->sampleAndRecordTrials( trials ); 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  11.5131919974469596*cgs::centimeter, 
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  11.5131919974469596*cgs::centimeter,
 				  1e-15 );
   TEST_EQUALITY_CONST( trials, 2 );
 
-  sample = unit_aware_distribution->sampleAndRecordTrials( trials ); 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -log(0.5)/3.0*cgs::centimeter, 
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -log(0.5)/3.0*cgs::centimeter,
 				  1e-12 );
   TEST_EQUALITY_CONST( trials, 3 );
 
@@ -336,7 +336,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, getUpperBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, getUpperBoundOfIndepVar )
 {
@@ -353,11 +353,11 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the unit-aware distribution independent 
+// Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       Utility::QuantityTraits<quantity<cgs::length> >::zero());
 }
 
@@ -411,24 +411,24 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::ExponentialDistribution> true_distribution =
    Teuchos::rcp_dynamic_cast<Utility::ExponentialDistribution>( distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Utility::ExponentialDistribution>( "test distribution", 
+
+  parameter_list.set<Utility::ExponentialDistribution>( "test distribution",
 						     *true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"exponential_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "exponential_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<Utility::ExponentialDistribution> 
+  Teuchos::RCP<Utility::ExponentialDistribution>
     copy_distribution( new Utility::ExponentialDistribution );
 
-  *copy_distribution = 
+  *copy_distribution =
     read_parameter_list->get<Utility::ExponentialDistribution>(
 							  "test distribution");
 
@@ -439,30 +439,30 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, toParameterList )
 // Check that the unit-aware distribution can be written to an xml file
 TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, toParameterList )
 {
-  typedef Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> 
+  typedef Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>
     UnitAwareExponentialDistribution;
-  
+
   Teuchos::RCP<UnitAwareExponentialDistribution> true_distribution =
-   Teuchos::rcp_dynamic_cast<UnitAwareExponentialDistribution>( 
+   Teuchos::rcp_dynamic_cast<UnitAwareExponentialDistribution>(
 						     unit_aware_distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<UnitAwareExponentialDistribution>( "test distribution", 
+
+  parameter_list.set<UnitAwareExponentialDistribution>( "test distribution",
 							*true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"unit_aware_exponential_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "unit_aware_exponential_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<UnitAwareExponentialDistribution> 
+  Teuchos::RCP<UnitAwareExponentialDistribution>
     copy_distribution( new UnitAwareExponentialDistribution );
 
-  *copy_distribution = 
+  *copy_distribution =
     read_parameter_list->get<UnitAwareExponentialDistribution>(
 							  "test distribution");
 
@@ -473,18 +473,18 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, toParameterList )
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
 {
-  Utility::ExponentialDistribution read_distribution = 
+  Utility::ExponentialDistribution read_distribution =
     test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution A" );
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 1.0 );
-  TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0 ), 
-			  exp( -3.0 ), 
+  TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0 ),
+			  exp( -3.0 ),
 			  1e-15 );
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
 		       std::numeric_limits<double>::infinity() );
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0 );
-  
-  read_distribution = 
+
+  read_distribution =
     test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution B" );
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ),
@@ -495,8 +495,8 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
 		       std::numeric_limits<double>::infinity() );
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0 );
-  
-  read_distribution = 
+
+  read_distribution =
     test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution C" );
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 0.0 );
@@ -507,7 +507,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
 		       std::numeric_limits<double>::infinity() );
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 1.0 );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution D" );
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 0.0 );
@@ -517,7 +517,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 2.0 );
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 1.0 );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution E" );
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 0.0 );
@@ -533,81 +533,81 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
 // Check that the unit-aware distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, fromParameterList )
 {
-  typedef Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> 
+  typedef Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>
     UnitAwareExponentialDistribution;
-  
-  UnitAwareExponentialDistribution read_distribution = 
+
+  UnitAwareExponentialDistribution read_distribution =
     test_dists_list->get<UnitAwareExponentialDistribution>( "Unit-Aware Exponential Distribution A" );
 
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ), 
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ),
   		       1.0*si::mole );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
   			     read_distribution.evaluate( 1.0*cgs::centimeter ),
-  			     exp( -3.0 )*si::mole, 
+  			     exp( -3.0 )*si::mole,
   			     1e-15 );
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
   		       Utility::QuantityTraits<quantity<cgs::length> >::inf());
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
   		       0.0*cgs::centimeter );
-  
-  read_distribution = 
-    test_dists_list->get<UnitAwareExponentialDistribution>( 
+
+  read_distribution =
+    test_dists_list->get<UnitAwareExponentialDistribution>(
 				     "Unit-Aware Exponential Distribution B" );
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ),
   		       Utility::PhysicalConstants::pi*si::mole );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			  read_distribution.evaluate( 1.0*cgs::centimeter ),
   			  Utility::PhysicalConstants::pi*exp( -3.0 )*si::mole,
   			  1e-15 );
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
   		       Utility::QuantityTraits<quantity<cgs::length> >::inf());
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
 		       0.0*cgs::centimeter );
-  
-  read_distribution = 
-    test_dists_list->get<UnitAwareExponentialDistribution>( 
+
+  read_distribution =
+    test_dists_list->get<UnitAwareExponentialDistribution>(
 				     "Unit-Aware Exponential Distribution C" );
 
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ), 
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ),
 		       0.0*si::mole );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   read_distribution.evaluate( 1.0*cgs::centimeter ),
 			   Utility::PhysicalConstants::pi*exp( -3.0 )*si::mole,
 			   1e-15 );
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
   		       Utility::QuantityTraits<quantity<cgs::length> >::inf());
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
 		       1.0*cgs::centimeter );
 
-  read_distribution = 
-    test_dists_list->get<UnitAwareExponentialDistribution>( 
+  read_distribution =
+    test_dists_list->get<UnitAwareExponentialDistribution>(
 				     "Unit-Aware Exponential Distribution D" );
 
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ), 
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ),
 		       0.0*si::mole );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   read_distribution.evaluate( 1.0*cgs::centimeter ),
 			   Utility::PhysicalConstants::pi*exp( -3.0 )*si::mole,
 			   1e-15 );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
 		       2.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
 		       1.0*cgs::centimeter );
 
-  read_distribution = 
-    test_dists_list->get<UnitAwareExponentialDistribution>( 
+  read_distribution =
+    test_dists_list->get<UnitAwareExponentialDistribution>(
 				     "Unit-Aware Exponential Distribution E" );
 
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ), 
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ),
 		       0.0*si::mole );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   read_distribution.evaluate( 1.0*cgs::centimeter ),
 			   Utility::PhysicalConstants::pi*exp( -3.0 )*si::mole,
 			   1e-15 );
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
   		       Utility::QuantityTraits<quantity<cgs::length> >::inf());
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
 		       1.0*cgs::centimeter );
 }
 
@@ -622,10 +622,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareExponentialDistribution,
 {
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
@@ -637,30 +637,30 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareExponentialDistribution,
   Utility::UnitAwareExponentialDistribution<IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 3.0 );
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 2.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
@@ -673,19 +673,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareExponentialDistribution,
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
@@ -846,17 +846,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareExponentialDistribution,
 int main( int argc, char** argv )
 {
   std::string test_dists_xml_file;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_dists_xml_file",
 		 &test_dists_xml_file,
 		 "Test distributions xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -867,12 +867,12 @@ int main( int argc, char** argv )
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::ExponentialDistribution );
   typedef Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> UnitAwareExponentialDistribution;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareExponentialDistribution );
-  
+
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

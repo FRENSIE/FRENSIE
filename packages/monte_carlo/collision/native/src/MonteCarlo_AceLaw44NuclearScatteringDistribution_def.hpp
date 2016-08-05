@@ -27,9 +27,9 @@ template<typename IncomingParticleType,
 	 typename SystemConversionPolicy>
 AceLaw44NuclearScatteringDistribution<IncomingParticleType,
 				      OutgoingParticleType,
-				      SystemConversionPolicy>::AceLaw44NuclearScatteringDistribution( 
+				      SystemConversionPolicy>::AceLaw44NuclearScatteringDistribution(
                    const double atomic_weight_ratio,
-		   const Teuchos::RCP<NuclearScatteringEnergyDistribution>& 
+		   const Teuchos::RCP<NuclearScatteringEnergyDistribution>&
 		   energy_scattering_distribution,
 		   const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
 		   ar_distributions )
@@ -57,20 +57,20 @@ void AceLaw44NuclearScatteringDistribution<IncomingParticleType,
   double energy_prime;
 
   // Sample the energy of the outgoing particle
-  double outgoing_sys_energy = d_energy_scattering_distribution->sampleEnergy( 
+  double outgoing_sys_energy = d_energy_scattering_distribution->sampleEnergy(
 						 incoming_particle.getEnergy(),
 						 incoming_bin_index,
 						 outgoing_bin_index,
 						 energy_prime );
- 
+
   double a, r;
- 
+
   d_ar_distributions[incoming_bin_index]->sampleAR( outgoing_bin_index,
 						    energy_prime,
-						    a, 
+						    a,
 						    r );
 
-  double random_num = 
+  double random_num =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   double sys_scattering_angle_cosine;
@@ -83,20 +83,20 @@ void AceLaw44NuclearScatteringDistribution<IncomingParticleType,
   }
   else
   {
-    sys_scattering_angle_cosine = 
+    sys_scattering_angle_cosine =
       log(random_num * exp(a) + (1 - random_num) * exp(-a))/a;
   }
 
   // convert the outgoing energy from this system to the lab system
-  double outgoing_energy = 
+  double outgoing_energy =
     SystemConversionPolicy::convertToLabEnergy( incoming_particle.getEnergy(),
 						outgoing_sys_energy,
 						sys_scattering_angle_cosine,
 						this->getAtomicWeightRatio() );
 
   // convert the scattering angle cosine from this system to the lab system
-  double scattering_angle_cosine = 
-    SystemConversionPolicy::convertToLabAngleCosine( 
+  double scattering_angle_cosine =
+    SystemConversionPolicy::convertToLabAngleCosine(
 						incoming_particle.getEnergy(),
 						outgoing_sys_energy,
 						outgoing_energy,

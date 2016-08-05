@@ -39,7 +39,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellTrackLengthFluxEstimator,
 				   getNumberOfBins,
 				   ContributionMultiplierPolicy )
 {
-  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType> 
+  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>
     cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
@@ -47,14 +47,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellTrackLengthFluxEstimator,
   Teuchos::Array<double> cell_norm_consts( 2 );
   cell_norm_consts[0] = 1.0;
   cell_norm_consts[1] = 2.0;
-  
+
   Teuchos::RCP<MonteCarlo::Estimator> estimator(
     new MonteCarlo::CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>(
 							  0ull,
 							  2.0,
 							  cell_ids,
 							  cell_norm_consts ) );
-  
+
   Teuchos::Array<double> energy_bin_boundaries( 3 );
   energy_bin_boundaries[0] = 0.0;
   energy_bin_boundaries[1] = 0.1;
@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellTrackLengthFluxEstimator,
 
   estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
-  
+
   TEST_EQUALITY_CONST(estimator->getNumberOfBins(MonteCarlo::ENERGY_DIMENSION),
 		      2 );
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 2 );
@@ -114,20 +114,20 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
 {
   Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
-  
+
   Teuchos::RCP<MonteCarlo::Estimator> estimator_1_base;
   Teuchos::RCP<MonteCarlo::Estimator> estimator_2_base;
-  
+
   {
-    Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType> 
+    Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>
       cell_ids( 2 );
     cell_ids[0] = 0;
     cell_ids[1] = 1;
-    
+
     Teuchos::Array<double> cell_norm_consts( 2 );
     cell_norm_consts[0] = 1.0;
     cell_norm_consts[1] = 2.0;
-    
+
     estimator_1.reset(
     new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(
 						       0u,
@@ -150,7 +150,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
     energy_bin_boundaries[0] = 0.0;
     energy_bin_boundaries[1] = 0.1;
     energy_bin_boundaries[2] = 1.0;
-  
+
     estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
     estimator_2_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
@@ -203,7 +203,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   // bin 2
   particle.incrementCollisionNumber();
   particle.setEnergy( 1.0 );
-  
+
   estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
   estimator_1->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
 
@@ -230,29 +230,29 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  std::shared_ptr<Utility::HDF5FileHandler> 
+  std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( 
+  hdf5_file->openHDF5FileAndOverwrite(
 				  "test_cell_track_length_flux_estimator.h5" );
 
   estimator_1_base->exportData( hdf5_file, true );
   estimator_2_base->exportData( hdf5_file, true );
-  
+
   // Create an estimator hdf5 file handler
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   typedef StandardCellEstimator::cellIdType cellIdType;
 
-  Teuchos::Array<Utility::Pair<double,double> > 
+  Teuchos::Array<Utility::Pair<double,double> >
     raw_bin_data( 4, Utility::Pair<double,double>( 1.0, 1.0 ) ),
     raw_bin_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   0u, 0u, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   0u, 1u, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
@@ -260,12 +260,12 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   raw_bin_data[0]( 0.1, 0.1*0.1 );
   raw_bin_data[2]( 0.1, 0.1*0.1 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   1u, 0u, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   1u, 1u, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
@@ -312,16 +312,16 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   Teuchos::Array<Utility::Pair<double,double> >
     raw_total_bin_data( 4, Utility::Pair<double,double>( 2.0, 4.0 ) ),
     raw_total_bin_data_copy;
-    
+
   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
 
   raw_total_bin_data[0]( 0.2, 0.2*0.2 );
   raw_total_bin_data[2]( 0.2, 0.2*0.2 );
 
   hdf5_file_handler.getRawEstimatorTotalBinData( 1u, raw_total_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
 
   // Retrieve the processed total bin data
@@ -329,7 +329,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
     processed_total_bin_data( 4, Utility::Pair<double,double>( 20.0/3, 0.0 )),
     processed_total_bin_data_copy;
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
 					   0u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
@@ -338,37 +338,37 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   processed_total_bin_data[0]( 2.0/3, 0.0 );
   processed_total_bin_data[2]( 2.0/3, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
 					   1u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
 			       processed_total_bin_data_copy );
 
   // Retrieve the raw estimator total data for each entity
-  Utility::Quad<double,double,double,double> 
+  Utility::Quad<double,double,double,double>
     raw_moments( 4.0, 16.0, 64.0, 256.0 );
-  
+
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1, raw_moments ),
     raw_total_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>(
 						 0u, 0u, raw_total_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-			       
+
   hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>(
 						 0u, 1u, raw_total_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
 
   raw_total_data[0]( 2.2, 2.2*2.2, 2.2*2.2*2.2, 2.2*2.2*2.2*2.2 );
-  
-  hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>( 
+
+  hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>(
 						 1u, 0u, raw_total_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-			       
+
   hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>(
 						 1u, 1u, raw_total_data_copy );
 
@@ -385,7 +385,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<cellIdType>(
 					   0u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 
   processed_total_data[0]( 20.0, 0.0, 0.0, 0.0 );
@@ -393,7 +393,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<cellIdType>(
 					   0u, 1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 
   processed_total_data[0]( 22.0, 0.0, 0.0, 0.0 );
@@ -401,7 +401,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<cellIdType>(
 					   1u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 
   processed_total_data[0]( 11.0, 0.0, 0.0, 0.0 );
@@ -409,37 +409,37 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<cellIdType>(
 					   1u, 1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 
   // Retrieve the raw total data
   raw_total_data[0]( 8.0, 64.0, 512.0, 4096.0 );
 
   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
 
   raw_total_data[0]( 4.4, 4.4*4.4, 4.4*4.4*4.4, 4.4*4.4*4.4*4.4 );
-  
+
   hdf5_file_handler.getRawEstimatorTotalData( 1u, raw_total_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
 
   // Retrieve the processed total data
   processed_total_data[0]( 80.0/3, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
 					       0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 
   processed_total_data[0]( 44.0/3, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
 					       1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 }
 
@@ -450,20 +450,20 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
 {
   Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
-  
+
   Teuchos::RCP<MonteCarlo::Estimator> estimator_1_base;
   Teuchos::RCP<MonteCarlo::Estimator> estimator_2_base;
-  
+
   {
-    Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType> 
+    Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>
       cell_ids( 2 );
     cell_ids[0] = 0;
     cell_ids[1] = 1;
-    
+
     Teuchos::Array<double> cell_norm_consts( 2 );
     cell_norm_consts[0] = 1.0;
     cell_norm_consts[1] = 2.0;
-    
+
     estimator_1.reset(
     new MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(
 						       0u,
@@ -486,7 +486,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
     energy_bin_boundaries[0] = 0.0;
     energy_bin_boundaries[1] = 0.1;
     energy_bin_boundaries[2] = 1.0;
-  
+
     estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
     estimator_2_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
@@ -510,7 +510,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
     estimator_2_base->setParticleTypes( particle_types );
 
     // Enable thread support
-    estimator_1_base->enableThreadSupport( 
+    estimator_1_base->enableThreadSupport(
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
     estimator_2_base->enableThreadSupport(
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
@@ -519,7 +519,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2_base->hasUncommittedHistoryContribution() );
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
 
   #pragma omp parallel num_threads( threads )
@@ -547,7 +547,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
     // bin 2
     particle.incrementCollisionNumber();
     particle.setEnergy( 1.0 );
-  
+
     estimator_1->updateFromParticleSubtrackEndingInCellEvent(particle, 0, 1.0);
     estimator_1->updateFromParticleSubtrackEndingInCellEvent(particle, 1, 1.0);
 
@@ -588,38 +588,38 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
 
   typedef StandardCellEstimator::cellIdType cellIdType;
 
-  Teuchos::Array<Utility::Pair<double,double> > 
+  Teuchos::Array<Utility::Pair<double,double> >
     raw_bin_data( 4, Utility::Pair<double,double>( threads, threads ) ),
     raw_bin_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   0u, 0u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_copy,
                                         1e-15 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   0u, 1u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_copy,
                                         1e-15 );
 
   raw_bin_data[0]( 0.1*threads, 0.1*0.1*threads );
   raw_bin_data[2]( 0.1*threads, 0.1*0.1*threads );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   1u, 0u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_copy,
                                         1e-15 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   1u, 1u, raw_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_copy,
                                         1e-15 );
 
@@ -639,7 +639,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<cellIdType>(
 					     0u, 1u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
                                         processed_bin_data_copy,
                                         1e-15 );
 
@@ -651,7 +651,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<cellIdType>(
 					     1u, 0u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
 					processed_bin_data_copy,
 					1e-8 );
 
@@ -663,19 +663,19 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityBinData<cellIdType>(
 					     1u, 1u, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
 					processed_bin_data_copy,
 					1e-8 );
 
   // Retrieve the raw total bin data
   Teuchos::Array<Utility::Pair<double,double> >
-    raw_total_bin_data(4, 
+    raw_total_bin_data(4,
 		       Utility::Pair<double,double>(2.0*threads, 4.0*threads)),
     raw_total_bin_data_copy;
-    
+
   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
                                         raw_total_bin_data_copy,
                                         1e-15 );
 
@@ -683,8 +683,8 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   raw_total_bin_data[2]( 0.2*threads, 0.2*0.2*threads );
 
   hdf5_file_handler.getRawEstimatorTotalBinData( 1u, raw_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
                                         raw_total_bin_data_copy,
                                         1e-15 );
 
@@ -693,7 +693,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
     processed_total_bin_data( 4, Utility::Pair<double,double>( 20.0/3, 0.0 )),
     processed_total_bin_data_copy;
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
 					   0u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
@@ -703,7 +703,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   processed_total_bin_data[0]( 2.0/3, 0.0 );
   processed_total_bin_data[2]( 2.0/3, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
 					   1u, processed_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
@@ -711,43 +711,43 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
 					1e-8 );
 
   // Retrieve the raw estimator total data for each entity
-  Utility::Quad<double,double,double,double> 
+  Utility::Quad<double,double,double,double>
     raw_moments( 4.0*threads, 16.0*threads, 64.0*threads, 256.0*threads );
-  
+
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1, raw_moments ),
     raw_total_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>( 
+  hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>(
 						 0u, 0u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_copy,
                                         1e-15 );
-			       
+
   hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>(
 						 0u, 1u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_copy,
                                         1e-15 );
 
-  raw_total_data[0]( 2.2*threads, 
-		     2.2*2.2*threads, 
-		     2.2*2.2*2.2*threads, 
+  raw_total_data[0]( 2.2*threads,
+		     2.2*2.2*threads,
+		     2.2*2.2*2.2*threads,
 		     2.2*2.2*2.2*2.2*threads );
-  
-  hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>( 
+
+  hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>(
 						 1u, 0u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_copy,
                                         1e-15 );
-			       
+
   hdf5_file_handler.getRawEstimatorEntityTotalData<cellIdType>(
 						 1u, 1u, raw_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_copy,
                                         1e-15 );
 
@@ -762,7 +762,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<cellIdType>(
 					   0u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
                                         processed_total_data_copy,
                                         1e-15 );
 
@@ -771,7 +771,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<cellIdType>(
 					   0u, 1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 
   processed_total_data[0]( 22.0, 0.0, 0.0, 0.0 );
@@ -779,7 +779,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<cellIdType>(
 					   1u, 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
 					processed_total_data_copy,
 					1e-15 );
 
@@ -788,7 +788,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   hdf5_file_handler.getProcessedEstimatorEntityTotalData<cellIdType>(
 					   1u, 1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
 					processed_total_data_copy,
 					1e-15 );
 
@@ -796,38 +796,38 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   raw_total_data[0]( 8.0*threads, 64.0*threads, 512.0*threads, 4096.0*threads);
 
   hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_copy,
                                         1e-15 );
 
-  raw_total_data[0]( 4.4*threads, 
-		     4.4*4.4*threads, 
-		     4.4*4.4*4.4*threads, 
+  raw_total_data[0]( 4.4*threads,
+		     4.4*4.4*threads,
+		     4.4*4.4*4.4*threads,
 		     4.4*4.4*4.4*4.4*threads );
-  
+
   hdf5_file_handler.getRawEstimatorTotalData( 1u, raw_total_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_copy,
                                         1e-15 );
 
   // Retrieve the processed total data
   processed_total_data[0]( 80.0/3, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
 					       0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
 			                processed_total_data_copy,
                                         1e-15 );
 
   processed_total_data[0]( 44.0/3, 0.0, 0.0, 0.0 );
 
-  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  hdf5_file_handler.getProcessedEstimatorTotalData(
 					       1u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data,
 					processed_total_data_copy,
 					1e-15 );
 }
@@ -845,10 +845,10 @@ int main( int argc, char** argv )
 		 &threads,
 		 "Number of threads to use" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {

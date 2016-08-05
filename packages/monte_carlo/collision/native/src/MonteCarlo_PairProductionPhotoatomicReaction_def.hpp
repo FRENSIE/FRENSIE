@@ -58,7 +58,7 @@ PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairPro
 {
   // Make sure the grid searcher is valid
   testPrecondition( !grid_searcher.is_null() );
-  
+
   if( use_detailed_electron_emission_physics )
   {
     d_interaction_model = detailedInteraction;
@@ -114,7 +114,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::re
 
 // The basic pair production model
 template<typename InterpPolicy, bool processed_cross_section>
-void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::basicInteraction( 
+void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::basicInteraction(
 							   PhotonState& photon,
 							   ParticleBank& bank )
 {
@@ -123,15 +123,15 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   Teuchos::RCP<ParticleState> electron(
 				     new ElectronState( photon, true, true ) );
 
-  electron->setEnergy( photon.getEnergy() - 
+  electron->setEnergy( photon.getEnergy() -
 		     2*Utility::PhysicalConstants::electron_rest_mass_energy );
-  
+
   bank.push( electron );
 
-  // Sample an isotropic outgoing angle for the annihilation photon 
+  // Sample an isotropic outgoing angle for the annihilation photon
   double angle_cosine = -1.0 +
     2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
- 
+
   // Sample the azimuthal angle
   double azimuthal_angle = 2*Utility::PhysicalConstants::pi*
     Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -149,12 +149,12 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   // Create the second annihilation photon
   Teuchos::RCP<PhotonState> annihilation_photon(
 				       new PhotonState( photon, true, true ) );
-  
+
   // Reverse the direction of the second annihilation photon
   annihilation_photon->setDirection( -annihilation_photon->getXDirection(),
 				     -annihilation_photon->getYDirection(),
 				     -annihilation_photon->getZDirection() );
-  
+
   // Bank the annihilation photon
   bank.push( annihilation_photon );
 
@@ -168,12 +168,12 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   testPostcondition( azimuthal_angle >= 0.0 );
   testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
 }
-  
+
 // The detailed pair production model
 /*! \todo Implement the detailed pair production model.
  */
 template<typename InterpPolicy, bool processed_cross_section>
-void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteraction( 
+void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteraction(
 							   PhotonState& photon,
 							   ParticleBank& bank )
 {

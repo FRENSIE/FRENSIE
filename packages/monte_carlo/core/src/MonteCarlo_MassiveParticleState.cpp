@@ -21,7 +21,7 @@ MassiveParticleState::MassiveParticleState()
 { /* ... */ }
 
 // Constructor
-MassiveParticleState::MassiveParticleState( 
+MassiveParticleState::MassiveParticleState(
 					const historyNumberType history_number,
 					const ParticleType type )
   : ParticleState( history_number, type ),
@@ -29,7 +29,7 @@ MassiveParticleState::MassiveParticleState(
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-MassiveParticleState::MassiveParticleState( 
+MassiveParticleState::MassiveParticleState(
 				      const ParticleState& existing_base_state,
 				      const ParticleType new_type,
 				      const double new_rest_mass_energy,
@@ -39,7 +39,7 @@ MassiveParticleState::MassiveParticleState(
 		   new_type,
 		   increment_generation_number,
 		   reset_collision_number ),
-    d_speed( Utility::calculateRelativisticSpeed( 
+    d_speed( Utility::calculateRelativisticSpeed(
 					    new_rest_mass_energy,
 					    existing_base_state.getEnergy() ) )
 {
@@ -48,7 +48,7 @@ MassiveParticleState::MassiveParticleState(
 }
 
 // Copy constructor (with possible creation of new generation)
-MassiveParticleState::MassiveParticleState( 
+MassiveParticleState::MassiveParticleState(
 			      const MassiveParticleState& existing_state,
 			      const ParticleType new_type,
 			      const double new_rest_mass_energy,
@@ -59,10 +59,10 @@ MassiveParticleState::MassiveParticleState(
 		   increment_generation_number,
 		   reset_collision_number ),
     d_speed()
-{ 
+{
   // Make sure the new rest mass energy is valid
   testPrecondition( new_rest_mass_energy > 0.0 );
-  
+
   if( existing_state.getParticleType() == this->getParticleType() )
     d_speed = existing_state.d_speed;
   else
@@ -98,16 +98,16 @@ void MassiveParticleState::setSpeed( const double speed )
   testPrecondition( !ST::isnaninf( speed ) );
   testPrecondition( speed > 0.0 );
   testPrecondition( speed < Utility::PhysicalConstants::speed_of_light );
-  
+
   d_speed = speed;
 
-  ParticleState::setEnergy( Utility::calculateRelativisticKineticEnergy( 
+  ParticleState::setEnergy( Utility::calculateRelativisticKineticEnergy(
 						     this->getRestMassEnergy(),
 						     d_speed ) );
 }
 
 // Calculate the time to traverse a distance
-ParticleState::timeType 
+ParticleState::timeType
 MassiveParticleState::calculateTraversalTime( const double distance ) const
 {
   // Make sure the speed has been set

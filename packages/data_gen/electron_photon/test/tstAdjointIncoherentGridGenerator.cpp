@@ -3,7 +3,7 @@
 //! \file   tstAdjointIncoherentGridGenerator.cpp
 //! \author Alex Robinson
 //! \brief  Adjoint incoherent grid generator unit tests
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -29,14 +29,14 @@
 // Check that the min table energy can be set
 TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator, setMinTableEnergy )
 {
-  double min_table_energy = 
+  double min_table_energy =
     DataGen::AdjointIncoherentGridGenerator::getMinTableEnergy();
 
   TEST_EQUALITY_CONST( min_table_energy, 0.0001 );
-  
+
   DataGen::AdjointIncoherentGridGenerator::setMinTableEnergy( 0.00001 );
 
-  min_table_energy = 
+  min_table_energy =
     DataGen::AdjointIncoherentGridGenerator::getMinTableEnergy();
 
   TEST_EQUALITY_CONST( min_table_energy, 0.00001 );
@@ -46,24 +46,24 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator, setMinTableEnergy )
 // Check that the max table energy can be set
 TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator, setMaxTableEnergy )
 {
-  double max_table_energy = 
+  double max_table_energy =
     DataGen::AdjointIncoherentGridGenerator::getMaxTableEnergy();
 
   TEST_EQUALITY_CONST( max_table_energy, 20.0 );
 
-  double nudged_max_table_energy = 
+  double nudged_max_table_energy =
     DataGen::AdjointIncoherentGridGenerator::getNudgedMaxTableEnergy();
 
   TEST_FLOATING_EQUALITY( nudged_max_table_energy, 20.2, 1e-15 );
 
   DataGen::AdjointIncoherentGridGenerator::setMaxTableEnergy( 30.0 );
 
-  max_table_energy = 
+  max_table_energy =
     DataGen::AdjointIncoherentGridGenerator::getMaxTableEnergy();
 
   TEST_EQUALITY_CONST( max_table_energy, 30.0 );
 
-  nudged_max_table_energy = 
+  nudged_max_table_energy =
     DataGen::AdjointIncoherentGridGenerator::getNudgedMaxTableEnergy();
 
   TEST_FLOATING_EQUALITY( nudged_max_table_energy, 30.3, 1e-15 );
@@ -71,20 +71,20 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator, setMaxTableEnergy )
 
 //---------------------------------------------------------------------------//
 // Check that the energy to max energy nudge factor can be set
-TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator, 
+TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator,
 		   setEnergyToMaxEnergyNudgeFactor )
 {
-  double nudge_factor = 
+  double nudge_factor =
     DataGen::AdjointIncoherentGridGenerator::getEnergyToMaxEnergyNudgeFactor();
-  
+
   TEST_EQUALITY_CONST( nudge_factor, 1e-6 );
-  
-  DataGen::AdjointIncoherentGridGenerator::setEnergyToMaxEnergyNudgeFactor( 
+
+  DataGen::AdjointIncoherentGridGenerator::setEnergyToMaxEnergyNudgeFactor(
 									1e-5 );
 
-  nudge_factor = 
+  nudge_factor =
     DataGen::AdjointIncoherentGridGenerator::getEnergyToMaxEnergyNudgeFactor();
-  
+
   TEST_EQUALITY_CONST( nudge_factor, 1e-5 );
 }
 

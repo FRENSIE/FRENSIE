@@ -34,7 +34,7 @@ public:
                                                            atomic_weight_ratio,
 							   raw_nuclide_data )
   { /* ... */ }
-  
+
   ~TestNeutronNuclearScatteringDistributionACEFactory()
   { /* ... */ }
 
@@ -66,7 +66,7 @@ Teuchos::RCP<TestNeutronNuclearScatteringDistributionACEFactory> neutron_distrib
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionOrdering_h1 )
 {
 
@@ -79,9 +79,9 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
    new Data::XSSNeutronDataExtractor( ace_file_handler_h1->getTableNXSArray(),
                                       ace_file_handler_h1->getTableJXSArray(),
                                       ace_file_handler_h1->getTableXSSArray()));
-   
+
 //  MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
-  neutron_distribution_factory_h1.reset( 
+  neutron_distribution_factory_h1.reset(
     new TestNeutronNuclearScatteringDistributionACEFactory(
                              test_basic_h1_ace_table_name,
                              ace_file_handler_h1->getTableAtomicWeightRatio(),
@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionOrdering_o16 )
 {
 
@@ -104,9 +104,9 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
    new Data::XSSNeutronDataExtractor( ace_file_handler_o16->getTableNXSArray(),
                                       ace_file_handler_o16->getTableJXSArray(),
                                       ace_file_handler_o16->getTableXSSArray()));
-   
+
 //  MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
-  neutron_distribution_factory_o16.reset( 
+  neutron_distribution_factory_o16.reset(
     new TestNeutronNuclearScatteringDistributionACEFactory(
 			     test_basic_o16_ace_table_name,
                              ace_file_handler_o16->getTableAtomicWeightRatio(),
@@ -118,7 +118,7 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionCMScattering_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionCMScattering().size() ,==, 1);
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionCMScattering_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionCMScattering().size() ,==, 18);
@@ -136,14 +136,14 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionsWithIsotropicScatteringOnly_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionsWithIsotropicScatteringOnly().size() ,==, 0 );
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionsWithIsotropicScatteringOnly_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionsWithIsotropicScatteringOnly().size() ,==, 2 );
@@ -154,43 +154,43 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionWithCoupledEnergyAngleDist_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionsWithCoupledEnergyAngleDist().size() ,==, 0 );
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionWithCoupledEnergyAngleDist_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().size() ,==, 10 );
 
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__ANYTHING_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__2N_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__N_ALPHA_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__N_3ALPHA_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__N_P_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__N_D_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__2N_P_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__N_2P_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__N_P_ALPHA_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(MonteCarlo::N__N_CONTINUUM_REACTION) !=
                neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
 
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionAngularDist_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionAngularDist().size() ,==, 1 );
@@ -202,7 +202,7 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionAngularDist_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDist().size() ,==, 6 );
@@ -246,7 +246,7 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionAngularDistStartIndex_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionAngularDistStartIndex().size() ,==, 1 );
@@ -254,7 +254,7 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionAngularDistStartIndex_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().size() ,==, 6 );
@@ -267,50 +267,50 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionEnergyDist_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionEnergyDist().size() ,==, 0 );
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionEnergyDist_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDist().size() ,==, 17 );
 
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__ANYTHING_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__2N_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_ALPHA_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_3ALPHA_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_P_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_D_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__2N_P_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_2P_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_P_ALPHA_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_EXCITED_STATE_1_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_EXCITED_STATE_2_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_EXCITED_STATE_3_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_EXCITED_STATE_4_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_EXCITED_STATE_5_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_EXCITED_STATE_6_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_EXCITED_STATE_7_REACTION) !=
-               neutron_distribution_factory_o16->getReactionEnergyDist().end() ); 
+               neutron_distribution_factory_o16->getReactionEnergyDist().end() );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionEnergyDist().find(MonteCarlo::N__N_CONTINUUM_REACTION) !=
                neutron_distribution_factory_o16->getReactionEnergyDist().end() );
 
@@ -380,14 +380,14 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionEnergyDistStartIndex_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionEnergyDistStartIndex().size() ,==, 0 );
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   getReactionEnergyDistStartIndex_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(MonteCarlo::N__ANYTHING_REACTION)->second ,==, 34 );
@@ -411,7 +411,7 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that an elastic scattering distribution can be constructed
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   createScatteringDistribution_elastic )
 {
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
@@ -426,23 +426,23 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
   neutron.setEnergy( 1.0 );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
 				   ace_file_handler_h1->getTableTemperature() );
-  
+
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
   				   ace_file_handler_h1->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
   				   ace_file_handler_h1->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
   				   ace_file_handler_h1->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
   				   ace_file_handler_h1->getTableTemperature() );
 
   std::cout << neutron << std::endl;
@@ -456,23 +456,23 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
   neutron.setEnergy( 1.0 );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
 				   ace_file_handler_o16->getTableTemperature() );
-  
+
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
   				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
   				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
   				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterParticle( neutron, 
+  scattering_dist->scatterParticle( neutron,
   				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
@@ -480,105 +480,105 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that all other scattering distributions can be constructed
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
 		   createScatteringDistribution_all )
 {
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
-  
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					       MonteCarlo::N__ANYTHING_REACTION,
 					       scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					      MonteCarlo::N__2N_REACTION,
 					      scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					       MonteCarlo::N__N_ALPHA_REACTION,
 					       scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					       MonteCarlo::N__N_3ALPHA_REACTION,
 					       scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					       MonteCarlo::N__N_D_REACTION,
 					       scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					       MonteCarlo::N__2N_P_REACTION,
 					       scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					       MonteCarlo::N__N_2P_REACTION,
 					       scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					       MonteCarlo::N__N_P_ALPHA_REACTION,
 					       scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					 MonteCarlo::N__N_EXCITED_STATE_1_REACTION,
 					 scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					 MonteCarlo::N__N_EXCITED_STATE_2_REACTION,
 					 scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					 MonteCarlo::N__N_EXCITED_STATE_3_REACTION,
 					 scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					 MonteCarlo::N__N_EXCITED_STATE_4_REACTION,
 					 scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					 MonteCarlo::N__N_EXCITED_STATE_5_REACTION,
 					 scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					 MonteCarlo::N__N_EXCITED_STATE_6_REACTION,
 					 scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					 MonteCarlo::N__N_EXCITED_STATE_7_REACTION,
 					 scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
-  neutron_distribution_factory_o16->createScatteringDistribution( 
+  neutron_distribution_factory_o16->createScatteringDistribution(
 					      MonteCarlo::N__N_CONTINUUM_REACTION,
 					      scattering_dist );
-						
+
   TEST_ASSERT( !scattering_dist.is_null() );
 
 

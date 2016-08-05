@@ -21,25 +21,25 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
-    static const Teuchos::Array<double> gauss_weights;
-    
-    // Kronrad quadrature weights 
-    static const Teuchos::Array<double> kronrod_weights;
+    // Gauss quadrature weights
+    static const std::vector<long_float> gauss_weights;
+
+    // Kronrad quadrature weights
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const Teuchos::Array<double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static Teuchos::Array<double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 21 point rule
@@ -49,25 +49,25 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
-    static const Teuchos::Array<double> gauss_weights;
-    
-    // Kronrad quadrature weights 
-    static const Teuchos::Array<double> kronrod_weights;
+    // Gauss quadrature weights
+    static const std::vector<long_float> gauss_weights;
+
+    // Kronrad quadrature weights
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const Teuchos::Array<double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static Teuchos::Array<double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 31 point rule
@@ -77,25 +77,25 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
-    static const Teuchos::Array<double> gauss_weights;
-    
-    // Kronrad quadrature weights 
-    static const Teuchos::Array<double> kronrod_weights;
+    // Gauss quadrature weights
+    static const std::vector<long_float> gauss_weights;
+
+    // Kronrad quadrature weights
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const Teuchos::Array<double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static Teuchos::Array<double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 41 point rule
@@ -105,25 +105,25 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
-    static const Teuchos::Array<double> gauss_weights;
-    
-    // Kronrad quadrature weights 
-    static const Teuchos::Array<double> kronrod_weights;
+    // Gauss quadrature weights
+    static const std::vector<long_float> gauss_weights;
+
+    // Kronrad quadrature weights
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const Teuchos::Array<double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static Teuchos::Array<double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 51 point rule
@@ -133,25 +133,25 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
-    static const Teuchos::Array<double> gauss_weights;
-    
-    // Kronrad quadrature weights 
-    static const Teuchos::Array<double> kronrod_weights;
+    // Gauss quadrature weights
+    static const std::vector<long_float> gauss_weights;
+
+    // Kronrad quadrature weights
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const Teuchos::Array<double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static Teuchos::Array<double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 61 point rule
@@ -161,25 +161,25 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
-    static const Teuchos::Array<double> gauss_weights;
-    
-    // Kronrad quadrature weights 
-    static const Teuchos::Array<double> kronrod_weights;
+    // Gauss quadrature weights
+    static const std::vector<long_float> gauss_weights;
+
+    // Kronrad quadrature weights
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const Teuchos::Array<double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static Teuchos::Array<double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static Teuchos::Array<double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
 } // end Utility namespace

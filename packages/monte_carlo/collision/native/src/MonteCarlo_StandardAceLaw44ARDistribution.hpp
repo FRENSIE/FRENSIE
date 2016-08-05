@@ -24,7 +24,7 @@ class StandardAceLaw44ARDistribution : public AceLaw44ARDistribution
 public:
 
   //! Constructor
-  StandardAceLaw44ARDistribution( 
+  StandardAceLaw44ARDistribution(
 		   const Teuchos::ArrayView<const double>& outgoing_energy_grid,
 		   const Teuchos::ArrayView<const double>& A_array,
 		   const Teuchos::ArrayView<const double>& R_array );

@@ -26,7 +26,7 @@ struct LogDepVarProcessingTag{};
 //! The lin dependent variable processing tag
 struct LinDepVarProcessingTag{};
 
-/*! \brief Policy struct for interpolating data tables that require log-log 
+/*! \brief Policy struct for interpolating data tables that require log-log
  * interpolation between evaluated points.
  * \ingroup policies
  */
@@ -37,7 +37,7 @@ struct LogLog
 
   //! Dependent variable processing tag
   typedef LogDepVarProcessingTag DepVarProcessingTag;
-  
+
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
   static DepType interpolate( const IndepType indep_var_0,
@@ -45,7 +45,7 @@ struct LogLog
 			      const IndepType indep_var,
 			      const DepType dep_var_0,
 			      const DepType dep_var_1 );
-  
+
   //! Interpolate between two processed points
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
@@ -55,7 +55,7 @@ struct LogLog
 
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
-  static typename QuantityTraits<DepType>::RawType 
+  static typename QuantityTraits<DepType>::RawType
   interpolateAndProcess( const IndepType indep_var_0,
 			 const IndepType indep_var_1,
 			 const IndepType indep_var,
@@ -71,18 +71,18 @@ struct LogLog
 
   //! Process the independent value
   template<typename T>
-  static typename QuantityTraits<T>::RawType  
+  static typename QuantityTraits<T>::RawType
   processIndepVar( const T indep_var );
 
   //! Process the dependent value
   template<typename T>
-  static typename QuantityTraits<T>::RawType  
+  static typename QuantityTraits<T>::RawType
   processDepVar( const T dep_var );
 
   //! Recover the processed independent value
   template<typename T>
   static T recoverProcessedIndepVar( const T processed_indep_var );
-  
+
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
@@ -99,7 +99,7 @@ struct LogLog
   static const std::string name();
 };
 
-/*! \brief Policy struct for interpolating data tables that require log-lin 
+/*! \brief Policy struct for interpolating data tables that require log-lin
  * interpolation between evaluated points.
  * \ingroup policies
  */
@@ -110,7 +110,7 @@ struct LogLin
 
   //! Dependent variable processing tag
   typedef LogDepVarProcessingTag DepVarProcessingTag;
-  
+
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
   static DepType interpolate( const IndepType indep_var_0,
@@ -118,7 +118,7 @@ struct LogLin
 			      const IndepType indep_var,
 			      const DepType dep_var_0,
 			      const DepType dep_var_1 );
-  
+
   //! Interpolate between two processed points
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
@@ -128,7 +128,7 @@ struct LogLin
 
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
-  static typename QuantityTraits<DepType>::RawType 
+  static typename QuantityTraits<DepType>::RawType
   interpolateAndProcess( const IndepType indep_var_0,
 			 const IndepType indep_var_1,
 			 const IndepType indep_var,
@@ -144,18 +144,18 @@ struct LogLin
 
   //! Process the independent value
   template<typename T>
-  static typename QuantityTraits<T>::RawType  
+  static typename QuantityTraits<T>::RawType
   processIndepVar( const T indep_var );
 
   //! Process the dependent value
   template<typename T>
-  static typename QuantityTraits<T>::RawType  
+  static typename QuantityTraits<T>::RawType
   processDepVar( const T dep_var );
-  
+
   //! Recover the processed independent value
   template<typename T>
   static T recoverProcessedIndepVar( const T processed_indep_var );
-  
+
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
@@ -183,7 +183,7 @@ struct LinLog
 
   //! Dependent variable processing tag
   typedef LinDepVarProcessingTag DepVarProcessingTag;
-  
+
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
   static DepType interpolate( const IndepType indep_var_0,
@@ -191,7 +191,7 @@ struct LinLog
 			      const IndepType indep_var,
 			      const DepType dep_var_0,
 			      const DepType dep_var_1 );
-  
+
   //! Interpolate between two processed points
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
@@ -201,7 +201,7 @@ struct LinLog
 
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
-  static typename QuantityTraits<DepType>::RawType 
+  static typename QuantityTraits<DepType>::RawType
   interpolateAndProcess( const IndepType indep_var_0,
 			 const IndepType indep_var_1,
 			 const IndepType indep_var,
@@ -217,18 +217,18 @@ struct LinLog
 
   //! Process the independent value
   template<typename T>
-  static typename QuantityTraits<T>::RawType 
+  static typename QuantityTraits<T>::RawType
   processIndepVar( const T indep_var );
 
   //! Process the dependent value
   template<typename T>
-  static typename QuantityTraits<T>::RawType 
+  static typename QuantityTraits<T>::RawType
   processDepVar( const T dep_var );
 
   //! Recover the processed independent value
   template<typename T>
   static T recoverProcessedIndepVar( const T processed_indep_var );
-  
+
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
@@ -256,7 +256,7 @@ struct LinLin
 
   //! Dependent variable processing tag
   typedef LinDepVarProcessingTag DepVarProcessingTag;
-  
+
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
   static DepType interpolate( const IndepType indep_var_0,
@@ -264,7 +264,7 @@ struct LinLin
 			      const IndepType indep_var,
 			      const DepType dep_var_0,
 			      const DepType dep_var_1 );
-  
+
   //! Interpolate between two processed points
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
@@ -287,7 +287,7 @@ struct LinLin
 				  const T processed_indep_var,
 				  const T processed_dep_var_0,
 				  const T processed_slope );
-  
+
   //! Test if the independent value is in a valid range (doesn't check nan/inf)
   template<typename T>
   static bool isIndepVarInValidRange( const T indep_var );
@@ -298,7 +298,7 @@ struct LinLin
 
   //! Process the independent value
   template<typename T>
-  static typename QuantityTraits<T>::RawType 
+  static typename QuantityTraits<T>::RawType
   processIndepVar( const T indep_var );
 
   //! Process the dependent value
@@ -309,7 +309,7 @@ struct LinLin
   //! Recover the processed independent value
   template<typename T>
   static T recoverProcessedIndepVar( const T processed_indep_var );
-  
+
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );

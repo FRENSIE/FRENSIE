@@ -25,7 +25,7 @@ using boost::units::quantity;
 // Check that the inverse area units can be converted
 TEUCHOS_UNIT_TEST( InverseAreaConversion, convert )
 {
-  quantity<InverseSquareAngstrom> 
+  quantity<InverseSquareAngstrom>
     inverse_sqr_angstrom( 1.0*inverse_square_centimeter );
 
   quantity<InverseSquareCentimeter>

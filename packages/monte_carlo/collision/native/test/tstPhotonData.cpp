@@ -31,7 +31,7 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the PhotonData class with only basic physics turn on can be 
+// Check that the PhotonData class with only basic physics turn on can be
 // constructed correctly
 TEUCHOS_UNIT_TEST( PhotonData, basic_physics_constructor_test )
 {
@@ -46,7 +46,7 @@ TEUCHOS_UNIT_TEST( PhotonData, basic_physics_constructor_test )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonData class with fluorescence physics turned on can be 
+// Check that the PhotonData class with fluorescence physics turned on can be
 // constructed correctly
 TEUCHOS_UNIT_TEST( PhotonData, fluorescence_physics_constructor_test )
 {
@@ -59,13 +59,13 @@ TEUCHOS_UNIT_TEST( PhotonData, fluorescence_physics_constructor_test )
    unsigned int atomic_number = photon_data.getAtomicNumber();
    TEST_EQUALITY_CONST( atomic_number, ATOMIC_NUMBER );
 
-   double rad_trans_prob = 
+   double rad_trans_prob =
      photon_data.getShellRadiativeTransitionProbability( SHELL );
    TEST_EQUALITY_CONST( rad_trans_prob, RAD_TRANS_PROB_REF );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonData class with doppler physics turned on can be 
+// Check that the PhotonData class with doppler physics turned on can be
 // constructed correctly
 TEUCHOS_UNIT_TEST( PhotonData, doppler_physics_constructor_test )
 {
@@ -83,7 +83,7 @@ TEUCHOS_UNIT_TEST( PhotonData, doppler_physics_constructor_test )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonData class with all physics turned on can be 
+// Check that the PhotonData class with all physics turned on can be
 // constructed correctly
 TEUCHOS_UNIT_TEST( PhotonData, all_physics_constructor_test )
 {
@@ -96,7 +96,7 @@ TEUCHOS_UNIT_TEST( PhotonData, all_physics_constructor_test )
   unsigned int atomic_number = photon_data.getAtomicNumber();
   TEST_EQUALITY_CONST( atomic_number, ATOMIC_NUMBER );
 
-  double rad_trans_prob = 
+  double rad_trans_prob =
      photon_data.getShellRadiativeTransitionProbability( SHELL );
    TEST_EQUALITY_CONST( rad_trans_prob, RAD_TRANS_PROB_REF );
 

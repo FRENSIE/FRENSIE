@@ -23,11 +23,11 @@ namespace MonteCarlo{
 // Add an entity observer to the handler
 /*! \details The observer will be registered with the appropriate dispatchers.
  * It is important to pass a pointer to the class that maintains the event
- * tags associated with the observer (so that automatic dispatcher 
+ * tags associated with the observer (so that automatic dispatcher
  * registration can occur).
  */
 template<typename ObserverType, typename EntityHandle>
-void EventHandler::addEntityEventObserver( 
+void EventHandler::addEntityEventObserver(
                                const std::shared_ptr<ObserverType>& observer,
 			       const Teuchos::Array<EntityHandle>& entity_ids )
 {
@@ -38,7 +38,7 @@ void EventHandler::addEntityEventObserver(
   // Make sure the observer id is unique
   testPrecondition( d_particle_history_observers.find( observer->getId() ) ==
                     d_particle_history_observers.end() );
-  
+
   // Register the observer with the particle event dispatchers
   this->registerObserver( observer, entity_ids );
 
@@ -50,7 +50,7 @@ void EventHandler::addEntityEventObserver(
 /*! \details The estimator will be registered with the appropriate dispatchers.
  */
 template<typename ObserverType>
-void EventHandler::addGlobalEventObserver( 
+void EventHandler::addGlobalEventObserver(
                                 const std::shared_ptr<ObserverType>& observer )
 {
   // Make sure observer is valid
@@ -58,7 +58,7 @@ void EventHandler::addGlobalEventObserver(
   // Make sure the observer id is unique
   testPrecondition( d_particle_history_observers.find( observer->getId() ) ==
                     d_particle_history_observers.end() );
- 
+
   // Register the estimator with the particle global event dispatchers
   this->registerGlobalObserver( observer );
 
@@ -68,7 +68,7 @@ void EventHandler::addGlobalEventObserver(
 
 // Register an observer with the appropriate dispatcher
 template<typename Observer, typename EntityHandle>
-void EventHandler::registerObserver( 
+void EventHandler::registerObserver(
                                const std::shared_ptr<Observer>& observer,
                                const Teuchos::Array<EntityHandle>& entity_ids )
 {
@@ -86,7 +86,7 @@ void EventHandler::registerObserver(
 
 // Register a global observer with the appropriate dispatcher
 template<typename Observer>
-void EventHandler::registerGlobalObserver( 
+void EventHandler::registerGlobalObserver(
                                     const std::shared_ptr<Observer>& observer )
 {
   typedef typename boost::mpl::begin<typename Observer::EventTags>::type
@@ -108,7 +108,7 @@ void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagI
                                const std::shared_ptr<Observer>& observer,
 			       const Teuchos::Array<EntityHandle>& entity_ids )
 {
-  event_handler.registerObserverWithTag( 
+  event_handler.registerObserverWithTag(
                    observer,
                    entity_ids,
                    typename boost::mpl::deref<BeginEventTagIterator>::type() );
@@ -133,11 +133,11 @@ void EventHandler::ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIte
 // BeginEventTag tag
 template<typename BeginEventTagIterator, typename EndEventTagIterator>
 template<typename Observer>
-void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerGlobalObserverWithTag( 
+void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::registerGlobalObserverWithTag(
                                     EventHandler& event_handler,
                                     const std::shared_ptr<Observer>& observer )
 {
-  event_handler.registerGlobalObserverWithTag( 
+  event_handler.registerGlobalObserverWithTag(
                    observer,
                    typename boost::mpl::deref<BeginEventTagIterator>::type() );
 
@@ -150,7 +150,7 @@ void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagI
 // End global registration iteration
 template<typename EndEventTagIterator>
 template<typename Observer>
-void EventHandler::ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>::registerGlobalObserverWithTag( 
+void EventHandler::ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>::registerGlobalObserverWithTag(
                                      EventHandler& event_handler,
                                      const std::shared_ptr<Observer>& observer)
 { /* ... */ }

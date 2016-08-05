@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstXSSEPRDataExtractor.cpp
 //! \author Alex Robinson
 //! \brief  XSS photoatomic data extractor class unit tests.
@@ -18,7 +18,7 @@
 // FRENSIE Includes
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
-  
+
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
@@ -58,7 +58,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, hasFluorescenceData )
 // Check that the ESZG block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractESZGBlock )
 {
-  Teuchos::ArrayView<const double> eszg_block = 
+  Teuchos::ArrayView<const double> eszg_block =
     b_xss_data_extractor->extractESZGBlock();
 
   TEST_EQUALITY_CONST( eszg_block.size(), 5880 );
@@ -94,7 +94,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractPhotonEnergyGrid )
 // Check that the incoherent cross section can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractIncoherentCrossSection )
 {
-  Teuchos::ArrayView<const double> incoherent_cs = 
+  Teuchos::ArrayView<const double> incoherent_cs =
     b_xss_data_extractor->extractIncoherentCrossSection();
 
   TEST_EQUALITY_CONST( incoherent_cs.size(), 1176 );
@@ -112,7 +112,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractIncoherentCrossSection )
 // Check that the coherent cross section can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractCoherentCrossSection )
 {
-  Teuchos::ArrayView<const double> coherent_cs = 
+  Teuchos::ArrayView<const double> coherent_cs =
     b_xss_data_extractor->extractCoherentCrossSection();
 
   TEST_EQUALITY_CONST( coherent_cs.size(), 1176 );
@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractCoherentCrossSection )
 // Check that the photoelectric cross section can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractPhotoelectricCrossSection )
 {
-  Teuchos::ArrayView<const double> photoelectric_cs = 
+  Teuchos::ArrayView<const double> photoelectric_cs =
     b_xss_data_extractor->extractPhotoelectricCrossSection();
 
   TEST_EQUALITY_CONST( photoelectric_cs.size(), 1176 );
@@ -138,7 +138,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractPhotoelectricCrossSection )
   TEST_EQUALITY_CONST( photoelectric_cs.back(), -2.403097442973E+01 );
 
   photoelectric_cs = pb_xss_data_extractor->extractPhotoelectricCrossSection();
-  
+
   TEST_EQUALITY_CONST( photoelectric_cs.size(), 3176 );
   TEST_EQUALITY_CONST( photoelectric_cs.front(), 0.0 );
   TEST_EQUALITY_CONST( photoelectric_cs.back(), -1.115947249407E+01 );
@@ -148,14 +148,14 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractPhotoelectricCrossSection )
 // Check that the pair production cross section can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractPairProductionCrossSection )
 {
-  Teuchos::ArrayView<const double> pair_production_cs = 
+  Teuchos::ArrayView<const double> pair_production_cs =
     b_xss_data_extractor->extractPairProductionCrossSection();
 
   TEST_EQUALITY_CONST( pair_production_cs.size(), 1176 );
   TEST_EQUALITY_CONST( pair_production_cs.front(), 0.0 );
   TEST_EQUALITY_CONST( pair_production_cs.back(), -1.342622032664E+00 );
 
-  pair_production_cs = 
+  pair_production_cs =
     pb_xss_data_extractor->extractPairProductionCrossSection();
 
   TEST_EQUALITY_CONST( pair_production_cs.size(), 3176 );
@@ -167,7 +167,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractPairProductionCrossSection )
 // Check that the JINCE block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractJINCEBlock )
 {
-  Teuchos::ArrayView<const double> jince_block = 
+  Teuchos::ArrayView<const double> jince_block =
     b_xss_data_extractor->extractJINCEBlock();
 
   TEST_EQUALITY_CONST( jince_block.size(), 270 );
@@ -185,9 +185,9 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractJINCEBlock )
 // Check that the JCOHE block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractJCOHEBlock )
 {
-  Teuchos::ArrayView<const double> jcohe_block = 
+  Teuchos::ArrayView<const double> jcohe_block =
     b_xss_data_extractor->extractJCOHEBlock();
-  
+
   TEST_EQUALITY_CONST( jcohe_block.size(), 393 );
   TEST_EQUALITY_CONST( jcohe_block.front(), 0.0 );
   TEST_EQUALITY_CONST( jcohe_block.back(), 6.525100000000E-30 );
@@ -203,7 +203,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractJCOHEBlock )
 // Check that the JFLO block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractJFLOBlock )
 {
-  Teuchos::ArrayView<const double> jflo_block = 
+  Teuchos::ArrayView<const double> jflo_block =
     b_xss_data_extractor->extractJFLOBlock();
 
   TEST_EQUALITY_CONST( jflo_block.size(), 0 );
@@ -219,9 +219,9 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractJFLOBlock )
 // Check that the LHNM block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLHNMBlock )
 {
-  Teuchos::ArrayView<const double> lhnm_block = 
+  Teuchos::ArrayView<const double> lhnm_block =
     b_xss_data_extractor->extractLHNMBlock();
-  
+
   TEST_EQUALITY_CONST( lhnm_block.size(), 1176 );
   TEST_EQUALITY_CONST( lhnm_block.front(), 9.635990815996E-07 );
   TEST_EQUALITY_CONST( lhnm_block.back(), 9.999575195820E+04 );
@@ -237,9 +237,9 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLHNMBlock )
 // Check that the LNEPS block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLNEPSBlock )
 {
-  Teuchos::ArrayView<const double> lneps_block = 
+  Teuchos::ArrayView<const double> lneps_block =
     b_xss_data_extractor->extractLNEPSBlock();
-  
+
   TEST_EQUALITY_CONST( lneps_block.size(), 3 );
   TEST_EQUALITY_CONST( lneps_block.front(), 2.0 );
   TEST_EQUALITY_CONST( lneps_block.back(), 1.0 );
@@ -255,9 +255,9 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLNEPSBlock )
 // Check that the LBEPS block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLBEPSBlock )
 {
-  Teuchos::ArrayView<const double> lbeps_block = 
+  Teuchos::ArrayView<const double> lbeps_block =
     b_xss_data_extractor->extractLBEPSBlock();
-  
+
   TEST_EQUALITY_CONST( lbeps_block.size(), 3 );
   TEST_EQUALITY_CONST( lbeps_block.front(), 1.910000000000E-04 );
   TEST_EQUALITY_CONST( lbeps_block.back(), 0.0 );
@@ -273,9 +273,9 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLBEPSBlock )
 // Check that the LPIPS block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLPIPSBlock )
 {
-  Teuchos::ArrayView<const double> lpips_block = 
+  Teuchos::ArrayView<const double> lpips_block =
     b_xss_data_extractor->extractLPIPSBlock();
-  
+
   TEST_EQUALITY_CONST( lpips_block.size(), 3 );
   TEST_EQUALITY_CONST( lpips_block.front(), 4.000000000000E-01 );
   TEST_EQUALITY_CONST( lpips_block.back(), 2.000000000000E-01 );
@@ -291,9 +291,9 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLPIPSBlock )
 // Check that the LSWD block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLSWDBlock )
 {
-  Teuchos::ArrayView<const double> lswd_block = 
+  Teuchos::ArrayView<const double> lswd_block =
     b_xss_data_extractor->extractLSWDBlock();
-  
+
   TEST_EQUALITY_CONST( lswd_block.size(), 3 );
   TEST_EQUALITY_CONST( lswd_block.front(), 1.0 );
   TEST_EQUALITY_CONST( lswd_block.back(), 191.0 );
@@ -309,9 +309,9 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLSWDBlock )
 // Check that the SWD block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSWDBlock )
 {
-  Teuchos::ArrayView<const double> swd_block = 
+  Teuchos::ArrayView<const double> swd_block =
     b_xss_data_extractor->extractSWDBlock();
-  
+
   TEST_EQUALITY_CONST( swd_block.size(), 285 );
   TEST_EQUALITY_CONST( swd_block.front(), 2.000000000000E+00 );
   TEST_EQUALITY_CONST( swd_block.back(), 1.000000000000E+00 );
@@ -333,7 +333,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSUBSHBlock )
   TEST_EQUALITY_CONST( subsh_block.size(), 20 );
   TEST_EQUALITY_CONST( subsh_block.front(), 1.0 );
   TEST_EQUALITY_CONST( subsh_block.back(), 0.0 );
-  
+
   subsh_block = pb_xss_data_extractor->extractSUBSHBlock();
 
   TEST_EQUALITY_CONST( subsh_block.size(), 120 );
@@ -345,14 +345,14 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSUBSHBlock )
 // Check that the subshell ENDF designators can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellENDFDesignators )
 {
-  Teuchos::ArrayView<const double> subshell_endf_designators = 
+  Teuchos::ArrayView<const double> subshell_endf_designators =
     b_xss_data_extractor->extractSubshellENDFDesignators();
 
   TEST_EQUALITY_CONST( subshell_endf_designators.size(), 4 );
   TEST_EQUALITY_CONST( subshell_endf_designators.front(), 1.0 );
   TEST_EQUALITY_CONST( subshell_endf_designators.back(), 4.0 );
 
-  subshell_endf_designators = 
+  subshell_endf_designators =
     pb_xss_data_extractor->extractSubshellENDFDesignators();
 
   TEST_EQUALITY_CONST( subshell_endf_designators.size(), 24 );
@@ -364,14 +364,14 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellENDFDesignators )
 // Check that the subshell occupancies can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellOccupancies )
 {
-  Teuchos::ArrayView<const double> subshell_occupancies = 
+  Teuchos::ArrayView<const double> subshell_occupancies =
     b_xss_data_extractor->extractSubshellOccupancies();
 
   TEST_EQUALITY_CONST( subshell_occupancies.size(), 4 );
   TEST_EQUALITY_CONST( subshell_occupancies.front(), 2.0 );
   TEST_EQUALITY_CONST( subshell_occupancies.back(), 0.67 );
 
-  subshell_occupancies = 
+  subshell_occupancies =
     pb_xss_data_extractor->extractSubshellOccupancies();
 
   TEST_EQUALITY_CONST( subshell_occupancies.size(), 24 );
@@ -383,7 +383,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellOccupancies )
 // Check that the subshell binding energies can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellBindingEnergies )
 {
-  Teuchos::ArrayView<const double> subshell_be = 
+  Teuchos::ArrayView<const double> subshell_be =
     b_xss_data_extractor->extractSubshellBindingEnergies();
 
   TEST_EQUALITY_CONST( subshell_be.size(), 4 );
@@ -401,14 +401,14 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellBindingEnergies )
 // Check that the subshell compton interaction cdf can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellComptonInteractionCDF )
 {
-  Teuchos::ArrayView<const double> subshell_compton_cdf = 
+  Teuchos::ArrayView<const double> subshell_compton_cdf =
     b_xss_data_extractor->extractSubshellComptonInteractionCDF();
 
   TEST_EQUALITY_CONST( subshell_compton_cdf.size(), 4 );
   TEST_EQUALITY_CONST( subshell_compton_cdf.front(), 4.000000000000E-01 );
   TEST_EQUALITY_CONST( subshell_compton_cdf.back(), 1.0 );
 
-  subshell_compton_cdf = 
+  subshell_compton_cdf =
     pb_xss_data_extractor->extractSubshellComptonInteractionCDF();
 
   TEST_EQUALITY_CONST( subshell_compton_cdf.size(), 24 );
@@ -420,14 +420,14 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellComptonInteractionCDF )
 // Check that the subshell vacancy transition paths can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellVacancyTransitionPaths )
 {
-  Teuchos::ArrayView<const double> subshell_transitions = 
+  Teuchos::ArrayView<const double> subshell_transitions =
     b_xss_data_extractor->extractSubshellVacancyTransitionPaths();
-  
+
   TEST_EQUALITY_CONST( subshell_transitions.size(), 4 );
   TEST_EQUALITY_CONST( subshell_transitions.front(), 0.0 );
   TEST_EQUALITY_CONST( subshell_transitions.back(), 0.0 );
 
-  subshell_transitions = 
+  subshell_transitions =
     pb_xss_data_extractor->extractSubshellVacancyTransitionPaths();
 
   TEST_EQUALITY_CONST( subshell_transitions.size(), 24 );
@@ -489,7 +489,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractXPROBBlock )
 // Check that the ESZE block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractESZEBlock )
 {
-  Teuchos::ArrayView<const double> esze_block = 
+  Teuchos::ArrayView<const double> esze_block =
     b_xss_data_extractor->extractESZEBlock();
 
   TEST_EQUALITY_CONST( esze_block.size(), 3490 );
@@ -507,7 +507,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractESZEBlock )
 // Check that the electron energy grid can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElectronEnergyGrid )
 {
-  Teuchos::ArrayView<const double> electron_energy_grid = 
+  Teuchos::ArrayView<const double> electron_energy_grid =
     b_xss_data_extractor->extractElectronEnergyGrid();
 
   TEST_EQUALITY_CONST( electron_energy_grid.size(), 349 );
@@ -532,7 +532,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElectronTotalCrossSection )
   TEST_EQUALITY_CONST( electron_total_cs.front(), 3.605412858153E+09 );
   TEST_EQUALITY_CONST( electron_total_cs.back(), 5.246259578280E+05 );
 
-  electron_total_cs = 
+  electron_total_cs =
     pb_xss_data_extractor->extractElectronTotalCrossSection();
 
   TEST_EQUALITY_CONST( electron_total_cs.size(), 477 );
@@ -562,7 +562,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticCrossSection )
 // Check that the electron bremsstrahlung cross section can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractBremsstrahlungCrossSection )
 {
-  Teuchos::ArrayView<const double> bremss_cs = 
+  Teuchos::ArrayView<const double> bremss_cs =
     b_xss_data_extractor->extractBremsstrahlungCrossSection();
 
   TEST_EQUALITY_CONST( bremss_cs.size(), 349 );
@@ -580,7 +580,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractBremsstrahlungCrossSection )
 // Check that the electron excitation cross section can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractExcitationCrossSection )
 {
-  Teuchos::ArrayView<const double> excitation_cs = 
+  Teuchos::ArrayView<const double> excitation_cs =
     b_xss_data_extractor->extractExcitationCrossSection();
 
   TEST_EQUALITY_CONST( excitation_cs.size(), 349 );
@@ -598,16 +598,16 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractExcitationCrossSection )
 // Check that the total electroionization cross section can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElectroionizationCrossSection )
 {
-  Teuchos::ArrayView<const double> electroionization_cs = 
+  Teuchos::ArrayView<const double> electroionization_cs =
     b_xss_data_extractor->extractElectroionizationCrossSection();
 
   TEST_EQUALITY_CONST( electroionization_cs.size(), 349 );
   TEST_EQUALITY_CONST( electroionization_cs.front(), 8.625000000000E+07 );
   TEST_EQUALITY_CONST( electroionization_cs.back(), 2.907126000000E+05 );
-  
-  electroionization_cs = 
+
+  electroionization_cs =
     pb_xss_data_extractor->extractElectroionizationCrossSection();
-  
+
   TEST_EQUALITY_CONST( electroionization_cs.size(), 477 );
   TEST_EQUALITY_CONST( electroionization_cs.front(), 1.310577000000E+08 );
   TEST_EQUALITY_CONST( electroionization_cs.back(), 1.264838877900E+06 );
@@ -615,23 +615,23 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElectroionizationCrossSection )
 
 //---------------------------------------------------------------------------//
 // Check that the electroionization subshell cross sections can be extracted
-TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, 
+TEUCHOS_UNIT_TEST( XSSEPRDataExtractor,
 		   extractElectroionizationSubshellCrossSections )
 {
-  Teuchos::ArrayView<const double> electroionization_subshell_cs = 
+  Teuchos::ArrayView<const double> electroionization_subshell_cs =
     b_xss_data_extractor->extractElectroionizationSubshellCrossSections();
 
   TEST_EQUALITY_CONST( electroionization_subshell_cs.size(), 1396 );
   TEST_EQUALITY_CONST( electroionization_subshell_cs.front(), 0.0 );
-  TEST_EQUALITY_CONST( electroionization_subshell_cs.back(), 
+  TEST_EQUALITY_CONST( electroionization_subshell_cs.back(),
 		       1.155380000000E+05 );
 
-  electroionization_subshell_cs = 
+  electroionization_subshell_cs =
     pb_xss_data_extractor->extractElectroionizationSubshellCrossSections();
 
   TEST_EQUALITY_CONST( electroionization_subshell_cs.size(), 11448 );
   TEST_EQUALITY_CONST( electroionization_subshell_cs.front(), 0.0 );
-  TEST_EQUALITY_CONST( electroionization_subshell_cs.back(), 
+  TEST_EQUALITY_CONST( electroionization_subshell_cs.back(),
 		       1.822340000000E+05 );
 }
 
@@ -657,7 +657,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractEXCITBlock )
 // Check that the ELASI block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractELASIBlock )
 {
-  Teuchos::ArrayView<const double> elasi_block = 
+  Teuchos::ArrayView<const double> elasi_block =
     b_xss_data_extractor->extractELASIBlock();
 
   TEST_EQUALITY_CONST( elasi_block.size(), 48 );
@@ -675,7 +675,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractELASIBlock )
 // Check that the ELAS block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractELASBlock )
 {
-  Teuchos::ArrayView<const double> elas_block = 
+  Teuchos::ArrayView<const double> elas_block =
     b_xss_data_extractor->extractELASBlock();
 
   TEST_EQUALITY_CONST( elas_block.size(), 1954 );
@@ -695,7 +695,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractEIONBlock )
 {
   Teuchos::ArrayView<const double> eion_block =
     b_xss_data_extractor->extractEIONBlock();
-  
+
   TEST_EQUALITY_CONST( eion_block.size(), 3233 );
   TEST_EQUALITY_CONST( eion_block.front(), 7.000000000000E+00 );
   TEST_EQUALITY_CONST( eion_block.back(), 1.000000000000E+00 );
@@ -715,13 +715,13 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractBREMIBlock )
     b_xss_data_extractor->extractBREMIBlock();
 
   TEST_EQUALITY_CONST( bremi_block.size(), 30 );
-  TEST_EQUALITY_CONST( bremi_block.front(), 1.000000000000E-05 ); 
+  TEST_EQUALITY_CONST( bremi_block.front(), 1.000000000000E-05 );
   TEST_EQUALITY_CONST( bremi_block.back(), 8.520000000000E+02 );
 
   bremi_block = pb_xss_data_extractor->extractBREMIBlock();
 
   TEST_EQUALITY_CONST( bremi_block.size(), 27 );
-  TEST_EQUALITY_CONST( bremi_block.front(), 1.000000000000E-05 ); 
+  TEST_EQUALITY_CONST( bremi_block.front(), 1.000000000000E-05 );
   TEST_EQUALITY_CONST( bremi_block.back(), 6.500000000000E+02 );
 }
 
@@ -747,7 +747,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractBREMEBlock )
 // Check that the BREML block can be extracted
 TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractBREMLBlock )
 {
-  Teuchos::ArrayView<const double> breml_block = 
+  Teuchos::ArrayView<const double> breml_block =
     b_xss_data_extractor->extractBREMLBlock();
 
   TEST_EQUALITY_CONST( breml_block.size(), 152 );
@@ -784,24 +784,24 @@ int main( int argc, char** argv )
 		 &b_ace_table_name,
 		 "Test B ACE table name in ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Initialize ace file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
                                  new Data::ACEFileHandler( pb_ace_file_name,
                                                            pb_ace_table_name,
 						           1u ) );
 
-  pb_xss_data_extractor.reset( 
+  pb_xss_data_extractor.reset(
       new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
 				     ace_file_handler->getTableJXSArray(),
 				     ace_file_handler->getTableXSSArray() ) );
@@ -809,8 +809,8 @@ int main( int argc, char** argv )
   ace_file_handler.reset( new Data::ACEFileHandler( b_ace_file_name,
                                                     b_ace_table_name,
 						    1u ) );
-  
-  b_xss_data_extractor.reset( 
+
+  b_xss_data_extractor.reset(
       new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
 				     ace_file_handler->getTableJXSArray(),
 				     ace_file_handler->getTableXSSArray() ) );
@@ -830,7 +830,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

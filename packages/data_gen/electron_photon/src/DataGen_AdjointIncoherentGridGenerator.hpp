@@ -50,7 +50,7 @@ public:
   static double getEnergyToMaxEnergyNudgeFactor();
 
   //! Generate the bilinear grid
-  virtual void generate( 
+  virtual void generate(
 	     Teuchos::Array<double>& energy_grid,
 	     Teuchos::Array<Teuchos::Array<double> >& max_energy_grids,
 	     Teuchos::Array<Teuchos::Array<double> >& cross_section) const = 0;
@@ -61,7 +61,7 @@ public:
 			 const double energy ) const = 0;
 
 private:
-  
+
   // The min table energy
   static double s_min_table_energy;
 

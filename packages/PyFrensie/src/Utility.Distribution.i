@@ -8,13 +8,13 @@
 
 %define %utility_dist_docstring
 "
-PyFrensie.Utility.Distribution is the python interface to the FRENSIE 
+PyFrensie.Utility.Distribution is the python interface to the FRENSIE
 utility/distribution subpackage.
 
 The purpose of Distribution is to provide a variety of 1-D distributions and
-a variety of higher dimension distributions that can be used for both 
-evaluation and sampling. All distributions are compatible with the 
-Teuchos::ParameterList and its Python wrapper 
+a variety of higher dimension distributions that can be used for both
+evaluation and sampling. All distributions are compatible with the
+Teuchos::ParameterList and its Python wrapper
 (PyTrilinos.Teuchos.ParameterList).
 "
 %enddef

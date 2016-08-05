@@ -42,9 +42,9 @@ public:
 
   //! Return the number of bins in the discretization
   virtual unsigned getNumberOfBins() const = 0;
-  
+
   //! Check if the value is contained in the discretization
-  virtual bool isValueInDiscretization( 
+  virtual bool isValueInDiscretization(
        const EstimatorParticleStateWrapper& particle_state_wrapper ) const = 0;
 
   //! Check if the value is contained in the discretization
@@ -52,14 +52,14 @@ public:
                                      const Teuchos::any& any_value ) const = 0;
 
   //! Calculate the index of the bin that the value falls in
-  virtual unsigned calculateBinIndex( 
+  virtual unsigned calculateBinIndex(
        const EstimatorParticleStateWrapper& particle_state_wrapper ) const = 0;
 
   //! Calculate the index of the bin that the value falls in
   virtual unsigned calculateBinIndex( const Teuchos::any& any_value) const = 0;
 
   //! Print the boundaries of a bin
-  virtual void printBoundariesOfBin( std::ostream& os, 
+  virtual void printBoundariesOfBin( std::ostream& os,
 				     const unsigned bin_index ) const = 0;
 
   //! Print the dimension discretization

@@ -50,24 +50,24 @@ TEUCHOS_UNIT_TEST( ModuleInterface, sampleParticleState_thread_safe )
 {
   typedef MonteCarlo::SourceModuleInterface<MonteCarlo::ParticleSource> SMI;
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
 
   std::vector<MonteCarlo::ParticleBank> banks( threads );
-  
+
   SMI::enableThreadSupport( threads );
 
   // Create a sample for each thread
   #pragma omp parallel num_threads( threads )
   {
-    SMI::sampleParticleState( 
+    SMI::sampleParticleState(
                             banks[Utility::GlobalOpenMPSession::getThreadId()],
                             Utility::GlobalOpenMPSession::getThreadId() );
   }
 
   // Splice all of the banks
   MonteCarlo::ParticleBank combined_bank;
-  
+
   for( unsigned i = 0; i < banks.size(); ++i )
     combined_bank.splice( banks[i] );
 
@@ -154,7 +154,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, exportSourceData )
   }
 
   // Check that the source data was written correctly
-  MonteCarlo::SourceHDF5FileHandler source_file_handler( 
+  MonteCarlo::SourceHDF5FileHandler source_file_handler(
                source_data_file_name,
                MonteCarlo::SourceHDF5FileHandler::READ_ONLY_SOURCE_HDF5_FILE );
 
@@ -181,10 +181,10 @@ int main( int argc, char** argv )
 		 &threads,
 		 "Number of threads to use" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -196,7 +196,7 @@ int main( int argc, char** argv )
   {
     // Create the spatial distribution
     std::shared_ptr<Utility::SpatialDistribution>
-      spatial_distribution( 
+      spatial_distribution(
                       new Utility::PointSpatialDistribution( 0.0, 0.0, 0.0 ) );
 
     // Create the directional distribution
@@ -210,7 +210,7 @@ int main( int argc, char** argv )
       directional_distribution( new Utility::SphericalDirectionalDistribution(
                                                            theta_distribution,
 							   mu_distribution ) );
-    
+
     // Create the energy distribution
     std::shared_ptr<Utility::OneDDistribution>
       energy_distribution( new Utility::DeltaDistribution( 1.0 ) );
@@ -228,7 +228,7 @@ int main( int argc, char** argv )
                                                       energy_distribution,
                                                       time_distribution,
                                                       MonteCarlo::PHOTON ) );
-    
+
     MonteCarlo::setSourceHandlerInstance( source );
   }
 
@@ -241,7 +241,7 @@ int main( int argc, char** argv )
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

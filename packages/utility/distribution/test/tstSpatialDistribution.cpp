@@ -50,16 +50,16 @@ TEUCHOS_UNIT_TEST( SpatialDistribution, hasSameBounds )
 			 new Utility::PowerDistribution<2u>( 1.0, 0.0, 1.0 ) );
 
   std::shared_ptr<Utility::OneDDistribution> uniform_dist(
-	    new Utility::UniformDistribution( 0.0, 
+	    new Utility::UniformDistribution( 0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
-  
+
   // Create the cartesian spatial distributions
   std::shared_ptr<Utility::SpatialDistribution> cartesian_dist_a(
 		 new Utility::CartesianSpatialDistribution( delta_dist,
 							    discrete_dist,
 							    histogram_dist ) );
-  
+
   std::shared_ptr<Utility::SpatialDistribution> cartesian_dist_b(
 		 new Utility::CartesianSpatialDistribution( delta_dist,
 							    histogram_dist,
@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST( SpatialDistribution, hasSameBounds )
 							   histogram_dist,
 							   0.0, 0.0, 0.0,
 							   Utility::Z_AXIS ) );
-  
+
   std::shared_ptr<Utility::SpatialDistribution> cylindrical_dist_e(
 	      new Utility::CylindricalSpatialDistribution( histogram_dist,
 							   uniform_dist,
@@ -134,7 +134,7 @@ TEUCHOS_UNIT_TEST( SpatialDistribution, hasSameBounds )
 							 histogram_dist,
 							 0.0, 0.0, 0.0,
 							 Utility::Z_AXIS ) );
-  
+
   std::shared_ptr<Utility::SpatialDistribution> spherical_dist_e(
 	      new Utility::SphericalSpatialDistribution( histogram_dist,
 							 uniform_dist,
@@ -147,14 +147,14 @@ TEUCHOS_UNIT_TEST( SpatialDistribution, hasSameBounds )
   TEST_ASSERT( !cartesian_dist_a->hasSameBounds( *cylindrical_dist_a ) );
   TEST_ASSERT( !cartesian_dist_a->hasSameBounds( *spherical_dist_a ) );
   TEST_ASSERT( !cartesian_dist_b->hasSameBounds( *cartesian_dist_c ) );
-  
+
   TEST_ASSERT( !cylindrical_dist_a->hasSameBounds( *cylindrical_dist_b ) );
   TEST_ASSERT( !cylindrical_dist_a->hasSameBounds( *cylindrical_dist_c ) );
   TEST_ASSERT( cylindrical_dist_a->hasSameBounds( *cylindrical_dist_d ) );
   TEST_ASSERT( !cylindrical_dist_a->hasSameBounds( *cylindrical_dist_e ) );
   TEST_ASSERT( !cylindrical_dist_b->hasSameBounds( *cylindrical_dist_c ) );
   TEST_ASSERT( !cylindrical_dist_d->hasSameBounds( *cylindrical_dist_e ) );
-  
+
   TEST_ASSERT( !spherical_dist_a->hasSameBounds( *spherical_dist_b ) );
   TEST_ASSERT( !spherical_dist_a->hasSameBounds( *spherical_dist_c ) );
   TEST_ASSERT( spherical_dist_a->hasSameBounds( *spherical_dist_d ) );

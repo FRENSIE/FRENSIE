@@ -16,7 +16,7 @@
 namespace Utility{
 
 // Constructor
-SphericalDirectionalDistribution::SphericalDirectionalDistribution( 
+SphericalDirectionalDistribution::SphericalDirectionalDistribution(
 		   const std::shared_ptr<OneDDistribution>& theta_distribution,
                    const std::shared_ptr<OneDDistribution>& mu_distribution,
                    const Axis axis )
@@ -28,7 +28,7 @@ SphericalDirectionalDistribution::SphericalDirectionalDistribution(
   testPrecondition( theta_distribution.get() );
   testPrecondition( mu_distribution.get() );
   // Make sure that the theta distribution is valid
-  testPrecondition( theta_distribution->getUpperBoundOfIndepVar() 
+  testPrecondition( theta_distribution->getUpperBoundOfIndepVar()
 		    <= 2*PhysicalConstants::pi );
   testPrecondition( theta_distribution->getLowerBoundOfIndepVar()
 		    >= 0.0 );
@@ -40,18 +40,18 @@ SphericalDirectionalDistribution::SphericalDirectionalDistribution(
 }
 
 // Evaluate the direction distribution
-double SphericalDirectionalDistribution::evaluate( 
+double SphericalDirectionalDistribution::evaluate(
 				        const double cartesian_point[3] ) const
 {
   // Make sure that the point is a valid direction
   testPrecondition( validDirection( cartesian_point ) );
-  
+
   double spherical_point[3];
 
   SphericalDirectionalDistribution::convertCartesianCoordsToSpherical(cartesian_point,
 							     spherical_point );
 
-  double distribution_value = 
+  double distribution_value =
     d_theta_distribution->evaluate( spherical_point[1] );
   distribution_value *= d_mu_distribution->evaluate( spherical_point[2] );
 
@@ -62,17 +62,17 @@ double SphericalDirectionalDistribution::evaluate(
 
   // Make sure that the distribution value is valid
   testPostcondition( distribution_value == distribution_value );
-  
+
   return distribution_value;
 }
 
 // Evaluate the directional distribution PDF
-double SphericalDirectionalDistribution::evaluatePDF( 
+double SphericalDirectionalDistribution::evaluatePDF(
 					const double cartesian_point[3] ) const
 {
   // Make sure that the point is a valid direction
   testPrecondition( validDirection( cartesian_point ) );
-  
+
   double spherical_point[3];
 
   SphericalDirectionalDistribution::convertCartesianCoordsToSpherical(cartesian_point,
@@ -83,7 +83,7 @@ double SphericalDirectionalDistribution::evaluatePDF(
   // Make sure that the pdf value is valid
   testPostcondition( !ST::isnaninf( pdf_value ) );
 
-  return pdf_value; 
+  return pdf_value;
 }
 
 // Return a random (cartesian) sample from the distribution (u, v, w)
@@ -93,7 +93,7 @@ void SphericalDirectionalDistribution::sample( double sampled_direction[3] ) con
   const double spherical_point[3] = {1.0,
 				     d_theta_distribution->sample(),
 				     d_mu_distribution->sample()};
-  
+
   // Convert the spherical coordinate to cartesian
   convertSphericalCoordsToCartesian( spherical_point,
 				     sampled_direction,
@@ -107,7 +107,7 @@ DirectionalDistributionType SphericalDirectionalDistribution::getDistributionTyp
 }
 
 // Convert a cartesian coordinate to a spherical coordinate
-void SphericalDirectionalDistribution::convertCartesianCoordsToSpherical( 
+void SphericalDirectionalDistribution::convertCartesianCoordsToSpherical(
 					      const double cartesian_point[3],
 					      double spherical_point[3] ) const
 {
@@ -120,18 +120,18 @@ void SphericalDirectionalDistribution::convertCartesianCoordsToSpherical(
 }
 
 // Check if the distribution has the same bounds
-bool SphericalDirectionalDistribution::hasSameBounds( 
+bool SphericalDirectionalDistribution::hasSameBounds(
 			    const DirectionalDistribution& distribution ) const
 {
   if( this->getDistributionType() == distribution.getDistributionType() )
   {
-    const SphericalDirectionalDistribution& true_dist = 
+    const SphericalDirectionalDistribution& true_dist =
       dynamic_cast<const SphericalDirectionalDistribution&>( distribution );
 
-    
+
     if( d_axis == true_dist.d_axis )
     {
-      return 
+      return
 	Policy::relError(d_theta_distribution->getLowerBoundOfIndepVar(),
 		  true_dist.d_theta_distribution->getLowerBoundOfIndepVar())
 	< 1e-9 &&

@@ -42,7 +42,7 @@ public:
 };
 
 // Dispatch the particle subtrack ending in cell event to the observers
-inline void 
+inline void
 ParticleSubtrackEndingInCellEventDispatcher::dispatchParticleSubtrackEndingInCellEvent(
 	    const ParticleState& particle,
 	    const Geometry::ModuleTraits::InternalCellHandle  cell_of_subtrack,
@@ -52,7 +52,7 @@ ParticleSubtrackEndingInCellEventDispatcher::dispatchParticleSubtrackEndingInCel
 
   if( it != this->dispatcher_map().end() )
   {
-    it->second->dispatchParticleSubtrackEndingInCellEvent( particle, 
+    it->second->dispatchParticleSubtrackEndingInCellEvent( particle,
 							   cell_of_subtrack,
 							   track_length );
   }

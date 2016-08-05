@@ -34,7 +34,7 @@ ParticleState::ParticleState()
 { /* ... */ }
 
 // Constructor
-ParticleState::ParticleState( 
+ParticleState::ParticleState(
 			 const ParticleState::historyNumberType history_number,
 			 const ParticleType type )
   : d_history_number( history_number ),
@@ -93,11 +93,11 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
  * The clone will only need a new history number in very rare circumstances
  * (e.g. state source).
  */
-ParticleState* ParticleState::clone( 
+ParticleState* ParticleState::clone(
 	      const ParticleState::historyNumberType new_history_number ) const
 {
   ParticleState* clone_state = this->clone();
-  
+
   clone_state->d_history_number = new_history_number;
 
   return clone_state;
@@ -122,13 +122,13 @@ Geometry::ModuleTraits::InternalCellHandle ParticleState::getCell() const
 }
 
 // Set the cell containing the particle
-void ParticleState::setCell( 
+void ParticleState::setCell(
 			const Geometry::ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the cell handle is valid
-  testPrecondition( cell != 
+  testPrecondition( cell !=
 		    Geometry::ModuleTraits::invalid_internal_cell_handle);
-  
+
   d_cell = cell;
 }
 
@@ -157,7 +157,7 @@ const double* ParticleState::getPosition() const
 }
 
 // Set the position of the particle
-void ParticleState::setPosition( const double x_position, 
+void ParticleState::setPosition( const double x_position,
 				 const double y_position,
 				 const double z_position )
 {
@@ -165,7 +165,7 @@ void ParticleState::setPosition( const double x_position,
   testPrecondition( !ST::isnaninf( x_position ) );
   testPrecondition( !ST::isnaninf( y_position ) );
   testPrecondition( !ST::isnaninf( z_position ) );
-  
+
   d_position[0] = x_position;
   d_position[1] = y_position;
   d_position[2] = z_position;
@@ -205,10 +205,10 @@ void ParticleState::setDirection( const double x_direction,
   testPrecondition( !ST::isnaninf( y_direction ) );
   testPrecondition( !ST::isnaninf( z_direction ) );
   // Make sure the direction is a unit vector
-  testPrecondition( Utility::validDirection( x_direction, 
-					     y_direction, 
+  testPrecondition( Utility::validDirection( x_direction,
+					     y_direction,
 					     z_direction ) );
-  
+
   d_direction[0] = x_direction;
   d_direction[1] = y_direction;
   d_direction[2] = z_direction;
@@ -233,14 +233,14 @@ void ParticleState::rotateDirection( const double polar_angle_cosine,
   // Make sure the azimuthal angle is valid
   testPrecondition( azimuthal_angle >= 0.0 );
   testPrecondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
-  
+
   double outgoing_direction[3];
 
   Utility::rotateDirectionThroughPolarAndAzimuthalAngle( polar_angle_cosine,
 							 azimuthal_angle,
 							 this->getDirection(),
 							 outgoing_direction );
-  
+
   this->setDirection( outgoing_direction );
 }
 
@@ -249,7 +249,7 @@ void ParticleState::advance( const double distance )
 {
   // Make sure the distance is valid
   testPrecondition( !ST::isnaninf( distance ) );
-  
+
   d_position[0] += d_direction[0]*distance;
   d_position[1] += d_direction[1]*distance;
   d_position[2] += d_direction[2]*distance;
@@ -261,13 +261,13 @@ void ParticleState::advance( const double distance )
 // Set the energy of the particle
 /*! The default implementation is only valid for massless particles (It is
  * assumed that the speed of the particle does not change with the energy).
- */ 
+ */
 void ParticleState::setEnergy( const ParticleState::energyType energy )
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
-  
+
   d_energy = energy;
 }
 
@@ -297,7 +297,7 @@ void ParticleState::incrementCollisionNumber()
 
 // Reset the collision number
 /*! \details This should rarely be used - try to rely on the contructor to
- * reset the collision number. 
+ * reset the collision number.
  */
 void ParticleState::resetCollisionNumber()
 {
@@ -333,7 +333,7 @@ void ParticleState::multiplyWeight( const double weight_factor )
 {
   // Make sure that the current weight is valid
   testPrecondition( d_weight > 0.0 );
-  
+
   d_weight *= weight_factor;
 }
 

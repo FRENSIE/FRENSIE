@@ -40,9 +40,9 @@ public:
 };
 
 //! Stream operator for printing all printable objects
-inline std::ostream& operator<<( std::ostream &os, 
+inline std::ostream& operator<<( std::ostream &os,
 				 const Utility::PrintableObject &obj )
-{ 
+{
   obj.print( os );
 
   return os;

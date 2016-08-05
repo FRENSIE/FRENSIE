@@ -34,9 +34,10 @@ public:
   using ElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;
   using ElectronPhotonRelaxationDataContainer::setMinElectronEnergy;
   using ElectronPhotonRelaxationDataContainer::setMaxElectronEnergy;
-  using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using ElectronPhotonRelaxationDataContainer::setOccupationNumberEvaluationTolerance;
   using ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
+  using ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles;
   using ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;

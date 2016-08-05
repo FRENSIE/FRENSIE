@@ -19,7 +19,7 @@ class MasslessParticleState : public ParticleState
 {
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
@@ -37,7 +37,7 @@ public:
 			 const ParticleType new_type,
 			 const bool increment_generation_number,
 			 const bool reset_collision_number );
-  
+
   //! Destructor
   virtual ~MasslessParticleState()
   { /* ... */ }

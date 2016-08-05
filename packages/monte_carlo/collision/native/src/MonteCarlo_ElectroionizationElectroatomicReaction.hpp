@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_ElectroionizationElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The electroionization electroatomic reaction class decl.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_HPP
@@ -56,7 +56,7 @@ public:
   ElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
 	      ParticleBank& bank,
 	      Data::SubshellType& shell_of_interaction ) const;
 };

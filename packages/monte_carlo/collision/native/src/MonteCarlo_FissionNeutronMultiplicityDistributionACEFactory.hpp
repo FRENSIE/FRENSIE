@@ -24,9 +24,9 @@ class FissionNeutronMultiplicityDistributionACEFactory
 {
 
 public:
-  
+
   //! Constructor
-  FissionNeutronMultiplicityDistributionACEFactory( 
+  FissionNeutronMultiplicityDistributionACEFactory(
 			   const std::string& table_name,
 			   const Teuchos::ArrayView<const double>& nu_block,
 			   const Teuchos::ArrayView<const double>& dnu_block );
@@ -36,13 +36,13 @@ public:
   { /* ... */ }
 
   //! Create the fission neutron multiplicity distribution
-  void createDistribution( 
+  void createDistribution(
     Teuchos::RCP<FissionNeutronMultiplicityDistribution>& distribution ) const;
 
 protected:
-  
+
   //! Create the partial distribution from a raw distribution array
-  void createPartialDistribution( 
+  void createPartialDistribution(
 	 const std::string& table_name,
 	 const Teuchos::ArrayView<const double>& distribution_array,
 	 Teuchos::RCP<Utility::OneDDistribution>& partial_distribution ) const;

@@ -30,7 +30,7 @@ set(SWIG_EXTRA_LIBRARIES "")
 set(SWIG_PYTHON_EXTRA_FILE_EXTENSION "py")
 
 #
-# Get dependencies of the generated wrapper. Duplicated from a reverted CMake project patch: http://public.kitware.com/Bug/view.php?id=4147 by Tristan Carel. This may cause problems when attempting to wrap generated header files. 
+# Get dependencies of the generated wrapper. Duplicated from a reverted CMake project patch: http://public.kitware.com/Bug/view.php?id=4147 by Tristan Carel. This may cause problems when attempting to wrap generated header files.
 #
 MACRO(SWIG_GET_WRAPPER_DEPENDENCIES swigFile genWrapper language DEST_VARIABLE)
   GET_FILENAME_COMPONENT(swig_getdeps_basename ${swigFile} NAME_WE)

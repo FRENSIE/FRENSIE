@@ -7,9 +7,9 @@ IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
   INSTALL(TARGETS facemc_core
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
-    
+
   ADD_EXECUTABLE(facemc facemc.cpp)
-  TARGET_LINK_LIBRARIES(facemc facemc_core)    
+  TARGET_LINK_LIBRARIES(facemc facemc_core)
 
   # Add exec to install target
   INSTALL(TARGETS facemc
@@ -22,7 +22,7 @@ IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
     INSTALL(TARGETS facemc-mpi
       RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
   ENDIF()
- 
+
 ELSE()
   MESSAGE(WARNING "The facemc executable cannot be built without enabling the DagMC or the Root geometry handler!")
 ENDIF()

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstIntersectionPoint.cpp
 //! \author Alex Robinson
 //! \brief  IntersectionPoint unit tests.
@@ -44,7 +44,7 @@ void createConcavePolyhedronOnOrigin( Teuchos::RCP<Cell> &cell_ptr )
   typedef typename Cell::surfaceOrdinalType ordinalType;
   typedef typename Cell::scalarType scalarType;
   typedef Geometry::Surface<ordinalType,scalarType> Surface;
-  
+
   // Create the cell definition
   std::string cell_definition( "-1n2n-3n4n(-5u-6)n7" );
 
@@ -75,7 +75,7 @@ void createConcavePolyhedronOnOrigin( Teuchos::RCP<Cell> &cell_ptr )
 				  0, 1, 0,
 				  4 ) );
   surface_map[4] = surface_ptr;
-  
+
   // Surface 5: 2z-y = 0
   surface_ptr.reset( new Surface( 5,
 				  0, -1, 2,
@@ -93,10 +93,10 @@ void createConcavePolyhedronOnOrigin( Teuchos::RCP<Cell> &cell_ptr )
 				  0, 0, 1,
 				  1 ) );
   surface_map[7] = surface_ptr;
-						  
+
   // Create the cell
   cell_ptr.reset( new Cell( 0, cell_definition, surface_map ) );
-}   
+}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -150,7 +150,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 							     3, 4, 5 );
 
   TEST_ASSERT( point_a != point_b );
-  
+
   point_a = point_b;
 
   TEST_ASSERT( point_a == point_b );
@@ -165,7 +165,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 				   ScalarType )
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
-  
+
   Geometry::IntersectionPoint<OrdinalType,ScalarType> test_point( 0.0, 1.0, 0.0,
 								1, 2, 3 );
   TEST_EQUALITY_CONST( test_point[0], ST::zero() );
@@ -184,7 +184,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 				   ScalarType )
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
-  
+
   Geometry::IntersectionPoint<OrdinalType,ScalarType> test_point( 0.0, 1.0, 0.0,
 								1, 2, 3 );
 
@@ -204,7 +204,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 				   ScalarType )
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
-  
+
   Geometry::IntersectionPoint<OrdinalType,ScalarType> test_point( 0.0, 1.0, 0.0,
 								1, 2, 3 );
 
@@ -245,7 +245,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 				   OrdinalType,
 				   ScalarType )
 {
-  Geometry::IntersectionPoint<OrdinalType,ScalarType> 
+  Geometry::IntersectionPoint<OrdinalType,ScalarType>
     normal_point( 0.0, 1.0, 2.0,
 		  1, 2, 3 );
 
@@ -256,10 +256,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
   Geometry::IntersectionPoint<OrdinalType,ScalarType> point( 0.0, 1.0, 2.0,
 							   1, 2, 3 );
   point.setAsStarCorner();
-  
+
   TEST_ASSERT( !normal_point.isStarCorner() );
   TEST_ASSERT( star_point.isStarCorner() );
-  TEST_ASSERT( point.isStarCorner() );					  
+  TEST_ASSERT( point.isStarCorner() );
 }
 
 UNIT_TEST_INSTANTIATION( IntersectionPoint, set_test_star_corner );
@@ -273,7 +273,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 {
   Geometry::IntersectionPoint<OrdinalType,ScalarType> point_a( 0.0, 0.0, 0.0,
 							     1, 2, 3 );
-  
+
   Geometry::IntersectionPoint<OrdinalType,ScalarType> point_b( 1.0, 0.0, 0.0,
 							     1, 4, 5 );
 
@@ -296,7 +296,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 {
   Geometry::IntersectionPoint<OrdinalType,ScalarType> point_a( 0.0, 0.0, 0.0,
 							     1, 2, 3 );
-  
+
   Geometry::IntersectionPoint<OrdinalType,ScalarType> point_b( 1.0, 0.0, 0.0,
 							     1, 4, 5 );
 
@@ -311,7 +311,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 UNIT_TEST_INSTANTIATION( IntersectionPoint, isOnSameCurve );
 
 //---------------------------------------------------------------------------//
-// Check that the unshared surface id between two points on a curve can be 
+// Check that the unshared surface id between two points on a curve can be
 // found
 TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 				   getUnsharedSurfaceId,
@@ -387,7 +387,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 							      1, 4, 5 );
   Geometry::IntersectionPoint<OrdinalType,ScalarType> point_14( -2.0, -4.0, -2.0,
 							      2, 4, 5 );
-  
+
   // Create all of the fictitious corners on the cell
   Geometry::IntersectionPoint<OrdinalType,ScalarType> point_15( 2.0, 2.0, -1.0,
 							      1, 6, 7 );
@@ -400,7 +400,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 
   TEST_ASSERT( cell_ptr->isOn( point_1.getRawPoint() ) );
   TEST_ASSERT( point_1.isRealIntersectionPoint( *cell_ptr ) );
-  
+
   TEST_ASSERT( cell_ptr->isOn( point_2.getRawPoint() ) );
   TEST_ASSERT( point_2.isRealIntersectionPoint( *cell_ptr ) );
 
@@ -418,7 +418,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 
   TEST_ASSERT( cell_ptr->isOn( point_7.getRawPoint() ) );
   TEST_ASSERT( point_7.isRealIntersectionPoint( *cell_ptr ) );
-  
+
   TEST_ASSERT( cell_ptr->isOn( point_8.getRawPoint() ) );
   TEST_ASSERT( point_8.isRealIntersectionPoint( *cell_ptr ) );
 
@@ -436,21 +436,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPoint,
 
   TEST_ASSERT( !cell_ptr->isOn( point_13.getRawPoint() ) );
   TEST_ASSERT( !point_13.isRealIntersectionPoint( *cell_ptr ) );
-  
+
   TEST_ASSERT( !cell_ptr->isOn( point_14.getRawPoint() ) );
   TEST_ASSERT( !point_14.isRealIntersectionPoint( *cell_ptr ) );
 
   TEST_ASSERT( cell_ptr->isOn( point_15.getRawPoint() ) );
   TEST_ASSERT( !point_15.isRealIntersectionPoint( *cell_ptr ) );
-  
+
   TEST_ASSERT( cell_ptr->isOn( point_16.getRawPoint() ) );
   TEST_ASSERT( !point_16.isRealIntersectionPoint( *cell_ptr ) );
-  
+
   TEST_ASSERT( cell_ptr->isOn( point_17.getRawPoint() ) );
   TEST_ASSERT( !point_17.isRealIntersectionPoint( *cell_ptr ) );
 
   TEST_ASSERT( cell_ptr->isOn( point_18.getRawPoint() ) );
-  TEST_ASSERT( !point_18.isRealIntersectionPoint( *cell_ptr ) ); 
+  TEST_ASSERT( !point_18.isRealIntersectionPoint( *cell_ptr ) );
 }
 
 UNIT_TEST_INSTANTIATION( IntersectionPoint, isRealIntersectionPoint );

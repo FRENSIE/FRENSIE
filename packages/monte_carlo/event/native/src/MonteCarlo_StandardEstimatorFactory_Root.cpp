@@ -29,15 +29,15 @@ StandardEstimatorFactory<Geometry::Root>::StandardEstimatorFactory(
 
 // Create and register cached estimators
 /*! \details Root does not cache any estimator data so this method is empty.
- */ 
+ */
 void StandardEstimatorFactory<Geometry::Root>::createAndRegisterCachedEstimators()
 { /* ... */ }
 
 // Verify that the estimator type is consistent with cached data
-/*! \details Root does not cache any estimator data so this method is empty 
+/*! \details Root does not cache any estimator data so this method is empty
  * (no cosistency check is required).
  */
-void StandardEstimatorFactory<Geometry::Root>::verifyEstimatorTypeConsistency( 
+void StandardEstimatorFactory<Geometry::Root>::verifyEstimatorTypeConsistency(
                                       const unsigned estimator_id,
                                       const std::string& estimator_type ) const
 { /* ... */ }
@@ -55,7 +55,7 @@ void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfCells(
     TEST_FOR_EXCEPTION(
                      !Geometry::Root::doesCellExist( *cell ),
                      InvalidEstimatorRepresentation,
-                     "Error: estimator " << estimator_id << " specified cell " 
+                     "Error: estimator " << estimator_id << " specified cell "
                      << *cell << " in the xml file, which does not exists!" );
 
     ++cell;
@@ -65,16 +65,16 @@ void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfCells(
 // Get the cached cells (add to set)
 /*! \details Root does not cache any estimator data so this method is empty.
  */
-void StandardEstimatorFactory<Geometry::Root>::getCachedCells( 
+void StandardEstimatorFactory<Geometry::Root>::getCachedCells(
        boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>& cells,
        const unsigned estimator_id ) const
 { /* ... */ }
 
 // Get the cell volumes
-void StandardEstimatorFactory<Geometry::Root>::getCellVolumes( 
+void StandardEstimatorFactory<Geometry::Root>::getCellVolumes(
      Teuchos::Array<double>& cell_volumes,
      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells )
-{ 
+{
   // Resize the cell volume array
   cell_volumes.resize( cells.size() );
 
@@ -84,7 +84,7 @@ void StandardEstimatorFactory<Geometry::Root>::getCellVolumes(
     // Check if the cell volume has already been cached
     if( d_cell_volume_map.find( cells[i] ) != d_cell_volume_map.end() )
       cell_volumes[i] = d_cell_volume_map.find( cells[i] )->second;
-  
+
     // Calculate and cache the cell volume if the cell is new
     else
     {
@@ -112,7 +112,7 @@ void StandardEstimatorFactory<Geometry::Root>::getCachedSurfaces(
 { /* ... */ }
 
 // Get the surface areas
-void StandardEstimatorFactory<Geometry::Root>::getSurfaceAreas( 
+void StandardEstimatorFactory<Geometry::Root>::getSurfaceAreas(
            Teuchos::Array<double>& surface_areas,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
            surfaces )
@@ -136,7 +136,7 @@ void StandardEstimatorFactory<Geometry::Root>::createAndRegisterSurfaceEstimator
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
 {
-  this->getWarningOutputStream() 
+  this->getWarningOutputStream()
     << "Warning: Surface estimators are not supported when using Root. "
     << "Estimator " << id << " will be ignored." << std::endl;
 }
@@ -144,7 +144,7 @@ void StandardEstimatorFactory<Geometry::Root>::createAndRegisterSurfaceEstimator
 // Update the estimator cache info
 /*! \details Root does not cache any estimator data so this method is empty.
  */
-void StandardEstimatorFactory<Geometry::Root>::updateEstimatorCacheInfo( 
+void StandardEstimatorFactory<Geometry::Root>::updateEstimatorCacheInfo(
                                                             const unsigned id )
 { /* ... */ }
 

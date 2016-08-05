@@ -15,11 +15,11 @@
 namespace MonteCarlo{
 
 //! Create a full profile from a doubled half profile
-template<typename GridIterator, 
-	 typename ProfileIterator, 
+template<typename GridIterator,
+	 typename ProfileIterator,
 	 typename STLCompliantArrayA,
 	 typename STLCompliantArrayB>
-void createFullProfileFromHalfProfile( 
+void createFullProfileFromHalfProfile(
 			      const GridIterator half_momentum_grid_start,
 			      const GridIterator half_momentum_grid_end,
 			      const ProfileIterator half_profile_start,
@@ -29,7 +29,7 @@ void createFullProfileFromHalfProfile(
 			      const bool extend_if_possible = false,
 			      const bool doubled_half_profile = true );
 
-//! Convert the momentum grid from me*e^2/h_bar to me*c units	     
+//! Convert the momentum grid from me*e^2/h_bar to me*c units
 template<typename GridIterator>
 void convertMomentumGridToMeCUnits( GridIterator momentum_grid_start,
 				    GridIterator momentum_grid_end );

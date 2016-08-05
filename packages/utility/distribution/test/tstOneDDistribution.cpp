@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( OneDDistribution, hasSameBounds )
 
   Teuchos::RCP<Utility::OneDDistribution> uniform_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
-  
+
   TEST_ASSERT( !delta_dist->hasSameBounds( *discrete_dist ) );
   TEST_ASSERT( !delta_dist->hasSameBounds( *histogram_dist ) );
   TEST_ASSERT( !delta_dist->hasSameBounds( *exponential_dist ) );

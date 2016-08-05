@@ -23,15 +23,15 @@ namespace MonteCarlo{
 //! The phase space response function
 class PhaseSpaceResponseFunction : public ResponseFunction
 {
-  
+
 public:
 
   //! Constructor
-  PhaseSpaceResponseFunction( 
+  PhaseSpaceResponseFunction(
      const unsigned id,
-     const std::string& name,			      
+     const std::string& name,
      const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
-     const std::shared_ptr<Utility::DirectionalDistribution>& 
+     const std::shared_ptr<Utility::DirectionalDistribution>&
      directional_distribution,
      const std::shared_ptr<Utility::OneDDistribution>& energy_distribution,
      const std::shared_ptr<Utility::OneDDistribution>& time_distribution );

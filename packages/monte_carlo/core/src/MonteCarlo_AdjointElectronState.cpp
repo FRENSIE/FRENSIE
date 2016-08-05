@@ -19,13 +19,13 @@ AdjointElectronState::AdjointElectronState()
 { /* ... */ }
 
 // Constructor
-AdjointElectronState::AdjointElectronState( 
+AdjointElectronState::AdjointElectronState(
                          const ParticleState::historyNumberType history_number )
   : MassiveParticleState( history_number, ADJOINT_ELECTRON )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointElectronState::AdjointElectronState( 
+AdjointElectronState::AdjointElectronState(
 				      const ParticleState& existing_base_state,
 				      const bool increment_generation_number,
 				      const bool reset_collision_number )
@@ -37,7 +37,7 @@ AdjointElectronState::AdjointElectronState(
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointElectronState::AdjointElectronState( 
+AdjointElectronState::AdjointElectronState(
 				 const AdjointElectronState& existing_base_state,
 				 const bool increment_generation_number,
 				 const bool reset_collision_number )
@@ -50,14 +50,14 @@ AdjointElectronState::AdjointElectronState(
 
 
 // Probe constructor
-AdjointElectronState::AdjointElectronState( 
+AdjointElectronState::AdjointElectronState(
 			 const ParticleState::historyNumberType history_number,
 			 const ParticleType probe_type )
-  : MassiveParticleState( history_number, probe_type ) 
+  : MassiveParticleState( history_number, probe_type )
 { /* ... */ }
 
 // Probe copy constructor
-AdjointElectronState::AdjointElectronState( 
+AdjointElectronState::AdjointElectronState(
 				     const ParticleState& existing_base_state,
 				     const ParticleType probe_type,
 				     const bool increment_generation_number,
@@ -91,7 +91,7 @@ double AdjointElectronState::getRestMassEnergy() const
 void AdjointElectronState::print( std::ostream& os ) const
 {
   os << "Particle Type: Adjoint Electron" << std::endl;
-  
+
   this->printImplementation<AdjointElectronState>( os );
 }
 

@@ -30,11 +30,11 @@ public:
   virtual const std::string getTypeName() const = 0;
 
   //! Return the OneDDistribution represented in the parameter entry
-  virtual Teuchos::RCP<OneDDistribution> getDistributionRCP( 
+  virtual Teuchos::RCP<OneDDistribution> getDistributionRCP(
 	  const Teuchos::RCP<const Teuchos::ParameterEntry>& entry ) const = 0;
 
   //! Return the OneDDistribution represented in the parameter entry
-  virtual std::shared_ptr<OneDDistribution> getDistributionSharedPtr( 
+  virtual std::shared_ptr<OneDDistribution> getDistributionSharedPtr(
 	  const Teuchos::RCP<const Teuchos::ParameterEntry>& entry ) const = 0;
 
   //! Return the parameter entry corresponding to the OneDDistribution object

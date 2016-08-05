@@ -22,12 +22,12 @@ class TwoSpaceObject
 {
 
 public:
-  
+
   //! Constructor
   TwoSpaceObject( TwoSpaceObjectType object_type )
   : d_object_type( object_type )
   { /* ... */ }
-  
+
   //! Destructor
   virtual ~TwoSpaceObject()
   { /* ... */ }

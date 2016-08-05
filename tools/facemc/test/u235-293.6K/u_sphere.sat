@@ -1,6 +1,6 @@
-1900 0 2 0           
-10 Cubit 14.0 17 ACIS 22.0.2 Linux 24 Mon Mar  7 21:46:18 2016 
-1 9.9999999999999995e-07 1e-10 
+1900 0 2 0
+10 Cubit 14.0 17 ACIS 22.0.2 Linux 24 Mon Mar  7 21:46:18 2016
+1 9.9999999999999995e-07 1e-10
 body $2 -1 -1 $-1 $3 $-1 $4 T -1 -1 -1 1 1 1 #
 body $5 -1 -1 $-1 $6 $-1 $7 T -2 -2 -2 2 2 2 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $8 $-1 $0 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 1 #
@@ -347,4 +347,4 @@ simple-snl-attrib $-1 -1 $-1 $324 $228 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 N
 simple-snl-attrib $-1 -1 $-1 $326 $230 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 7 @16 GRAPHICS_OPTIONS @14 geometry color @10 mesh color @19 geometry visibility @15 mesh visibility @11 render mode @11 transparent 0 6 -1 -1 0 0 0 0 #
 simple-snl-attrib $-1 -1 $-1 $327 $232 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 7 @16 GRAPHICS_OPTIONS @14 geometry color @10 mesh color @19 geometry visibility @15 mesh visibility @11 render mode @11 transparent 0 6 -1 -1 0 0 0 0 #
 simple-snl-attrib $-1 -1 $-1 $329 $234 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 7 @16 GRAPHICS_OPTIONS @14 geometry color @10 mesh color @19 geometry visibility @15 mesh visibility @11 render mode @11 transparent 0 6 -1 -1 0 0 0 0 #
-End-of-ACIS-data 
+End-of-ACIS-data

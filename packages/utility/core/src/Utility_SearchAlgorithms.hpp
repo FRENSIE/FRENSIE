@@ -33,14 +33,14 @@ Iterator binaryLowerBound( Iterator start,
 
 //! Binary search on a container and return the lower bound container index
 template<TupleMember member, typename Iterator>
-typename std::iterator_traits<Iterator>::difference_type  
+typename std::iterator_traits<Iterator>::difference_type
 binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
 		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value );
 
 //! Binary search on a container and return the lower bound container index
 template<typename Iterator>
-typename std::iterator_traits<Iterator>::difference_type  
+typename std::iterator_traits<Iterator>::difference_type
 binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
 		       const typename std::iterator_traits<Iterator>::value_type value );
@@ -59,14 +59,14 @@ Iterator binaryUpperBound( Iterator start,
 
 //! Binary search on a container and return the upper bound container index
 template<TupleMember member, typename Iterator>
-typename std::iterator_traits<Iterator>::difference_type  
+typename std::iterator_traits<Iterator>::difference_type
 binaryUpperBoundIndex( Iterator start,
 		       Iterator end,
 		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value );
 
 //! Binary search on a container and return the upper bound container index
 template<typename Iterator>
-typename std::iterator_traits<Iterator>::difference_type  
+typename std::iterator_traits<Iterator>::difference_type
 binaryUpperBoundIndex( Iterator start,
 		       Iterator end,
 		       const typename std::iterator_traits<Iterator>::value_type value );

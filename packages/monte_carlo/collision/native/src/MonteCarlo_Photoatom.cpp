@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 // Return the reactions that are treated as absorption
-const boost::unordered_set<PhotoatomicReactionType>& 
+const boost::unordered_set<PhotoatomicReactionType>&
 Photoatom::getAbsorptionReactionTypes()
 {
   return PhotoatomCore::absorption_reaction_types;
@@ -58,20 +58,20 @@ double Photoatom::getAtomicWeight() const
   return d_atomic_weight;
 }
 
-// Return the total cross section from atomic interactions 
+// Return the total cross section from atomic interactions
 double Photoatom::getAtomicTotalCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  unsigned energy_grid_bin = 
+  unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( energy );
 
-  double cross_section = 
+  double cross_section =
     this->getAtomicScatteringCrossSection( energy, energy_grid_bin );
 
-  cross_section += 
+  cross_section +=
     this->getAtomicAbsorptionCrossSection( energy, energy_grid_bin );
 
   return cross_section;
@@ -84,9 +84,9 @@ double Photoatom::getAtomicAbsorptionCrossSection( const double energy ) const
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  unsigned energy_grid_bin = 
+  unsigned energy_grid_bin =
     d_core.getGridSearcher().findLowerBinIndex( energy );
-  
+
   return this->getAtomicAbsorptionCrossSection( energy, energy_grid_bin );
 }
 
@@ -102,16 +102,16 @@ double Photoatom::getSurvivalProbability( const double energy ) const
   // Find the energy bin index
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( energy ) )
   {
-    unsigned energy_grid_bin = 
+    unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( energy );
 
-    double total_cross_section = 
+    double total_cross_section =
       d_core.getTotalReaction().getCrossSection( energy, energy_grid_bin );
-    
+
     if( total_cross_section > 0.0 )
     {
-      survival_prob = 1.0 - 
-	d_core.getTotalAbsorptionReaction().getCrossSection( energy, 
+      survival_prob = 1.0 -
+	d_core.getTotalAbsorptionReaction().getCrossSection( energy,
 							     energy_grid_bin )/
 	total_cross_section;
     }
@@ -140,16 +140,16 @@ double Photoatom::getAtomicSurvivalProbability( const double energy ) const
 
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( energy ) )
   {
-    unsigned energy_grid_bin = 
+    unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( energy );
-    
-    double total_cross_section = 
+
+    double total_cross_section =
       d_core.getTotalReaction().getCrossSection( energy, energy_grid_bin );
-  
+
     if( total_cross_section > 0.0 )
     {
-      survival_prob = 1.0 - 
-	d_core.getTotalAbsorptionReaction().getCrossSection( energy, 
+      survival_prob = 1.0 -
+	d_core.getTotalAbsorptionReaction().getCrossSection( energy,
 							     energy_grid_bin )/
 	total_cross_section;
     }
@@ -176,15 +176,15 @@ double Photoatom::getNuclearSurvivalProbability( const double energy ) const
 
   double survival_prob;
   double total_cross_section = this->getNuclearTotalCrossSection( energy );
-  
+
   if( total_cross_section > 0.0 )
   {
-    survival_prob = 1.0 - 
+    survival_prob = 1.0 -
       this->getNuclearAbsorptionCrossSection( energy )/total_cross_section;
   }
   else
     survival_prob = 1.0;
-  
+
   // Make sure the survival probability is valid
   testPostcondition( !ST::isnaninf( survival_prob ) );
   testPostcondition( survival_prob >= 0.0 );
@@ -194,7 +194,7 @@ double Photoatom::getNuclearSurvivalProbability( const double energy ) const
 }
 
 // Return the cross section for a specific photoatomic reaction
-double Photoatom::getReactionCrossSection( 
+double Photoatom::getReactionCrossSection(
 			        const double energy,
 			        const PhotoatomicReactionType reaction ) const
 {
@@ -205,7 +205,7 @@ double Photoatom::getReactionCrossSection(
   case TOTAL_ABSORPTION_PHOTOATOMIC_REACTION:
     return this->getAbsorptionCrossSection( energy );
   default:
-    ConstReactionMap::const_iterator photoatomic_reaction = 
+    ConstReactionMap::const_iterator photoatomic_reaction =
       d_core.getScatteringReactions().find( reaction );
 
     if( photoatomic_reaction != d_core.getScatteringReactions().end() )
@@ -226,34 +226,34 @@ double Photoatom::getReactionCrossSection(
 }
 
 // Collide with a photon
-void Photoatom::collideAnalogue( PhotonState& photon, 
+void Photoatom::collideAnalogue( PhotonState& photon,
 				 ParticleBank& bank ) const
 {
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( photon.getEnergy() ))
   {
-    unsigned energy_grid_bin = 
+    unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( photon.getEnergy() );
-  
-    double scattering_cross_section = 
+
+    double scattering_cross_section =
       this->getAtomicScatteringCrossSection( photon.getEnergy(),
 					     energy_grid_bin );
 
     double absorption_cross_section =
       this->getAtomicAbsorptionCrossSection( photon.getEnergy(),
 					     energy_grid_bin );
-    
-    double scaled_random_number = 
+
+    double scaled_random_number =
       Utility::RandomNumberGenerator::getRandomNumber<double>()*
-      (scattering_cross_section+absorption_cross_section);    
-    
-    // Check if absorption occurs 
+      (scattering_cross_section+absorption_cross_section);
+
+    // Check if absorption occurs
     if( scaled_random_number < absorption_cross_section )
     {
-      sampleAbsorptionReaction( scaled_random_number, 
-				energy_grid_bin, 
-				photon, 
+      sampleAbsorptionReaction( scaled_random_number,
+				energy_grid_bin,
+				photon,
 				bank );
-      
+
       // Set the photon as gone regardless of the reaction that occurred
       photon.setAsGone();
     }
@@ -261,39 +261,39 @@ void Photoatom::collideAnalogue( PhotonState& photon,
     {
       sampleScatteringReaction(scaled_random_number - absorption_cross_section,
 			       energy_grid_bin,
-			       photon, 
+			       photon,
 			       bank );
     }
   }
 }
 
 // Collide with a photon and survival bias
-void Photoatom::collideSurvivalBias( PhotonState& photon, 
+void Photoatom::collideSurvivalBias( PhotonState& photon,
 				     ParticleBank& bank ) const
 {
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( photon.getEnergy() ))
   {
-    unsigned energy_grid_bin = 
+    unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( photon.getEnergy() );
-    
-    double total_cross_section = 
+
+    double total_cross_section =
       d_core.getTotalReaction().getCrossSection( photon.getEnergy(),
 						 energy_grid_bin );
-  
+
     double scattering_cross_section = total_cross_section -
       d_core.getTotalAbsorptionReaction().getCrossSection( photon.getEnergy(),
 							   energy_grid_bin );
 
     double survival_prob = scattering_cross_section/total_cross_section;
-  
+
     // Multiply the photon's weigth by the survival probabilty
     if( survival_prob > 0.0 )
     {
       // Create a copy of the photon for sampling the absorption reaction
       PhotonState photon_copy( photon, false, false );
-      
+
       photon.multiplyWeight( survival_prob );
-      
+
       sampleScatteringReaction(
 		     Utility::RandomNumberGenerator::getRandomNumber<double>()*
 		     scattering_cross_section,
@@ -322,8 +322,8 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
 					  ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
-  
-  ConstReactionMap::const_iterator photoatomic_reaction = 
+
+  ConstReactionMap::const_iterator photoatomic_reaction =
     d_core.getAbsorptionReactions().begin();
 
   while( photoatomic_reaction != d_core.getAbsorptionReactions().end() )
@@ -339,12 +339,12 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
   }
 
   // Make sure a reaction was selected
-  testPostcondition( photoatomic_reaction != 
+  testPostcondition( photoatomic_reaction !=
 		     d_core.getAbsorptionReactions().end() );
 
   // Undergo reaction selected
   Data::SubshellType subshell_vacancy;
-  
+
   photoatomic_reaction->second->react( photon, bank, subshell_vacancy );
 
   // Relax the atom
@@ -360,16 +360,16 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
 					  ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
-  
-  ConstReactionMap::const_iterator photoatomic_reaction = 
+
+  ConstReactionMap::const_iterator photoatomic_reaction =
     d_core.getScatteringReactions().begin();
-  
+
   while( photoatomic_reaction != d_core.getScatteringReactions().end() )
   {
     partial_cross_section +=
       photoatomic_reaction->second->getCrossSection( photon.getEnergy(),
 						     energy_grid_bin );
-    
+
     if( scaled_random_number < partial_cross_section )
       break;
 
@@ -377,12 +377,12 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
   }
 
   // Make sure the reaction was found
-  testPostcondition( photoatomic_reaction != 
+  testPostcondition( photoatomic_reaction !=
 		     d_core.getScatteringReactions().end() );
 
   // Undergo reaction selected
   Data::SubshellType subshell_vacancy;
-  
+
   photoatomic_reaction->second->react( photon, bank, subshell_vacancy );
 
   // Relax the atom

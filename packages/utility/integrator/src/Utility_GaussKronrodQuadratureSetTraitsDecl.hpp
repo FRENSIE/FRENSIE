@@ -9,44 +9,48 @@
 #ifndef UTILITY_GAUSS_KRONROD_QUADRATURE_SET_TRAITS_DECL_HPP
 #define UTILITY_GAUSS_KRONROD_QUADRATURE_SET_TRAITS_DECL_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// std Includes
+#include <vector>
+
+// Boost Includes
+#include <boost/multiprecision/cpp_dec_float.hpp>
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
 
-
 namespace Utility{
 
-  //! Gauss-Kronrod quadrature set traits 
+typedef boost::multiprecision::cpp_dec_float_50 long_float;
+
+  //! Gauss-Kronrod quadrature set traits
   template<int Points>
   struct GaussKronrodQuadratureSetTraits
   {
     //! Valid rule
     static const bool valid_rule = false;
 
-    //! Gauss quadrature weights 
-    static const Teuchos::Array<double> gauss_weights;
-    
-    //! Kronrad quadrature weights 
-    static const Teuchos::Array<double> kronrod_weights;
+    //! Gauss quadrature weights
+    static const std::vector<long_float> gauss_weights;
+
+    //! Kronrad quadrature weights
+    static const std::vector<long_float> kronrod_weights;
 
     //! Kronrad quadrature abscissae
-    static const Teuchos::Array<double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static inline Teuchos::Array<double> initializeGaussWeights()
-    { return Teuchos::Array<double>(); }
+    static inline std::vector<long_float> initializeGaussWeights()
+    { return std::vector<long_float>(); }
 
     // Initialize the kronrod weight array
-    static inline Teuchos::Array<double> initializeKronrodWeights()
-    { return Teuchos::Array<double>(); }
+    static inline std::vector<long_float> initializeKronrodWeights()
+    { return std::vector<long_float>(); }
 
     // Initialize the gauss weight array
-    static inline Teuchos::Array<double> initializeKronrodAbscissae()
-    { return Teuchos::Array<double>(); }
+    static inline std::vector<long_float> initializeKronrodAbscissae()
+    { return std::vector<long_float>(); }
   };
 
 } // end Utility namespace

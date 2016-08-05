@@ -29,23 +29,23 @@ CompleteFissionNeutronMultiplicityDistribution::CompleteFissionNeutronMultiplici
   testPrecondition( !delayed_multiplicity_distribution.is_null() );
   testPrecondition( !total_multiplicity_distribution.is_null() );
 }
-  
+
 // Return the average number of neutrons emitted
-double CompleteFissionNeutronMultiplicityDistribution::getAverageNumberOfEmittedNeutrons( 
+double CompleteFissionNeutronMultiplicityDistribution::getAverageNumberOfEmittedNeutrons(
 						     const double energy) const
 {
   return d_total_multiplicity_distribution->evaluate( energy );
 }
 
 // Return the average number of prompt neutrons emitted
-double CompleteFissionNeutronMultiplicityDistribution::getAverageNumberOfPromptNeutrons( 
+double CompleteFissionNeutronMultiplicityDistribution::getAverageNumberOfPromptNeutrons(
 						    const double energy ) const
 {
   return d_prompt_multiplicity_distribution->evaluate( energy );
 }
 
 // Return the average number of delayed neutrons emitted
-double CompleteFissionNeutronMultiplicityDistribution::getAverageNumberOfDelayedNeutrons( 
+double CompleteFissionNeutronMultiplicityDistribution::getAverageNumberOfDelayedNeutrons(
 						     const double energy) const
 {
   return d_delayed_multiplicity_distribution->evaluate( energy );

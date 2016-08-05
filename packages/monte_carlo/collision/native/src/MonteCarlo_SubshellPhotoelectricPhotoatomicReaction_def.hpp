@@ -25,7 +25,7 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
 		   const unsigned threshold_energy_index,
 		   const Data::SubshellType interaction_subshell,
 		   const double binding_energy )
-  : PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>( 
+  : PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>(
 						      incoming_energy_grid,
 						      cross_section,
 						      threshold_energy_index ),
@@ -50,7 +50,7 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        const Data::SubshellType interaction_subshell,
        const double binding_energy )
-  : PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>( 
+  : PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>(
 						      incoming_energy_grid,
 						      cross_section,
 						      threshold_energy_index,
@@ -75,21 +75,21 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
  */
 template<typename InterpPolicy, bool processed_cross_section>
 void SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     PhotonState& photon, 
+				     PhotonState& photon,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
   // Make sure the photon energy is valid
   testPrecondition( photon.getEnergy() > d_binding_energy );
-  
+
   // Create the emitted electron
   Teuchos::RCP<ParticleState> electron(
 				     new ElectronState( photon, true, true ) );
 
   electron->setEnergy( photon.getEnergy() - d_binding_energy );
-  
+
   // Sample an isotropic outgoing angle for the emitted angle
-  double angle_cosine = -1.0 + 
+  double angle_cosine = -1.0 +
     2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   // Sample the azimuthal angle
@@ -97,7 +97,7 @@ void SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_secti
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   electron->rotateDirection( angle_cosine, azimuthal_angle );
-  
+
   bank.push( electron );
 
   // End the photon history

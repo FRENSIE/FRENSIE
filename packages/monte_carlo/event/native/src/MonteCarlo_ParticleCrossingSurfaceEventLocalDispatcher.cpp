@@ -11,7 +11,7 @@
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
-  
+
 // Constructor
 ParticleCrossingSurfaceEventLocalDispatcher::ParticleCrossingSurfaceEventLocalDispatcher(
 	       const Geometry::ModuleTraits::InternalSurfaceHandle surface_id )
@@ -20,7 +20,7 @@ ParticleCrossingSurfaceEventLocalDispatcher::ParticleCrossingSurfaceEventLocalDi
 { /* ... */ }
 
 // Dispatch the new event ot the observers
-void 
+void
 ParticleCrossingSurfaceEventLocalDispatcher::dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
 	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,

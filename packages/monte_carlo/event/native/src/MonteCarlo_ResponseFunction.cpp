@@ -16,7 +16,7 @@
 namespace MonteCarlo{
 
 // Initialize the default response function
-const std::shared_ptr<ResponseFunction> 
+const std::shared_ptr<ResponseFunction>
 ResponseFunction::default_response_function( new ResponseFunction(
 					  std::numeric_limits<unsigned>::max(),
 					  "default" ) );
