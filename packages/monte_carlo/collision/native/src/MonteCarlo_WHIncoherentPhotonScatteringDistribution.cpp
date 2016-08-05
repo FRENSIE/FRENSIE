@@ -14,7 +14,7 @@
 #include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_GaussKronrodBasicIntegrator.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -69,7 +69,7 @@ double WHIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 
   double abs_error, integrated_cs;
 
-  Utility::GaussKronrodBasicIntegrator quadrature_gkq_set( precision );
+  Utility::GaussKronrodIntegrator<double> quadrature_gkq_set( precision );
 
   quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
 					     -1.0,
