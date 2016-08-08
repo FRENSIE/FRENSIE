@@ -17,6 +17,7 @@
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElectroatomicReactionENDLFactory.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_GridGenerator.hpp"
@@ -42,6 +43,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
         const double cutoff_angle_cosine,
         const unsigned number_of_moment_preserving_angles,
         const double adjoint_bremsstrahlung_evaluation_tolerance,
+        const double adjoint_electroionization_evaluation_tolerance,
         const double grid_convergence_tol,
         const double grid_absolute_diff_tol,
         const double grid_distance_tol )
@@ -55,6 +57,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
     d_number_of_moment_preserving_angles( number_of_moment_preserving_angles ),
     d_adjoint_bremsstrahlung_evaluation_tolerance( adjoint_bremsstrahlung_evaluation_tolerance ),
+    d_adjoint_electroionization_evaluation_tolerance( adjoint_electroionization_evaluation_tolerance ),
     d_grid_convergence_tol( grid_convergence_tol ),
     d_grid_absolute_diff_tol( grid_absolute_diff_tol ),
     d_grid_distance_tol( grid_distance_tol )
@@ -290,42 +293,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Create The Adjoint Electroionization Subshell Cross Section Evaluator
   //---------------------------------------------------------------------------//
   // The adjoint electroionization subshell cross section evaluator
-  std::vector<std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >
+  std::map<unsigned,std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >
     adjoint_electroionization_cs_evaluators;
 
   this->createAdjointElectroionizationSubshellCrossSectionEvaluator(
           data_container,
           adjoint_electroionization_cs_evaluators );
-/*
-  //---------------------------------------------------------------------------//
-  // Get Electroionization Data Cross Section Data
-  //---------------------------------------------------------------------------//
-
-  std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
-
-  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >
-    electroionization_cross_section;
-
-  // Loop through electroionization data for every subshell
-  for ( shell; shell != data_container.getSubshells().end(); shell++ )
-  {
-  std::shared_ptr<const Utility::OneDDistribution> subshell_cross_section;
-
-  raw_energy_grid =
-      d_forward_endl_data->getElectroionizationCrossSectionEnergyGrid( *shell );
-
-  subshell_cross_section.reset(
-      new Utility::TabularDistribution<Utility::LinLin>(
-      raw_energy_grid,
-      d_forward_endl_data->getElectroionizationCrossSection( *shell ) ) );
-
-  // merge raw energy grid with the union energy grid
-  mergeAdjointElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
-
-  electroionization_cross_section.push_back(
-      std::make_pair( *shell, subshell_cross_section ) );
-  }
-*/
 
   //---------------------------------------------------------------------------//
   // Create union energy grid and calculate cross sections
@@ -392,10 +365,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
 
   grid_function = 
-    boost::bind( &DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>::evaluateAdjointCrossSection,
-                 boost::cref( *adjoint_bremsstrahlung_cs_evaluator ),
-                 _1,
-                 d_adjoint_bremsstrahlung_evaluation_tolerance );
+    boost::bind(
+        &DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>::evaluateAdjointCrossSection,
+        boost::cref( *adjoint_bremsstrahlung_cs_evaluator ),
+        _1,
+        d_adjoint_bremsstrahlung_evaluation_tolerance );
 
   std::vector<double> old_adjoint_bremsstrahlung_cs;
 
@@ -409,20 +383,27 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   std::cout << ".";
   std::cout.flush();
-/*
-  for( unsigned i = 0; i < electroionization_cross_section.size(); ++i )
-  {
-  grid_function = boost::bind(
-  	   &Utility::OneDDistribution::evaluate,
-  	   boost::cref( *electroionization_cross_section[i].second ),
-  	   _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-                                              grid_function );
-  std::cout << ".";
-  std::cout.flush();
+
+  std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
+
+  // Loop through electroionization evaluator for every subshell
+  for ( shell; shell != data_container.getSubshells().end(); shell++ )
+  {
+    grid_function =
+      boost::bind(
+    	   &DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction>::evaluateAdjointCrossSection,
+    	   boost::cref( *adjoint_electroionization_cs_evaluators.find( *shell )->second ),
+    	   _1,
+         d_adjoint_electroionization_evaluation_tolerance );
+
+std::cout << "*shell = " << *shell << std::endl;
+    union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                 grid_function );
+    std::cout << ".";
+    std::cout.flush();
   }
-*/
+
   std::cout << "done." << std::endl;
 
   // Set the union energy grid
@@ -579,7 +560,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     // Get the angular scattering grid for the min energy
     std::vector<double> min_angles =
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-        d_forward_endl_data->getCutoffElasticAngles(),
+        elastic_angle,
         d_min_electron_energy,
         d_cutoff_angle_cosine );
 
@@ -741,29 +722,34 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         adjoint_bremsstrahlung_energy_grid.at(i),
         adjoint_bremsstrahlung_photon_energies );
     }
-    else if( adjoint_bremsstrahlung_energy_grid.at(i) == d_min_electron_energy )
+    else
     {
       /* If the min_electron_energy falls between two energies on the forward
-         bremsstrahlung energy grid a new set of photon energies must be chosen.
-         This is done by taking the set of photon energies for the forward
-         energy grid point above the min energy and substracting the photon
-         energies above the min electron energy.
+          bremsstrahlung energy grid a new set of photon energies must be chosen.
+          This is done by taking the set of photon energies for the forward
+          energy grid point above the min energy and substracting the photon
+          energies above the min electron energy.
+          For the nudge energy (right below the max energy) the photon energies
+          for the max_electron_energy are used with the max_electron_energy
+          replaced with the nudge energy.
        */
       adjoint_bremsstrahlung_photon_energies =
         d_forward_endl_data->getBremsstrahlungPhotonEnergyAtEnergy(
             adjoint_bremsstrahlung_energy_grid.at(i+1) );
-
-      // Eliminate photon energies above the min electron energy
-      while ( adjoint_bremsstrahlung_photon_energies.back() >= d_min_electron_energy )
+   
+      // Eliminate photon energies above the current electron energy
+      while ( adjoint_bremsstrahlung_photon_energies.back() >=
+              adjoint_bremsstrahlung_energy_grid.at(i) )
       {
         adjoint_bremsstrahlung_photon_energies.pop_back();
       }
 
-      // Add the min electron energy as the max photon energy
-      adjoint_bremsstrahlung_photon_energies.push_back( d_min_electron_energy );
+      // Add the current energy as the max photon energy
+      adjoint_bremsstrahlung_photon_energies.push_back(
+        adjoint_bremsstrahlung_energy_grid.at(i) );
 
       data_container.setAdjointBremsstrahlungPhotonEnergyAtIncomingEnergy(
-        d_min_electron_energy,
+        adjoint_bremsstrahlung_energy_grid.at(i),
         adjoint_bremsstrahlung_photon_energies );
     }
 
@@ -780,8 +766,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // The PDF for the max incoming energy is always zero
   std::vector<double> photon_energy( 2 );
-  photon_energy[0] = d_min_photon_energy;
-  photon_energy[1] = d_max_photon_energy;
+  photon_energy[0] = 1e-7;
+  photon_energy[1] = d_max_electron_energy;
 
   data_container.setAdjointBremsstrahlungPhotonEnergyAtIncomingEnergy(
     d_max_electron_energy,
@@ -804,7 +790,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   std::cout << " Setting the electroionization data...";
   std::cout.flush();
 
-  std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
+  shell = data_container.getSubshells().begin();
 
   // Loop through electroionization data for every subshell
   for ( shell; shell != data_container.getSubshells().end(); shell++ )
@@ -1077,6 +1063,25 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSec
   threshold_index = std::distance( raw_cross_section.begin(), start );
 }
 */
+
+// Calculate the elastic anglular grid for the angle cosine
+void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
+    const std::vector<double>& raw_elastic_angle,
+    std::vector<double>& elastic_angle ) const
+{
+  int size = raw_elastic_angle.size();
+  int r_bin = size - 1;
+
+  elastic_angle.resize( size );
+
+  for ( int bin = 0; bin < size; bin++ )
+  {
+    long double angle_cosine = 1.0L - raw_elastic_angle[bin];
+    elastic_angle[r_bin] = angle_cosine;
+    r_bin--;
+  }
+}
+
 // Calculate the elastic anglular distribution for the angle cosine
 void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
     const std::vector<double>& raw_elastic_angle,
@@ -1186,131 +1191,46 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
     std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >&
         adjoint_bremsstrahlung_cs_evaluator ) const
 {
-  // Extract the forward electron energy grid
-  Teuchos::ArrayRCP<double> forward_brem_cs_energy_grid;
-  forward_brem_cs_energy_grid.assign(
-    d_forward_endl_data->getBremsstrahlungCrossSectionEnergyGrid().begin(),
-    d_forward_endl_data->getBremsstrahlungCrossSectionEnergyGrid().end() );
-
-  // Create the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-    forward_brem_cs_energy_grid,
-    forward_brem_cs_energy_grid[0],
-    forward_brem_cs_energy_grid[forward_brem_cs_energy_grid.size()-1],
-    forward_brem_cs_energy_grid.size()/10 + 1 ) );
- 
-  // Extract the forward bremsstrahlung cross section
-  Teuchos::ArrayRCP<double> forward_bremsstrahlung_cross_section;
-  forward_bremsstrahlung_cross_section.assign(
-    d_forward_endl_data->getBremsstrahlungCrossSection().begin(),
-    d_forward_endl_data->getBremsstrahlungCrossSection().end() );
-
   // Get the energy grid for the forward bremsstrahlung energy loss distributions
-  std::vector<double> forward_brem_energy_grid =
-    d_forward_endl_data->getBremsstrahlungPhotonEnergyGrid();
+  std::vector<double>::const_iterator start, end;
 
-  // Get energy index below/equal to d_min_electron_energy
-  unsigned start_index =
-    Utility::Search::binaryLowerBoundIndex(
-              forward_brem_energy_grid.begin(),
-              forward_brem_energy_grid.end(),
+  // Get energy iterator below/equal to d_min_electron_energy
+  start = Utility::Search::binaryLowerBound(
+              d_forward_endl_data->getBremsstrahlungPhotonEnergyGrid().begin(),
+              d_forward_endl_data->getBremsstrahlungPhotonEnergyGrid().end(),
               d_min_electron_energy );
 
-  // Get energy index above/equal to d_max_electron_energy
-  unsigned end_index =
-    Utility::Search::binaryUpperBoundIndex(
-              forward_brem_energy_grid.begin(),
-              forward_brem_energy_grid.end(),
+  // Get energy iterator above/equal to d_max_electron_energy
+  end = Utility::Search::binaryUpperBound(
+              d_forward_endl_data->getBremsstrahlungPhotonEnergyGrid().begin(),
+              d_forward_endl_data->getBremsstrahlungPhotonEnergyGrid().end(),
               d_max_electron_energy );
-
-  end_index -= start_index;
+  ++end;
 
   // The adjoint bremsstrahlung energy grid for the energy gain function
-  std::vector<double> adjoint_bremsstrahlung_energy_grid( end_index+1 );
+  std::vector<double> adjoint_bremsstrahlung_energy_grid( start, end );
 
-  // Create the forward bremsstrahlung energy loss function
-  MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-    energy_loss_function( end_index+1 );
+  std::shared_ptr<BremsstrahlungReaction> bremsstrahlung_reaction;
 
-  unsigned n = 0;
-  // Insert bin below d_min_electron_energy (if necessary)
-  if( forward_brem_energy_grid[start_index] != d_min_electron_energy )
-  {
-    energy_loss_function[n].first = forward_brem_energy_grid[start_index];
-    adjoint_bremsstrahlung_energy_grid[n] = d_min_electron_energy;
+  MonteCarlo::ElectroatomicReactionENDLFactory::createBremsstrahlungReaction(
+    *d_forward_endl_data,
+    adjoint_bremsstrahlung_energy_grid,
+    bremsstrahlung_reaction,
+	MonteCarlo::DIPOLE_DISTRIBUTION );
 
-    // Get the energy of the bremsstrahlung photon at the incoming energy
-    std::vector<double> photon_energy(
-        d_forward_endl_data->getBremsstrahlungPhotonEnergyAtEnergy(
-          forward_brem_energy_grid[start_index] ) );
-
-    // Get the bremsstrahlung photon pdf at the incoming energy
-    std::vector<double> pdf(
-        d_forward_endl_data->getBremsstrahlungPhotonPDFAtEnergy(
-          forward_brem_energy_grid[start_index] ) );
-
-    energy_loss_function[n].second.reset(
-	  new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
-                                                               pdf ) );
-
-    ++n;
-    ++start_index;
-  }
-
-  std::map<double,std::vector<double> > photon_energy(
-    d_forward_endl_data->getBremsstrahlungPhotonEnergy() );
-
-  std::map<double,std::vector<double> > pdf(
-        d_forward_endl_data->getBremsstrahlungPhotonPDF() );
-
-  for( n; n < end_index; ++n )
-  {
-    energy_loss_function[n].first = forward_brem_energy_grid[start_index];
-    adjoint_bremsstrahlung_energy_grid[n] = forward_brem_energy_grid[start_index];
-
-    energy_loss_function[n].second.reset(
-	    new const Utility::TabularDistribution<Utility::LinLin>(
-        photon_energy[forward_brem_energy_grid[start_index] ],
-        pdf[forward_brem_energy_grid[start_index] ] ) );
-
-    ++start_index;
-  }
-
-  // Insert bin above d_max_electron_energy
-  {
-    energy_loss_function[n].first = forward_brem_energy_grid[start_index];
-    adjoint_bremsstrahlung_energy_grid[n] = d_max_electron_energy;
-
-    energy_loss_function[n].second.reset(
-	    new const Utility::TabularDistribution<Utility::LinLin>(
-        photon_energy[forward_brem_energy_grid[start_index] ],
-        pdf[forward_brem_energy_grid[start_index] ] ) );
-  }
-
-  std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-    bremsstrahlung_distribution(
-        new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-            energy_loss_function ) );
-
-  std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
-    bremsstrahlung_reaction(
-        new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-            forward_brem_cs_energy_grid,
-            forward_bremsstrahlung_cross_section,
-            0,
-            grid_searcher,
-            bremsstrahlung_distribution ) );
+  // Set the min and max adjoint energies
+  adjoint_bremsstrahlung_energy_grid.front() = d_min_electron_energy;
+  adjoint_bremsstrahlung_energy_grid.back() = d_max_electron_energy;
 
   adjoint_bremsstrahlung_cs_evaluator.reset(
     new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
         bremsstrahlung_reaction,
         adjoint_bremsstrahlung_energy_grid ) );
 
-    // Add nudge value
-    adjoint_bremsstrahlung_energy_grid.back() =
-      d_max_electron_energy - s_threshold_energy_nudge_factor;
-    adjoint_bremsstrahlung_energy_grid.push_back( d_max_electron_energy );
+  // Add nudge value
+  adjoint_bremsstrahlung_energy_grid.back() =
+     d_max_electron_energy - s_threshold_energy_nudge_factor;
+   adjoint_bremsstrahlung_energy_grid.push_back( d_max_electron_energy );
 
   // Set the adjoint bremsstrahlung energy grid
   data_container.setAdjointBremsstrahlungEnergyGrid(
@@ -1363,10 +1283,77 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointBremss
 // Create the adjoint electroionization subshell cross section evaluator
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroionizationSubshellCrossSectionEvaluator(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::vector<std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
+    std::map<unsigned,std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
         adjoint_electroionization_cs_evaluators ) const
 {
+  // Extract the subshell information
+  std::set<unsigned>::const_iterator shell =
+    d_forward_endl_data->getSubshells().begin();
 
+  // Get the energy grid for the forward electroionization subshell reactions
+  std::vector<double>::const_iterator start, end;
+
+  double threshold_energy =
+    *d_forward_endl_data->getElectroionizationRecoilEnergyGrid(*shell).begin();
+
+  for ( shell; shell != d_forward_endl_data->getSubshells().end(); ++shell )
+  {
+    if ( threshold_energy >= d_min_electron_energy )
+    {
+      start =
+        d_forward_endl_data->getElectroionizationRecoilEnergyGrid(*shell).begin();
+    }
+    else
+    {
+      // Get energy iterator below/equal to d_min_electron_energy
+      start = Utility::Search::binaryLowerBound(
+          d_forward_endl_data->getElectroionizationRecoilEnergyGrid(*shell).begin(),
+          d_forward_endl_data->getElectroionizationRecoilEnergyGrid(*shell).end(),
+          d_min_electron_energy );
+    }
+
+    // Get energy iterator above/equal to d_max_electron_energy
+    end = Utility::Search::binaryUpperBound(
+        start,
+        d_forward_endl_data->getElectroionizationRecoilEnergyGrid(*shell).end(),
+        d_max_electron_energy );
+    ++end;
+
+    // Set the recoil energy grid for the given min and max electron energy
+    std::vector<double> ionization_energy_grid( start, end );
+
+    // Create the subshell reaction
+    std::shared_ptr<ElectroionizationReaction>
+      electroionization_subshell_reaction;
+
+    MonteCarlo::ElectroatomicReactionENDLFactory::createSubshellElectroionizationReaction(
+      *d_forward_endl_data,
+      ionization_energy_grid,
+      *shell,
+      electroionization_subshell_reaction );
+
+    // Set the min and max adjoint energies
+    if ( threshold_energy < d_min_electron_energy )
+    {
+      ionization_energy_grid.front() = d_min_electron_energy;
+    }
+    ionization_energy_grid.back() = d_max_electron_energy;
+
+    adjoint_electroionization_cs_evaluators[*shell].reset(
+      new DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction>(
+          electroionization_subshell_reaction,
+          ionization_energy_grid ) );
+
+    // Add nudge value
+    ionization_energy_grid.back() =
+        d_max_electron_energy - s_threshold_energy_nudge_factor;
+      ionization_energy_grid.push_back( d_max_electron_energy );
+
+    // Set the adjoint bremsstrahlung energy grid
+    data_container.setAdjointElectroionizationEnergyGrid(
+      *shell,
+      ionization_energy_grid );
+  }
 }
 
 // Initialize the electron union energy grid

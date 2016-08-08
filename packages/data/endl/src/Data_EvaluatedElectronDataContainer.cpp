@@ -216,6 +216,13 @@ ENDLDataContainer::getElectroionizationAverageRecoilElectronEnergy(
   return d_electroionization_average_recoil_electron_energy.find( subshell )->second;
 }
 
+// Return the electroionization incident energy grid for the recoil electron spectrum for all subshells
+const std::map<unsigned,std::vector<double> >&
+ENDLDataContainer::getElectroionizationRecoilEnergyGrid() const
+{
+  return d_electroionization_recoil_energy_grid;
+}
+
 // Return the electroionization recoil energy grid for a subshell
 const std::vector<double>&
 ENDLDataContainer::getElectroionizationRecoilEnergyGrid(

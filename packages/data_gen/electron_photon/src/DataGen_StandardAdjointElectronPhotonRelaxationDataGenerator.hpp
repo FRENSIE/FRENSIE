@@ -52,6 +52,7 @@ public:
         const double cutoff_angle_cosine = 1.0,
         const unsigned number_of_moment_preserving_angles = 0,
         const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
+        const double adjoint_electroionization_evaluation_tolerance = 0.001,
         const double grid_convergence_tol = 0.001,
         const double grid_absolute_diff_tol = 1e-13,
         const double grid_distance_tol = 1e-13 );
@@ -144,6 +145,11 @@ private:
     const std::vector<double>& energy_grid,
     std::list<double>& union_energy_grid ) const;
 
+  // Calculate the elastic anglular grid for the angle cosine
+  void calculateElasticAngleCosine(
+    const std::vector<double>& raw_elastic_angle,
+    std::vector<double>& elastic_angle) const;
+
   // Calculate the elastic anglular distribution for the angle cosine
   void calculateElasticAngleCosine(
     const std::vector<double>& raw_elastic_angle,
@@ -193,7 +199,7 @@ private:
   // Create the adjoint electroionization subshell cross section evaluator
   void createAdjointElectroionizationSubshellCrossSectionEvaluator(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::vector<std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
+    std::map<unsigned,std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
         adjoint_electroionization_cs_evaluators ) const;
 
   // The threshold energy nudge factor
@@ -234,6 +240,9 @@ private:
 
   // The evaluation tolerance for the adjoint bremsstrahlung cross sections
   double d_adjoint_bremsstrahlung_evaluation_tolerance;
+
+  // The evaluation tolerance for the adjoint electroionization cross sections
+  double d_adjoint_electroionization_evaluation_tolerance;
 };
 
 // Test if a value is greater than or equal to one

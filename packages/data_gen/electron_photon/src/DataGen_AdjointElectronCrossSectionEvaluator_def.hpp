@@ -110,7 +110,7 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
               incoming_adjoint_energy );
 
   // Integrate from the given energy to the next highest energy bin (if necessary)
-  if( d_integration_points[start_index] != incoming_adjoint_energy )
+  if( d_integration_points[start_index] != incoming_adjoint_energy && start_index > 0)
   {
     cross_section_k = 0.0L;
     abs_error = 0.0L;
