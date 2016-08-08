@@ -258,6 +258,11 @@ TARGET_LINK_LIBRARIES(tstStandardComptonProfile monte_carlo_collision_native)
 ADD_TEST(StandardComptonProfile_test tstStandardComptonProfile)
 SET_PROPERTY(TEST StandardComptonProfile_test PROPERTY LABELS monte_carlo_collision_native photon)
 
+ADD_EXECUTABLE(tstStandardOccupationNumber
+  tstStandardOccupationNumber.cpp)
+TARGET_LINK_LIBRARIES(tstStandardOccupationNumber monte_carlo_collision_native)
+ADD_TEST(StandardOccupationNumber_test tstStandardOccupationNumber)
+
 ADD_EXECUTABLE(tstStandardScatteringFunction
   tstStandardScatteringFunction.cpp)
 TARGET_LINK_LIBRARIES(tstStandardScatteringFunction monte_carlo_collision_native)
@@ -276,11 +281,10 @@ TARGET_LINK_LIBRARIES(tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDist
 ADD_TEST(CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
 
-# ADD_EXECUTABLE(tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution
-#   tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
-# TARGET_LINK_LIBRARIES(tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
-# ADD_TEST(DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-# SET_PROPERTY(TEST DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+ADD_EXECUTABLE(tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution
+  tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstStandardSubshellDopplerBroadenedPhotonEnergyDistribution
   tstStandardSubshellDopplerBroadenedPhotonEnergyDistribution.cpp)
@@ -459,18 +463,25 @@ TARGET_LINK_LIBRARIES(tstKleinNishinaAdjointPhotonScatteringDistribution monte_c
 ADD_TEST(KleinNishinaAdjointPhotonScatteringDistribution_test tstKleinNishinaAdjointPhotonScatteringDistribution)
 SET_PROPERTY(TEST KleinNishinaAdjointPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
 
-# ADD_EXECUTABLE(tstWHIncoherentAdjointPhotonScatteringDistribution
-#   tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
-# TARGET_LINK_LIBRARIES(tstWHIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
-# ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-# SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
+ADD_EXECUTABLE(tstWHIncoherentAdjointPhotonScatteringDistribution
+  tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstWHIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
-##----------------------------------------------------------------------------##
-##      electron class tests
-##----------------------------------------------------------------------------##
+ADD_EXECUTABLE(tstSubshellIncoherentAdjointPhotonScatteringDistribution
+  tstSubshellIncoherentAdjointPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstSubshellIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(SubshellIncoherentAdjointPhotonScatteringDistribution_test tstSubshellIncoherentAdjointPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 
+ADD_EXECUTABLE(tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution
+  tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution_test tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 
-##      electron distribution tests
+##---------------------------------------------------------------------------##
+##      electron class tests                                                  
+##---------------------------------------------------------------------------##
+##      electron distribution tests                                           
 ADD_EXECUTABLE(tstCutoffElasticElectronScatteringDistribution
   tstCutoffElasticElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstCutoffElasticElectronScatteringDistribution monte_carlo_collision_native)

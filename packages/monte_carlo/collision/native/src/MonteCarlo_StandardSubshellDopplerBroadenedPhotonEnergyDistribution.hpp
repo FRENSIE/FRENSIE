@@ -40,20 +40,40 @@ public:
   ~StandardSubshellDopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
 
+  //! Evaluate the distribution with electron momentum projection
+  double evaluateWithElectronMomentumProjection(
+                              const double incoming_energy,
+                              const double electron_momentum_projection,
+                              const double scattering_angle_cosine ) const;
+  
   //! Evaluate the distribution
-  double evaluate( const double incoming_energy,
-		   const double outgoing_energy,
-		   const double scattering_angle_cosine ) const;
+  double evaluateExact( const double incoming_energy,
+                        const double outgoing_energy,
+                        const double scattering_angle_cosine ) const;
 
+  //! Evaluate the PDF with electron momentum projection
+  double evaluatePDFWithElectronMomentumProjection(
+                              const double incoming_energy,
+                              const double electron_momentum_projection,
+                              const double scattering_angle_cosine,
+                              const double precision ) const;
+  
   //! Evaluate the PDF
-  double evaluatePDF( const double incoming_energy,
-		      const double outgoing_energy,
-		      const double scattering_angle_cosine ) const;
+  double evaluatePDFExact( const double incoming_energy,
+                           const double outgoing_energy,
+                           const double scattering_angle_cosine,
+                           const double precision ) const;
 
   //! Evaluate the integrated cross section (b/mu)
   double evaluateIntegratedCrossSection( const double incoming_energy,
 					 const double scattering_angle_cosine,
 					 const double precision ) const;
+
+  //! Evaluate the integrated cross section (b/mu)
+  double evaluateIntegratedCrossSectionExact(
+                                          const double incoming_energy,
+                                          const double scattering_angle_cosine,
+                                          const double precision ) const;
 
   //! Sample an outgoing energy from the distribution
   void sample( const double incoming_energy,

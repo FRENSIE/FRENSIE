@@ -165,7 +165,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> swd_block =
     xss_data_extractor->extractSWDBlock();
 
-  MonteCarlo::DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
+  MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
     half_compton_profiles( lswd_block.size() ),
     full_compton_profiles( lswd_block.size() );
 

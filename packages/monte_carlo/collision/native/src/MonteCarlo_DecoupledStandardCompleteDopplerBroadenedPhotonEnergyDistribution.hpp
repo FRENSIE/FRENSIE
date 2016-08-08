@@ -32,14 +32,14 @@ public:
 
   //! Constructor
   DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-     const Teuchos::Array<double>& endf_subshell_occupancies,
-     const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
-     const Teuchos::Array<double>& old_subshell_binding_energies,
-     const Teuchos::Array<double>& old_subshell_occupancies,
-     const std::shared_ptr<const ComptonProfileSubshellConverter>&
-     subshell_converter,
-     const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
-     electron_momentum_dist_array );
+   const Teuchos::Array<double>& endf_subshell_occupancies,
+   const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
+   const Teuchos::Array<double>& old_subshell_binding_energies,
+   const Teuchos::Array<double>& old_subshell_occupancies,
+   const std::shared_ptr<const ComptonProfileSubshellConverter>&
+   subshell_converter,
+   const CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
+   compton_profile_array );
 
   //! Destructor
   ~DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution()
@@ -51,15 +51,27 @@ public:
   //! Return the occupancy of a subshell (default is the ENDF occupacy)
   double getSubshellOccupancy( const Data::SubshellType subshell ) const;
 
-  //! Evaluate the distribution
-  double evaluate( const double incoming_energy,
-		   const double outgoing_energy,
-		   const double scattering_angle_cosine ) const;
+  //! Evaluate the distribution with electron momentum projection
+  double evaluateWithElectronMomentumProjection(
+                              const double incoming_energy,
+                              const double electron_momentum_projection,
+                              const double scattering_angle_cosine ) const;
+  
+  //! Evaluate the exact distribution
+  double evaluateExact( const double incoming_energy,
+                        const double outgoing_energy,
+                        const double scattering_angle_cosine ) const;
 
   //! Evaluate the integrated cross section (b/mu)
   double evaluateIntegratedCrossSection( const double incoming_energy,
                                          const double scattering_angle_cosine,
                                          const double precision ) const;
+
+  //! Evaluate the exact integrated cross section (b/mu)
+  double evaluateIntegratedCrossSectionExact(
+                                          const double incoming_energy,
+                                          const double scattering_angle_cosine,
+                                          const double precision ) const;
 
 protected:
 
@@ -82,6 +94,9 @@ private:
 
   // The old subshell occupandies
   Teuchos::Array<double> d_old_subshell_occupancies;
+
+  // The index of the minimum binding energy
+  unsigned d_min_binding_energy_index;
 };
 
 } // end MonteCarlo namespace

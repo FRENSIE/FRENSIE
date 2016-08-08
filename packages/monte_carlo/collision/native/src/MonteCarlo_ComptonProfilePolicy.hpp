@@ -28,11 +28,26 @@ struct FullComptonProfilePolicy
   static ComptonProfile::MomentumQuantity getUpperBoundOfMomentum(
                                                const ComptonProfile& profile );
 
+  //! Get lower limit of integration
+  static ComptonProfile::MomentumQuantity getLowerLimitOfIntegration(
+                          const ComptonProfile::MomentumQuantity upper_limit );
+
+  //! Get upper limit of integration
+  static ComptonProfile::MomentumQuantity getUpperLimitOfIntegration(
+                          const ComptonProfile& profile,
+                          const ComptonProfile::MomentumQuantity upper_limit );
+    
   //! Evaluate a full Compton profile
   static ComptonProfile::ProfileQuantity evaluate(
                              const ComptonProfile& profile,
                              const ComptonProfile::MomentumQuantity momentum );
 
+  //! Evaluate a full Compton profile using the max momentum as a limit
+  static ComptonProfile::ProfileQuantity evaluateWithPossibleLimit(
+                         const ComptonProfile& profile,
+                         const ComptonProfile::MomentumQuantity momentum,
+                         const ComptonProfile::MomentumQuantity max_momentum );
+  
   //! Sample from a full Compton profile
   static ComptonProfile::MomentumQuantity sample(
                          const ComptonProfile& profile,
@@ -53,6 +68,15 @@ struct HalfComptonProfilePolicyHelper
   static ComptonProfile::MomentumQuantity getUpperBoundOfMomentum(
                                                const ComptonProfile& profile );
 
+  //! Get lower limit of integration
+  static ComptonProfile::MomentumQuantity getLowerLimitOfIntegration(
+                          const ComptonProfile::MomentumQuantity upper_limit );
+
+  //! Get upper limit of integration
+  static ComptonProfile::MomentumQuantity getUpperLimitOfIntegration(
+                          const ComptonProfile& profile,
+                          const ComptonProfile::MomentumQuantity upper_limit );
+
   //! Sample from a half Compton profile
   static ComptonProfile::MomentumQuantity sample(
                          const ComptonProfile& profile,
@@ -66,6 +90,12 @@ struct HalfComptonProfilePolicy : public HalfComptonProfilePolicyHelper
   static ComptonProfile::ProfileQuantity evaluate(
                              const ComptonProfile& profile,
                              const ComptonProfile::MomentumQuantity momentum );
+
+  //! Evaluate a half Compton profile using the max momentum as a limit
+  static ComptonProfile::ProfileQuantity evaluateWithPossibleLimit(
+                         const ComptonProfile& profile,
+                         const ComptonProfile::MomentumQuantity momentum,
+                         const ComptonProfile::MomentumQuantity max_momentum );
 };
 
 //! Policy for using a doubled half Compton profile
@@ -75,6 +105,12 @@ struct DoubledHalfComptonProfilePolicy : public HalfComptonProfilePolicyHelper
   static ComptonProfile::ProfileQuantity evaluate(
                              const ComptonProfile& profile,
                              const ComptonProfile::MomentumQuantity momentum );
+
+  //! Evaluate a double half Compton profile using the max momentum as a limit
+  static ComptonProfile::ProfileQuantity evaluateWithPossibleLimit(
+                         const ComptonProfile& profile,
+                         const ComptonProfile::MomentumQuantity momentum,
+                         const ComptonProfile::MomentumQuantity max_momentum );
 };
 
 } // end MonteCarlo namespace

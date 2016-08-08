@@ -47,10 +47,10 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 				    raw_photoatom_data.extractAtomicNumber() );
 
   // Create the compton profile distributions
-  DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
+  CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
     compton_profiles;
 
-  DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
+  DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileArray(
 							    raw_photoatom_data,
 							    use_full_profile,
 							    compton_profiles );
@@ -118,10 +118,10 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 				    raw_photoatom_data.extractAtomicNumber() );
 
   // Create the compton profile distributions
-  DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
+  CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
     compton_profiles;
 
-  DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
+  DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileArray(
 							    raw_photoatom_data,
 							    use_full_profile,
 							    compton_profiles );
@@ -222,7 +222,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 
   std::shared_ptr<const ComptonProfile> compton_profile;
 
-  DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDist(
+  DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfile(
 							    half_momentum_grid,
 							    half_profile,
 							    use_full_profile,
@@ -287,10 +287,10 @@ DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 }
 
 // Create the Compton profile distribution
-void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
+void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileArray(
 	 const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	 const bool use_full_profile,
-	 DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
+	 CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
          compton_profiles )
 {
   Teuchos::ArrayView<const double> lswd_block =
@@ -314,7 +314,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDis
                            swd_block( subshell_index + 1 + num_momentum_points,
 				      num_momentum_points ) );
 
-    DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDist(
+    DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfile(
 						  half_momentum_grid,
 						  half_profile,
 						  use_full_profile,
@@ -323,7 +323,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDis
 }
 
 // Create the Compton profile distribution
-void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDist(
+void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfile(
 		       Teuchos::Array<double>& raw_half_momentum_grid,
                        Teuchos::Array<double>& raw_half_profile,
                        const bool use_full_profile,

@@ -81,3 +81,7 @@ IF(FRENSIE_ENABLE_ROOT)
   ADD_TEST(PyFrensie.Geometry.ROOT.initializeRoot_test ${PYTHON_EXECUTABLE} tstGeometry.ROOT.initializeRoot.py --xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.xml)
   SET_PROPERTY(TEST PyFrensie.Geometry.ROOT.initializeRoot_test PROPERTY LABELS pyfrensie root)
 ENDIF(FRENSIE_ENABLE_ROOT)
+
+# Add the MonteCarlo.Collision.PhotonKinematics unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)

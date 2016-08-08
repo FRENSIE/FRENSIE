@@ -9,8 +9,10 @@
 #ifndef DATA_GEN_STANDARD_ADJOINT_INCOHERENT_GRID_GENERATOR_HPP
 #define DATA_GEN_STANDARD_ADJOINT_INCOHERENT_GRID_GENERATOR_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
@@ -31,8 +33,8 @@ class StandardAdjointIncoherentGridGenerator : public AdjointIncoherentGridGener
 public:
 
   //! Constructor
-  StandardAdjointIncoherentGridGenerator(
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
+  StandardAdjointIncoherentGridGenerator( 
+      const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& adjoint_incoherent_cross_section,
       const double convergence_tol = 0.001,
       const double absolute_diff_tol = 1e-12,
       const double distance_tol = 1e-14 );
@@ -104,7 +106,7 @@ private:
   d_max_energy_grid_generator;
 
   // The adjoint incoherent cross section evaluator
-  MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution
+  std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
   d_adjoint_incoherent_cross_section;
 };
 

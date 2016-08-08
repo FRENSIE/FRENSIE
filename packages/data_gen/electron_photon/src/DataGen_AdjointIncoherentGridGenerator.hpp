@@ -20,6 +20,14 @@ class AdjointIncoherentGridGenerator
 
 public:
 
+  //! Constructor
+  AdjointIncoherentGridGenerator()
+  { /* ... */ }
+
+  //! Destructor
+  virtual ~AdjointIncoherentGridGenerator()
+  { /* ... */ }
+  
   //! Set the min table energy (default is 0.0001 MeV)
   static void setMinTableEnergy( const double min_energy );
 

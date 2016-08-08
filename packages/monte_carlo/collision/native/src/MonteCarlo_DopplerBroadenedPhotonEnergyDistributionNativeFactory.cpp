@@ -57,7 +57,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
 				   new VoidComptonProfileSubshellConverter() );
 
   // Create the compton profile distributions
-  DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
+  CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
     compton_profiles( subshell_order.size() );
 
   Teuchos::Array<Data::SubshellType> subshell_order_copy = subshell_order;

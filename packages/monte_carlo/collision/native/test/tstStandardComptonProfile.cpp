@@ -99,6 +99,33 @@ TEUCHOS_UNIT_TEST( StandardComptonProfile, sampleInSubrange )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the Compton profile can be sampled from
+TEUCHOS_UNIT_TEST( StandardComptonProfile, sampleInSubrange_with_lower )
+{
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0 - 1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ComptonProfile::MomentumQuantity
+    momentum = compton_profile->sampleInSubrange(
+                                           0.75*Utility::Units::mec_momentum,
+                                           0.25*Utility::Units::mec_momentum );
+
+  TEST_EQUALITY_CONST( momentum, 0.25*Utility::Units::mec_momentum );
+
+  momentum = compton_profile->sampleInSubrange(
+                                           0.75*Utility::Units::mec_momentum,
+                                           0.25*Utility::Units::mec_momentum );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+                          momentum, 0.75*Utility::Units::mec_momentum, 1e-12 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the lower bound of the momentum can be returned
 TEUCHOS_UNIT_TEST( StandardComptonProfile, getLowerBoundOfMomentum )
 {
