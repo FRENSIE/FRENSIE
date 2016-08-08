@@ -18,7 +18,6 @@
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 

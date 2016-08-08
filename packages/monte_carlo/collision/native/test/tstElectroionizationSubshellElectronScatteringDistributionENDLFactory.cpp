@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstElectroionizationSubshellElectronScatteringDistributionNativeFactory.cpp
+//! \file   tstElectroionizationSubshellElectronScatteringDistributionENDLFactory.cpp
 //! \author Luke Kersting
-//! \brief  electroionization subshell scattering distribution Native factory unit tests
+//! \brief  electroionization subshell scattering distribution ENDL factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,8 +15,8 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
-#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionENDLFactory.hpp"
+#include "Data_ENDLDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -25,10 +25,12 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
+std::shared_ptr<Data::ENDLDataContainer> data_container;
+
+std::vector<double> recoil_energy_grid;
 
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
-  native_distribution;
+  endl_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -40,7 +42,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
   // Get binding energy
   double binding_energy =
-    native_distribution->getBindingEnergy();
+    endl_distribution->getBindingEnergy();
 
   // Test original electron
   TEST_EQUALITY_CONST( binding_energy, 8.8290E-02 );
@@ -53,10 +55,10 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 {
   // Get min energy
   double min_energy =
-    native_distribution->getMinEnergy();
+    endl_distribution->getMinEnergy();
 
   // Test original electron
-  TEST_EQUALITY_CONST( min_energy, 8.829000000000E-02 );
+  TEST_EQUALITY_CONST( min_energy, 8.8290E-02 );
 }
 
 //---------------------------------------------------------------------------//
@@ -66,7 +68,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 {
   // Get max energy
   double min_energy =
-    native_distribution->getMaxEnergy();
+    endl_distribution->getMaxEnergy();
 
   // Test original electron
   TEST_EQUALITY_CONST( min_energy, 1e5 );
@@ -80,21 +82,21 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 {
   // Get max energy
   double max_energy =
-    native_distribution->getMaxIncomingEnergyAtOutgoingEnergy( 1.0 );
+    endl_distribution->getMaxIncomingEnergyAtOutgoingEnergy( 1.0 );
 
   // Test original electron
   TEST_EQUALITY_CONST( max_energy, 1E5 );
 
   // Get max energy
   max_energy =
-    native_distribution->getMaxIncomingEnergyAtOutgoingEnergy( 1e-2 );
+    endl_distribution->getMaxIncomingEnergyAtOutgoingEnergy( 1e-2 );
 
   // Test original electron
   TEST_EQUALITY_CONST( max_energy, 1E5 );
 
   // Get max energy
   max_energy =
-    native_distribution->getMaxIncomingEnergyAtOutgoingEnergy( 1e-8 );
+    endl_distribution->getMaxIncomingEnergyAtOutgoingEnergy( 1e-8 );
 
   // Test original electron
   TEST_EQUALITY_CONST( max_energy, 0.0 );
@@ -107,21 +109,21 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 {
 
   double pdf =
-    native_distribution->evaluatePDF( 8.8290000000000E-02, 1.000000000000E-08 );
+    endl_distribution->evaluatePDF( 8.8290E-02, 1.0E-08 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
 				                  1.111111111111E+07,
 				                  1e-12 );
 
   pdf =
-    native_distribution->evaluatePDF( 1.000000000000E+00, 9.716300000000E-02 );
+    endl_distribution->evaluatePDF( 1.00E+00, 9.71630E-02 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
 				                  2.38239950812861E+00,
 				                  1e-12 );
 
   pdf =
-    native_distribution->evaluatePDF( 1.000000000000E+05, 1.752970000000E+02 );
+    endl_distribution->evaluatePDF( 1.0E+05, 1.752970E+02 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
 				                  4.98650620153625E-07,
@@ -145,7 +147,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   double knock_on_energy, knock_on_angle_cosine;
 
   // sample the electron
-  native_distribution->sample( incoming_energy,
+  endl_distribution->sample( incoming_energy,
                                knock_on_energy,
                                knock_on_angle_cosine );
 
@@ -171,7 +173,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  native_distribution->sample( incoming_energy,
+  endl_distribution->sample( incoming_energy,
                                outgoing_energy,
                                knock_on_energy,
                                scattering_angle_cosine,
@@ -204,7 +206,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   double knock_on_energy, scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  native_distribution->sampleAndRecordTrials( incoming_energy,
+  endl_distribution->sampleAndRecordTrials( incoming_energy,
                                               knock_on_energy,
                                               knock_on_angle_cosine,
                                               trials );
@@ -238,7 +240,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   // Analytically scatter electron
-  native_distribution->scatterElectron( electron,
+  endl_distribution->scatterElectron( electron,
                                         bank,
                                         shell_of_interaction );
 
@@ -256,13 +258,13 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_native_file_name;
+  std::string test_endl_file_name;
 
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test native file name" );
+  clp.setOption( "test_endl_file",
+		 &test_endl_file_name,
+		 "Test ENDL file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -276,21 +278,25 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  // Create the native data file container
-  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
-						     test_native_file_name ) );
+  // Create the ENDL data file container
+  data_container.reset( new Data::ENDLDataContainer(
+						     test_endl_file_name ) );
 
   // Set binding energy
   double binding_energy = 8.829E-02;
 
   std::set<unsigned> subshells = data_container->getSubshells();
 
+  recoil_energy_grid = data_container->getElectroionizationRecoilEnergyGrid(
+    *subshells.begin() );
+
   // Create the electroionization subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionENDLFactory::createElectroionizationSubshellDistribution(
     *data_container,
+    recoil_energy_grid,
     *subshells.begin(),
     binding_energy,
-	native_distribution );
+	endl_distribution );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
@@ -311,5 +317,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstElectroionizationSubshellElectronScatteringDistributionNativeFactory.cpp
+// end tstElectroionizationSubshellElectronScatteringDistributionENDLFactory.cpp
 //---------------------------------------------------------------------------//

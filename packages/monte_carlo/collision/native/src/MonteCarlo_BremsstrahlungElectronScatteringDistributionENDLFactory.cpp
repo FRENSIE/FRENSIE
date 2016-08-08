@@ -17,7 +17,7 @@ namespace MonteCarlo{
 // Create a simple dipole bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionENDLFactory::createBremsstrahlungDistribution(
 	const Data::ENDLDataContainer& raw_electroatom_data,
-    const std::vector<double> bremsstrahlung_energy_grid,
+    const std::vector<double>& bremsstrahlung_energy_grid,
 	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 		scattering_distribution )
 {
@@ -37,7 +37,7 @@ void BremsstrahlungElectronScatteringDistributionENDLFactory::createBremsstrahlu
 // Create a detailed 2BS bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionENDLFactory::createBremsstrahlungDistribution(
 	const Data::ENDLDataContainer& raw_electroatom_data,
-    const std::vector<double> bremsstrahlung_energy_grid,
+    const std::vector<double>& bremsstrahlung_energy_grid,
 	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 		scattering_distribution,
     const int atomic_number )
@@ -59,7 +59,7 @@ void BremsstrahlungElectronScatteringDistributionENDLFactory::createBremsstrahlu
 // Create the energy loss function
 void BremsstrahlungElectronScatteringDistributionENDLFactory::createEnergyLossFunction(
 	const Data::ENDLDataContainer& raw_electroatom_data,
-    const std::vector<double> bremsstrahlung_energy_grid,
+    const std::vector<double>& bremsstrahlung_energy_grid,
     BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
         energy_loss_function )
 {
