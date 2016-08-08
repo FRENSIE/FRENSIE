@@ -2,6 +2,8 @@ License (BSD-3) {#license}
 =====
 Copyright (c) 2016, FRENSIE Development Team
 
+Copyright 2016 Sandia Corporation. Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains certain rights in this software.”
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
