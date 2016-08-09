@@ -88,10 +88,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 1 ), 1 );
   TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy( 1 ),
 		       1.361000000000E-05 );
-  TEST_ASSERT( !data_container.hasAdjointRelaxationData() );
 
   // Check the photon data
-  TEST_ASSERT( !data_container.hasAdjointPhotonData() );
 
   // Check the electron data
   std::vector<double> energy_grid = data_container.getAdjointElectronEnergyGrid();
@@ -368,7 +366,6 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
 
   // Check the photon data
-  TEST_ASSERT( !data_container.hasAdjointPhotonData() );
 
   // Check the electron data
   std::vector<double> energy_grid = data_container.getAdjointElectronEnergyGrid();
@@ -666,7 +663,6 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_ASSERT( !data_container.hasAdjointRelaxationData() );
 
   // Check the photon data
-  TEST_ASSERT( !data_container.hasAdjointPhotonData() );
 
   // Check the electron data
   std::vector<double> energy_grid = data_container.getAdjointElectronEnergyGrid();
@@ -959,8 +955,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_ASSERT( !data_container.hasAdjointRelaxationData() );
 
   // Check the photon data
-  TEST_ASSERT( !data_container.hasAdjointPhotonData() );
-
+  
   // Check the electron energy grid data
   std::vector<double> energy_grid = data_container.getAdjointElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );

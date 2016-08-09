@@ -170,9 +170,6 @@ public:
   const std::vector<double>&
   getAdjointPairProductionEnergyDistributionNormConstant() const;
 
-  //! Return the (forward) photon energy grid
-  const std::vector<double>& getPhotonEnergyGrid() const;
-
   //! Return the (forward) Waller-Hartree total cross section
   const std::vector<double>& getWallerHartreeTotalCrossSection() const;
 
@@ -366,10 +363,9 @@ protected:
                     const unsigned subshell,
                     const std::vector<double>& compton_profile_momentum_grid );
 
-  //! Set the Compton profile for a subshell
-  void setComptonProfileMomentumGrid(
-                                  const unsigned subshell,
-                                  const std::vector<double>& compton_profile );
+  //! Set the Compton profile  for a subshell
+  void setComptonProfile( const unsigned subshell,
+                          const std::vector<double>& compton_profile );
 
   //! Set the occupation number momentum grid for a subshell
   void setOccupationNumberMomentumGrid(
@@ -442,9 +438,6 @@ protected:
   void setAdjointPairProductionEnergyDistributionNormConstant(
                          const std::vector<double>&
                          adjoint_pair_production_energy_dist_norm_const );
-
-  //! Set the (forward) photon energy grid
-  void setPhotonEnergyGrid( const std::vector<double>& energy_grid );
 
   //! Set the (forward) Waller-Hartree total cross section
   void setWallerHartreeTotalCrossSection(
@@ -735,9 +728,6 @@ private:
 
   // The adjoint pair production energy distribution norm constant (b)
   std::vector<double> d_adjoint_pair_production_norm_constant;
-
-  // The (forward) photon energy grid
-  std::vector<double> d_photon_energy_grid;
 
   // The (forward) Waller-Hartree total cross section (b)
   std::vector<double> d_waller_hartree_total_cross_section;

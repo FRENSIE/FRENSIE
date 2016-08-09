@@ -157,7 +157,7 @@ AdjointElectronPhotonRelaxationDataContainer::getComptonProfileMomentumGrid(
   testPrecondition( d_subshells.find( subshell ) !=
                     d_subshells.end() );
 
-  return d_compton_profile_momentum_grids.find( subshell )->second
+  return d_compton_profile_momentum_grids.find( subshell )->second;
 }
 
 // Return the Compton profile for a subshell
@@ -166,7 +166,7 @@ AdjointElectronPhotonRelaxationDataContainer::getComptonProfile(
                                                 const unsigned subshell ) const
 {
   // Make sure the subshell is valid
-  testPrecodition( d_subshells.find( subshell ) !=
+  testPrecondition( d_subshells.find( subshell ) !=
                    d_subshells.end() );
 
   return d_compton_profiles.find( subshell )->second;
@@ -302,13 +302,6 @@ const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDistributionNormConstant() const
 {
   return d_adjoint_pair_production_norm_constant;
-}
-
-// Return the (forward) photon energy grid
-const std::vector<double>&
-AdjointElectronPhotonRelaxationDataContainer::getPhotonEnergyGrid() const
-{
-  return d_photon_energy_grid;
 }
 
 // Return the (forward) Waller-Hartree total cross section
@@ -786,7 +779,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setComptonProfileMomentumGrid
 }
 
 // Set the Compton profile for a subshell
-void AdjointElectronPhotonRelaxationDataContainer::setComptonProfileMomentumGrid(
+void AdjointElectronPhotonRelaxationDataContainer::setComptonProfile(
                                    const unsigned subshell,
                                    const std::vector<double>& compton_profile )
 {
@@ -876,7 +869,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFac
 void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactor(
                                 const std::vector<double>& atomic_form_factor )
 {
-  / Make sure the atomic form factor is valid
+  // Make sure the atomic form factor is valid
   testPrecondition( atomic_form_factor.size() ==
 		    d_waller_hartree_atomic_form_factor_momentum_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending(
@@ -948,9 +941,9 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxSubshe
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the max energy grid is valid
-  testPrecondition( adjoint_incoherent_max_energy_grid.size() ==
-                    adjoint_incherent_cross_section );
+  // Make sure the cross section is valid
+  testPrecondition( adjoint_incoherent_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
 
   d_adjoint_impulse_approx_subshell_incoherent_cross_sections[subshell] =
     adjoint_incoherent_cross_section;
@@ -1019,24 +1012,14 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnerg
     adjoint_pair_production_energy_dist_norm_const;
 }
 
-// Set the (forward) photon energy grid
-void AdjointElectronPhotonRelaxationDataContainer::setPhotonEnergyGrid(
-                                       const std::vector<double>& energy_grid )
-{
-  // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( energy_grid );
-
-  d_photon_energy_grid = energy_grid;
-}
-
 // Set the (forward) Waller-Hartree total cross section
 void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection(
                                const std::vector<double>& total_cross_section )
 {
   // Make sure the total cross section is valid
   testPrecondition( total_cross_section.size() ==
-                    d_photon_energy_grid.size() );
-  testPreconditionValueGreaterThanZero( total_cross_section );
+                    d_adjoint_photon_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( total_cross_section );
 
   d_waller_hartree_total_cross_section = total_cross_section;
 }
@@ -1047,8 +1030,8 @@ void AdjointElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSec
 {
   // Make sure the total cross section is valid
   testPrecondition( total_cross_section.size() ==
-                    d_photon_energy_grid.size() );
-  testPreconditionValueGreaterThanZero( total_cross_section );
+                    d_adjoint_photon_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( total_cross_section );
 
   d_impulse_approx_total_cross_section = total_cross_section;
 }

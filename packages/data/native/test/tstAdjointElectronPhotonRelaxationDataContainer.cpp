@@ -179,11 +179,395 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Photon Tests
 //---------------------------------------------------------------------------//
-// Check that the number of subshell relaxation transitions can be set
+// Check that the Compton profile momentum grid can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-		   hasAdjointPhotonData )
+                   setComptonProfileMomentumGrid )
 {
-  TEST_ASSERT( !epr_data_container.hasAdjointPhotonData() );
+  std::vector<double> compton_profile_momentum_grid( 3 );
+  compton_profile_momentum_grid[0] = -1.0;
+  compton_profile_momentum_grid[1] = 0.0;
+  compton_profile_momentum_grid[2] = 1.0;
+
+  epr_data_container.setComptonProfileMomentumGrid(
+					    1, compton_profile_momentum_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getComptonProfileMomentumGrid( 1 ),
+		       compton_profile_momentum_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Compton profile for a subshell can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setComptonProfile )
+{
+  std::vector<double> compton_profile( 3 );
+  compton_profile[0] = 1e-12;
+  compton_profile[1] = 10.0;
+  compton_profile[2] = 1e-12;
+
+  epr_data_container.setComptonProfile( 1, compton_profile );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getComptonProfile( 1 ),
+		       compton_profile );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the occupation number momentum grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setOccupationNumberMomentumGrid )
+{
+  std::vector<double> momentum_grid( 3 );
+  momentum_grid[0] = -1.0;
+  momentum_grid[1] = 0.0;
+  momentum_grid[2] = 1.0;
+
+  epr_data_container.setOccupationNumberMomentumGrid( 1, momentum_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getOccupationNumberMomentumGrid( 1 ),
+		       momentum_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the occupation number of a subshell can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setOccupationNumber )
+{
+  std::vector<double> occupation_number( 3 );
+  occupation_number[0] = 0.0;
+  occupation_number[1] = 0.5;
+  occupation_number[2] = 1.0;
+
+  epr_data_container.setOccupationNumber( 1, occupation_number );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getOccupationNumber( 1 ),
+		       occupation_number );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree scattering function momentum grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setWallerHartreeScatteringFunctionMomentumGrid )
+{
+  std::vector<double> momentum_grid( 4 );
+  momentum_grid[0] = 1e-30;
+  momentum_grid[1] = 1.0;
+  momentum_grid[2] = 10.0;
+  momentum_grid[3] = 1e8;
+
+  epr_data_container.setWallerHartreeScatteringFunctionMomentumGrid(
+							       momentum_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeScatteringFunctionMomentumGrid(),
+		       momentum_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree scattering function can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setWallerHartreeScatteringFunction )
+{
+  std::vector<double> scattering_function( 4 );
+  scattering_function[0] = 1e-30;
+  scattering_function[1] = 1e-3;
+  scattering_function[2] = 0.1;
+  scattering_function[3] = 1.0;
+
+  epr_data_container.setWallerHartreeScatteringFunction( scattering_function );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeScatteringFunction(),
+		       scattering_function );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree atomic form factor momentum grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setWallerHartreeAtomicFormFactorMomentumGrid )
+{
+  std::vector<double> momentum_grid( 4 );
+  momentum_grid[0] = 1e-30;
+  momentum_grid[1] = 1.0;
+  momentum_grid[2] = 10.0;
+  momentum_grid[3] = 1e8;
+
+  epr_data_container.setWallerHartreeAtomicFormFactorMomentumGrid(
+							       momentum_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeAtomicFormFactorMomentumGrid(),
+		       momentum_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree atmoic form factor can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setWallerHartreeAtomicFormFactor )
+{
+  std::vector<double> form_factor( 4 );
+  form_factor[0] = 1.0;
+  form_factor[1] = 1.0;
+  form_factor[2] = 0.3;
+  form_factor[3] = 1e-30;
+
+  epr_data_container.setWallerHartreeAtomicFormFactor( form_factor );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeAtomicFormFactor(),
+		       form_factor );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint photon energy grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointPhotonEnergyGrid )
+{
+  std::vector<double> adjoint_photon_energy_grid( 3 );
+  adjoint_photon_energy_grid[0] = 1e-3;
+  adjoint_photon_energy_grid[1] = 1.0;
+  adjoint_photon_energy_grid[2] = 20.0;
+
+  epr_data_container.setAdjointPhotonEnergyGrid( adjoint_photon_energy_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointPhotonEnergyGrid(),
+                       adjoint_photon_energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent max energy grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointWallerHartreeIncoherentMaxEnergyGrid )
+{
+  std::vector<std::vector<double> > max_energy_grid( 3 );
+  max_energy_grid[0].resize( 3 );
+  max_energy_grid[0][0] = 1.5e-3;
+  max_energy_grid[0][1] = 2.0;
+  max_energy_grid[0][2] = 20.2;
+
+  max_energy_grid[1].resize( 3 );
+  max_energy_grid[1][0] = 1.01;
+  max_energy_grid[1][1] = 5.0;
+  max_energy_grid[1][2] = 20.2;
+
+  max_energy_grid[2].resize( 2 );
+  max_energy_grid[2][0] = 20.1;
+  max_energy_grid[2][0] = 20.2;
+
+  epr_data_container.setAdjointWallerHartreeIncoherentMaxEnergyGrid( max_energy_grid );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(),
+                       max_energy_grid.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid()[0],
+                       max_energy_grid[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid()[1],
+                       max_energy_grid[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid()[2],
+                       max_energy_grid[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointWallerHartreeIncoherentCrossSection )
+{
+  std::vector<std::vector<double> > cross_section( 3 );
+  cross_section[0].resize( 3 );
+  cross_section[0][0] = 1e-6;
+  cross_section[0][1] = 0.5;
+  cross_section[0][2] = 2.5;
+
+  cross_section[1].resize( 3 );
+  cross_section[1][0] = 1e-6;
+  cross_section[1][1] = 1.5;
+  cross_section[1][2] = 5.0;
+
+  cross_section[2].resize( 2 );
+  cross_section[2][0] = 0.0;
+  cross_section[2][0] = 1e-6;
+
+  epr_data_container.setAdjointWallerHartreeIncoherentCrossSection( cross_section );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointWallerHartreeIncoherentCrossSection().size(),
+                       cross_section.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeIncoherentCrossSection()[0],
+                       cross_section[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeIncoherentCrossSection()[1],
+                       cross_section[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeIncoherentCrossSection()[2],
+                       cross_section[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell adjoint incoherent max energy grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid )
+{
+  std::vector<std::vector<double> > max_energy_grid( 3 );
+  max_energy_grid[0].resize( 3 );
+  max_energy_grid[0][0] = 1.5e-3;
+  max_energy_grid[0][1] = 2.0;
+  max_energy_grid[0][2] = 20.2;
+
+  max_energy_grid[1].resize( 3 );
+  max_energy_grid[1][0] = 1.01;
+  max_energy_grid[1][1] = 5.0;
+  max_energy_grid[1][2] = 20.2;
+
+  max_energy_grid[2].resize( 2 );
+  max_energy_grid[2][0] = 20.1;
+  max_energy_grid[2][0] = 20.2;
+
+  epr_data_container.setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1, max_energy_grid );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 ).size(),
+                       max_energy_grid.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 )[0],
+                       max_energy_grid[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 )[1],
+                       max_energy_grid[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 )[2],
+                       max_energy_grid[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell adjoint incoherent cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointImpulseApproxSubshellIncoherentCrossSection )
+{
+  std::vector<std::vector<double> > cross_section( 3 );
+  cross_section[0].resize( 3 );
+  cross_section[0][0] = 1e-6;
+  cross_section[0][1] = 0.5;
+  cross_section[0][2] = 2.5;
+
+  cross_section[1].resize( 3 );
+  cross_section[1][0] = 1e-6;
+  cross_section[1][1] = 1.5;
+  cross_section[1][2] = 5.0;
+
+  cross_section[2].resize( 2 );
+  cross_section[2][0] = 0.0;
+  cross_section[2][0] = 1e-6;
+
+  epr_data_container.setAdjointImpulseApproxSubshellIncoherentCrossSection( 1, cross_section );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 ).size(),
+                       cross_section.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 )[0],
+                       cross_section[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 )[1],
+                       cross_section[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 )[2],
+                       cross_section[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree coherent cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setWallerHartreeCoherentCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setAdjointWallerHartreeCoherentCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeCoherentCrossSection(),
+		       cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint pair production energy distribution grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointPairProductionEnergyDistributionGrid )
+{
+  std::vector<double> energy_dist_grid( 3 );
+  energy_dist_grid[0] = 1.02199782026;
+  energy_dist_grid[1] = 5.0;
+  energy_dist_grid[2] = 20.2;
+
+  epr_data_container.setAdjointPairProductionEnergyDistributionGrid( energy_dist_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointPairProductionEnergyDistributionGrid(),
+                       energy_dist_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint pair production energy distribution can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointPairProductionEnergyDistribution )
+{
+  std::vector<double> energy_dist( 3 );
+  energy_dist[0] = 0.0;
+  energy_dist[1] = 0.1;
+  energy_dist[2] = 10.0;
+
+  epr_data_container.setAdjointPairProductionEnergyDistribution( energy_dist );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointPairProductionEnergyDistribution(),
+                       energy_dist );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint pair production energy dist norm const grid can be
+// set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointPairProductionEnergyDistributionNormConstantGrid )
+{
+  std::vector<double> norm_const_grid( 3 );
+  norm_const_grid[0] = 1.02199782026;
+  norm_const_grid[1] = 5.0;
+  norm_const_grid[2] = 20.2;
+
+  epr_data_container.setAdjointPairProductionEnergyDistributionNormConstantGrid( norm_const_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointPairProductionEnergyDistributionNormConstantGrid(),
+                       norm_const_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint pair production energy dist norm constant can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointPairProductionEnergyDistributionNormConstant )
+{
+  std::vector<double> norm_const( 3 );
+  norm_const[0] = 0.0;
+  norm_const[1] = 10.0;
+  norm_const[2] = 50.0;
+
+  epr_data_container.setAdjointPairProductionEnergyDistributionNormConstant( norm_const );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointPairProductionEnergyDistributionNormConstant(),
+                       norm_const );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree total cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setWallerHatreeTotalCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setWallerHartreeTotalCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeTotalCrossSection(),
+		       cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the impulse approx. total cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setImpulseApproxTotalCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setImpulseApproxTotalCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getImpulseApproxTotalCrossSection(),
+		       cross_section );
 }
 
 //---------------------------------------------------------------------------//
@@ -826,8 +1210,27 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 		       1.361e-5 );
   
   // Photon Tests
-  TEST_ASSERT( !epr_data_container_copy.hasAdjointPhotonData() );
-
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumber( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunction().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPhotonEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistribution().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstantGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstant().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(), 3 );
+  
   // Electron Tests
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
@@ -967,8 +1370,28 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellBindingEnergy( 1 ),
 		       1.361e-5 );
 
-    TEST_ASSERT( !epr_data_container_copy.hasAdjointPhotonData() );
-
+  // Photon Tests
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumber( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunction().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPhotonEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistribution().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstantGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstant().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(), 3 );
+  
   // Electron Tests
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
@@ -1105,7 +1528,27 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellBindingEnergy( 1 ),
 		       1.361e-5 );
 
-    TEST_ASSERT( !epr_data_container_copy.hasAdjointPhotonData() );
+  // Photon Tests
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumber( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunction().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPhotonEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistribution().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstantGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstant().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(), 3 );
 
   // Electron Tests
   TEST_EQUALITY_CONST(
