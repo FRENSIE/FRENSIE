@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator.hpp
-//! \author Luke Kersting
+//! \author Luke Kersting, Alex Robinson
 //! \brief  The standard electron-photon-relaxation data generator class decl.
 //!
 //---------------------------------------------------------------------------//
@@ -20,8 +20,7 @@
 #include "DataGen_AdjointElectronCrossSectionEvaluator.hpp"
 #include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
-#include "Data_ENDLDataContainer.hpp"
-#include "Data_XSSEPRDataExtractor.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
@@ -40,22 +39,33 @@ public:
   typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> 
     BremsstrahlungReaction;
 
-  //! Constructor
+  //! Advanced Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
-        const unsigned atomic_number,
-        const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
-        const std::shared_ptr<const Data::ENDLDataContainer>& forward_endl_data,
-        const double min_photon_energy,
-        const double max_photon_energy,
-        const double min_electron_energy,
-        const double max_electron_energy,
-        const double cutoff_angle_cosine = 1.0,
-        const unsigned number_of_moment_preserving_angles = 0,
-        const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
-        const double adjoint_electroionization_evaluation_tolerance = 0.001,
-        const double grid_convergence_tol = 0.001,
-        const double grid_absolute_diff_tol = 1e-13,
-        const double grid_distance_tol = 1e-13 );
+      const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
+      forward_epr_data,
+      const double min_photon_energy,
+      const double max_photon_energy,
+      const double min_electron_energy,
+      const double max_electron_energy,
+      const double cutoff_angle_cosine = 1.0,
+      const unsigned number_of_moment_preserving_angles = 0,
+      const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
+      const double adjoint_electroionization_evaluation_tolerance = 1e-5,
+      const double grid_convergence_tol = 0.001,
+      const double grid_absolute_diff_tol = 1e-13,
+      const double grid_distance_tol = 1e-13 );
+
+  //! Basic Constructor
+  StandardAdjointElectronPhotonRelaxationDataGenerator(
+      const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
+      forward_epr_data,
+      const double cutoff_angle_cosine = 1.0,
+      const unsigned number_of_moment_preserving_angles = 0,
+      const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
+      const double adjoint_electroionization_evaluation_tolerance = 1e-5,
+      const double grid_convergence_tol = 0.001,
+      const double grid_absolute_diff_tol = 1e-13,
+      const double grid_distance_tol = 1e-13 );
 
   //! Destructor
   ~StandardAdjointElectronPhotonRelaxationDataGenerator()
@@ -73,15 +83,15 @@ public:
 
 protected:
 
-  // Set the adjoint atomic data
+  //! Set the adjoint atomic data
   void setAdjointRelaxationData(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Set the adjoint photon data
+  //! Set the adjoint photon data
   void setAdjointPhotonData(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Set the adjoint electron data
+  //! Set the adjoint electron data
   void setAdjointElectronData(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
@@ -208,11 +218,9 @@ private:
   // The minimum tabulated energy loss
   static const double s_min_tabulated_energy_loss;
 
-  // The ACE forward data
-  std::shared_ptr<const Data::XSSEPRDataExtractor> d_ace_epr_data;
-
-  // The EDNL forward epr data
-  std::shared_ptr<const Data::ENDLDataContainer> d_forward_endl_data;
+  // The forward data
+  std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
+  d_forward_epr_data;
 
   // The min photon energy
   double d_min_photon_energy;
@@ -272,14 +280,6 @@ inline bool StandardAdjointElectronPhotonRelaxationDataGenerator::notEqualZero(
 }
 
 } // end DataGen namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end DATA_GEN_STANDARD_ADJOINT_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 

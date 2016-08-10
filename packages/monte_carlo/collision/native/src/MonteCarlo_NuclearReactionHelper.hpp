@@ -10,14 +10,11 @@
 #define MONTE_CARLO_NUCLEAR_REACTION_HELPER_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
-#include "MonteCarlo_PhotonState.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_NuclearReactionHelper.hpp"
 
 namespace MonteCarlo{
 

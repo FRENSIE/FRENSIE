@@ -24,6 +24,8 @@
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_DataContainerHelpers.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_SearchAlgorithms.hpp"
+#include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Data{
@@ -146,10 +148,174 @@ bool AdjointElectronPhotonRelaxationDataContainer::hasAdjointRelaxationData() co
 // GET PHOTON DATA
 //---------------------------------------------------------------------------//
 
-// Return if there is relaxation data
-bool AdjointElectronPhotonRelaxationDataContainer::hasAdjointPhotonData() const
+// Return the Compton profile momentum grid
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getComptonProfileMomentumGrid(
+                                                const unsigned subshell ) const
 {
-  return false;
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                    d_subshells.end() );
+
+  return d_compton_profile_momentum_grids.find( subshell )->second;
+}
+
+// Return the Compton profile for a subshell
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getComptonProfile(
+                                                const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                   d_subshells.end() );
+
+  return d_compton_profiles.find( subshell )->second;
+}
+
+// Return the occupation number momentum grid
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getOccupationNumberMomentumGrid(
+					        const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                    d_subshells.end() );
+
+  return d_occupation_number_momentum_grids.find( subshell )->second;
+}
+
+// Return the occupation number for a subshell
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getOccupationNumber(
+					        const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                    d_subshells.end() );
+
+  return d_occupation_numbers.find( subshell )->second;
+}
+
+// Return the Waller-Hartree scattering function momentum grid
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeScatteringFunctionMomentumGrid() const
+{
+  return d_waller_hartree_scattering_function_momentum_grid;
+}
+
+// Return the Waller-Hartree scattering function
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeScatteringFunction() const
+{
+  return d_waller_hartree_scattering_function;
+}
+
+// Return the Waller-Hartree atomic form factor momentum grid
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeAtomicFormFactorMomentumGrid() const
+{
+  return d_waller_hartree_atomic_form_factor_momentum_grid;
+}
+
+// Return the Waller-Hartree atomic form factor
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeAtomicFormFactor() const
+{
+  return d_waller_hartree_atomic_form_factor;
+}
+
+// Return the adjoint photon energy grid
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointPhotonEnergyGrid() const
+{
+  return d_adjoint_photon_energy_grid;
+}
+
+// Return the adjoint Waller-Hartree (WH) incoherent photon max energy grid
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointWallerHartreeIncoherentMaxEnergyGrid() const
+{
+  return d_adjoint_waller_hartree_incoherent_max_energy_grid;
+}
+
+// Return the adjoint Waller-Hartree (WH) incoherent photon cross section
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointWallerHartreeIncoherentCrossSection() const
+{
+  return d_adjoint_waller_hartree_incoherent_cross_section;
+}
+
+// Return the subshell adjoint impulse approx. (IA) incoh. max energy grid
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
+                                                const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                    d_subshells.end() );
+
+  return d_adjoint_impulse_approx_subshell_incoherent_max_energy_grids.find( subshell )->second;
+}
+
+// Return the subshell adjoint impulse approx. (IA) incoherent photon cs
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxSubshellIncoherentCrossSection(
+                                                const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                    d_subshells.end() );
+
+  return d_adjoint_impulse_approx_subshell_incoherent_cross_sections.find( subshell )->second;
+}
+
+// Return the adjoint Waller-Hartree coherent cross section
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointWallerHartreeCoherentCrossSection() const
+{
+  return d_waller_hartree_coherent_cross_section;
+}
+
+// Return the adjoint pair production energy distribution grid
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDistributionGrid() const
+{
+  return d_adjoint_pair_production_energy_distribution_grid;
+}
+
+// Return the adjoint pair production energy distribution
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDistribution() const
+{
+  return d_adjoint_pair_production_energy_distribution;
+}
+
+// Return the adjoint pair production energy dist. norm grid
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDistributionNormConstantGrid() const
+{
+  return d_adjoint_pair_production_norm_constant_grid;
+}
+
+// Return the adjoint pair production energy dist. normalization constant
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDistributionNormConstant() const
+{
+  return d_adjoint_pair_production_norm_constant;
+}
+
+// Return the (forward) Waller-Hartree total cross section
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeTotalCrossSection() const
+{
+  return d_waller_hartree_total_cross_section;
+}
+
+// Return the (forward) impulse approx. total cross section
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getImpulseApproxTotalCrossSection() const
+{
+  return d_impulse_approx_total_cross_section;
 }
 
 //---------------------------------------------------------------------------//
@@ -595,6 +761,281 @@ void AdjointElectronPhotonRelaxationDataContainer::setSubshellBindingEnergy(
 // SET PHOTON DATA
 //---------------------------------------------------------------------------//
 
+// Set the Compton profile momentum grid for a subshell
+void AdjointElectronPhotonRelaxationDataContainer::setComptonProfileMomentumGrid(
+                     const unsigned subshell,
+                     const std::vector<double>& compton_profile_momentum_grid )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the momentum grid is valid
+  testPrecondition( compton_profile_momentum_grid.size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+				       compton_profile_momentum_grid.begin(),
+				       compton_profile_momentum_grid.end() ) );
+  testPrecondition( compton_profile_momentum_grid.front() == -1.0 );
+
+  d_compton_profile_momentum_grids[subshell] = compton_profile_momentum_grid;
+}
+
+// Set the Compton profile for a subshell
+void AdjointElectronPhotonRelaxationDataContainer::setComptonProfile(
+                                   const unsigned subshell,
+                                   const std::vector<double>& compton_profile )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the compton_profile is valid
+  testPrecondition( compton_profile.size() ==
+		    d_compton_profile_momentum_grids.find( subshell )->second.size() );
+  testPreconditionValuesGreaterThanZero( compton_profile );
+
+  d_compton_profiles[subshell] = compton_profile;
+}
+
+// Set the occupation number momentum grid for a subshell
+void AdjointElectronPhotonRelaxationDataContainer::setOccupationNumberMomentumGrid(
+                   const unsigned subshell,
+                   const std::vector<double>& occupation_number_momentum_grid )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the occupation number momentum grid is valid
+  testPrecondition( occupation_number_momentum_grid.size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+					occupation_number_momentum_grid.begin(),
+					occupation_number_momentum_grid.end()));
+  testPrecondition( occupation_number_momentum_grid.front() == -1.0 );
+
+  d_occupation_number_momentum_grids[subshell] = occupation_number_momentum_grid;
+}
+
+// Set the occupation number for a subshell
+void AdjointElectronPhotonRelaxationDataContainer::setOccupationNumber(
+                                 const unsigned subshell,
+                                 const std::vector<double>& occupation_number )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the occupation number is valid
+  testPrecondition( occupation_number.size() ==
+		    d_occupation_number_momentum_grids.find( subshell )->second.size() );
+  testPrecondition( occupation_number.front() == 0.0 );
+  testPrecondition( occupation_number.back() <= 1.0 );
+
+  d_occupation_numbers[subshell] = occupation_number;
+}
+
+// Set the Waller-Hartree scattering function momentum grid
+void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunctionMomentumGrid(
+                                     const std::vector<double>& momentum_grid )
+{
+  // Make sure the momentum grid is valid
+  testPrecondition( momentum_grid.size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending( momentum_grid.begin(),
+						      momentum_grid.end() ) );
+  testPreconditionValuesGreaterThanOrEqualToZero( momentum_grid );
+
+  d_waller_hartree_scattering_function_momentum_grid = momentum_grid;
+}
+
+// Set the Waller-Hartree scattering function
+void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunction(
+                               const std::vector<double>& scattering_function )
+{
+  // Make sure the scattering function is valid
+  testPrecondition( scattering_function.size() ==
+		    d_waller_hartree_scattering_function_momentum_grid.size());
+  testPrecondition( scattering_function.front() >= 0.0 );
+  testPrecondition( scattering_function.back() == d_atomic_number );
+
+  d_waller_hartree_scattering_function = scattering_function;
+}
+
+// Set the Waller-Hartree atomic form factor momentum grid
+void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactorMomentumGrid(
+                                     const std::vector<double>& momentum_grid )
+{
+  // Make sure the momentum grid is valid
+  testPrecondition( momentum_grid.size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending( momentum_grid.begin(),
+						      momentum_grid.end() ) );
+  testPreconditionValuesGreaterThanOrEqualToZero( momentum_grid );
+
+  d_waller_hartree_atomic_form_factor_momentum_grid = momentum_grid;
+}
+
+// Set the Waller-Hartree atomic form factor
+void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactor(
+                                const std::vector<double>& atomic_form_factor )
+{
+  // Make sure the atomic form factor is valid
+  testPrecondition( atomic_form_factor.size() ==
+		    d_waller_hartree_atomic_form_factor_momentum_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending(
+						 atomic_form_factor.rbegin(),
+						 atomic_form_factor.rend() ) );
+  testPrecondition( atomic_form_factor.front() == d_atomic_number );
+  testPrecondition( atomic_form_factor.back() >= 0.0 );
+
+  d_waller_hartree_atomic_form_factor = atomic_form_factor;
+}
+
+// Set the adjoint photon energy grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointPhotonEnergyGrid(
+                                       const std::vector<double>& energy_grid )
+{
+  // Make sure the energy grid is valid
+  testPreconditionEnergyGrid( energy_grid );
+
+  d_adjoint_photon_energy_grid = energy_grid;
+}
+
+// Set the adjoint WH incoherent photon max energy grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointWallerHartreeIncoherentMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid )
+{
+  // Make sure the max energy grid is valid
+  testPrecondition( adjoint_incoherent_max_energy_grid.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_waller_hartree_incoherent_max_energy_grid =
+    adjoint_incoherent_max_energy_grid;
+}
+
+// Set the adjoint WH incoherent photon cross section
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointWallerHartreeIncoherentCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section )
+{
+  // Make sure the cross section is valid
+  testPrecondition( adjoint_incoherent_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_waller_hartree_incoherent_cross_section =
+    adjoint_incoherent_cross_section;
+}
+
+// Set the subshell adjoint IA incoherent photon max energy grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
+                                       const unsigned subshell,
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the max energy grid is valid
+  testPrecondition( adjoint_incoherent_max_energy_grid.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_impulse_approx_subshell_incoherent_max_energy_grids[subshell] =
+    adjoint_incoherent_max_energy_grid;
+}
+
+// Set the subshell adjoint IA incoherent photon cross section
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxSubshellIncoherentCrossSection(
+                                       const unsigned subshell,
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the cross section is valid
+  testPrecondition( adjoint_incoherent_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_impulse_approx_subshell_incoherent_cross_sections[subshell] =
+    adjoint_incoherent_cross_section;
+}
+
+// Set the adjoint Waller-Hartree coherent cross section
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointWallerHartreeCoherentCrossSection(
+                            const std::vector<double>& coherent_cross_section )
+{
+  // Make sure the coherent cross section is valid
+  testPrecondition( coherent_cross_section.size() ==
+		    d_adjoint_photon_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( coherent_cross_section );
+
+  d_waller_hartree_coherent_cross_section = coherent_cross_section;
+}
+
+// Set the adjoint pair production energy distribution grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistributionGrid(
+          const std::vector<double>& adjoint_pair_production_energy_dist_grid )
+{
+  // Make sure the energy distribution grid is valid
+  testPreconditionEnergyGrid( adjoint_pair_production_energy_dist_grid );
+
+  d_adjoint_pair_production_energy_distribution_grid =
+    adjoint_pair_production_energy_dist_grid;
+}
+
+// Set the adjoint pair production energy distribution
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistribution(
+               const std::vector<double>& adjoint_pair_production_energy_dist )
+{
+  // Make sure the energy distribution grid is valid
+  testPrecondition( adjoint_pair_production_energy_dist.size() ==
+                    d_adjoint_pair_production_energy_distribution_grid.size());
+
+  d_adjoint_pair_production_energy_distribution =
+    adjoint_pair_production_energy_dist;
+}
+
+// Set the adjoint pair production energy dist. norm constant grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistributionNormConstantGrid(
+                          const std::vector<double>&
+                          adjoint_pair_production_energy_dist_norm_const_grid )
+{
+  // Make sure the energy distribution grid is valid
+  testPreconditionEnergyGrid( adjoint_pair_production_energy_dist_norm_const_grid );
+  
+  d_adjoint_pair_production_norm_constant_grid =
+    adjoint_pair_production_energy_dist_norm_const_grid;
+}
+
+// Set the adjoint pair production energy dist. norm constant
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistributionNormConstant(
+                               const std::vector<double>&
+                               adjoint_pair_production_energy_dist_norm_const )
+{
+  // Make sure the energy dist. norm constant is valid
+  testPrecondition( adjoint_pair_production_energy_dist_norm_const.size() ==
+                    d_adjoint_pair_production_norm_constant_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending(
+                      adjoint_pair_production_energy_dist_norm_const.begin(),
+                      adjoint_pair_production_energy_dist_norm_const.end() ) );
+
+  d_adjoint_pair_production_norm_constant =
+    adjoint_pair_production_energy_dist_norm_const;
+}
+
+// Set the (forward) Waller-Hartree total cross section
+void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection(
+                               const std::vector<double>& total_cross_section )
+{
+  // Make sure the total cross section is valid
+  testPrecondition( total_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( total_cross_section );
+
+  d_waller_hartree_total_cross_section = total_cross_section;
+}
+
+// Set the (forward) impulse apprx. total cross section
+void AdjointElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
+                               const std::vector<double>& total_cross_section )
+{
+  // Make sure the total cross section is valid
+  testPrecondition( total_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( total_cross_section );
+
+  d_impulse_approx_total_cross_section = total_cross_section;
+}
+  
 //---------------------------------------------------------------------------//
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//

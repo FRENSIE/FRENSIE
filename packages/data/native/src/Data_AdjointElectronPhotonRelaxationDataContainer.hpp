@@ -100,8 +100,81 @@ public:
 // GET PHOTON DATA
 //---------------------------------------------------------------------------//
 
-  //! Return if there is adjoint photon data
-  bool hasAdjointPhotonData() const;
+  //! Return the Compton profile momentum grid
+  const std::vector<double>& getComptonProfileMomentumGrid(
+                                               const unsigned subshell ) const;
+
+  //! Return the Compton profile for a subshell
+  const std::vector<double>& getComptonProfile(const unsigned subshell ) const;
+
+  //! Return the occupation number momentum grid
+  const std::vector<double>& getOccupationNumberMomentumGrid(
+					       const unsigned subshell ) const;
+
+  //! Return the occupation number for a subshell
+  const std::vector<double>& getOccupationNumber(
+					       const unsigned subshell ) const;
+
+  //! Return the Waller-Hartree scattering function momentum grid
+  const std::vector<double>&
+  getWallerHartreeScatteringFunctionMomentumGrid() const;
+
+  //! Return the Waller-Hartree scattering function
+  const std::vector<double>& getWallerHartreeScatteringFunction() const;
+
+  //! Return the Waller-Hartree atomic form factor momentum grid
+  const std::vector<double>&
+  getWallerHartreeAtomicFormFactorMomentumGrid() const;
+
+  //! Return the Waller-Hartree atomic form factor
+  const std::vector<double>& getWallerHartreeAtomicFormFactor() const;
+
+  //! Return the adjoint photon energy grid
+  const std::vector<double>& getAdjointPhotonEnergyGrid() const;
+
+  //! Return the adjoint Waller-Hartree (WH) incoherent photon max energy grid
+  const std::vector<std::vector<double> >&
+  getAdjointWallerHartreeIncoherentMaxEnergyGrid() const;
+
+  //! Return the adjoint Waller-Hartree (WH) incoherent photon cross section
+  const std::vector<std::vector<double> >&
+  getAdjointWallerHartreeIncoherentCrossSection() const;
+
+  //! Return the subshell adjoint impulse approx. (IA) incoh. max energy grid
+  const std::vector<std::vector<double> >&
+  getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
+                                               const unsigned subshell ) const;
+
+  //! Return the subshell adjoint impulse approx. (IA) incoherent photon cs
+  const std::vector<std::vector<double> >&
+  getAdjointImpulseApproxSubshellIncoherentCrossSection(
+                                               const unsigned subshell ) const;
+
+  //! Return the adjoint Waller-Hartree coherent cross section
+  const std::vector<double>&
+  getAdjointWallerHartreeCoherentCrossSection() const;
+
+  //! Return the adjoint pair production energy distribution grid
+  const std::vector<double>&
+  getAdjointPairProductionEnergyDistributionGrid() const;
+
+  //! Return the adjoint pair production energy distribution
+  const std::vector<double>&
+  getAdjointPairProductionEnergyDistribution() const;
+
+  //! Return the adjoint pair production energy dist. norm grid
+  const std::vector<double>&
+  getAdjointPairProductionEnergyDistributionNormConstantGrid() const;
+
+  //! Return the adjoint pair production energy dist. normalization constant
+  const std::vector<double>&
+  getAdjointPairProductionEnergyDistributionNormConstant() const;
+
+  //! Return the (forward) Waller-Hartree total cross section
+  const std::vector<double>& getWallerHartreeTotalCrossSection() const;
+
+  //! Return the (forward) impulse approx. total cross section
+  const std::vector<double>& getImpulseApproxTotalCrossSection() const;
 
 //---------------------------------------------------------------------------//
 // GET ELECTRON DATA
@@ -285,6 +358,95 @@ protected:
 // SET PHOTON DATA
 //---------------------------------------------------------------------------//
 
+  //! Set the Compton profile momentum grid for a subshell
+  void setComptonProfileMomentumGrid(
+                    const unsigned subshell,
+                    const std::vector<double>& compton_profile_momentum_grid );
+
+  //! Set the Compton profile  for a subshell
+  void setComptonProfile( const unsigned subshell,
+                          const std::vector<double>& compton_profile );
+
+  //! Set the occupation number momentum grid for a subshell
+  void setOccupationNumberMomentumGrid(
+                  const unsigned subshell,
+                  const std::vector<double>& occupation_number_momentum_grid );
+
+  //! Set the occupation number for a subshell
+  void setOccupationNumber( const unsigned subshell,
+                            const std::vector<double>& occupation_number );
+
+  //! Set the Waller-Hartree scattering function momentum grid
+  void setWallerHartreeScatteringFunctionMomentumGrid(
+                                    const std::vector<double>& momentum_grid );
+
+  //! Set the Waller-Hartree scattering function
+  void setWallerHartreeScatteringFunction(
+                              const std::vector<double>& scattering_function );
+
+  //! Set the Waller-Hartree atomic form factor momentum grid
+  void setWallerHartreeAtomicFormFactorMomentumGrid(
+                                    const std::vector<double>& momentum_grid );
+
+  //! Set the Waller-Hartree atomic form factor
+  void setWallerHartreeAtomicFormFactor(
+                               const std::vector<double>& atomic_form_factor );
+
+  //! Set the adjoint photon energy grid
+  void setAdjointPhotonEnergyGrid( const std::vector<double>& energy_grid );
+
+  //! Set the adjoint WH incoherent photon max energy grid
+  void setAdjointWallerHartreeIncoherentMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid );
+
+  //! Set the adjoint WH incoherent photon cross section
+  void setAdjointWallerHartreeIncoherentCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section );
+
+  //! Set the subshell adjoint IA incoherent photon max energy grid
+  void setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
+                                       const unsigned subshell,
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid );
+
+  //! Set the subshell adjoint IA incoherent photon cross section
+  void setAdjointImpulseApproxSubshellIncoherentCrossSection(
+                                       const unsigned subshell,
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section );
+
+  //! Set the adjoint Waller-Hartree coherent cross section
+  void setAdjointWallerHartreeCoherentCrossSection(
+                           const std::vector<double>& coherent_cross_section );
+
+  //! Set the adjoint pair production energy distribution grid
+  void setAdjointPairProductionEnergyDistributionGrid(
+          const std::vector<double>& ajoint_pair_production_energy_dist_grid );
+
+  //! Set the adjoint pair production energy distribution
+  void setAdjointPairProductionEnergyDistribution(
+              const std::vector<double>& adjoint_pair_production_energy_dist );
+
+  //! Set the adjoint pair production energy dist. norm constant grid
+  void setAdjointPairProductionEnergyDistributionNormConstantGrid(
+                         const std::vector<double>&
+                         adjoint_pair_production_energy_dist_norm_const_grid );
+
+  //! Set the adjoint pair production energy dist. norm constant
+  void setAdjointPairProductionEnergyDistributionNormConstant(
+                         const std::vector<double>&
+                         adjoint_pair_production_energy_dist_norm_const );
+
+  //! Set the (forward) Waller-Hartree total cross section
+  void setWallerHartreeTotalCrossSection(
+                              const std::vector<double>& total_cross_section );
+
+  //! Set the (forward) impulse apprx. total cross section
+  void setImpulseApproxTotalCrossSection(
+                              const std::vector<double>& total_cross_section );
+  
 //---------------------------------------------------------------------------//
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
@@ -509,6 +671,70 @@ private:
 // PHOTON DATA
 //---------------------------------------------------------------------------//
 
+  // The Compton profile momentum grids (me*c units)
+  std::map<unsigned,std::vector<double> > d_compton_profile_momentum_grids;
+
+  // The Compton profiles ((me*c)^-1 units)
+  std::map<unsigned,std::vector<double> > d_compton_profiles;
+
+  // The occupation number momentum grids (me*c units)
+  std::map<unsigned,std::vector<double> > d_occupation_number_momentum_grids;
+
+  // The subshell occupation numbers
+  std::map<unsigned,std::vector<double> > d_occupation_numbers;
+
+  // The Waller-Hartree scattering function momentum grid (1/cm)
+  std::vector<double> d_waller_hartree_scattering_function_momentum_grid;
+
+  // The Waller-Hartree scattering function
+  std::vector<double> d_waller_hartree_scattering_function;
+
+  // The Waller-Hartree atomic form factor momentum grid (1/cm)
+  std::vector<double> d_waller_hartree_atomic_form_factor_momentum_grid;
+
+  // The Waller-Hartree atomic form factor
+  std::vector<double> d_waller_hartree_atomic_form_factor;
+
+  // The adjoint photon energy grid (MeV)
+  std::vector<double> d_adjoint_photon_energy_grid;
+
+  // The Waller-Hartree incoherent adjoint photon max energy grid (MeV)
+  std::vector<std::vector<double> >
+  d_adjoint_waller_hartree_incoherent_max_energy_grid;
+
+  // The Waller-Hartree incoherent adjoint photon cross section (b)
+  std::vector<std::vector<double> >
+  d_adjoint_waller_hartree_incoherent_cross_section;
+
+  // The impulse approx. subshell incoh. adjoint photon max energy grid (MeV)
+  std::map<unsigned,std::vector<std::vector<double> > >
+  d_adjoint_impulse_approx_subshell_incoherent_max_energy_grids;
+
+  // The impulse approx. subshell incoherent adjoint photon cross section (b)
+  std::map<unsigned,std::vector<std::vector<double> > >
+  d_adjoint_impulse_approx_subshell_incoherent_cross_sections;
+
+  // The Waller-Hartree coherent cross section (b)
+  std::vector<double> d_waller_hartree_coherent_cross_section;
+
+  // The adjoint pair production energy distribution grid (MeV)
+  std::vector<double> d_adjoint_pair_production_energy_distribution_grid;
+
+  // The adjoint pair production energy distribution (b)
+  std::vector<double> d_adjoint_pair_production_energy_distribution;
+
+  // The adjoint pair production energy distribution norm constant grid (MeV)
+  std::vector<double> d_adjoint_pair_production_norm_constant_grid;
+
+  // The adjoint pair production energy distribution norm constant (b)
+  std::vector<double> d_adjoint_pair_production_norm_constant;
+
+  // The (forward) Waller-Hartree total cross section (b)
+  std::vector<double> d_waller_hartree_total_cross_section;
+
+  // The (forward) impulse approx. total cross section (b)
+  std::vector<double> d_impulse_approx_total_cross_section;
+  
 //---------------------------------------------------------------------------//
 // ELECTRON DATA
 //---------------------------------------------------------------------------//

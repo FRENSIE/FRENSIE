@@ -435,7 +435,7 @@
 			</second>
 		</item>
 	</compton_profile_momentum_grids>
-	<comton_profiles>
+	<compton_profiles>
 		<count>4</count>
 		<item_version>0</item_version>
 		<item>
@@ -718,7 +718,7 @@
 				<item>2.46239765051693239e-13</item>
 			</second>
 		</item>
-	</comton_profiles>
+	</compton_profiles>
 	<occupation_number_momentum_grids>
 		<count>4</count>
 		<item_version>0</item_version>
@@ -14297,7 +14297,7 @@
 			</second>
 		</item>
 	</impulse_approx_subshell_incoherent_cross_sections>
-	<d_impulse_approx_subshell_incoherent_cross_section_theshold_indices>
+	<impulse_approx_subshell_incoherent_cross_section_threshold_indices>
 		<count>4</count>
 		<item_version>0</item_version>
 		<item>
@@ -14316,7 +14316,7 @@
 			<first>4</first>
 			<second>0</second>
 		</item>
-	</d_impulse_approx_subshell_incoherent_cross_section_theshold_indices>
+	</impulse_approx_subshell_incoherent_cross_section_threshold_indices>
 	<waller_hartree_coherent_cross_section>
 		<count>775</count>
 		<item_version>0</item_version>
