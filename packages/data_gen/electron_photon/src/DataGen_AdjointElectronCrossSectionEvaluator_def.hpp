@@ -90,11 +90,10 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
   long double cross_section = 0.0L;
 
   // Create boost rapper function for the adjoint electroatomic differential cross section
-  boost::function<double (unsigned x, double y)> diff_adjoint_cs_wrapper =
+  boost::function<double (double y)> diff_adjoint_cs_wrapper =
     boost::bind( &ConstElectroatomicReaction::getDifferentialCrossSection,
                          boost::cref( *d_electroatomic_reaction ),
                          _1,
-                         _2,
                          incoming_adjoint_energy );
 
   long double cross_section_k, abs_error;
@@ -114,10 +113,24 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
   {
     cross_section_k = 0.0L;
     abs_error = 0.0L;
+/*
+    // For inelastic interactions the minimum tabulated energy loss is 1.0e-7
+    double min_tabulated_energy_loss;
 
+    if ( incoming_adjoint_energy - d_integration_points[start_index] >= min_tabulated_energy_loss )
+    {
+      integrator.integrateAdaptively<15>(
+            diff_adjoint_cs_wrapper,
+            (long double)incoming_adjoint_energy + min_tabulated_energy_loss,
+            (long double)d_integration_points[start_index],
+            cross_section_k,
+            abs_error );
+
+      cross_section += cross_section_k;
+    }
+*/
     integrator.integrateAdaptively<15>(
         diff_adjoint_cs_wrapper,
-        start_index-1,
         (long double)incoming_adjoint_energy,
         (long double)d_integration_points[start_index],
         cross_section_k,
@@ -140,7 +153,6 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
 
     integrator.integrateAdaptively<15>(
         diff_adjoint_cs_wrapper,
-        lower_bin_index,
         (long double)d_integration_points[start_index-1],
         (long double)d_integration_points[start_index],
         cross_section_k,

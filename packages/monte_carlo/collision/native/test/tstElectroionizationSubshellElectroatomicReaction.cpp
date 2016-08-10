@@ -31,6 +31,8 @@
 std::shared_ptr<MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin> >
     ace_first_subshell_reaction, ace_last_subshell_reaction;
 
+double max_ionization_subshell_adjoint_energy;
+
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
@@ -222,6 +224,45 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         1.605436200739700E-05,
         1e-12 );
 
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        1.0E+05,
+        1.0e-7 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        888.104518382663,
+        1e-12 );
+
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        1.0E+05,
+        max_ionization_subshell_adjoint_energy );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        888.104518382663,
+        1e-12 );
+
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        1.0E+05,
+        1.0e-7-1.0e-10 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        0.0,
+        1e-12 );
+
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+        1.0E+05,
+        max_ionization_subshell_adjoint_energy+1.0e-10 );
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+        diff_cross_section,
+        0.0,
+        1e-12 );
 
   // Test the efficient method
   diff_cross_section =
@@ -442,6 +483,11 @@ int main( int argc, char** argv )
       new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                                            first_subshell_function,
                                            binding_energies[first_subshell] ) );
+
+  double binding_energy = binding_energies[first_subshell];
+
+  // Set the max allowed adjoint energy
+  max_ionization_subshell_adjoint_energy = 9.99999117099E+04;
 
   // Create the reaction
   ace_first_subshell_reaction.reset(

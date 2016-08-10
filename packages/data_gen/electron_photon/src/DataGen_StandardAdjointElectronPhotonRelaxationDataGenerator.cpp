@@ -29,8 +29,8 @@
 namespace DataGen{
 
 // Initialize the static member data
-const double StandardAdjointElectronPhotonRelaxationDataGenerator::s_threshold_energy_nudge_factor = 1.0e-5;
-
+const double StandardAdjointElectronPhotonRelaxationDataGenerator::s_threshold_energy_nudge_factor = 1.0001;
+const double StandardAdjointElectronPhotonRelaxationDataGenerator::s_min_tabulated_energy_loss = 1.0e-7;
 // Constructor
 StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPhotonRelaxationDataGenerator(
         const unsigned atomic_number,
@@ -385,6 +385,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   std::cout.flush();
 
 
+  std::map<unsigned,std::list<double> >
+    old_adjoint_electroionization_union_energy_grid;
+
+  std::map<unsigned,std::vector<double> > old_adjoint_electroionization_cs;
+
   std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
 
   // Loop through electroionization evaluator for every subshell
@@ -397,9 +402,43 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     	   _1,
          d_adjoint_electroionization_evaluation_tolerance );
 
-std::cout << "*shell = " << *shell << std::endl;
-    union_energy_grid_generator.generateInPlace( union_energy_grid,
-                                                 grid_function );
+    double binding_energy = data_container.getSubshellBindingEnergy( *shell );
+
+    it =  Utility::Search::binaryLowerBound(
+        union_energy_grid.begin(),
+        union_energy_grid.end(),
+        d_max_electron_energy - binding_energy - 1.0e-7 );
+
+std::cout << std::endl << "*shell = " << *shell << std::endl;
+std::cout << "union_energy_grid.size() = " << union_energy_grid.size() << std::endl;
+  temp_union_energy_grid.splice(
+    temp_union_energy_grid.begin(), union_energy_grid, union_energy_grid.begin(), it );
+
+std::cout << "temp_union_energy_grid.size() = " << temp_union_energy_grid.size() << std::endl;
+std::cout << "spliced union_energy_grid.size() = " << union_energy_grid.size() << std::endl;
+
+    union_energy_grid_generator.generateAndEvaluateInPlace(
+      temp_union_energy_grid,
+      old_adjoint_electroionization_cs[*shell],
+      grid_function );
+
+    old_adjoint_electroionization_union_energy_grid[*shell] =
+      temp_union_energy_grid;
+
+std::cout << "new temp_union_energy_grid.size() = " << temp_union_energy_grid.size() << std::endl;
+
+    // If needed add the max electron energy
+    if ( old_adjoint_electroionization_union_energy_grid[*shell].back() < d_max_electron_energy )
+    {
+      old_adjoint_electroionization_union_energy_grid[*shell].push_back(
+        d_max_electron_energy );
+      old_adjoint_electroionization_cs[*shell].push_back( 0.0 );
+    }
+
+    union_energy_grid.merge( temp_union_energy_grid );
+
+std::cout << "new union_energy_grid.size() = " << union_energy_grid.size() << std::endl;
+
     std::cout << ".";
     std::cout.flush();
   }
@@ -410,6 +449,10 @@ std::cout << "*shell = " << *shell << std::endl;
   std::vector<double> energy_grid(
         union_energy_grid.begin(),
         union_energy_grid.end() );
+
+std::cout << "union_energy_grid.size() = " << union_energy_grid.size() << std::endl;
+std::cout << "energy_grid.size() = " << energy_grid.size() << std::endl;
+
 
   data_container.setAdjointElectronEnergyGrid( energy_grid );
 
@@ -504,6 +547,32 @@ std::cout << "*shell = " << *shell << std::endl;
   data_container.setAdjointBremsstrahlungCrossSectionThresholdEnergyIndex( threshold );
   std::cout << "done." << std::endl;
 
+  // Set the adjoint electroionization subshell cross section data
+  std::cout << "   Setting the adjoint electroionization subshell cross section...";
+  std::cout.flush();
+
+  // Loop through the electroionization subshells
+  shell = data_container.getSubshells().begin();
+  for ( shell; shell != data_container.getSubshells().end(); shell++ )
+  {
+    this->createAdjointCrossSectionOnUnionEnergyGrid(
+        union_energy_grid,
+        old_adjoint_electroionization_union_energy_grid[*shell],
+        old_adjoint_electroionization_cs[*shell],  
+        adjoint_electroionization_cs_evaluators[*shell],
+        d_adjoint_electroionization_evaluation_tolerance,
+        cross_section,
+        threshold );
+
+    data_container.setAdjointElectroionizationCrossSection(
+      *shell,
+      cross_section );
+
+    data_container.setAdjointElectroionizationCrossSectionThresholdEnergyIndex(
+      *shell,
+      threshold );
+  }
+  std::cout << "done." << std::endl;
 
 //---------------------------------------------------------------------------//
 // Set Elastic Data
@@ -977,92 +1046,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSec
 
   threshold_index = std::distance( raw_cross_section.begin(), start );
 }
-/*
-// Create the cross section on the union energy grid
-void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSectionOnUnionEnergyGrid(
-   const std::list<double>& union_energy_grid,
-   const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
-        adjoint_bremsstrahlung_cs_evaluator,
-   std::vector<double>& cross_section,
-   unsigned& threshold_index ) const
-{
-  std::vector<double> raw_cross_section( union_energy_grid.size() );
-
-  std::list<double>::const_iterator energy_grid_pt = union_energy_grid.begin();
-
-  unsigned index = 0u;
-
-  while( energy_grid_pt != union_energy_grid.end() )
-  {
-    raw_cross_section[index] =
-      adjoint_bremsstrahlung_cs_evaluator->evaluateAdjointCrossSection(
-        *energy_grid_pt,
-        d_adjoint_bremsstrahlung_evaluation_tolerance );
-
-    ++energy_grid_pt;
-    ++index;
-  }
-
-  std::vector<double>::iterator start =
-    std::find_if( raw_cross_section.begin(),
-		  raw_cross_section.end(),
-		  notEqualZero );
-
-  cross_section.assign( start, raw_cross_section.end() );
-
-  threshold_index = std::distance( raw_cross_section.begin(), start );
-}
-
-// Create the cross section on the union energy grid
-void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSectionOnUnionEnergyGrid(
-   const std::list<double>& union_energy_grid,
-   const std::list<double>& old_union_energy_grid,
-   const std::vector<double>& old_cross_section,
-   const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
-        adjoint_bremsstrahlung_cs_evaluator,
-   std::vector<double>& cross_section,
-   unsigned& threshold_index ) const
-{
-  std::vector<double> raw_cross_section( union_energy_grid.size() );
-
-  std::list<double>::const_iterator energy_grid_pt = union_energy_grid.begin();
-  std::list<double>::const_iterator old_energy_grid_pt =
-    old_union_energy_grid.begin();
-
-  unsigned index = 0u;
-  unsigned old_index = 0u;
-
-  while( energy_grid_pt != union_energy_grid.end() )
-  {
-    if ( *energy_grid_pt == *old_energy_grid_pt )
-    {
-      raw_cross_section[index] = old_cross_section[old_index];
-   
-      ++old_energy_grid_pt;
-      ++old_index;
-    }
-    else
-    {
-      raw_cross_section[index] =
-        adjoint_bremsstrahlung_cs_evaluator->evaluateAdjointCrossSection(
-          *energy_grid_pt,
-          d_adjoint_bremsstrahlung_evaluation_tolerance );
-    }
-
-    ++energy_grid_pt;
-    ++index;
-  }
-
-  std::vector<double>::iterator start =
-    std::find_if( raw_cross_section.begin(),
-		  raw_cross_section.end(),
-		  notEqualZero );
-
-  cross_section.assign( start, raw_cross_section.end() );
-
-  threshold_index = std::distance( raw_cross_section.begin(), start );
-}
-*/
 
 // Calculate the elastic anglular grid for the angle cosine
 void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
@@ -1229,7 +1212,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 
   // Add nudge value
   adjoint_bremsstrahlung_energy_grid.back() =
-     d_max_electron_energy - s_threshold_energy_nudge_factor;
+     d_max_electron_energy - s_min_tabulated_energy_loss;
    adjoint_bremsstrahlung_energy_grid.push_back( d_max_electron_energy );
 
   // Set the adjoint bremsstrahlung energy grid
@@ -1346,10 +1329,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
 
     // Add nudge value
     ionization_energy_grid.back() =
-        d_max_electron_energy - s_threshold_energy_nudge_factor;
+        d_max_electron_energy - s_min_tabulated_energy_loss;
       ionization_energy_grid.push_back( d_max_electron_energy );
 
-    // Set the adjoint bremsstrahlung energy grid
+    // Set the adjoint electroionization energy grid
     data_container.setAdjointElectroionizationEnergyGrid(
       *shell,
       ionization_energy_grid );
@@ -1363,7 +1346,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElec
 {
   // Add the min electron energy to the union energy grid
   union_energy_grid.push_back( d_min_electron_energy );
-/*
+
   const std::set<unsigned>& subshells = data_container.getSubshells();
 
   std::set<unsigned>::const_iterator subshell = subshells.begin();
@@ -1374,16 +1357,18 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElec
     double binding_energy =
       data_container.getSubshellBindingEnergy( *subshell );
 
-    if( binding_energy > d_min_electron_energy )
-    {
-      union_energy_grid.push_back( binding_energy );
-      union_energy_grid.push_back( binding_energy*
-				   s_threshold_energy_nudge_factor );
-    }
+      union_energy_grid.push_back(
+        d_max_electron_energy - binding_energy - s_min_tabulated_energy_loss );
+      union_energy_grid.push_back(
+        d_max_electron_energy - binding_energy - s_min_tabulated_energy_loss*s_threshold_energy_nudge_factor );
 
     ++subshell;
   }
-*/
+
+  // Add a max allowed adjoint energy bin
+  union_energy_grid.push_back(
+    d_max_electron_energy - s_min_tabulated_energy_loss );
+
   // Add the max electron energy
   union_energy_grid.push_back( d_max_electron_energy );
 

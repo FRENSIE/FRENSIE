@@ -205,6 +205,9 @@ private:
   // The threshold energy nudge factor
   static const double s_threshold_energy_nudge_factor;
 
+  // The minimum tabulated energy loss
+  static const double s_min_tabulated_energy_loss;
+
   // The ACE forward data
   std::shared_ptr<const Data::XSSEPRDataExtractor> d_ace_epr_data;
 

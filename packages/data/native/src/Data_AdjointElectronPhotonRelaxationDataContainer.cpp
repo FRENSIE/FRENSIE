@@ -980,7 +980,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationCr
   // Make sure the electroionization cross section is valid
   testPrecondition( adjoint_electroionization_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero(
+  testPreconditionValuesGreaterThanOrEqualToZero(
     adjoint_electroionization_cross_section );
 
   d_adjoint_electroionization_subshell_cross_section[subshell] =

@@ -89,7 +89,6 @@ double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cro
 
   // Evaluate the forward cross section at the incoming energy
   double forward_cs = this->getCrossSection( incoming_energy );
-
   double pdf;
 
   // If reaction is energetically impossible return zero
@@ -116,7 +115,6 @@ double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cro
     d_electroionization_subshell_distribution->evaluatePDF( incoming_energy,
                                                             knock_on_energy );
   }
-
   return forward_cs*pdf;
 }
 

@@ -46,6 +46,8 @@ std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationR
 std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
   ace_adjoint_brem_cs, native_adjoint_brem_cs;
 
+double max_ionization_subshell_adjoint_energy, max_brem_adjoint_energy;
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -80,6 +82,24 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
                                   125955.16376563441008,
+                                  1e-6 );
+
+  cross_section =
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
+        max_ionization_subshell_adjoint_energy - 6.0e-8,
+        1.0e-9 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  799.79064580439091969,
+                                  1e-6 );
+
+  cross_section =
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
+        max_ionization_subshell_adjoint_energy,
+        1.0e-12 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  0.0,
                                   1e-6 );
 
 
@@ -489,10 +509,18 @@ int main( int argc, char** argv )
                                                              pdf ) );
   }
 
+  double binding_energy = data_container->getSubshellBindingEnergy( *shell );
+
+  // Set the max allowed adjoint energy
+  max_ionization_subshell_adjoint_energy = 1.0e5 - binding_energy - 1.0e-7;
+
+  integration_points.back() = max_ionization_subshell_adjoint_energy;
+  integration_points.push_back( ionization_energy_grid.back() );
+
   electroionization_subshell_distribution.reset(
     new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
             subshell_distribution,
-            data_container->getSubshellBindingEnergy( *shell ) ) );
+            binding_energy ) );
 
   // Create the subshell electroelectric reaction
   std::shared_ptr<ElectroionizationReaction> 
