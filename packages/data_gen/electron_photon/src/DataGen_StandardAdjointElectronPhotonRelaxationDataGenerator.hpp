@@ -20,7 +20,10 @@
 #include "DataGen_AdjointBremsstrahlungCrossSectionEvaluator.hpp"
 #include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
+#include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace DataGen{
@@ -77,6 +80,22 @@ protected:
   void setAdjointRelaxationData(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
+  //! Set the Compton profile data
+  void setComptonProfileData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  //! Set the occupation number data
+  void setOccupationNumberData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  //! Set the Waller-Hartree scattering function data
+  void setWallerHartreeScatteringFunctionData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  //! Set the Waller-Hartree atomic form factor data
+  void setWallerHartreeAtomicFormFactorData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
   //! Set the adjoint photon data
   void setAdjointPhotonData(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
@@ -95,6 +114,20 @@ private:
 
   // The if a value is not equal to zero
   static bool notEqualZero( const double value );
+
+  // Create the adjoint Waller-Hartree incoherent cs evaluator
+  void createAdjointWallerHartreeIncoherentCrossSectionEvaluator(
+         std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
+
+  // Create an adjoint subshell impulse approx incoherent cs evaluator
+  void createAdjointSubshellImpulseApproxIncoherentCrossSectionEvaluator(
+         const unsigned subshell,
+         std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
+
+  // Create an adjoint incoherent grid generator
+  void createAdjointIncoherentGridGenerator(
+       const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_cs_evaluator,
+       std::shared_ptr<const AdjointIncoherentGridGenerator>& grid_generator );
 
   // Set the electron cross section union energy grid
   void setAdjointElectronCrossSectionsData(

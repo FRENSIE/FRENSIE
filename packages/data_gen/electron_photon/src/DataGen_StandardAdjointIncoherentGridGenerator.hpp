@@ -35,6 +35,7 @@ public:
   //! Constructor
   StandardAdjointIncoherentGridGenerator( 
       const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& adjoint_incoherent_cross_section,
+      const double cross_section_evaluation_tol = 1e-3,
       const double convergence_tol = 0.001,
       const double absolute_diff_tol = 1e-12,
       const double distance_tol = 1e-14 );
@@ -90,7 +91,7 @@ private:
   bool d_verbose;
 
   // The cross section evaluation precision
-  double d_precision;
+  double d_cross_section_evaluation_tol;
 
   // The convergence tolerance
   double d_convergence_tol;

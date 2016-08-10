@@ -555,16 +555,19 @@ int main( int argc, char** argv )
     
     linlinlin_grid_generator_h.reset( new DataGen::StandardAdjointIncoherentGridGenerator<Utility::LinLinLin>( 
                                                        adjoint_incoherent_dist,
+                                                       1e-3,
                                                        0.001,
                                                        1e-15 ) );
 
     linloglog_grid_generator_h.reset( new DataGen::StandardAdjointIncoherentGridGenerator<Utility::LinLogLog>( 
                                                        adjoint_incoherent_dist,
+                                                       1e-3,
                                                        0.001,
                                                        1e-15 ) );
 
     logloglog_grid_generator_h.reset( new DataGen::StandardAdjointIncoherentGridGenerator<Utility::LogLogLog>( 
                                                        adjoint_incoherent_dist,
+                                                       1e-3,
                                                        0.001,
                                                        1e-15 ) );
   }

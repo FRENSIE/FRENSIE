@@ -17,6 +17,11 @@
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
+#include "MonteCarlo_StandardComptonProfile.hpp"
+#include "MonteCarlo_StandardOccupationNumber.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
+#include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_GridGenerator.hpp"
@@ -169,6 +174,30 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
   this->setAdjointRelaxationData( data_container );
   std::cout << "done." << std::endl;
 
+  // Set the Compton profile data
+  std::cout << "Setting the Compton profile data...";
+  std::cout.flush();
+  this->setComptonProfileData( data_container );
+  std::cout << "done." << std::endl;
+
+  // Set the occupation number data
+  std::cout << "Setting the occupation number data...";
+  std::cout.flush();
+  this->setOccupationNumberData( data_container );
+  std::cout << "done." << std::endl;
+
+  // Set the Waller-Hartree scattering function data
+  std::cout << "Setting the Waller-Hartree scattering function data...";
+  std::cout.flush();
+  this->setWallerHartreeScatteringFunctionData( data_container );
+  std::cout << "done." << std::endl;
+
+  // Set the Waller-Hartree atomic form factor data
+  std::cout << "Setting the Waller-Hartree atomic form factor data...";
+  std::cout.flush();
+  this->setWallerHartreeAtomicFormFactorData( data_container );
+  std::cout << "done." << std::endl;
+
   // Set the photon data
   std::cout << "Setting the adjoint photon data... " << std::endl;
   std::cout.flush();
@@ -231,12 +260,174 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointRelaxationD
   }
 }
 
+// Set the Compton profile data
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setComptonProfileData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+{
+  // Get the subshells
+  const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
+
+  std::set<unsigned>::const_iterator subshell_it =
+    subshells.begin();
+  
+  // Extract and set the Compton profiles and grids
+  while( subshell_it != subshells.end() )
+  {
+    data_container.setComptonProfileMomentumGrid(
+           *subshell_it,
+           d_forward_epr_data->getComptonProfileMomentumGrid( *subshell_it ) );
+
+    data_container.setComptonProfile(
+                       *subshell_it,
+                       d_forward_epr_data->getComptonProfile( *subshell_it ) );
+
+    ++subshell_it;
+  }
+}
+
+// Set the occupation number data
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+{
+  // Get the subshells
+  const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
+
+  std::set<unsigned>::const_iterator subshell_it =
+    subshells.begin();
+
+  // Extract and set the occupation numbers and grids
+  while( subshell_it != subshells.end() )
+  {
+    data_container.setOccupationNumberMomentumGrid(
+         *subshell_it,
+         d_forward_epr_data->getOccupationNumberMomentumGrid( *subshell_it ) );
+
+    data_container.setOccupationNumber(
+                     *subshell_it,
+                     d_forward_epr_data->getOccupationNumber( *subshell_it ) );
+
+    ++subshell_it;
+  }
+}
+
+// Set the Waller-Hartree scattering function data
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFunctionData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+{
+  // Extract and set the scattering function grid
+  data_container.setWallerHartreeScatteringFunctionMomentumGrid(
+        d_forward_epr_data->getWallerHartreeScatteringFunctionMomentumGrid() );
+
+  // Extract and set the scattering function
+  data_container.setWallerHartreeScatteringFunction(
+                    d_forward_epr_data->getWallerHartreeScatteringFunction() );
+}
+
+//! Set the Waller-Hartree atomic form factor data
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+{
+  // Extract and set the atomic form factor grid
+  data_container.setWallerHartreeAtomicFormFactorMomentumGrid(
+          d_forward_epr_data->getWallerHartreeAtomicFormFactorMomentumGrid() );
+
+  // Extract and set the atomic form
+  data_container.setWallerHartreeAtomicFormFactor(
+                      d_forward_epr_data->getWallerHartreeAtomicFormFactor() );
+}
+
 // Set the photon data
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
 			   Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const
 {
-  std::cout << " Adjoint photon data generation has not been implmented yet!" << std::endl;
+  // Extract the coherent cross section
+  std::shared_ptr<const Utility::OneDDistribution> waller_hartree_coherent_cs(
+       new Utility::TabularDistribution<Utility::LinLin>(
+                d_forward_epr_data->getPhotonEnergyGrid(),
+                d_forward_epr_data->getWallerHartreeCoherentCrossSection() ) );
+
+  // Extract the Waller-Hartree total forward cross section
+  std::shared_ptr<const Utility::OneDDistribution> waller_hartree_total_forward_cs(
+       new Utility::TabularDistribution<Utility::LinLin>(
+                   d_forward_epr_data->getPhotonEnergyGrid(),
+                   d_forward_epr_data->getWallerHartreeTotalCrossSection() ) );
+
+  // Extract the impulse approx. total forward cross section
+  std::shared_ptr<const Utility::OneDDistribution> impulse_approx_total_forward_cs(
+       new Utility::TabularDistribution<Utility::LinLin>(
+                   d_forward_epr_data->getPhotonEnergyGrid(),
+                   d_forward_epr_data->getImpulseApproxTotalCrossSection() ) );
+
+  // Create the adjoint Waller-Hartree incoherent grid generator
+  
+
+  // Generate and set the adjoint Waller-Hatree incoherent cross section
+
+  // Generate and set the adjoint impulse approx. subshell incoherent css
+
+  // Generate and set the adjoint Waller-Hartree coherent cross section
+
+  // Generate and set the adjoint pair production energy distribution
+
+  // Generate and set the adjoint pair production norm constant grid
+
+  // Generate and set the Waller-Hartree total forward cross section
+
+  // Generate and set the Impulse Approx total forward cross section
+}
+
+// Create the adjoint Waller-Hartree incoherent cs evaluator
+void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointWallerHartreeIncoherentCrossSectionEvaluator(
+         std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const
+{
+  // Create a scattering function
+  std::shared_ptr<const Utility::UnitAwareOneDDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function(
+         new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseCentimeter,void>(
+          d_forward_epr_data->getWallerHartreeScatteringFunctionMomentumGrid(),
+          d_forward_epr_data->getWallerHartreeScatteringFunction() ) );
+    
+  std::shared_ptr<const MonteCarlo::ScatteringFunction> scattering_function(
+         new MonteCarlo::StandardScatteringFunction<Utility::Units::InverseCentimeter>(
+                                                   raw_scattering_function ) );
+
+  // Create the cross section evaluator
+  cs_evaluator.reset(
+               new MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution(
+                                                       d_max_photon_energy,
+                                                       scattering_function ) );
+}
+
+// Create an adjoint subshell impulse approx incoherent cs evaluator
+void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointSubshellImpulseApproxIncoherentCrossSectionEvaluator(
+         const unsigned subshell,
+         std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const
+{
+  // Create the occupation number
+  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,void> > raw_occupation_number(
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,void>(
+               d_forward_epr_data->getOccupationNumberMomentumGrid( subshell ),
+               d_forward_epr_data->getOccupationNumber( subshell ) ) );
+
+  std::shared_ptr<MonteCarlo::OccupationNumber> occupation_number(
+         new MonteCarlo::StandardOccupationNumber<Utility::Units::MeCMomentum>(
+                                                     raw_occupation_number ) );
+
+  cs_evaluator.reset(
+        new MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution(
+                  d_max_photon_energy,
+                  Data::convertENDFDesignatorToSubshellEnum( subshell ),
+                  d_forward_epr_data->getSubshellOccupancy( subshell ),
+                  d_forward_epr_data->getSubshellBindingEnergy( subshell ),
+                  occupation_number ) );
+}
+
+// Create an adjoint incoherent grid generator
+void createAdjointIncoherentGridGenerator(
+       const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_cs_evaluator,
+       std::shared_ptr<const AdjointIncoherentGridGenerator>& grid_generator )
+{
+  
 }
 
 

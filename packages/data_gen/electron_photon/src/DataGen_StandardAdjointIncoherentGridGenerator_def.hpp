@@ -28,12 +28,13 @@ namespace DataGen{
 template<typename TwoDInterpPolicy>
 StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::StandardAdjointIncoherentGridGenerator(
       const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& adjoint_incoherent_cross_section,
+      const double cross_section_evaluation_tol,
       const double convergence_tol,
       const double absolute_diff_tol,
       const double distance_tol )
   : AdjointIncoherentGridGenerator(),
     d_verbose( false ),
-    d_precision( 1e-3 ),
+    d_cross_section_evaluation_tol( cross_section_evaluation_tol ),
     d_convergence_tol( convergence_tol ),
     d_absolute_diff_tol( absolute_diff_tol ),
     d_distance_tol( distance_tol ),
@@ -251,7 +252,7 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::generate(
 		 boost::cref( *d_adjoint_incoherent_cross_section ),
 		 energy,
 		 _1,
-		 d_precision );
+		 d_cross_section_evaluation_tol );
 
   d_max_energy_grid_generator.generateAndEvaluateInPlace( max_energy_grid,
 							  cross_section,
@@ -367,9 +368,9 @@ StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::hasGridConverged(
 
 	double true_cross_section = 
 	  d_adjoint_incoherent_cross_section->evaluateIntegratedCrossSection(
-							intermediate_energy,
-							max_energy_mid_point,
-							d_precision );
+					      intermediate_energy,
+                                              max_energy_mid_point,
+					      d_cross_section_evaluation_tol );
 
 	relative_error = Utility::Policy::relError( true_cross_section,
 						    interp_cross_section );
