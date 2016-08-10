@@ -357,7 +357,7 @@ ElectronPhotonRelaxationDataContainer::getImpulseApproxSubshellIncoherentCrossSe
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
 
-  return d_impulse_approx_subshell_incoherent_cross_section_theshold_indices.find( subshell )->second;
+  return d_impulse_approx_subshell_incoherent_cross_section_threshold_indices.find( subshell )->second;
 }
 
 // Return the Waller-Hartree coherent cross section
@@ -393,7 +393,7 @@ const std::vector<double>& ElectronPhotonRelaxationDataContainer::getPhotoelectr
   return d_photoelectric_cross_section;
 }
 
-// Return the Photoelectric effect cross section theshold energy bin index
+// Return the Photoelectric effect cross section threshold energy bin index
 unsigned ElectronPhotonRelaxationDataContainer::getPhotoelectricCrossSectionThresholdEnergyIndex() const
 {
   return d_photoelectric_cross_section_threshold_index;
@@ -1195,7 +1195,7 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxSubshellIncoherentCr
   testPrecondition( incoherent_cross_section.size() + index ==
 		    d_photon_energy_grid.size() );
 
-  d_impulse_approx_subshell_incoherent_cross_section_theshold_indices[subshell] =
+  d_impulse_approx_subshell_incoherent_cross_section_threshold_indices[subshell] =
     index;
 }
 

@@ -200,7 +200,7 @@ public:
   //! Return the Photoelectric effect cross section
   const std::vector<double>& getPhotoelectricCrossSection() const;
 
-  //! Return the Photoelectric effect cross section theshold energy bin index
+  //! Return the Photoelectric effect cross section threshold energy bin index
   unsigned getPhotoelectricCrossSectionThresholdEnergyIndex() const;
 
   //! Return the Photoelectric effect cross section for a subshell
@@ -832,7 +832,7 @@ private:
 
   // The impulse approx. subshell incoherent photon cross section thes. indices
   std::map<unsigned,unsigned>
-  d_impulse_approx_subshell_incoherent_cross_section_theshold_indices;
+  d_impulse_approx_subshell_incoherent_cross_section_threshold_indices;
 
   // The Waller-Hartree coherent cross section (b)
   std::vector<double> d_waller_hartree_coherent_cross_section;

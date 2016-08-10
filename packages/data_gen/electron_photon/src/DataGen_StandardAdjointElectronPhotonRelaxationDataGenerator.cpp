@@ -57,11 +57,8 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_grid_absolute_diff_tol( grid_absolute_diff_tol ),
     d_grid_distance_tol( grid_distance_tol )
 {
-  // Make sure the atomic number is valid
-  testPrecondition( atomic_number <= 100u );
   // Make sure the forward epr data is valid
   testPrecondition( forward_epr_data.get() );
-  testPrecontition( forward_epr_data->getAtomicNumber() == atomic_number );
   // Make sure the photon energy limits are valid
   testPrecondition( min_photon_energy > 0.0 );
   testPrecondition( min_photon_energy < max_photon_energy );
@@ -73,14 +70,6 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
   testPrecondition( cutoff_angle_cosine > -1.0 );
   // Make sure the number of moment preserving angles is valid
   testPrecondition( number_of_moment_preserving_angles >= 0 );
-
-  // Check if the atomic number agrees with the forward table's atomic number
-  TEST_FOR_EXCEPTION( atomic_number != forward_epr_data->getAtomicNumber(),
-                      std::logic_error,
-                      "Error: The specified atomic number and the foward "
-                      "table's atomic number are not in agreement ("
-                      << atomic_number << " != "
-                      << forward_epr_data->getAtomicNumber() << ")!" );
 
   // Check if the min photon energy is below the forward table min energy
   if( d_min_photon_energy < forward_epr_data->getMinPhotonEnergy() )
@@ -131,12 +120,12 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
 StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPhotonRelaxationDataGenerator(
       const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
       forward_epr_data,
-      const double cutoff_angle_cosine = 1.0,
-      const unsigned number_of_moment_preserving_angles = 0,
-      const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
-      const double grid_convergence_tol = 0.001,
-      const double grid_absolute_diff_tol = 1e-13,
-      const double grid_distance_tol = 1e-13 )
+      const double cutoff_angle_cosine,
+      const unsigned number_of_moment_preserving_angles,
+      const double adjoint_bremsstrahlung_evaluation_tolerance,
+      const double grid_convergence_tol,
+      const double grid_absolute_diff_tol,
+      const double grid_distance_tol )
   : AdjointElectronPhotonRelaxationDataGenerator( forward_epr_data->getAtomicNumber() ),
     d_forward_epr_data( forward_epr_data ),
     d_min_photon_energy( forward_epr_data->getMinPhotonEnergy() ),
@@ -161,10 +150,6 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
 void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
-
-  // Make sure the forward endl data is valid
-  testPrecondition( d_forward_endl_data.use_count() > 0 );
-
   // Set the table data
   this->setAtomicNumber( data_container );
   data_container.setMinPhotonEnergy( d_min_photon_energy );
@@ -238,7 +223,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointRelaxationD
                     *subshell_it,
                     d_forward_epr_data->getSubshellOccupancy( *subshell_it ) );
 
-    data_contaner.setSubshellBindingEnergy(
+    data_container.setSubshellBindingEnergy(
                 *subshell_it,
                 d_forward_epr_data->getSubshellBindingEnergy( *subshell_it ) );
 

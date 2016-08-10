@@ -65,7 +65,7 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_incoherent_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_incoherent_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_subshell_incoherent_cross_sections );
-  DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_subshell_incoherent_cross_section_theshold_indices );
+  DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_subshell_incoherent_cross_section_threshold_indices );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_coherent_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_coherent_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, pair_production_cross_section );
@@ -153,7 +153,7 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_incoherent_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_incoherent_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_subshell_incoherent_cross_sections );
-  DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_subshell_incoherent_cross_section_theshold_indices );
+  DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_subshell_incoherent_cross_section_threshold_indices );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_coherent_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_coherent_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, pair_production_cross_section );
