@@ -300,7 +300,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
 
   // Extract the atomic excitation cross section data
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> atomic_excitation_reaction;
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction> atomic_excitation_reaction;
   MonteCarlo::ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
     *d_forward_epr_data,
     forward_electron_energy_grid,
@@ -999,7 +999,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointMomentPrese
   //   data_container.getAdjointScreenedRutherfordElasticCrossSection().begin(),
   //   data_container.getAdjointScreenedRutherfordElasticCrossSection().end() );
 
-  // Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>> 
+  // std::shared_ptr<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>> 
   //   analog_reaction(
   //   	new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
   //           energy_grid,
@@ -1148,7 +1148,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateDisceteAngles
 // Generate elastic moment preserving cross section
 void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointMomentPreservingCrossSection(
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
+    const std::shared_ptr<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
         analog_reaction,
     const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>&
         analog_distribution,
@@ -1184,12 +1184,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointMoment
 
 // Create the adjoint bremsstrahlung cross section evaluator
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstrahlungCrossSectionEvaluator(
-    const Teuchos::ArrayRCP<const double>& forward_energy_grid,
+    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
     std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >&
         adjoint_bremsstrahlung_cs_evaluator ) const
 {
-  Teuchos::RCP<BremsstrahlungReaction> bremsstrahlung_reaction;
+  std::shared_ptr<BremsstrahlungReaction> bremsstrahlung_reaction;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     *d_forward_epr_data,
@@ -1394,6 +1394,17 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointElec
     ++subshell;
   }
 
+  // Add a max allowed adjoint energy bin
+  union_energy_grid.push_back(
+    d_max_electron_energy - s_min_tabulated_energy_loss );
+
+  // Add the max electron energy
+  union_energy_grid.push_back( d_max_electron_energy );
+
+  // Sort the union energy grid
+  union_energy_grid.sort();
+}
+
 // Find the lower and upper bin boundary for a min and max energy
 void StandardAdjointElectronPhotonRelaxationDataGenerator::findLowerAndUpperBinBoundary(
     const double min_energy,
@@ -1413,17 +1424,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::findLowerAndUpperBinB
               lower_energy_boundary,
               energy_distribution.end(),
               max_energy );
-}
-
-  // Add a max allowed adjoint energy bin
-  union_energy_grid.push_back(
-    d_max_electron_energy - s_min_tabulated_energy_loss );
-
-  // Add the max electron energy
-  union_energy_grid.push_back( d_max_electron_energy );
-
-  // Sort the union energy grid
-  union_energy_grid.sort();
 }
 
 } // end DataGen namespace

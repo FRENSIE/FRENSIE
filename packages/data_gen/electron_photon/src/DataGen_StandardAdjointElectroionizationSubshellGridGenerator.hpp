@@ -32,8 +32,8 @@ public:
   //! Constructor
   StandardAdjointElectroionizationSubshellGridGenerator(
       const double& binding_energy,
-      const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
-                                       electroionization_subshell_reaction,
+      const std::shared_ptr<MonteCarlo::ElectroatomicReaction>&
+        electroionization_subshell_reaction,
       const ElectroionizationSubshellDistribution& knock_on_distribution,
       const double convergence_tol = 0.001,
       const double absolute_diff_tol = 1e-12,

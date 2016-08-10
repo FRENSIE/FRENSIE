@@ -28,7 +28,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
+std::shared_ptr<MonteCarlo::ElectroatomicReaction>
     rutherford_elastic_reaction;
 double cutoff_angle_cosine = 1.0;
 

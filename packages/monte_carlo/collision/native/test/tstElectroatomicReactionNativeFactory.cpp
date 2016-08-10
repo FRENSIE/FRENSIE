@@ -26,10 +26,10 @@
 //---------------------------------------------------------------------------//
 
 MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
+std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
+std::shared_ptr<MonteCarlo::ElectroatomicReaction> reaction;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -220,7 +220,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 		   createSubshellElectroelectricReactions )
 {
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ElectroatomicReaction> > reactions;
+  std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
 							   *data_container,

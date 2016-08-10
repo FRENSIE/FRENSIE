@@ -137,8 +137,8 @@ ElectroatomCore::ElectroatomCore()
  * and absorption reactions.
  */
 ElectroatomCore::ElectroatomCore(
-      const Teuchos::RCP<const ElectroatomicReaction>& total_reaction,
-      const Teuchos::RCP<const ElectroatomicReaction>& total_absorption_reaction,
+      const std::shared_ptr<const ElectroatomicReaction>& total_reaction,
+      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
       const ConstReactionMap& scattering_reactions,
       const ConstReactionMap& absorption_reactions,
       const ConstReactionMap& miscellaneous_reactions,
@@ -151,9 +151,9 @@ ElectroatomCore::ElectroatomCore(
     d_relaxation_model( relaxation_model )
 {
   // Make sure the total reaction is valid
-  testPrecondition( !total_reaction.is_null() );
+  testPrecondition( total_reaction.use_count() > 0 );
   // Make sure the absorption reaction is valid
-  testPrecondition( !total_absorption_reaction.is_null() );
+  testPrecondition( total_absorption_reaction.use_count() > 0 );
   // Make sure the scattering reactions map is valid
   testPrecondition( scattering_reactions.size() > 0 );
   // Make sure the absorption reactions map is valid
@@ -172,9 +172,9 @@ ElectroatomCore::ElectroatomCore( const ElectroatomCore& instance )
     d_relaxation_model( instance.d_relaxation_model )
 {
   // Make sure the total reaction is valid
-  testPrecondition( !instance.d_total_reaction.is_null() );
+  testPrecondition( instance.d_total_reaction.use_count() > 0 );
   // Make sure the absorption reaction is valid
-  testPrecondition( !instance.d_total_absorption_reaction.is_null() );
+  testPrecondition( instance.d_total_absorption_reaction.use_count() > 0 );
   // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
@@ -186,9 +186,9 @@ ElectroatomCore::ElectroatomCore( const ElectroatomCore& instance )
 ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
 {
   // Make sure the total reaction is valid
-  testPrecondition( !instance.d_total_reaction.is_null() );
+  testPrecondition( instance.d_total_reaction.use_count() > 0 );
   // Make sure the absorption reaction is valid
-  testPrecondition( !instance.d_total_absorption_reaction.is_null() );
+  testPrecondition( instance.d_total_absorption_reaction.use_count() > 0 );
   // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );

@@ -76,8 +76,8 @@ ElectroatomCore::ElectroatomCore(
     ++rxn_type_pointer;
   }
   // Create the total absorption and total reactions
-  Teuchos::RCP<ElectroatomicReaction> total_absorption_reaction;
-  Teuchos::RCP<ElectroatomicReaction> total_reaction;
+  std::shared_ptr<ElectroatomicReaction> total_absorption_reaction;
+  std::shared_ptr<ElectroatomicReaction> total_reaction;
 
   if( processed_atomic_cross_sections )
   {
@@ -141,7 +141,7 @@ template<typename InterpPolicy>
 void ElectroatomCore::createTotalAbsorptionReaction(
 		const Teuchos::ArrayRCP<double>& energy_grid,
 		const ConstReactionMap& absorption_reactions,
-		Teuchos::RCP<ElectroatomicReaction>& total_absorption_reaction )
+		std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction )
 {
   // Make sure the absorption cross section is sized correctly
   testPrecondition( energy_grid.size() > 1 );
@@ -206,7 +206,7 @@ template<typename InterpPolicy>
 void ElectroatomCore::createProcessedTotalAbsorptionReaction(
 		const Teuchos::ArrayRCP<double>& energy_grid,
 		const ConstReactionMap& absorption_reactions,
-		Teuchos::RCP<ElectroatomicReaction>& total_absorption_reaction )
+		std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -274,13 +274,13 @@ template<typename InterpPolicy>
 void ElectroatomCore::createTotalReaction(
       const Teuchos::ArrayRCP<double>& energy_grid,
       const ConstReactionMap& scattering_reactions,
-      const Teuchos::RCP<const ElectroatomicReaction>& total_absorption_reaction,
-      Teuchos::RCP<ElectroatomicReaction>& total_reaction )
+      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
+      std::shared_ptr<ElectroatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
   // Make sure the absorption reaction has been created
-  testPrecondition( !total_absorption_reaction.is_null() );
+  testPrecondition( total_absorption_reaction.use_count() > 0 );
 
   Teuchos::Array<double> total_cross_section;
   unsigned total_threshold_energy_index = 0u;
@@ -342,13 +342,13 @@ template<typename InterpPolicy>
 void ElectroatomCore::createProcessedTotalReaction(
       const Teuchos::ArrayRCP<double>& energy_grid,
       const ConstReactionMap& scattering_reactions,
-      const Teuchos::RCP<const ElectroatomicReaction>& total_absorption_reaction,
-      Teuchos::RCP<ElectroatomicReaction>& total_reaction )
+      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
+      std::shared_ptr<ElectroatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
   // Make sure the absorption reaction has been created
-  testPrecondition( !total_absorption_reaction.is_null() );
+  testPrecondition( total_absorption_reaction.use_count() > 0 );
 
   Teuchos::Array<double> total_cross_section;
   unsigned total_threshold_energy_index = 0u;

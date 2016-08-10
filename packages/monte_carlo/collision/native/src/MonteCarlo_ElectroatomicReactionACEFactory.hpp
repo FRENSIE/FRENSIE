@@ -28,7 +28,7 @@ public:
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-        Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+        std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
         const double lower_cutoff_angle_cosine = 1.0 );
 
   //! Create an atomic excitation scattering electroatomic reaction
@@ -36,21 +36,21 @@ public:
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-	Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction );
+	std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the total electroionization electroatomic reaction
   static void createTotalElectroionizationReaction(
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-	Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction );
+	std::shared_ptr<ElectroatomicReaction>& electroionization_reaction );
 
   //! Create the subshell electroionization electroatomic reactions
   static void createSubshellElectroionizationReactions(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-        Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
+        std::vector<std::shared_ptr<ElectroatomicReaction> >&
         electroionization_subshell_reactions );
 
   //! Create the bremsstrahlung electroatomic reaction
@@ -58,12 +58,12 @@ public:
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-	Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
+	std::shared_ptr<ElectroatomicReaction>& bremsstrahlung_reactions,
 	BremsstrahlungAngularDistributionType photon_distribution_function );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(
-        Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction );
+        std::shared_ptr<ElectroatomicReaction>& void_absorption_reaction );
 
 //protected:
 

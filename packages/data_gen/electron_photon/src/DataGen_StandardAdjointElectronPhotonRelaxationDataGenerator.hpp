@@ -163,7 +163,7 @@ private:
   // Generate adjoint elastic moment preserving cross section
   static void evaluateAdjointMomentPreservingCrossSection(
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
+    const std::shared_ptr<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
         analog_reaction,
     const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>&
         analog_distribution,
@@ -275,6 +275,14 @@ inline bool StandardAdjointElectronPhotonRelaxationDataGenerator::notEqualZero(
 }
 
 } // end DataGen namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end DATA_GEN_STANDARD_ADJOINT_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 

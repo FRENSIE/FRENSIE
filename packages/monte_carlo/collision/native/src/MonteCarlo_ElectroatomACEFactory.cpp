@@ -92,7 +92,7 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create the electroionization reaction(s)
   if( use_atomic_relaxation_data )
   {
-    Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
     ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
         raw_electroatom_data,

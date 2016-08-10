@@ -34,8 +34,8 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomCore> ace_electroatom_core;
-Teuchos::RCP<MonteCarlo::ElectroatomCore> native_electroatom_core;
+std::shared_ptr<MonteCarlo::ElectroatomCore> ace_electroatom_core;
+std::shared_ptr<MonteCarlo::ElectroatomCore> native_electroatom_core;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -401,7 +401,7 @@ int main( int argc, char** argv )
     new MonteCarlo::AtomicExcitationElectronScatteringDistribution(
                       ae_energy_loss_function ) );
 
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ae_reaction(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> ae_reaction(
 	    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
 			    energy_grid,
 			    ae_cross_section,
@@ -484,7 +484,7 @@ int main( int argc, char** argv )
 
 
     // Create the bremsstrahlung scattering reaction
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> b_reaction(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
 	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             b_cross_section,
@@ -552,7 +552,7 @@ int main( int argc, char** argv )
             new MonteCarlo::AtomicExcitationElectronScatteringDistribution(
                       ae_energy_loss_function ) );
 
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ae_reaction(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> ae_reaction(
 	    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             ae_cross_section,
@@ -602,7 +602,7 @@ int main( int argc, char** argv )
 
 
     // Create the bremsstrahlung scattering reaction
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> b_reaction(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
 	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             b_cross_section,

@@ -37,7 +37,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction )
+			std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -88,7 +88,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+    std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
@@ -147,7 +147,7 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+			std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
@@ -188,7 +188,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+			std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
@@ -241,7 +241,7 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
 			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+			std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
@@ -283,7 +283,7 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-			Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction )
+			std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -323,7 +323,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 		   const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 		   const Teuchos::ArrayRCP<const double>& energy_grid,
            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
+		   std::vector<std::shared_ptr<ElectroatomicReaction> >&
 		   electroionization_subshell_reactions )
 {
   electroionization_subshell_reactions.clear();
@@ -331,7 +331,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
   // Extract the subshell information
   std::set<unsigned> subshells = raw_electroatom_data.getSubshells();
 
-  Teuchos::RCP<ElectroatomicReaction> electroionization_subshell_reaction;
+  std::shared_ptr<ElectroatomicReaction> electroionization_subshell_reaction;
 
   Data::SubshellType subshell_type;
 
@@ -382,13 +382,13 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
   // Make sure the subshell electroelectric reactions have been created
   testPostcondition( electroionization_subshell_reactions.size() > 0 );
 }
-
+/*
 // Create a bremsstrahlung electroatomic reactions
 void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 		const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 		const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reaction,
+		std::shared_ptr<ElectroatomicReaction>& bremsstrahlung_reaction,
 		BremsstrahlungAngularDistributionType photon_distribution_function )
 {
   // Make sure the energy grid is valid
@@ -439,11 +439,11 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 					      threshold_energy_index,
                           grid_searcher,
 					      bremsstrahlung_distribution ) );
-}
+}*/
 
 // Create a void absorption electroatomic reaction
 void ElectroatomicReactionNativeFactory::createVoidAbsorptionReaction(
-      Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction )
+      std::shared_ptr<ElectroatomicReaction>& void_absorption_reaction )
 {
   // Create the void absorption reaction
   void_absorption_reaction.reset(

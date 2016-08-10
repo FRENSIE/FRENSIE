@@ -31,7 +31,7 @@ MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
+std::shared_ptr<MonteCarlo::ElectroatomicReaction> reaction;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -111,7 +111,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 		   createSubshellElectroelectricReactions )
 {
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ElectroatomicReaction> > reactions;
+  std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
 
   MonteCarlo::ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
                 *xss_data_extractor,

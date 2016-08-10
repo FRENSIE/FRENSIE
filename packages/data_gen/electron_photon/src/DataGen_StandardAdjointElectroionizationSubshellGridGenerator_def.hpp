@@ -28,8 +28,8 @@ namespace DataGen{
 template<typename TwoDInterpPolicy>
 StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::StandardAdjointElectroionizationSubshellGridGenerator(
       const double& binding_energy,
-      const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
-                                       electroionization_subshell_reaction,
+      const std::shared_ptr<MonteCarlo::ElectroatomicReaction>&
+        electroionization_subshell_reaction,
       const ElectroionizationSubshellDistribution& knock_on_distribution,
       const double convergence_tol,
       const double absolute_diff_tol,
