@@ -42,7 +42,7 @@ public:
 
   //! Return the cross section at the given energy (efficient)
   virtual double getCrossSection( const double energy,
-				  const unsigned bin_index ) const = 0;
+                                  const unsigned bin_index ) const = 0;
 
   //! Return the threshold energy
   virtual double getThresholdEnergy() const = 0;
