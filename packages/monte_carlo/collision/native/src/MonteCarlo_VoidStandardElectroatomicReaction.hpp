@@ -31,6 +31,13 @@ public:
 	const Teuchos::ArrayRCP<const double>& cross_section,
 	const unsigned threshold_energy_index );
 
+  //! Constructor
+  VoidStandardElectroatomicReaction(
+	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	const Teuchos::ArrayRCP<const double>& cross_section,
+	const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
+
   //! Destructor
   ~VoidStandardElectroatomicReaction()
   { /* ... */ }
@@ -62,6 +69,18 @@ VoidStandardElectroatomicReaction<InterpPolicy,processed_cross_section>::VoidSta
         threshold_energy_index )
   { /* ... */ }
 
+template<typename InterpPolicy, bool processed_cross_section>
+VoidStandardElectroatomicReaction<InterpPolicy,processed_cross_section>::VoidStandardElectroatomicReaction(
+	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	const Teuchos::ArrayRCP<const double>& cross_section,
+	const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
+  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index,
+        grid_searcher )
+  { /* ... */ }
 
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>

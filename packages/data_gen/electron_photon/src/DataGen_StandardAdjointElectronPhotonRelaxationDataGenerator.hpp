@@ -150,22 +150,6 @@ private:
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const;
 
-  // Merge the electron union energy grid
-  void mergeAdjointElectronUnionEnergyGrid(
-    const std::vector<double>& energy_grid,
-    std::list<double>& union_energy_grid ) const;
-
-  // Calculate the elastic anglular grid for the angle cosine
-  void calculateElasticAngleCosine(
-    const std::vector<double>& raw_elastic_angle,
-    std::vector<double>& elastic_angle) const;
-
-  // Calculate the elastic anglular distribution for the angle cosine
-  void calculateElasticAngleCosine(
-    const std::vector<double>& raw_elastic_angle,
-    const std::vector<double>& raw_elastic_pdf,
-    std::vector<double>& elastic_angle,
-    std::vector<double>& elastic_pdf ) const;
 
   // Generate elastic moment preserving discrete angle cosines and weights
   static void evaluateDisceteAnglesAndWeights(
@@ -188,9 +172,11 @@ private:
     const unsigned threshold_energy_index,
     std::vector<double>& moment_preserving_cross_section );
 
+
   // Create the adjoint bremsstrahlung cross section evaluator
   void createAdjointBremsstrahlungCrossSectionEvaluator(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const Teuchos::ArrayRCP<const double>& forward_energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
     std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >&
         adjoint_bremsstrahlung_cs_evaluator ) const;
 
@@ -206,11 +192,20 @@ private:
     const std::vector<double>& adjoint_bremsstrahlung_photon_energy,
     std::vector<double>& adjoint_bremsstrahlung_pdf ) const;
 
+
   // Create the adjoint electroionization subshell cross section evaluator
   void createAdjointElectroionizationSubshellCrossSectionEvaluator(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     std::map<unsigned,std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
         adjoint_electroionization_cs_evaluators ) const;
+
+// Find the lower and upper bin boundary for a min and max energy
+  void findLowerAndUpperBinBoundary(
+    const double min_energy,
+    const double max_energy,
+    const std::vector<double>& energy_distribution,
+    std::vector<double>::const_iterator& lower_energy_boundary,
+    std::vector<double>::const_iterator& upper_energy_boundary ) const;
 
   // The threshold energy nudge factor
   static const double s_threshold_energy_nudge_factor;

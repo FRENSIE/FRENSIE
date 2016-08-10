@@ -85,7 +85,7 @@ public:
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 	const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-	Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
+	Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reaction,
 	BremsstrahlungAngularDistributionType photon_distribution_function );
 
   //! Create a void absorption electroatomic reaction
