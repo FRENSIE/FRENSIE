@@ -201,7 +201,6 @@ void ParticleSimulationManager<GeometryHandler,
     #pragma omp for
     for( unsigned long long history = batch_start_history; history < batch_end_history; ++history )
     {
-      std::cout << "HISTORY: " << history << std::endl;
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
       if( !d_end_simulation )
@@ -432,14 +431,15 @@ void ParticleSimulationManager<GeometryHandler,
 
         // Undergo a collision with the material in the cell
         CMI::collideWithCellMaterial( particle, bank, true );
+        if( !particle.isGone() )
+        {
+          GMI::changeInternalRayDirection( particle.getDirection() );
 
-        GMI::changeInternalRayDirection( particle.getDirection() );
-
-  	    // Cache the current position of the new ray
-  	    ray_start_point[0] = particle.getXPosition();
-  	    ray_start_point[1] = particle.getYPosition();
-  	    ray_start_point[2] = particle.getZPosition();
-
+  	      // Cache the current position of the new ray
+  	      ray_start_point[0] = particle.getXPosition();
+  	      ray_start_point[1] = particle.getYPosition();
+  	      ray_start_point[2] = particle.getZPosition();
+        }
   	    // Make sure the energy is above the cutoff
   	    if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
   	      particle.setAsGone();
@@ -449,10 +449,7 @@ void ParticleSimulationManager<GeometryHandler,
       }
     }	     
   }
-  std::cout << std::endl;
-  std::cout << "END POINT AND START POINT" << std::endl;
-  std::cout << "START POINT: " << ray_start_point[0] << ", " << ray_start_point[1] << ", " << ray_start_point[2] << std::endl;
-  std::cout << "END POINT: " << particle.getPosition()[0] << ", " << particle.getPosition()[1] << ", " << particle.getPosition()[2] << std::endl;
+
   // Update the global observers: particle subtrack ending global event
   EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
   						      particle,

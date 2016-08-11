@@ -6,8 +6,6 @@
 //
 //---------------------------------------------------------------------------//
 
-#include <iostream>
-
 // moab includes
 #include "moab/Core.hpp"
 #include "moab/ScdInterface.hpp"
@@ -93,19 +91,11 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                 const double start_point[3],
                 const double end_point[3])
 {
-  if( start_point[0] == end_point[0] &&
-      start_point[1] == end_point[1] &&
-      start_point[2] == end_point[2])
-  {
-    std::cout << std::endl;
-    std::cout << "START POINT: " << start_point[0] << ", " << start_point[1] << ", " << start_point[2] << std::endl;
-    std::cout << std::endl;
-    std::cout << "END POINT: " << end_point[0] << ", " << end_point[1] << ", " << end_point[2] << std::endl;
-  }
+
   //make sure end point isn't the same as start point
-  /*testPrecondition( !( start_point[0] == end_point[0] &&
+  testPrecondition( !( start_point[0] == end_point[0] &&
                          start_point[1] == end_point[1] &&
-                         start_point[2] == end_point[2] ) );*/
+                         start_point[2] == end_point[2] ) );
 
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
@@ -144,32 +134,33 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
 
   // Set the estimator as a mesh estimator
   EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
-  
-  estimator_hdf5_file.setMeshEstimator( this->getId() );
 
+  estimator_hdf5_file.setMeshEstimator( this->getId() );
   // Export data for visualization
   if( process_data )
   {
     //preset this value to be used with all the functions that MOAB uses
     moab::ErrorCode rval;
-  
+
     //create pointer that points to a new instance of the moab_interface
     std::unique_ptr<moab::Interface> moab_interface (new moab::Core);
   
     //create new structured mesh interface
     std::unique_ptr<moab::ScdInterface> scdiface;
     {
+
       // Allow moab to create a new heap allocated object
       moab::ScdInterface* raw_scdiface;
       
       rval = moab_interface->query_interface(raw_scdiface);
-      
+     
       TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                         Utility::MOABException,
                         moab::ErrorCodeStr[rval] );
       
       //Tell the smart pointer to won the new raw pointer
       scdiface.reset( raw_scdiface);
+
     }
 
     //transform planes of mesh into moab useable interleaved coordinates;
@@ -177,10 +168,11 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
     std::vector<double>::size_type y_coordinates_size = d_hex_mesh->getNumberOfYPlanes();
     std::vector<double>::size_type z_coordinates_size = d_hex_mesh->getNumberOfZPlanes();
 
+
     //make an array called coordinates that MOAB can use to construct a structured hex mesh
-    unsigned size_of_coordinates = x_coordinates_size * y_coordinates_size * z_coordinates_size;
-    double coordinates [size_of_coordinates*3];
-    
+    unsigned long size_of_coordinates = x_coordinates_size * y_coordinates_size * z_coordinates_size;
+    // This array can get very large, so allocate on the heap instead of the stack.
+    double* coordinates = new double[size_of_coordinates*3];
     //construct array for moab
     unsigned l = 0;
     for( unsigned k = 0; k < z_coordinates_size; ++k)
@@ -192,11 +184,11 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
           coordinates[l] = d_hex_mesh->getXPlaneLocation(i);
           coordinates[l + 1] = d_hex_mesh->getYPlaneLocation(j);
           coordinates[l + 2] = d_hex_mesh->getZPlaneLocation(k);
-          l = l + 3;
+          l += 3;
         }
       }
     }
-
+ 
     //set up the actual box
     std::unique_ptr<moab::ScdBox> box;
     {
@@ -215,12 +207,12 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
       TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                           Utility::MOABException,
                           moab::ErrorCodeStr[rval] );
-      
+
       //Tell the smart pointer to own the new raw pointer
       box.reset( raw_scdbox);
     }
     scdiface.release();
-    
+    delete[] coordinates;   
     std::vector<moab::Tag> mean_tag( this->getNumberOfBins()*
                                      this->getNumberOfResponseFunctions() +
                                      this->getNumberOfResponseFunctions() ),
@@ -453,50 +445,44 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary
   Teuchos::Array<unsigned long long> num_hexes_lte_10pc_re(
                                   this->getNumberOfResponseFunctions(), 0ull );
 
-  //figure out how many hex elements there are
   
-  unsigned long hex_elements = (d_hex_mesh->getNumberOfXPlanes()-1)*
-                               (d_hex_mesh->getNumberOfYPlanes()-1)*
-                               (d_hex_mesh->getNumberOfZPlanes()-1);
-
-  for( unsigned long i = 0; i < hex_elements; ++i )
+  Utility::StructuredHexMesh::HexIDIterator start = this->getStartHex();
+  Utility::StructuredHexMesh::HexIDIterator end = this->getEndHex();
+  for( auto i = start; i != end; ++i )
   {
-  
-    const double hex_volume = this->getEntityNormConstant( i );
-    
+    const double hex_volume = this->getEntityNormConstant( std::distance(start, i) );
+
     const Estimator::FourEstimatorMomentsArray& total_hex_data = 
-      this->getEntityTotalData( i );
+      this->getEntityTotalData( std::distance(start, i) );
 
     for( unsigned long j = 0; j != total_hex_data.size(); ++j )
     {
     
       double mean, relative_error, vov, fom;
-      
+     
       this->processMoments( total_hex_data[j],
                             hex_volume,
                             mean,
                             relative_error,
                             vov,
                             fom );
-
+                            
       if( mean == 0.0 )
-        ++num_zero_hexes[i];
-      
+        ++num_zero_hexes[j];    
       if( relative_error <= 0.10 )
-        ++num_hexes_lte_10pc_re[i];
+        ++num_hexes_lte_10pc_re[j];
       if( relative_error <= 0.05 )
-        ++num_hexes_lte_5pc_re[i];
+        ++num_hexes_lte_5pc_re[j];
       if( relative_error <= 0.01)
-        ++num_hexes_lte_1pc_re[i];
-        
-    }
+        ++num_hexes_lte_1pc_re[j];
+    }  
   }
-  
+  unsigned long hex_elements = std::distance(start, end);
   os << "Hex mesh track-length flux estimator " << this->getId() << ": "
      << std::endl 
      << "\t Hexes: " << hex_elements << std::endl;
 
-  // Print the percentage of tets with no hits
+  // Print the percentage of hexs with no hits
   os << "\t % of Hexes with no hits (per response func.): ";
     
   for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
@@ -504,7 +490,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary
 
   os << std::endl;
 
-  // Print the percentage of tets with <= 10% relative error
+  // Print the percentage of hexs with <= 10% relative error
   os << "\t % of Hexes with <= 10% RE (per response func.): ";
 
   for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
@@ -512,7 +498,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary
 
   os << std::endl;
 
-  // Print the percentage of tets with <= 5% relative error
+  // Print the percentage of hexs with <= 5% relative error
   os << "\t % of Hexes with <= 5% RE (per response func.): ";
 
   for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
@@ -520,7 +506,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary
 
   os << std::endl;
 
-  // Print the percentage of tets with <= 1% relative error
+  // Print the percentage of hexs with <= 1% relative error
   os << "\t % of Hexes with <= 1% RE (per respone func.): ";
 
   for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )

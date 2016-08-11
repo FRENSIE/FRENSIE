@@ -60,7 +60,7 @@ double ParticleHistoryObserver::getElapsedTime()
 // Constructor
 ParticleHistoryObserver::ParticleHistoryObserver( const idType id )
   : d_id( id )
-{ std::cout << "PARTICLE HISTORY OBSERVER ID: " << id << std::endl;/* ... */ }
+{ /* ... */ }
 
 } // end MonteCarlo namespace
 
