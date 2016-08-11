@@ -9,8 +9,15 @@
 #ifndef UTILITY_GRID_GENERATOR_HPP
 #define UTILITY_GRID_GENERATOR_HPP
 
+// Std Lib Includes
+#include <functional>
+
 // Boost Includes
 #include <boost/function.hpp>
+#include <boost/bind.hpp>
+
+// FRENSIE Includes
+#include "Utility_InterpolationPolicy.hpp"
 
 namespace Utility{
 
@@ -60,7 +67,7 @@ public:
 		 const STLCompliantContainerB& initial_grid_points,
 		 const Functor& evaluated_function ) const;
 
-  //! Generate the linear grid (return evaluated function on grid)
+  //! Generate the grid (return evaluated function on grid)
   template<typename STLCompliantContainerA,
 	   typename STLCompliantContainerB,
 	   typename STLCompliantContainerC,

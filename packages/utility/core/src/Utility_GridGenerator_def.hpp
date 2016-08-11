@@ -10,7 +10,7 @@
 #define UTILITY_LINEAR_GRID_GENERATOR_DEF_HPP
 
 // Std Lib Includes
-#include <list>
+#include <deque>
 #include <iterator>
 
 // FRENSIE Includes
@@ -100,7 +100,7 @@ void GridGenerator<InterpPolicy>::generateInPlace(
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainer::value_type>::value) );
   // Make sure at least 2 initial grid points have been given
   testPrecondition( grid.size() >= 2 );
-  // Make sure the intial grid points are sorted
+  // Make sure the initial grid points are sorted
   testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
 
   STLCompliantContainer evaluated_function;
