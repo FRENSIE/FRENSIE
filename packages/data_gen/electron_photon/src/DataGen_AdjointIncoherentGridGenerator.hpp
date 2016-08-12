@@ -17,35 +17,38 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "Utility_IncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "Utility_TwoDGridGenerator.hpp"
 
 namespace DataGen{
 
 //! The adjoint incoherent cross section grid generator
-template<typename TwoDInterPolicy>
-class AdjointIncoherentGridGenerator : public TwoDGridGenerator<TwoDInterpPolicy>
+template<typename TwoDInterpPolicy>
+class AdjointIncoherentGridGenerator : public Utility::TwoDGridGenerator<TwoDInterpPolicy>
 {
 
 public:
 
   //! Constructor
   AdjointIncoherentGridGenerator(
-                        const double max_energy = 20.0,
-                        const double max_energy_nudge_value = 0.2,
-                        const double energy_to_max_energy_nudge_value = 1e-6 );
+                          const double max_energy = 20.0,
+                          const double max_energy_nudge_value = 0.2,
+                          const double energy_to_max_energy_nudge_value = 1e-6,
+                          const double convergence_tol = 0.001,
+                          const double absolute_diff_tol = 1e-12,
+                          const double distance_tol = 1e-14 );
 
   //! Destructor
   virtual ~AdjointIncoherentGridGenerator()
   { /* ... */ }
 
-  //! Get the max table energy
+  //! Get the max energy
   double getMaxEnergy() const;
 
   //! Set the max energy nudge value
   void setMaxEnergyNudgeValue( const double max_energy_nudge_value );
   
-  //! Get the nudged max table energy
+  //! Get the nudged max energy
   double getNudgedMaxEnergy() const;
 
   //! Set the energy to max energy nudge value
@@ -79,8 +82,8 @@ private:
   // The max table energy nudge value 
   double d_nudged_max_energy;
 
-  // The energy to max energy nudge factor
-  double d_energy_to_max_energy_nudge_factor;
+  // The energy to max energy nudge value
+  double d_energy_to_max_energy_nudge_value;
 };
 
 } // end DataGen namespace

@@ -41,11 +41,18 @@ namespace DataGen{
  * the binding energy since the cross section goes to zero when the energy is 
  * equal to the max energy minus the binding energy.
  */
-AdjointIncoherentGridGenerator::AdjointIncoherentGridGenerator(
+template<typename TwoDInterpPolicy>
+AdjointIncoherentGridGenerator<TwoDInterpPolicy>::AdjointIncoherentGridGenerator(
                                 const double max_energy,
                                 const double max_energy_nudge_value,
-                                const double energy_to_max_energy_nudge_value )
-  : d_max_energy( max_energy ),
+                                const double energy_to_max_energy_nudge_value,
+                                const double convergence_tol,
+                                const double absolute_diff_tol,
+                                const double distance_tol )
+  : Utility::TwoDGridGenerator<TwoDInterpPolicy>( convergence_tol,
+                                                  absolute_diff_tol,
+                                                  distance_tol ),
+    d_max_energy( max_energy ),
     d_nudged_max_energy( max_energy + max_energy_nudge_value ),
     d_energy_to_max_energy_nudge_value( energy_to_max_energy_nudge_value )
 {
@@ -58,7 +65,8 @@ AdjointIncoherentGridGenerator::AdjointIncoherentGridGenerator(
 }
 
 // Get the max energy
-double AdjointIncoherentGridGenerator::getMaxEnergy() const
+template<typename TwoDInterpPolicy>
+double AdjointIncoherentGridGenerator<TwoDInterpPolicy>::getMaxEnergy() const
 {
   return d_max_energy;
 }
@@ -73,7 +81,8 @@ double AdjointIncoherentGridGenerator::getMaxEnergy() const
  * the cross section goes to zero when the energy is equal to the max energy 
  * minus the binding energy.
  */
-void AdjointIncoherentGridGenerator::setMaxEnergyNudgeValue(
+template<typename TwoDInterpPolicy>
+void AdjointIncoherentGridGenerator<TwoDInterpPolicy>::setMaxEnergyNudgeValue(
                                           const double max_energy_nudge_value )
 {
   // Make sure the max energy nudge value is valid
@@ -82,8 +91,9 @@ void AdjointIncoherentGridGenerator::setMaxEnergyNudgeValue(
   d_nudged_max_energy = d_max_energy + max_energy_nudge_value;
 }
 
-// Get the max energy nudge factor
-double AdjointIncoherentGridGenerator::getNudgedMaxEnergy() const
+// Get the nudged max energy
+template<typename TwoDInterpPolicy>
+double AdjointIncoherentGridGenerator<TwoDInterpPolicy>::getNudgedMaxEnergy() const
 {
   return d_nudged_max_energy;
 }
@@ -101,44 +111,51 @@ double AdjointIncoherentGridGenerator::getNudgedMaxEnergy() const
  * the binding energy since the cross section goes to zero when the energy is 
  * equal to the max energy minus the binding energy.
  */
-void AdjointIncoherentGridGenerator::setEnergyToMaxEnergyNudgeValue(
+template<typename TwoDInterpPolicy>
+void AdjointIncoherentGridGenerator<TwoDInterpPolicy>::setEnergyToMaxEnergyNudgeValue(
                                 const double energy_to_max_energy_nudge_value )
 {
   // Make sure the energy to max energy nudge value is valid
   testPrecondition( energy_to_max_energy_nudge_value >= 0.0 );
   
-  d_energy_to_max_energy_nudge_factor = energy_to_max_energy_nudge_value;
+  d_energy_to_max_energy_nudge_value = energy_to_max_energy_nudge_value;
 }
 
 // Get the nudged energy
-double AdjointIncoherentGridGenerator::getNudgedEnergy(
+template<typename TwoDInterpPolicy>
+double AdjointIncoherentGridGenerator<TwoDInterpPolicy>::getNudgedEnergy(
                                                     const double energy ) const
 {
-  return energy + d_energy_to_max_energy_nudge_factor;
+  return energy + d_energy_to_max_energy_nudge_value;
 }
 
 // Create a cross section evaluator
 /*! The std::function returned from this method can be used with the
  * generate methods to generate the two-dimensional grid.
  */
+template<typename TwoDInterpPolicy>
 std::function<double (double,double)>
-AdjointIncoherentGridGenerator::createCrossSectionEvaluator(
+AdjointIncoherentGridGenerator<TwoDInterpPolicy>::createCrossSectionEvaluator(
      const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& adjoint_incoherent_cross_section,
      const double cross_section_evaluation_tol )
 {
   // Make sure the cross section is valid
   testPrecondition( adjoint_incoherent_cross_section.get() );
-  
-  return std::bind<double>(
-                    &MonteCarlo::IncoherentAdjointPhotonScatteringDistribution,
-                    std::cref( *adjoint_incoherent_cross_section ),
-                    std::placeholder::_1,
-                    std::placeholder::_2,
-                    cross_section_evaluation_tol );
+
+  typedef MonteCarlo::IncoherentAdjointPhotonScatteringDistribution DistType;
+
+  // The evaluateIntegratedCrossSection method that we want to bind to is
+  // overloaded. We have to disambiguate it for the bind to work.
+  return std::bind<double>( (double(DistType::*)(double,double,double) const)&DistType::evaluateIntegratedCrossSection,
+                            std::cref( *adjoint_incoherent_cross_section ),
+                            std::placeholders::_1,
+                            std::placeholders::_2,
+                            cross_section_evaluation_tol );
 }
 
 // Add critical energies to energy grid
-void AdjointIncoherentGridGenerator::addCriticalValuesToPrimaryGrid(
+template<typename TwoDInterpPolicy>
+void AdjointIncoherentGridGenerator<TwoDInterpPolicy>::addCriticalValuesToPrimaryGrid(
                                         std::deque<double>& energy_grid ) const
 {
   // Make sure the primary grid is sorted
@@ -159,18 +176,21 @@ void AdjointIncoherentGridGenerator::addCriticalValuesToPrimaryGrid(
   if( energy_of_max_cs > energy_grid.front() )
   {
     std::deque<double>::iterator critical_position =
-      std::lower_bound( energy_grid.begin(), energy_grid.end() );
+      std::lower_bound( energy_grid.begin(),
+                        energy_grid.end(),
+                        energy_of_max_cs );
 
     // If this is not true then the critical energy is already present
-    else if( *critical_position > energy_of_max_cs )
+    if( *critical_position > energy_of_max_cs )
       energy_grid.insert( critical_position, energy_of_max_cs );
   }
 }
 
 // Initialize the max energy grid at an energy grid point
-void AdjointIncoherentGridGenerator::initializeSecondaryGrid(
-                                           std::vector<double>& secondary_grid,
-                                           const double energy ) const
+template<typename TwoDInterpPolicy>
+void AdjointIncoherentGridGenerator<TwoDInterpPolicy>::initializeSecondaryGrid(
+                                          std::vector<double>& max_energy_grid,
+                                          const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( energy <= d_max_energy );
@@ -187,7 +207,8 @@ void AdjointIncoherentGridGenerator::initializeSecondaryGrid(
       getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( energy );
 
     // The energy is inside the critical range
-    if( max_energy_of_max_cs < this->getNudgedMaxEnergy() )
+    if( max_energy_of_max_cs < this->getNudgedMaxEnergy() &&
+        max_energy_of_max_cs > this->getNudgedEnergy( energy ) )
     {
       max_energy_grid.resize( 3 );
 
@@ -214,7 +235,7 @@ void AdjointIncoherentGridGenerator::initializeSecondaryGrid(
   }
 
   // Make sure the max energy grid is valid
-  testPoscondition( max_energy_grid.size() >= 2 );
+  testPostcondition( max_energy_grid.size() >= 2 );
 }
 
 } // end DataGen namespace

@@ -423,12 +423,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointSubshell
 }
 
 // Create an adjoint incoherent grid generator
-void createAdjointIncoherentGridGenerator(
-       const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_cs_evaluator,
-       std::shared_ptr<const AdjointIncoherentGridGenerator>& grid_generator )
-{
+// void createAdjointIncoherentGridGenerator(
+//        const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_cs_evaluator,
+//        std::shared_ptr<const AdjointIncoherentGridGenerator>& grid_generator )
+// {
   
-}
+// }
 
 
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronData(

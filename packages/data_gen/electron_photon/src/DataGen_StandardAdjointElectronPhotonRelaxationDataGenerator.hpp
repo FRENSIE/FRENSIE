@@ -19,6 +19,7 @@
 #include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointBremsstrahlungCrossSectionEvaluator.hpp"
 #include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp"
+#include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
@@ -125,9 +126,9 @@ private:
          std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
 
   // Create an adjoint incoherent grid generator
-  void createAdjointIncoherentGridGenerator(
-       const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_cs_evaluator,
-       std::shared_ptr<const AdjointIncoherentGridGenerator>& grid_generator );
+  // void createAdjointIncoherentGridGenerator(
+  //      const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_cs_evaluator,
+  //      std::shared_ptr<const AdjointIncoherentGridGenerator>& grid_generator );
 
   // Set the electron cross section union energy grid
   void setAdjointElectronCrossSectionsData(
