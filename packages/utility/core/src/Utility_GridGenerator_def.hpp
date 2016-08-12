@@ -12,12 +12,14 @@
 // Std Lib Includes
 #include <deque>
 #include <iterator>
+#include <sstream>
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ComparePolicy.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
 
@@ -28,7 +30,9 @@ GridGenerator<InterpPolicy>::GridGenerator( const double convergence_tol,
 					    const double distance_tol )
   : d_convergence_tol( convergence_tol ),
     d_absolute_diff_tol( absolute_diff_tol ),
-    d_distance_tol( distance_tol )
+    d_distance_tol( distance_tol ),
+    d_throw_exceptions( false ),
+    d_os_warn( &std::cerr )
 {
   // Make sure the convergence tolerance is valid
   testPrecondition( convergence_tol <= 1.0 );
@@ -39,6 +43,40 @@ GridGenerator<InterpPolicy>::GridGenerator( const double convergence_tol,
   // Make sure the distance tolerance is valid
   testPrecondition( distance_tol <= 1.0 );
   testPrecondition( distance_tol >= 0.0 );
+}
+
+// Throw exception on dirty convergence
+/*! \details "Dirty Convergence" has occured when the distance tolerance or
+ * the absolute difference tolerance is reached before the convergence
+ * tolerance. This type of convergence should be avoided because the grid
+ * has not truely converged.
+ */
+template<typename InterpPolicy>
+void GridGenerator<InterpPolicy>::throwExceptionOnDirtyConvergence()
+{
+  d_throw_exceptions = true;
+}
+
+// Warn on dirty convergence (default)
+/*! \details "Dirty Convergence" has occured when the distance tolerance or
+ * the absolute difference tolerance is reached before the convergence
+ * tolerance. This type of convergence should be avoided because the grid
+ * has not truely converged.
+ */
+template<typename InterpPolicy>
+void GridGenerator<InterpPolicy>::warnOnDirtyConvergence(
+                                                        std::ostream* os_warn )
+{
+  d_throw_exceptions = false;
+
+  d_os_warn = os_warn;
+}
+
+// Check if an exception will be thrown on dirty convergence
+template<typename InterpPolicy>
+bool GridGenerator<InterpPolicy>::isExceptionThrownOnDirtyConvergence() const
+{
+  return d_throw_exceptions;
 }
 
 // Set the convergence tolerance
@@ -53,6 +91,13 @@ void GridGenerator<InterpPolicy>::setConvergenceTolerance(
   d_convergence_tol = convergence_tol;
 }
 
+// Get the convergence tolerance
+template<typename InterpPolicy>
+double GridGenerator<InterpPolicy>::getConvergenceTolerance() const
+{
+  return d_convergence_tol;
+}
+
 // Set the absolute difference tolerance
 template<typename InterpPolicy>
 void GridGenerator<InterpPolicy>::setAbsoluteDifferenceTolerance(
@@ -65,6 +110,13 @@ void GridGenerator<InterpPolicy>::setAbsoluteDifferenceTolerance(
   d_absolute_diff_tol = absolute_diff_tol;
 }
 
+// Get the absolute difference tolerance
+template<typename InterpPolicy>
+double GridGenerator<InterpPolicy>::getAbsoluteDifferenceTolerance() const
+{
+  return d_absolute_diff_tol;
+}
+
 // Set the distance tolerance
 template<typename InterpPolicy>
 void GridGenerator<InterpPolicy>::setDistanceTolerance(
@@ -75,6 +127,13 @@ void GridGenerator<InterpPolicy>::setDistanceTolerance(
   testPrecondition( distance_tol >= 0.0 );
 
   d_distance_tol = distance_tol;
+}
+
+// Get the distance tolerance
+template<typename InterpPolicy>
+double GridGenerator<InterpPolicy>::getDistanceTolerance() const
+{
+  return d_distance_tol;
 }
 
 // Generate the grid in place
@@ -147,7 +206,6 @@ void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
 
   // Variables used to calculate the linearized grid
   double x0, x1, x_mid, y0, y1, y_mid_exact, y_mid_estimated;
-  double relative_error, abs_diff, relative_distance;
 
   // Evaluate the first grid point
   x0 = grid_queue.front();
@@ -169,46 +227,8 @@ void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
 
     y_mid_estimated = InterpPolicy::interpolate( x0, x1, x_mid, y0, y1 );
 
-    relative_error = Policy::relError( y_mid_exact, y_mid_estimated );
-
-    abs_diff =
-      Teuchos::ScalarTraits<double>::magnitude( y_mid_exact - y_mid_estimated);
-
-    relative_distance = Policy::relError( x0, x1 );
-
-    bool converged = false;
-
-    // Check if the distance tolerance was hit
-    if( relative_distance <= d_distance_tol &&
-	relative_error > d_convergence_tol )
-    {
-      converged = true;
-
-      std::cerr.precision( 18 );
-      std::cerr << "Warning: distance tolerance hit before convergence - "
-		<< "relError(x0,x1) = relError(" << x0 << "," << x1 << ") = "
-		<< relative_distance
-		<< ", relError(ym,ym_exact) = relError(" << y_mid_estimated
-		<< "," << y_mid_exact << ") = " << relative_error
-		<< std::endl;
-    }
-
-    // Check if the absolute difference tolerance was hit
-    if( abs_diff <= d_absolute_diff_tol &&
-	relative_error > d_convergence_tol )
-    {
-      converged = true;
-
-      std::cerr.precision( 18 );
-      std::cerr << "Warning: absolute difference tolerance hit before "
-		<< "convergence - x_mid=" << x_mid << ", y_mid_exact="
-		<< y_mid_exact << ", y_mid_estimated="
-		<< y_mid_estimated << ", abs_diff=" << abs_diff << std::endl;
-    }
-
-    // Check if the convergence tolerance was hit
-    if( relative_error <= d_convergence_tol )
-      converged = true;
+    bool converged =
+      this->hasGridConverged( x0, x_mid, x1, y_mid_estimated, y_mid_exact );
 
     // Keep the grid points
     if( converged )
@@ -313,6 +333,84 @@ void GridGenerator<InterpPolicy>::generateAndEvaluate(
   grid.assign( initial_grid_points.begin(), initial_grid_points.end() );
 
   this->generateAndEvaluateInPlace( grid, evaluated_function, function );
+}
+
+// Check for convergence
+template<typename InterpPolicy>
+bool GridGenerator<InterpPolicy>::hasGridConverged(
+                                               const double lower_grid_point,
+                                               const double mid_grid_point,
+                                               const double upper_grid_point,
+                                               const double y_mid_estimated,
+                                               const double y_mid_exact ) const
+                                            
+{
+  bool converged = false;
+
+  // Calculate the convergence parameters
+  double relative_error = Policy::relError( y_mid_exact, y_mid_estimated );
+
+  double absolute_difference =
+      Teuchos::ScalarTraits<double>::magnitude( y_mid_exact - y_mid_estimated);
+
+  double relative_distance =
+    Policy::relError( lower_grid_point, upper_grid_point );
+
+  // Check if the distance tolerance was hit - dirty convergence
+  if( relative_distance <= d_distance_tol &&
+      relative_error > d_convergence_tol )
+  {
+    std::ostringstream oss;
+    oss.precision( 18 );
+    oss << "distance tolerance hit before convergence - "
+        << "relError(x0,x1) = relError(" << lower_grid_point << ","
+        << upper_grid_point << ") = " << relative_distance
+        << ", relError(ym,ym_exact) = relError(" << y_mid_estimated
+        << "," << y_mid_exact << ") = " << relative_error;
+
+    if( d_throw_exceptions )
+    {
+      THROW_EXCEPTION( std::runtime_error, "Error: " << oss.str() );
+    }
+    else
+    {
+      converged = true;
+      
+      d_os_warn->precision( 18 );
+      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+    }
+  }
+
+  // Check if the absolute difference tolerance was hit - dirty convergence
+  if( absolute_difference <= d_absolute_diff_tol &&
+      relative_error > d_convergence_tol )
+  {
+    std::ostringstream oss;
+    oss.precision( 18 );
+    oss << "absolute difference tolerance hit before "
+        << "convergence - x_mid=" << mid_grid_point << ", y_mid_exact="
+        << y_mid_exact << ", y_mid_estimated="
+        << y_mid_estimated << ", abs_diff=" << absolute_difference;
+
+    if( d_throw_exceptions )
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: " << oss.str() );
+    }
+    else
+    {
+      converged = true;
+      
+      d_os_warn->precision( 18 );
+      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+    }
+  }
+
+  // Check if the convergence tolerance was hit - clean convergence
+  if( relative_error <= d_convergence_tol )
+    converged = true;
+
+  return converged;
 }
 
 } // end Utility namespace

@@ -76,6 +76,62 @@ private:
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check if exceptions/warnings on dirty convergence can be set
+TEUCHOS_UNIT_TEST( GridGenerator, dirty_convergence_handling )
+{
+  Utility::GridGenerator<Utility::LinLin> generator;
+
+  TEST_ASSERT( !generator.isExceptionThrownOnDirtyConvergence() );
+
+  generator.throwExceptionOnDirtyConvergence();
+
+  TEST_ASSERT( generator.isExceptionThrownOnDirtyConvergence() );
+
+  generator.warnOnDirtyConvergence();
+
+  TEST_ASSERT( !generator.isExceptionThrownOnDirtyConvergence() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the convergence tolerance can be set
+TEUCHOS_UNIT_TEST( GridGenerator, setConvergenceTolerance )
+{
+  Utility::GridGenerator<Utility::LinLin> generator;
+
+  TEST_EQUALITY_CONST( generator.getConvergenceTolerance(), 0.001 );
+
+  generator.setConvergenceTolerance( 0.0001 );
+
+  TEST_EQUALITY_CONST( generator.getConvergenceTolerance(), 0.0001 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absolute difference tolerance can be set
+TEUCHOS_UNIT_TEST( GridGenerator, setAbsoluteDifferenceTolerance )
+{
+  Utility::GridGenerator<Utility::LinLin> generator;
+
+  TEST_EQUALITY_CONST( generator.getAbsoluteDifferenceTolerance(), 1e-12 );
+
+  generator.setAbsoluteDifferenceTolerance( 1e-14 );
+
+  TEST_EQUALITY_CONST( generator.getAbsoluteDifferenceTolerance(), 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distance tolerance can be set
+TEUCHOS_UNIT_TEST( GridGenerator, setDistanceTolerance )
+{
+  Utility::GridGenerator<Utility::LinLin> generator;
+
+  TEST_EQUALITY_CONST( generator.getDistanceTolerance(), 1e-14 );
+
+  generator.setDistanceTolerance( 1e-16 );
+
+  TEST_EQUALITY_CONST( generator.getDistanceTolerance(), 1e-16 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a grid can be generated for the functions
 TEUCHOS_UNIT_TEST( GridGenerator, generate )
 {

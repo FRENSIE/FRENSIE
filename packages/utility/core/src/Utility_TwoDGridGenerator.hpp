@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <functional>
+#include <iostream>
 
 // Boost Includes
 #include <boost/function.hpp>
@@ -18,6 +19,7 @@
 
 // FRENSIE Includes
 #include "Utility_TwoDInterpolationPolicy.hpp"
+#include "Utility_GridGenerator.hpp"
 
 namespace Utility{
 
@@ -37,14 +39,41 @@ public:
   virtual ~TwoDGridGenerator()
   { /* ... */ }
 
+  //! Set verbose mode to on
+  void setVerboseModeOn( std::ostream* os_log = &std::cout );
+
+  //! Set verbose mode to off (default)
+  void setVerboseModeOff();
+
+  //! Check if verbose mode is on
+  bool isVerboseModeOn() const;
+
+  //! Throw exception on dirty convergence
+  void throwExceptionOnDirtyConvergence();
+
+  //! Warn on dirty convergence (default)
+  void warnOnDirtyConvergence( std::ostream* os_warn = &std::cerr );
+
+  //! Check if an exception will be thrown on dirty convergence
+  bool isExceptionThrownOnDirtyConvergence() const;
+
   //! Set the convergence tolerance
   void setConvergenceTolerance( const double convergence_tol );
+
+  //! Get the convergence tolerance
+  double getConvergenceTolerance() const;
 
   //! Set the absolute difference tolerance
   void setAbsoluteDifferenceTolerance( const double absolute_diff_tol );
 
+  //! Get the absolute difference tolerance
+  double getAbsoluteDifferenceTolerance() const;
+
   //! Set the distance tolerance
   void setDistanceTolerance( const double distance_tol );
+
+  //! Get the distance tolerance
+  double getDistanceTolerance() const;
 
   //! Add critical values to primary grid
   virtual void addCriticalValuesToPrimaryGrid(
@@ -52,7 +81,7 @@ public:
 
   //! Initialize secondary grid at a primary grid point
   virtual void initializeSecondaryGrid(
-                                   std::deque<double>& secondary_grid,
+                                   std::vector<double>& secondary_grid,
                                    const double primary_grid_point ) const = 0;
 
   //! Generate the primary grid in place
@@ -68,7 +97,7 @@ public:
   void generateAndEvaluateInPlace( STLCompliantContainerA& primary_grid,
                                    STLCompliantContainerB& secondary_grids,
                                    STLCompliantContainerC& evaluated_function,
-                                   const Function& function ) const;
+                                   const Functor& function ) const;
 
   //! Generate the primary grid
   template<typename STLCompliantContainerA,
@@ -112,6 +141,21 @@ private:
                     const STLCompliantContainerA& secondary_grid_0,
                     const STLCompliantContainerA& secondary_grid_1,
                     const STLCompliantContainerB& evaluated_function_0,
+                    const STLCompliantContainerB& evaluated_function_1,
+                    const Functor& function ) const;
+
+  // Check for 2D grid convergence at the intermediate value
+  template<typename STLCompliantContainerA,
+           typename STLCompliantContainerB>
+  bool hasGridConvergedAtSecondaryPoint(
+                    const double primary_value_0,
+                    const double primary_value_1,
+                    const double intermediate_primary_value,
+                    const double secondary_value,
+                    const double exact_function_value,
+                    const STLCompliantContainerA& secondary_grid_0,
+                    const STLCompliantContainerA& secondary_grid_1,
+                    const STLCompliantContainerB& evaluated_function_0,
                     const STLCompliantContainerB& evaluated_function_1 ) const;
 
   // Calculate the midpoint between two primary values
@@ -122,6 +166,10 @@ private:
   double calculateSecondaryMidpoint( const double secondary_value_0,
                                      const double secondary_value_1 ) const;
 
+  // Log added primary grid point
+  void logAddedPrimaryGridPoint( const double primary_grid_point,
+                                 const double primary_grid_point_id ) const;
+
   // The convergence tolerance
   double d_convergence_tol;
 
@@ -131,12 +179,32 @@ private:
   // The distance tolerance
   double d_distance_tol;
 
+  // Verbose mode
+  bool d_verbose_mode_on;
+
+  // Throw exception on dirty convergence
+  bool d_throw_exceptions;
+
+  // The logging output stream
+  std::ostream* d_os_log;
+
+  // The warning output stream
+  std::ostream* d_os_warn;
+
   // The secondary grid generator
   Utility::GridGenerator<typename TwoDInterpPolicy::ZYInterpPolicy>
   d_secondary_grid_generator;
 };
   
 } // end Utility namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_TwoDGridGenerator_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_TWO_D_GRID_GENERATOR_HPP
 
