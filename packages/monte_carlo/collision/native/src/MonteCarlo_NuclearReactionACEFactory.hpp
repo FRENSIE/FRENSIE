@@ -106,7 +106,7 @@ protected:
                                NuclearReactionType reaction_type, 
                                Teuchos::RCP<NuclearReaction>& base_reaction );
 
-private:
+protected:
 
   // Initialize the scattering reactions
   void initializeScatteringReactions( 

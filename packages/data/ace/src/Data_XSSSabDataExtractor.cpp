@@ -56,12 +56,20 @@ XSSSabDataExtractor::XSSSabDataExtractor(
   {
     d_itce_block = d_xss( d_jxs[3], (int)d_xss[d_jxs[3]]*2 + 1 );
   }
+  else
+  {
+    d_itce_block = Teuchos::ArrayView<const double>();
+  }
     
   // Extract and cache the ITCA block
   if( d_jxs[3] != 0 && d_nxs[5] != -1 )
   {
     int elastic_energies = (int)d_xss[d_jxs[3]];
     d_itca_block = d_xss( d_jxs[5], elastic_energies*(d_nxs[5] + 1) );
+  }
+    else
+  {
+    d_itca_block = Teuchos::ArrayView<const double>();
   }
 }
 

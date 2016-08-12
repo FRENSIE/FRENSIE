@@ -25,6 +25,10 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
+#include "MonteCarlo_SAlphaBetaNuclearScatteringDistributionACEFactory.hpp"
+#include "Data_XSSSabDataExtractor.hpp"
+#include "Data_ACEFileHandler.hpp"
+
 namespace MonteCarlo{
 
 // Constructor
@@ -38,12 +42,12 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 		 const double temperature,
 		 const Teuchos::ArrayRCP<const double>& energy_grid,
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data )
-{ 
-  // Create the scattering distribution factory
+{ 		     
+	// Create the scattering distribution factory
   NeutronNuclearScatteringDistributionACEFactory 
-    scattering_dist_factory( table_name,
+  scattering_dist_factory( table_name,
 			     atomic_weight_ratio,
-			     raw_nuclide_data );
+			     raw_nuclide_data );  
 
   // Extract the required blocks
   Teuchos::ArrayView<const double> elastic_cross_section = 
@@ -76,6 +80,27 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
     raw_nuclide_data.extractDNEDLBlock();
   Teuchos::ArrayView<const double> dned_block = 
     raw_nuclide_data.extractDNEDBlock();
+    
+  if( false )
+  {
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
+    ace_file_handler.reset( 
+	      new Data::ACEFileHandler( "/home/ecmoll/software/frensie/FRENSIE/packages/data/test/test_files/test_h2o_sab_ace_file.txt",
+					"/home/ecmoll/software/frensie/FRENSIE/packages/data/test/test_files/lwtr.20t",
+					1u ) );
+
+    Data::XSSSabDataExtractor sab_nuclide_data( 
+        ace_file_handler->getTableNXSArray(),
+				ace_file_handler->getTableJXSArray(),
+				ace_file_handler->getTableXSSArray() );
+
+	  // Create the scattering distribution factory
+    SAlphaBetaNuclearScatteringDistributionACEFactory 
+    sab_scattering_dist_factory( table_name,
+			                           atomic_weight_ratio,
+			                           raw_nuclide_data,
+			                           sab_nuclide_data );  
+  }
 
   // Create a map of the reaction types and their table ordering
   boost::unordered_map<NuclearReactionType,unsigned> reaction_ordering;

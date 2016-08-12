@@ -367,7 +367,7 @@ void DecoupledPhotonProductionReactionACEFactory::initializeCrossSectionBasedPho
   iter_reaction = threshold_energy_map.begin();
   end_reaction = threshold_energy_map.end();
   
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> > 
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >
     photon_production_distribution;
   
   while( iter_reaction != end_reaction )

@@ -204,7 +204,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
 		    const std::string& table_name,
 		    const unsigned reaction,
 		    const bool is_cm_distribution,
-		      Teuchos::RCP<ScatteringDistributionBaseType>& distribution )
+		    Teuchos::RCP<ScatteringDistributionBaseType>& distribution )
 {
   typedef AceLaw61NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
 						typename ScatteringDistributionBaseType::OutgoingParticleState,

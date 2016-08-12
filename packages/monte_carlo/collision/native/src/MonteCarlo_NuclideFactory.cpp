@@ -61,18 +61,40 @@ NuclideFactory::NuclideFactory(
 
     if( nuclide_file_type == CrossSectionsXMLProperties::ace_file )
     {
-      createNuclideFromACETable( cross_sections_xml_directory,
-				 *nuclide_name,
-				 nuclide_file_path,
-				 nuclide_table_name,
-				 nuclide_file_start_line,
-				 atomic_number,
-				 atomic_mass_number,
-				 isomer_number,
-				 atomic_weight_ratio,
-				 temperature,
-				 use_unresolved_resonance_data,
-				 use_photon_production_data );
+      if( false )
+      {
+      /*
+        createSAlphaBetaNuclideFromACETable( cross_sections_xml_directory,
+				   *nuclide_name,
+				   nuclide_file_path,
+				   nuclide_table_name,
+				   nuclide_file_start_line,
+				   atomic_number,
+				   atomic_mass_number,
+				   isomer_number,
+				   atomic_weight_ratio,
+				   temperature,
+				   use_unresolved_resonance_data,
+				   use_photon_production_data,
+				   *sab_alias,
+			 const Data::XSSSabDataExtractor& sab_nuclide_data
+			 */
+      }
+      else
+      {
+        createNuclideFromACETable( cross_sections_xml_directory,
+				   *nuclide_name,
+				   nuclide_file_path,
+				   nuclide_table_name,
+				   nuclide_file_start_line,
+				   atomic_number,
+				   atomic_mass_number,
+				   isomer_number,
+				   atomic_weight_ratio,
+				   temperature,
+				   use_unresolved_resonance_data,
+				   use_photon_production_data );
+			}
     }
     else
     {

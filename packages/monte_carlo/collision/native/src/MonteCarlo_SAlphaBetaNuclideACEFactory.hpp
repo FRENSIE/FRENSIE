@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NuclideACEFactory.hpp
-//! \author Alex Robinson
-//! \brief  The nuclide ace factory class declaration
+//! \file   MonteCarlo_SAlphaBetaNuclideACEFactory.hpp
+//! \author Eli Moll
+//! \brief  The S(alpha,beta) nuclide ace factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NUCLIDE_ACE_FACTORY_HPP
-#define MONTE_CARLO_NUCLIDE_ACE_FACTORY_HPP
+#ifndef MONTE_CARLO_S_ALPHA_BETA_NUCLIDE_ACE_FACTORY_HPP
+#define MONTE_CARLO_S_ALPHA_BETA_NUCLIDE_ACE_FACTORY_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -15,11 +15,13 @@
 // FRENSIE Includes
 #include "MonteCarlo_Nuclide.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Data_XSSSabDataExtractor.hpp"
+#include "MonteCarlo_NuclideACEFactory.hpp"
 
 namespace MonteCarlo{
 
 //! The nuclide factory class that uses ACE data
-class NuclideACEFactory
+class SAlphaBetaNuclideACEFactory : public NuclideACEFactory
 {
 
 public:
@@ -35,12 +37,14 @@ public:
 			 const double temperature,
 			 Teuchos::RCP<Nuclide>& nuclide,
 			 const bool use_unresolved_resonance_data,
-			 const bool use_photon_production_data );
+			 const bool use_photon_production_data,
+			 const std::string& sab_alias,
+			 const Data::XSSSabDataExtractor& sab_nuclide_data  );
 
-protected:
+private:
 
   // Constructor
-  NuclideACEFactory();
+  SAlphaBetaNuclideACEFactory();
 };
 
 } // end MonteCarlo namespace

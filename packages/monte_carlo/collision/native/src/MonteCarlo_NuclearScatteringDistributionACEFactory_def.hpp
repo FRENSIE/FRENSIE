@@ -185,8 +185,8 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 {
   // Make sure the reaction type has a scattering distribution (mult > 0)
   testPrecondition( this->doesReactionHaveScatteringDistribution( 
-							     reaction_type ) );
- 
+					         reaction_type ) );
+
   // Create an angular distribution if scattering laws 44/61/67 are not used
   if( !d_reactions_with_coupled_energy_angle_dist.count( reaction_type ) )
   {
@@ -205,18 +205,18 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     else
     {
       NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution(
-							angular_distribution );
+					    angular_distribution );
     }
 
     // Special Case: elastic scattering will have no energy distribution
     if( this->isElasticScatteringImplicit() && reaction_type == 2 )
     {
       this->createElasticScatteringDistribution( 
-		       distribution,
-		       d_table_name,
-		       d_reaction_cm_scattering.find( reaction_type )->second,
-		       d_atomic_weight_ratio,
-		       angular_distribution );
+           distribution,
+           d_table_name,
+           d_reaction_cm_scattering.find( reaction_type )->second,
+           d_atomic_weight_ratio,
+           angular_distribution );
       
     }
     // Create all other scattering distributions using the energy dist factory
@@ -229,37 +229,37 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
        	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
        	      d_table_name,
        	      reaction_type,
-	            energy_distribution,
-	            d_atomic_weight_ratio );
-  
+              energy_distribution,
+              d_atomic_weight_ratio );
+
       // Test that law 3 distributions are always in the CM system
       if( energy_distribution->getLaw() == 3 )
       {
-	TEST_FOR_EXCEPTION( !(d_reaction_cm_scattering.find( 
-						      reaction_type )->second),
-			    std::runtime_error,
-			    "Error: MT# " << reaction_type << " in ACE table "
-			    << d_table_name << " uses ACE Law 3, which must "
-			    "be in the CM system. The ref. frame specified is "
-			    "the lab indicating that there is an error in the "
-			    "ACE table!" );
+  TEST_FOR_EXCEPTION( !(d_reaction_cm_scattering.find( 
+				          reaction_type )->second),
+	        std::runtime_error,
+	        "Error: MT# " << reaction_type << " in ACE table "
+	        << d_table_name << " uses ACE Law 3, which must "
+	        "be in the CM system. The ref. frame specified is "
+	        "the lab indicating that there is an error in the "
+	        "ACE table!" );
       }
       
       if( d_reaction_cm_scattering.find( reaction_type )->second )
       {
-	distribution.reset(
-			   new IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType,CMSystemConversionPolicy>( 
-						      d_atomic_weight_ratio,
-						      energy_distribution,
-						      angular_distribution ) );
+  distribution.reset(
+	       new IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType,CMSystemConversionPolicy>( 
+				          d_atomic_weight_ratio,
+				          energy_distribution,
+				          angular_distribution ) );
       }
       else
       {
-	distribution.reset(
-			   new IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType,LabSystemConversionPolicy>( 
-						      d_atomic_weight_ratio,
-						      energy_distribution,
-						      angular_distribution ) );
+  distribution.reset(
+	       new IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType,LabSystemConversionPolicy>( 
+				          d_atomic_weight_ratio,
+				          energy_distribution,
+				          angular_distribution ) );
       }
     }
   }
@@ -271,17 +271,17 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
               d_atomic_weight_ratio,
      	        d_reaction_energy_dist.find( reaction_type )->second,
      	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
-	            d_table_name );
-  
+              d_table_name );
+
     if( acelaw == 44 )
     {
       NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
                 d_atomic_weight_ratio,
        	        d_reaction_energy_dist.find( reaction_type )->second,
        	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
-	              d_table_name,
+                d_table_name,
        	        reaction_type,
-	              d_reaction_cm_scattering.find( reaction_type )->second,
+                d_reaction_cm_scattering.find( reaction_type )->second,
        	        distribution );
     }
     else if( acelaw == 61 )
@@ -290,9 +290,9 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
                 d_atomic_weight_ratio,
        	        d_reaction_energy_dist.find( reaction_type )->second,
        	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
-	              d_table_name,
+                d_table_name,
        	        reaction_type,
-	              d_reaction_cm_scattering.find( reaction_type )->second,
+                d_reaction_cm_scattering.find( reaction_type )->second,
        	        distribution );
     }
     else
