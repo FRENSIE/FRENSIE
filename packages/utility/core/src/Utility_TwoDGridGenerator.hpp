@@ -75,15 +75,6 @@ public:
   //! Get the distance tolerance
   double getDistanceTolerance() const;
 
-  //! Add critical values to primary grid
-  virtual void addCriticalValuesToPrimaryGrid(
-                                      std::deque<double>& primary_grid ) const;
-
-  //! Initialize secondary grid at a primary grid point
-  virtual void initializeSecondaryGrid(
-                                   std::vector<double>& secondary_grid,
-                                   const double primary_grid_point ) const = 0;
-
   //! Generate the primary grid in place
   template<typename STLCompliantContainer, typename Functor>
   void generateInPlace( STLCompliantContainer& primary_grid,
@@ -128,6 +119,17 @@ public:
                                     STLCompliantContainerB& evaluated_function,
                                     const double primary_value,
                                     const Functor& function ) const;
+
+protected:
+
+  //! Add critical values to primary grid
+  virtual void addCriticalValuesToPrimaryGrid(
+                                      std::deque<double>& primary_grid ) const;
+
+  //! Initialize secondary grid at a primary grid point
+  virtual void initializeSecondaryGrid(
+                                   std::vector<double>& secondary_grid,
+                                   const double primary_grid_point ) const = 0;
 
 private:
 

@@ -413,7 +413,9 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateAndEvaluate(
 // Generate and evaluate the secondary grid in place
 /*! \details The container must have a push_back method defined. The
  * function must have the following signature: double (double,double). 
- * The first function parameter must correspond to the primary value.
+ * The first function parameter must correspond to the primary value. It is
+ * acceptable to pass an empty secondary grid (it will be initialized with the
+ * initializeSecondaryGrid method).
  */
 template<typename TwoDInterpPolicy>
 template<typename STLCompliantContainerA,
