@@ -54,17 +54,16 @@ public:
   double getDefaultGridConvergenceTolerance() const;
 
   //! Set the default grid absolute difference tolerance
-  void setDefaultGridAbsoluteDifferenceTolerance(
-                                              const double absolute_diff_tol );
+  void setDefaultAbsoluteDifferenceTolerance( const double absolute_diff_tol );
 
   //! Get the default grid absolute difference tolerance
-  double getDefaultGridAbsoluteDifferenceTolerance() const;
+  double getDefaultAbsoluteDifferenceTolerance() const;
 
   //! Set the default grid distance tolerance
-  void setDefaultGridDistanceTolerance( const double distance_tol );
+  void setDefaultDistanceTolerance( const double distance_tol );
 
   //! Get the default grid distance tolerance
-  double getDefaultGridDistanceTolerance() const;
+  double getDefaultDistanceTolerance() const;
 
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer(
@@ -105,11 +104,11 @@ private:
   // The default grid convergence tolerance
   double d_default_grid_convergence_tol;
 
-  // The default grid absolute difference tolerance
-  double d_default_grid_absolute_diff_tol;
+  // The default absolute difference tolerance
+  double d_default_absolute_diff_tol;
 
-  // The default grid distance tolerance
-  double d_default_grid_distance_tol;
+  // The default distance tolerance
+  double d_default_distance_tol;
 };
 
 } // end DataGen namespace

@@ -52,12 +52,6 @@ public:
       const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
       forward_epr_data,
       std::ostream* os_log = &std::cout );
-
-  // Make sure the cutoff angle is valid
-  testPrecondition( cutoff_angle_cosine <= 1.0 );
-  testPrecondition( cutoff_angle_cosine > -1.0 );
-  // Make sure the number of moment preserving angles is valid
-  testPrecondition( number_of_moment_preserving_angles >= 0 );
   
   //! Destructor
   virtual ~StandardAdjointElectronPhotonRelaxationDataGenerator()
@@ -83,13 +77,15 @@ public:
   double getAdjointIncoherentCrossSectionIntegrationTolerance() const;
 
   //! Set the adjoint incoherent grid convergence tolerance
-  void setAdjointIncoherentGridConvergenceTolerance( const double convergence_tol );
+  void setAdjointIncoherentGridConvergenceTolerance(
+                                                const double convergence_tol );
 
   //! Return the adjoint incoherent grid convergence tolerance
   double getAdjointIncoherentGridConvergenceTolerance() const;
 
   //! Set the adjoint incoherent absolute difference tolerance
-  void setAdjointIncoherentGridConvergenceTolerance( const double absolute_diff_tol );
+  void setAdjointIncoherentAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
 
   //! Get the adjoint incoherent absolute difference tolerance
   double getAdjointIncoherentAbsoluteDifferenceTolerance() const;
@@ -125,10 +121,10 @@ public:
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Repopulate the adjoint electron moment preserving data
-  static void repopulateAdjointMomentPreservingData(
+  void repopulateAdjointMomentPreservingData(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double cutoff_angle_cosine = 0.9,
-    const unsigned number_of_moment_preserving_angles = 1 );
+    const unsigned number_of_moment_preserving_angles = 1 ) const;
   
 protected:
 
@@ -171,19 +167,68 @@ private:
   // The if a value is not equal to zero
   static bool notEqualZero( const double value );
 
-  // Create the adjoint Waller-Hartree incoherent cs evaluator
-  void createAdjointWallerHartreeIncoherentCrossSectionEvaluator(
+  ////////////////////
+  // Photon Methods //
+  ////////////////////
+
+  // Create the Waller-Hartree incoherent adjoint cs evaluator
+  void createWallerHartreeIncoherentAdjointCrossSectionEvaluator(
          std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
 
-  // Create an adjoint subshell impulse approx incoherent cs evaluator
-  void createAdjointSubshellImpulseApproxIncoherentCrossSectionEvaluator(
-         const unsigned subshell,
-         std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
+  // Create the subshell impulse approx incoherent adjoint cs evaluators
+  void createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
+          Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+          cs_evaluators ) const;
 
-  // Create an adjoint incoherent grid generator
-  // void createAdjointIncoherentGridGenerator(
-  //      const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& incoherent_cs_evaluator,
-  //      std::shared_ptr<const AdjointIncoherentGridGenerator>& grid_generator );
+  // Create a subshell impulse approx incoherent adjoint cs evaluators
+  void createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluator(
+          const unsigned subshell,
+          std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
+
+  // Initialize the adjoint photon union energy grid
+  void initializeAdjointPhotonUnionEnergyGrid(
+                                  std::list<double>& union_energy_grid ) const;
+
+  // Update the adjoint photon union energy grid
+  void updateAdjointPhotonUnionEnergyGrid(
+         std::list<double>& union_energy_grid,
+         const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
+
+  // Update the adjoint photon union energy grid
+  void updateAdjointPhotonUnionEnergyGrid(
+         std::list<double>& union_energy_grid,
+         const Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+         cs_evaluators ) const;
+
+  // Update the adjoint photon union energy grid
+  void updateAdjointPhotonUnionEnergyGrid(
+                        std::list<double>& union_energy_grid,
+                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        cs_evaluator ) const;
+
+  // Create the cross section on the union energy grid
+  void createCrossSectionOnUnionEnergyGrid(
+          const std::list<double>& union_energy_grid,
+          const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
+          std::vector<std::vector<double> >& max_energy_grid,
+          std::vector<std::vector<double> >& cross_section ) const;
+
+  // Create the cross section on the union energy grid
+  void createCrossSectionOnUnionEnergyGrid(
+          const std::list<double>& union_energy_grid,
+          const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
+          std::vector<std::vector<double> >& max_energy_grid,
+          std::vector<std::vector<double> >& cross_section ) const;
+
+  // Create the cross section on the union energy grid
+  void createCrossSectionOnUnionEnergyGrid(
+          const std::list<double>& union_energy_grid,
+          const std::shared_ptr<const Utility::OneDDistribution>& cs_evaluator,
+          std::vector<double>& cross_section ) const;
+
+  //////////////////////
+  // Electron Methods //
+  //////////////////////
 
   // Set the electron cross section union energy grid
   void setAdjointElectronCrossSectionsData(
@@ -201,14 +246,14 @@ private:
      std::list<double>& union_energy_grid ) const;
 
   // Create the cross section on the union energy grid
-  void createAdjointCrossSectionOnUnionEnergyGrid(
+  void createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
    const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const;
-
+  
   // Create the cross section on the union energy grid
-  void createAdjointCrossSectionOnUnionEnergyGrid(
+  void createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
    const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
         adjoint_bremsstrahlung_cs_evaluator,
@@ -216,7 +261,7 @@ private:
    unsigned& threshold_index ) const;
 
   // Create the cross section on the union energy grid
-  void createAdjointCrossSectionOnUnionEnergyGrid(
+  void createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
    const std::list<double>& old_union_energy_grid,
    const std::vector<double>& old_cross_section,

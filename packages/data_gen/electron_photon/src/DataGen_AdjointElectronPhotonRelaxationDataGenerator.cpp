@@ -25,8 +25,8 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
     d_default_grid_convergence_tol( 0.001 ),
-    d_default_grid_absolute_diff_tol( 1e-12 ),
-    d_default_grid_distance_tol( 1e-14 )
+    d_default_absolute_diff_tol( 1e-12 ),
+    d_default_distance_tol( 1e-14 )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
@@ -65,7 +65,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setMaxPhotonEnergy(
                                                const double max_photon_energy )
 {
   // Make sure the max photon energy is valid
-  testPrecondition( min_photon_energy < max_photon_energy );
+  testPrecondition( d_min_photon_energy < max_photon_energy );
 
   d_max_photon_energy = max_photon_energy;
 }
@@ -97,7 +97,7 @@ void AdjointElectronPhotonRelaxationDataGenerator::setMaxElectronEnergy(
                                              const double max_electron_energy )
 {
   // Make sure the max electron energy is valid
-  testPrecondition( min_electron_energy < max_electron_energy );
+  testPrecondition( d_min_electron_energy < max_electron_energy );
 
   d_max_electron_energy = max_electron_energy;
 }
@@ -125,38 +125,38 @@ double AdjointElectronPhotonRelaxationDataGenerator::getDefaultGridConvergenceTo
   return d_default_grid_convergence_tol;
 }
 
-// Set the default grid absolute difference tolerance
-void AdjointElectronPhotonRelaxationDataGenerator::setDefaultGridAbsoluteDifferenceTolerance(
+// Set the default absolute difference tolerance
+void AdjointElectronPhotonRelaxationDataGenerator::setDefaultAbsoluteDifferenceTolerance(
                                                const double absolute_diff_tol )
 {
   // Make sure the absolute difference tolerance is valid
   testPrecondition( absolute_diff_tol <= 1.0 );
   testPrecondition( absolute_diff_tol >= 0.0 );
 
-  d_default_grid_absolute_diff_tol = absolute_diff_tol;
+  d_default_absolute_diff_tol = absolute_diff_tol;
 }
 
-// Get the default grid absolute difference tolerance
-double AdjointElectronPhotonRelaxationDataGenerator::getDefaultGridAbsoluteDifferenceTolerance() const
+// Get the default absolute difference tolerance
+double AdjointElectronPhotonRelaxationDataGenerator::getDefaultAbsoluteDifferenceTolerance() const
 {
-  return d_default_grid_absolute_diff_tol;
+  return d_default_absolute_diff_tol;
 }
 
-// Set the default grid distance tolerance
-void AdjointElectronPhotonRelaxationDataGenerator::setDefaultGridDistanceTolerance(
+// Set the default distance tolerance
+void AdjointElectronPhotonRelaxationDataGenerator::setDefaultDistanceTolerance(
                                                     const double distance_tol )
 {
   // Make sure the distance tolerance is valid
   testPrecondition( distance_tol <= 1.0 );
   testPrecondition( distance_tol >= 0.0 );
 
-  d_default_grid_distance_tol = distance_tol;
+  d_default_distance_tol = distance_tol;
 }
 
-// Get the default grid distance tolerance
-double AdjointElectronPhotonRelaxationDataGenerator::getDefaultGridDistanceTolerance() const
+// Get the default distance tolerance
+double AdjointElectronPhotonRelaxationDataGenerator::getDefaultDistanceTolerance() const
 {
-  return d_default_grid_distance_tol;
+  return d_default_distance_tol;
 }
 
 } // end DataGen
