@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <utility>
+#include <iostream>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -43,27 +44,81 @@ public:
       const double max_photon_energy,
       const double min_electron_energy,
       const double max_electron_energy,
-      const double cutoff_angle_cosine = 1.0,
-      const unsigned number_of_moment_preserving_angles = 0,
-      const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
-      const double grid_convergence_tol = 0.001,
-      const double grid_absolute_diff_tol = 1e-13,
-      const double grid_distance_tol = 1e-13 );
-
+      std::ostream* os_log = &std::cout,
+      std::ostream* os_warn = &std::cerr );
+  
   //! Basic Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
       const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
       forward_epr_data,
-      const double cutoff_angle_cosine = 1.0,
-      const unsigned number_of_moment_preserving_angles = 0,
-      const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
-      const double grid_convergence_tol = 0.001,
-      const double grid_absolute_diff_tol = 1e-13,
-      const double grid_distance_tol = 1e-13 );
+      std::ostream* os_log = &std::cout );
 
+  // Make sure the cutoff angle is valid
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+  testPrecondition( cutoff_angle_cosine > -1.0 );
+  // Make sure the number of moment preserving angles is valid
+  testPrecondition( number_of_moment_preserving_angles >= 0 );
+  
   //! Destructor
-  ~StandardAdjointElectronPhotonRelaxationDataGenerator()
+  virtual ~StandardAdjointElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
+
+  //! Set the adjoint incoherent max energy nudge value
+  void setAdjointIncoherentMaxEnergyNudgeValue( const double max_energy_nudge_value );
+  
+  //! Return the adjoint incoherent max energy nudge value
+  double getAdjointIncoherentMaxEnergyNudgeValue() const;
+
+  //! Set the adjoint incoherent energy to max energy nudge value
+  void setAdjointIncoherentEnergyToMaxEnergyNudgeValue(
+                               const double energy_to_max_energy_nudge_value );
+
+  //! Return the adjoint incoherent energy to max energy nudge value
+  double getAdjointIncoherentEnergyToMaxEnergyNudgeValue() const;
+
+  //! Set the adjoint incoherent cross section evaluation tolerance
+  void setAdjointIncoherentEvaluationTolerance( const double integration_tol );
+
+  //! Return the adjoint incoherent cross section integration tolerance
+  double getAdjointIncoherentCrossSectionIntegrationTolerance() const;
+
+  //! Set the adjoint incoherent grid convergence tolerance
+  void setAdjointIncoherentGridConvergenceTolerance( const double convergence_tol );
+
+  //! Return the adjoint incoherent grid convergence tolerance
+  double getAdjointIncoherentGridConvergenceTolerance() const;
+
+  //! Set the adjoint incoherent absolute difference tolerance
+  void setAdjointIncoherentGridConvergenceTolerance( const double absolute_diff_tol );
+
+  //! Get the adjoint incoherent absolute difference tolerance
+  double getAdjointIncoherentAbsoluteDifferenceTolerance() const;
+
+  //! Set the adjoint incoherent distance tolerance
+  void setAdjointIncoherentDistanceTolerance( const double distance_tol );
+
+  //! Get the adjoint incoherent distance tolerance
+  double getAdjointIncoherentDistanceTolerance() const;
+
+  //! Set the cutoff angle cosine above which screened rutherford is used
+  void setCutoffAngleCosine( const double cutoff_angle_cosine );
+
+  //! Get the cutoff angle cosine above which screened rutherford is used
+  double getCutoffAngleCosine() const;
+
+  //! Set the number of moment preserving angles
+  void setNumberOfMomentumPreservingAngles(
+                           const unsigned number_of_moment_preserving_angles );
+
+  //! Get the number of moment preserving angles
+  unsigned getNumberOfMomentumPreservingAngles() const;
+  
+  //! Set the evaluation tolerance for the adjoint bremsstrahlung cross section
+  void setAdjointBremsstrahlungCrossSectionEvaluationTolerance(
+                                           const double evaluation_tolerance );
+  
+  //! Get the evaluation tolerance for the adjoint bremsstrahlung cross section
+  double getAdjointBremsstrahlungCrossSectionEvaluationTolerance() const;
 
   //! Populate the adjoint electron-photon-relaxation data container
   void populateEPRDataContainer(
@@ -74,7 +129,7 @@ public:
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double cutoff_angle_cosine = 0.9,
     const unsigned number_of_moment_preserving_angles = 1 );
-
+  
 protected:
 
   //! Set the adjoint atomic data
@@ -227,6 +282,9 @@ private:
     std::shared_ptr<DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator>&
         adjoint_electroionization_cs_evaluator ) const;
 
+  // Initialize table generation data
+  void initializeTableGenerationData();
+
   // The threshold energy nudge factor
   static const double s_threshold_energy_nudge_factor;
 
@@ -234,32 +292,32 @@ private:
   std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
   d_forward_epr_data;
 
-  // The min photon energy
-  double d_min_photon_energy;
+  // The log stream
+  std::ostream* d_os_log;
 
-  // The max photon energy
-  double d_max_photon_energy;
+  // The adjoint incoherent max energy nudge value
+  double d_adjoint_incoherent_max_energy_nudge_value;
 
-  // The min electron energy
-  double d_min_electron_energy;
+  // The adjoint incoherent energy to max energy nudge value
+  double d_adjoint_incoherent_energy_to_max_energy_nudge_value;
 
-  // The max electron energy
-  double d_max_electron_energy;
+  // The adjoint incoherent cross section evaluation tolerance
+  double d_adjoint_incoherent_evaluation_tol;
+
+  // The adjoint incoherent grid convergence tolerance
+  double d_adjoint_incoherent_grid_convergence_tol;
+
+  // The adjoint incoherent absolute diff tolerance
+  double d_adjoint_incoherent_absolute_diff_tol;
+
+  // The adjoint incoherent distance tolerance
+  double d_adjoint_incoherent_distance_tol;
 
   // The cutoff angle cosine above which screened rutherford is used
   double d_cutoff_angle_cosine;
 
-  // The grid convergence tolerance
-  double d_grid_convergence_tol;
-
-  // The grid absolute difference tolerance
-  double d_grid_absolute_diff_tol;
-
-  // The grid distance tolerance
-  double d_grid_distance_tol;
-
   // The number of moment preserving angles
-  int d_number_of_moment_preserving_angles;
+  unsigned d_number_of_moment_preserving_angles;
 
   // The evaluation tolerance for the adjoint bremsstrahlung cross sections
   double d_adjoint_bremsstrahlung_evaluation_tolerance;
