@@ -1,7 +1,7 @@
 ADD_EXECUTABLE(tstOccupationNumberEvaluator tstOccupationNumberEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstOccupationNumberEvaluator data_gen_electron_photon)
-ADD_TEST(OccupatioNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
-SET_PROPERTY(TEST OccupatioNumberEvaluator_test PROPERTY LABELS data_gen_electron_photon)
+ADD_TEST(OccupationNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+SET_PROPERTY(TEST OccupationNumberEvaluator_test PROPERTY LABELS data_gen_electron_photon)
 
 ADD_EXECUTABLE(tstAdjointBremsstrahlungCrossSectionEvaluator
   tstAdjointBremsstrahlungCrossSectionEvaluator.cpp)

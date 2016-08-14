@@ -8,11 +8,11 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
@@ -22,21 +22,20 @@
 #include "Data_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
-#include "Utility_TabularDistribution.hpp"
-#include "Utility_UniformDistribution.hpp"
+#include "Utility_AtomicMomentumUnit.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<DataGen::OccupationNumberEvaluator>
+std::shared_ptr<DataGen::OccupationNumberEvaluator>
   occupation_number_h_k;
 
-Teuchos::RCP<DataGen::OccupationNumberEvaluator>
+std::shared_ptr<DataGen::OccupationNumberEvaluator>
   occupation_number_pb_k;
 
-Teuchos::RCP<DataGen::OccupationNumberEvaluator>
+std::shared_ptr<DataGen::OccupationNumberEvaluator>
   occupation_number_pb_p3;
 
 //---------------------------------------------------------------------------//
@@ -320,19 +319,19 @@ int main( int argc, char** argv )
 
   {
     // Create the file handler and data extractor for hydrogen
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 			       new Data::ACEFileHandler( test_h_ace_file_name,
 							 test_h_ace_table_name,
 							 1u ) );
 
-    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+    std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
 				new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
     // Create the Compton profile subshell converter
-    Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
+    std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
 
     MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
@@ -368,33 +367,28 @@ int main( int argc, char** argv )
 						  full_compton_profile,
 						  true );
 
-    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
-					       full_momentum_grid.end() );
-
-    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
-						 full_compton_profile.end() );
-
-    occupation_number_h_k.reset( new DataGen::OccupationNumberEvaluator(
+    occupation_number_h_k =
+      DataGen::OccupationNumberEvaluator::createEvaluator<Utility::LogLin,Utility::Units::AtomicMomentum>(
 							  full_momentum_grid,
 							  full_compton_profile,
-							  1e-4 ) );
+							  1e-4 );
   }
 
   {
     // Create the file handler and data extractor for lead
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 			      new Data::ACEFileHandler( test_pb_ace_file_name,
 							test_pb_ace_table_name,
 							1u ) );
 
-    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+    std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
 				new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
     // Create the Compton profile subshell converter
-    Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
+    std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
 
     MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
@@ -433,16 +427,11 @@ int main( int argc, char** argv )
 						  full_compton_profile,
 						  true );
 
-    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
-					       full_momentum_grid.end() );
-
-    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
-						 full_compton_profile.end() );
-
-    occupation_number_pb_k.reset( new DataGen::OccupationNumberEvaluator(
+    occupation_number_pb_k =
+      DataGen::OccupationNumberEvaluator::createEvaluator<Utility::LogLin,Utility::Units::AtomicMomentum>(
 							  full_momentum_grid,
 							  full_compton_profile,
-							  1e-4 ) );
+							  1e-4 );
 
     profile_index = lswd_block[p3_shell_index];
 
@@ -461,16 +450,11 @@ int main( int argc, char** argv )
 						  full_compton_profile,
 						  true );
 
-    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
-					       full_momentum_grid.end() );
-
-    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
-						 full_compton_profile.end() );
-
-    occupation_number_pb_p3.reset( new DataGen::OccupationNumberEvaluator(
+    occupation_number_pb_p3 =
+      DataGen::OccupationNumberEvaluator::createEvaluator<Utility::LogLin,Utility::Units::AtomicMomentum>(
 							  full_momentum_grid,
 							  full_compton_profile,
-							  1e-4 ) );
+							  1e-4 );
   }
 
   // Run the unit tests
