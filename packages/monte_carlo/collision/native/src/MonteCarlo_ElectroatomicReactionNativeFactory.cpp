@@ -21,9 +21,6 @@
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
-#include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
-#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -317,129 +314,6 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
                                                 grid_searcher,
                                                 energy_loss_distribution ) );
 }
-
-// Create the subshell electroionization electroatomic reactions
-void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
-		   const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-           const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-		   std::vector<std::shared_ptr<ElectroatomicReaction> >&
-		   electroionization_subshell_reactions )
-{
-  electroionization_subshell_reactions.clear();
-
-  // Extract the subshell information
-  std::set<unsigned> subshells = raw_electroatom_data.getSubshells();
-
-  std::shared_ptr<ElectroatomicReaction> electroionization_subshell_reaction;
-
-  Data::SubshellType subshell_type;
-
-  std::set<unsigned>::iterator shell = subshells.begin();
-
-  for( shell; shell != subshells.end(); ++shell )
-  {
-    // Convert subshell number to enum
-    subshell_type = Data::convertENDFDesignatorToSubshellEnum( *shell );
-
-    // Electroionization cross section
-    Teuchos::ArrayRCP<double> subshell_cross_section;
-    subshell_cross_section.assign(
-	   raw_electroatom_data.getElectroionizationCrossSection( *shell ).begin(),
-	   raw_electroatom_data.getElectroionizationCrossSection( *shell ).end() );
-
-    // Electroionization cross section threshold energy bin index
-    unsigned threshold_energy_index =
-      raw_electroatom_data.getElectroionizationCrossSectionThresholdEnergyIndex(
-        *shell );
-
-    // The electroionization subshell distribution
-    std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
-      electroionization_subshell_distribution;
-
-    // Create the electroionization subshell distribution
-    ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
-        raw_electroatom_data,
-        *shell,
-        raw_electroatom_data.getSubshellBindingEnergy( *shell ),
-	    electroionization_subshell_distribution );
-
-
-    // Create the subshell electroelectric reaction
-    electroionization_subshell_reaction.reset(
-      new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
-              energy_grid,
-              subshell_cross_section,
-              threshold_energy_index,
-              grid_searcher,
-              subshell_type,
-              electroionization_subshell_distribution ) );
-
-    electroionization_subshell_reactions.push_back(
-					  electroionization_subshell_reaction );
-  }
-
-  // Make sure the subshell electroelectric reactions have been created
-  testPostcondition( electroionization_subshell_reactions.size() > 0 );
-}
-/*
-// Create a bremsstrahlung electroatomic reactions
-void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-		const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-		std::shared_ptr<ElectroatomicReaction>& bremsstrahlung_reaction,
-		BremsstrahlungAngularDistributionType photon_distribution_function )
-{
-  // Make sure the energy grid is valid
-  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
-
-  // Bremsstrahlung cross section
-  Teuchos::ArrayRCP<double> bremsstrahlung_cross_section;
-  bremsstrahlung_cross_section.assign(
-	   raw_electroatom_data.getBremsstrahlungCrossSection().begin(),
-	   raw_electroatom_data.getBremsstrahlungCrossSection().end() );
-
-  // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index =
-    raw_electroatom_data.getBremsstrahlungCrossSectionThresholdEnergyIndex();
-
-  // Create bremsstrahlung scattering distribution
-  std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
-    bremsstrahlung_distribution;
-
-  if( photon_distribution_function = DIPOLE_DISTRIBUTION )
-  {
-    BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
-      raw_electroatom_data,
-      bremsstrahlung_distribution );
-
-  }
-  else if( photon_distribution_function = TABULAR_DISTRIBUTION )
-  {
-  THROW_EXCEPTION( std::logic_error,
-          "Error! The detailed bremsstrahlung reaction has not been implemented");
-  }
-  else if( photon_distribution_function = TWOBS_DISTRIBUTION )
-  {
-    BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
-      raw_electroatom_data,
-      bremsstrahlung_distribution,
-      raw_electroatom_data.getAtomicNumber() );
-  }
-
-  // Create the bremsstrahlung reaction
-  bremsstrahlung_reaction.reset(
-		     new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-					      energy_grid,
-					      bremsstrahlung_cross_section,
-					      threshold_energy_index,
-                          grid_searcher,
-					      bremsstrahlung_distribution ) );
-}*/
 
 // Create a void absorption electroatomic reaction
 void ElectroatomicReactionNativeFactory::createVoidAbsorptionReaction(

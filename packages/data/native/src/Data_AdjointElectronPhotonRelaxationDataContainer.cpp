@@ -1104,7 +1104,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointCutoffElasticPDF(
 }
 
 // Set the moment preserving elastic discrete angles for an incoming energy
-void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingElasticDiscreteAngles(
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingElasticDiscreteAnglesAtEnergy(
 		     const double incoming_adjoint_energy,
 		     const std::vector<double>& adjoint_moment_preserving_elastic_discrete_angles )
 {
@@ -1128,7 +1128,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingEla
 }
 
 // Set the moment preserving elastic weights for an incoming energy
-void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingElasticWeights(
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingElasticWeightsAtEnergy(
 			 const double incoming_adjoint_energy,
 			 const std::vector<double>& adjoint_moment_preserving_elastic_weights )
 {
@@ -1145,6 +1145,22 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingEla
                     adjoint_moment_preserving_elastic_weights.end() );
 
   d_adjoint_moment_preserving_elastic_weights[incoming_adjoint_energy] = adjoint_moment_preserving_elastic_weights;
+}
+
+// Set the moment preserving elastic discrete angles for an incoming energy
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingElasticDiscreteAngles(
+    const std::map<double,std::vector<double> >& adjoint_moment_preserving_elastic_discrete_angles )
+{
+  d_adjoint_moment_preserving_elastic_discrete_angles =
+        adjoint_moment_preserving_elastic_discrete_angles;
+}
+
+// Set the moment preserving elastic weights
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingElasticWeights(
+    const std::map<double,std::vector<double> >& adjoint_moment_preserving_elastic_weights )
+{
+  d_adjoint_moment_preserving_elastic_weights =
+    adjoint_moment_preserving_elastic_weights;
 }
 
 // Set the electroionization energy grid for a subshell

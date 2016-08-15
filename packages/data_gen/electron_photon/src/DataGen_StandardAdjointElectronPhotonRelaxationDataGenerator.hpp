@@ -47,10 +47,8 @@ public:
       const double max_photon_energy,
       const double min_electron_energy,
       const double max_electron_energy,
-      const double cutoff_angle_cosine = 1.0,
-      const unsigned number_of_moment_preserving_angles = 0,
-      const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
-      const double adjoint_electroionization_evaluation_tolerance = 1e-5,
+      const double adjoint_bremsstrahlung_evaluation_tolerance,
+      const double adjoint_electroionization_evaluation_tolerance,
       const double grid_convergence_tol = 0.001,
       const double grid_absolute_diff_tol = 1e-13,
       const double grid_distance_tol = 1e-13 );
@@ -59,8 +57,6 @@ public:
   StandardAdjointElectronPhotonRelaxationDataGenerator(
       const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
       forward_epr_data,
-      const double cutoff_angle_cosine = 1.0,
-      const unsigned number_of_moment_preserving_angles = 0,
       const double adjoint_bremsstrahlung_evaluation_tolerance = 0.001,
       const double adjoint_electroionization_evaluation_tolerance = 1e-5,
       const double grid_convergence_tol = 0.001,
@@ -74,12 +70,6 @@ public:
   //! Populate the adjoint electron-photon-relaxation data container
   void populateEPRDataContainer(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
-
-  //! Repopulate the adjoint electron moment preserving data
-  static void repopulateAdjointMomentPreservingData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const double cutoff_angle_cosine = 0.9,
-    const unsigned number_of_moment_preserving_angles = 1 );
 
 protected:
 
@@ -111,20 +101,16 @@ private:
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     bool recalculate_union_energy_grid = false ) const;
 
-  // Set the adjoint moment preserving data
-  static void setAdjointMomentPreservingData(
-    std::vector<double>& elastic_energy_grid,
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container );
-
   // Initialize the electron union energy grid
   void initializeAdjointElectronUnionEnergyGrid(
      const Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
 
   // Create the cross section on the union energy grid
+  template<typename Functor>
   void createAdjointCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
-   const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
+   Functor& forward_cross_section,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const;
 
@@ -150,32 +136,17 @@ private:
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const;
 
-
-  // Generate elastic moment preserving discrete angle cosines and weights
-  static void evaluateDisceteAnglesAndWeights(
-    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
-    const double& energy,
-    const int& number_of_moment_preserving_angles,
-    std::vector<double>& discrete_angles,
-    std::vector<double>& weights,
-    double& cross_section_reduction );
-
-  // Generate adjoint elastic moment preserving cross section
-  static void evaluateAdjointMomentPreservingCrossSection(
-    const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const std::shared_ptr<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
-        analog_reaction,
-    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>&
-        analog_distribution,
-    const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
-    const double cutoff_angle_cosine,
-    const unsigned threshold_energy_index,
-    std::vector<double>& moment_preserving_cross_section );
-
+  // Create the adjoint atomic excitation cross section distribution
+  void createAdjointAtomicExcitationCrossSectionDistribution(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
+    std::shared_ptr<const Utility::OneDDistribution>&
+        adjoint_excitation_cross_section_distribution ) const;
 
   // Create the adjoint bremsstrahlung cross section evaluator
   void createAdjointBremsstrahlungCrossSectionEvaluator(
-    const Teuchos::ArrayRCP<const double>& forward_energy_grid,
+    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
     std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >&
         adjoint_bremsstrahlung_cs_evaluator ) const;
@@ -195,7 +166,8 @@ private:
 
   // Create the adjoint electroionization subshell cross section evaluator
   void createAdjointElectroionizationSubshellCrossSectionEvaluator(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
     std::map<unsigned,std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
         adjoint_electroionization_cs_evaluators ) const;
 

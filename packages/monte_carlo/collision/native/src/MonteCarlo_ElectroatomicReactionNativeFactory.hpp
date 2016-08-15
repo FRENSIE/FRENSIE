@@ -72,12 +72,22 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 	std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction );
 
+  //! Create the subshell electroionization electroatomic reaction
+  template< typename ReactionType = ElectroatomicReaction>
+  static void createSubshellElectroionizationReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const unsigned subshell,
+    std::shared_ptr<ReactionType>& electroionization_subshell_reaction );
+
   //! Create the subshell electroionization electroatomic reactions
+  template< typename ReactionType = ElectroatomicReaction>
   static void createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    std::vector<std::shared_ptr<ElectroatomicReaction> >&
+    std::vector<std::shared_ptr<ReactionType> >&
         electroionization_subshell_reactions );
 
   //! Create the bremsstrahlung electroatomic reaction

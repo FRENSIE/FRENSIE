@@ -474,14 +474,22 @@ protected:
     const std::map<double,std::vector<double> >& adjoint_cutoff_elastic_pdf );
 
   //! Set the moment preserving elastic discrete angles for an incoming energy
-  void setAdjointMomentPreservingElasticDiscreteAngles(
+  void setAdjointMomentPreservingElasticDiscreteAnglesAtEnergy(
 	const double incoming_adjoint_energy,
 	const std::vector<double>& adjoint_moment_preserving_elastic_discrete_angles );
 
   //! Set the moment preserving elastic weights for an incoming energy
-  void setAdjointMomentPreservingElasticWeights(
+  void setAdjointMomentPreservingElasticWeightsAtEnergy(
 	const double incoming_adjoint_energy,
 	const std::vector<double>& adjoint_moment_preserving_elastic_weights );
+
+  //! Set the moment preserving elastic discrete angles
+  void setAdjointMomentPreservingElasticDiscreteAngles(
+    const std::map<double,std::vector<double> >& adjoint_moment_preserving_elastic_discrete_angles );
+
+  //! Set the moment preserving elastic weights
+  void setAdjointMomentPreservingElasticWeights(
+    const std::map<double,std::vector<double> >& adjoint_moment_preserving_elastic_weights );
 
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setAdjointElectroionizationEnergyGrid(

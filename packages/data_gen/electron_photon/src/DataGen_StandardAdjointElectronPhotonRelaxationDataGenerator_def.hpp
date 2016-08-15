@@ -15,6 +15,42 @@
 namespace DataGen{
 
 // Create the cross section on the union energy grid
+/*! \detials The functor should take the incoming adjoint energy (double) as its
+ *  argument and return the adjoint cross section. 
+ */
+template <typename Functor>
+void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSectionOnUnionEnergyGrid(
+   const std::list<double>& union_energy_grid,
+   Functor& adjoint_cross_section_functor,
+   std::vector<double>& cross_section,
+   unsigned& threshold_index ) const
+{
+   std::vector<double> raw_cross_section( union_energy_grid.size() );
+
+   std::list<double>::const_iterator energy_grid_pt = union_energy_grid.begin();
+
+   unsigned index = 0u;
+
+   while( energy_grid_pt != union_energy_grid.end() )
+   {
+     raw_cross_section[index] =
+       adjoint_cross_section_functor( *energy_grid_pt );
+
+     ++energy_grid_pt;
+     ++index;
+   }
+
+   std::vector<double>::iterator start =
+     std::find_if( raw_cross_section.begin(),
+         	  raw_cross_section.end(),
+         	  notEqualZero );
+
+   cross_section.assign( start, raw_cross_section.end() );
+
+   threshold_index = std::distance( raw_cross_section.begin(), start );
+}
+
+// Create the cross section on the union energy grid
 template <typename ElectroatomicReaction>
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,

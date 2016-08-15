@@ -677,7 +677,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   discrete_angles[1] = 0.95;
   discrete_angles[2] = 0.99;
 
-  epr_data_container.setAdjointMomentPreservingElasticDiscreteAngles( 1.0,
+  epr_data_container.setAdjointMomentPreservingElasticDiscreteAnglesAtEnergy( 1.0,
                                                             discrete_angles );
 
   TEST_COMPARE_ARRAYS( epr_data_container.getAdjointMomentPreservingElasticDiscreteAngles(1.0),
@@ -696,7 +696,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   weights[1] = 0.2;
   weights[2] = 0.7;
 
-  epr_data_container.setAdjointMomentPreservingElasticWeights( 1.0, weights );
+  epr_data_container.setAdjointMomentPreservingElasticWeightsAtEnergy( 1.0, weights );
 
   TEST_COMPARE_ARRAYS( epr_data_container.getAdjointMomentPreservingElasticWeights(1.0),
                        weights );

@@ -44,6 +44,14 @@ public:
   void generateInPlace( STLCompliantContainer& grid,
 			const Functor& function ) const;
 
+  //! Refine the grid in place between an min and max value
+  template<typename STLCompliantContainer, typename Functor>
+  void refineInPlace(
+        STLCompliantContainer& grid,
+		const Functor& function,
+        const double min_value,
+        const double max_value ) const;
+
   //! Generate the grid in place (return evaluated function on grid)
   template<typename STLCompliantContainerA,
 	   typename STLCompliantContainerB,
@@ -51,6 +59,17 @@ public:
   void generateAndEvaluateInPlace( STLCompliantContainerA& grid,
 				   STLCompliantContainerB& evaluated_function,
 				   const Functor& function ) const;
+
+  //! Refine the grid in place between min and max (return evaluated function on grid)
+  template<typename STLCompliantContainerA,
+	   typename STLCompliantContainerB,
+	   typename Functor>
+  void refineAndEvaluateInPlace(
+        STLCompliantContainerA& grid,
+        STLCompliantContainerB& evaluated_function,
+        const Functor& function,
+        const double min_value,
+        const double max_value ) const;
 
   //! Generate the grid
   template<typename STLCompliantContainerA,
