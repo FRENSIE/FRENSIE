@@ -840,16 +840,43 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   Utility::ExtrpolatedBinTraits<double> bin, bin_1, bin_2;
 
   int nr_max = 0;
-  int number_of_intervals = 3;
+  int number_of_intervals = 1;
 
   // Set up bin order array
-  Teuchos::Array<int> bin_order(3);
+  Teuchos::Array<int> bin_order(1);
+  bin_order[0] = 0;
+
+  // Set bin array
+  Utility::GaussKronrodIntegrator<double>::BinArray bin_array(1000);
+  bin.error = 10.0;
+  bin_array[0] = bin;
+
+  // Set bin_1 and bin_2
+  bin_1.error = 5.0;
+  bin_2.error = 2.0;
+
+  test_integrator.sortBins(
+                bin_order,
+                bin_array,
+                bin_1,
+                bin_2,
+                number_of_intervals,
+                nr_max );
+
+  TEST_EQUALITY_CONST( 0, bin_order[0] );
+  TEST_EQUALITY_CONST( 1, bin_order[1] );
+  TEST_EQUALITY_CONST( 0, nr_max );
+
+  nr_max = 0;
+  number_of_intervals = 3;
+
+  // Set up bin order array
+  bin_order.resize(3);
   bin_order[0] = 0;
   bin_order[1] = 1;
   bin_order[2] = 2;
 
   // Set bin array
-  Utility::GaussKronrodIntegrator<double>::BinArray bin_array(1000);
   bin.error = 10.0;
   bin_array[0] = bin;
   bin.error = 8.0;
@@ -1607,6 +1634,26 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   double tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( result, 4.0, tol );
+
+
+
+  Teuchos::Array<long double> long_points_of_interest( 2 );
+  points_of_interest[0] = -1.0L;
+  points_of_interest[1] = 1.0L;
+
+  Utility::GaussKronrodIntegrator<long double> gk_long_int( 1e-12, 0.0, 100000 );
+
+  long double long_result, long_absolute_error;
+
+  gk_long_int.integrateAdaptivelyWynnEpsilon( function_wrapper,
+					 long_points_of_interest(),
+					 long_result,
+					 long_absolute_error );
+
+
+  long double long_tol = long_absolute_error/long_result;
+
+  TEST_FLOATING_EQUALITY( (double)result, 4.0, (double)tol );
 }
 
 //---------------------------------------------------------------------------//

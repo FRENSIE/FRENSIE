@@ -116,6 +116,13 @@ void GaussKronrodIntegrator<T>::sortBins(
     smaller_error = bin_2.error;
   }
 
+  if ( bin_order.size() == 1 )
+  {
+    bin_order[0] = 0;
+    bin_order.push_back(1);
+    return;
+  }
+
   // remove old interval from list
   bin_order.remove( nr_max );
 
@@ -130,7 +137,6 @@ void GaussKronrodIntegrator<T>::sortBins(
   {
     nr_max--; //reduce nr_max if the bin above it has larger error
   }
-
 
   int start_bin;
   if ( original_nr_max > nr_max )
@@ -150,17 +156,19 @@ void GaussKronrodIntegrator<T>::sortBins(
    *  subdivisions still allowed.
    */
   Teuchos::Array<int>::iterator max_bin;
+
   if ( (d_subinterval_limit/2+2) < bin_order.size()-1 )
     max_bin = bin_order.begin() + ( d_subinterval_limit - bin_order.size() );
   else
+  {
     max_bin = bin_order.end();
+  }
 
   Teuchos::Array<int>::iterator large_bin = bin_order.begin()+start_bin;
   while ( large_bin != max_bin && larger_error < bin_array[*large_bin].error )
   {
     large_bin++;
   }
-
   bin_order.insert( large_bin, bin_with_larger_error );
   max_bin;
 
@@ -823,11 +831,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     const Teuchos::ArrayView<T>& points_of_interest,
     T& result,
     T& absolute_error ) const
-{
+{/*
   // Check that the points of interest are in ascending order
   testPrecondition( Sort::isSortedAscending( points_of_interest.begin(),
                                              points_of_interest.end(),
-                                             true ) );
+                                             true ) );*/
   // check that the number of points don't excees the subinterval limit
   testPrecondition( points_of_interest.size() < d_subinterval_limit );
   // check that there are at least two points
@@ -843,7 +851,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
   int number_of_intervals = points_of_interest.size() - 1;
   std::vector<bool> rescale_bin_error( number_of_intervals );
-
+std::cout << "got here 1" << std::endl;
   absolute_error = 0.0;
   // Compute the integration between the points of interest
   for ( int i = 0; i < number_of_intervals; i++ )
@@ -877,7 +885,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     {
       rescale_bin_error[i] = false;
     }
-  }
+  }std::cout << "got here 2" << std::endl;
   // initialize bin_order array
   Teuchos::Array<int> bin_order( number_of_intervals );
 
@@ -919,7 +927,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   TEST_FOR_EXCEPTION( d_subinterval_limit == 1,
                       Utility::IntegratorException,
                       "a maximum of one iteration was insufficient" );
-
+std::cout << "got here 3" << std::endl;
   // initialize
   bin_extrapolated_result[0] = total_area;
   absolute_error = std::numeric_limits<T>::max();
@@ -977,7 +985,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     // Improve previous approximations to integral and error and test for accuracy
     total_error += bin_1.error + bin_2.error - bin.error;
     total_area += bin_1.result + bin_2.result - bin.result;
-
+std::cout << "got here 4" << std::endl;
     // Check that the roundoff error is not too high
     checkRoundoffError( bin,
                         bin_1,
@@ -989,6 +997,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
                         round_off_3,
                         extrapolate,
                         number_of_intervals );
+std::cout << "got here 4.1" << std::endl;
 
     // Update and sort bin order
     sortBins( bin_order,
@@ -998,6 +1007,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
               number_of_intervals,
               nr_max );
 
+std::cout << "got here 4.2" << std::endl;
     tolerance =
       getMax( d_absolute_error_tol, d_relative_error_tol * fabs (total_area));
 
@@ -1013,7 +1023,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
                                                  bin_2.upper_limit ),
                         Utility::IntegratorException,
                         "Maximum number of subdivisions reached" );
-
+std::cout << "got here 4.3" << std::endl;
     if ( round_off_2 >= 5 )
     {
       bad_integration_behavior = true;
@@ -1023,12 +1033,12 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
       continue; // go to next for loop iteration without extrapolating
 
     error_over_large_bins -= bin.error;
-
+std::cout << "got here 4.4" << std::endl;
     if ( bin_1.level + 1 <= max_level )
     {
       error_over_large_bins += error_12;
     }
-
+std::cout << "got here 4.5" << std::endl;
     bin = bin_array[bin_order[nr_max]];
     // Test whether the interval to be bisected next is the smallest interval
     if ( !extrapolate )
@@ -1039,7 +1049,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
       extrapolate = true;
       nr_max = 1;
     }
-
+std::cout << "got here 5" << std::endl;
     if ( bad_integration_behavior != true &&
          error_over_large_bins > extrapolated_tolerance )
     {
@@ -1081,7 +1091,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
       error_over_large_bins = total_error;
       continue;
     }
-
+std::cout << "got here 6" << std::endl;
     getWynnEpsilonAlgorithmExtrapolation(
         bin_extrapolated_result,
         last_three_results,
@@ -1091,7 +1101,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
         number_of_extrapolated_calls );
 
     ktmin++;
-
+std::cout << "got here 7" << std::endl;
     TEST_FOR_EXCEPTION( ktmin > 5 && absolute_error < (1/1000.0) * total_error,
                         Utility::IntegratorException,
                         "The integral is probably divergent, or slowly convergent." );
@@ -1119,7 +1129,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     max_level++;
     error_over_large_bins = total_error;
   } // end main for loop
-
+std::cout << "got here 8" << std::endl;
   //  Set final result and error estimate.
 
   if ( absolute_error == std::numeric_limits<T>::max() )

@@ -15,6 +15,9 @@
 // Trillinos Includes
 #include <Teuchos_Array.hpp>
 
+// Boost Includes
+#include <boost/numeric/odeint.hpp>
+
 namespace Utility{
 
 template<typename T>
