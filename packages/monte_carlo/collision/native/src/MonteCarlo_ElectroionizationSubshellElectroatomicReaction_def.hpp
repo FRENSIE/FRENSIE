@@ -87,6 +87,9 @@ double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cro
   testPrecondition( outgoing_energy >= 0.0 );
   testPrecondition( outgoing_energy <= incoming_energy );
 
+  if ( !this->isEnergyWithinEnergyGrid( incoming_energy ) )
+    return 0.0;
+
   // Evaluate the forward cross section at the incoming energy
   double forward_cs = this->getCrossSection( incoming_energy );
   double pdf;
@@ -130,6 +133,9 @@ double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cro
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy >= 0.0 );
   testPrecondition( outgoing_energy <= incoming_energy );
+
+  if ( !this->isEnergyWithinEnergyGrid( incoming_energy ) )
+    return 0.0;
 
   // Evaluate the forward cross section at the incoming energy
   double forward_cs = this->getCrossSection( incoming_energy );

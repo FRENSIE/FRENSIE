@@ -18,6 +18,9 @@ class AdjointElectronCrossSectionEvaluator
 
 public:
 
+  // Boost integrator state type
+  typedef std::vector<long double> state_type;
+
   //! Typedef for the const electroatomic reaction
   typedef const ElectroatomicReaction
     ConstElectroatomicReaction;
@@ -49,8 +52,24 @@ public:
   double evaluateAdjointCrossSection(
         const double adjoint_energy,
         const double precision = 1e-6 ) const;
+        
+  //! Return the cross section value at a given energy
+  template <typename BoostIntegrator>
+  double evaluateAdjointCrossSectionUsingBoost(
+        const double adjoint_energy,
+        const BoostIntegrator integrator ) const;
 
 private:
+
+  // Return the differential cross section at a given energy
+  void getDifferentialCrossSection(
+        const state_type& initial_value,
+        state_type& differential_cross_section,
+        const double outgoing_adjoint_energy,
+        const double incoming_adjoint_energy ) const;
+
+  // Observer, prints time and state when called (during integration)
+  static void observer( const state_type& x, const double t );
 
   // The forward electroionization subshell reaction
   std::shared_ptr<ElectroatomicReaction>

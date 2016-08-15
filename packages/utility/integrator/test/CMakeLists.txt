@@ -5,6 +5,13 @@ TARGET_LINK_LIBRARIES(tstGaussKronrodIntegrator utility_integrator)
 ADD_TEST(GaussKronrodIntegrator_test tstGaussKronrodIntegrator)
 SET_PROPERTY(TEST GaussKronrodIntegrator_test PROPERTY LABELS utility_integrator)
 
+ADD_EXECUTABLE(tstBoostIntegrator
+  tstBoostIntegrator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstBoostIntegrator utility_integrator)
+ADD_TEST(BoostIntegrator_test tstBoostIntegrator)
+SET_PROPERTY(TEST BoostIntegrator_test PROPERTY LABELS utility_integrator)
+
 ADD_EXECUTABLE(tstGaussRadauQuadratureSet
   tstGaussRadauQuadratureSet.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
