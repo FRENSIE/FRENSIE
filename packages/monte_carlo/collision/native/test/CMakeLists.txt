@@ -269,6 +269,12 @@ TARGET_LINK_LIBRARIES(tstStandardScatteringFunction monte_carlo_collision_native
 ADD_TEST(StandardScatteringFunction_test tstStandardScatteringFunction)
 SET_PROPERTY(TEST StandardScatteringFunction_test PROPERTY LABELS monte_carlo_collision_native photon)
 
+ADD_EXECUTABLE(tstStandardFormFactor
+  tstStandardFormFactor.cpp)
+TARGET_LINK_LIBRARIES(tstStandardFormFactor monte_carlo_collision_native)
+ADD_TEST(StandardFormFactor_test tstStandardFormFactor)
+SET_PROPERTY(TEST StandardFormFactor_test  PROPERTY LABELS monte_carlo_collision_native photon)
+
 ADD_EXECUTABLE(tstStandardFormFactorSquared
   tstStandardFormFactorSquared.cpp)
 TARGET_LINK_LIBRARIES(tstStandardFormFactorSquared monte_carlo_collision_native)
