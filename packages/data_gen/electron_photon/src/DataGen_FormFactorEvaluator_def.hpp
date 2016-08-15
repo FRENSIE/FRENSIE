@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_FormFactorSquaredEvaluator_def.hpp
+//! \file   DataGen_FormFactorEvaluator_def.hpp
 //! \author Alex Robinson
-//! \brief  The form factor squared evaluator declaration
+//! \brief  The form factor evaluator declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_FORM_FACTOR_SQUARED_EVALUATOR_DEF_HPP
-#define DATA_GEN_FORM_FACTOR_SQUARED_EVALUATOR_DEF_HPP
+#ifndef DATA_GEN_FORM_FACTOR_EVALUATOR_DEF_HPP
+#define DATA_GEN_FORM_FACTOR_EVALUATOR_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardFormFactor.hpp"
@@ -21,8 +21,8 @@ namespace DataGen{
 template<typename InterpPolicy,
          typename GridArgumentUnit,
          template<typename,typename...> class Array>
-std::shared_ptr<FormFactorSquaredEvaluator>
-FormFactorSquaredEvaluator::createEvaluator(
+std::shared_ptr<FormFactorEvaluator>
+FormFactorEvaluator::createEvaluator(
                                       const Array<double>& argument_grid,
                                       const Array<double>& form_factor_values )
 {
@@ -46,14 +46,14 @@ FormFactorSquaredEvaluator::createEvaluator(
                          new MonteCarlo::StandardFormFactor<GridArgumentUnit>(
                                                            raw_form_factor ) );
 
-  return std::shared_ptr<FormFactorSquaredEvaluator>(
-                               new FormFactorSquaredEvaluator( form_factor ) );
+  return std::shared_ptr<FormFactorEvaluator>(
+                                      new FormFactorEvaluator( form_factor ) );
 }
 
 } // end DataGen namespace
 
-#endif // end DATA_GEN_FORM_FACTOR_SQUARED_EVALUATOR_DEF_HPP
+#endif // end DATA_GEN_FORM_FACTOR_EVALUATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_FormFactorSquaredEvaluator_def.hpp
+// end DataGen_FormFactorEvaluator_def.hpp
 //---------------------------------------------------------------------------//

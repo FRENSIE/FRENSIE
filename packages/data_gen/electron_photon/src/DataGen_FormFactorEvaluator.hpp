@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_FormFactorSquaredEvaluator.hpp
+//! \file   DataGen_FormFactorEvaluator.hpp
 //! \author Alex Robinson
-//! \brief  The form factor squared evaluator declaration
+//! \brief  The form factor evaluator declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_FORM_FACTOR_SQUARED_EVALUATOR_HPP
-#define DATA_GEN_FORM_FACTOR_SQUARED_EVALUATOR_HPP
+#ifndef DATA_GEN_FORM_FACTOR_EVALUATOR_HPP
+#define DATA_GEN_FORM_FACTOR_EVALUATOR_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -18,8 +18,8 @@
 
 namespace DataGen{
 
-//! The form factor squared evaluator
-class FormFactorSquaredEvaluator
+//! The form factor evaluator
+class FormFactorEvaluator
 {
 
 public:
@@ -28,24 +28,30 @@ public:
   template<typename InterpPolicy,
            typename GridArgumentUnit,
            template<typename,typename...> class Array>
-  static std::shared_ptr<FormFactorSquaredEvaluator> createEvaluator(
+  static std::shared_ptr<FormFactorEvaluator> createEvaluator(
                                      const Array<double>& argument_grid,
                                      const Array<double>& form_factor_values );
 
   //! Destructor
-  ~FormFactorSquaredEvaluator()
+  ~FormFactorEvaluator()
   { /* ... */ }
+
+  //! Evaluate the form factor
+  double evaluateFormFactor( const double argument ) const;
+
+  //! Return a function that wraps the form factor evaluation method
+  std::function<double(double)> getFormFactorEvaluationWrapper() const;
 
   //! Evaluate the form factor squared
   double evaluateFormFactorSquared( const double squared_argument ) const;
 
-  //! Return a function that wraps the evaluation method
+  //! Return a function that wraps the form factor squared evaluation method
   std::function<double(double)> getFormFactorSquaredEvalutionWrapper() const;
 
 private:
 
   //! Constructor
-  FormFactorSquaredEvaluator(
+  FormFactorEvaluator(
                   std::unique_ptr<const MonteCarlo::FormFactor>& form_factor );
 
   // The form factor
@@ -58,12 +64,12 @@ private:
 // Template Includes.
 //---------------------------------------------------------------------------//
 
-#include "DataGen_FormFactorSquaredEvaluator_def.hpp"
+#include "DataGen_FormFactorEvaluator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end DATA_GEN_FORM_FACTOR_SQUARED_EVALUATOR_HPP
+#endif // end DATA_GEN_FORM_FACTOR_EVALUATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_FormFactorSquaredEvaluator.hpp
+// end DataGen_FormFactorEvaluator.hpp
 //---------------------------------------------------------------------------//

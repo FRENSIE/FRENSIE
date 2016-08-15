@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstFormFactorSquaredEvaluator.cpp
+//! \file   tstFormFactorEvaluator.cpp
 //! \author Alex Robinson
 //! \brief  The form factor squared evaluator unit tests
 //!
@@ -16,7 +16,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "DataGen_FormFactorSquaredEvaluator.hpp"
+#include "DataGen_FormFactorEvaluator.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InverseAngstromUnit.hpp"
@@ -26,14 +26,50 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<DataGen::FormFactorSquaredEvaluator> evaluator;
+std::shared_ptr<DataGen::FormFactorEvaluator> evaluator;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check that the form factor can be evaluated
+TEUCHOS_UNIT_TEST( FormFactorEvaluator, evaluateFormFactor )
+{
+  TEST_FLOATING_EQUALITY( evaluator->evaluateFormFactor( 0.0 ),
+                          82.0,
+                          1e-15 );
+    
+  TEST_FLOATING_EQUALITY( evaluator->evaluateFormFactor( 1e8 ),
+                          29.741,
+                          1e-15 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( evaluator->evaluateFormFactor( 1e17 ),
+                                  0.0,
+                                  1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the form factor evaluation wrapper can be generated
+TEUCHOS_UNIT_TEST( FormFactorEvaluator, getFormFactorEvaluationWrapper )
+{
+  std::function<double(double)> evaluation_wrapper =
+    evaluator->getFormFactorEvaluationWrapper();
+
+  TEST_FLOATING_EQUALITY( evaluation_wrapper( 0.0 ),
+                          82.0,
+                          1e-15 );
+    
+  TEST_FLOATING_EQUALITY( evaluation_wrapper( 1e8 ),
+                          29.741,
+                          1e-15 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( evaluation_wrapper( 1e17 ),
+                                  0.0,
+                                  1e-15 );
+}
+                   
+//---------------------------------------------------------------------------//
 // Check that the form factor squared can be evaluated
-TEUCHOS_UNIT_TEST( FormFactorSquaredEvaluator,
-                   evaluateFormFactorSquared )
+TEUCHOS_UNIT_TEST( FormFactorEvaluator, evaluateFormFactorSquared )
 {
   TEST_FLOATING_EQUALITY( evaluator->evaluateFormFactorSquared( 0.0 ),
                           82.0*82.0,
@@ -50,7 +86,7 @@ TEUCHOS_UNIT_TEST( FormFactorSquaredEvaluator,
 
 //---------------------------------------------------------------------------//
 // Check that the form factor squared evaluation wrapper can be generated
-TEUCHOS_UNIT_TEST( FormFactorSquaredEvaluator,
+TEUCHOS_UNIT_TEST( FormFactorEvaluator,
                    getFormFactorSquaredEvaluationWrapper )
 {
   std::function<double(double)> evaluation_wrapper =
@@ -120,7 +156,7 @@ int main( int argc, char** argv )
     Teuchos::Array<double> form_factor_values(
 			 jcohe_block( 2*form_factor_size, form_factor_size ) );
 
-    evaluator = DataGen::FormFactorSquaredEvaluator::createEvaluator<Utility::LinLin,Utility::Units::InverseAngstrom>(
+    evaluator = DataGen::FormFactorEvaluator::createEvaluator<Utility::LinLin,Utility::Units::InverseAngstrom>(
                                                           recoil_momentum,
                                                           form_factor_values );
   }
@@ -141,5 +177,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstFormFactorSquaredEvaluator.cpp
+// end tstFormFactorEvaluator.cpp
 //---------------------------------------------------------------------------//
