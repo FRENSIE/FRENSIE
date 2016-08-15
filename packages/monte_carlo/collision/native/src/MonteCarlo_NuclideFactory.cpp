@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_NuclideFactory.cpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Eli Moll
 //! \brief  The nuclide factory class definition
 //!
 //---------------------------------------------------------------------------//
@@ -29,6 +29,9 @@ NuclideFactory::NuclideFactory(
 		     const std::unordered_set<std::string>& nuclide_aliases,
 		     const bool use_unresolved_resonance_data,
 		     const bool use_photon_production_data,
+		     const bool use_sab_data,
+		     std::unordered_map<std::string,std::string>& sab_file_paths,
+		     std::unordered_map<std::string,std::string>& sab_table_names,
 		     std::ostream* os_message )
   : d_os_message( os_message )
 { 
@@ -62,10 +65,12 @@ NuclideFactory::NuclideFactory(
 
     if( nuclide_file_type == CrossSectionsXMLProperties::ace_file )
     {
-      if( false )
+      if( use_sab_data )
       {
-      /*
-        createSAlphaBetaNuclideFromACETable( cross_sections_xml_directory,
+        const std::string sab_file_path = *nuclide_name;
+        const std::string sab_table_names = *nuclide_name;
+      
+        createNuclideFromACETable( cross_sections_xml_directory,
 				   *nuclide_name,
 				   nuclide_file_path,
 				   nuclide_table_name,
@@ -77,9 +82,8 @@ NuclideFactory::NuclideFactory(
 				   temperature,
 				   use_unresolved_resonance_data,
 				   use_photon_production_data,
-				   *sab_alias,
-			 const Data::XSSSabDataExtractor& sab_nuclide_data
-			 */
+				   sab_file_path,
+				   sab_table_names );
       }
       else
       {
@@ -171,6 +175,71 @@ void NuclideFactory::createNuclideFromACETable(
 				    nuclide,
 				    use_unresolved_resonance_data,
 				    use_photon_production_data );
+  
+  *d_os_message << "done." << std::endl;
+}
+
+// Create a nuclide from an ACE table
+void NuclideFactory::createNuclideFromACETable(
+			    const std::string& cross_sections_xml_directory,
+			    const std::string& nuclide_alias,
+			    const std::string& ace_file_path,
+			    const std::string& nuclear_table_name,
+			    const int nuclide_file_start_line,
+			    const int atomic_number,
+			    const int atomic_mass_number,
+			    const int isomer_number,
+			    const double atomic_weight_ratio,
+			    const double temperature,
+			    const bool use_unresolved_resonance_data,
+			    const bool use_photon_production_data,
+			    const std::string& sab_file_path,
+			    const std::string& sab_table_name )
+{
+  // Load the cross section data with the specified format
+  *d_os_message << "Loading ACE cross section table " 
+		<< nuclear_table_name << " (" << nuclide_alias << ") ... ";
+  
+  // The ACE table reader
+  Data::ACEFileHandler ace_file_handler( ace_file_path,
+					 nuclear_table_name,
+					 nuclide_file_start_line,
+					 true );
+  
+  // The XSS neutron data extractor
+  Data::XSSNeutronDataExtractor xss_data_extractor( 
+					 ace_file_handler.getTableNXSArray(),
+					 ace_file_handler.getTableJXSArray(),
+				   ace_file_handler.getTableXSSArray() );
+				         
+	// The ACE table reader
+	Data::ACEFileHandler sab_file_handler( sab_file_path,
+	                                       sab_table_name,
+	                                       1u );
+	                                       
+	// The XSS S(alpha,beta) data extractor
+	Data::XSSSabDataExtractor sab_nuclide_data(
+					 sab_file_handler.getTableNXSArray(),
+					 sab_file_handler.getTableJXSArray(),
+				   sab_file_handler.getTableXSSArray() );
+				         
+
+  // Initialize the new nuclide
+  Teuchos::RCP<Nuclide>& nuclide = d_nuclide_name_map[nuclide_alias];
+  
+  // Create the new nuclide
+  SAlphaBetaNuclideACEFactory::createNuclide( xss_data_extractor,
+				    nuclear_table_name,
+				    atomic_number,
+				    atomic_mass_number,
+				    isomer_number,
+				    atomic_weight_ratio,
+				    temperature,
+				    nuclide,
+				    use_unresolved_resonance_data,
+				    use_photon_production_data,
+				    sab_table_name,
+				    sab_nuclide_data );
   
   *d_os_message << "done." << std::endl;
 }

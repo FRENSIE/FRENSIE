@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SAlphaBetaNuclearReactionACEFactory.hpp"
 #include "Utility_SearchAlgorithms.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -49,6 +50,15 @@ SAlphaBetaNuclearReactionACEFactory::SAlphaBetaNuclearReactionACEFactory(
 	                               sab_nuclide_data.extractInelasticEnergyGrid(),
 	                               reaction_cross_section,
 	                               scattering_dist_factory );
+}
+
+// Create the S(alpha,beta) reactions
+void SAlphaBetaNuclearReactionACEFactory::createSAlphaBetaReactions(
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
+  sab_reactions ) const
+{
+  sab_reactions.insert( d_s_alpha_beta_reactions.begin(),
+			       d_s_alpha_beta_reactions.end() );
 }
 
 // Update the reaction threshold map with the new reactions
@@ -107,23 +117,64 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
 
   Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
     scattering_distribution;
+    
+  Teuchos::Array<double> sab_energy_grid_array( sab_energy_grid );
+  boost::unordered_map<NuclearReactionType,Teuchos::Array<double> >
+      reaction_cross_section_arrays;
+ 
+  // Append the S(alpha,beta) data with the threshold data point from the
+  //   standard reaction and update the standard reaction data
+  while( reaction_xs != reaction_xs_end )
+  {
+    reaction_type = reaction_xs->first;
+    
+    if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION ||
+        reaction_type == MonteCarlo::SALPHABETA_N__N_ELASTIC_REACTION )
+    {
+      unsigned index;
+      
+      Utility::Search::binaryUpperBoundIndex( d_energy_grid.begin(),
+                                              d_energy_grid.end(),
+                                              sab_energy_grid.back() );
+    
+      d_scattering_reactions[reaction_type]->updateThresholdEnergyIndex( index );
+      
+      double energy = d_energy_grid[index];
+      double energy_xs = 
+        d_scattering_reactions[reaction_type]->getCrossSection( energy );
+        
+      sab_energy_grid_array.push_back( energy );
+      reaction_cross_section_arrays[reaction_type] =
+        reaction_cross_section[reaction_type];
+      reaction_cross_section_arrays[reaction_type].push_back( energy_xs );
+      
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error, "Error: reaction type " << 
+        reaction_type << " is not an acceptable S(a,b) reaction type." );
+    }
+    
+    ++reaction_xs;
+    
+  }  
  
   while( reaction_xs != reaction_xs_end )
   {
     reaction_type = reaction_xs->first;
   
     Teuchos::RCP<NuclearReaction>& reaction =
-      d_scattering_reactions[reaction_type];
+      d_s_alpha_beta_reactions[reaction_type];
       
     scattering_dist_factory.createSAlphaBetaScatteringDistributions(
       reaction_type,
       scattering_distribution );
       
     Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.deepCopy( sab_energy_grid );
+    energy_grid.deepCopy( sab_energy_grid_array );
     
     Teuchos::ArrayRCP<double> cross_section;
-    cross_section.deepCopy( reaction_cross_section[reaction_type] );
+    cross_section.deepCopy( reaction_cross_section_arrays[reaction_type] );
       
     reaction.reset( new NeutronScatteringReaction(
       reaction_type,
@@ -137,37 +188,7 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
     
     ++reaction_xs;
   }
-  
-  // Adjust the threshold energy index for the existing scattering reactions
-  reaction_xs = reaction_cross_section.begin();
-  reaction_xs_end = reaction_cross_section.end();
-  
-  while( reaction_xs != reaction_xs_end )
-  {
-    reaction_type = reaction_xs->first;
-    
-    if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION )
-    {
-      unsigned index;
-      
-      Utility::Search::binaryUpperBoundIndex( d_energy_grid.begin(),
-                                              d_energy_grid.end(),
-                                              sab_energy_grid.back() );
-    
-      d_scattering_reactions[MonteCarlo::N__N_INELASTIC_REACTION]->updateThresholdEnergyIndex( index );
-    }
-    else if( reaction_type == MonteCarlo::SALPHABETA_N__N_ELASTIC_REACTION )
-    {
-      unsigned index;
-      
-      Utility::Search::binaryUpperBoundIndex( d_energy_grid.begin(),
-                                              d_energy_grid.end(),
-                                              sab_energy_grid.back() );
-    
-      d_scattering_reactions[MonteCarlo::N__N_ELASTIC_REACTION]->updateThresholdEnergyIndex( index );
-    }
-    
-  }  
+
 }
 
 } // end MonteCarlo namespace

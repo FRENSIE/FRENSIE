@@ -7,6 +7,11 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "MonteCarlo_NuclideACEFactory.hpp"
+#include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_SAlphaBetaDecoupledPhotonProductionReactionACEFactory.hpp"
+#include "MonteCarlo_DecoupledPhotonProductionNuclide.hpp"
+#include "MonteCarlo_SAlphaBetaNuclearReactionACEFactory.hpp"
 #include "MonteCarlo_SAlphaBetaNuclideACEFactory.hpp"
 
 namespace MonteCarlo{
@@ -28,17 +33,17 @@ void SAlphaBetaNuclideACEFactory::createNuclide(
 			 const std::string& sab_alias,
 			 const Data::XSSSabDataExtractor& sab_nuclide_data )
 {
-/*
   // Extract the common energy grid used for this nuclide
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_nuclide_data.extractEnergyGrid() );
 
   // Create the nuclear reaction factory
-  NuclearReactionACEFactory reaction_factory( nuclide_alias,
+  SAlphaBetaNuclearReactionACEFactory reaction_factory( nuclide_alias,
 					      atomic_weight_ratio,
 					      temperature,
 					      energy_grid.getConst(),
-					      raw_nuclide_data );
+					      raw_nuclide_data,
+					      sab_nuclide_data );
 					  
   // Create the standard scattering reactions
   Nuclide::ReactionMap standard_scattering_reactions;
@@ -50,6 +55,21 @@ void SAlphaBetaNuclideACEFactory::createNuclide(
   Nuclide::ReactionMap standard_absorption_reactions;
   
   reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
+  
+  // Create the S(alpha,beta) reactions
+  Nuclide::ReactionMap sab_reactions;
+  reaction_factory.createSAlphaBetaReactions( sab_reactions );
+  
+  // Add the S(alpha,beta) reactions to the scattering reactions
+  Nuclide::ReactionMap::const_iterator sab_reaction, sab_reaction_end;
+  sab_reaction = sab_reactions.begin();
+  sab_reaction_end = sab_reactions.end();
+  
+  while( sab_reaction != sab_reactions.end() )
+  {
+    standard_scattering_reactions[sab_reaction->first] = sab_reaction->second;
+    ++sab_reaction;
+  }
                                                   
   if( use_unresolved_resonance_data )
   {
@@ -59,27 +79,16 @@ void SAlphaBetaNuclideACEFactory::createNuclide(
 	      << std::endl;
   }
 
-  // Create the S(alpha,beta) reaction factory
-  SAlphaBetaReactionACEFactory sab_reaction_factory( nuclide_alias,
-                                                     atomic_weight_ratio,
-                                                     temperature,
-                                                     sab_energy_grid.getConst(),
-                                                     raw_sab_data );
-                                           
-  // Create the S(alpha,beta) reactions
-  SAlphaBetaNuclide::SAlphaBetaReactionMap sab_reactions;
-
-  sab_reaction_factory.createSAlphaBetaReactions( sab_reactions );
-
   if( use_photon_production_data )
   {
     // Create the photon production reaction factory
-    DecoupledPhotonProductionReactionACEFactory photon_production_reaction_factory( 
+    SAlphaBetaDecoupledPhotonProductionReactionACEFactory photon_production_reaction_factory( 
                   nuclide_alias,
 					        atomic_weight_ratio,
 					        temperature,
 					        energy_grid.getConst(),
-					        raw_nuclide_data ); 
+					        raw_nuclide_data,
+					        sab_nuclide_data ); 
 				        
 		// Create the photon production reactions 
 		DecoupledPhotonProductionNuclide::PhotonProductionReactionMap
@@ -88,7 +97,7 @@ void SAlphaBetaNuclideACEFactory::createNuclide(
 		photon_production_reaction_factory.createPhotonProductionReactions( 
 		                                             photon_production_reactions );
    
-    nuclide.reset( new DecoupledPhotonProductionSAlphaBetaNuclide( nuclide_alias,
+    nuclide.reset( new DecoupledPhotonProductionNuclide( nuclide_alias,
 			        atomic_number,
 			        atomic_mass_number,
 			        isomer_number,
@@ -97,23 +106,20 @@ void SAlphaBetaNuclideACEFactory::createNuclide(
 			        energy_grid,
 			        standard_scattering_reactions,
 			        standard_absorption_reactions,
-			        photon_production_reactions,
-			        sab_reactions ) );
+			        photon_production_reactions ) );
   }
   else
   {
-    nuclide.reset( new SAlphaBetaNuclide( nuclide_alias,
-			                                    atomic_number,
-			                                    atomic_mass_number,
-			                                    isomer_number,
-			                                    atomic_weight_ratio,
-			                                    temperature,
-			                                    energy_grid,
-			                                    standard_scattering_reactions,
-			                                    standard_absorption_reactions,
-			                                    sab_reactions ) );
+    nuclide.reset( new Nuclide( nuclide_alias,
+			        atomic_number,
+			        atomic_mass_number,
+			        isomer_number,
+			        atomic_weight_ratio,
+			        temperature,
+			        energy_grid,
+			        standard_scattering_reactions,
+			        standard_absorption_reactions ) );
   }
-*/
 }
 
 } // end MonteCarlo namespace

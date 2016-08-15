@@ -48,7 +48,7 @@ public:
   //! Create the scattering reactions 
   void createSAlphaBetaReactions( 
       boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
-      scattering_reactions ) const;
+      sab_reactions ) const;
 
 protected:
 
