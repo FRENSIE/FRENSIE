@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ThompsonScatteringDistribution.hpp"
+#include "MonteCarlo_StandardFormFactorSquared.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
@@ -19,7 +20,7 @@ namespace MonteCarlo{
 
 // Default constructor
 ThompsonScatteringDistribution::ThompsonScatteringDistribution()
-  : CoherentScatteringDistribution( Teuchos::RCP<const Utility::TabularOneDDistribution>( new Utility::UniformDistribution( 0.0, std::numeric_limits<double>::max(), 1.0 ) ) )
+  : CoherentScatteringDistribution( this->getDummyFormFactorSquaredDistribution() )
 { /* ... */ }
 
 // Evaluate the integrated cross section (b)
@@ -47,6 +48,22 @@ void ThompsonScatteringDistribution::sampleAndRecordTrialsImpl(
   this->sampleAndRecordTrialsBasicImpl( incoming_energy,
 					scattering_angle_cosine,
 					trials );
+}
+
+// Return a dummy form factor squared distribution
+std::shared_ptr<const FormFactorSquared>
+ThompsonScatteringDistribution::getDummyFormFactorSquaredDistribution()
+{
+  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareCentimeter,void> > raw_distribution(
+         new Utility::UnitAwareUniformDistribution<Utility::Units::InverseSquareCentimeter,void>(
+                                0.0*Utility::Units::inverse_square_centimeter,
+                                std::numeric_limits<double>::max()*
+                                Utility::Units::inverse_square_centimeter,
+                                1.0 ) );
+
+  return std::shared_ptr<const FormFactorSquared>(
+        new StandardFormFactorSquared<Utility::Units::InverseSquareCentimeter>(
+                                                          raw_distribution ) );
 }
 
 } // end MonteCarlo namespace

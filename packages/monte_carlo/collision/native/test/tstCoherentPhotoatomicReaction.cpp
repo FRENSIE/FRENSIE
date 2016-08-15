@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -17,10 +18,12 @@
 // FRENSIE Includes
 #include "MonteCarlo_CoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_EfficientCoherentScatteringDistribution.hpp"
+#include "MonteCarlo_StandardFormFactorSquared.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_InverseSquareAngstromUnit.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -177,21 +180,25 @@ int main( int argc, char** argv )
 
   for( unsigned i = 0; i < form_factor_size; ++i )
   {
-    recoil_momentum_squared[i] *=
-      recoil_momentum_squared[i]*1e16; // convert from A^-2 to cm^-2
+    recoil_momentum_squared[i] *= recoil_momentum_squared[i];
 
     form_factor_squared[i] *= form_factor_squared[i];
   }
 
-  Teuchos::RCP<Utility::TabularOneDDistribution> form_factor(
-                             new Utility::TabularDistribution<Utility::LogLog>(
+  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareAngstrom,void> >
+    raw_form_factor_squared(
+         new Utility::UnitAwareTabularDistribution<Utility::LogLog,Utility::Units::InverseSquareAngstrom,void>(
                                                        recoil_momentum_squared,
 						       form_factor_squared ) );
 
+  std::shared_ptr<const MonteCarlo::FormFactorSquared> form_factor_obj(
+       new MonteCarlo::StandardFormFactorSquared<Utility::Units::InverseSquareAngstrom>(
+                                                   raw_form_factor_squared ) );
+  
   // Create the coherent scattering distribution
   Teuchos::RCP<const MonteCarlo::CoherentScatteringDistribution> distribution(
 		       new MonteCarlo::EfficientCoherentScatteringDistribution(
-							       form_factor ) );
+                                                           form_factor_obj ) );
 
   // Create the reaction
   ace_coherent_reaction.reset(

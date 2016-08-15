@@ -19,11 +19,13 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_BasicCoherentScatteringDistribution.hpp"
+#include "MonteCarlo_StandardFormFactorSquared.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_InverseSquareAngstromUnit.hpp"
 #include "Utility_DirectionHelpers.hpp"
 
 //---------------------------------------------------------------------------//
@@ -299,21 +301,25 @@ int main( int argc, char** argv )
 
     for( unsigned i = 0; i < form_factor_size; ++i )
     {
-      recoil_momentum_squared[i] *=
-	recoil_momentum_squared[i]*1e16; // conver from A^-2 to cm^-2
+      recoil_momentum_squared[i] *= recoil_momentum_squared[i]; 
 
       form_factor_squared[i] *= form_factor_squared[i];
     }
 
-    Teuchos::RCP<Utility::TabularOneDDistribution> form_factor_function_squared(
-			    new Utility::TabularDistribution<Utility::LinLin>(
-						       recoil_momentum_squared,
-				                       form_factor_squared ) );
+    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareAngstrom,void> >
+    raw_form_factor_squared(
+         new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseSquareAngstrom,void>(
+                                                       recoil_momentum_squared,
+						       form_factor_squared ) );
+
+    std::shared_ptr<const MonteCarlo::FormFactorSquared> form_factor_obj(
+       new MonteCarlo::StandardFormFactorSquared<Utility::Units::InverseSquareAngstrom>(
+                                                   raw_form_factor_squared ) );
 
     // Create the scattering distribution
     distribution.reset(
 		new MonteCarlo::BasicCoherentScatteringDistribution(
-					      form_factor_function_squared ) );
+                                                           form_factor_obj ) );
   }
 
   // Initialize the random number generator

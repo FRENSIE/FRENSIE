@@ -10,14 +10,16 @@
 #include "MonteCarlo_EfficientCoherentScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_UnitTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 EfficientCoherentScatteringDistribution::EfficientCoherentScatteringDistribution(
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    form_factor_function_squared )
+                                const std::shared_ptr<const FormFactorSquared>&
+                                form_factor_function_squared )
   : CoherentScatteringDistribution( form_factor_function_squared )
 { /* ... */ }
 
@@ -35,23 +37,29 @@ void EfficientCoherentScatteringDistribution::sampleAndRecordTrialsImpl(
 					       unsigned& trials ) const
 {
   // The wavelength of the photon (cm)
-  const double wavelength = Utility::PhysicalConstants::planck_constant*
-    Utility::PhysicalConstants::speed_of_light/incoming_energy;
+  const boost::units::quantity<boost::units::cgs::length> wavelength =
+    Utility::PhysicalConstants::planck_constant_q*
+    Utility::PhysicalConstants::speed_of_light_q/
+    (incoming_energy*Utility::Units::MeV);
 
   // The squared wavelength of the photon (cm^2)
-  const double wavelength_sqr = wavelength*wavelength;
+  const auto wavelength_sqr = wavelength*wavelength;
 
   // The max form factor arg squared (1/cm^2)
-  const double max_form_factor_arg_squared = 1.0/wavelength_sqr;
+  const auto max_form_factor_arg_squared = 1.0/wavelength_sqr;
 
+  // The sampled form factor argument squared
+  FormFactorSquared::SquaredArgumentQuantity form_factor_arg_squared;
+  
   // The form factor function squared value corresponding to the outgoing angle
   double form_factor_function_squared_value;
 
-  // The sampled form factor argument squared
-  double form_factor_arg_squared;
+  // The form factor squared distribution
+  const FormFactorSquared& form_factor_squared =
+    this->getFormFactorSquaredDistribution();
 
   if( max_form_factor_arg_squared <=
-      getFormFactorSquaredDistribution()->getUpperBoundOfIndepVar() )
+      form_factor_squared.getUpperBoundOfSquaredArgument() )
   {
     while( true )
     {
@@ -59,8 +67,7 @@ void EfficientCoherentScatteringDistribution::sampleAndRecordTrialsImpl(
       ++trials;
 
       // Randomly sample the form factor squared
-      form_factor_arg_squared =
-	getFormFactorSquaredDistribution()->sampleInSubrange(
+      form_factor_arg_squared = form_factor_squared.sampleInSubrange(
 						 max_form_factor_arg_squared );
 
       // Calc. the outgoing photon angle cosine from the sampled form factor
@@ -78,7 +85,11 @@ void EfficientCoherentScatteringDistribution::sampleAndRecordTrialsImpl(
   // Ignore coherent scattering at energies where scattering is
   // highly forward peaked
   else
+  {
+    ++trials;
+    
     scattering_angle_cosine = 1.0;
+  }
 
   // Check for roundoff error
   if( fabs( scattering_angle_cosine ) > 1.0 )
