@@ -65,6 +65,9 @@ public:
   //! Simulate the reaction
   virtual void react( NeutronState& neutron, ParticleBank& bank ) const = 0;
 
+  // Update the threshold energy index for S(alpha,beta) replacement
+  void updateThresholdEnergyIndex( const unsigned index );
+
 protected:
 
   //! Return an integer number of emitted neutrons given a non-integer value

@@ -517,6 +517,7 @@ ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --tes
 ##      collision handler class tests                                         ##
 ##----------------------------------------------------------------------------##
 
+
 ADD_EXECUTABLE(tstCollisionHandler
   tstCollisionHandler.cpp)
 TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)

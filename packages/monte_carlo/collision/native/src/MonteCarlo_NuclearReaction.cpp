@@ -46,6 +46,12 @@ NuclearReaction::NuclearReaction(
   testPrecondition( cross_section.size() > 0 );
 }
 
+// Update the threshold energy index for S(alpha,beta) replacement
+void NuclearReaction::updateThresholdEnergyIndex( const unsigned index )
+{
+  d_threshold_energy_index = index;
+}
+
 // Return the reaction type
 NuclearReactionType NuclearReaction::getReactionType() const
 {

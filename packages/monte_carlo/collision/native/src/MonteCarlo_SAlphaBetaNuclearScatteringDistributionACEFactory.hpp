@@ -79,7 +79,7 @@ public:
   //! Create S(alpha,beta) distributions
   void createSAlphaBetaScatteringDistributions(
     const unsigned reaction_type,
-	  Teuchos::RCP<DistributionType>& distribution );
+	  Teuchos::RCP<DistributionType>& distribution ) const;
 
 protected:
 

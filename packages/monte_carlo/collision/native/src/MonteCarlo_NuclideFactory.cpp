@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NuclideACEFactory.hpp"
+#include "MonteCarlo_SAlphaBetaNuclideACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"

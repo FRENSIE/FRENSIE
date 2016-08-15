@@ -21,7 +21,7 @@
 namespace MonteCarlo{
 
 //! The nuclide factory class that uses ACE data
-class SAlphaBetaNuclideACEFactory : public NuclideACEFactory
+class SAlphaBetaNuclideACEFactory
 {
 
 public:

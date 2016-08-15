@@ -263,7 +263,7 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::setInelasticSAlphaBetaOu
 // Create S(alpha,beta) distributions
 void SAlphaBetaNuclearScatteringDistributionACEFactory::createSAlphaBetaScatteringDistributions(
     const unsigned reaction_type,
-	  Teuchos::RCP<DistributionType>& distribution )
+	  Teuchos::RCP<DistributionType>& distribution ) const
 {
   // Create the inelastic scattering distribution
   if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION )

@@ -11,6 +11,7 @@
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionReactionACEFactory.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionNuclide.hpp"
+#include "MonteCarlo_SAlphaBetaNuclearReactionACEFactory.hpp"
 
 namespace MonteCarlo{
 

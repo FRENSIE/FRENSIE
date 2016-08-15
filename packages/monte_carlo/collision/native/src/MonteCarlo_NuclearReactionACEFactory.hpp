@@ -165,6 +165,8 @@ protected:
   // A map of the fission reactions
   boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
   d_fission_reactions;
+  
+  Teuchos::ArrayRCP<const double> d_energy_grid;
 };
 
 } // end MonteCarlo namespace

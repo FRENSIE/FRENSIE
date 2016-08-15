@@ -11,8 +11,7 @@
 
 namespace MonteCarlo{
 
-SAlphaBetaNuclideACEFactory::SAlphaBetaNuclideACEFactory() :
-  NuclideACEFactory()
+SAlphaBetaNuclideACEFactory::SAlphaBetaNuclideACEFactory()
 { /* ... */ }
 
 void SAlphaBetaNuclideACEFactory::createNuclide( 

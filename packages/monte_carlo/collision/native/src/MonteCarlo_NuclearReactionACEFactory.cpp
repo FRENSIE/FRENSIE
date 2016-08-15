@@ -48,6 +48,8 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
   scattering_dist_factory( table_name,
 			     atomic_weight_ratio,
 			     raw_nuclide_data );  
+			     
+	d_energy_grid = energy_grid;
 
   // Extract the required blocks
   Teuchos::ArrayView<const double> elastic_cross_section = 

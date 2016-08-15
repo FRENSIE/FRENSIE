@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_NeutronScatteringReaction.hpp"
 #include "MonteCarlo_SAlphaBetaNuclearScatteringDistributionACEFactory.hpp"
 #include "Data_XSSSabDataExtractor.hpp"
 
@@ -66,12 +67,17 @@ private:
 
   // Initialize the scattering reactions
   void initializeSAlphaBetaReactions( 
-    const double& temperature,
+    const double temperature,
     Teuchos::ArrayView<const double> sab_energy_grid,
     boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
       reaction_cross_section,
     const SAlphaBetaNuclearScatteringDistributionACEFactory& 
       scattering_dist_factory );
+      
+  // S(alpha,beta) reactions
+  // A map of the scattering reactions
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+  d_s_alpha_beta_reactions;
 
 };
 
