@@ -542,9 +542,9 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
   energy = 2.000000000000E-01;
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
-  inelastic = 6.411260911064270E+06;
+  inelastic = 6.41057988372776E+06;
   elastic = 1.611188150713820E+07*cross_section_ratio + 1.950992057434620E+06;
-
+  
   cross_section =
     atom->getTotalCrossSection( energy );
 
@@ -552,16 +552,15 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
                           inelastic + elastic,
                           1e-12 );
 
-
   energy = 1.000000000000E+05;
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
   inelastic = 2.845403047900000E+06;
   elastic = 8.83051E-02*cross_section_ratio + 2.203770304996720E-03;
-
+  
   cross_section =
     atom->getTotalCrossSection( energy );
-
+  
   TEST_FLOATING_EQUALITY( cross_section,
                           inelastic + elastic,
                           1e-12 );
@@ -644,9 +643,9 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
 
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCDF( 1.E-03, new_cutoff_angle_cosine );
-
+  
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.902810E+08*cross_section_ratio + 1.258401377405710E+08,
+                          2.902810E+08*cross_section_ratio + 1.2584013774057174E+08,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
@@ -655,9 +654,9 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
 
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCDF( 1.99526E-04, new_cutoff_angle_cosine );
-
+  
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.130900E+08*cross_section_ratio + 3.085062847704200E+08,
+                          6.130900E+08*cross_section_ratio + 2.5849727567112732E+08,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(

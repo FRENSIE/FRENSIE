@@ -167,7 +167,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   double cross_section = reactions.front()->getCrossSection(
 						     8.82900086220703151e-02 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
 
   cross_section = reactions.front()->getCrossSection( 20.0 );
 
@@ -180,12 +180,12 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 		       1e-3 );
 
   cross_section = reactions.back()->getCrossSection( 1e-3 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 1.98041761897415292e-01, 1e-6 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.198065568410027426, 1e-6 );
 
   cross_section = reactions.back()->getCrossSection( 20.0 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 4.02322890775264064e-02, 1e-9 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.0402322921484711687, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -214,11 +214,11 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   double cross_section = reactions.front()->getCrossSection(
 						     8.82900086220703151e-02 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
 
   cross_section = reactions.front()->getCrossSection( 20.0 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-9 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.0603100048795882984, 1e-9 );
 
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
@@ -267,11 +267,11 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 
   cross_section = reactions.back()->getCrossSection( 1e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.98041761897415292e-01, 1e-6 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.198065568410027426, 1e-6 );
 
   cross_section = reactions.back()->getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.02322890775264064e-02, 1e-9 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.0402322921484711687, 1e-9 );
 
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
