@@ -24,6 +24,9 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
+// Std Lib Includes
+#include <unordered_map>
+
 namespace MonteCarlo{
 
 // Constructor
@@ -90,6 +93,16 @@ void CollisionHandlerFactory::initializeHandler(
 						   material_reps,
 						   material_id_fraction_map,
 						   material_id_component_map );
+						   
+	SabUseMap sab_use_map;
+	SabPathMap sab_path_map;
+	SabTableMap sab_table_map;
+						   
+	this->createSAlphaBetaDataMaps(
+	  material_reps,
+	  sab_use_map,
+	  sab_path_map,
+	  sab_table_map );
 
   // Create the cell id data maps
   CellIdMatIdMap cell_id_mat_id_map;
@@ -107,14 +120,18 @@ void CollisionHandlerFactory::initializeHandler(
   case NEUTRON_MODE:
   {
     this->createNeutronMaterials( cross_sections_table_info,
-				  cross_sections_xml_directory,
-				  material_id_fraction_map,
-				  material_id_component_map,
-				  aliases,
-				  cell_id_mat_id_map,
-				  cell_id_density_map,
-				  false,
-				  false );
+			    cross_sections_xml_directory,
+			    material_id_fraction_map,
+			    material_id_component_map,
+			    aliases,
+			    cell_id_mat_id_map,
+			    cell_id_density_map,
+			    false,
+			    false,
+			    sab_use_map,
+			    sab_path_map,
+			    sab_table_map );
+
     break;
   }
   case PHOTON_MODE:
@@ -139,14 +156,17 @@ void CollisionHandlerFactory::initializeHandler(
   case NEUTRON_PHOTON_MODE:
   {
     this->createNeutronMaterials( cross_sections_table_info,
-				  cross_sections_xml_directory,
-				  material_id_fraction_map,
-				  material_id_component_map,
-				  aliases,
-				  cell_id_mat_id_map,
-				  cell_id_density_map,
-				  false,
-				  true );
+			    cross_sections_xml_directory,
+			    material_id_fraction_map,
+			    material_id_component_map,
+			    aliases,
+			    cell_id_mat_id_map,
+			    cell_id_density_map,
+			    false,
+			    false,
+			    sab_use_map,
+			    sab_path_map,
+			    sab_table_map );
 
     this->createPhotonMaterials(
 		     cross_sections_table_info,
@@ -187,6 +207,45 @@ void CollisionHandlerFactory::initializeHandler(
 		     "Error: " << SimulationGeneralProperties::getParticleMode() <<
 		     " is not currently supported!" );
   }	    
+}
+
+// Check if S(alpha,beta) data is present
+void CollisionHandlerFactory::createSAlphaBetaDataMaps( 
+                              const Teuchos::ParameterList& material_reps,
+                              SabUseMap sab_use_map,
+                              SabPathMap sab_path_map,
+                              SabTableMap sab_table_map )
+{
+  Teuchos::ParameterList::ConstIterator it = material_reps.begin();
+
+  while( it != material_reps.end() )
+  {
+    const Teuchos::ParameterList& material_rep = 
+      Teuchos::any_cast<Teuchos::ParameterList>( it->second.getAny() );
+
+    if( material_rep.isParameter( "sab_nuclides" ) &&
+        material_rep.isParameter( "sab_tables" ) &&
+        material_rep.isParameter( "sab_path") )
+    {
+      unsigned id = material_rep.get<unsigned>( "Id" );
+      
+      sab_use_map[id]   = material_rep.get<bool>( "Sab_Nuclide" );
+      sab_path_map[id]  = material_rep.get<std::string>( "Sab_Path" );
+      sab_table_map[id] = material_rep.get<std::string>( "Sab_Table" );
+    }
+    else if( !material_rep.isParameter( "sab_nuclides" ) ||
+             !material_rep.isParameter( "sab_tables" ) ||
+             !material_rep.isParameter( "sab_path" ) )
+    {
+      THROW_EXCEPTION( std::logic_error,
+           "Error: S(alpha,beta) data was only partially requested in the "
+           "material definitions file. User must supply the sab_nuclide,"
+           "sab_table, and sab_path for S(alpha,beta) to be utilized." );
+    }
+  
+  ++it;
+  }
+  
 }
 
 // Validate a material representation
@@ -319,15 +378,18 @@ void CollisionHandlerFactory::createNeutronMaterials(
                        const CellIdMatIdMap& cell_id_mat_id_map,
                        const CellIdDensityMap& cell_id_density_map,
                        const bool use_unresolved_resonance_data,
-                       const bool use_photon_production_data )
+                       const bool use_photon_production_data,
+                       SabUseMap sab_use_map,
+                       SabPathMap sab_path_map,
+                       SabTableMap sab_table_map )
 {
   // Load the nuclides of interest
   NuclideFactory nuclide_factory( cross_sections_xml_directory,
-				  cross_sections_table_info,
-				  nuclide_aliases,
-				  use_unresolved_resonance_data,
-				  use_photon_production_data,
-				  d_os_warn );
+				                          cross_sections_table_info,
+			                        	  nuclide_aliases,
+				                          use_unresolved_resonance_data,
+				                          use_photon_production_data,
+				                          d_os_warn );
 
   std::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;
 

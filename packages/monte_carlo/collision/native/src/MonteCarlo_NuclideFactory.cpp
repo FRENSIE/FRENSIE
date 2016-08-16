@@ -29,7 +29,74 @@ NuclideFactory::NuclideFactory(
 		     const std::unordered_set<std::string>& nuclide_aliases,
 		     const bool use_unresolved_resonance_data,
 		     const bool use_photon_production_data,
-		     const bool use_sab_data,
+		     std::ostream* os_message )
+  : d_os_message( os_message )
+{ 
+  // Make sure the message output stream is valid
+  testPrecondition( os_message != NULL );
+  
+  // Create each nuclide in the set
+  std::unordered_set<std::string>::const_iterator nuclide_name = 
+    nuclide_aliases.begin();
+  
+  std::string nuclide_file_path, nuclide_file_type, nuclide_table_name;
+  int nuclide_file_start_line;
+  int atomic_number, atomic_mass_number, isomer_number;
+  double atomic_weight_ratio, temperature;
+
+  while( nuclide_name != nuclide_aliases.end() )
+  {
+    CrossSectionsXMLProperties::extractInfoFromNuclideTableInfoParameterList(
+						  cross_sections_xml_directory,
+						  *nuclide_name,
+						  cross_section_table_info,
+						  nuclide_file_path,
+						  nuclide_file_type,
+						  nuclide_table_name,
+						  nuclide_file_start_line,
+						  atomic_number,
+						  atomic_mass_number,
+						  isomer_number,
+						  atomic_weight_ratio,
+						  temperature );
+
+    if( nuclide_file_type == CrossSectionsXMLProperties::ace_file )
+    {
+      createNuclideFromACETable( cross_sections_xml_directory,
+			   *nuclide_name,
+			   nuclide_file_path,
+			   nuclide_table_name,
+			   nuclide_file_start_line,
+			   atomic_number,
+			   atomic_mass_number,
+			   isomer_number,
+			   atomic_weight_ratio,
+			   temperature,
+			   use_unresolved_resonance_data,
+			   use_photon_production_data );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::logic_error,
+		       "Error: nuclear table type " << nuclide_file_type <<
+		       " is not supported!" );
+    }
+
+    ++nuclide_name;
+  }
+
+  // Make sure that every nuclide has been created
+  testPostcondition( d_nuclide_name_map.size() == nuclide_aliases.size() );
+}
+
+// Constructor
+NuclideFactory::NuclideFactory( 
+		     const std::string& cross_sections_xml_directory,
+		     const Teuchos::ParameterList& cross_section_table_info,
+		     const std::unordered_set<std::string>& nuclide_aliases,
+		     const bool use_unresolved_resonance_data,
+		     const bool use_photon_production_data,
+		     std::unordered_map<unsigned, bool>,
 		     std::unordered_map<std::string,std::string>& sab_file_paths,
 		     std::unordered_map<std::string,std::string>& sab_table_names,
 		     std::ostream* os_message )
@@ -67,8 +134,11 @@ NuclideFactory::NuclideFactory(
     {
       if( use_sab_data )
       {
-        const std::string sab_file_path = *nuclide_name;
-        const std::string sab_table_names = *nuclide_name;
+        std::unordered_map<std::string,std::string>::const_iterator
+          sab_file_path = sab_file_paths.find(*nuclide_name);
+          
+        std::unordered_map<std::string,std::string>::const_iterator
+          sab_table_name = sab_table_names.find(*nuclide_name);
       
         createNuclideFromACETable( cross_sections_xml_directory,
 				   *nuclide_name,
@@ -82,8 +152,8 @@ NuclideFactory::NuclideFactory(
 				   temperature,
 				   use_unresolved_resonance_data,
 				   use_photon_production_data,
-				   sab_file_path,
-				   sab_table_names );
+				   sab_file_path->second,
+				   sab_table_name->second );
       }
       else
       {

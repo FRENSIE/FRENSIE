@@ -35,6 +35,14 @@ public:
 		  const std::unordered_set<std::string>& nuclide_aliases,
 		  const bool use_unresolved_resonance_data,
 		  const bool use_photon_production_data,
+		  std::ostream* os_message = &std::cout );
+		  
+	//! S(alpha,beta) Constructor
+	NuclideFactory( const std::string& cross_sections_xml_directory,
+		  const Teuchos::ParameterList& cross_section_table_info,
+		  const std::unordered_set<std::string>& nuclide_aliases,
+		  const bool use_unresolved_resonance_data,
+		  const bool use_photon_production_data,
 		  const bool use_sab_data,
 		  std::unordered_map<std::string,std::string>& sab_file_paths,
 		  std::unordered_map<std::string,std::string>& sab_table_names,
@@ -47,7 +55,7 @@ public:
   //! Create the map of nuclides
   void createNuclideMap( 
                       std::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
-		      nuclide_map ) const;
+		                  nuclide_map ) const;
 
 private:
 

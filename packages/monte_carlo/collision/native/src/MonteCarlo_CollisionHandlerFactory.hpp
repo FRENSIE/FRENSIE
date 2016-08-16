@@ -46,6 +46,24 @@ public:
 		     const Teuchos::ParameterList& cross_sections_table_info,
 		     const std::string& cross_sections_xml_directory );
 
+  //! The sab use map typedef
+  typedef std::unordered_map<unsigned, bool>
+    SabUseMap;
+    
+  //! The sab file path map typedef
+  typedef std::unordered_map<unsigned, std::string>
+    SabPathMap;
+    
+  //! The sab table name map typedef
+  typedef std::unordered_map<unsigned, std::string>
+    SabTableMap;
+		     
+  //! Check if S(alpha,beta) data is present
+  void createSAlphaBetaDataMaps( const Teuchos::ParameterList& material_reps,
+                                 SabUseMap sab_use_map,
+                                 SabPathMap sab_path_map,
+                                 SabTableMap sab_table_map );
+
 protected:
 
   //! The cell id mat id map typedef
@@ -117,7 +135,10 @@ private:
                        const CellIdMatIdMap& cell_id_mat_id_map,
                        const CellIdDensityMap& cell_id_density_map,
                        const bool use_unresolved_resonance_data,
-                       const bool use_photon_production_data );
+                       const bool use_photon_production_data,
+                       SabUseMap sab_use_map,
+                       SabPathMap sab_path_map,
+                      SabTableMap sab_table_map );
    
   //! Create the photon materials
   void createPhotonMaterials(
