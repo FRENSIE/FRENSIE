@@ -19,7 +19,6 @@
 // FRENSIE Includes
 #include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointElectronCrossSectionEvaluator.hpp"
-#include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
@@ -293,15 +292,15 @@ private:
   // Electron Methods //
   //////////////////////
 
-  // Set the electron cross section union energy grid
-  void setAdjointElectronCrossSectionsData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    bool recalculate_union_energy_grid = false ) const;
-
   // Initialize the electron union energy grid
   void initializeAdjointElectronUnionEnergyGrid(
      const Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
+
+  // Set the electron cross section union energy grid
+  void setAdjointElectronCrossSectionsData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    bool recalculate_union_energy_grid = false ) const;
   
   // Create the adjoint atomic excitation cross section distribution
   void createAdjointAtomicExcitationCrossSectionDistribution(

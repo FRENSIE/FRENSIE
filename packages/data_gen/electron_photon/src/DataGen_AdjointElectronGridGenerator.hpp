@@ -9,9 +9,6 @@
 #ifndef DATA_GEN_ADJOINT_ELECTRON_GRID_GENERATOR_HPP
 #define DATA_GEN_ADJOINT_ELECTRON_GRID_GENERATOR_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 namespace DataGen{
 
 //! The adjoint electron cross section grid generator
@@ -34,13 +31,13 @@ public:
 
   //! Generate the bilinear grid
   virtual void generate(
-	     Teuchos::Array<double>& energy_grid,
-	     Teuchos::Array<Teuchos::Array<double> >& max_energy_grids,
-	     Teuchos::Array<Teuchos::Array<double> >& cross_section) const = 0;
+	     std::vector<double>& energy_grid,
+	     std::vector<std::vector<double> >& max_energy_grids,
+	     std::vector<std::vector<double> >& cross_section) const = 0;
 
   //! Generate a max energy grid at the desired energy
-  virtual void generate( Teuchos::Array<double>& max_energy_grid,
-			 Teuchos::Array<double>& cross_section,
+  virtual void generate( std::vector<double>& max_energy_grid,
+			 std::vector<double>& cross_section,
 			 const double energy ) const = 0;
 
 private:
