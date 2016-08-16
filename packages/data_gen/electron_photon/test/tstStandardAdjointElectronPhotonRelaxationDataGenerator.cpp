@@ -87,8 +87,6 @@ Data::AdjointElectronPhotonRelaxationVolatileDataContainer
 std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer>
   h_epr_data_container, c_epr_data_container;
 
-std::ostream* os_log = &std::cout;
-
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -98,7 +96,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 {
     data_generator_h.reset(
         new TestStandardAdjointElectronPhotonRelaxationDataGenerator(
-            h_epr_data_container, os_log ) );
+            h_epr_data_container, 0.001, 20.0, 1.0e-5, 20.0 ) );
 
   data_generator_h->setAdjointBremsstrahlungCrossSectionEvaluationTolerance( 1e-3 );
   data_generator_h->setAdjointElectroionizationCrossSectionEvaluationTolerance( 1e-4 );
@@ -113,7 +111,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( h_data_container.getMinPhotonEnergy(), 0.001 );
   TEST_EQUALITY_CONST( h_data_container.getMaxPhotonEnergy(), 20.0 );
   TEST_EQUALITY_CONST( h_data_container.getMinElectronEnergy(), 1.0e-5 );
-  TEST_EQUALITY_CONST( h_data_container.getMaxElectronEnergy(), 1.0e+5 );
+  TEST_EQUALITY_CONST( h_data_container.getMaxElectronEnergy(), 20.0 );
   TEST_EQUALITY_CONST( h_data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( h_data_container.getNumberOfAdjointMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( h_data_container.getGridConvergenceTolerance(), 0.001 );
@@ -419,7 +417,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 {
   data_generator_c.reset(
        new TestStandardAdjointElectronPhotonRelaxationDataGenerator(
-            c_epr_data_container, os_log ) );
+            c_epr_data_container, 0.001, 20.0, 1.0e-5, 20.0 ) );
 
   data_generator_c->setAdjointBremsstrahlungCrossSectionEvaluationTolerance( 1e-3 );
   data_generator_c->setAdjointElectroionizationCrossSectionEvaluationTolerance( 1e-4 );
@@ -434,7 +432,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( c_data_container.getMinPhotonEnergy(), 0.001 );
   TEST_EQUALITY_CONST( c_data_container.getMaxPhotonEnergy(), 20.0 );
   TEST_EQUALITY_CONST( c_data_container.getMinElectronEnergy(), 1.0e-5 );
-  TEST_EQUALITY_CONST( c_data_container.getMaxElectronEnergy(), 1.0e+5 );
+  TEST_EQUALITY_CONST( c_data_container.getMaxElectronEnergy(), 20.0 );
   TEST_EQUALITY_CONST( c_data_container.getCutoffAngleCosine(), 1.0 );
   TEST_EQUALITY_CONST( c_data_container.getNumberOfAdjointMomentPreservingAngles(), 0 );
   TEST_EQUALITY_CONST( c_data_container.getGridConvergenceTolerance(), 0.001 );

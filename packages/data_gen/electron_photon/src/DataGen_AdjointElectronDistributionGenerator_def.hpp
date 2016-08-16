@@ -1,414 +1,186 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_StandardAdjointElectroionizationSubshellGridGenerator_def.hpp
+//! \file   DataGen_AdjointElectronDistributionGenerator_def.cpp
 //! \author Luke Kersting
-//! \brief  Standard adjoint electroionization subshell grid generator template definition
+//! \brief  Adjoint electron distribution generator definition
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_STANDARD_ADJOINT_ELECTROIONIZATION_SUBSHELL_GRID_GENERATOR_DEF_HPP
-#define DATA_GEN_STANDARD_ADJOINT_ELECTROIONIZATION_SUBSHELL_GRID_GENERATOR_DEF_HPP
+#ifndef DATA_GEN_ADJOINT_ELECTRON_DISTRIBUTION_GENERATOR_DEF_HPP
+#define DATA_GEN_ADJOINT_ELECTRON_DISTRIBUTION_GENERATOR_DEF_HPP
 
-// Std Lib
-#include <deque>
+// Std Lib Includes
 #include <algorithm>
 
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
 // FRENSIE Includes
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ComparePolicy.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace DataGen{
 
 // Constructor
+/*! \details The max incoming energy (max energy) will be used to test the input
+ * incoming energy grid (if values in the input grid that are greater than the
+ * max incoming energy are found an exception will be thrown). The max incoming
+ * energy plus the max energy nudge value will be used as the upper limit for
+ * the outgoing energy grid. The max energy nudge value must be greater than 0.0
+ * to avoid an invalid outgoing energy grid at the max incoming energy (each
+ * outgoing energy grid must have at least two distinct points). The incoming
+ * energy plus the energy to outgoing energy nudge value will be used as the
+ * lower limit for the outgoing energy grid. Setting a value of 0.0 means that
+ * every outgoing energy grid will start at the corresponding energy. This can
+ * be problematic for log interpolation since the adjoint electron cross section
+ * is zero when the incoming energy is equal to the outgoing energy (for
+ * inelastic reactions).
+ * By pushing the first outgoing energy slightly above the corresponding energy
+ * with this value, that problem can be avoided (usually leading to smaller
+ * grids that converge faster). Note: when generating grids for subshell
+ * electroionization distributions the max energy nudge value should be greater
+ * than the binding energy and the energy to outgoing energy nudge value should
+ * be greater than or equal to the binding energy since the cross section goes to
+ * zero when the incoming energy is equal to the outgoing energy minus the
+ * binding energy.
+ */
 template<typename TwoDInterpPolicy>
-StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::StandardAdjointElectroionizationSubshellGridGenerator(
-      const double& binding_energy,
-      const std::shared_ptr<MonteCarlo::ElectroatomicReaction>&
-        electroionization_subshell_reaction,
-      const ElectroionizationSubshellDistribution& knock_on_distribution,
-      const double convergence_tol,
-      const double absolute_diff_tol,
-      const double distance_tol )
-  : d_verbose( false ),
-    d_precision( 1e-3 ),
-    d_convergence_tol( convergence_tol ),
-    d_absolute_diff_tol( absolute_diff_tol ),
-    d_distance_tol( distance_tol ),
-    d_max_energy_grid_generator( convergence_tol,
-				 absolute_diff_tol,
-				 distance_tol ),
-  d_adjoint_electroionization_subshell_cross_section(
-                                            binding_energy,
-                                            electroionization_subshell_reaction,
-                                            knock_on_distribution  )
+AdjointElectronDistributionGenerator<TwoDInterpPolicy>::AdjointElectronDistributionGenerator(
+                                const double max_energy,
+                                const double max_energy_nudge_value,
+                                const double energy_to_outgoing_energy_nudge_value,
+                                const double convergence_tol,
+                                const double absolute_diff_tol,
+                                const double distance_tol )
+  : Utility::TwoDGridGenerator<TwoDInterpPolicy>( convergence_tol,
+                                                  absolute_diff_tol,
+                                                  distance_tol ),
+    d_max_energy( max_energy ),
+    d_nudged_max_energy( max_energy + max_energy_nudge_value ),
+    d_ energy_to_outgoing_energy_nudge_value(  energy_to_outgoing_energy_nudge_value )
 {
-  // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
-  // Make sure the tolerances are valid
-  testPrecondition( convergence_tol > 0.0 );
-  testPrecondition( convergence_tol <= 1.0 );
-  testPrecondition( absolute_diff_tol > 0.0 );
-  testPrecondition( distance_tol > 0.0 );
+  // Make sure the max energy is valid
+  testPrecondition( max_energy > 0.0 );
+  // Make sure the max energy nudge value is valid
+  testPrecondition( max_energy_nudge_value > 0.0 );
+  // Make sure the energy to outgoing energy nudge value is valid
+  testPrecondition(  energy_to_outgoing_energy_nudge_value >= 0.0 );
 }
 
-// Set verbose mode to on
+// Get the max energy
 template<typename TwoDInterpPolicy>
-void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::setVerboseModeOn()
+double AdjointElectronDistributionGenerator<TwoDInterpPolicy>::getMaxEnergy() const
 {
-  d_verbose = true;
+  return d_max_energy;
 }
 
-// Set verbose mode to off
+// Set the max energy nudge value
+/*! The max energy plus the max energy nudge value will be used as the upper
+ * limit for the outgoing energy grid. The max energy nudge value must be
+ * greater than 0.0 to avoid an invalid outgoing energy grid at the max incoming
+ * energy (each outgoing energy grid must have at least two distinct points).
+ * Note: when generating grids for subshell electroionization distributions the
+ * max energy nudge value should be greater than the binding energy since the
+ * cross section goes to zero when the incoming energy is equal to the outgoing
+ * energy minus the binding energy.
+ */
 template<typename TwoDInterpPolicy>
-void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::setVerboseModeOff()
+void AdjointElectronDistributionGenerator<TwoDInterpPolicy>::setMaxEnergyNudgeValue(
+                                          const double max_energy_nudge_value )
 {
-  d_verbose = false;
+  // Make sure the max energy nudge value is valid
+  testPrecondition( max_energy_nudge_value > 0.0 );
+  
+  d_nudged_max_energy = d_max_energy + max_energy_nudge_value;
 }
 
-// Set the convergence tolerance
+// Get the nudged max energy
 template<typename TwoDInterpPolicy>
-void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::setConvergenceTolerance( const double convergence_tol )
+double AdjointElectronDistributionGenerator<TwoDInterpPolicy>::getNudgedMaxEnergy() const
 {
-  // Make sure the convergence tolerance is valid
-  testPrecondition( convergence_tol > 0.0 );
-  testPrecondition( convergence_tol <= 1.0 );
-
-  d_convergence_tol = convergence_tol;
-
-  d_max_energy_grid_generator.setConvergenceTolerance( convergence_tol );
+  return d_nudged_max_energy;
 }
 
-// Set the absolute difference tolerance
+// Set the incoming energy to max outgoing energy nudge value
+/*! The incoming energy plus the energy to outgoing energy nudge value will be used 
+ * as the lower limit for the outgoing energy grid. Setting a value of 0.0 means
+ * that every outgoing energy grid will start at the corresponding energy. This
+ * can be problematic for log interpolation since the adjoint electron cross
+ * section is zero when the incoming energy is equal to the outgoing energy
+ * (for inelastic reactions).
+ * By pushing the first outgoing energy slightly above the
+ * corresponding incoming energy with this value, that problem can be avoided
+ * (usually leading to smaller grids that converge faster). Note: when
+ * generating grids for subshell electroionization distributions the energy to
+ * max energy nudge value should be greater than or equal to the binding energy
+ * since the cross section goes to zero when the energy is equal to the max
+ * energy minus the binding energy.
+ */
 template<typename TwoDInterpPolicy>
-void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::setAbsoluteDifferenceTolerance( const double absolute_diff_tol )
+void AdjointElectronDistributionGenerator<TwoDInterpPolicy>::setEnergyToOutgoingEnergyNudgeValue(
+                                const double  energy_to_outgoing_energy_nudge_value )
 {
-  // Make sure the absolute diff tolerance is valid
-  testPrecondition( absolute_diff_tol > 0.0 );
-
-  d_absolute_diff_tol = absolute_diff_tol;
-
-  d_max_energy_grid_generator.setAbsoluteDifferenceTolerance(
-							   absolute_diff_tol );
+  // Make sure the energy to outgoing energy nudge value is valid
+  testPrecondition(  energy_to_outgoing_energy_nudge_value >= 0.0 );
+  
+  d_ energy_to_outgoing_energy_nudge_value =  energy_to_outgoing_energy_nudge_value;
 }
 
-// Set the distance tolerance
+// Get the nudged energy
 template<typename TwoDInterpPolicy>
-void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::setDistanceTolerance( const double distance_tol )
+double AdjointElectronDistributionGenerator<TwoDInterpPolicy>::getNudgedEnergy(
+                                                    const double energy ) const
 {
-  // Make sure the distance tolerance is valid
-  testPrecondition( distance_tol > 0.0 );
-
-  d_distance_tol = distance_tol;
-
-  d_max_energy_grid_generator.setAbsoluteDifferenceTolerance( distance_tol );
+  return energy + d_energy_to_outgoing_energy_nudge_value;
 }
 
-// Generate the bilinear grid
+// Create an cross section evaluator
+/*! The std::function returned from this method can be used with the
+ * generateAndEvaluateSecondaryInPlace methods to generate the
+ * pdf-outgoing energy distributions on the adjoint electron union energy grid.
+ */
 template<typename TwoDInterpPolicy>
-void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::generate(
-		 Teuchos::Array<double>& energy_grid,
-		 Teuchos::Array<Teuchos::Array<double> >& max_energy_grids,
-		 Teuchos::Array<Teuchos::Array<double> >& cross_section ) const
+template< typename ElectroatomicReaction >
+std::function<double (double,double)>
+AdjointElectronDistributionGenerator<TwoDInterpPolicy>::createAdjointPDFEvaluator(
+     const std::shared_ptr<const DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> >& adjoint_evaluator,
+     const double cross_section_evaluation_tol )
 {
-  // Make sure the same inerpolation is used for the energy and max energy
-  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
-  // Reset the energy grid
-  energy_grid.clear();
+  // Make sure the adjoint evaluator is valid
+  testPrecondition( adjoint_evaluator.get() );
 
-  // Reset the max energy grids and cross section
-  max_energy_grids.clear();
-  cross_section.clear();
+  typedef DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> > DistType;
 
-  // Initialize the energy grid queue
-  std::deque<double> energy_grid_queue;
-
-  // Enter energy grid min and max energies
-  energy_grid_queue.push_back( getMinTableEnergy() );
-  energy_grid_queue.push_back( getMaxTableEnergy() );
-
-  double energy_0, energy_1;
-  Teuchos::Array<double> max_energy_grid_0, max_energy_grid_1;
-  Teuchos::Array<double> cross_section_grid_0, cross_section_grid_1;
-
-  // Generate the first max energy grid
-  energy_0 = energy_grid_queue.front();
-  energy_grid_queue.pop_front();
-
-  this->generate( max_energy_grid_0, cross_section_grid_0, energy_0 );
-
-  // Optimize the 2D grid
-  while( !energy_grid_queue.empty() )
-  {
-    // Generate the max energy grid at the second energy grid point
-    energy_1 = energy_grid_queue.front();
-
-    this->generate( max_energy_grid_1, cross_section_grid_1, energy_1 );
-
-    bool converged = this->hasGridConverged( energy_0,
-					     energy_1,
-					     max_energy_grid_0,
-					     max_energy_grid_1,
-					     cross_section_grid_0,
-					     cross_section_grid_1 );
-
-    // Keep the grid points
-    if( converged )
-    {
-      energy_grid.push_back( energy_0 );
-      max_energy_grids.push_back( max_energy_grid_0 );
-      cross_section.push_back( cross_section_grid_0 );
-
-      if( d_verbose )
-      {
-	std::cout.precision( 18 );
-	std::cout << "Added " << energy_0 << " ("
-		  << energy_grid.size()-1 << ")"
-		  << std::endl;
-      }
-
-      energy_0 = energy_1;
-      energy_grid_queue.pop_front();
-
-      max_energy_grid_0 = max_energy_grid_1;
-      cross_section_grid_0 = cross_section_grid_1;
-    }
-    // Refine the grid
-    else
-    {
-      energy_grid_queue.push_front(
-			 this->calculateEnergyMidpoint( energy_0, energy_1 ) );
-    }
-  }
-
-  energy_grid.push_back( energy_0 );
-  max_energy_grids.push_back( max_energy_grid_0 );
-  cross_section.push_back( cross_section_grid_0 );
-
-  // Make sure there is a max energy grid for every energy grid point
-  testPostcondition( energy_grid.size() == max_energy_grids.size() );
-  testPostcondition( max_energy_grids.size() == cross_section.size() );
-  // Make sure the optimized grid has at least 2 grid points
-  testPostcondition( energy_grid.size() >= 2 );
+  // The evaluateIntegratedCrossSection method that we want to bind to is
+  // overloaded. We have to disambiguate it for the bind to work.
+  return std::bind<double>( double(DistType::*)(double,double,double,double) const)&DistType::evaluateAdjointPDF,
+                            std::cref( *adjoint_evaluator ),
+                            std::placeholders::_1,
+                            std::placeholders::_2,
+                            std::placeholders::_3,
+                            cross_section_evaluation_tol );
 }
 
-// Generate a max energy grid at the desired energy
+// Initialize the outgoing energy grid at an incoming energy grid point
 template<typename TwoDInterpPolicy>
-void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::generate(
-			               Teuchos::Array<double>& max_energy_grid,
-				       Teuchos::Array<double>& cross_section,
-				       const double energy ) const
+void AdjointElectronDistributionGenerator<TwoDInterpPolicy>::initializeSecondaryGrid(
+                                          std::vector<double>& outgoing_energy_grid,
+                                          const double energy ) const
 {
-  // Make sure the same inerpolation is used for the energy and max energy
-  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
   // Make sure the energy is valid
-  testPrecondition( energy <= getMaxTableEnergy() );
+  testPrecondition( energy <= d_max_energy );
 
-  // Load the initial max energy grid
+  outgoing_energy_grid.resize( 2 );
 
-  double max_outgoing_energy =
-    AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy(
-                                                                       energy );
+  outgoing_energy_grid[0] = this->getNudgedEnergy( energy );
+  outgoing_energy_grid[1] = this->getNudgedMaxEnergy();
 
-    max_energy_grid.resize( 2 );
-
-    max_energy_grid[0] = energy;
-    max_energy_grid[1] = max_outgoing_energy;
-
-  // Create the boost function that returns the processed cross section
-  boost::function<double (double max_energy)> grid_function =
-    boost::bind( &AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSection,
-		 boost::cref( d_adjoint_electroionization_subshell_cross_section ),
-		 energy,
-		 _1,
-		 d_precision );
-
-  d_max_energy_grid_generator.generateAndEvaluateInPlace( max_energy_grid,
-							  cross_section,
-							  grid_function );
+  // Make sure the outgoing energy grid is valid
+  testPostcondition( outgoing_energy_grid.size() >= 2 );
 }
 
-// Check for 2D grid convergence
-template<typename TwoDInterpPolicy>
-bool
-StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGridConverged(
-		          const double energy_0,
-			  const double energy_1,
-			  const Teuchos::Array<double>& max_energy_grid_0,
-			  const Teuchos::Array<double>& max_energy_grid_1,
-			  const Teuchos::Array<double>& cross_section_0,
-			  const Teuchos::Array<double>& cross_section_1 ) const
-{
-  // Make sure the same inerpolation is used for the energy and max energy
-  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
-  // Make sure the process energies are valid
-  testPrecondition( energy_0 < energy_1 );
-  // Make sure the processed max energy grids are valid
-  testPrecondition( Utility::Sort::isSortedAscending(
-					 max_energy_grid_0.begin(),
-					 max_energy_grid_0.end() ) );
-  testPrecondition( Utility::Sort::isSortedAscending(
-					 max_energy_grid_1.begin(),
-					 max_energy_grid_1.end() ) );
-  // Make sure the processed cross sections are valid
-  testPrecondition( cross_section_0.size() ==
-		    max_energy_grid_0.size() );
-  testPrecondition( cross_section_1.size() ==
-		    max_energy_grid_1.size() );
+} // end DataGen namespace
 
-  bool converged = true;
-
-  double distance = Utility::Policy::relError( energy_0, energy_1 );
-
-  if( distance > d_distance_tol )
-  {
-    // Generate an optimized grid at the intermediate energy
-    const double intermediate_energy =
-      this->calculateEnergyMidpoint( energy_0, energy_1 );
-
-    Teuchos::Array<double> max_energy_grid_mid, cross_section_grid_mid;
-
-    this->generate( max_energy_grid_mid,
-		    cross_section_grid_mid,
-		    intermediate_energy );
-
-    for( unsigned i = 0; i < max_energy_grid_mid.size(); ++i )
-    {
-      // Check for convergence at the grid point
-      double interp_cross_section = TwoDInterpPolicy::interpolateUnitBase(
-					   energy_0,
-					   energy_1,
-					   intermediate_energy,
-					   max_energy_grid_mid[i],
-					   max_energy_grid_0.begin(),
-					   max_energy_grid_0.end(),
-					   cross_section_0.begin(),
-					   cross_section_0.end(),
-					   max_energy_grid_1.begin(),
-					   max_energy_grid_1.end(),
-					   cross_section_1.begin(),
-					   cross_section_1.end() );
-
-      double relative_error =
-	Utility::Policy::relError( cross_section_grid_mid[i],
-				   interp_cross_section );
-
-      double abs_diff = fabs( cross_section_grid_mid[i] -
-			      interp_cross_section );
-
-      if( relative_error > d_convergence_tol &&
-	  abs_diff > d_absolute_diff_tol )
-      {
-	converged = false;
-
-	break;
-      }
-      else if( relative_error > d_convergence_tol &&
-	       abs_diff <= d_absolute_diff_tol )
-      {
-	std::cerr << "Warning: absolute difference tolerance hit before "
-		  << "convergence - energy_0="
-		  << energy_0 << ", energy_1="
-		  << energy_1 << ", max_energy="
-		  << max_energy_grid_mid[i] << ", abs_diff_cs="
-		  << abs_diff << std::endl;
-      }
-
-      // Check for convergence at the grid mid point
-      if( i < max_energy_grid_mid.size()-1 )
-      {
-	double max_energy_mid_point = this->calculateMaxEnergyMidpoint(
-						    max_energy_grid_mid[i],
-						    max_energy_grid_mid[i+1] );
-
-	interp_cross_section = TwoDInterpPolicy::interpolateUnitBase(
-					   energy_0,
-					   energy_1,
-					   intermediate_energy,
-					   max_energy_mid_point,
-					   max_energy_grid_0.begin(),
-					   max_energy_grid_0.end(),
-					   cross_section_0.begin(),
-					   cross_section_0.end(),
-					   max_energy_grid_1.begin(),
-					   max_energy_grid_1.end(),
-					   cross_section_1.begin(),
-					   cross_section_1.end() );
-
-	double true_cross_section =
-	  d_adjoint_electroionization_subshell_cross_section.evaluateCrossSection(
-							intermediate_energy,
-							max_energy_mid_point,
-							d_precision );
-
-	relative_error = Utility::Policy::relError( true_cross_section,
-						    interp_cross_section );
-
-	abs_diff = fabs( true_cross_section - interp_cross_section );
-
-	if( relative_error > d_convergence_tol &&
-	    abs_diff > d_absolute_diff_tol )
-	{
-	  converged = false;
-
-	  break;
-	}
-	else if( relative_error > d_convergence_tol &&
-		 abs_diff <= d_absolute_diff_tol )
-	{
-	  std::cerr.precision( 18 );
-	  std::cerr << "Warning: absolute difference tolerance hit before "
-		    << "convergence - energy_0="
-		    << energy_0 << ", energy_1="
-		    << energy_1 << ", max_energy="
-		    << max_energy_grid_mid[i] << ", abs_diff_cs="
-		    << abs_diff << std::endl;
-	}
-      }
-    }
-  }
-  else
-  {
-    std::cerr.precision( 18 );
-    std::cerr << "Warning: distance tolerance hit before convergence - "
-	      << "relError(energy_0,energy_1) =\n"
-	      << "relError(" << energy_0 << ","
-	      << energy_1 << ") = " << distance << std::endl;
-  }
-
-  return converged;
-}
-
-// Calculate the energy midpoint
-template<typename TwoDInterpPolicy>
-double StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::calculateEnergyMidpoint(
-						  const double energy_0,
-						  const double energy_1 ) const
-{
-  return TwoDInterpPolicy::recoverProcessedFirstIndepVar(
-		   0.5*(TwoDInterpPolicy::processFirstIndepVar(energy_0) +
-			TwoDInterpPolicy::processFirstIndepVar(energy_1) ) );
-}
-
-// Calculate the max energy midpoint
-template<typename TwoDInterpPolicy>
-double StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::calculateMaxEnergyMidpoint(
-					      const double max_energy_0,
-					      const double max_energy_1 ) const
-{
-  return TwoDInterpPolicy::recoverProcessedSecondIndepVar(
-		0.5*(TwoDInterpPolicy::processSecondIndepVar(max_energy_0) +
-		     TwoDInterpPolicy::processSecondIndepVar(max_energy_1) ) );
-}
-
-} // end DataGen
-
-#endif // end DATA_GEN_STANDARD_ADJOINT_ELECTROIONIZATION_SUBSHELL_GRID_GENERATOR_DEF_HPP
+#endif // end DATA_GEN_ADJOINT_ELECTRON_DISTRIBUTION_GENERATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_AdjointElectroionizationSubshellGridGenerator_def.hpp
+// end DataGen_AdjointElectronDistributionGenerator_def.hpp
 //---------------------------------------------------------------------------//
