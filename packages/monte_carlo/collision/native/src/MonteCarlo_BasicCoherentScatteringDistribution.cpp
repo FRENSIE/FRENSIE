@@ -16,19 +16,12 @@ namespace MonteCarlo{
 
 // Constructor
 BasicCoherentScatteringDistribution::BasicCoherentScatteringDistribution(
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    form_factor_function_squared )
+                                const std::shared_ptr<const FormFactorSquared>&
+                                form_factor_function_squared )
   : CoherentScatteringDistribution( form_factor_function_squared )
 { /* ... */ }
 
 // Sample an outgoing energy and direction and record the number of trials
-/*! \details The sampling routine is set to ignore coherent scattering if the
- * recoil electron momentum (form factor function independent variable with
- * units of inverse cm^2) is greater than the data table provided
- * (ie: for high energy photons). This is due to the fact that coherent
- * scattering becomes very forward peaked at high energies and their effect on
- * the photon path can be ignored.
- */
 void BasicCoherentScatteringDistribution::sampleAndRecordTrialsImpl(
 					     const double incoming_energy,
 					     double& scattering_angle_cosine,

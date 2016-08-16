@@ -196,6 +196,13 @@ TARGET_LINK_LIBRARIES(tstGridGenerator utility_core)
 ADD_TEST(GridGenerator_test tstGridGenerator)
 SET_PROPERTY(TEST GridGenerator_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstTwoDGridGenerator
+  tstTwoDGridGenerator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTwoDGridGenerator utility_core)
+ADD_TEST(TwoDGridGenerator_test tstTwoDGridGenerator)
+SET_PROPERTY(TEST TwoDGridGenerator_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstTetrahedronHelpers
   tstTetrahedronHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

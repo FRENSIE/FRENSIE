@@ -81,31 +81,31 @@ public:
 
 protected:
 
-  // Set the atomic data
+  //! Set the atomic data
   void setRelaxationData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Set the Compton profile data
+  //! Set the Compton profile data
   void setComptonProfileData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Set the occupation number data
+  //! Set the occupation number data
   void setOccupationNumberData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Set the Waller-Hartree scattering function data
+  //! Set the Waller-Hartree scattering function data
   void setWallerHartreeScatteringFunctionData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Set the Waller-Hartree atomic form factor data
+  //! Set the Waller-Hartree atomic form factor data
   void setWallerHartreeAtomicFormFactorData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Set the photon data
+  //! Set the photon data
   void setPhotonData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Set the electron data
+  //! Set the electron data
   void setElectronData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 

@@ -8,28 +8,27 @@
 
 // Std Lib Includes
 #include <limits>
-
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 // FRENSIE Includes
 #include "MonteCarlo_CoherentScatteringDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 CoherentScatteringDistribution::CoherentScatteringDistribution(
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    form_factor_function_squared )
+                                const std::shared_ptr<const FormFactorSquared>&
+                                form_factor_function_squared )
   : PhotonScatteringDistribution(),
     d_form_factor_function_squared( form_factor_function_squared )
 {
-  // Make sure the array is valid
-  testPrecondition( !form_factor_function_squared.is_null() );
+  // Make sure the form factor squared is valid
+  testPrecondition( form_factor_function_squared.get() );
 }
 
 // Evaluate the distribution
@@ -48,12 +47,12 @@ double CoherentScatteringDistribution::evaluate(
 
   const double mult = Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::classical_electron_radius*
-    Utility::PhysicalConstants::classical_electron_radius;
+    Utility::PhysicalConstants::classical_electron_radius*1e24;
 
   const double form_factor_squared =
-    this->evaluateFormFactorSquared( incoming_energy, scattering_angle_cosine);
+    this->evaluateFormFactorSquared(incoming_energy, scattering_angle_cosine);
 
-  return mult*1e24*(1.0 + scattering_angle_cosine*scattering_angle_cosine)*
+  return mult*(1.0 + scattering_angle_cosine*scattering_angle_cosine)*
     form_factor_squared;
 }
 
@@ -81,21 +80,21 @@ double CoherentScatteringDistribution::evaluateIntegratedCrossSection(
   testPrecondition( incoming_energy > 0.0 );
 
   // Evaluate the integrated cross section
-  boost::function<double (double x)> diff_cs_wrapper =
-    boost::bind<double>( &CoherentScatteringDistribution::evaluate,
-			 boost::cref( *this ),
-			 incoming_energy,
-			 _1 );
+  std::function<double (double)> diff_cs_wrapper =
+    std::bind<double>( &CoherentScatteringDistribution::evaluate,
+                       std::cref( *this ),
+                       incoming_energy,
+                       std::placeholders::_1 );
 
   double abs_error, integrated_cs;
 
   Utility::GaussKronrodIntegrator<double> quadrature_gkq_set( precision );
 
   quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
-					     -1.0,
-					     1.0,
-					     integrated_cs,
-					     abs_error );
+                                              -1.0,
+                                              1.0,
+                                              integrated_cs,
+                                              abs_error );
 
   // Make sure the integrated cross section is valid
   testPostcondition( integrated_cs > 0.0 );
@@ -138,9 +137,9 @@ void CoherentScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the photon
 void CoherentScatteringDistribution::scatterPhoton(
-				     PhotonState& photon,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+			       PhotonState& photon,
+                               ParticleBank& bank,
+			       Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -186,16 +185,18 @@ double CoherentScatteringDistribution::evaluateFormFactorSquared(
 				  const double scattering_angle_cosine ) const
 {
   // The inverse wavelength of the photon (1/cm)
-  const double inverse_wavelength = incoming_energy/
-    (Utility::PhysicalConstants::planck_constant*
-     Utility::PhysicalConstants::speed_of_light);
+  FormFactorSquared::ArgumentQuantity inverse_wavelength =
+    (incoming_energy*Utility::Units::MeV)/
+    (Utility::PhysicalConstants::planck_constant_q*
+     Utility::PhysicalConstants::speed_of_light_q);
 
   // The squared form factor argument
-  const double form_factor_arg_squared = ((1.0 - scattering_angle_cosine)/2.0)*
+  const FormFactorSquared::SquaredArgumentQuantity form_factor_arg_squared =
+    ((1.0 - scattering_angle_cosine)/2.0)*
     inverse_wavelength*inverse_wavelength;
 
   // Make sure the squared form factor argument is valid
-  testPostcondition( form_factor_arg_squared >= 0.0 );
+  testPostcondition( form_factor_arg_squared >= Utility::QuantityTraits<FormFactorSquared::SquaredArgumentQuantity>::zero() );
 
   return d_form_factor_function_squared->evaluate( form_factor_arg_squared );
 }
@@ -237,11 +238,11 @@ void CoherentScatteringDistribution::sampleAndRecordTrialsBasicImpl(
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
-// Return the form factor function squared distribution
-const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+//! Return the form factor squared distribution
+const FormFactorSquared&
 CoherentScatteringDistribution::getFormFactorSquaredDistribution() const
 {
-  return d_form_factor_function_squared;
+  return *d_form_factor_function_squared;
 }
 
 } // end MonteCarlo namespace

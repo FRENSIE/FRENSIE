@@ -9,14 +9,16 @@
 #ifndef MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "MonteCarlo_FormFactorSquared.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
@@ -31,8 +33,8 @@ public:
 
   //! Constructor
   CoherentScatteringDistribution(
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    form_factor_function_squared );
+                                const std::shared_ptr<const FormFactorSquared>&
+                                form_factor_function_squared );
 
   //! Destructor
   virtual ~CoherentScatteringDistribution()
@@ -89,14 +91,13 @@ protected:
 				       double& scattering_angle_cosine,
 				       unsigned& trials ) const;
 
-  //! Return the form factor function squared distribution
-  const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-  getFormFactorSquaredDistribution() const;
+  //! Return the form factor squared distribution
+  const FormFactorSquared& getFormFactorSquaredDistribution() const;
 
 private:
 
   // The coherent form factor function squared
-  Teuchos::RCP<const Utility::TabularOneDDistribution>
+  std::shared_ptr<const FormFactorSquared>
   d_form_factor_function_squared;
 };
 

@@ -20,10 +20,11 @@
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_GridGenerator.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
+#include "Utility_AtomicMomentumUnit.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace DataGen{
 
@@ -323,6 +324,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setComptonProfileData(
 
   std::set<unsigned>::const_iterator subshell = subshells.begin();
 
+  // Create a grid generator
+  Utility::GridGenerator<Utility::LinLin> grid_generator(
+                                                      d_grid_convergence_tol,
+                                                      d_grid_absolute_diff_tol,
+                                                      d_grid_distance_tol );
+  grid_generator.throwExceptionOnDirtyConvergence();
+
+  // The evaluator
+  std::shared_ptr<OccupationNumberEvaluator> evaluator;
+
   while( subshell != subshells.end() )
   {
     // Extract the half profile from the ACE data
@@ -343,16 +354,29 @@ void StandardElectronPhotonRelaxationDataGenerator::setComptonProfileData(
 						  true,
 						  true );
 
-    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
-					       full_momentum_grid.end() );
+    evaluator = OccupationNumberEvaluator::createEvaluator<Utility::LogLin,Utility::Units::AtomicMomentum>(
+                                    full_momentum_grid,
+                                    full_profile,
+                                    d_occupation_number_evaluation_tolerance );
 
-    MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(),
-						 full_profile.end());
+    std::function<double(double)> evaluation_wrapper =
+      evaluator->getComptonProfileEvaluationWrapper();
+
+    std::vector<double> optimized_momentum_grid( 5 ), evaluated_profile;
+    optimized_momentum_grid[0] = -1.0;
+    optimized_momentum_grid[1] = -0.5;
+    optimized_momentum_grid[2] = 0.0;
+    optimized_momentum_grid[3] = 0.5;
+    optimized_momentum_grid[4] = 1.0;
+
+    grid_generator.generateAndEvaluateInPlace( optimized_momentum_grid,
+                                               evaluated_profile,
+                                               evaluation_wrapper );
 
     data_container.setComptonProfileMomentumGrid( *subshell,
-						  full_momentum_grid );
+						  optimized_momentum_grid );
 
-    data_container.setComptonProfile( *subshell, full_profile );
+    data_container.setComptonProfile( *subshell, evaluated_profile );
 
     ++subshell;
   }
@@ -367,6 +391,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
 
   std::set<unsigned>::const_iterator subshell = subshells.begin();
 
+  // Create a grid generator
+  Utility::GridGenerator<Utility::LinLin> grid_generator(
+						      d_grid_convergence_tol,
+						      d_grid_absolute_diff_tol,
+						      d_grid_distance_tol );
+  grid_generator.throwExceptionOnDirtyConvergence();
+
+  // The evaluator
+  std::shared_ptr<OccupationNumberEvaluator> evaluator;
+
   while( subshell != subshells.end() )
   {
     const std::vector<double>& momentum_grid =
@@ -376,39 +410,33 @@ void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
       data_container.getComptonProfile( *subshell );
 
     // Create the occupation number evaluator
-    OccupationNumberEvaluator occupation_number_evaluator(
+    evaluator = OccupationNumberEvaluator::createEvaluator<Utility::LinLin,Utility::Units::MeCMomentum>(
 				    momentum_grid,
 				    compton_profile,
 				    d_occupation_number_evaluation_tolerance );
 
-    // Create the occupation number grid
-    boost::function<double (double pz)> grid_function =
-      boost::bind( &OccupationNumberEvaluator::evaluateOccupationNumber,
-		   boost::cref( occupation_number_evaluator ),
-		   _1,
-		   d_occupation_number_evaluation_tolerance );
+    std::function<double(double)> evaluation_wrapper =
+      evaluator->getOccupationNumberEvaluationWrapper(
+                                    d_occupation_number_evaluation_tolerance );
 
-    std::vector<double> occupation_number_momentum_grid( 3 ),
+    // Create the occupation number grid
+    std::vector<double> occupation_number_momentum_grid( 5 ),
       occupation_number;
     occupation_number_momentum_grid[0] = -1.0;
-    occupation_number_momentum_grid[1] = 0.0;
-    occupation_number_momentum_grid[2] = 1.0;
+    occupation_number_momentum_grid[1] = -0.5;
+    occupation_number_momentum_grid[2] = 0.0;
+    occupation_number_momentum_grid[3] = 0.5;
+    occupation_number_momentum_grid[4] = 1.0;
 
-    Utility::GridGenerator<Utility::LinLin> occupation_number_grid_generator(
-						      d_grid_convergence_tol,
-						      d_grid_absolute_diff_tol,
-						      d_grid_distance_tol );
-
-    occupation_number_grid_generator.generateAndEvaluateInPlace(
-					       occupation_number_momentum_grid,
+    grid_generator.generateAndEvaluateInPlace( occupation_number_momentum_grid,
 					       occupation_number,
-					       grid_function );
+					       evaluation_wrapper );
 
     // Fix the grid rounding errors
     std::vector<double>::iterator unity_occupation =
-      std::find_if( occupation_number.begin(),
-		    occupation_number.end(),
-		    greaterThanOrEqualToOne );
+      std::lower_bound( occupation_number.begin(),
+                        occupation_number.end(),
+                        1.0 );
 
     while( unity_occupation != occupation_number.end() )
     {
@@ -465,6 +493,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
     scattering_func_grid_generator( d_grid_convergence_tol,
 				    d_grid_absolute_diff_tol,
 				    d_grid_distance_tol );
+  scattering_func_grid_generator.throwExceptionOnDirtyConvergence();
 
   std::list<double> recoil_momentum_grid, scattering_function;
   recoil_momentum_grid.push_back( scaled_recoil_momentum.front() );
@@ -531,6 +560,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
     form_factor_grid_generator( d_grid_convergence_tol,
 				d_grid_absolute_diff_tol,
 				d_grid_distance_tol );
+  form_factor_grid_generator.throwExceptionOnDirtyConvergence();
 
   std::list<double> recoil_momentum_grid, form_factor;
   recoil_momentum_grid.push_back( scaled_recoil_momentum.front() );
@@ -622,6 +652,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
     union_energy_grid_generator( d_grid_convergence_tol,
 				 d_grid_absolute_diff_tol,
 				 d_grid_distance_tol );
+  union_energy_grid_generator.throwExceptionOnDirtyConvergence();
 
   // Calculate the union energy grid
   boost::function<double (double pz)> grid_function =
@@ -1069,6 +1100,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
     union_energy_grid_generator( d_grid_convergence_tol,
                                  d_grid_absolute_diff_tol,
                                  d_grid_distance_tol );
+  union_energy_grid_generator.throwExceptionOnDirtyConvergence();
 
   // Calculate the union energy grid
   boost::function<double (double pz)> grid_function =

@@ -15,6 +15,7 @@
 #include "MonteCarlo_ThompsonScatteringDistribution.hpp"
 #include "MonteCarlo_BasicCoherentScatteringDistribution.hpp"
 #include "MonteCarlo_EfficientCoherentScatteringDistribution.hpp"
+#include "MonteCarlo_StandardFormFactorSquared.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -27,7 +28,7 @@ void CoherentScatteringDistributionNativeFactory::createBasicCoherentDistributio
 	 coherent_distribution )
 {
   // Create the form factor squared
-  Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
+  std::shared_ptr<const FormFactorSquared> form_factor_squared;
 
   CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
 							 raw_photoatom_data,
@@ -44,7 +45,7 @@ void CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistrib
 	 coherent_distribution )
 {
   // Create the form factor squared
-  Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
+  std::shared_ptr<const FormFactorSquared> form_factor_squared;
 
   CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
 							 raw_photoatom_data,
@@ -57,24 +58,34 @@ void CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistrib
 // Create the form factor distribution
 void CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const Utility::TabularOneDDistribution>& form_factor )
+	 std::shared_ptr<const FormFactorSquared>& form_factor_squared )
 {
   Teuchos::Array<double> recoil_momentum_squared =
     raw_photoatom_data.getWallerHartreeAtomicFormFactorMomentumGrid();
 
-  Teuchos::Array<double> form_factor_squared =
+  Teuchos::Array<double> form_factor_squared_values =
     raw_photoatom_data.getWallerHartreeAtomicFormFactor();
 
+  // Square the grid points and the form factor factor values
+  // This operation is non-linear, which means that the grid is no longer
+  // guaranteed to give interpolated values within the convergence tolerance
+  // used to create the grid.
   for( unsigned i = 0; i < recoil_momentum_squared.size(); ++i )
   {
     recoil_momentum_squared[i] *= recoil_momentum_squared[i];
 
-    form_factor_squared[i] *= form_factor_squared[i];
+    form_factor_squared_values[i] *= form_factor_squared_values[i];
   }
 
-  form_factor.reset( new Utility::TabularDistribution<Utility::LinLin>(
-						       recoil_momentum_squared,
-						       form_factor_squared ) );
+  // The stored recoil momentum squared has units of inverse squared cm.
+  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareCentimeter,void> > raw_form_factor_squared(
+           new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseSquareCentimeter,void>(
+                                                recoil_momentum_squared,
+                                                form_factor_squared_values ) );
+
+  form_factor_squared.reset(
+        new StandardFormFactorSquared<Utility::Units::InverseSquareCentimeter>(
+                                                   raw_form_factor_squared ) );
 }
 
 } // end MonteCarlo namespace

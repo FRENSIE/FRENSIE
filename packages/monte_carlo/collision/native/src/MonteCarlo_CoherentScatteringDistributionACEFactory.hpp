@@ -9,11 +9,15 @@
 #ifndef MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 #define MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_CoherentScatteringDistributionFactory.hpp"
+#include "MonteCarlo_FormFactorSquared.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
 namespace MonteCarlo{
@@ -40,8 +44,8 @@ protected:
 
   //! Create the form factor squared distribution
   static void createFormFactorSquared(
-	   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-           Teuchos::RCP<const Utility::TabularOneDDistribution>& form_factor );
+               const Data::XSSEPRDataExtractor& raw_photoatom_data,
+               std::shared_ptr<const FormFactorSquared>& form_factor_squared );
 };
 
 } // end MonteCarlo namespace

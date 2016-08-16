@@ -19,11 +19,13 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_EfficientCoherentScatteringDistribution.hpp"
+#include "MonteCarlo_StandardFormFactorSquared.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_InverseSquareAngstromUnit.hpp"
 #include "Utility_DirectionHelpers.hpp"
 
 //---------------------------------------------------------------------------//
@@ -191,13 +193,13 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->scatterPhoton( photon,
-					bank,
-					shell_of_interaction );
+                               bank,
+                               shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 4.95936772145E-03, 1e-15  );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), -0.125019990362325473, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getZDirection(), -0.125019990362325473, 1e-14 );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
@@ -236,7 +238,7 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
 			  1e-15  );
   TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(),
 			  -0.125019990362325473,
-			  1e-15 );
+			  1e-14 );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
@@ -294,25 +296,29 @@ int main( int argc, char** argv )
 
     for( unsigned i = 0; i < form_factor_size; ++i )
     {
-      recoil_momentum_squared[i] *=
-	recoil_momentum_squared[i]*1e16; // conver from A^-2 to cm^-2
+      recoil_momentum_squared[i] *= recoil_momentum_squared[i]; 
 
       form_factor_squared[i] *= form_factor_squared[i];
     }
 
-    Teuchos::RCP<Utility::TabularOneDDistribution> form_factor_function_squared(
-			    new Utility::TabularDistribution<Utility::LinLin>(
-						       recoil_momentum_squared,
-				                       form_factor_squared ) );
+    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareAngstrom,void> >
+    raw_form_factor_squared(
+         new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseSquareAngstrom,void>(
+                                                       recoil_momentum_squared,
+						       form_factor_squared ) );
+
+    std::shared_ptr<const MonteCarlo::FormFactorSquared> form_factor_obj(
+       new MonteCarlo::StandardFormFactorSquared<Utility::Units::InverseSquareAngstrom>(
+                                                   raw_form_factor_squared ) );
 
     // Create the scattering distribution
     distribution.reset(
 		new MonteCarlo::EfficientCoherentScatteringDistribution(
-					      form_factor_function_squared ) );
+                                                           form_factor_obj ) );
 
     adjoint_distribution.reset(
 		new MonteCarlo::EfficientCoherentScatteringDistribution(
-					      form_factor_function_squared ) );
+                                                           form_factor_obj ) );
   }
 
   // Initialize the random number generator

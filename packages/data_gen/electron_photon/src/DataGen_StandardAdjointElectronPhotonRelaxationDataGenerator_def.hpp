@@ -9,9 +9,6 @@
 #ifndef DATA_GEN_STANDARD_ADJOINT_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_DEF_HPP
 #define DATA_GEN_STANDARD_ADJOINT_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_DEF_HPP
 
-// FRENSIE Includes
-#include "Utility_TabularDistribution.hpp"
-
 namespace DataGen{
 
 // Create the cross section on the union energy grid
@@ -19,7 +16,7 @@ namespace DataGen{
  *  argument and return the adjoint cross section. 
  */
 template <typename Functor>
-void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSectionOnUnionEnergyGrid(
+void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
    Functor& adjoint_cross_section_functor,
    std::vector<double>& cross_section,
@@ -50,52 +47,17 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSec
    threshold_index = std::distance( raw_cross_section.begin(), start );
 }
 
-// Create the cross section on the union energy grid
-template <typename ElectroatomicReaction>
-void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSectionOnUnionEnergyGrid(
-   const std::list<double>& union_energy_grid,
-   const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> >
-        adjoint_electron_cs_evaluator,
-   const double evaluation_tolerance,
-   std::vector<double>& cross_section,
-   unsigned& threshold_index ) const
-{
-  std::vector<double> raw_cross_section( union_energy_grid.size() );
-
-  std::list<double>::const_iterator energy_grid_pt = union_energy_grid.begin();
-
-  unsigned index = 0u;
-
-  while( energy_grid_pt != union_energy_grid.end() )
-  {
-    raw_cross_section[index] =
-      adjoint_electron_cs_evaluator->evaluateAdjointCrossSection(
-        *energy_grid_pt,
-        evaluation_tolerance );
-
-    ++energy_grid_pt;
-    ++index;
-  }
-
-  std::vector<double>::iterator start =
-    std::find_if( raw_cross_section.begin(),
-		  raw_cross_section.end(),
-		  notEqualZero );
-
-  cross_section.assign( start, raw_cross_section.end() );
-
-  threshold_index = std::distance( raw_cross_section.begin(), start );
-}
-
-// Create the cross section on the union energy grid
-template <typename ElectroatomicReaction>
-void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSectionOnUnionEnergyGrid(
+// Update the cross section on the union energy grid
+/*! \detials The functor should take the incoming adjoint energy (double) as its
+ *  argument and return the adjoint cross section. The old union energy grid and
+ *  cross section values should only contain energy grid points that are in the union energy grid
+ */
+template <typename Functor>
+void StandardAdjointElectronPhotonRelaxationDataGenerator::updateCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
    const std::list<double>& old_union_energy_grid,
    const std::vector<double>& old_cross_section,
-   const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> >
-        adjoint_electron_cs_evaluator,
-   const double evaluation_tolerance,
+   Functor& adjoint_cross_section_functor,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const
 {
@@ -120,9 +82,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointCrossSec
     else
     {
       raw_cross_section[index] =
-        adjoint_electron_cs_evaluator->evaluateAdjointCrossSection(
-          *energy_grid_pt,
-          evaluation_tolerance );
+        adjoint_cross_section_functor( *energy_grid_pt );
     }
 
     ++energy_grid_pt;

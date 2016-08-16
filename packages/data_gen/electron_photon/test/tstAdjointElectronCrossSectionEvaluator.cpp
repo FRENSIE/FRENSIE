@@ -107,6 +107,15 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
                                   0.0,
                                   1e-6 );
 
+  cross_section =
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
+        1e5,
+        precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  0.0,
+                                  1e-6 );
+
 
   // ACE Bremsstrahlung
   cross_section =

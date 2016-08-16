@@ -9,8 +9,16 @@
 #ifndef UTILITY_GRID_GENERATOR_HPP
 #define UTILITY_GRID_GENERATOR_HPP
 
+// Std Lib Includes
+#include <functional>
+#include <iostream>
+
 // Boost Includes
 #include <boost/function.hpp>
+#include <boost/bind.hpp>
+
+// FRENSIE Includes
+#include "Utility_InterpolationPolicy.hpp"
 
 namespace Utility{
 
@@ -30,14 +38,32 @@ public:
   ~GridGenerator()
   { /* ... */ }
 
+  //! Throw exception on dirty convergence
+  void throwExceptionOnDirtyConvergence();
+
+  //! Warn on dirty convergence (default)
+  void warnOnDirtyConvergence( std::ostream* os_warn = &std::cerr );
+
+  //! Check if an exception will be thrown on dirty convergence
+  bool isExceptionThrownOnDirtyConvergence() const;
+
   //! Set the convergence tolerance
   void setConvergenceTolerance( const double convergence_tol );
+
+  //! Get the convergence tolerance
+  double getConvergenceTolerance() const;
 
   //! Set the absolute difference tolerance
   void setAbsoluteDifferenceTolerance( const double absolute_diff_tol );
 
+  //! Get the absolute difference tolerance
+  double getAbsoluteDifferenceTolerance() const;
+
   //! Set the distance tolerance
   void setDistanceTolerance( const double distance_tol );
+
+  //! Get the distance tolerance
+  double getDistanceTolerance() const;
 
   //! Generate the grid in place
   template<typename STLCompliantContainer, typename Functor>
@@ -79,7 +105,7 @@ public:
 		 const STLCompliantContainerB& initial_grid_points,
 		 const Functor& evaluated_function ) const;
 
-  //! Generate the linear grid (return evaluated function on grid)
+  //! Generate the grid (return evaluated function on grid)
   template<typename STLCompliantContainerA,
 	   typename STLCompliantContainerB,
 	   typename STLCompliantContainerC,
@@ -91,6 +117,13 @@ public:
 
 private:
 
+  // Check for convergence
+  bool hasGridConverged( const double lower_grid_point,
+                         const double mid_grid_point,
+                         const double upper_grid_point,
+                         const double y_mid_estimated,
+                         const double y_mid_exact ) const;
+
   // The convergence tolerance
   double d_convergence_tol;
 
@@ -99,6 +132,12 @@ private:
 
   // The distance tolerance
   double d_distance_tol;
+  
+  // Throw exception on dirty convergence
+  bool d_throw_exceptions;
+
+  // The warning output stream
+  std::ostream* d_os_warn;
 };
 
 } // end Utility namespace
