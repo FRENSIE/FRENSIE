@@ -121,10 +121,11 @@ public:
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Repopulate the adjoint electron moment preserving data
-  void repopulateAdjointMomentPreservingData(
+  static void repopulateAdjointMomentPreservingData(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double cutoff_angle_cosine = 0.9,
-    const unsigned number_of_moment_preserving_angles = 1 ) const;
+    const unsigned number_of_moment_preserving_angles = 1,
+    std::ostream& os_log = std::cout );
   
 protected:
 

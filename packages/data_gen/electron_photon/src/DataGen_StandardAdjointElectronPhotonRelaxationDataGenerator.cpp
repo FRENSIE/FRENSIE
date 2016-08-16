@@ -201,7 +201,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
 void StandardAdjointElectronPhotonRelaxationDataGenerator::repopulateAdjointMomentPreservingData(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const unsigned number_of_moment_preserving_angles ) const
+    const unsigned number_of_moment_preserving_angles,
+    std::ostream& os_log )
 {
   data_container.setCutoffAngleCosine( cutoff_angle_cosine );
   data_container.setNumberOfAdjointMomentPreservingAngles( 
@@ -210,12 +211,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::repopulateAdjointMome
   std::vector<double> adjoint_angular_energy_grid(
     data_container.getAdjointElasticAngularEnergyGrid() );
 
-  (*d_os_log) << std::endl << "Setting the adjoint moment preserving electron data...";
-  d_os_log->flush();
+  os_log << std::endl << "Setting the adjoint moment preserving electron data...";
+  os_log.flush();
   StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointMomentPreservingData( 
     adjoint_angular_energy_grid, 
     data_container );
-  (*d_os_log) << "done." << std::endl;
+  os_log << "done." << std::endl;
 }
 
 // Set the relaxation data
