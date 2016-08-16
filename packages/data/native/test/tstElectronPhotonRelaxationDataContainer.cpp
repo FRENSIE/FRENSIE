@@ -358,7 +358,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		   setWallerHartreeAtomicFormFactorMomentumGrid )
 {
   std::vector<double> momentum_grid( 4 );
-  momentum_grid[0] = 1e-30;
+  momentum_grid[0] = 0.0;
   momentum_grid[1] = 1.0;
   momentum_grid[2] = 10.0;
   momentum_grid[3] = 1e8;
@@ -379,12 +379,47 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   form_factor[0] = 1.0;
   form_factor[1] = 1.0;
   form_factor[2] = 0.3;
-  form_factor[3] = 1e-30;
+  form_factor[3] = 0.0;
 
   epr_data_container.setWallerHartreeAtomicFormFactor( form_factor );
 
   TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeAtomicFormFactor(),
 		       form_factor );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree atomic form factor momentum grid can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+		   setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid )
+{
+  std::vector<double> squared_momentum_grid( 4 );
+  squared_momentum_grid[0] = 0.0;
+  squared_momentum_grid[1] = 1.0;
+  squared_momentum_grid[2] = 100.0;
+  squared_momentum_grid[3] = 1e16;
+
+  epr_data_container.setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
+                                                       squared_momentum_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(),
+		       squared_momentum_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree atomic form factor can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+		   setWallerHartreeSquaredAtomicFormFactor )
+{
+  std::vector<double> squared_form_factor( 4 );
+  squared_form_factor[0] = 1.0;
+  squared_form_factor[1] = 1.0;
+  squared_form_factor[2] = 0.09;
+  squared_form_factor[3] = 0.0;
+
+  epr_data_container.setWallerHartreeSquaredAtomicFormFactor( squared_form_factor );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeSquaredAtomicFormFactor(),
+		       squared_form_factor );
 }
 
 //---------------------------------------------------------------------------//
@@ -1345,6 +1380,10 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(),
 		       4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+		       4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactor().size(),
+		       4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getPhotonEnergyGrid().size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAveragePhotonHeatingNumbers().size(),
@@ -1557,6 +1596,10 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(),
 		       4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+		       4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactor().size(),
+		       4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getPhotonEnergyGrid().size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAveragePhotonHeatingNumbers().size(),
@@ -1765,6 +1808,10 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
 		       4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(),
+		       4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+		       4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactor().size(),
 		       4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getPhotonEnergyGrid().size(),
 		       3 );

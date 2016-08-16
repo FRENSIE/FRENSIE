@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                 0.9,
                 1,
                 0.001,
-                1e-42,
+                1e-80,
                 1e-20) );
 
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
@@ -84,7 +84,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
-    data_container.getGridAbsoluteDifferenceTolerance(), 1e-42 );
+    data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
   TEST_EQUALITY_CONST( data_container.getGridDistanceTolerance(), 1e-20 );
 
   // Check the relaxation data
@@ -161,6 +161,22 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		      data_container.getWallerHartreeAtomicFormFactor().back(),
 		      8.18290000000000004e-39,
 		      1e-15 );
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+                       3231 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().front(),
+                          0.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().back(),
+                          1.0e+34,
+                          1e-15 );
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactor().size(),
+                       3231 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().front(),
+                          1.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().back(),
+                          6.695985241e-77,
+                          1e-15 );
   TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().size(), 727 );
   TEST_FLOATING_EQUALITY( data_container.getPhotonEnergyGrid().front(),
 			  1.0e-03,
@@ -554,7 +570,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
-    data_container.getGridAbsoluteDifferenceTolerance(), 1e-42 );
+    data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
   TEST_EQUALITY_CONST( data_container.getGridDistanceTolerance(), 1e-20 );
 
   // Check the relaxation data
@@ -631,6 +647,22 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		      data_container.getWallerHartreeAtomicFormFactor().back(),
 		      8.18290000000000004e-39,
 		      1e-15 );
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+                       3231 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().front(),
+                          0.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().back(),
+                          1.0e+34,
+                          1e-15 );
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactor().size(),
+                       3231 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().front(),
+                          1.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().back(),
+                          6.695985241e-77,
+                          1e-15 );
   TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().size(), 727 );
   TEST_FLOATING_EQUALITY( data_container.getPhotonEnergyGrid().front(),
 			  1.0e-03,
@@ -1013,7 +1045,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                      1e-3,
                      1e-3,
                      1e-3,
-                     1e-32,
+                     1e-70,
                      1e-16) );
 
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
@@ -1034,7 +1066,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
-    data_container.getGridAbsoluteDifferenceTolerance(), 1e-32 );
+    data_container.getGridAbsoluteDifferenceTolerance(), 1e-70 );
   TEST_EQUALITY_CONST( data_container.getGridDistanceTolerance(), 1e-16 );
 
   // Check the relaxation data
@@ -1241,6 +1273,22 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		      data_container.getWallerHartreeAtomicFormFactor().back(),
 		      1.68099999999999989e-29,
 		      1e-15 );
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+                       2475 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().front(),
+                          0.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().back(),
+                          1.0e+34,
+                          1e-15 );
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactor().size(),
+                       2475 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().front(),
+                          36.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().back(),
+                          2.8257609999999995e-58,
+                          1e-15 );
   TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().size(), 774 );
   TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().front(),
 		       0.001 );
@@ -1724,7 +1772,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
-    data_container.getGridAbsoluteDifferenceTolerance(), 1e-32 );
+    data_container.getGridAbsoluteDifferenceTolerance(), 1e-70 );
   TEST_EQUALITY_CONST( data_container.getGridDistanceTolerance(), 1e-16 );
 
   // Check the relaxation data
@@ -1931,6 +1979,22 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		      data_container.getWallerHartreeAtomicFormFactor().back(),
 		      1.68099999999999989e-29,
 		      1e-15 );
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+                       2475 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().front(),
+                          0.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().back(),
+                          1.0e+34,
+                          1e-15 );
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactor().size(),
+                       2475 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().front(),
+                          36.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().back(),
+                          2.8257609999999995e-58,
+                          1e-15 );
   TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().size(), 774 );
   TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().front(),
 		       0.001 );

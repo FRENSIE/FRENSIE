@@ -58,6 +58,8 @@ public:
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunction;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactorMomentumGrid;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactor;
+  using ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid;
+  using ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactor;
   using ElectronPhotonRelaxationDataContainer::setPhotonEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setAveragePhotonHeatingNumbers;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeIncoherentCrossSection;

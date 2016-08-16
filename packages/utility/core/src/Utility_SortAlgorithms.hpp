@@ -33,6 +33,20 @@ bool isSortedAscending( Iterator start,
 			Iterator end,
 			const bool verbose = false );
 
+/*! Test if the specified member of an array of tuples is sorted in descending
+ * order
+ */
+template<TupleMember member, typename Iterator>
+bool isSortedDescending( Iterator start,
+                         Iterator end,
+                         const bool verbose = false  );
+  
+//! Test if an array is sorted in descending order
+template<typename Iterator>
+bool isSortedDescending( Iterator start,
+                         Iterator end,
+                         const bool verbose = false );
+
 } // end Sort namespace
 
 } // end Utility namespace

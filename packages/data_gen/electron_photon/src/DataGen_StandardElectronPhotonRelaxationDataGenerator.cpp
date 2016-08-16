@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_MomentPreservingElectronDataGenerator.hpp"
+#include "DataGen_FormFactorEvaluator.hpp"
 #include "DataGen_OccupationNumberEvaluator.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
@@ -23,6 +24,7 @@
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_AtomicMomentumUnit.hpp"
+#include "Utility_InverseAngstromUnit.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -33,18 +35,18 @@ const double StandardElectronPhotonRelaxationDataGenerator::s_threshold_energy_n
 
 // Constructor
 StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationDataGenerator(
-        const unsigned atomic_number,
-        const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
-        const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
-        const double min_photon_energy,
-        const double max_photon_energy,
-        const double min_electron_energy,
-        const double max_electron_energy,
-        const double occupation_number_evaluation_tolerance,
-        const double subshell_incoherent_evaluation_tolerance,
-        const double grid_convergence_tol,
-        const double grid_absolute_diff_tol,
-        const double grid_distance_tol )
+     const unsigned atomic_number,
+     const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+     const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
+     const double min_photon_energy,
+     const double max_photon_energy,
+     const double min_electron_energy,
+     const double max_electron_energy,
+     const double occupation_number_evaluation_tolerance,
+     const double subshell_incoherent_evaluation_tolerance,
+     const double grid_convergence_tol,
+     const double grid_absolute_diff_tol,
+     const double grid_distance_tol )
   : StandardElectronPhotonRelaxationDataGenerator(
         atomic_number,
         ace_epr_data,
@@ -526,63 +528,126 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
 			   Data::ElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const
 {
-  Teuchos::ArrayView<const double> jcohe_block =
-    d_ace_epr_data->extractJCOHEBlock();
+  // Generate the form factor
+  {
+    Teuchos::ArrayView<const double> jcohe_block =
+      d_ace_epr_data->extractJCOHEBlock();
 
-  unsigned form_factor_size = jcohe_block.size()/3;
+    unsigned form_factor_size = jcohe_block.size()/3;
 
-  Teuchos::ArrayView<const double> raw_recoil_momentum(
+    Teuchos::ArrayView<const double> raw_recoil_momentum(
 					jcohe_block( 1, form_factor_size-1 ) );
 
-  Teuchos::ArrayView<const double> raw_form_factor(
+    Teuchos::ArrayView<const double> raw_form_factor(
 		     jcohe_block( 2*form_factor_size+1, form_factor_size-1 ) );
 
-  std::vector<double> scaled_recoil_momentum;
+    // Create a form factor evaluator
+    std::shared_ptr<FormFactorEvaluator> evaluator =
+      FormFactorEvaluator::createEvaluator<Utility::LogLog,Utility::Units::InverseAngstrom>(
+                                                           raw_recoil_momentum,
+                                                           raw_form_factor );
 
-  scaled_recoil_momentum.assign( raw_recoil_momentum.begin(),
-				 raw_recoil_momentum.end() );
+    // Create the evaluation wrapper
+    std::function<double(double)> evaluation_wrapper =
+      evaluator->getFormFactorEvaluationWrapper();
 
-  // Convert from inverse Angstroms to inverse cm
-  for( unsigned i = 0; i < scaled_recoil_momentum.size(); ++i )
-    scaled_recoil_momentum[i] *= 1e8;
+    // Initialize the recoil momentum grid
+    std::list<double> recoil_momentum_grid;
 
-  std::shared_ptr<Utility::OneDDistribution> form_factor_dist(
-			    new Utility::TabularDistribution<Utility::LogLog>(
-						        scaled_recoil_momentum,
-							raw_form_factor ) );
+    // Convert the initial values from inverse Angstrom to inverse cm
+    recoil_momentum_grid.push_back( raw_recoil_momentum.front()*1e8 );
+    recoil_momentum_grid.push_back( raw_recoil_momentum.back()*1e8 );
 
-  boost::function<double (double x)> grid_function =
-    boost::bind( &Utility::OneDDistribution::evaluate,
-		 boost::cref( *form_factor_dist ),
-		 _1 );
+    // Convert the initial and final grid values from inverse Angstrom to
+    // inverse cm before passing them into this method
+    this->setWallerHartreeAtomicFormFactorData(
+                                           evaluation_wrapper,
+                                           recoil_momentum_grid,
+                                           jcohe_block.front()*1e8,
+                                           jcohe_block[form_factor_size-1]*1e8,
+                                           jcohe_block[2*form_factor_size],
+                                           jcohe_block.back(),
+                                           data_container );
+  }
 
+  // Generate the squared form factor from the newly generated form factor
+  std::shared_ptr<FormFactorEvaluator> evaluator =
+      FormFactorEvaluator::createEvaluator<Utility::LinLin,Utility::Units::InverseCentimeter>(
+                 data_container.getWallerHartreeAtomicFormFactorMomentumGrid(),
+                 data_container.getWallerHartreeAtomicFormFactor() );
+
+  // Create the evaluation wrapper
+    std::function<double(double)> evaluation_wrapper =
+      evaluator->getFormFactorSquaredEvalutionWrapper();
+
+  // Initialize the squared recoil momentum grid
+  std::vector<double> squared_recoil_momentum_grid( 2 ), squared_form_factor;
+
+  squared_recoil_momentum_grid[0] = 
+    data_container.getWallerHartreeAtomicFormFactorMomentumGrid().front();
+  squared_recoil_momentum_grid[0] *= squared_recoil_momentum_grid[0];
+
+  squared_recoil_momentum_grid[1] = 
+    data_container.getWallerHartreeAtomicFormFactorMomentumGrid().back();
+  squared_recoil_momentum_grid[1] *= squared_recoil_momentum_grid[1];
+
+  // Create a grid generator
   Utility::GridGenerator<Utility::LinLin>
-    form_factor_grid_generator( d_grid_convergence_tol,
-				d_grid_absolute_diff_tol,
-				d_grid_distance_tol );
-  form_factor_grid_generator.throwExceptionOnDirtyConvergence();
+    grid_generator( d_grid_convergence_tol,
+                    d_grid_absolute_diff_tol,
+                    d_grid_distance_tol );
+  grid_generator.throwExceptionOnDirtyConvergence();
+  
+  grid_generator.generateAndEvaluateInPlace( squared_recoil_momentum_grid,
+                                             squared_form_factor,
+                                             evaluation_wrapper );
 
-  std::list<double> recoil_momentum_grid, form_factor;
-  recoil_momentum_grid.push_back( scaled_recoil_momentum.front() );
-  recoil_momentum_grid.push_back( scaled_recoil_momentum.back() );
+  data_container.setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
+                                                squared_recoil_momentum_grid );
+  data_container.setWallerHartreeSquaredAtomicFormFactor( squared_form_factor );
+}
 
-  form_factor_grid_generator.generateAndEvaluateInPlace( recoil_momentum_grid,
-							 form_factor,
-							 grid_function );
+// Set the Waller-Hartree atomic form factor data
+void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFactorData(
+                       const std::function<double(double)>& evaluation_wrapper,
+                       std::list<double>& recoil_momentum_grid,
+                       const double initial_grid_value,
+                       const double final_grid_value,
+                       const double initial_form_factor_value,
+                       const double final_form_factor_value,
+                       Data::ElectronPhotonRelaxationVolatileDataContainer&
+                       data_container ) const
+{
+  // Create a grid generator
+  Utility::GridGenerator<Utility::LinLin>
+    grid_generator( d_grid_convergence_tol,
+                    d_grid_absolute_diff_tol,
+                    d_grid_distance_tol );
+  grid_generator.throwExceptionOnDirtyConvergence();
 
-  recoil_momentum_grid.push_front( jcohe_block.front()*1e8 );
-  recoil_momentum_grid.push_back( jcohe_block[form_factor_size-1]*1e8 );
+  // Generate the new optimized recoil momentum grid
+  std::list<double> form_factor;
 
-  form_factor.push_front( jcohe_block[2*form_factor_size] );
-  form_factor.push_back( jcohe_block.back() );
+  grid_generator.generateAndEvaluateInPlace( recoil_momentum_grid,
+                                             form_factor,
+                                             evaluation_wrapper );
 
+  // The first and last values were kept off of the grid because the 0.0
+  // value of the recoil momentum (first value) and the 0.0 value of the form
+  // factor (last value) are not compatible with Log-Log interpolation
+  recoil_momentum_grid.push_front( initial_grid_value );
+  recoil_momentum_grid.push_back( final_grid_value );
+
+  form_factor.push_front( initial_form_factor_value );
+  form_factor.push_back( final_form_factor_value );
+    
   std::vector<double> refined_recoil_momentum, refined_form_factor;
-
+    
   refined_recoil_momentum.assign( recoil_momentum_grid.begin(),
-				  recoil_momentum_grid.end() );
-
+                                  recoil_momentum_grid.end() );
+    
   refined_form_factor.assign( form_factor.begin(),
-			      form_factor.end() );
+                              form_factor.end() );
 
   data_container.setWallerHartreeAtomicFormFactorMomentumGrid(
 						     refined_recoil_momentum );
@@ -720,6 +785,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   }
 
   std::cout << "done." << std::endl;
+  std::cout.flush();
 
   // Set the union energy grid
   std::vector<double> energy_grid;

@@ -294,6 +294,20 @@ const std::vector<double>& ElectronPhotonRelaxationDataContainer::getWallerHartr
   return d_waller_hartree_atomic_form_factor;
 }
 
+// Return the Waller-Hartree squared atomic form factor squared mom. grid
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid() const
+{
+  return d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid;
+}
+
+// Return the Waller-Hartree squared atomic form factor
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getWallerHartreeSquaredAtomicFormFactor() const
+{
+  return d_waller_hartree_squared_atomic_form_factor;
+}
+
 // Return the photon energy grid
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getPhotonEnergyGrid() const
@@ -1088,13 +1102,46 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactor(
   // Make sure the atomic form factor is valid
   testPrecondition( atomic_form_factor.size() ==
 		    d_waller_hartree_atomic_form_factor_momentum_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending(
-						 atomic_form_factor.rbegin(),
-						 atomic_form_factor.rend() ) );
+  testPrecondition( Utility::Sort::isSortedDescending(
+                                                  atomic_form_factor.begin(),
+						  atomic_form_factor.end() ) );
   testPrecondition( atomic_form_factor.front() == d_atomic_number );
   testPrecondition( atomic_form_factor.back() >= 0.0 );
 
   d_waller_hartree_atomic_form_factor = atomic_form_factor;
+}
+
+// Return the Waller-Hartree squared atomic form factor squared mom. grid
+void ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
+                             const std::vector<double>& squared_momentum_grid )
+{
+  // Make sure the momentum grid is valid
+  testPrecondition( squared_momentum_grid.size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+                                               squared_momentum_grid.begin(),
+					       squared_momentum_grid.end() ) );
+  testPreconditionValuesGreaterThanOrEqualToZero( squared_momentum_grid );
+
+  d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid =
+    squared_momentum_grid;
+}
+  
+// Return the Waller-Hartree squared atomic form factor
+void ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactor(
+                        const std::vector<double>& squared_atomic_form_factor )
+{
+  // Make sure the atomic form factor is valid
+  testPrecondition(
+     squared_atomic_form_factor.size() ==
+     d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid.size() );
+  testPrecondition( Utility::Sort::isSortedDescending(
+                                          squared_atomic_form_factor.begin(),
+					  squared_atomic_form_factor.end() ) );
+  testPrecondition( squared_atomic_form_factor.front() ==
+                    d_atomic_number*d_atomic_number );
+  testPrecondition( squared_atomic_form_factor.back() >= 0.0 );
+
+  d_waller_hartree_squared_atomic_form_factor = squared_atomic_form_factor;
 }
 
 // Set the photon energy grid

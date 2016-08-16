@@ -20,11 +20,12 @@ namespace DataGen{
 // Construction helper
 template<typename InterpPolicy,
          typename GridArgumentUnit,
+         typename ScalarType,
          template<typename,typename...> class Array>
 std::shared_ptr<FormFactorEvaluator>
 FormFactorEvaluator::createEvaluator(
-                                      const Array<double>& argument_grid,
-                                      const Array<double>& form_factor_values )
+                                  const Array<ScalarType>& argument_grid,
+                                  const Array<ScalarType>& form_factor_values )
 {
   // Make sure the argument grid is valid
   testPrecondition( argument_grid.front() >= 0.0 );
@@ -32,9 +33,9 @@ FormFactorEvaluator::createEvaluator(
                                                       argument_grid.end() ) );
   // Make sure the form factor values are valid
   testPrecondition( form_factor_values.back() >= 0.0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                                                 form_factor_values.rbegin(),
-                                                 form_factor_values.rend() ) );
+  testPrecondition( Utility::Sort::isSortedDescending(
+                                                  form_factor_values.begin(),
+                                                  form_factor_values.end() ) );
 
   // Create the raw form factor
   std::shared_ptr<Utility::UnitAwareOneDDistribution<GridArgumentUnit,void> >

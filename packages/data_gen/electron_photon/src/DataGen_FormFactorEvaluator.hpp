@@ -27,10 +27,11 @@ public:
   //! Construction helper
   template<typename InterpPolicy,
            typename GridArgumentUnit,
+           typename FloatType,
            template<typename,typename...> class Array>
   static std::shared_ptr<FormFactorEvaluator> createEvaluator(
-                                     const Array<double>& argument_grid,
-                                     const Array<double>& form_factor_values );
+                                  const Array<FloatType>& argument_grid,
+                                  const Array<FloatType>& form_factor_values );
 
   //! Destructor
   ~FormFactorEvaluator()
