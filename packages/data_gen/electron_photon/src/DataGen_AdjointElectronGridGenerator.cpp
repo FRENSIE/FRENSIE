@@ -14,8 +14,8 @@
 namespace DataGen{
 
 // Initialize the static member data
-double AdjointElectronGridGenerator::s_min_table_energy = 0.00001;
-double AdjointElectronGridGenerator::s_max_table_energy = 20;
+double AdjointElectronGridGenerator::s_min_table_energy = 1e-5;
+double AdjointElectronGridGenerator::s_max_table_energy = 1e5;
 
 //! Set the min table energy (default is 0.00001 MeV)
 void AdjointElectronGridGenerator::setMinTableEnergy(

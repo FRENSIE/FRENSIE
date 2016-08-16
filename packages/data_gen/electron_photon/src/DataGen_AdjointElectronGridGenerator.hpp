@@ -17,13 +17,13 @@ class AdjointElectronGridGenerator
 
 public:
 
-  //! Set the min table energy (default is 0.00001 MeV)
+  //! Set the min table energy (default is 1e-5 MeV)
   static void setMinTableEnergy( const double min_energy );
 
   //! Get the min table energy
   static double getMinTableEnergy();
 
-  //! Set the max table energy (default is 20.0 MeV)
+  //! Set the max table energy (default is 1e5 MeV)
   static void setMaxTableEnergy( const double max_energy );
 
   //! Get the max table energy
@@ -43,10 +43,10 @@ public:
 private:
 
   // The min table energy
-  static double s_min_table_energy;
+  static double d_min_table_energy;
 
   // The max table energy (highest energy grid point)
-  static double s_max_table_energy;
+  static double d_max_table_energy;
 };
 
 } // end DataGen namespace
