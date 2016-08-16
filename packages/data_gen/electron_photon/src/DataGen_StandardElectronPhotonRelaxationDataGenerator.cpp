@@ -26,6 +26,7 @@
 #include "Utility_AtomicMomentumUnit.hpp"
 #include "Utility_InverseAngstromUnit.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace DataGen{
@@ -371,9 +372,17 @@ void StandardElectronPhotonRelaxationDataGenerator::setComptonProfileData(
     optimized_momentum_grid[3] = 0.5;
     optimized_momentum_grid[4] = 1.0;
 
-    grid_generator.generateAndEvaluateInPlace( optimized_momentum_grid,
-                                               evaluated_profile,
-                                               evaluation_wrapper );
+    try{
+      grid_generator.generateAndEvaluateInPlace( optimized_momentum_grid,
+                                                 evaluated_profile,
+                                                 evaluation_wrapper );
+    }
+    EXCEPTION_CATCH_RETHROW(
+                   std::runtime_error,
+                   "Error: Could not generate an optimized Compton "
+                   "profile momentum grid for the "
+                   << Data::convertENDFDesignatorToSubshellEnum( *subshell ) <<
+                   " subshell with the provided convergence parameters!" );
 
     data_container.setComptonProfileMomentumGrid( *subshell,
 						  optimized_momentum_grid );
@@ -430,9 +439,18 @@ void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
     occupation_number_momentum_grid[3] = 0.5;
     occupation_number_momentum_grid[4] = 1.0;
 
-    grid_generator.generateAndEvaluateInPlace( occupation_number_momentum_grid,
+    try{
+      grid_generator.generateAndEvaluateInPlace(
+                                               occupation_number_momentum_grid,
 					       occupation_number,
 					       evaluation_wrapper );
+    }
+    EXCEPTION_CATCH_RETHROW(
+                   std::runtime_error,
+                   "Error: Could not generate an optimized occupation "
+                   "number momentum grid for the "
+                   << Data::convertENDFDesignatorToSubshellEnum( *subshell ) <<
+                   " subshell with the provided convergence parameters!" );
 
     // Fix the grid rounding errors
     std::vector<double>::iterator unity_occupation =
@@ -501,10 +519,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
   recoil_momentum_grid.push_back( scaled_recoil_momentum.front() );
   recoil_momentum_grid.push_back( scaled_recoil_momentum.back() );
 
-  scattering_func_grid_generator.generateAndEvaluateInPlace(
+  try{
+    scattering_func_grid_generator.generateAndEvaluateInPlace(
 							  recoil_momentum_grid,
 							  scattering_function,
 							  grid_function );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized scattering "
+                           "function recoil momentum grid with the provided "
+                           "convergence parameters!" );
 
   recoil_momentum_grid.push_front( jince_block[0]*1e8 );
   scattering_function.push_front( jince_block[scatt_func_size] );
@@ -597,10 +621,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
                     d_grid_absolute_diff_tol,
                     d_grid_distance_tol );
   grid_generator.throwExceptionOnDirtyConvergence();
-  
-  grid_generator.generateAndEvaluateInPlace( squared_recoil_momentum_grid,
-                                             squared_form_factor,
-                                             evaluation_wrapper );
+
+  try{
+    grid_generator.generateAndEvaluateInPlace( squared_recoil_momentum_grid,
+                                               squared_form_factor,
+                                               evaluation_wrapper );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized squared "
+                           "form factor squared recoil momentum grid with the "
+                           "provided convergence parameters!" );
 
   data_container.setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
                                                 squared_recoil_momentum_grid );
@@ -628,9 +658,15 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
   // Generate the new optimized recoil momentum grid
   std::list<double> form_factor;
 
-  grid_generator.generateAndEvaluateInPlace( recoil_momentum_grid,
-                                             form_factor,
-                                             evaluation_wrapper );
+  try{
+    grid_generator.generateAndEvaluateInPlace( recoil_momentum_grid,
+                                               form_factor,
+                                               evaluation_wrapper );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized form "
+                           "factor recoil momentum grid with the "
+                           "provided convergence parameters!" );
 
   // The first and last values were kept off of the grid because the 0.0
   // value of the recoil momentum (first value) and the 0.0 value of the form
@@ -725,8 +761,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 		 boost::cref( *heating_numbers ),
 		 _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-					       grid_function );
+  try{
+    union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                 grid_function );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized photon "
+                           "energy grid for the heating numbers with the "
+                           "provided convergence parameters!" );
   std::cout << ".";
   std::cout.flush();
 
@@ -734,8 +776,15 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 			       boost::cref( *waller_hartree_incoherent_cs ),
 			       _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-					       grid_function );
+  try{
+    union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                 grid_function );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized photon "
+                           "energy grid for the Waller-Hartree incoherent "
+                           "cross section with the provided convergence "
+                           "parameters!" );
   std::cout << ".";
   std::cout.flush();
 
@@ -743,8 +792,15 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 			       boost::cref( *waller_hartree_coherent_cs ),
 			       _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-					       grid_function );
+  try{
+    union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                 grid_function );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized photon "
+                           "energy grid for the Waller-Hartree coherent "
+                           "cross section with the provided convergence "
+                           "parameters!" );
   std::cout << ".";
   std::cout.flush();
 
@@ -752,8 +808,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 			       boost::cref( *pair_production_cs ),
 			       _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-					       grid_function );
+  try{
+    union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                 grid_function );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized photon "
+                           "energy grid for the pair production cross section "
+                           "with the provided convergence parameters!" );
   std::cout << ".";
   std::cout.flush();
 
@@ -764,8 +826,17 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 		   boost::cref( *subshell_photoelectric_effect_css[i].second ),
 		   _1 );
 
-    union_energy_grid_generator.generateInPlace( union_energy_grid,
-						 grid_function );
+    try{
+      union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                   grid_function );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Error: Could not generate an optimized photon "
+                             "energy grid for the subshell "
+                             << Data::convertENDFDesignatorToSubshellEnum(
+                                subshell_photoelectric_effect_css[i].first ) <<
+                             " photoelectric cross section with the provided "
+                             "convergence parameters!" );
     std::cout << ".";
     std::cout.flush();
   }
@@ -778,8 +849,18 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 	     _1,
 	     d_subshell_incoherent_evaluation_tolerance );
 
-    union_energy_grid_generator.generateInPlace( union_energy_grid,
-						 grid_function );
+    try{
+      union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                   grid_function );
+    }
+    EXCEPTION_CATCH_RETHROW(
+                          std::runtime_error,
+                          "Error: Could not generate an optimized photon "
+                          "energy grid for the subshell "
+                          << Data::convertENDFDesignatorToSubshellEnum(
+                          impulse_approx_incoherent_cs_evaluators[i].first ) <<
+                          " impulse approx. cross section with the "
+                          "provided convergence parameters!" );
     std::cout << ".";
     std::cout.flush();
   }
@@ -847,7 +928,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   for( unsigned i = 0; i < subshell_photoelectric_effect_css.size(); ++i )
   {
     std::cout << " Setting subshell "
-	      << subshell_photoelectric_effect_css[i].first
+	      << Data::convertENDFDesignatorToSubshellEnum(
+                                   subshell_photoelectric_effect_css[i].first )
 	      << " photoelectric cross section...";
     std::cout.flush();
     this->createCrossSectionOnUnionEnergyGrid(
@@ -868,7 +950,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   for( unsigned i = 0; i < impulse_approx_incoherent_cs_evaluators.size(); ++i)
   {
     std::cout << " Setting subshell "
-	      << impulse_approx_incoherent_cs_evaluators[i].first
+	      << Data::convertENDFDesignatorToSubshellEnum(
+                             impulse_approx_incoherent_cs_evaluators[i].first )
 	      << " impusle approx incoherent cross section...";
     std::cout.flush();
     this->createCrossSectionOnUnionEnergyGrid(
@@ -1174,8 +1257,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                  boost::cref( *cutoff_elastic_cross_section ),
                  _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-                                               grid_function );
+  try{
+    union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                 grid_function );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized electron "
+                           "energy grid for the cutoff elastic cross section "
+                           "with the provided convergence parameters!" );
 
   std::cout << ".";
   std::cout.flush();
@@ -1185,26 +1274,45 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
         boost::cref( *total_elastic_cross_section ),
         _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-                                               grid_function );
+  try{
+    union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                 grid_function );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized electron "
+                           "energy grid for the total elastic cross section "
+                           "with the provided convergence parameters!" );
   std::cout << ".";
   std::cout.flush();
 
   grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
-			                   boost::cref( *bremsstrahlung_cross_section ),
-			                   _1 );
+                               boost::cref( *bremsstrahlung_cross_section ),
+                               _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-                                               grid_function );
+  try{
+    union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                 grid_function );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized electron "
+                           "energy grid for the bremsstrahlung cross section "
+                           "with the provided convergence parameters!" );
   std::cout << ".";
   std::cout.flush();
 
   grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
-			                   boost::cref( *atomic_excitation_cross_section ),
-			                   _1 );
+                               boost::cref( *atomic_excitation_cross_section ),
+                               _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-                                               grid_function );
+  try{
+    union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                 grid_function );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: Could not generate an optimized electron "
+                           "energy grid for the atomic excitation cross "
+                           "section with the provided convergence "
+                           "parameters!" );
   std::cout << ".";
   std::cout.flush();
 
@@ -1215,8 +1323,18 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 		   boost::cref( *electroionization_cross_section[i].second ),
 		   _1 );
 
-  union_energy_grid_generator.generateInPlace( union_energy_grid,
-                                               grid_function );
+    try{
+      union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                                   grid_function );
+    }
+    EXCEPTION_CATCH_RETHROW(
+                          std::runtime_error,
+                          "Error: Could not generate an optimized electron "
+                          "energy grid for the subshell "
+                          << Data::convertENDFDesignatorToSubshellEnum(
+                                  electroionization_cross_section[i].first ) <<
+                          " electroionization cross section with the "
+                          "provided convergence parameters!" );
     std::cout << ".";
     std::cout.flush();
   }
@@ -1317,7 +1435,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   for( unsigned i = 0; i < electroionization_cross_section.size(); ++i )
   {
     std::cout << "   Setting subshell "
-	      << electroionization_cross_section[i].first
+	      << Data::convertENDFDesignatorToSubshellEnum(
+                                     electroionization_cross_section[i].first )
 	      << " electroionization cross section...";
     std::cout.flush();
     this->createCrossSectionOnUnionEnergyGrid(

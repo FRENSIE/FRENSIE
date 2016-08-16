@@ -147,7 +147,7 @@ int main( int argc, char** argv )
       Data::ElectronPhotonRelaxationVolatileDataContainer data_container(
             data_file_path,
             Utility::ArchivableObject::XML_ARCHIVE );
-
+      
       DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
         data_container,
         cutoff_angle_cosine,
@@ -191,20 +191,20 @@ int main( int argc, char** argv )
         new Data::ENDLDataContainer(
             endl_file_path,
             Utility::ArchivableObject::XML_ARCHIVE ) );
-
+    
     epr_generator.reset(
 	    new const DataGen::StandardElectronPhotonRelaxationDataGenerator(
 					    atomic_number,
 					    ace_epr_extractor,
-                        endl_data_container,
+                                            endl_data_container,
 					    min_photon_energy,
 					    max_photon_energy,
 					    min_electron_energy,
 					    max_electron_energy,
 					    occupation_number_evaluation_tol,
-                        subshell_incoherent_evaluation_tol,
-                        cutoff_angle_cosine,
-                        number_of_moment_preserving_angles,
+                                            subshell_incoherent_evaluation_tol,
+                                            cutoff_angle_cosine,
+                                            number_of_moment_preserving_angles,
 					    grid_convergence_tol,
 					    grid_absolute_diff_tol,
 					    grid_distance_tol ) );
@@ -218,7 +218,11 @@ int main( int argc, char** argv )
     // Create the new data container
     Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
-    epr_generator->populateEPRDataContainer( data_container );
+    try{
+      epr_generator->populateEPRDataContainer( data_container );
+    }
+    EXCEPTION_CATCH_AND_EXIT( std::exception,
+                              "Error: The EPR data could not be generated! " );
 
     std::ostringstream oss;
     oss << "epr_" << atomic_number << "_native.xml";
