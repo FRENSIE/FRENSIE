@@ -56,7 +56,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.18204031443868224, 1e-6 );
+  TEST_FLOATING_EQUALITY( dist_value, 0.182031495370433727, 1e-6 );
 
   dist_value = distribution->evaluate( 1.0, 1.0 );
 
@@ -86,7 +86,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf_value, 0.468206881760033666, 1e-6 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.468210959354766421, 1e-6 );
 
   pdf_value = distribution->evaluatePDF( 1.0, 1.0 );
 
@@ -94,11 +94,11 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 
   pdf_value = distribution->evaluatePDF( 1.0, 0.0 );
 
-  TEST_FLOATING_EQUALITY( pdf_value, 0.361055269849248517, 1e-9 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.361065574572935588, 1e-9 );
 
   pdf_value = distribution->evaluatePDF( 1.0, -1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf_value, 0.291507803998082682, 1e-9 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.291516123797359028, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -110,15 +110,15 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.38880309491689713, 1e-9 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.388780936741182304, 1e-9 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.362735546891601146, 1e-9 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.362725194507310333, 1e-9 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 20.0, 1e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0603100615156834663, 1e-9 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.0603100048795882984, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//

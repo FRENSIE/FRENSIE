@@ -190,8 +190,8 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
-
-  TEST_FLOATING_EQUALITY( dist_value, 0.18204031443868224, 1e-6 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 0.182031495370433727, 1e-6 );
 
   MonteCarlo::ParticleBank bank;
 

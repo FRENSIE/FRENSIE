@@ -58,6 +58,8 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_scattering_function );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_atomic_form_factor_momentum_grid );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_atomic_form_factor );
+  DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_squared_atomic_form_factor_squared_momentum_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_squared_atomic_form_factor );
   DATA_MAKE_NVP_DEFAULT( ar, photon_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, average_photon_heating_numbers );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_incoherent_cross_section );
@@ -146,6 +148,8 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_scattering_function );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_atomic_form_factor_momentum_grid );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_atomic_form_factor );
+  DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_squared_atomic_form_factor_squared_momentum_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_squared_atomic_form_factor );
   DATA_MAKE_NVP_DEFAULT( ar, photon_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, average_photon_heating_numbers );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_incoherent_cross_section );

@@ -150,6 +150,13 @@ public:
   //! Return the Waller-Hartree atomic form factor
   const std::vector<double>& getWallerHartreeAtomicFormFactor() const;
 
+  //! Return the Waller-Hartree squared atomic form factor squared mom. grid
+  const std::vector<double>&
+  getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid() const;
+
+  //! Return the Waller-Hartree squared atomic form factor
+  const std::vector<double>& getWallerHartreeSquaredAtomicFormFactor() const;
+
   //! Return the photon energy grid
   const std::vector<double>& getPhotonEnergyGrid() const;
 
@@ -466,6 +473,14 @@ protected:
   //! Set the Waller-Hartree atomic form factor
   void setWallerHartreeAtomicFormFactor(
 			       const std::vector<double>& atomic_form_factor );
+
+  //! Return the Waller-Hartree squared atomic form factor squared mom. grid
+  void setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
+                            const std::vector<double>& squared_momentum_grid );
+
+  //! Return the Waller-Hartree squared atomic form factor
+  void setWallerHartreeSquaredAtomicFormFactor(
+                       const std::vector<double>& squared_atomic_form_factor );
 
   //! Set the photon energy grid
   void setPhotonEnergyGrid( const std::vector<double>& energy_grid );
@@ -807,6 +822,13 @@ private:
 
   // The Waller-Hartree atomic form factor
   std::vector<double> d_waller_hartree_atomic_form_factor;
+
+  // The Waller-Hartree squared atomic form factor squared mom. grid (1/cm^2)
+  std::vector<double>
+  d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid;
+
+  // The Waller-Hartree squared atomic form factor
+  std::vector<double> d_waller_hartree_squared_atomic_form_factor;
 
   // The photon energy grid (MeV)
   std::vector<double> d_photon_energy_grid;

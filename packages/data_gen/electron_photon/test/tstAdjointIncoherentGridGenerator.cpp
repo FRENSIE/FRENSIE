@@ -313,7 +313,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator,
                                              cs_evaluator );
 
   // Check the energy grid
-  TEST_EQUALITY_CONST( energy_grid.size(), 96 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 95 );
   TEST_EQUALITY_CONST( energy_grid.front(), 0.001 );
 
   const double nudged_max_energy = 20.0 +

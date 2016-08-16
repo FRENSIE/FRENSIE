@@ -35,35 +35,35 @@ public:
 
   //! Constructor 
   StandardElectronPhotonRelaxationDataGenerator(
-	   const unsigned atomic_number,
-	   const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
-       const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
-	   const double min_photon_energy,
-	   const double max_photon_energy,
-       const double min_electron_energy,
-       const double max_electron_energy,
-	   const double occupation_number_evaluation_tolerance,
-	   const double subshell_incoherent_evaluation_tolerance,
-	   const double grid_convergence_tol = 0.001,
-	   const double grid_absolute_diff_tol = 1e-13,
-	   const double grid_distance_tol = 1e-13 );
+     const unsigned atomic_number,
+     const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+     const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
+     const double min_photon_energy,
+     const double max_photon_energy,
+     const double min_electron_energy,
+     const double max_electron_energy,
+     const double occupation_number_evaluation_tolerance,
+     const double subshell_incoherent_evaluation_tolerance,
+     const double grid_convergence_tol = 0.001,
+     const double grid_absolute_diff_tol = 1e-13,
+     const double grid_distance_tol = 1e-13 );
 
   //! Target Constructor with moment preserving data
   StandardElectronPhotonRelaxationDataGenerator(
-	   const unsigned atomic_number,
-	   const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
-       const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
-	   const double min_photon_energy,
-	   const double max_photon_energy,
-       const double min_electron_energy,
-       const double max_electron_energy,
-	   const double occupation_number_evaluation_tolerance,
-	   const double subshell_incoherent_evaluation_tolerance,
-       const double cutoff_angle_cosine = 1.0,
-       const unsigned number_of_moment_preserving_angles = 0,
-	   const double grid_convergence_tol = 0.001,
-	   const double grid_absolute_diff_tol = 1e-13,
-	   const double grid_distance_tol = 1e-13 );
+     const unsigned atomic_number,
+     const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
+     const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
+     const double min_photon_energy,
+     const double max_photon_energy,
+     const double min_electron_energy,
+     const double max_electron_energy,
+     const double occupation_number_evaluation_tolerance,
+     const double subshell_incoherent_evaluation_tolerance,
+     const double cutoff_angle_cosine = 1.0,
+     const unsigned number_of_moment_preserving_angles = 0,
+     const double grid_convergence_tol = 0.001,
+     const double grid_absolute_diff_tol = 1e-13,
+     const double grid_distance_tol = 1e-13 );
 
   //! Destructor
   ~StandardElectronPhotonRelaxationDataGenerator()
@@ -71,7 +71,7 @@ public:
 
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Repopulate the electron moment preserving data
   static void repopulateMomentPreservingData(
@@ -83,31 +83,31 @@ protected:
 
   //! Set the atomic data
   void setRelaxationData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the Compton profile data
   void setComptonProfileData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the occupation number data
   void setOccupationNumberData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the Waller-Hartree scattering function data
   void setWallerHartreeScatteringFunctionData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the Waller-Hartree atomic form factor data
   void setWallerHartreeAtomicFormFactorData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the photon data
   void setPhotonData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the electron data
   void setElectronData(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
 private:
 
@@ -126,6 +126,17 @@ private:
 			  const unsigned subshell_data_start_index,
 			  Data::ElectronPhotonRelaxationVolatileDataContainer&
 			  data_container ) const;
+
+  // Set the Waller-Hartree atomic form factor data
+  void setWallerHartreeAtomicFormFactorData(
+                       const std::function<double(double)>& evaluation_wrapper,
+                       std::list<double>& recoil_momentum_grid,
+                       const double initial_grid_value,
+                       const double final_grid_value,
+                       const double initial_form_factor_value,
+                       const double final_form_factor_value,
+                       Data::ElectronPhotonRelaxationVolatileDataContainer&
+                       data_container ) const;
 
   // Extract the half Compton profile from the ACE table
   void extractHalfComptonProfile(

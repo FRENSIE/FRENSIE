@@ -60,28 +60,11 @@ void CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 std::shared_ptr<const FormFactorSquared>& form_factor_squared )
 {
-  Teuchos::Array<double> recoil_momentum_squared =
-    raw_photoatom_data.getWallerHartreeAtomicFormFactorMomentumGrid();
-
-  Teuchos::Array<double> form_factor_squared_values =
-    raw_photoatom_data.getWallerHartreeAtomicFormFactor();
-
-  // Square the grid points and the form factor factor values
-  // This operation is non-linear, which means that the grid is no longer
-  // guaranteed to give interpolated values within the convergence tolerance
-  // used to create the grid.
-  for( unsigned i = 0; i < recoil_momentum_squared.size(); ++i )
-  {
-    recoil_momentum_squared[i] *= recoil_momentum_squared[i];
-
-    form_factor_squared_values[i] *= form_factor_squared_values[i];
-  }
-
   // The stored recoil momentum squared has units of inverse squared cm.
   std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareCentimeter,void> > raw_form_factor_squared(
            new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseSquareCentimeter,void>(
-                                                recoil_momentum_squared,
-                                                form_factor_squared_values ) );
+              raw_photoatom_data.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(),
+              raw_photoatom_data.getWallerHartreeSquaredAtomicFormFactor() ) );
 
   form_factor_squared.reset(
         new StandardFormFactorSquared<Utility::Units::InverseSquareCentimeter>(

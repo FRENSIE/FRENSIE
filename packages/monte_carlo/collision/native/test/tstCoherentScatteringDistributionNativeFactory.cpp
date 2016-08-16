@@ -85,12 +85,12 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionNativeFactory,
   TEST_FLOATING_EQUALITY( dist_value, 3.354834939813898e3, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, 0.0 );
-
-  TEST_FLOATING_EQUALITY( dist_value, 4.14635765360550668, 1e-15 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 4.13794808678274517, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, -1.0 );
-
-  TEST_FLOATING_EQUALITY( dist_value, 3.59193477234775882, 1e-15 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 3.58206485705525468, 1e-15 );
 
   double outgoing_energy, scattering_angle_cosine;
 
@@ -137,9 +137,9 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionNativeFactory,
   distribution->sample( 0.1,
 			outgoing_energy,
 			scattering_angle_cosine );
-
+  
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.940354738810264323, 1e-15 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.94014376762379892, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

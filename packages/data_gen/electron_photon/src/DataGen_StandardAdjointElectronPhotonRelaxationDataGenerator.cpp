@@ -200,13 +200,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
   data_container.setMinElectronEnergy( this->getMinElectronEnergy() );
   data_container.setMaxElectronEnergy( this->getMaxElectronEnergy() );
   data_container.setGridConvergenceTolerance(
-                               this->getDefaultGridConvergenceTolerance() );
+                    this->getDefaultGridConvergenceTolerance() );
   data_container.setGridAbsoluteDifferenceTolerance(
-                               this->getDefaultAbsoluteDifferenceTolerance() );
+                    this->getDefaultAbsoluteDifferenceTolerance() );
   data_container.setGridDistanceTolerance( this->getDefaultDistanceTolerance() );
-  data_container.setCutoffAngleCosine( d_forward_epr_data->getCutoffAngleCosine() );
+  data_container.setCutoffAngleCosine(
+                    d_forward_epr_data->getCutoffAngleCosine() );
   data_container.setNumberOfAdjointMomentPreservingAngles(
-    d_forward_epr_data->getNumberOfMomentPreservingAngles() );
+                    d_forward_epr_data->getNumberOfMomentPreservingAngles() );
 }
 
 // Set the relaxation data
@@ -1628,18 +1629,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
       new DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction>(
           electroionization_subshell_reaction,
           ionization_energy_grid ) );
-
-  
-/*
-    // Add nudge value
-    ionization_energy_grid.back() =
-        this->getMaxElectronEnergy() - s_min_tabulated_energy_loss;
-      ionization_energy_grid.push_back( this->getMaxElectronEnergy() );
-
-    // Set the adjoint electroionization energy grid
-    data_container.setAdjointElectroionizationEnergyGrid(
-      *shell,
-      ionization_energy_grid );*/
   }
 }
 
