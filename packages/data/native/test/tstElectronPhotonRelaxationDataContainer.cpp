@@ -100,6 +100,17 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the photon threshold energy nudge factor can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setPhotonThresholdEnergyNudgeFactor )
+{
+  epr_data_container.setPhotonThresholdEnergyNudgeFactor( 1.01 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
+                       1.01 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the Cutoff Angle can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setCutoffAngleCosine )
 {
@@ -585,6 +596,32 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setPairProductionCrossSectionThresholdEnergyIndex( 1 );
 
   TEST_EQUALITY_CONST( epr_data_container.getPairProductionCrossSectionThresholdEnergyIndex(),
+		       1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the triplet production cross section can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setTripletProductionCrossSection )
+{
+  std::vector<double> cross_section( 2 );
+  cross_section[0] = 1e-12;
+  cross_section[1] = 2.0;
+  
+  epr_data_container.setTripletProductionCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getTripletProductionCrossSection(),
+                       cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the triplet production cross section threshold index can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setTripletProductionCrossSectionThresholdEnergyIndex )
+{
+  epr_data_container.setTripletProductionCrossSectionThresholdEnergyIndex( 1 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getTripletProductionCrossSectionThresholdEnergyIndex(),
 		       1 );
 }
 
@@ -1121,7 +1158,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the elastic cs threshold index can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		           setCutoffElasticCrossSectionThresholdEnergyIndex )
+                   setCutoffElasticCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setCutoffElasticCrossSectionThresholdEnergyIndex( 0 );
 
@@ -1150,7 +1187,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the elastic cs threshold index can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		           setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex )
+                   setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex( 0 );
 
@@ -1180,7 +1217,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the elastic cs threshold index can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		           setTotalElasticCrossSectionThresholdEnergyIndex )
+                   setTotalElasticCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setTotalElasticCrossSectionThresholdEnergyIndex( 0 );
 
@@ -1241,7 +1278,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the electroionization cs threshold index can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		        setElectroionizationCrossSectionThresholdEnergyIndex )
+                   setElectroionizationCrossSectionThresholdEnergyIndex )
 {
   unsigned subshell = 1;
 
@@ -1273,7 +1310,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung cs threshold index can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		        setBremsstrahlungCrossSectionThresholdEnergyIndex )
+                   setBremsstrahlungCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setBremsstrahlungCrossSectionThresholdEnergyIndex( 0 );
 
@@ -1302,7 +1339,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation cs threshold index can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		        setAtomicExcitationCrossSectionThresholdEnergyIndex )
+                   setAtomicExcitationCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setAtomicExcitationCrossSectionThresholdEnergyIndex( 0 );
 
@@ -1334,6 +1371,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellIncoherentEvaluationTolerance(),
                        1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
+                       1.01 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1407,6 +1446,10 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getPairProductionCrossSection().size(),
 		       2 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getPairProductionCrossSectionThresholdEnergyIndex(),
+		       1 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getTripletProductionCrossSection().size(),
+                       2 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getTripletProductionCrossSectionThresholdEnergyIndex(),
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getPhotoelectricCrossSection().size(),
 		       3 );
@@ -1550,6 +1593,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellIncoherentEvaluationTolerance(),
                        1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
+                       1.01 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1623,6 +1668,10 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getPairProductionCrossSection().size(),
 		       2 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getPairProductionCrossSectionThresholdEnergyIndex(),
+		       1 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getTripletProductionCrossSection().size(),
+                       2 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getTripletProductionCrossSectionThresholdEnergyIndex(),
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getPhotoelectricCrossSection().size(),
 		       3 );
@@ -1763,6 +1812,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellIncoherentEvaluationTolerance(),
                        1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
+                       1.01 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1836,6 +1887,10 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getPairProductionCrossSection().size(),
 		       2 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getPairProductionCrossSectionThresholdEnergyIndex(),
+		       1 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getTripletProductionCrossSection().size(),
+                       2 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getTripletProductionCrossSectionThresholdEnergyIndex(),
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getPhotoelectricCrossSection().size(),
 		       3 );

@@ -68,6 +68,9 @@ public:
   //! Return the subshell incoherent evaluation tolerance
   double getSubshellIncoherentEvaluationTolerance() const;
 
+  //! Return the photon threshold energy nudge factor
+  double getPhotonThresholdEnergyNudgeFactor() const;
+
   //! Return the upper cutoff scattering angle cosine above which moment preserving elastic scattering is used
   double getCutoffAngleCosine() const;
 
@@ -203,6 +206,13 @@ public:
 
   //! Return the pair production cross section threshold energy bin index
   unsigned getPairProductionCrossSectionThresholdEnergyIndex() const;
+
+  //! Return the triplet production cross section
+  const std::vector<double>&
+  getTripletProductionCrossSection() const;
+
+  //! Return the triple production cross section threshold energy bin index
+  unsigned getTripletProductionCrossSectionThresholdEnergyIndex() const;
 
   //! Return the Photoelectric effect cross section
   const std::vector<double>& getPhotoelectricCrossSection() const;
@@ -386,6 +396,9 @@ protected:
   void setSubshellIncoherentEvaluationTolerance(
     const double subshell_incoherent_evaluation_tolerance );
 
+  //! Set the photon threshold energy nudge factor
+  void setPhotonThresholdEnergyNudgeFactor( const double nudge_factor );
+
   //! Set the upper cutoff scattering angle below which moment preserving elastic scattering is used
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
@@ -530,6 +543,14 @@ protected:
   //! Set the pair production cross section threshold energy bin index
   void setPairProductionCrossSectionThresholdEnergyIndex(
 							const unsigned index );
+
+  //! Set the triplet production cross section
+  void setTripletProductionCrossSection(
+                 const std::vector<double>& triplet_production_cross_section );
+
+  //! Set the triplet production cross section threshold energy bin index
+  void setTripletProductionCrossSectionThresholdEnergyIndex(
+                                                        const unsigned index );
 
   //! Set the Photoelectric effect cross section
   void setPhotoelectricCrossSection(
@@ -754,6 +775,9 @@ private:
   // The subshell incoherent evaluation tolerance
   double d_subshell_incoherent_evaluation_tolerance;
 
+  // The photon threshold energy nudge factor
+  double d_photon_threshold_energy_nudge_factor;
+
   // The elastic cutoff angle
   double d_cutoff_angle_cosine;
 
@@ -867,6 +891,12 @@ private:
 
   // The pair production cross section threshold energy index
   unsigned d_pair_production_cross_section_threshold_index;
+
+  // The triplet production cross section (b)
+  std::vector<double> d_triplet_production_cross_section;
+
+  // The triplet production cross section threshold energy index
+  unsigned d_triplet_production_cross_section_threshold_index;
 
   // The photoelectric effect cross section (b)
   std::vector<double> d_photoelectric_cross_section;
