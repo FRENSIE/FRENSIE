@@ -32,9 +32,6 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<const DataGen::StandardElectronPhotonRelaxationDataGenerator>
-  data_generator_h, data_generator_c;
-
 std::shared_ptr<Data::XSSEPRDataExtractor>
   h_xss_data_extractor, c_xss_data_extractor;
 
@@ -44,30 +41,205 @@ std::shared_ptr<Data::ENDLDataContainer>
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check that a data generator can be constructed
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   basic_constructor )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  TEST_EQUALITY_CONST( generator.getAtomicNumber(), 1 );
+  TEST_FLOATING_EQUALITY( generator.getMinPhotonEnergy(), 1e-6, 1e-9 );
+  TEST_FLOATING_EQUALITY( generator.getMaxPhotonEnergy(), 1e5, 1e-9 );
+  TEST_EQUALITY_CONST( generator.getMinElectronEnergy(), 1e-5 );
+  TEST_EQUALITY_CONST( generator.getMaxElectronEnergy(), 1e5 );
+  TEST_EQUALITY_CONST( generator.getDefaultGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( generator.getDefaultGridAbsoluteDifferenceTolerance(),
+                       1e-13 );
+  TEST_EQUALITY_CONST( generator.getDefaultGridDistanceTolerance(), 1e-13 );
+  TEST_EQUALITY_CONST( generator.getOccupationNumberEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( generator.getSubshellIncoherentEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( generator.getPhotonThresholdEnergyNudgeFactor(),
+                       1.0001 );
+  TEST_EQUALITY_CONST( generator.getCutoffAngleCosine(), 1.0 );
+  TEST_EQUALITY_CONST( generator.getNumberOfMomentPreservingAngles(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a data generator can be constructed
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator, constructor )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       c_xss_data_extractor,
+                                                       c_endl_data_container,
+                                                       1e-3,
+                                                       20.0,
+                                                       1e-5,
+                                                       1e5 );
+
+  TEST_EQUALITY_CONST( generator.getAtomicNumber(), 6 );
+  TEST_EQUALITY_CONST( generator.getMinPhotonEnergy(), 1e-3 );
+  TEST_EQUALITY_CONST( generator.getMaxPhotonEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( generator.getMinElectronEnergy(), 1e-5 );
+  TEST_EQUALITY_CONST( generator.getMaxElectronEnergy(), 1e5 );
+  TEST_EQUALITY_CONST( generator.getDefaultGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( generator.getDefaultGridAbsoluteDifferenceTolerance(),
+                       1e-13 );
+  TEST_EQUALITY_CONST( generator.getDefaultGridDistanceTolerance(), 1e-13 );
+  TEST_EQUALITY_CONST( generator.getOccupationNumberEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( generator.getSubshellIncoherentEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( generator.getPhotonThresholdEnergyNudgeFactor(),
+                       1.0001 );
+  TEST_EQUALITY_CONST( generator.getCutoffAngleCosine(), 1.0 );
+  TEST_EQUALITY_CONST( generator.getNumberOfMomentPreservingAngles(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the default grid convergence tolerance can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setDefaultGridConvergenceTolerance )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setDefaultGridConvergenceTolerance( 1e-5 );
+
+  TEST_EQUALITY_CONST( generator.getDefaultGridConvergenceTolerance(), 1e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the default grid absolute difference tolerance can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setDefaultGridAbsoluteDifferenceTolerance )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setDefaultGridAbsoluteDifferenceTolerance( 1e-40 );
+  TEST_EQUALITY_CONST( generator.getDefaultGridAbsoluteDifferenceTolerance(),
+                       1e-40 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the default grid distance tolerance can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setDefaultGridDistanceTolerance )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setDefaultGridDistanceTolerance( 1e-30 );
+  TEST_EQUALITY_CONST( generator.getDefaultGridDistanceTolerance(), 1e-30 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the occupation number evaluation tolerance can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setOccupationNumberEvaluationTolerance )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setOccupationNumberEvaluationTolerance( 1e-4 );
+  TEST_EQUALITY_CONST( generator.getOccupationNumberEvaluationTolerance(),
+                       1e-4 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoherent evaluation tolerance can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setSubshellIncoherentEvaluationTolerance )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setSubshellIncoherentEvaluationTolerance( 1e-5 );
+  TEST_EQUALITY_CONST( generator.getSubshellIncoherentEvaluationTolerance(),
+                       1e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photon threshold energy nudge factor can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setPhotonThresholdEnergyNudgeFactor )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setPhotonThresholdEnergyNudgeFactor( 1.5 );
+  TEST_EQUALITY_CONST( generator.getPhotonThresholdEnergyNudgeFactor(), 1.5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cutoff angle cosine can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setCutoffAngleCosine )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setCutoffAngleCosine( 0.89 );
+  TEST_EQUALITY_CONST( generator.getCutoffAngleCosine(), 0.89 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of moment preserving angles can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setNumberOfMomentPreservingAngles )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setNumberOfMomentPreservingAngles( 5 );
+  TEST_EQUALITY_CONST( generator.getNumberOfMomentPreservingAngles(), 5 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a data container can be populated
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		   populateEPRDataContainer_h )
 {
-    data_generator_h.reset(
-        new DataGen::StandardElectronPhotonRelaxationDataGenerator(
-                h_xss_data_extractor->extractAtomicNumber(),
+  std::shared_ptr<const DataGen::ElectronPhotonRelaxationDataGenerator>
+    data_generator;
+
+  {
+    DataGen::StandardElectronPhotonRelaxationDataGenerator*
+      raw_data_generator = new DataGen::StandardElectronPhotonRelaxationDataGenerator(
                 h_xss_data_extractor,
                 h_endl_data_container,
                 0.001,
                 20.0,
                 1.0e-5,
-                1.0e+5,
-                1e-3,
-                1e-3,
-                0.9,
-                1,
-                0.001,
-                1e-80,
-                1e-20) );
+                1.0e+5 );
+    
+    raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
+    raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
+    raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
+    raw_data_generator->setCutoffAngleCosine( 0.9 );
+    raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
+    raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
+    raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-80 );
+    raw_data_generator->setDefaultGridDistanceTolerance( 1e-20 );
+
+    data_generator.reset( raw_data_generator );
+  }
 
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
-  data_generator_h->populateEPRDataContainer( data_container );
+  data_generator->populateEPRDataContainer( data_container );
 
 
   // Check the table settings data
@@ -1033,24 +1205,32 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		   populateEPRDataContainer_c )
 {
-    data_generator_c.reset(
-		   new DataGen::StandardElectronPhotonRelaxationDataGenerator(
-		     c_xss_data_extractor->extractAtomicNumber(),
-                     c_xss_data_extractor,
-                     c_endl_data_container,
-                     0.001,
-                     20.0,
-                     1.0e-5,
-                     1.0e+5,
-                     1e-3,
-                     1e-3,
-                     1e-3,
-                     1e-70,
-                     1e-16) );
+  std::shared_ptr<const DataGen::ElectronPhotonRelaxationDataGenerator>
+    data_generator;
+
+  {
+    DataGen::StandardElectronPhotonRelaxationDataGenerator*
+      raw_data_generator = new DataGen::StandardElectronPhotonRelaxationDataGenerator(
+                c_xss_data_extractor,
+                c_endl_data_container,
+                0.001,
+                20.0,
+                1.0e-5,
+                1.0e+5 );
+
+    raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
+    raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
+    raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
+    raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
+    raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-70 );
+    raw_data_generator->setDefaultGridDistanceTolerance( 1e-16 );
+
+    data_generator.reset( raw_data_generator );
+  }
 
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
-  data_generator_c->populateEPRDataContainer( data_container );
+  data_generator->populateEPRDataContainer( data_container );
 
   // Check the table settings data
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 6 );
