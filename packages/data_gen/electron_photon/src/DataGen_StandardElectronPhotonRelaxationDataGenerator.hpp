@@ -210,6 +210,19 @@ private:
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
 
+  // Initialize the electron union energy grid
+  void initializeElectronUnionEnergyGrid(
+     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+     std::list<double>& union_energy_grid ) const;
+
+  // Add binding energies to union energy grid
+  void addBindingEnergiesToUnionEnergyGrid(
+     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+     const double min_energy,
+     const double max_energy,
+     const bool add_nudged_values,
+     std::list<double>& union_energy_grid ) const;
+
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
@@ -226,6 +239,12 @@ private:
 	     original_cross_section,
 	     std::vector<double>& cross_section,
 	     unsigned& threshold_index ) const;
+
+  // Populate a cross section using the raw cross section
+  void populateCrossSection( const std::vector<double>& raw_cross_section,
+                             std::vector<double>& cross_section,
+                             unsigned& threshold_index,
+                             const bool zero_at_threshold ) const;
 
   // Merge the electron union energy grid
   void mergeElectronUnionEnergyGrid(
