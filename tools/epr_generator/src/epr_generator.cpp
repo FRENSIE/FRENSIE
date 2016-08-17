@@ -148,10 +148,15 @@ int main( int argc, char** argv )
             data_file_path,
             Utility::ArchivableObject::XML_ARCHIVE );
       
-      DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
-        data_container,
-        cutoff_angle_cosine,
-        number_of_moment_preserving_angles );
+      try{
+        DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+          data_container,
+          cutoff_angle_cosine,
+          number_of_moment_preserving_angles );
+      }
+      EXCEPTION_CATCH_AND_EXIT( std::exception,
+                                "Error: Unable to repopulate the moment "
+                                "preserving data!" );
 
       data_container.exportData( data_file_path,
                                  Utility::ArchivableObject::XML_ARCHIVE );
@@ -167,47 +172,64 @@ int main( int argc, char** argv )
     // Create the data generator
     if( data_file_type == "ACE" )
     {
-    Data::ACEFileHandler ace_file_handler( data_file_path,
-					   data_table_name,
-					   data_file_start_line,
-					   true );
+      Data::ACEFileHandler ace_file_handler( data_file_path,
+                                             data_table_name,
+                                             data_file_start_line,
+                                             true );
 
-    std::shared_ptr<const Data::XSSEPRDataExtractor> ace_epr_extractor(
+      std::shared_ptr<const Data::XSSEPRDataExtractor> ace_epr_extractor(
 				new const Data::XSSEPRDataExtractor(
 				       ace_file_handler.getTableNXSArray(),
 				       ace_file_handler.getTableJXSArray(),
 				       ace_file_handler.getTableXSSArray() ) );
 
-    atomic_number = ace_epr_extractor->extractAtomicNumber();
+      atomic_number = ace_epr_extractor->extractAtomicNumber();
+      
+      std::ostringstream oss;
+      oss << "endl_" << atomic_number << "_native.xml";
+      
+      std::string endl_file_path = cross_section_directory;
+      endl_file_path += "endldata/";
+      endl_file_path += oss.str();
 
-    std::ostringstream oss;
-    oss << "endl_" << atomic_number << "_native.xml";
+      std::shared_ptr<Data::ENDLDataContainer> endl_data_container;
+      try{
+        endl_data_container.reset( new Data::ENDLDataContainer(
+                                    endl_file_path,
+                                    Utility::ArchivableObject::XML_ARCHIVE ) );
+      }
+      EXCEPTION_CATCH_AND_EXIT( std::exception,
+                                "Error: Unable to load the desired ENDL data "
+                                "file!" );
 
-    std::string endl_file_path = cross_section_directory;
-    endl_file_path += "endldata/";
-    endl_file_path += oss.str();
-
-    std::shared_ptr<Data::ENDLDataContainer> endl_data_container(
-        new Data::ENDLDataContainer(
-            endl_file_path,
-            Utility::ArchivableObject::XML_ARCHIVE ) );
-    
-    epr_generator.reset(
-	    new const DataGen::StandardElectronPhotonRelaxationDataGenerator(
-					    atomic_number,
-					    ace_epr_extractor,
+      try{
+        DataGen::StandardElectronPhotonRelaxationDataGenerator*
+          raw_generator = new DataGen::StandardElectronPhotonRelaxationDataGenerator(
+                                            ace_epr_extractor,
                                             endl_data_container,
 					    min_photon_energy,
 					    max_photon_energy,
 					    min_electron_energy,
-					    max_electron_energy,
-					    occupation_number_evaluation_tol,
-                                            subshell_incoherent_evaluation_tol,
-                                            cutoff_angle_cosine,
-                                            number_of_moment_preserving_angles,
-					    grid_convergence_tol,
-					    grid_absolute_diff_tol,
-					    grid_distance_tol ) );
+					    max_electron_energy );
+        
+        raw_generator->setOccupationNumberEvaluationTolerance(
+                                            occupation_number_evaluation_tol );
+        raw_generator->setSubshellIncoherentEvaluationTolerance(
+                                          subshell_incoherent_evaluation_tol );
+        raw_generator->setCutoffAngleCosine( cutoff_angle_cosine );
+        raw_generator->setNumberOfMomentPreservingAngles(
+                                          number_of_moment_preserving_angles );
+        raw_generator->setDefaultGridConvergenceTolerance(
+                                                        grid_convergence_tol );
+        raw_generator->setDefaultGridAbsoluteDifferenceTolerance(
+                                                      grid_absolute_diff_tol );
+        raw_generator->setDefaultGridDistanceTolerance( grid_distance_tol );
+        
+        epr_generator.reset( raw_generator );
+      }
+      EXCEPTION_CATCH_AND_EXIT( std::exception,
+                                "Error: Unable to constructor the epr "
+                                "generator!" );
     }
     else
     {

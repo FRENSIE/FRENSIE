@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <utility>
+#include <iostream>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -35,39 +36,56 @@ public:
 
   //! Constructor 
   StandardElectronPhotonRelaxationDataGenerator(
-     const unsigned atomic_number,
      const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
      const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
      const double min_photon_energy,
      const double max_photon_energy,
      const double min_electron_energy,
      const double max_electron_energy,
-     const double occupation_number_evaluation_tolerance,
-     const double subshell_incoherent_evaluation_tolerance,
-     const double grid_convergence_tol = 0.001,
-     const double grid_absolute_diff_tol = 1e-13,
-     const double grid_distance_tol = 1e-13 );
+     std::ostream* os_log = &std::cout,
+     std::ostream* os_warn = &std::cerr );
 
-  //! Target Constructor with moment preserving data
+  //! Basic Constructor
   StandardElectronPhotonRelaxationDataGenerator(
-     const unsigned atomic_number,
      const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
      const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
-     const double min_photon_energy,
-     const double max_photon_energy,
-     const double min_electron_energy,
-     const double max_electron_energy,
-     const double occupation_number_evaluation_tolerance,
-     const double subshell_incoherent_evaluation_tolerance,
-     const double cutoff_angle_cosine = 1.0,
-     const unsigned number_of_moment_preserving_angles = 0,
-     const double grid_convergence_tol = 0.001,
-     const double grid_absolute_diff_tol = 1e-13,
-     const double grid_distance_tol = 1e-13 );
+     std::ostream* os_log = &std::cout );
 
   //! Destructor
   ~StandardElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
+
+  //! Set the occupation number evaluation tolerance
+  void setOccupationNumberEvaluationTolerance(
+                                           const double evaluation_tolerance );
+
+  //! Get the occupation number evaluation tolerance
+  double getOccupationNumberEvaluationTolerance() const;
+
+  //! Set the subshell incoherent evaluation tolerance
+  void setSubshellIncoherentEvaluationTolerance(
+                                           const double evaluation_tolerance );
+
+  //! Get the subshell incoherent evaluation tolerance
+  double getSubshellIncoherentEvaluationTolerance() const;
+
+  //! Set the photon threshold energy nudge factor
+  void setPhotonThresholdEnergyNudgeFactor( const double nudge_factor );
+
+  //! Get the photon threshold energy nudge factor
+  double getPhotonThresholdEnergyNudgeFactor() const;
+  
+  //! Set the cutoff angle cosine
+  void setCutoffAngleCosine( const double cutoff_angle_cosine );
+
+  //! Get the cutoff angle cosine
+  double getCutoffAngleCosine() const;
+
+  //! Set the number of moment preserving angles
+  void setNumberOfMomentPreservingAngles( const unsigned number_of_angles );
+
+  //! Get the number of moment preserving angles
+  double getNumberOfMomentPreservingAngles() const;
 
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
@@ -77,7 +95,8 @@ public:
   static void repopulateMomentPreservingData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double cutoff_angle_cosine = 0.9,
-    const unsigned number_of_moment_preserving_angles = 1 );
+    const unsigned number_of_moment_preserving_angles = 1,
+    std::ostream& os_log = std::cout );
 
 protected:
 
@@ -254,32 +273,14 @@ private:
     const unsigned threshold_energy_index,
     std::vector<double>& moment_preserving_cross_section );
 
-  // The threshold energy nudge factor
-  static const double s_threshold_energy_nudge_factor;
-
   // The ACE data
   std::shared_ptr<const Data::XSSEPRDataExtractor> d_ace_epr_data;
 
   // The ENDL data
   std::shared_ptr<const Data::ENDLDataContainer> d_endl_data_container;
-
-  // The Native data
-  std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer> d_native_epr_data;
-
-  // The min photon energy
-  double d_min_photon_energy;
-
-  // The max photon energy
-  double d_max_photon_energy;
-
-  // The min electron energy
-  double d_min_electron_energy;
-
-  // The max electron energy
-  double d_max_electron_energy;
-
-  // The cutoff angle cosine above which screened rutherford is used
-  double d_cutoff_angle_cosine;
+ 
+  // The log stream
+  std::ostream* d_os_log;
 
   // The occupation number evaluation tolerance
   double d_occupation_number_evaluation_tolerance;
@@ -287,17 +288,14 @@ private:
   // The subshell incoherent evaluation tolerance
   double d_subshell_incoherent_evaluation_tolerance;
 
-  // The grid convergence tolerance
-  double d_grid_convergence_tol;
+  // The photon threshold energy nudge factor
+  double d_photon_threshold_energy_nudge_factor;
 
-  // The grid absolute difference tolerance
-  double d_grid_absolute_diff_tol;
-
-  // The grid distance tolerance
-  double d_grid_distance_tol;
+  // The cutoff angle cosine above which screened rutherford is used
+  double d_cutoff_angle_cosine;
 
   // The number of moment preserving angles
-  int d_number_of_moment_preserving_angles;
+  unsigned d_number_of_moment_preserving_angles;
 };
 
 // Test if a value is greater than or equal to one
