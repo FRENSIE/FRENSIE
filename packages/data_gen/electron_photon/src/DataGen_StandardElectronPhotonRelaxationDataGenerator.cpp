@@ -14,6 +14,7 @@
 #include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_MomentPreservingElectronDataGenerator.hpp"
 #include "DataGen_FormFactorEvaluator.hpp"
+#include "DataGen_ScatteringFunctionEvaluator.hpp"
 #include "DataGen_OccupationNumberEvaluator.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
@@ -568,36 +569,38 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
 			   Data::ElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const
 {
-  Teuchos::ArrayView<const double> jince_block =
-    d_ace_epr_data->extractJINCEBlock();
+  // Create the evaluator, initial recoil momentum grid
+  std::shared_ptr<const ScatteringFunctionEvaluator> evaluator;
 
-  unsigned scatt_func_size = jince_block.size()/2;
-
-  Teuchos::ArrayView<const double> raw_recoil_momentum(
+  std::list<double> recoil_momentum_grid;
+  
+  {
+    Teuchos::ArrayView<const double> jince_block =
+      d_ace_epr_data->extractJINCEBlock();
+    
+    unsigned scatt_func_size = jince_block.size()/2;
+    
+    Teuchos::ArrayView<const double> raw_recoil_momentum(
 					 jince_block( 1, scatt_func_size-1 ) );
 
-  Teuchos::ArrayView<const double> raw_scattering_function(
+    Teuchos::ArrayView<const double> raw_scattering_function_values(
 			 jince_block( scatt_func_size+1, scatt_func_size-1 ) );
 
-  std::vector<double> scaled_recoil_momentum;
+    // Convert the initial and final grid values from inverse Angstrom to
+    // inverse cm before adding them to the new grid.
+    recoil_momentum_grid.push_back( raw_recoil_momentum.front()*1e8 );
+    recoil_momentum_grid.push_back( raw_recoil_momentum.back()*1e8 );
 
-  scaled_recoil_momentum.assign( raw_recoil_momentum.begin(),
-                                 raw_recoil_momentum.end() );
+    evaluator = DataGen::ScatteringFunctionEvaluator::createEvaluator<Utility::LogLog,Utility::Units::InverseAngstrom>(
+                                              raw_recoil_momentum,
+                                              raw_scattering_function_values );
+  }
 
-  std::shared_ptr<Utility::OneDDistribution> scattering_function_dist(
-              new Utility::TabularDistribution<Utility::LogLog>(
-						   scaled_recoil_momentum,
-						   raw_scattering_function ) );
+  boost::function<double (double)> grid_function =
+    evaluator->getScatteringFunctionEvaluationWrapper();
 
-  boost::function<double (double x)> grid_function =
-    boost::bind( &Utility::OneDDistribution::evaluate,
-		 boost::cref( *scattering_function_dist ),
-		 _1 );
-
-  std::list<double> recoil_momentum_grid, scattering_function;
-  recoil_momentum_grid.push_back( scaled_recoil_momentum.front() );
-  recoil_momentum_grid.push_back( scaled_recoil_momentum.back() );
-
+  std::list<double> scattering_function;
+  
   try{
     this->getDefaultGridGenerator().generateAndEvaluateInPlace(
 							  recoil_momentum_grid,
@@ -609,12 +612,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
                            "function recoil momentum grid with the provided "
                            "convergence parameters!" );
 
-  // Convert the initial grid value from inverse Angstrom to inverse cm before
-  // adding it to the new grid. This grid point was left off because both
-  // the recoil momentum and the scattering function are likely 0.0,
-  // which is incompatible with log-log interpolation
-  recoil_momentum_grid.push_front( jince_block[0]*1e8 );
-  scattering_function.push_front( jince_block[scatt_func_size] );
+  // This grid point was left off because both the recoil momentum and the
+  // scattering function are 0.0, which is incompatible with log-log
+  // interpolation
+  recoil_momentum_grid.push_front( 0.0 );
+  scattering_function.push_front( 0.0 );
 
   std::vector<double> refined_recoil_momentum, refined_scattering_function;
 
@@ -664,16 +666,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
     // Convert the initial values from inverse Angstrom to inverse cm
     recoil_momentum_grid.push_back( raw_recoil_momentum.front()*1e8 );
     recoil_momentum_grid.push_back( raw_recoil_momentum.back()*1e8 );
-
-    // Convert the initial and final grid values from inverse Angstrom to
-    // inverse cm before passing them into this method
+    
+    // Convert the initial grid value from inverse Angstrom to inverse cm
+    // before passing it into this method
     this->setWallerHartreeAtomicFormFactorData(
                                            evaluation_wrapper,
                                            recoil_momentum_grid,
                                            jcohe_block.front()*1e8,
-                                           jcohe_block[form_factor_size-1]*1e8,
                                            jcohe_block[2*form_factor_size],
-                                           jcohe_block.back(),
                                            data_container );
   }
 
@@ -719,9 +719,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
                        const std::function<double(double)>& evaluation_wrapper,
                        std::list<double>& recoil_momentum_grid,
                        const double initial_grid_value,
-                       const double final_grid_value,
                        const double initial_form_factor_value,
-                       const double final_form_factor_value,
                        Data::ElectronPhotonRelaxationVolatileDataContainer&
                        data_container ) const
 {
@@ -739,15 +737,12 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
                            "factor recoil momentum grid with the "
                            "provided convergence parameters!" );
 
-  // The first and last values were kept off of the grid because the 0.0
-  // value of the recoil momentum (first value) and the 0.0 value of the form
-  // factor (last value) are not compatible with Log-Log interpolation
+  // The first value was kept off of the grid because the 0.0
+  // value of the recoil momentum, which is not compatible with Log-Log
+  // interpolation
   recoil_momentum_grid.push_front( initial_grid_value );
-  recoil_momentum_grid.push_back( final_grid_value );
-
   form_factor.push_front( initial_form_factor_value );
-  form_factor.push_back( final_form_factor_value );
-    
+      
   std::vector<double> refined_recoil_momentum, refined_form_factor;
     
   refined_recoil_momentum.assign( recoil_momentum_grid.begin(),

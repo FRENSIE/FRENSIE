@@ -151,9 +151,7 @@ private:
                        const std::function<double(double)>& evaluation_wrapper,
                        std::list<double>& recoil_momentum_grid,
                        const double initial_grid_value,
-                       const double final_grid_value,
                        const double initial_form_factor_value,
-                       const double final_form_factor_value,
                        Data::ElectronPhotonRelaxationVolatileDataContainer&
                        data_container ) const;
 

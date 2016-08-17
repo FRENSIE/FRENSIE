@@ -323,7 +323,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   // Check the Waller-Hartree atomic form factor
   TEST_EQUALITY_CONST(
 	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
-	  1583 );
+	  1582 );
   TEST_EQUALITY_CONST(
 	 data_container.getWallerHartreeAtomicFormFactorMomentumGrid().front(),
 	 0.0 );
@@ -332,7 +332,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 	  1.0e+17,
 	  1e-15 );
   TEST_EQUALITY_CONST(data_container.getWallerHartreeAtomicFormFactor().size(),
-		      1583 );
+		      1582 );
   TEST_FLOATING_EQUALITY(
 		     data_container.getWallerHartreeAtomicFormFactor().front(),
 		     1.0e+00,
@@ -864,7 +864,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   // Check the Waller-Hartree atomic form factor
   TEST_EQUALITY_CONST(
 	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
-	  1583 );
+	  1582 );
   TEST_EQUALITY_CONST(
 	 data_container.getWallerHartreeAtomicFormFactorMomentumGrid().front(),
 	 0.0 );
@@ -873,7 +873,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 	  1.0e+17,
 	  1e-15 );
   TEST_EQUALITY_CONST(data_container.getWallerHartreeAtomicFormFactor().size(),
-		      1583 );
+		      1582 );
   TEST_FLOATING_EQUALITY(
 		     data_container.getWallerHartreeAtomicFormFactor().front(),
 		     1.0e+00,
@@ -1563,7 +1563,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   // Check the Waller-Hartree atomic form factor data
   TEST_EQUALITY_CONST(
 	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
-	  1259 );
+	  1258 );
   TEST_EQUALITY_CONST(
 	 data_container.getWallerHartreeAtomicFormFactorMomentumGrid().front(),
 	 0.0 );
@@ -1571,7 +1571,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().back(),
 	  1e17 );
   TEST_EQUALITY_CONST(data_container.getWallerHartreeAtomicFormFactor().size(),
-		      1259 );
+		      1258 );
   TEST_EQUALITY_CONST(
 		     data_container.getWallerHartreeAtomicFormFactor().front(),
 		     6.0 );
