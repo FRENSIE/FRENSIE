@@ -103,6 +103,9 @@ void CollisionHandlerFactory::initializeHandler(
 	  sab_use_map,
 	  sab_path_map,
 	  sab_table_map );
+	  
+	// Check whether S(alpha,beta) data is in use
+	bool use_sab_data = !sab_use_map.empty();
 
   // Create the cell id data maps
   CellIdMatIdMap cell_id_mat_id_map;
@@ -119,19 +122,34 @@ void CollisionHandlerFactory::initializeHandler(
   {
   case NEUTRON_MODE:
   {
-    this->createNeutronMaterials( cross_sections_table_info,
-			    cross_sections_xml_directory,
-			    material_id_fraction_map,
-			    material_id_component_map,
-			    aliases,
-			    cell_id_mat_id_map,
-			    cell_id_density_map,
-			    false,
-			    false,
-			    sab_use_map,
-			    sab_path_map,
-			    sab_table_map );
-
+    if( use_sab_data )
+    {
+      this->createNeutronMaterials( cross_sections_table_info,
+			      cross_sections_xml_directory,
+			      material_id_fraction_map,
+			      material_id_component_map,
+			      aliases,
+			      cell_id_mat_id_map,
+			      cell_id_density_map,
+			      false,
+			      false,
+			      sab_use_map,
+			      sab_path_map,
+			      sab_table_map );
+	  }
+    else
+    {
+      this->createNeutronMaterials( cross_sections_table_info,
+			      cross_sections_xml_directory,
+			      material_id_fraction_map,
+			      material_id_component_map,
+			      aliases,
+			      cell_id_mat_id_map,
+			      cell_id_density_map,
+			      false,
+			      false );
+	  }
+	  
     break;
   }
   case PHOTON_MODE:
@@ -155,18 +173,33 @@ void CollisionHandlerFactory::initializeHandler(
   }
   case NEUTRON_PHOTON_MODE:
   {
-    this->createNeutronMaterials( cross_sections_table_info,
-			    cross_sections_xml_directory,
-			    material_id_fraction_map,
-			    material_id_component_map,
-			    aliases,
-			    cell_id_mat_id_map,
-			    cell_id_density_map,
-			    false,
-			    false,
-			    sab_use_map,
-			    sab_path_map,
-			    sab_table_map );
+    if( use_sab_data )
+    {
+      this->createNeutronMaterials( cross_sections_table_info,
+			      cross_sections_xml_directory,
+			      material_id_fraction_map,
+			      material_id_component_map,
+			      aliases,
+			      cell_id_mat_id_map,
+			      cell_id_density_map,
+			      false,
+			      false,
+			      sab_use_map,
+			      sab_path_map,
+			      sab_table_map );
+	  }
+    else
+    {
+      this->createNeutronMaterials( cross_sections_table_info,
+			      cross_sections_xml_directory,
+			      material_id_fraction_map,
+			      material_id_component_map,
+			      aliases,
+			      cell_id_mat_id_map,
+			      cell_id_density_map,
+			      false,
+			      false );
+	  }
 
     this->createPhotonMaterials(
 		     cross_sections_table_info,
@@ -223,19 +256,29 @@ void CollisionHandlerFactory::createSAlphaBetaDataMaps(
     const Teuchos::ParameterList& material_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( it->second.getAny() );
 
-    if( material_rep.isParameter( "sab_nuclides" ) &&
-        material_rep.isParameter( "sab_tables" ) &&
-        material_rep.isParameter( "sab_path") )
+    if( material_rep.isParameter( "Sab_Isotopes" ) &&
+        material_rep.isParameter( "Sab_Tables" ) &&
+        material_rep.isParameter( "Sab_Path") )
     {
-      unsigned id = material_rep.get<unsigned>( "Id" );
-      
-      sab_use_map[id]   = material_rep.get<bool>( "Sab_Nuclide" );
-      sab_path_map[id]  = material_rep.get<std::string>( "Sab_Path" );
-      sab_table_map[id] = material_rep.get<std::string>( "Sab_Table" );
+    
+		  // Get the names of the S(alpha,beta) isotopes
+      const Teuchos::Array<std::string>& sab_isotopes =
+        material_rep.get<Teuchos::Array<std::string> >( "Sab_Isotopes" );
+        
+      const Teuchos::Array<std::string>& sab_tables =
+        material_rep.get<Teuchos::Array<std::string> >( "Sab_Tables" );
+        
+      for( int i = 0; i < sab_isotopes.length(); ++i )
+      {
+        sab_use_map[sab_isotopes[i]] = true;
+        sab_table_map[sab_isotopes[i]] = sab_tables[i];
+        sab_path_map[sab_isotopes[i]] = material_rep.get<std::string>( "Sab_Path" );
+
+      }
     }
-    else if( !material_rep.isParameter( "sab_nuclides" ) ||
-             !material_rep.isParameter( "sab_tables" ) ||
-             !material_rep.isParameter( "sab_path" ) )
+    else if( !material_rep.isParameter( "Sab_Isotopes" ) ||
+             !material_rep.isParameter( "Sab_Tables" ) ||
+             !material_rep.isParameter( "Sab_Path" ) )
     {
       THROW_EXCEPTION( std::logic_error,
            "Error: S(alpha,beta) data was only partially requested in the "
@@ -301,21 +344,23 @@ void CollisionHandlerFactory::createAliasSet(
       // The name is a key - store the mapped name
       if( cross_sections_alias_map.isParameter( material_isotopes[i] ) )
       {
-	std::string mapped_alias;
-	try{ 
-	  mapped_alias = 
-	    cross_sections_alias_map.get<std::string>( material_isotopes[i] );
+	      std::string mapped_alias;
+	      
+	      try
+	      { 
+	        mapped_alias = 
+	        cross_sections_alias_map.get<std::string>( material_isotopes[i] );
         }
-	EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-				  "Error: cross section alias map entry "
-				  << material_isotopes[i] <<
-				  "is invalid! Please fix this entry." );
+	      EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
+				        "Error: cross section alias map entry "
+				        << material_isotopes[i] <<
+				        "is invalid! Please fix this entry." );
 
-	nuclides.insert( mapped_alias );	   
+	      nuclides.insert( mapped_alias );	   
       }
       // The name is not a key - store the name
       else
-	nuclides.insert( material_isotopes[i] );
+	      nuclides.insert( material_isotopes[i] );
     }
     
     ++it;
@@ -357,15 +402,88 @@ void CollisionHandlerFactory::createMaterialIdDataMaps(
 			"Error: The number of fractions does not "
 			"equal the number of isotopes in material "
 			<< material_rep.name() << "!" );
+				
+		// Update material isotope names in the event S(alpha,beta) data is
+		//   requested.	
+		if( material_rep.isParameter( "Sab_Isotopes" ) )
+		{
+      const Teuchos::Array<std::string>& sab_isotopes =
+        material_rep.get<Teuchos::Array<std::string> >( "Sab_Isotopes" );
+        
+      Teuchos::Array<std::string> full_iso_list;  
+      
+      for( int iso = 0; iso < sab_isotopes.length(); ++iso )
+      {
+        if( sab_isotopes[iso] == material_isotopes[iso] )
+        {
+          full_iso_list.push_back( sab_isotopes[iso] + "_sab" );
+        }
+        else
+        {
+          full_iso_list.push_back( material_isotopes[iso] );
+        }
+      }
+      
+      material_id_fraction_map[material_rep.get<unsigned>( "Id" )] = 
+        material_fractions;
 
-    material_id_fraction_map[material_rep.get<unsigned>( "Id" )] = 
-      material_fractions;
+      material_id_component_map[material_rep.get<unsigned>( "Id" )] = 
+        full_iso_list;
+		}
+    else
+    {
+      material_id_fraction_map[material_rep.get<unsigned>( "Id" )] = 
+        material_fractions;
 
-    material_id_component_map[material_rep.get<unsigned>( "Id" )] = 
-      material_isotopes;
-    
+      material_id_component_map[material_rep.get<unsigned>( "Id" )] = 
+        material_isotopes;
+    }
     ++it;
   }
+}
+
+// Create the neutron materials
+void CollisionHandlerFactory::createNeutronMaterials( 
+                       const Teuchos::ParameterList& cross_sections_table_info,
+                       const std::string& cross_sections_xml_directory,
+                       const MatIdFractionMap& material_id_fraction_map,
+                       const MatIdComponentMap& material_id_component_map,
+                       const AliasSet& nuclide_aliases,
+                       const CellIdMatIdMap& cell_id_mat_id_map,
+                       const CellIdDensityMap& cell_id_density_map,
+                       const bool use_unresolved_resonance_data,
+                       const bool use_photon_production_data )
+{
+  // Load the nuclides of interest
+  NuclideFactory nuclide_factory( cross_sections_xml_directory,
+				                          cross_sections_table_info,
+			                        	  nuclide_aliases,
+				                          use_unresolved_resonance_data,
+				                          use_photon_production_data,
+				                          d_os_warn );
+
+  std::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;
+
+  nuclide_factory.createNuclideMap( nuclide_map );
+
+  // Create the material name data maps
+  std::unordered_map<std::string,Teuchos::RCP<NeutronMaterial> >
+    material_name_pointer_map;
+  
+  MatNameCellIdsMap material_name_cell_ids_map;
+
+  CollisionHandlerFactory::createMaterialNameDataMaps( 
+						  material_id_fraction_map,
+						  material_id_component_map,
+						  nuclide_map,
+						  cell_id_mat_id_map,
+						  cell_id_density_map,
+						  material_name_pointer_map,
+						  material_name_cell_ids_map );
+
+  // Register materials with the collision handler
+  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
+					      material_name_cell_ids_map );
 }
 
 // Create the neutron materials
@@ -389,6 +507,9 @@ void CollisionHandlerFactory::createNeutronMaterials(
 			                        	  nuclide_aliases,
 				                          use_unresolved_resonance_data,
 				                          use_photon_production_data,
+				                          sab_use_map,
+				                          sab_path_map,
+				                          sab_table_map,
 				                          d_os_warn );
 
   std::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;

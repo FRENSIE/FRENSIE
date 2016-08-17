@@ -47,15 +47,15 @@ public:
 		     const std::string& cross_sections_xml_directory );
 
   //! The sab use map typedef
-  typedef std::unordered_map<unsigned, bool>
+  typedef std::unordered_map<std::string, bool>
     SabUseMap;
     
   //! The sab file path map typedef
-  typedef std::unordered_map<unsigned, std::string>
+  typedef std::unordered_map<std::string, std::string>
     SabPathMap;
     
   //! The sab table name map typedef
-  typedef std::unordered_map<unsigned, std::string>
+  typedef std::unordered_map<std::string, std::string>
     SabTableMap;
 		     
   //! Check if S(alpha,beta) data is present
@@ -135,10 +135,22 @@ private:
                        const CellIdMatIdMap& cell_id_mat_id_map,
                        const CellIdDensityMap& cell_id_density_map,
                        const bool use_unresolved_resonance_data,
+                       const bool use_photon_production_data );
+
+  //! Create the neutron materials
+  void createNeutronMaterials( 
+                       const Teuchos::ParameterList& cross_sections_table_info,
+                       const std::string& cross_sections_xml_directory,
+                       const MatIdFractionMap& material_id_fraction_map,
+                       const MatIdComponentMap& material_id_component_map,
+                       const AliasSet& nuclide_aliases,
+                       const CellIdMatIdMap& cell_id_mat_id_map,
+                       const CellIdDensityMap& cell_id_density_map,
+                       const bool use_unresolved_resonance_data,
                        const bool use_photon_production_data,
                        SabUseMap sab_use_map,
                        SabPathMap sab_path_map,
-                      SabTableMap sab_table_map );
+                       SabTableMap sab_table_map );
    
   //! Create the photon materials
   void createPhotonMaterials(

@@ -43,7 +43,7 @@ public:
 		  const std::unordered_set<std::string>& nuclide_aliases,
 		  const bool use_unresolved_resonance_data,
 		  const bool use_photon_production_data,
-		  const bool use_sab_data,
+		  std::unordered_map<std::string,bool>& use_sab_data,
 		  std::unordered_map<std::string,std::string>& sab_file_paths,
 		  std::unordered_map<std::string,std::string>& sab_table_names,
 		  std::ostream* os_message = &std::cout );

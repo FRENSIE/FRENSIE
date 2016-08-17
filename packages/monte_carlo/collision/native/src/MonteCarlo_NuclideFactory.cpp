@@ -86,20 +86,20 @@ NuclideFactory::NuclideFactory(
   }
 
   // Make sure that every nuclide has been created
-  testPostcondition( d_nuclide_name_map.size() == nuclide_aliases.size() );
+  testPostcondition( d_nuclide_name_map.size() >= nuclide_aliases.size() );
 }
 
 // Constructor
 NuclideFactory::NuclideFactory( 
-		     const std::string& cross_sections_xml_directory,
-		     const Teuchos::ParameterList& cross_section_table_info,
-		     const std::unordered_set<std::string>& nuclide_aliases,
-		     const bool use_unresolved_resonance_data,
-		     const bool use_photon_production_data,
-		     std::unordered_map<unsigned, bool>,
-		     std::unordered_map<std::string,std::string>& sab_file_paths,
-		     std::unordered_map<std::string,std::string>& sab_table_names,
-		     std::ostream* os_message )
+		  const std::string& cross_sections_xml_directory,
+		  const Teuchos::ParameterList& cross_section_table_info,
+		  const std::unordered_set<std::string>& nuclide_aliases,
+		  const bool use_unresolved_resonance_data,
+		  const bool use_photon_production_data,
+		  std::unordered_map<std::string,bool>& use_sab_data,
+		  std::unordered_map<std::string,std::string>& sab_file_paths,
+		  std::unordered_map<std::string,std::string>& sab_table_names,
+		  std::ostream* os_message )
   : d_os_message( os_message )
 { 
   // Make sure the message output stream is valid
@@ -132,7 +132,12 @@ NuclideFactory::NuclideFactory(
 
     if( nuclide_file_type == CrossSectionsXMLProperties::ace_file )
     {
-      if( use_sab_data )
+      std::unordered_map<std::string,bool>::const_iterator use_sab_data_it =
+        use_sab_data.find(*nuclide_name);
+        
+      bool sab_use_bool = use_sab_data_it->second;
+    
+      if( sab_use_bool )
       {
         std::unordered_map<std::string,std::string>::const_iterator
           sab_file_path = sab_file_paths.find(*nuclide_name);
@@ -140,6 +145,7 @@ NuclideFactory::NuclideFactory(
         std::unordered_map<std::string,std::string>::const_iterator
           sab_table_name = sab_table_names.find(*nuclide_name);
       
+        // Construct S(alpha,beta) nuclide
         createNuclideFromACETable( cross_sections_xml_directory,
 				   *nuclide_name,
 				   nuclide_file_path,
@@ -154,6 +160,20 @@ NuclideFactory::NuclideFactory(
 				   use_photon_production_data,
 				   sab_file_path->second,
 				   sab_table_name->second );
+				 
+				 // Construct original nuclide  
+				 createNuclideFromACETable( cross_sections_xml_directory,
+				   *nuclide_name,
+				   nuclide_file_path,
+				   nuclide_table_name,
+				   nuclide_file_start_line,
+				   atomic_number,
+				   atomic_mass_number,
+				   isomer_number,
+				   atomic_weight_ratio,
+				   temperature,
+				   use_unresolved_resonance_data,
+				   use_photon_production_data );
       }
       else
       {
@@ -295,7 +315,7 @@ void NuclideFactory::createNuclideFromACETable(
 				         
 
   // Initialize the new nuclide
-  Teuchos::RCP<Nuclide>& nuclide = d_nuclide_name_map[nuclide_alias];
+  Teuchos::RCP<Nuclide>& nuclide = d_nuclide_name_map[nuclide_alias + "_sab"];
   
   // Create the new nuclide
   SAlphaBetaNuclideACEFactory::createNuclide( xss_data_extractor,
