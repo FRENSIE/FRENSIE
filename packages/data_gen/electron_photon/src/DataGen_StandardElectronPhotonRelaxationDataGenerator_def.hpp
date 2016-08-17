@@ -16,10 +16,11 @@ namespace DataGen{
 
 // Extract the average photon heating numbers
 template<typename InterpPolicy>
-void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
+void StandardElectronPhotonRelaxationDataGenerator::extractPhotonCrossSection(
 	   Teuchos::ArrayView<const double> raw_energy_grid,
 	   Teuchos::ArrayView<const double> raw_cross_section,
-	   std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const
+	   std::shared_ptr<const Utility::OneDDistribution>& cross_section,
+           const bool processed_raw_data ) const
 {
   // Find the first non-zero cross section value
   Teuchos::ArrayView<const double>::iterator start =
@@ -40,12 +41,16 @@ void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
   energy_grid.assign( start, raw_energy_grid.end() );
 
   // Recover the original energy grid and cross_section
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  if( processed_raw_data )
   {
-    energy_grid[i] = InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
+    for( unsigned i = 0; i < energy_grid.size(); ++i )
+    {
+      energy_grid[i] =
+        InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
 
-    processed_cross_section[i] =
-      InterpPolicy::recoverProcessedDepVar( processed_cross_section[i] );
+      processed_cross_section[i] =
+        InterpPolicy::recoverProcessedDepVar( processed_cross_section[i] );
+    }
   }
 
   cross_section.reset( new Utility::TabularDistribution<InterpPolicy>(

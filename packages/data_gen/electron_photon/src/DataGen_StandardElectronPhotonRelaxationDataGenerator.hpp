@@ -184,10 +184,11 @@ private:
 
   // Extract the average photon heating numbers
   template<typename InterpPolicy>
-  void extractCrossSection(
+  void extractPhotonCrossSection(
 	  Teuchos::ArrayView<const double> raw_energy_grid,
 	  Teuchos::ArrayView<const double> raw_cross_section,
-	  std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const;
+	  std::shared_ptr<const Utility::OneDDistribution>& cross_section,
+          const bool processed_raw_data = true ) const;
 
   // Extract electron cross sections
   template<typename InterpPolicy>
@@ -214,7 +215,9 @@ private:
    const std::list<double>& union_energy_grid,
    const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
    std::vector<double>& cross_section,
-   unsigned& threshold_index ) const;
+   unsigned& threshold_index,
+   const double true_threshold_energy,
+   const bool zero_at_threshold ) const;
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
@@ -231,19 +234,22 @@ private:
 
   // Calculate the total photoelectric cross section
   void calculateTotalPhotoelectricCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Calculate the total impulse approx. incoherent cross section
   void calculateImpulseApproxTotalIncoherentCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Calculate the Waller-Hartree total cross section
-  void calculateWallerHartreeTotalCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  // Calculate the photon total cross section
+  void calculatePhotonTotalCrossSection(
+           Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+           const bool use_waller_hartree_incoherent_cs ) const;
 
-  // Calculate the impulse approx total cross section
-  void calculateImpulseApproxTotalCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  // Add cross section to photon total cross section
+  void addCrossSectionToPhotonTotalCrossSection(
+                              const std::vector<double>& energy_grid,
+                              const std::vector<double>& cross_section,
+                              std::vector<double>& total_cross_section ) const;
 
   // Calculate the elastic anglular distribution for the angle cosine
   void calculateElasticAngleCosine(

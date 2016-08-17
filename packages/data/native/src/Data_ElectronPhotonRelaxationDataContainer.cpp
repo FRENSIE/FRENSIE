@@ -1224,7 +1224,7 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxIncoherentCrossSecti
   // Make sure the incoherent cross section is valid
   testPrecondition( incoherent_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( incoherent_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( incoherent_cross_section );
 
   d_impulse_approx_incoherent_cross_section = incoherent_cross_section;
 }
@@ -1250,7 +1250,7 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxSubshellIncoherentCr
   // Make sure the incoherent cross section is valid
   testPrecondition( incoherent_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( incoherent_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( incoherent_cross_section );
 
   d_impulse_approx_subshell_incoherent_cross_sections[subshell] =
     incoherent_cross_section;
@@ -1305,7 +1305,7 @@ void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSection(
   // Make sure the pair production cross section is valid
   testPrecondition( pair_production_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( pair_production_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( pair_production_cross_section );
 
   d_pair_production_cross_section = pair_production_cross_section;
 }
@@ -1328,7 +1328,7 @@ void ElectronPhotonRelaxationDataContainer::setTripletProductionCrossSection(
   // Make sure the triplet production cross section is valid
   testPrecondition( triplet_production_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( triplet_production_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( triplet_production_cross_section );
 
   d_triplet_production_cross_section = triplet_production_cross_section;
 }
@@ -1376,7 +1376,7 @@ void ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSection
   // Make sure the photoelectric cross section is valid
   testPrecondition( photoelectric_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( photoelectric_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( photoelectric_cross_section );
 
   d_subshell_photoelectric_cross_sections[subshell] =
     photoelectric_cross_section;
@@ -1822,7 +1822,7 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSection(
   // Make sure the electroionization cross section is valid
   testPrecondition( electroionization_cross_section.size() <=
                     d_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero(electroionization_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero(electroionization_cross_section );
 
   d_electroionization_subshell_cross_section[subshell] =
     electroionization_cross_section;
@@ -1874,7 +1874,7 @@ void ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSection(
   // Make sure the atomic excitation cross section is valid
   testPrecondition( atomic_excitation_cross_section.size() <=
                     d_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( atomic_excitation_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( atomic_excitation_cross_section );
 
   d_atomic_excitation_cross_section = atomic_excitation_cross_section;
 }
