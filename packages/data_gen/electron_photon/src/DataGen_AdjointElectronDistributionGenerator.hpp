@@ -14,7 +14,7 @@
 #include <memory>
 
 // FRENSIE Includes
-#include "MonteCarlo_AdjointElectronCrossSectionEvaluator.hpp"
+#include "DataGen_AdjointElectronCrossSectionEvaluator.hpp"
 #include "Utility_TwoDGridGenerator.hpp"
 
 namespace DataGen{
@@ -28,12 +28,12 @@ public:
 
   //! Constructor
   AdjointElectronDistributionGenerator(
-            const double max_energy = 20.0,
-            const double max_energy_nudge_value = 0.2,
-            const double energy_to_outgoing_energy_nudge_value = 2e-7,
-            const double convergence_tol = 0.001,
-            const double absolute_diff_tol = 1e-12,
-            const double distance_tol = 1e-14 );
+          const double max_energy = 20.0,
+          const double max_energy_nudge_value = 0.2,
+          const double energy_to_outgoing_energy_nudge_value = 1e-6,
+          const double convergence_tol = 0.001,
+          const double absolute_diff_tol = 1e-10,
+          const double distance_tol = 1e-8 );
 
   //! Destructor
   virtual ~AdjointElectronDistributionGenerator()
@@ -55,12 +55,15 @@ public:
   //! Get the nudged energy
   double getNudgedEnergy( const double energy ) const;
 
-  //! Create an adjoint pdf evaluator
+  //! Generate and evaluate the distribution grid in place
   template< typename ElectroatomicReaction >
-  static std::function<double (double,double)>
-  createAdjointPDFEvaluator(
-     const std::shared_ptr<const DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> >& adjoint_evaluator,
-     const double cross_section_evaluation_tol );
+  void generateAndEvaluateDistributionInPlace(
+    std::vector<double>& outgoing_energy_grid,
+    std::vector<double>& evaluated_pdf,
+    const std::shared_ptr<const DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> >& adjoint_evaluator,
+    const double evaluation_tol,
+    const double incoming_adjoint_energy,
+    const double adjoint_cross_section ) const;
                               
 
 protected:
@@ -79,6 +82,12 @@ private:
 
   // The energy to outgoing energy nudge value
   double d_energy_to_outgoing_energy_nudge_value;
+
+  // The adjoint electron cross section energy grid (for the given reaction)
+  std::vector<double> d_energy_grid;
+
+  // The adjoint electron cross section (for the given reaction)
+  std::vector<double> d_cross_section;
 };
 
 } // end DataGen namespace

@@ -14,6 +14,13 @@ TARGET_LINK_LIBRARIES(tstAdjointElectronCrossSectionEvaluator data_gen_electron_
 ADD_TEST(AdjointElectronCrossSectionEvaluator_test tstAdjointElectronCrossSectionEvaluator --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_ace_table="1000.12p" --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
 SET_PROPERTY(TEST AdjointElectronCrossSectionEvaluator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
 
+ADD_EXECUTABLE(tstAdjointElectronDistributionGenerator
+  tstAdjointElectronDistributionGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstAdjointElectronDistributionGenerator data_gen_electron_photon)
+ADD_TEST(AdjointElectronDistributionGenerator_test
+  tstAdjointElectronDistributionGenerator  --test_native_h_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+SET_PROPERTY(TEST AdjointElectronDistributionGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
+
 ADD_EXECUTABLE(tstAdjointIncoherentCrossSectionHelpers
   tstAdjointIncoherentCrossSectionHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
