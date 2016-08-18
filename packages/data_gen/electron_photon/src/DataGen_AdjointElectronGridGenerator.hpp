@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_AdjointElectronDistributionGenerator.hpp
+//! \file   DataGen_AdjointElectronGridGenerator.hpp
 //! \author Luke Kersting
-//! \brief  Adjoint electron distribution generator declaration
+//! \brief  Adjoint electron grid generator declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_ADJOINT_ELECTRON_DISTRIBUTION_GENERATOR_HPP
-#define DATA_GEN_ADJOINT_ELECTRON_DISTRIBUTION_GENERATOR_HPP
+#ifndef DATA_GEN_ADJOINT_ELECTRON_GRID_GENERATOR_HPP
+#define DATA_GEN_ADJOINT_ELECTRON_GRID_GENERATOR_HPP
 
 // Std Lib Includes
 #include <functional>
@@ -19,15 +19,25 @@
 
 namespace DataGen{
 
-//! The adjoint electron distribution generator
+//! The adjoint electron grid generator
 template<typename TwoDInterpPolicy>
-class AdjointElectronDistributionGenerator : public Utility::TwoDGridGenerator<TwoDInterpPolicy>
+class AdjointElectronGridGenerator : public Utility::TwoDGridGenerator<TwoDInterpPolicy>
 {
 
 public:
 
-  //! Constructor
-  AdjointElectronDistributionGenerator(
+//  //! Advance Constructor
+//  AdjointElectronGridGenerator(
+//          const std::vector<double>& critical_energies,
+//          const double max_energy = 20.0,
+//          const double max_energy_nudge_value = 0.2,
+//          const double energy_to_outgoing_energy_nudge_value = 1e-6,
+//          const double convergence_tol = 0.001,
+//          const double absolute_diff_tol = 1e-10,
+//          const double distance_tol = 1e-8 );
+
+  //! Basic Constructor
+  AdjointElectronGridGenerator(
           const double max_energy = 20.0,
           const double max_energy_nudge_value = 0.2,
           const double energy_to_outgoing_energy_nudge_value = 1e-6,
@@ -36,7 +46,7 @@ public:
           const double distance_tol = 1e-8 );
 
   //! Destructor
-  virtual ~AdjointElectronDistributionGenerator()
+  virtual ~AdjointElectronGridGenerator()
   { /* ... */ }
 
   //! Get the max energy
@@ -55,18 +65,23 @@ public:
   //! Get the nudged energy
   double getNudgedEnergy( const double energy ) const;
 
-  //! Generate and evaluate the distribution grid in place
+  //! Set the critcal energies for the primary grid
+  void setCriticalEnergies( const std::vector<double> critical_energies );
+  
+  //! Get the critcal energies for the primary grid
+  std::vector<double> getCriticalEnergies() const;
+
+  //! Create a cross section evaluator
   template< typename ElectroatomicReaction >
-  void generateAndEvaluateDistributionInPlace(
-    std::vector<double>& outgoing_energy_grid,
-    std::vector<double>& evaluated_pdf,
-    const std::shared_ptr<const DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> >& adjoint_evaluator,
-    const double evaluation_tol,
-    const double incoming_adjoint_energy,
-    const double adjoint_cross_section ) const;
+  static std::function<double (double,double)> createCrossSectionEvaluator(
+    const std::shared_ptr<const DataGen::AdjointElectronCrossSectionEvaluator<ElectroatomicReaction> >& adjoint_diff_cross_section,
+    const double cross_section_evaluation_tol );
                               
 
 protected:
+
+  //! Add critical energies to energy grid
+  void addCriticalValuesToPrimaryGrid(std::deque<double>& energy_grid ) const;
 
   //! Initialize the outgoing energy grid at an energy grid point
   void initializeSecondaryGrid( std::vector<double>& outgoing_energy_grid,
@@ -82,6 +97,9 @@ private:
 
   // The energy to outgoing energy nudge value
   double d_energy_to_outgoing_energy_nudge_value;
+
+  // The critical enegies on the primary grid
+  std::vector<double> d_critical_energies;
 };
 
 } // end DataGen namespace
@@ -90,12 +108,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "DataGen_AdjointElectronDistributionGenerator_def.hpp"
+#include "DataGen_AdjointElectronGridGenerator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end DATA_GEN_ADJOINT_ELECTRON_DISTRIBUTION_GENERATOR_HPP
+#endif // end DATA_GEN_ADJOINT_ELECTRON_GRID_GENERATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_AdjointElectronDistributionGenerator.hpp
+// end DataGen_AdjointElectronGridGenerator.hpp
 //---------------------------------------------------------------------------//

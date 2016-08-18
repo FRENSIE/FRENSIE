@@ -21,6 +21,13 @@ ADD_TEST(AdjointElectronDistributionGenerator_test
   tstAdjointElectronDistributionGenerator  --test_native_h_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 SET_PROPERTY(TEST AdjointElectronDistributionGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
 
+ADD_EXECUTABLE(tstAdjointElectronGridGenerator
+  tstAdjointElectronGridGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstAdjointElectronGridGenerator data_gen_electron_photon)
+ADD_TEST(AdjointElectronGridGenerator_test
+  tstAdjointElectronGridGenerator  --test_native_h_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+SET_PROPERTY(TEST AdjointElectronGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
+
 ADD_EXECUTABLE(tstAdjointIncoherentCrossSectionHelpers
   tstAdjointIncoherentCrossSectionHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

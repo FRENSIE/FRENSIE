@@ -27,11 +27,11 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
-  typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>
-    ElectroionizationReaction;
+typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>
+  ElectroionizationReaction;
 
-  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> 
-    BremsstrahlungReaction;
+typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> 
+  BremsstrahlungReaction;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -44,10 +44,6 @@ std::shared_ptr<const DataGen::AdjointElectronCrossSectionEvaluator<Electroioniz
 
 std::shared_ptr<const DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
   bremsstrahlung_adjoint_cs;
-
-std::vector<double> energy_grid, cross_section;
-
-unsigned threshold_index;
 
 double min_energy = 1e-5;
 double max_energy = 20.0;
@@ -222,50 +218,6 @@ int main( int argc, char** argv )
     data_container_h.reset(
       new Data::ElectronPhotonRelaxationDataContainer(
         test_native_h_file_name ) );
-
-    {
-
-      std::vector<double>::const_iterator start, end;
-
-      if ( min_energy <= data_container_h->getElectronEnergyGrid().front() )
-      {
-        start = data_container_h->getElectronEnergyGrid().begin();
-      }
-      else
-      {
-        // Find the location of the first grid point that is <= the min energy
-        start = std::upper_bound(
-                    data_container_h->getElectronEnergyGrid().begin(),
-                    data_container_h->getElectronEnergyGrid().end(),
-                    min_energy );
-        --start;
-      }
-
-        // Find the location of the first grid point that is >= the max energy
-      end = std::lower_bound(
-                  start,
-                  data_container_h->getElectronEnergyGrid().end(),
-                  max_energy );
-      ++end;
-
-      std::vector<double> bremsstrahlung_integration_points( start, end );
-
-      energy_grid.assign( start, end );
-
-      unsigned index = std::distance(
-        data_container_h->getElectronEnergyGrid().begin(), start );
-      start = data_container_h->getBremsstrahlungCrossSection().begin();
-      std::advance( start, index );
-
-      index = std::distance(
-        data_container_h->getElectronEnergyGrid().begin(), end );
-      end = data_container_h->getBremsstrahlungCrossSection().begin();
-      std::advance( end, index );
-
-      cross_section.assign( start, end );
-      threshold_index =
-        data_container_h->getBremsstrahlungCrossSectionThresholdEnergyIndex();
-    }
 
     // Extract the common electron energy grid
     Teuchos::ArrayRCP<double> union_energy_grid;
