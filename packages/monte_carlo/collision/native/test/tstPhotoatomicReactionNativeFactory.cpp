@@ -162,12 +162,12 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   TEST_EQUALITY_CONST(reactions.front()->getReactionType(),
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
-		       8.82900086220703151e-02 );
+		       8.82899999999999935e-02 );
 
   double cross_section = reactions.front()->getCrossSection(
-						     8.82900086220703151e-02 );
+                                                     8.82899999999999935e-02 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-6 );
 
   cross_section = reactions.front()->getCrossSection( 20.0 );
 
@@ -209,12 +209,12 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   TEST_EQUALITY_CONST(reactions.front()->getReactionType(),
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
-		       8.82900086220703151e-02 );
+		       8.82899999999999935e-02 );
 
   double cross_section = reactions.front()->getCrossSection(
-						     8.82900086220703151e-02 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
+                                                     8.82899999999999935e-02 );
+						     
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-6 );
 
   cross_section = reactions.front()->getCrossSection( 20.0 );
   
@@ -346,20 +346,21 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   TEST_EQUALITY_CONST( reaction->getReactionType(),
 		       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
-		       1.02673329640432032e+00 );
+		       2*Utility::PhysicalConstants::electron_rest_mass_energy );
 
   // Test that the stored cross section is correct
   double cross_section = reaction->getCrossSection( 0.001 );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = reaction->getCrossSection( 1.02673329640432032e+00 );
+  cross_section = reaction->getCrossSection(
+                     2*Utility::PhysicalConstants::electron_rest_mass_energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.09098184021483652e-06, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
 
   cross_section = reaction->getCrossSection( 20.0 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 1.87762999999973985e+01, 1e-15 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -409,11 +410,11 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 		   reactions.front()->getReactionType(),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
-		       8.82900099999595622e-02 );
+		       8.82899999999999935e-02 );
 
   double cross_section = reactions.front()->getCrossSection(
-						     8.82900099999595622e-02 );
-
+                                                     8.82899999999999935e-02 );
+  
   TEST_FLOATING_EQUALITY( cross_section, 1.95582145812230942e+03, 1e-15 );
 
   cross_section = reactions.front()->getCrossSection( 20.0 );

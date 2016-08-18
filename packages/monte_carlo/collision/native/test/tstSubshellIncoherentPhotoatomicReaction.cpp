@@ -96,12 +96,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getThresholdEnergy )
 {
   TEST_FLOATING_EQUALITY(
 		      basic_subshell_incoherent_reaction->getThresholdEnergy(),
-		      8.82900086220703151e-02,
+		      8.82899999999999935e-02,
 		      1e-15 );
 
   TEST_FLOATING_EQUALITY(
 		   detailed_subshell_incoherent_reaction->getThresholdEnergy(),
-		   8.82900086220703151e-02,
+		   8.82899999999999935e-02,
 		   1e-15 );
 }
 

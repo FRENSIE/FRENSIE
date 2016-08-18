@@ -233,13 +233,14 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test the first shell's reaction properties
   TEST_EQUALITY_CONST(
-		   reactions.front()->getReactionType(),
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(), 8.97540e-2 );
+             reactions.front()->getReactionType(),
+	     MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
+                       8.82899999999999935e-02 );
 
   // Test the first shell's stored cross section is correct
   double cross_section =
-    reactions.front()->getCrossSection( 8.829000E-02 );
+    reactions.front()->getCrossSection( 8.82899999999999935e-02 );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
