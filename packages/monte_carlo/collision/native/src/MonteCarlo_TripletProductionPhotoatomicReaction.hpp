@@ -1,41 +1,41 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PairProductionPhotoatomicReaction.hpp
+//! \file   MonteCarlo_TripletProductionPhotoatomicReaction.hpp
 //! \author Alex Robinson
-//! \brief  The pair production photoatomic reaction class decl.
+//! \brief  The triplet production photoatomic reaction class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_HPP
-#define MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION_HPP
+#define MONTE_CARLO_TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION_HPP
 
-// Boost Includes
-#include <boost/function.hpp>
+// Std Lib Includes
+#include <functional>
 
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardPhotoatomicReaction.hpp"
 
 namespace MonteCarlo{
 
-//! The pair production photoatomic reaction class
+//! The triplet production photoatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = true>
-class PairProductionPhotoatomicReaction : public StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>
+class TripletProductionPhotoatomicReaction : public StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>
 {
 
 public:
 
-  //! Basic constructor
-  PairProductionPhotoatomicReaction(
-		const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		const Teuchos::ArrayRCP<const double>& cross_section,
-		const unsigned threshold_energy_index,
-		const bool use_detailed_electron_emission_physics = true );
+  //! Basic Constructor
+  TripletProductionPhotoatomicReaction(
+                   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+                   const Teuchos::ArrayRCP<const double>& cross_section,
+                   const unsigned threshold_energy_index,
+                   const bool use_detailed_electron_emission_physics = true );
 
   //! Constructor
-  PairProductionPhotoatomicReaction(
+  TripletProductionPhotoatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
@@ -43,7 +43,7 @@ public:
        const bool use_detailed_electron_emission_physics = true );
 
   //! Destructor
-  ~PairProductionPhotoatomicReaction()
+  ~TripletProductionPhotoatomicReaction()
   { /* ... */ }
 
   //! Return the number of photons emitted from the rxn at the given energy
@@ -62,18 +62,18 @@ public:
 
 protected:
 
-  //! The basic pair production model
+  //! The basic triplet production model
   static void basicInteraction( PhotonState& photon,
-				ParticleBank& bank );
+                                ParticleBank& bank );
 
-  //! The detailed pair production model
+  //! The detailed triplet production model
   static void detailedInteraction( PhotonState& photon,
-				   ParticleBank& bank );
-
-  //! The number of photons emitted from pair production using simple model
+                                   ParticleBank& bank );
+  
+  //! The number of photons emitted from triplet prod. using simple model
   static unsigned basicInteractionPhotonEmission();
 
-  //! The number of photons emitted from pair production using detailed model
+  //! The number of photons emitted from triplet prod. using detailed model
   static unsigned detailedInteractionPhotonEmission();
 
 private:
@@ -82,25 +82,25 @@ private:
   void initializeInteractionModels(
                            const bool use_detailed_electron_emission_physics );
 
-  // The pair production model
+  // The triplet production model
   boost::function<void (PhotonState&,ParticleBank&)> d_interaction_model;
 
   // The number of photons emitted from the interaction (model dependent)
   boost::function<unsigned (void)> d_interaction_model_emission;
 };
-
+  
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes.
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_PairProductionPhotoatomicReaction_def.hpp"
+#include "MonteCarlo_TripletProductionPhotoatomicReaction_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PairProductionPhotoatomicReaction.hpp
+// end MonteCarlo_TripletProductionPhotoatomicReaction.hpp
 //---------------------------------------------------------------------------//

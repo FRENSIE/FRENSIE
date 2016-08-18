@@ -69,7 +69,23 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cross section can be returned
+// Check that the number of electrons emitted from the rxn can be returned
+TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction,
+                   getNumberOfEmittedElectrons )
+{
+  TEST_EQUALITY_CONST(
+              ace_basic_pp_reaction->getNumberOfEmittedElectrons( 1e-4 ), 0u );
+
+  TEST_EQUALITY_CONST( ace_basic_pp_reaction->getNumberOfEmittedElectrons(
+                         ace_basic_pp_reaction->getThresholdEnergy() ),
+		       1u );
+
+  TEST_EQUALITY_CONST(
+              ace_basic_pp_reaction->getNumberOfEmittedElectrons( 20.0 ), 1u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the pair production cross section can be returned
 TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getCrossSection_ace )
 {
   double cross_section = ace_basic_pp_reaction->getCrossSection(

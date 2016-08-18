@@ -1,16 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PairProductionPhotoatomicReaction_def.hpp
+//! \file   MonteCarlo_TripletProductionPhotoatomicReaction_def.hpp
 //! \author Alex Robinson
-//! \brief  The pair production photoatomic reaction class definition
+//! \brief  The triplet production photoatomic reaction class definition.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
-#define MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
-
-// Std Lib Includes
-#include <math.h>
+#ifndef MONTE_CARLO_TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
+#define MONTE_CARLO_TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
@@ -22,24 +19,24 @@
 
 namespace MonteCarlo{
 
-// Basic constructor
+// Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairProductionPhotoatomicReaction(
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const unsigned threshold_energy_index,
-		   const bool use_detailed_electron_emission_physics )
+TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::TripletProductionPhotoatomicReaction(
+                   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+                   const Teuchos::ArrayRCP<const double>& cross_section,
+                   const unsigned threshold_energy_index,
+                   const bool use_detailed_electron_emission_physics )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-						       incoming_energy_grid,
-						       cross_section,
-						       threshold_energy_index )
+                                                       incoming_energy_grid,
+                                                       cross_section,
+                                                       threshold_energy_index )
 {
   this->initializeInteractionModels( use_detailed_electron_emission_physics );
 }
 
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairProductionPhotoatomicReaction(
+TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::TripletProductionPhotoatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
@@ -59,7 +56,7 @@ PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairPro
 
 // Return the number of photons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() )
     return d_interaction_model_emission();
@@ -69,27 +66,27 @@ unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>
 
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+unsigned TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() )
-    return 1u;
+    return 2u;
   else
     return 0u;
 }
 
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
-PhotoatomicReactionType PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+PhotoatomicReactionType TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return PAIR_PRODUCTION_PHOTOATOMIC_REACTION;
+  return TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION;
 }
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     PhotonState& photon,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
+                               PhotonState& photon,
+                               ParticleBank& bank,
+                               Data::SubshellType& shell_of_interaction ) const
 {
   // Make sure it is energetically possible for this reaction to occur
   testPrecondition( photon.getEnergy() >= this->getThresholdEnergy() );
@@ -101,28 +98,33 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::re
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
-// The basic pair production model
-/*! \details Simplified Model: Assume that the outgoing electron is emitted at
- * the mean emission angle (theta_mean = m_e*c^2/E_mean), w.r.t the original
- * photon direction, with the mean emission energy (E_mean = E_kinetic/2).
- * The positron will also be emitted at the mean emission angle and with the
- * remaining energy (E_mean). It will be immediately annihilated but
+// The basic triplet production model
+/*! \details Simplified Model: Assume that both outgoing electrons are emitted
+ * with the mean emission energy (E_mean = E_kinetic/3). One electron will be
+ * emitted at the mean emission angle for pair production
+ * (theta_mean = m_e*c^2/E_mean) and the other will be emitted in the
+ * direction of the incoming photon. The positron will be emitted at the
+ * mean emission angle for pair production and with the remaining
+ * energy (E_mean). It will be immediately annihilated but
  * the annihilation will not occur in-flight (isotropic emission of
  * annihilation photons in lab system). 
  */
 template<typename InterpPolicy, bool processed_cross_section>
-void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::basicInteraction(
-							   PhotonState& photon,
-							   ParticleBank& bank )
+void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::basicInteraction(
+                                                           PhotonState& photon,
+                                                           ParticleBank& bank )
 {
-  Teuchos::RCP<ParticleState> electron(
+  Teuchos::RCP<ParticleState> electron_1(
 				     new ElectronState( photon, true, true ) );
+
+  Teuchos::RCP<ParticleState> electron_2(
+                                     new ElectronState( photon, true, true ) );
 
   const double total_available_kinetic_energy = photon.getEnergy() -
     2*Utility::PhysicalConstants::electron_rest_mass_energy;
 
   const double mean_electron_kinetic_energy =
-    total_available_kinetic_energy/2;
+    total_available_kinetic_energy/3;
 
   const double mean_emission_angle_cosine =
     cos( Utility::PhysicalConstants::electron_rest_mass_energy/
@@ -130,19 +132,26 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
 
   double azimuthal_angle = 2*Utility::PhysicalConstants::pi*
     Utility::RandomNumberGenerator::getRandomNumber<double>();
+  
+  electron_1->setEnergy( mean_electron_kinetic_energy );
+  electron_1->rotateDirection( mean_emission_angle_cosine,
+                               azimuthal_angle );
 
-  electron->setEnergy( mean_electron_kinetic_energy );
-  electron->rotateDirection( mean_emission_angle_cosine,
-                             azimuthal_angle );
+  bank.push( electron_1 );
 
-  bank.push( electron );
+  // Electron 2 is emitted in the direction of the incoming photon
+  electron_2->setEnergy( mean_electron_kinetic_energy );
+
+  bank.push( electron_2 );
+
+  bank.push( electron_2 );
 
   // Change the photon's direction based on the initial direction of the
   // emitted positron
   azimuthal_angle = fmod( azimuthal_angle + Utility::PhysicalConstants::pi,
                           2*Utility::PhysicalConstants::pi );
   photon.rotateDirection( mean_emission_angle_cosine, azimuthal_angle );
-
+  
   // Sample an isotropic outgoing angle for the annihilation photon
   double angle_cosine = -1.0 +
     2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -176,36 +185,36 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   photon.incrementGenerationNumber();
 }
 
-// The detailed pair production model
+// The detailed triplet production model
 /*! \todo Implement the detailed pair production model.
  */
 template<typename InterpPolicy, bool processed_cross_section>
-void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteraction(
-							   PhotonState& photon,
-							   ParticleBank& bank )
+void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteraction(
+                                                           PhotonState& photon,
+                                                           ParticleBank& bank )
 {
   THROW_EXCEPTION( std::runtime_error,
-                   "Error: The detailed pair production model has not been "
+                   "Error: The detailed triplet production model has not been "
                    "implemented yet!" );
 }
-
-// The number of photons emitted from pair production using simple model
+  
+// The number of photons emitted from triplet production using simple model
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::basicInteractionPhotonEmission()
+unsigned TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::basicInteractionPhotonEmission()
 {
   return 2u;
 }
 
-// The number of photons emitted from pair production using detailed model
+// The number of photons emitted from triplet production using detailed model
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteractionPhotonEmission()
+unsigned TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteractionPhotonEmission()
 {
   return 0u;
 }
 
 // Initialize interaction models
 template<typename InterpPolicy, bool processed_cross_section>
-void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::initializeInteractionModels(
+void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::initializeInteractionModels(
                             const bool use_detailed_electron_emission_physics )
 {
   // Note: Detailed electron emission is not currently supported. Positron
@@ -213,11 +222,11 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::in
   d_interaction_model = basicInteraction;
   d_interaction_model_emission = basicInteractionPhotonEmission;
 }
-
+  
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
+#endif // end MONTE_CARLO_TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PairProductionPhotoatomicReaction_def.hpp
+// end MonteCarlo_TripletProductionPhotoatomicReaction_def.hpp
 //---------------------------------------------------------------------------//
