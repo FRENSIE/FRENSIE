@@ -98,7 +98,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::re
 
   // The shell of interaction, which will be important for triplet production
   // is currently ignored
-  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
+  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 }
 
 // The basic pair production model
@@ -124,7 +124,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   const double mean_electron_kinetic_energy =
     total_available_kinetic_energy/2;
 
-  const double mean_emission_angle_cosine =
+  double mean_emission_angle_cosine =
     cos( Utility::PhysicalConstants::electron_rest_mass_energy/
          mean_electron_kinetic_energy );
 
@@ -138,7 +138,8 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   bank.push( electron );
 
   // Change the photon's direction based on the initial direction of the
-  // emitted positron
+  // emitted positron (to conserve momentum we must rotate the
+  // azimuthal angle by pi)
   azimuthal_angle = fmod( azimuthal_angle + Utility::PhysicalConstants::pi,
                           2*Utility::PhysicalConstants::pi );
   photon.rotateDirection( mean_emission_angle_cosine, azimuthal_angle );

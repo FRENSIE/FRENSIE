@@ -95,94 +95,79 @@ void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 
   // The shell of interaction, which will be important for triplet production
   // is currently ignored
-  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
+  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 }
 
 // The basic triplet production model
-/*! \details Simplified Model: Assume that both outgoing electrons are emitted
- * with the mean emission energy (E_mean = E_kinetic/3). One electron will be
- * emitted at the mean emission angle for pair production
- * (theta_mean = m_e*c^2/E_mean) and the other will be emitted in the
- * direction of the incoming photon. The positron will be emitted at the
- * mean emission angle for pair production and with the remaining
- * energy (E_mean). It will be immediately annihilated but
- * the annihilation will not occur in-flight (isotropic emission of
- * annihilation photons in lab system). 
+/*! \details Simplified Model: Assume that both outgoing electrons and the
+ * positron are emitted with the mean emission energy (E_mean = E_kinetic/3). 
+ * All three particles will be emitted in the direction of the original photon.
+ * The positron will be immediately annihilated but the annihilation will not 
+ * occur in-flight (isotropic emission of annihilation photons in lab system). 
  */
 template<typename InterpPolicy, bool processed_cross_section>
 void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::basicInteraction(
                                                            PhotonState& photon,
                                                            ParticleBank& bank )
 {
-  Teuchos::RCP<ParticleState> electron_1(
+  // Handle the generated electron and the ejected orbital electron
+  {
+    Teuchos::RCP<ParticleState> electron_1(
 				     new ElectronState( photon, true, true ) );
 
-  Teuchos::RCP<ParticleState> electron_2(
+    Teuchos::RCP<ParticleState> electron_2(
                                      new ElectronState( photon, true, true ) );
 
-  const double total_available_kinetic_energy = photon.getEnergy() -
-    2*Utility::PhysicalConstants::electron_rest_mass_energy;
+    const double total_available_kinetic_energy = photon.getEnergy() -
+      2*Utility::PhysicalConstants::electron_rest_mass_energy;
 
-  const double mean_electron_kinetic_energy =
-    total_available_kinetic_energy/3;
+    const double mean_electron_kinetic_energy =
+      total_available_kinetic_energy/3;
 
-  const double mean_emission_angle_cosine =
-    cos( Utility::PhysicalConstants::electron_rest_mass_energy/
-         mean_electron_kinetic_energy );
-
-  double azimuthal_angle = 2*Utility::PhysicalConstants::pi*
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
+    electron_1->setEnergy( mean_electron_kinetic_energy );
   
-  electron_1->setEnergy( mean_electron_kinetic_energy );
-  electron_1->rotateDirection( mean_emission_angle_cosine,
-                               azimuthal_angle );
+    bank.push( electron_1 );
 
-  bank.push( electron_1 );
+    // Electron 2 is emitted in the direction of the incoming photon
+    electron_2->setEnergy( mean_electron_kinetic_energy );
 
-  // Electron 2 is emitted in the direction of the incoming photon
-  electron_2->setEnergy( mean_electron_kinetic_energy );
+    bank.push( electron_2 );
+  }
 
-  bank.push( electron_2 );
-
-  bank.push( electron_2 );
-
-  // Change the photon's direction based on the initial direction of the
-  // emitted positron
-  azimuthal_angle = fmod( azimuthal_angle + Utility::PhysicalConstants::pi,
-                          2*Utility::PhysicalConstants::pi );
-  photon.rotateDirection( mean_emission_angle_cosine, azimuthal_angle );
-  
-  // Sample an isotropic outgoing angle for the annihilation photon
-  double angle_cosine = -1.0 +
+  // Handle the annihilation photons
+  {
+    // Sample an isotropic outgoing angle for the annihilation photon
+    double angle_cosine = -1.0 +
     2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
+    
+    // Sample the azimuthal angle
+    double azimuthal_angle = 2*Utility::PhysicalConstants::pi*
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  // Sample the azimuthal angle
-  azimuthal_angle = 2*Utility::PhysicalConstants::pi*
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
+    // Set the new energy
+    photon.setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
 
-  // Set the new energy
-  photon.setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
+    // Set the new direction of the annihilation photon
+    photon.rotateDirection( angle_cosine, azimuthal_angle );
 
-  // Set the new direction of the annihilation photon
-  photon.rotateDirection( angle_cosine, azimuthal_angle );
+    // Reset the collision number since this is technically a new photon
+    photon.resetCollisionNumber();
 
-  // Reset the collision number since this is technically a new photon
-  photon.resetCollisionNumber();
-
-  // Create the second annihilation photon
-  Teuchos::RCP<PhotonState> annihilation_photon(
+    // Create the second annihilation photon
+    Teuchos::RCP<PhotonState> annihilation_photon(
 				       new PhotonState( photon, true, true ) );
 
-  // Reverse the direction of the second annihilation photon
-  annihilation_photon->setDirection( -annihilation_photon->getXDirection(),
-				     -annihilation_photon->getYDirection(),
-				     -annihilation_photon->getZDirection() );
+    // Reverse the direction of the second annihilation photon
+    annihilation_photon->setDirection( -annihilation_photon->getXDirection(),
+                                       -annihilation_photon->getYDirection(),
+                                       -annihilation_photon->getZDirection() );
 
-  // Bank the annihilation photon
-  bank.push( annihilation_photon );
-
-  // Increment the original photon generation number
-  photon.incrementGenerationNumber();
+    // Bank the annihilation photon
+    bank.push( annihilation_photon );
+    
+    // Increment the original photon generation number
+    photon.incrementGenerationNumber();
+  }
 }
 
 // The detailed triplet production model

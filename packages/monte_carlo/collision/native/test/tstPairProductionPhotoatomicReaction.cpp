@@ -88,7 +88,11 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction,
 // Check that the pair production cross section can be returned
 TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getCrossSection_ace )
 {
-  double cross_section = ace_basic_pp_reaction->getCrossSection(
+  double cross_section = ace_basic_pp_reaction->getCrossSection( 1.01e-3 );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = ace_basic_pp_reaction->getCrossSection(
                                  ace_basic_pp_reaction->getThresholdEnergy() );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -3.84621780013E+01 ), 1e-12 );
@@ -117,41 +121,60 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
 
   Data::SubshellType subshell;
 
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.5;
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
+  fake_stream[2] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   ace_basic_pp_reaction->react( *photon, bank, subshell );
 
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Check the bank
+  TEST_EQUALITY_CONST( bank.size(), 2 );
+
+  // Check the subshell
+  TEST_EQUALITY_CONST( subshell, Data::UNKNOWN_SUBSHELL );
+
+  // Check the photon (which is now an annihilation photon)
   TEST_EQUALITY_CONST( photon->getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
-  UTILITY_TEST_FLOATING_EQUALITY( photon->getZDirection(), 0.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon->getYDirection(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon->getZDirection(), 0.8649171183642954, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon->getYDirection(), -0.5019147122374511, 1e-15);
   UTILITY_TEST_FLOATING_EQUALITY( photon->getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( photon->getCollisionNumber(), 0 );
   TEST_EQUALITY_CONST( photon->getGenerationNumber(), 1 );
-  TEST_EQUALITY_CONST( bank.size(), 2 );
+
+  // Check the generated electron
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_EQUALITY_CONST( bank.top().getZDirection(), 1.0 );
-  TEST_EQUALITY_CONST(
-	       bank.top().getEnergy(),
-	       2.0 - 2*Utility::PhysicalConstants::electron_rest_mass_energy );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),0.48900108987, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+                          0.5019147122374511,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+                          -0.8649171183642954,
+                          1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
 
   bank.pop();
-
+  
+  // Check the second annihilation photon
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
   TEST_EQUALITY_CONST( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), -1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+                          -0.8649171183642954,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+                          0.5019147122374511,
+                          1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
   TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
-  TEST_EQUALITY_CONST( subshell, Data::UNKNOWN_SUBSHELL );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
