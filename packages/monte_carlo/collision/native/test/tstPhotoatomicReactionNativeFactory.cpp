@@ -364,6 +364,39 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 }
 
 //---------------------------------------------------------------------------//
+// Check that a triplet production reaction can be created
+TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
+                   createTripletProductionReaction )
+{
+  MonteCarlo::PhotoatomicReactionNativeFactory::createTripletProductionReaction(
+                                                               *data_container,
+                                                               energy_grid,
+							       grid_searcher,
+							       reaction,
+							       false );
+  
+  // Test the reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+		       MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
+		       4*Utility::PhysicalConstants::electron_rest_mass_energy );
+
+  // Test that the stored cross section is correct
+  double cross_section = reaction->getCrossSection( 0.001 );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = reaction->getCrossSection(
+                     4*Utility::PhysicalConstants::electron_rest_mass_energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
+
+  cross_section = reaction->getCrossSection( 20.0 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a total photoelectric reaction can be created
 TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 		   createTotalPhotoelectricReaction )

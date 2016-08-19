@@ -18,6 +18,7 @@
 #include "MonteCarlo_SubshellIncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_CoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_PairProductionPhotoatomicReaction.hpp"
+#include "MonteCarlo_TripletProductionPhotoatomicReaction.hpp"
 #include "MonteCarlo_PhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
@@ -195,6 +196,37 @@ void PhotoatomicReactionNativeFactory::createPairProductionReaction(
 					 threshold_index,
 					 grid_searcher,
 					 use_detailed_pair_production_data ) );
+}
+
+// Create the triplet production photoatomic reaction
+void PhotoatomicReactionNativeFactory::createTripletProductionReaction(
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& triplet_production_reaction,
+       const bool use_detailed_triplet_production_data )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
+		    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+						      energy_grid.end() ) );
+
+  Teuchos::ArrayRCP<double> triplet_production_cross_section;
+  triplet_production_cross_section.assign(
+	     raw_photoatom_data.getTripletProductionCrossSection().begin(),
+	     raw_photoatom_data.getTripletProductionCrossSection().end() );
+
+  unsigned threshold_index =
+    raw_photoatom_data.getTripletProductionCrossSectionThresholdEnergyIndex();
+
+  triplet_production_reaction.reset(
+               new TripletProductionPhotoatomicReaction<Utility::LinLin,false>(
+				      energy_grid,
+                                      triplet_production_cross_section,
+                                      threshold_index,
+                                      grid_searcher,
+				      use_detailed_triplet_production_data ) );
 }
 
 // Create the total photoelectric photoatomic reaction
