@@ -121,6 +121,38 @@ TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the number of electrons emitted from the rxn can be returned
+TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
+		   getNumberOfEmittedElectrons_ace )
+{
+  TEST_EQUALITY_CONST(
+	     ace_k_photoelectric_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+             0u );
+
+  TEST_EQUALITY_CONST(
+             ace_k_photoelectric_reaction->getNumberOfEmittedElectrons(
+                          ace_k_photoelectric_reaction->getThresholdEnergy() ),
+             1u );
+
+  TEST_EQUALITY_CONST(
+	     ace_k_photoelectric_reaction->getNumberOfEmittedElectrons( 20.0 ),
+             1u );
+
+  TEST_EQUALITY_CONST(
+            ace_l1_photoelectric_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+            0u );
+
+  TEST_EQUALITY_CONST(
+            ace_l1_photoelectric_reaction->getNumberOfEmittedElectrons(
+                         ace_l1_photoelectric_reaction->getThresholdEnergy() ),
+            1u );
+
+  TEST_EQUALITY_CONST(
+            ace_l1_photoelectric_reaction->getNumberOfEmittedElectrons( 20.0 ),
+            1u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
 		   getCrossSection_ace )

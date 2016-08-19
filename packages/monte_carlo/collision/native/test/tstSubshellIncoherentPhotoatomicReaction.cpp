@@ -80,6 +80,44 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the subshell can be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction,
+		   getNumberOfEmittedElectrons )
+{
+  TEST_EQUALITY_CONST(
+     basic_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+     0u );
+
+  TEST_EQUALITY_CONST(
+      basic_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 8.82e-2 ),
+      0u );
+
+  TEST_EQUALITY_CONST(
+      basic_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 8.83e-2 ),
+      1u );
+
+  TEST_EQUALITY_CONST(
+	 basic_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 20.0 ),
+	 1u );
+
+  TEST_EQUALITY_CONST(
+  detailed_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+  0u );
+
+  TEST_EQUALITY_CONST(
+   detailed_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 8.82e-2 ),
+   0u );
+
+  TEST_EQUALITY_CONST(
+   detailed_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 8.83e-2 ),
+   1u );
+
+  TEST_EQUALITY_CONST(
+      detailed_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 20.0 ),
+      1u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getReactionType )
 {

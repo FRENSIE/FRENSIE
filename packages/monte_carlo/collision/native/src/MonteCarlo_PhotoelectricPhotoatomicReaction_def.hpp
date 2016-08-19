@@ -76,7 +76,8 @@ unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
-/*! \details This does not include electrons from atomic relaxation.
+/*! \details Without the subshell information we cannot generate secondary
+ * electrons. This does not include electrons from atomic relaxation.
  */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
