@@ -26,8 +26,20 @@
 
 Data::ElectronPhotonRelaxationVolatileDataContainer epr_data_container;
 
+const std::string notes( "This is a test data table. Do not use it for "
+                         "anything other than tests!" );
+
 //---------------------------------------------------------------------------//
 // Tests.
+//---------------------------------------------------------------------------//
+// Check that the notes can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setNotes )
+{
+  epr_data_container.setNotes( notes );
+
+  TEST_EQUALITY_CONST( epr_data_container.getNotes(), notes );
+}
+
 //---------------------------------------------------------------------------//
 // Check that the atomic number can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setAtomicNumber )
@@ -1362,6 +1374,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 			     Utility::ArchivableObject::ASCII_ARCHIVE );
 
   // Table Tests
+  TEST_EQUALITY_CONST( epr_data_container_copy.getNotes(), notes );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
@@ -1584,6 +1597,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 			     Utility::ArchivableObject::XML_ARCHIVE );
 
   // Table Tests
+  TEST_EQUALITY_CONST( epr_data_container_copy.getNotes(), notes );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
@@ -1803,6 +1817,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container_copy.unpackDataFromString( packed_data );
 
   // Table Tests
+  TEST_EQUALITY_CONST( epr_data_container_copy.getNotes(), notes );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );

@@ -41,6 +41,7 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor epr_generator_clp;
 
   std::string cross_section_directory, cross_section_alias;
+  std::string table_notes;
   double min_photon_energy = 0.001, max_photon_energy = 20.0;
   double min_electron_energy = 0.00001, max_electron_energy = 100000.0;
   double occupation_number_evaluation_tol = 1e-3;
@@ -64,6 +65,9 @@ int main( int argc, char** argv )
 			       &cross_section_alias,
 			       "Photon cross section table alias",
 			       true );
+  epr_generator_clp.setOption( "notes",
+                               &table_notes,
+                               "Notes about this table" );
   epr_generator_clp.setOption( "min_photon_energy",
 			       &min_photon_energy,
 			       "Min photon energy for table" );
@@ -89,7 +93,7 @@ int main( int argc, char** argv )
 			       &number_of_moment_preserving_angles,
 			       "Number of moment preserving angles for table" );
   epr_generator_clp.setOption( "append_moment_preserving_data",
-                   "do_not_append_moment_preserving_data",
+                               "do_not_append_moment_preserving_data",
 			       &append_moment_preserving_data,
 			       "Append a native data file with new moment preserving data" );
   epr_generator_clp.setOption( "grid_convergence_tol",
@@ -301,8 +305,12 @@ int main( int argc, char** argv )
     else
       new_file_name = oss.str();
 
+    // Add the notes to the data container before exporting it
+    if( table_notes.size() > 0 )
+      data_container.setNotes( table_notes );
+
     data_container.exportData( new_file_name,
-			     Utility::ArchivableObject::XML_ARCHIVE );
+                               Utility::ArchivableObject::XML_ARCHIVE );
   }
 
   return 0;

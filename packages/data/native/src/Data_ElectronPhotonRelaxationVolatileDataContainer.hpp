@@ -29,6 +29,7 @@ public:
 		   const Utility::ArchivableObject::ArchiveType archive_type );
 
   // Add the setter member functions to the public interface
+  using ElectronPhotonRelaxationDataContainer::setNotes;
   using ElectronPhotonRelaxationDataContainer::setAtomicNumber;
   using ElectronPhotonRelaxationDataContainer::setMinPhotonEnergy;
   using ElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;

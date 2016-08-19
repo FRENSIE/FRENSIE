@@ -38,6 +38,16 @@ ElectronPhotonRelaxationDataContainer::ElectronPhotonRelaxationDataContainer(
 }
 
 //---------------------------------------------------------------------------//
+// GET NOTES
+//---------------------------------------------------------------------------//
+
+// Data table notes
+const std::string& ElectronPhotonRelaxationDataContainer::getNotes() const
+{
+  return d_notes;
+}
+  
+//---------------------------------------------------------------------------//
 // GET TABLE DATA
 //---------------------------------------------------------------------------//
 
@@ -777,6 +787,16 @@ unsigned
 ElectronPhotonRelaxationDataContainer::getAtomicExcitationCrossSectionThresholdEnergyIndex() const
 {
   return d_atomic_excitation_cross_section_threshold_index;
+}
+
+//---------------------------------------------------------------------------//
+// SET NOTES
+//---------------------------------------------------------------------------//
+
+// Data table notes
+void ElectronPhotonRelaxationDataContainer::setNotes( const std::string& notes )
+{
+  d_notes = notes;
 }
 
 //---------------------------------------------------------------------------//

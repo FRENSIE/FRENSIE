@@ -26,6 +26,9 @@ template<typename Archive>
 void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
 						  const unsigned version) const
 {
+  // Notes
+  DATA_MAKE_NVP_DEFAULT( ar, notes );
+  
   // Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
   DATA_MAKE_NVP_DEFAULT( ar, min_photon_energy );
@@ -119,6 +122,9 @@ template<typename Archive>
 void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
 						  const unsigned version )
 {
+  // Notes
+  DATA_MAKE_NVP_DEFAULT( ar, notes );
+  
   // Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
   DATA_MAKE_NVP_DEFAULT( ar, min_photon_energy );
