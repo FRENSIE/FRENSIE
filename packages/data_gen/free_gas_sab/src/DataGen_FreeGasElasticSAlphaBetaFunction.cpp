@@ -55,6 +55,9 @@ FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
 
+  // Have the integrator throw exceptions for a dirty integration
+  d_gkq_set.throwExceptionOnDirtyIntegration();
+
   // Compute the average zero temp elastic cross section
   boost::function<double (double)> integrand =
     boost::bind<double>( &Utility::OneDDistribution::evaluate,

@@ -324,7 +324,7 @@ IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelEventHandler_4_test
     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=4)
   SET_PROPERTY(TEST SharedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
-  SET_PROPERTY(TEST SharedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelEventHandler_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
