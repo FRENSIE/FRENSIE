@@ -101,6 +101,9 @@ template<typename InterpPolicy, bool processed_cross_section>
 unsigned SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons(
 						    const double energy ) const
 {
+  if( energy >= this->getThresholdEnergy() )
+    return 1u;
+  else
     return 0u;
 }
 

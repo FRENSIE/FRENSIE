@@ -126,10 +126,20 @@ void KleinNishinaPhotonScatteringDistribution::scatterPhoton(
 
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
+  // Sample the azimuthal angle of the outgoing photon
+  const double azimuthal_angle = this->sampleAzimuthalAngle();
+
+  // Create the ejectected electron
+  this->createEjectedElectron( photon,
+			       scattering_angle_cosine,
+			       azimuthal_angle,
+			       bank );
+
+  // Set the new energy
   photon.setEnergy( outgoing_energy );
 
-  photon.rotateDirection( scattering_angle_cosine,
-			  this->sampleAzimuthalAngle() );
+  // Set the new direction
+  photon.rotateDirection( scattering_angle_cosine, azimuthal_angle );
 }
 
 } // end MonteCarlo namespace

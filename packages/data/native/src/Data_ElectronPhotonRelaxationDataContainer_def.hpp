@@ -26,6 +26,9 @@ template<typename Archive>
 void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
 						  const unsigned version) const
 {
+  // Notes
+  DATA_MAKE_NVP_DEFAULT( ar, notes );
+  
   // Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
   DATA_MAKE_NVP_DEFAULT( ar, min_photon_energy );
@@ -34,6 +37,7 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, max_electron_energy );
   DATA_MAKE_NVP_DEFAULT( ar, occupation_number_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, subshell_incoherent_evaluation_tolerance );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_threshold_energy_nudge_factor );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_moment_preserving_angles );
   DATA_MAKE_NVP_DEFAULT( ar, grid_convergence_tol );
@@ -72,6 +76,8 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_coherent_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, pair_production_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, pair_production_cross_section_threshold_index );
+  DATA_MAKE_NVP_DEFAULT( ar, triplet_production_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, triplet_production_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, photoelectric_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, photoelectric_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, subshell_photoelectric_cross_sections );
@@ -116,6 +122,9 @@ template<typename Archive>
 void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
 						  const unsigned version )
 {
+  // Notes
+  DATA_MAKE_NVP_DEFAULT( ar, notes );
+  
   // Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
   DATA_MAKE_NVP_DEFAULT( ar, min_photon_energy );
@@ -124,6 +133,7 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, max_electron_energy );
   DATA_MAKE_NVP_DEFAULT( ar, occupation_number_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, subshell_incoherent_evaluation_tolerance );
+  DATA_MAKE_NVP_DEFAULT( ar, photon_threshold_energy_nudge_factor );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_moment_preserving_angles );
   DATA_MAKE_NVP_DEFAULT( ar, grid_convergence_tol );
@@ -162,6 +172,8 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_coherent_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, pair_production_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, pair_production_cross_section_threshold_index );
+  DATA_MAKE_NVP_DEFAULT( ar, triplet_production_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, triplet_production_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, photoelectric_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, photoelectric_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, subshell_photoelectric_cross_sections );

@@ -91,6 +91,19 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 					   use_detailed_pair_production_data );
   }
 
+  // Create the triplet production reaction
+  {
+    Photoatom::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION];
+
+    PhotoatomicReactionNativeFactory::createTripletProductionReaction(
+                                           raw_photoatom_data,
+                                           energy_grid,
+                                           grid_searcher,
+                                           reaction_pointer,
+                                           use_detailed_pair_production_data );
+  }
+
   // Create the photoelectric reaction(s)
   if( use_atomic_relaxation_data )
   {

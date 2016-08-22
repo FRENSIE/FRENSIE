@@ -151,9 +151,7 @@ private:
                        const std::function<double(double)>& evaluation_wrapper,
                        std::list<double>& recoil_momentum_grid,
                        const double initial_grid_value,
-                       const double final_grid_value,
                        const double initial_form_factor_value,
-                       const double final_form_factor_value,
                        Data::ElectronPhotonRelaxationVolatileDataContainer&
                        data_container ) const;
 
@@ -184,10 +182,11 @@ private:
 
   // Extract the average photon heating numbers
   template<typename InterpPolicy>
-  void extractCrossSection(
+  void extractPhotonCrossSection(
 	  Teuchos::ArrayView<const double> raw_energy_grid,
 	  Teuchos::ArrayView<const double> raw_cross_section,
-	  std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const;
+	  std::shared_ptr<const Utility::OneDDistribution>& cross_section,
+          const bool processed_raw_data = true ) const;
 
   // Extract electron cross sections
   template<typename InterpPolicy>
@@ -209,12 +208,27 @@ private:
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
 
+  // Initialize the electron union energy grid
+  void initializeElectronUnionEnergyGrid(
+     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+     std::list<double>& union_energy_grid ) const;
+
+  // Add binding energies to union energy grid
+  void addBindingEnergiesToUnionEnergyGrid(
+     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+     const double min_energy,
+     const double max_energy,
+     const bool add_nudged_values,
+     std::list<double>& union_energy_grid ) const;
+
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
    const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
    std::vector<double>& cross_section,
-   unsigned& threshold_index ) const;
+   unsigned& threshold_index,
+   const double true_threshold_energy,
+   const bool zero_at_threshold ) const;
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
@@ -224,6 +238,12 @@ private:
 	     std::vector<double>& cross_section,
 	     unsigned& threshold_index ) const;
 
+  // Populate a cross section using the raw cross section
+  void populateCrossSection( const std::vector<double>& raw_cross_section,
+                             std::vector<double>& cross_section,
+                             unsigned& threshold_index,
+                             const bool zero_at_threshold ) const;
+
   // Merge the electron union energy grid
   void mergeElectronUnionEnergyGrid(
     const std::vector<double>& energy_grid,
@@ -231,19 +251,22 @@ private:
 
   // Calculate the total photoelectric cross section
   void calculateTotalPhotoelectricCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Calculate the total impulse approx. incoherent cross section
   void calculateImpulseApproxTotalIncoherentCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+   Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Calculate the Waller-Hartree total cross section
-  void calculateWallerHartreeTotalCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  // Calculate the photon total cross section
+  void calculatePhotonTotalCrossSection(
+           Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+           const bool use_waller_hartree_incoherent_cs ) const;
 
-  // Calculate the impulse approx total cross section
-  void calculateImpulseApproxTotalCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+  // Add cross section to photon total cross section
+  void addCrossSectionToPhotonTotalCrossSection(
+                              const std::vector<double>& energy_grid,
+                              const std::vector<double>& cross_section,
+                              std::vector<double>& total_cross_section ) const;
 
   // Calculate the elastic anglular distribution for the angle cosine
   void calculateElasticAngleCosine(

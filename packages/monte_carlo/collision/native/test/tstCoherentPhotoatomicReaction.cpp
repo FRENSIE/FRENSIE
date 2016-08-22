@@ -70,6 +70,18 @@ TEUCHOS_UNIT_TEST( CoherentPhotoatomicReaction, getNumberOfEmittedPhotons_ace )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the number of electrons emitted from the rxn can be returned
+TEUCHOS_UNIT_TEST( CoherentPhotoatomicReaction,
+                   getNumberOfEmittedElectrons_ace )
+{
+  TEST_EQUALITY_CONST(ace_coherent_reaction->getNumberOfEmittedElectrons(1e-3),
+                      0u );
+
+  TEST_EQUALITY_CONST(ace_coherent_reaction->getNumberOfEmittedElectrons(20.0),
+		      0u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( CoherentPhotoatomicReaction, getCrossSection_ace )
 {

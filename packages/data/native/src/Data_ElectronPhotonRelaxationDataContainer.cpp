@@ -38,6 +38,16 @@ ElectronPhotonRelaxationDataContainer::ElectronPhotonRelaxationDataContainer(
 }
 
 //---------------------------------------------------------------------------//
+// GET NOTES
+//---------------------------------------------------------------------------//
+
+// Data table notes
+const std::string& ElectronPhotonRelaxationDataContainer::getNotes() const
+{
+  return d_notes;
+}
+  
+//---------------------------------------------------------------------------//
 // GET TABLE DATA
 //---------------------------------------------------------------------------//
 
@@ -79,10 +89,15 @@ ElectronPhotonRelaxationDataContainer::getOccupationNumberEvaluationTolerance() 
 }
 
 // Return the subshell incoherent evaluation tolerance
-double
-ElectronPhotonRelaxationDataContainer::getSubshellIncoherentEvaluationTolerance() const
+double ElectronPhotonRelaxationDataContainer::getSubshellIncoherentEvaluationTolerance() const
 {
   return d_subshell_incoherent_evaluation_tolerance;
+}
+
+// Return the photon threshold energy nudge factor
+double ElectronPhotonRelaxationDataContainer::getPhotonThresholdEnergyNudgeFactor() const
+{
+  return d_photon_threshold_energy_nudge_factor;
 }
 
 // Return the elastic cutoff angle
@@ -399,6 +414,19 @@ ElectronPhotonRelaxationDataContainer::getPairProductionCrossSection() const
 unsigned ElectronPhotonRelaxationDataContainer::getPairProductionCrossSectionThresholdEnergyIndex() const
 {
   return d_pair_production_cross_section_threshold_index;
+}
+
+// Return the triplet production cross section
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getTripletProductionCrossSection() const
+{
+  return d_triplet_production_cross_section;
+}
+
+// Return the triplet production cross section threshold energy bin index
+unsigned ElectronPhotonRelaxationDataContainer::getTripletProductionCrossSectionThresholdEnergyIndex() const
+{
+  return d_triplet_production_cross_section_threshold_index;
 }
 
 // Return the Photoelectric effect cross section
@@ -762,6 +790,16 @@ ElectronPhotonRelaxationDataContainer::getAtomicExcitationCrossSectionThresholdE
 }
 
 //---------------------------------------------------------------------------//
+// SET NOTES
+//---------------------------------------------------------------------------//
+
+// Data table notes
+void ElectronPhotonRelaxationDataContainer::setNotes( const std::string& notes )
+{
+  d_notes = notes;
+}
+
+//---------------------------------------------------------------------------//
 // SET TABLE DATA
 //---------------------------------------------------------------------------//
 
@@ -837,6 +875,17 @@ void ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationToler
   d_subshell_incoherent_evaluation_tolerance =
     subshell_incoherent_evaluation_tolerance;
 }
+
+// Set the photon threshold energy nudge factor
+void ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor(
+                                                    const double nudge_factor )
+{
+  // Make sure the nudge factor is valid
+  testPrecondition( nudge_factor >= 1.0 );
+  
+  d_photon_threshold_energy_nudge_factor = nudge_factor;
+}
+
 
 // Set the elastic cutoff angle
 void ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine(
@@ -1195,7 +1244,7 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxIncoherentCrossSecti
   // Make sure the incoherent cross section is valid
   testPrecondition( incoherent_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( incoherent_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( incoherent_cross_section );
 
   d_impulse_approx_incoherent_cross_section = incoherent_cross_section;
 }
@@ -1221,7 +1270,7 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxSubshellIncoherentCr
   // Make sure the incoherent cross section is valid
   testPrecondition( incoherent_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( incoherent_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( incoherent_cross_section );
 
   d_impulse_approx_subshell_incoherent_cross_sections[subshell] =
     incoherent_cross_section;
@@ -1276,7 +1325,7 @@ void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSection(
   // Make sure the pair production cross section is valid
   testPrecondition( pair_production_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( pair_production_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( pair_production_cross_section );
 
   d_pair_production_cross_section = pair_production_cross_section;
 }
@@ -1290,6 +1339,29 @@ void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSectionThresho
 		    d_photon_energy_grid.size() );
 
   d_pair_production_cross_section_threshold_index = index;
+}
+
+// Set the triplet production cross section
+void ElectronPhotonRelaxationDataContainer::setTripletProductionCrossSection(
+		  const std::vector<double>& triplet_production_cross_section )
+{
+  // Make sure the triplet production cross section is valid
+  testPrecondition( triplet_production_cross_section.size() <=
+		    d_photon_energy_grid.size() );
+  testPreconditionValuesGreaterThanOrEqualToZero( triplet_production_cross_section );
+
+  d_triplet_production_cross_section = triplet_production_cross_section;
+}
+
+// Set the triplet production cross section threshold energy bin index
+void ElectronPhotonRelaxationDataContainer::setTripletProductionCrossSectionThresholdEnergyIndex(
+							 const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_triplet_production_cross_section.size() + index ==
+		    d_photon_energy_grid.size() );
+
+  d_triplet_production_cross_section_threshold_index = index;
 }
 
 // Set the Photoelectric effect cross section
@@ -1324,7 +1396,7 @@ void ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSection
   // Make sure the photoelectric cross section is valid
   testPrecondition( photoelectric_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( photoelectric_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( photoelectric_cross_section );
 
   d_subshell_photoelectric_cross_sections[subshell] =
     photoelectric_cross_section;
@@ -1770,7 +1842,7 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSection(
   // Make sure the electroionization cross section is valid
   testPrecondition( electroionization_cross_section.size() <=
                     d_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero(electroionization_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero(electroionization_cross_section );
 
   d_electroionization_subshell_cross_section[subshell] =
     electroionization_cross_section;
@@ -1822,7 +1894,7 @@ void ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSection(
   // Make sure the atomic excitation cross section is valid
   testPrecondition( atomic_excitation_cross_section.size() <=
                     d_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( atomic_excitation_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( atomic_excitation_cross_section );
 
   d_atomic_excitation_cross_section = atomic_excitation_cross_section;
 }

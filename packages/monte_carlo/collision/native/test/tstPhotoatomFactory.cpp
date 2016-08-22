@@ -340,16 +340,35 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
-			    1.02673329640432032e+00,
-			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+                       2*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.09098184021483652e-06, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.87762999999973985e+01, 1e-15 );
+  // Test that the triplet production cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+                         0.001,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                       4*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                         20.0,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell cross sections
   cross_section = atom->getReactionCrossSection(
@@ -361,11 +380,6 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
   cross_section = atom->getReactionCrossSection(
 		   20.0,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-
-  // Test that there is no triple production cross section
-  cross_section = atom->getReactionCrossSection(
-			 20.0,
-			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
@@ -639,8 +653,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
   TEST_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-15 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 2.13373119562157392e+01, 1e-15 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 21.3373119562183398, 1e-15 );
 
   // Test that the absorption cross section can be returned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
@@ -698,16 +712,35 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
-			    1.02673329640432032e+00,
-			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+                       2*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.09098184021483652e-06, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.87762999999973985e+01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
+
+  // Test that the triplet production cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+                         0.001,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                       4*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                         20.0,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell cross sections
   cross_section = atom->getReactionCrossSection(
@@ -719,13 +752,6 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
   cross_section = atom->getReactionCrossSection(
 		   20.0,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  // Test that there is no triple production cross section
-  cross_section = atom->getReactionCrossSection(
-			 20.0,
-			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
@@ -882,16 +908,35 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
-			    1.02673329640432032e+00,
-			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+                       2*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.09098184021483652e-06, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.87762999999973985e+01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
+
+  // Test that the triplet production cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+                         0.001,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                       4*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                         20.0,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell photoelectric cross sections
   cross_section = atom->getReactionCrossSection(
@@ -899,14 +944,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  // Test that there is no triple production cross section
-  cross_section = atom->getReactionCrossSection(
-			 20.0,
-			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
+  
   // Test that the Doppler data is not present
   MonteCarlo::ParticleBank bank;
 
@@ -1058,28 +1096,40 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
-			    1.02673329640432032e+00,
-			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+                       2*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.09098184021483652e-06, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.87762999999973985e+01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
+
+  // Test that the triplet production cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+                         0.001,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                       4*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                         20.0,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell photoelectric cross sections
   cross_section = atom->getReactionCrossSection(
 		   20.0,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  // Test that there is no triple production cross section
-  cross_section = atom->getReactionCrossSection(
-			 20.0,
-			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
@@ -1365,7 +1415,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
 
   cross_section = atom->getTotalCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.13373119562157392e+01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 21.3373119562183398, 1e-15 );
 
   // Test that the absorption cross section can be reaturned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
@@ -1448,28 +1498,40 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
-			    1.02673329640432032e+00,
-			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+                       2*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.09098184021483652e-06, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.87762999999973985e+01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
+
+  // Test that the triplet production cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+                         0.001,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                       4*Utility::PhysicalConstants::electron_rest_mass_energy,
+                       MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection(
+                         20.0,
+                         MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell incoherent cross sections
   cross_section = atom->getReactionCrossSection(
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  // Test that there is no triple production cross section
-  cross_section = atom->getReactionCrossSection(
-			 20.0,
-			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 }

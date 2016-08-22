@@ -29,6 +29,7 @@ public:
 		   const Utility::ArchivableObject::ArchiveType archive_type );
 
   // Add the setter member functions to the public interface
+  using ElectronPhotonRelaxationDataContainer::setNotes;
   using ElectronPhotonRelaxationDataContainer::setAtomicNumber;
   using ElectronPhotonRelaxationDataContainer::setMinPhotonEnergy;
   using ElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;
@@ -36,6 +37,7 @@ public:
   using ElectronPhotonRelaxationDataContainer::setMaxElectronEnergy;
   using ElectronPhotonRelaxationDataContainer::setOccupationNumberEvaluationTolerance;
   using ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor;
   using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles;
   using ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
@@ -72,6 +74,8 @@ public:
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeCoherentCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setPairProductionCrossSection;
   using ElectronPhotonRelaxationDataContainer::setPairProductionCrossSectionThresholdEnergyIndex;
+  using ElectronPhotonRelaxationDataContainer::setTripletProductionCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setTripletProductionCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setPhotoelectricCrossSection;
   using ElectronPhotonRelaxationDataContainer::setPhotoelectricCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSection;

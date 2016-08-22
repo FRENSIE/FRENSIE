@@ -135,6 +135,16 @@ double SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_sec
   return d_binding_energy;
 }
 
+// Get the subshell binding energy (non-standard interface)
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  if( energy >= this->getThresholdEnergy() )
+    return 1u;
+  else
+    return 0u;
+}
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION_DEF_HPP

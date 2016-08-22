@@ -45,7 +45,7 @@ public:
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
   //! Return the number of electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+  virtual unsigned getNumberOfEmittedElectrons( const double energy ) const;
 
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const;
