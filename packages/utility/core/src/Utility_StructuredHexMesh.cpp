@@ -5,7 +5,7 @@
 //! \brief  Hexahedron mesh storage file
 //! 
 //---------------------------------------------------------------------------//
-#include <iostream>
+
 //std includes
 #include <math.h>
 
@@ -138,9 +138,9 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
                                             const double end_point[3] )
 {
   // make sure end point isn't the same as start point - use after bugs with end point of dying particle is fixed
-  /*testPrecondition( start_point[0] != end_point[0] ||
+  testPrecondition( start_point[0] != end_point[0] ||
                     start_point[1] != end_point[1] ||
-                    start_point[2] != end_point[2] );*/
+                    start_point[2] != end_point[2] );
 
   //calculate track length and direction unit vector
   double direction[3] {end_point[X_DIMENSION] - start_point[X_DIMENSION],
@@ -155,7 +155,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
   
   //initialize contribution array
   Teuchos::Array<std::pair<HexIndex,double>> contribution_array;
-  
+
   double current_point[3] { start_point[X_DIMENSION], 
                             start_point[Y_DIMENSION], 
                             start_point[Z_DIMENSION] };
@@ -174,21 +174,26 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
       this->pushPoint( current_point, 
                        direction,
                        std::get<2>( ray_intersection_tuple ) );
+      PlaneIndex hex_plane_indices[3]; 
       this->setMemberIndices( std::get<1>( ray_intersection_tuple ),
-                              current_point );
+                              current_point,
+                              hex_plane_indices );
       contribution_array = this->traceThroughMesh( current_point,
                                                    direction,
-                                                   track_length - std::get<2>( ray_intersection_tuple ) );
+                                                   track_length - std::get<2>( ray_intersection_tuple ),
+                                                   hex_plane_indices );
     }
   }
   else
   {
-    this->setMemberIndices( current_point );
+    PlaneIndex hex_plane_indices[3]; 
+    this->setMemberIndices( current_point, hex_plane_indices );
+
     contribution_array = this->traceThroughMesh( current_point,
                                                  direction,
-                                                 track_length );
+                                                 track_length,
+                                                 hex_plane_indices );
   }
-  
   return contribution_array;
 }
 
@@ -321,10 +326,11 @@ std::tuple<bool, StructuredHexMesh::Dimension, double>
 Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> 
   StructuredHexMesh::traceThroughMesh( double point[3],
                                        const double direction[3],
-                                       const double track_length )
+                                       const double track_length,
+                                       PlaneIndex hex_plane_indices[3] )
 {
   Teuchos::Array<std::pair<Dimension, PlaneIndex>> interaction_planes =
-    this->findInteractionPlanes( point, direction);
+    this->findInteractionPlanes( point, direction, hex_plane_indices);
   Teuchos::Array<std::pair<HexIndex, double>> contribution_array;
   double iteration_distance = 0;
   unsigned incrementer[3];
@@ -351,7 +357,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>>
     }
     
     // Push back a new pair for the indices
-    contribution_array.push_back( std::make_pair(this->findIndex( d_hex_plane_indices ), 
+    contribution_array.push_back( std::make_pair(this->findIndex( hex_plane_indices ), 
                                                  partial_track_length) );
     
     // Check if the particle left the mesh
@@ -369,7 +375,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>>
     // Increase iteration_distance to new value
     iteration_distance += partial_track_length;
     // Increment indices and perform calculation again.
-    d_hex_plane_indices[intersection_distance.first] +=
+    hex_plane_indices[intersection_distance.first] +=
       incrementer[intersection_distance.first];
     for( unsigned i = 0; i < interaction_planes.size() ; ++i )
     {
@@ -386,7 +392,8 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>>
 // Find the interaction planes that a particle will interact with
 Teuchos::Array<std::pair<StructuredHexMesh::Dimension, StructuredHexMesh::PlaneIndex>> 
   StructuredHexMesh::findInteractionPlanes( const double point[3],
-                                            const double direction[3] ) const
+                                            const double direction[3],
+                                            const PlaneIndex hex_plane_indices[3] ) const
 {
   testPrecondition( this->isPointInMesh( point ) );
   
@@ -395,11 +402,11 @@ Teuchos::Array<std::pair<StructuredHexMesh::Dimension, StructuredHexMesh::PlaneI
   {
     if( direction[i] < 0 )
     {
-      interaction_planes.push_back( std::make_pair( static_cast<Dimension>(i), d_hex_plane_indices[i] ) );
+      interaction_planes.push_back( std::make_pair( static_cast<Dimension>(i), hex_plane_indices[i] ) );
     }
     else if( direction[i] > 0)
     {
-      interaction_planes.push_back( std::make_pair( static_cast<Dimension>(i), d_hex_plane_indices[i] + 1) );
+      interaction_planes.push_back( std::make_pair( static_cast<Dimension>(i), hex_plane_indices[i] + 1) );
     }
   }
   return interaction_planes;
@@ -492,21 +499,26 @@ void StructuredHexMesh::setIncrementer( unsigned incrementer[3],
 }
 
 // Overloaded method to set the hex plane indices of a given particle
-void StructuredHexMesh::setMemberIndices( const double current_point[3] )
+void StructuredHexMesh::setMemberIndices( const double current_point[3],
+                                          PlaneIndex hex_plane_indices[3] )
 {
   testPrecondition( isPointInMesh(current_point) );
-  this->setMemberIndex( current_point[X_DIMENSION], d_x_planes, X_DIMENSION );
-  this->setMemberIndex( current_point[Y_DIMENSION], d_y_planes, Y_DIMENSION );
-  this->setMemberIndex( current_point[Z_DIMENSION], d_z_planes, Z_DIMENSION );
+  hex_plane_indices[X_DIMENSION] = 
+    this->setMemberIndex( current_point[X_DIMENSION], d_x_planes, X_DIMENSION );
+  hex_plane_indices[Y_DIMENSION] = 
+    this->setMemberIndex( current_point[Y_DIMENSION], d_y_planes, Y_DIMENSION );
+  hex_plane_indices[Z_DIMENSION] = 
+    this->setMemberIndex( current_point[Z_DIMENSION], d_z_planes, Z_DIMENSION );
   
-  testPostcondition( d_hex_plane_indices[X_DIMENSION] >= 0 && d_hex_plane_indices[X_DIMENSION] <= d_x_planes.size()-2);
-  testPostcondition( d_hex_plane_indices[Y_DIMENSION] >= 0 && d_hex_plane_indices[Y_DIMENSION] <= d_y_planes.size()-2);
-  testPostcondition( d_hex_plane_indices[Z_DIMENSION] >= 0 && d_hex_plane_indices[Z_DIMENSION] <= d_z_planes.size()-2);
+  testPostcondition( hex_plane_indices[X_DIMENSION] >= 0 && hex_plane_indices[X_DIMENSION] <= d_x_planes.size()-2);
+  testPostcondition( hex_plane_indices[Y_DIMENSION] >= 0 && hex_plane_indices[Y_DIMENSION] <= d_y_planes.size()-2);
+  testPostcondition( hex_plane_indices[Z_DIMENSION] >= 0 && hex_plane_indices[Z_DIMENSION] <= d_z_planes.size()-2);
 }
 
 // Set hex plane indices for a particle at its intersection point
 void StructuredHexMesh::setMemberIndices( const Dimension intersection_dimension,
-                                          const double current_point[3] )
+                                          const double current_point[3],
+                                          PlaneIndex hex_plane_indices[3] )
 {
 
   if( intersection_dimension == X_DIMENSION )
@@ -514,28 +526,32 @@ void StructuredHexMesh::setMemberIndices( const Dimension intersection_dimension
     if( current_point[X_DIMENSION] <= d_x_planes.front() + s_tol &&
         current_point[X_DIMENSION] >= d_x_planes.front() - s_tol )
     {
-      d_hex_plane_indices[X_DIMENSION] = 0;
+      hex_plane_indices[X_DIMENSION] = 0;
     }
     else
     {
-      d_hex_plane_indices[X_DIMENSION] = d_x_planes.size() - 2;
+      hex_plane_indices[X_DIMENSION] = d_x_planes.size() - 2;
     }
-    this->setMemberIndex( current_point[Y_DIMENSION], d_y_planes, Y_DIMENSION);
-    this->setMemberIndex( current_point[Z_DIMENSION], d_z_planes, Z_DIMENSION);
+    hex_plane_indices[Y_DIMENSION] =
+      this->setMemberIndex( current_point[Y_DIMENSION], d_y_planes, Y_DIMENSION);
+    hex_plane_indices[Z_DIMENSION] = 
+      this->setMemberIndex( current_point[Z_DIMENSION], d_z_planes, Z_DIMENSION);
   }
   else if( intersection_dimension == Y_DIMENSION )
   {
     if( current_point[Y_DIMENSION] <= d_y_planes.front() + s_tol &&
         current_point[Y_DIMENSION] >= d_y_planes.front() - s_tol )
     {
-      d_hex_plane_indices[Y_DIMENSION] = 0;
+      hex_plane_indices[Y_DIMENSION] = 0;
     }
     else
     {
-      d_hex_plane_indices[Y_DIMENSION] = d_y_planes.size() - 2;
+      hex_plane_indices[Y_DIMENSION] = d_y_planes.size() - 2;
     }
-    this->setMemberIndex( current_point[X_DIMENSION], d_x_planes, X_DIMENSION);
-    this->setMemberIndex( current_point[Z_DIMENSION], d_z_planes, Z_DIMENSION);
+    hex_plane_indices[X_DIMENSION] = 
+      this->setMemberIndex( current_point[X_DIMENSION], d_x_planes, X_DIMENSION);
+    hex_plane_indices[Z_DIMENSION] = 
+      this->setMemberIndex( current_point[Z_DIMENSION], d_z_planes, Z_DIMENSION);
   
   }
   else if( intersection_dimension == Z_DIMENSION )
@@ -543,36 +559,41 @@ void StructuredHexMesh::setMemberIndices( const Dimension intersection_dimension
     if( current_point[Z_DIMENSION] <= d_z_planes.front() + s_tol &&
         current_point[Z_DIMENSION] >= d_z_planes.front() - s_tol )
     {
-      d_hex_plane_indices[Z_DIMENSION] = 0;
+      hex_plane_indices[Z_DIMENSION] = 0;
     }
     else
     {
-      d_hex_plane_indices[Z_DIMENSION] = d_z_planes.size() - 2;
+      hex_plane_indices[Z_DIMENSION] = d_z_planes.size() - 2;
     }
-    this->setMemberIndex( current_point[X_DIMENSION], d_x_planes, X_DIMENSION);
-    this->setMemberIndex( current_point[Y_DIMENSION], d_y_planes, Y_DIMENSION);
+    hex_plane_indices[X_DIMENSION] = 
+      this->setMemberIndex( current_point[X_DIMENSION], d_x_planes, X_DIMENSION);
+    hex_plane_indices[Y_DIMENSION] = 
+      this->setMemberIndex( current_point[Y_DIMENSION], d_y_planes, Y_DIMENSION);
   }
 
-  testPostcondition( d_hex_plane_indices[X_DIMENSION] >= 0 && d_hex_plane_indices[X_DIMENSION] <= d_x_planes.size()-2);
-  testPostcondition( d_hex_plane_indices[Y_DIMENSION] >= 0 && d_hex_plane_indices[Y_DIMENSION] <= d_y_planes.size()-2);
-  testPostcondition( d_hex_plane_indices[Z_DIMENSION] >= 0 && d_hex_plane_indices[Z_DIMENSION] <= d_z_planes.size()-2);
+  testPostcondition( hex_plane_indices[X_DIMENSION] >= 0 && hex_plane_indices[X_DIMENSION] <= d_x_planes.size()-2);
+  testPostcondition( hex_plane_indices[Y_DIMENSION] >= 0 && hex_plane_indices[Y_DIMENSION] <= d_y_planes.size()-2);
+  testPostcondition( hex_plane_indices[Z_DIMENSION] >= 0 && hex_plane_indices[Z_DIMENSION] <= d_z_planes.size()-2);
 }
 
 // Set individual hex plane indicies for particle.
-void StructuredHexMesh::setMemberIndex( const double position_component, 
+auto StructuredHexMesh::setMemberIndex( const double position_component, 
                                         const Teuchos::Array<double>& plane_set,
-                                        const Dimension plane_dimension  )
+                                        const Dimension plane_dimension  ) ->PlaneIndex
 {
+  PlaneIndex hex_plane_index;
   if( position_component == plane_set.back() )
   {
-    d_hex_plane_indices[plane_dimension] = plane_set.size() - 2;
+    hex_plane_index = plane_set.size() - 2;
   }
   else
   {
-    d_hex_plane_indices[plane_dimension] = Search::binaryLowerBoundIndex( plane_set.begin(),
-                                                                          plane_set.end(),
-                                                                          position_component );
+    hex_plane_index = Search::binaryLowerBoundIndex( plane_set.begin(),
+                                                     plane_set.end(),
+                                                     position_component );
   }
+  
+  return hex_plane_index;
 }
 
 // Returns a set of distances to up to 3 planes that bound the mesh which the particle may interact with
@@ -682,14 +703,6 @@ void StructuredHexMesh::pushPoint( double point[3],
   point[X_DIMENSION] += direction[X_DIMENSION]*push_distance;
   point[Y_DIMENSION] += direction[Y_DIMENSION]*push_distance;
   point[Z_DIMENSION] += direction[Z_DIMENSION]*push_distance;
-}
-
-// Return the hex index of the hex element that the particle currently is in
-StructuredHexMesh::HexIndex StructuredHexMesh::findParticleHexIndex() const
-{
-  return d_hex_plane_indices[X_DIMENSION] +
-         d_hex_plane_indices[Y_DIMENSION] * d_x_planes.size() +
-         d_hex_plane_indices[Z_DIMENSION] * d_x_planes.size() * d_y_planes.size();
 }
 
 // Return whether or not a particle has exited the mesh

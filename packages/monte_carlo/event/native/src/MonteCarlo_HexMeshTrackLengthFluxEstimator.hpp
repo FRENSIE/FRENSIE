@@ -16,7 +16,6 @@
 // Boost Includes
 #include <boost/mpl/vector.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
 // Trillinos includes
 #include <Teuchos_Array.hpp>
@@ -24,13 +23,11 @@
 // Moab Includes
 #include <moab/Core.hpp>
 #include <moab/ScdInterface.hpp>
-#include <moab/Matrix3.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardEntityEstimator.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
-#include "Geometry_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "Utility_StructuredHexMesh.hpp"
 
@@ -46,9 +43,6 @@ class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<Utility::
 {
 
 public:
-
-  //! Typedef for the cell id type
-  typedef Geometry::ModuleTraits::InternalCellHandle cellIdType;
   
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleSubtrackEndingGlobalEventObserver::EventTag>

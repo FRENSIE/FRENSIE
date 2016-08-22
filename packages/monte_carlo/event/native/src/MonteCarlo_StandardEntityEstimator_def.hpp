@@ -8,7 +8,7 @@
 
 #ifndef MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
 #define MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
-#include <iostream>
+
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_CommHelpers.hpp"
@@ -480,8 +480,7 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
   // Make sure the thread id is valid
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
 		    d_update_tracker.size() );
-  if( !(this->isEntityAssigned( entity_id )) )
-    std::cout << "ENTITY ID AT PRECONDITION: " << entity_id << std::endl;
+
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure the particle type can contribute

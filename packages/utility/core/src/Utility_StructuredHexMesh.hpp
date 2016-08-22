@@ -110,11 +110,13 @@ private:
   // Trace particle path through mesh until it dies or leaves mesh
   Teuchos::Array<std::pair<HexIndex,double>> traceThroughMesh( double point[3],
                                                                const double direction[3],
-                                                               const double track_length );
+                                                               const double track_length,
+                                                               PlaneIndex hex_plane_indices[3] );
 
   // Find the interaction planes that a particle will interact with
   Teuchos::Array<std::pair<Dimension, PlaneIndex>> findInteractionPlanes( const double point[3],
-                                                                          const double direction[3] ) const;
+                                                                          const double direction[3],
+                                                                          const PlaneIndex hex_plane_indices[3] ) const;
 
   // Find the intersection distance along the path of the particle with the next hex
   std::pair<Dimension, double> findIntersectionDistance( const double point[3],
@@ -134,16 +136,18 @@ private:
                        const double direction[3] ) const;
 
   // set the plane indices that make up the hex element index
-  void setMemberIndices( const double current_point[3] );
+  void setMemberIndices( const double current_point[3],
+                         PlaneIndex hex_plane_indices[3] );
   
   // overloaded function for setting member indices
   void setMemberIndices( const Dimension intersection_dimension,
-                         const double current_point[3] );
+                         const double current_point[3],
+                         PlaneIndex hex_plane_indices[3] );
 
   // Set individual hex plane indicies for particle.
-  void setMemberIndex( const double position_component, 
+  auto setMemberIndex( const double position_component, 
                        const Teuchos::Array<double>& plane_set,
-                       const Dimension plane_dimension  );
+                       const Dimension plane_dimension  ) -> PlaneIndex;
                        
   // Returns a set of distances to up to 3 planes that bound the mesh which the particle may interact with
   Teuchos::Array<std::pair<Dimension, double>> findBoundingInteractionPlaneDistances( const double point[3],
@@ -185,9 +189,6 @@ private:
   void pushPoint( double point[3],
                   const double direction[3],
                   const double push_distance ) const;
-
-  // Return the hex index of the hex element that the particle currently is in
-  HexIndex findParticleHexIndex() const;
   
   // finds interaction plane for a given dimension
   void findInteractionPlaneForDimension( const Dimension dim,
@@ -213,9 +214,6 @@ private:
   
   // all hex elements
   std::list<HexIndex> d_hex_elements;
-  
-  // indices of the planes that are used to form the index for the hex element a particle is in
-  PlaneIndex d_hex_plane_indices[3];  
                             
 };
 

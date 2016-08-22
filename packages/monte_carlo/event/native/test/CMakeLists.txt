@@ -165,6 +165,11 @@ ADD_EXECUTABLE(tstHexMeshTrackLengthFluxEstimator
 TARGET_LINK_LIBRARIES(tstHexMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
 ADD_TEST(HexMeshTrackLengthFluxEstimator_test tstHexMeshTrackLengthFluxEstimator)
 
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelHexMeshTrackLengthFluxEstimator_2_test tstHexMeshTrackLengthFluxEstimator --threads=2)
+  ADD_TEST(SharedParallelHexMeshTrackLengthFluxEstimator_4_test tstHexMeshTrackLengthFluxEstimator --threads=4)
+ENDIF()
+
 Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
   tstTetMeshTrackLengthFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstTetMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
