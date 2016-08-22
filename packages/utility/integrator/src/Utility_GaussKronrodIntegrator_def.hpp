@@ -30,6 +30,7 @@ GaussKronrodIntegrator<T>::GaussKronrodIntegrator(
   : d_relative_error_tol( relative_error_tol ),
     d_absolute_error_tol( absolute_error_tol ),
     d_subinterval_limit( subinterval_limit ),
+    d_os_warn( &std::cerr ),
     d_throw_exceptions(false),
     d_estimate_roundoff(true)
 {
@@ -785,6 +786,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
     // Check if the subinterval limit was hit - dirty integration
     if ( last+1 == d_subinterval_limit )
     {
+
       std::ostringstream oss;
       oss.precision( 18 );
       oss << " The maximum number of subdivisions ( "
@@ -809,6 +811,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
                                       bin_2.lower_limit,
                                       bin_2.upper_limit ) )
     {
+
       std::ostringstream oss;
       oss.precision( 18 );
       oss << " The subinterval have become too small - "

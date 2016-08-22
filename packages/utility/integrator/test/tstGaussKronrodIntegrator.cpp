@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 
 // Boost Includes
 #include <boost/function.hpp>
@@ -1531,7 +1532,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
   // Test the 15-point rule
   gk_integrator.integrateAdaptively<15>( functor_instance,
-                  1.0,
+          1.0,
 				  0.0,
 				  1.0,
 				  result,
@@ -1685,6 +1686,100 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 }
 
 UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptivelyWynnEpsilon_no_singularities );
+
+//---------------------------------------------------------------------------//
+// Check that warnings can be thrown
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
+                                   warnOnDirtyIntegration,
+                                   Functor )
+{
+
+  Utility::GaussKronrodIntegrator<long_float> gk_integrator( 1e-20, 0.0, 2 );
+
+  long_float result, absolute_error, tol;
+
+  Functor functor_instance;
+
+  // Integration should only throw warnings
+  try
+  {
+    gk_integrator.integrateAdaptively<15,long_float>( functor_instance,
+				  (long_float)-1,
+				  (long_float)2,
+				  result,
+				  absolute_error );
+  }
+  catch( std::exception exception )
+  {
+    TEST_ASSERT( 1 );
+  }
+  catch( ... )
+  {
+    TEST_ASSERT( 0 );
+  }
+
+  // Integration should throw exception
+  try
+  {
+    gk_integrator.throwExceptionOnDirtyIntegration();
+
+    gk_integrator.integrateAdaptively<15,long_float>( functor_instance,
+				  (long_float)-1,
+				  (long_float)2,
+				  result,
+				  absolute_error );
+  }
+  catch( std::exception exception )
+  {
+    TEST_ASSERT( 1 );
+  }
+  catch( ... )
+  {
+    TEST_ASSERT( 0 );
+  }
+
+  // Integration should only throw warnings
+  try
+  {
+    gk_integrator.warnOnDirtyIntegration();
+
+    gk_integrator.integrateAdaptively<15,long_float>( functor_instance,
+				  (long_float)-1,
+				  (long_float)2,
+				  result,
+				  absolute_error );
+  }
+  catch( std::exception exception )
+  {
+    TEST_ASSERT( 0 );
+  }
+  catch( ... )
+  {
+    TEST_ASSERT( 0 );
+  }
+
+  // Integration should throw exception
+  try
+  {
+  Utility::GaussKronrodIntegrator<long_float> gk_int( 1e-50, 0.0, 2);
+
+  gk_integrator.integrateAdaptively<15,long_float>( functor_instance,
+				  (long_float)0,
+				  (long_float)1,
+				  result,
+				  absolute_error );
+  }
+  catch( std::exception exception )
+  {
+    TEST_ASSERT( 1 );
+  }
+  catch( ... )
+  {
+    TEST_ASSERT( 0 );
+  }
+}
+
+UNIT_TEST_INSTANTIATION_3( GaussKronrodIntegrator, warnOnDirtyIntegration );
 
 //---------------------------------------------------------------------------//
 // end tstGaussKronrodIntegrator.cpp
