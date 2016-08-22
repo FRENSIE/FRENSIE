@@ -851,7 +851,7 @@ template<typename T>
 template<int Points, typename FunctorType, typename ParameterType, typename Functor>
 void GaussKronrodIntegrator<T>::integrateAdaptively(
 						 Functor& integrand,
-                         ParameterType integrand_parameter,
+             ParameterType integrand_parameter,
 						 T lower_limit,
 						 T upper_limit,
 						 T& result,
