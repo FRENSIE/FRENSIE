@@ -170,7 +170,10 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   legendre_moments.resize(n+1);
 
   Utility::GaussKronrodIntegrator<Utility::long_float> 
-    integrator( precision, 0.0, 1000, true );
+    integrator( precision, 0.0, 1000 );
+
+  // Turn of error and warning messages
+  integrator.dontEstimateRoundoff();
 
   // Calucuate the cutoff and Rutherford component of the Legendre moment
   Utility::long_float cutoff_moment,rutherford_moment;
@@ -350,7 +353,10 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
   testPrecondition( n >= 0 );
 
   Utility::GaussKronrodIntegrator<Utility::long_float>
-    integrator( 1e-13, 0.0, 1000, true ); // integrator( 1e-13 );
+    integrator( 1e-13, 0.0, 1000 );
+
+  // Turn of error and warning messages
+  integrator.dontEstimateRoundoff();
 
   Utility::long_float abs_error, moment_zero;
 
@@ -409,7 +415,10 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
   Utility::long_float mu = Utility::long_float(999999)/1000000;
 
   Utility::GaussKronrodIntegrator<Utility::long_float>
-    integrator( 1e-13, 0.0, 1000, true ); // integrator( 1e-13 );
+    integrator( 1e-13, 0.0, 1000 );
+
+  // Turn of error and warning messages
+  integrator.dontEstimateRoundoff();
 
   Utility::long_float abs_error, moment_n, moment_zero;
 

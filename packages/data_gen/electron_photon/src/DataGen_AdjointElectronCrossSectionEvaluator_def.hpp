@@ -99,7 +99,10 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
   long double cross_section_k, abs_error;
 
   Utility::GaussKronrodIntegrator<long double>
-    integrator( precision, 0.0, 1000, true );
+    integrator( precision, 0.0, 1000 );
+
+  // Turn of error and warning messages
+  integrator.dontEstimateRoundoff();
 
   // Find the integration point above the given incoming_adjoint_energy
   unsigned start_index =
