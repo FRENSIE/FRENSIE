@@ -21,6 +21,12 @@ typedef std::vector<Utility::Pair<double,
                        std::shared_ptr<const Utility::TabularOneDDistribution> > > 
 TwoDDistribution; 
 
+//! Return the primary grid values of the 2-D distribution
+template<typename DependentTwoDDistribution>
+void getPrimaryGrid(
+	const DependentTwoDDistribution& dependent_distribution,
+  std::vector<double>& primary_grid );
+
 //! Find the lower and upper bin boundary
 template<typename DependentTwoDDistribution>
 void findLowerAndUpperBinIndex(

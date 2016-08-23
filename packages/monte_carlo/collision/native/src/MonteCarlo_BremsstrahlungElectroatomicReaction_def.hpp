@@ -117,6 +117,10 @@ double BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>
 
   double outgoing_photon_energy = incoming_energy - outgoing_energy;
 
+  // If the photon energy is less than the tables min photon energy return 0
+  if ( outgoing_photon_energy < 1e-7 )
+    return 0.0; 
+
   double cross_section = this->getCrossSection( incoming_energy );
 
   // Evaluate the PDF at a given incoming and outgoing energy

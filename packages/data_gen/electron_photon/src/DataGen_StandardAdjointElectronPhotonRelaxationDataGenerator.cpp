@@ -992,7 +992,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     old_adjoint_bremsstrahlung_cs,
     bremsstrahlung_grid_function,
     this->getMinElectronEnergy(),
-    this->getMaxElectronEnergy()*(1.0 - s_threshold_energy_nudge_factor) );
+    this->getMaxElectronEnergy() );
 
   std::list<double> old_adjoint_bremsstrahlung_union_energy_grid(
     union_energy_grid );
@@ -1027,7 +1027,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       old_adjoint_electroionization_cs[*shell],
       ionization_grid_functions[*shell],
       this->getMinElectronEnergy(),
-      this->getMaxElectronEnergy() - binding_energy - 2.0*s_min_tabulated_energy_loss );
+      this->getMaxElectronEnergy() );
 
     old_adjoint_electroionization_union_energy_grid[*shell] =
       union_energy_grid;
@@ -1477,55 +1477,17 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
     bremsstrahlung_reaction,
     MonteCarlo::DIPOLE_DISTRIBUTION );
 
-  std::vector<double>::const_iterator start, end;
-
-  this->findLowerAndUpperBinBoundary(
-          this->getMinElectronEnergy(),
-          this->getMaxElectronEnergy(),
-          d_forward_epr_data->getBremsstrahlungEnergyGrid(),
-          start,
-          end );
-  ++end;
-
-  // The bremsstrahlung integration points
-  /*! \details The forward bremsstrahlung energy grid is used as a basis for
-   *  the cross section evaluator integration points
-   */
-  std::vector<double> bremsstrahlung_integration_points( start, end );
-
-  // Replace the lower and upper bins with the min and max electron energies
-  bremsstrahlung_integration_points.front() = this->getMinElectronEnergy();
-  bremsstrahlung_integration_points.back() = this->getMaxElectronEnergy();
+  double max_energy_nudge_value = 0.2;
+  double energy_to_outgoing_energy_nudge_value = 0.0;
 
   adjoint_bremsstrahlung_cs_evaluator.reset(
     new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
         bremsstrahlung_reaction,
-        bremsstrahlung_integration_points ) );
-
-/*
-  MonteCarlo::ElectroatomicReactionENDLFactory::createBremsstrahlungReaction(
-    *d_forward_epr_data,
-    adjoint_bremsstrahlung_energy_grid,
-    bremsstrahlung_reaction,
-	  MonteCarlo::DIPOLE_DISTRIBUTION );
-
-  // Set the min and max adjoint energies
-  adjoint_bremsstrahlung_energy_grid.front() = this->getMinElectronEnergy();
-  adjoint_bremsstrahlung_energy_grid.back() = this->getMaxElectronEnergy();
-
-  adjoint_bremsstrahlung_cs_evaluator.reset(
-    new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
-        bremsstrahlung_reaction,
-        adjoint_bremsstrahlung_energy_grid ) );
-
-  // Add nudge value
-  adjoint_bremsstrahlung_energy_grid.back() =
-     this->getMaxElectronEnergy() - s_min_tabulated_energy_loss;
-   adjoint_bremsstrahlung_energy_grid.push_back( this->getMaxElectronEnergy() );
-
-  // Set the adjoint bremsstrahlung energy grid
-  data_container.setAdjointBremsstrahlungEnergyGrid(
-    adjoint_bremsstrahlung_energy_grid );*/
+        d_forward_epr_data->getBremsstrahlungEnergyGrid(),
+        this->getMinElectronEnergy(),
+        this->getMaxElectronEnergy(),
+        max_energy_nudge_value,
+        energy_to_outgoing_energy_nudge_value ) );
 }
 
 // Generate adjoint bremsstrahlung photon energy distribution
@@ -1599,36 +1561,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
       *shell,
       electroionization_subshell_reaction );
 
-    // Get the threshold energy for the reaction
-    double threshold_energy = d_forward_epr_data->getSubshellBindingEnergy( *shell );
-
-    // Get the minimum allowable energy for the sunshell (either threshold_energy or min_electron_energy)
-    double min_ionization_subshell_energy;
-    if ( threshold_energy > this->getMinElectronEnergy() )
-      min_ionization_subshell_energy = threshold_energy;
-    else
-      min_ionization_subshell_energy = this->getMinElectronEnergy();
-
-    // Find the upper and lower boundary bins for the min and max energy
-    this->findLowerAndUpperBinBoundary(
-          min_ionization_subshell_energy,
-          this->getMaxElectronEnergy(),
-          d_forward_epr_data->getElectroionizationEnergyGrid(*shell),
-          start,
-          end );
-    ++end;
-
-    // Set the recoil energy grid for the given min and max electron energy
-    std::vector<double> ionization_energy_grid( start, end );
-
-    // Set the min and max adjoint energies
-    ionization_energy_grid.front() = min_ionization_subshell_energy;
-    ionization_energy_grid.back() = this->getMaxElectronEnergy();
-
     adjoint_electroionization_cs_evaluators[*shell].reset(
       new DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction>(
           electroionization_subshell_reaction,
-          ionization_energy_grid ) );
+          d_forward_epr_data->getElectroionizationEnergyGrid(*shell),
+          this->getMinElectronEnergy(),
+          this->getMaxElectronEnergy(),
+          2.00 * d_forward_epr_data->getSubshellBindingEnergy( *shell ),
+          1e-7 + d_forward_epr_data->getSubshellBindingEnergy( *shell ) ) );
   }
 }
 

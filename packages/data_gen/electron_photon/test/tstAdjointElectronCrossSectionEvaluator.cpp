@@ -65,28 +65,28 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
     native_adjoint_ionization_cs->evaluateAdjointCrossSection( 1.361E-05, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  139697665948165.1875,
+                                  139697665948165.39062,
                                   1e-6 );
 
   cross_section =
     native_adjoint_ionization_cs->evaluateAdjointCrossSection( 1.88E-05, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  79238679438792.5625,
+                                  79238679438795.984375,
                                   1e-6 );
 
   cross_section =
     native_adjoint_ionization_cs->evaluateAdjointCrossSection( 1.123900E-02, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  206857228.81668719649,
+                                  206857228.81656169891,
                                   1e-6 );
 
   cross_section =
     native_adjoint_ionization_cs->evaluateAdjointCrossSection( 8.75350E-01, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  125955.16376563441008,
+                                  125955.16402119601844,
                                   1e-6 );
 
   cross_section =
@@ -95,7 +95,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  799.79064580439091969,
+                                  799.79561529002819498,
                                   1e-6 );
 
   cross_section =
@@ -122,21 +122,21 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
     ace_adjoint_brem_cs->evaluateAdjointCrossSection( 1.0e-5, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  4.3721988052516138623e1,
+                                  43.721988052516138623,
                                   1e-6 );
 
   cross_section =
     ace_adjoint_brem_cs->evaluateAdjointCrossSection( 5.0e-4, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  2.7299876754030748316e1,
+                                  27.299866535868648754,
                                   1e-6 );
 
   cross_section =
     ace_adjoint_brem_cs->evaluateAdjointCrossSection( 6.0e4, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.95396356210989363689,
+                                  0.95396344926418752408,
                                   1e-6 );
 
   cross_section =
@@ -150,21 +150,21 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
     native_adjoint_brem_cs->evaluateAdjointCrossSection( 1.0e-5, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  4.3499365965888287633e1,
+                                  43.499364453430203525,
                                   1e-6 );
 
   cross_section =
     native_adjoint_brem_cs->evaluateAdjointCrossSection( 5.0e-4, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  2.7374365055849828821e1,
+                                  27.374363809080310972,
                                   1e-6 );
 
   cross_section =
     native_adjoint_brem_cs->evaluateAdjointCrossSection( 6.0e4, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.95353250375262488259,
+                                  0.95353481301793019398,
                                   1e-6 );
 
   cross_section =
@@ -181,7 +181,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 {
   typedef std::vector<long double> state_type;
 
-  boost::numeric::odeint::bulirsch_stoer< state_type > integrator( 1e-6, 1e-6 );
+  boost::numeric::odeint::bulirsch_stoer< state_type > integrator( 1e-4, 1e-4 );
 
 
   // Native Electroionization
@@ -191,7 +191,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.3969765523765589062e14,
+                                  139697651661425.73438,
                                   1e-6 );
 
   cross_section =
@@ -200,7 +200,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  7.9238675474079671875e13,
+                                  79238665123921.578125,
                                   1e-6 );
 
   cross_section =
@@ -209,7 +209,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  2.056108425978654027e8,
+                                  206859058.11802884936,
                                   1e-6 );
 
   cross_section =
@@ -218,7 +218,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  33719.877569881937234,
+                                  125872.93157279863954,
                                   1e-6 );
 
   cross_section =
@@ -227,7 +227,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  799.65201520484311004,
+                                  799.72794636557034664,
                                   1e-6 );
 
   cross_section =
@@ -247,7 +247,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  28.426499976042638451,
+                                  43.506879553872074951,
                                   1e-6 );
 
   cross_section =
@@ -256,7 +256,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.2995414497325283865,
+                                  27.215919140211685345,
                                   1e-6 );
 
   cross_section =
@@ -265,7 +265,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.068972930607456794938,
+                                  0.38373862091105143124,
                                   1e-6 );
 
   cross_section =
@@ -283,7 +283,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  28.183668719310269069,
+                                  43.734465226065530885,
                                   1e-6 );
 
   cross_section =
@@ -292,7 +292,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.2937381482580989633,
+                                  27.360271997385154918,
                                   1e-6 );
 
   cross_section =
@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.068476325515593738924,
+                                  0.23221691232435670571,
                                   1e-6 );
 
   cross_section =
@@ -339,7 +339,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  79238648061770.359375,
+                                  79238665838762.140625,
                                   1e-6 );
 
   cross_section =
@@ -348,7 +348,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  205610596.52141487598,
+                                  205621029.70820000768,
                                   1e-6 );
 
   cross_section =
@@ -357,7 +357,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  33720.477478725471883,
+                                  33730.571028846126865,
                                   1e-6 );
 
   cross_section =
@@ -386,7 +386,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  28.571079384345019037,
+                                  44.702393603427729829,
                                   1e-6 );
 
   cross_section =
@@ -395,7 +395,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.2898672013675400727,
+                                  8.5119722300708797746,
                                   1e-6 );
 
   cross_section =
@@ -404,7 +404,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.067473735902751685867,
+                                  0.15980729482075045622,
                                   1e-6 );
 
   cross_section =
@@ -422,7 +422,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  28.439097243930305581,
+                                  45.907580577899906871,
                                   1e-6 );
 
   cross_section =
@@ -431,7 +431,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.2984382176900817196,
+                                  8.5674269522115675812,
                                   1e-6 );
 
   cross_section =
@@ -440,7 +440,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.06861894458935469121,
+                                  0.15884613700310798445,
                                   1e-6 );
 
   cross_section =
@@ -487,11 +487,11 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
   // ACE Bremsstrahlung
   diff_cross_section =
     ace_adjoint_brem_cs->evaluateAdjointPDF( 5.0e-4,
-                                          5.0e-3,
-                                          1.0e-16 );
+                                             5.0e-3,
+                                             1.0e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  2.763762632859210E+01/2.7299876754030748316e1,
+                                  2.763762632859210E+01/27.299866535868648754,
                                   1e-6 );
 
   diff_cross_section =
@@ -505,8 +505,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 
   diff_cross_section =
     ace_adjoint_brem_cs->evaluateAdjointPDF( 1.0e5-5.0e-8,
-                                          1.0e5,
-                                          1.0e-16 );
+                                             1.0e5,
+                                             1.0e-16 );
 
   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
@@ -514,11 +514,11 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
   // Native Bremsstralung
   diff_cross_section =
     native_adjoint_brem_cs->evaluateAdjointPDF( 5.0e-4,
-                                      5.0e-3,
-                                      1.0e-16 );
+                                                5.0e-3,
+                                                1.0e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.2054818736422567849,
+                                  1.2054819285461100264,
                                   1e-6 );
 
   diff_cross_section =
@@ -527,7 +527,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
                                       1.0e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  6.625704416102020535e-07,
+                                  6.6256883700079266363e-07,
                                   1e-6 );
 
   diff_cross_section =
@@ -660,7 +660,11 @@ int main( int argc, char** argv )
   // Initialize the hydrogen adjoint cross section evaluator
   ace_adjoint_brem_cs.reset( new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
                     bremsstrahlung_reaction,
-                    integration_points ) );
+                    integration_points,
+                    1e-5,
+                    1e5,
+                    0.0,
+                    0.0 ) );
   }
 
   // Create the native data file container
@@ -739,7 +743,11 @@ int main( int argc, char** argv )
   // Initialize the hydrogen adjoint cross section evaluator
   native_adjoint_brem_cs.reset( new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
                     bremsstrahlung_reaction,
-                    integration_points ) );
+                    integration_points,
+                    1e-5,
+                    1e5,
+                    0.0,
+                    0.0 ) );
   }
 
   // Create the Native adjoint electroionization cross section evaluators
@@ -828,7 +836,11 @@ int main( int argc, char** argv )
   native_adjoint_ionization_cs.reset(
     new DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction>(
       electroionization_subshell_reaction,
-      integration_points ) );
+      integration_points,
+      1e-5,
+      1e5,
+      0.0,
+      0.0 ) );
   }
 
   // Run the unit tests

@@ -27,9 +27,12 @@ public:
 
   //! Constructor
   AdjointElectronCrossSectionEvaluator(
-    const std::shared_ptr<ElectroatomicReaction>&
-        electroatomic_reaction,
-    const std::vector<double>& integration_points );
+    const std::shared_ptr<ElectroatomicReaction>& electroatomic_reaction,
+    const std::vector<double>& primary_energy_grid,
+    const double min_energy = 1e-5,
+    const double max_energy = 20.0,
+    const double max_energy_nudge_value = 0.0,
+    const double energy_to_outgoing_energy_nudge_value = 0.0 );
 
   //! Destructor
   ~AdjointElectronCrossSectionEvaluator()
@@ -61,6 +64,9 @@ public:
 
 private:
 
+  // Get the nudged energy
+  double getNudgedEnergy( const double energy ) const;
+
   // Return the differential cross section at a given energy
   void getDifferentialCrossSection(
         const state_type& initial_value,
@@ -71,12 +77,26 @@ private:
   // Observer, prints time and state when called (during integration)
   static void observer( const state_type& x, const double t );
 
-  // The forward electroionization subshell reaction
-  std::shared_ptr<ElectroatomicReaction>
-    d_electroatomic_reaction;
+  // The forward electroatomic reaction
+  std::shared_ptr<ElectroatomicReaction> d_electroatomic_reaction;
+
+  // The primary incoming energy grid of the forward electronatomic reaction
+  std::vector<double> d_primary_energy_grid;
 
   // The energies used as integration points
   std::vector<double> d_integration_points;
+
+  // The min electron energy
+  double d_min_energy;
+
+  // The max electron energy
+  double d_max_energy;
+
+  // The nudged max energy
+  double d_nudged_max_energy;
+
+  // The incoming energy to min outgoing energy nudge value
+  double d_energy_to_outgoing_energy_nudge_value;
 };
 
 } // end DataGen namespace
