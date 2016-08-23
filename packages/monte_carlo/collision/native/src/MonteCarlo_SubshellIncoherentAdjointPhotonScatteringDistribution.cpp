@@ -304,8 +304,16 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOcc
     this->evaluateOccupationNumber( pz_min );
   
   // Evaluate the adjoint occupation number
-  const double adjoint_occupation_number =
+  double adjoint_occupation_number =
     upper_occupation_number_value - lower_occupation_number_value;
+
+  // Due to floating-point roundoff, it is possible for the adjoint
+  // occupation number to be slightly outside of [0,1]. When this occurs,
+  // manually set to 0 or 1.
+  if( adjoint_occupation_number < 0.0 )
+    adjoint_occupation_number = 0.0;
+  else if( adjoint_occupation_number > 1.0 )
+    adjoint_occupation_number = 1.0;
 
   // Make sure the adjoint occupation number is valid
   testPrecondition( adjoint_occupation_number >= 0.0 );

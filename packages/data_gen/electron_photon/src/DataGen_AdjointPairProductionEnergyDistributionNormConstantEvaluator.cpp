@@ -32,7 +32,7 @@ double AdjointPairProductionEnergyDistributionNormConstantEvaluator::evaluateEne
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
-
+  
   long double norm_constant;
 
   if( energy <= d_pair_production_cs->getThresholdEnergy() )

@@ -64,12 +64,26 @@ public:
   //! Get the adjoint pair production energy dist. norm const. evaluation tol
   double getAdjointPairProductionEnergyDistNormConstEvaluationTolerance() const;
 
+  //! Set the adjoint pair production energy dist. norm const. nudge value
+  void setAdjointPairProductionEnergyDistNormConstNudgeValue(
+                                                    const double nudge_value );
+
+  //! Get the adjoint pair production energy dist. norm const. nudge value
+  double getAdjointPairProductionEnergyDistNormConstNudgeValue() const;
+
   //! Set the adjoint triplet production energy dist. norm const. evaluation tol.
   void setAdjointTripletProductionEnergyDistNormConstEvaluationTolerance(
                                                  const double evaluation_tol );
 
   //! Get the adjoint triplet production energy dist. norm const. evaluation tol
   double getAdjointTripletProductionEnergyDistNormConstEvaluationTolerance() const;
+
+  //! Set the adjoint triplet production energy dist. norm const. nudge value
+  void setAdjointTripletProductionEnergyDistNormConstNudgeValue(
+                                                    const double nudge_value );
+
+  //! Get the adjoint triplet production energy dist. norm const. nudge value
+  double getAdjointTripletProductionEnergyDistNormConstNudgeValue() const;
 
   //! Set the adjoint incoherent max energy nudge value
   void setAdjointIncoherentMaxEnergyNudgeValue( const double max_energy_nudge_value );
@@ -85,7 +99,8 @@ public:
   double getAdjointIncoherentEnergyToMaxEnergyNudgeValue() const;
 
   //! Set the adjoint incoherent cross section evaluation tolerance
-  void setAdjointIncoherentEvaluationTolerance( const double evaluation_tol );
+  void setAdjointIncoherentCrossSectionEvaluationTolerance(
+                                                 const double evaluation_tol );
 
   //! Return the adjoint incoherent cross section evaluation tolerance
   double getAdjointIncoherentCrossSectionEvaluationTolerance() const;
@@ -97,18 +112,18 @@ public:
   //! Return the adjoint incoherent grid convergence tolerance
   double getAdjointIncoherentGridConvergenceTolerance() const;
 
-  //! Set the adjoint incoherent absolute difference tolerance
-  void setAdjointIncoherentAbsoluteDifferenceTolerance(
+  //! Set the adjoint incoherent grid absolute difference tolerance
+  void setAdjointIncoherentGridAbsoluteDifferenceTolerance(
                                               const double absolute_diff_tol );
 
-  //! Get the adjoint incoherent absolute difference tolerance
-  double getAdjointIncoherentAbsoluteDifferenceTolerance() const;
+  //! Get the adjoint incoherent grid absolute difference tolerance
+  double getAdjointIncoherentGridAbsoluteDifferenceTolerance() const;
 
-  //! Set the adjoint incoherent distance tolerance
-  void setAdjointIncoherentDistanceTolerance( const double distance_tol );
+  //! Set the adjoint incoherent grid distance tolerance
+  void setAdjointIncoherentGridDistanceTolerance( const double distance_tol );
 
-  //! Get the adjoint incoherent distance tolerance
-  double getAdjointIncoherentDistanceTolerance() const;
+  //! Get the adjoint incoherent grid distance tolerance
+  double getAdjointIncoherentGridDistanceTolerance() const;
 
   //! Set the cutoff angle cosine above which screened rutherford is used
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
@@ -117,11 +132,11 @@ public:
   double getCutoffAngleCosine() const;
 
   //! Set the number of moment preserving angles
-  void setNumberOfMomentumPreservingAngles(
+  void setNumberOfMomentPreservingAngles(
                            const unsigned number_of_moment_preserving_angles );
 
   //! Get the number of moment preserving angles
-  unsigned getNumberOfMomentumPreservingAngles() const;
+  unsigned getNumberOfMomentPreservingAngles() const;
   
   //! Set the evaluation tolerance for the adjoint bremsstrahlung cross section
   void setAdjointBremsstrahlungCrossSectionEvaluationTolerance(
@@ -379,8 +394,14 @@ private:
   // The adjoint pair production energy dist norm constant evaluation tolerance
   double d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol;
 
+  // The adjoint pair production energy dist norm constant nudge value
+  double d_adjoint_pair_production_energy_dist_norm_const_nudge_value;
+
   // The adjoint triplet production energy dist norm constant evaluation tol
   double d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol;
+
+  // The adjoint triplet production energy dist norm constant nudge value
+  double d_adjoint_triplet_production_energy_dist_norm_const_nudge_value;
 
   // The adjoint incoherent max energy nudge value
   double d_adjoint_incoherent_max_energy_nudge_value;

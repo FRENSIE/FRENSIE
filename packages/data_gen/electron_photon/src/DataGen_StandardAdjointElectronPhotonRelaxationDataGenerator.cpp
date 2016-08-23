@@ -59,6 +59,10 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
                                                   max_electron_energy ),
     d_forward_epr_data( forward_epr_data ),
     d_os_log( os_log ),
+    d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol( 1e-3 ),
+    d_adjoint_pair_production_energy_dist_norm_const_nudge_value( 1e-6 ),
+    d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol( 1e-3 ),
+    d_adjoint_triplet_production_energy_dist_norm_const_nudge_value( 1e-6 ),
     d_adjoint_incoherent_max_energy_nudge_value( 0.2 ),
     d_adjoint_incoherent_energy_to_max_energy_nudge_value( 1e-6 ),
     d_adjoint_incoherent_evaluation_tol( 0.001 ),
@@ -153,6 +157,22 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointPairProdu
   return d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol;
 }
 
+// Set the adjoint pair production energy dist. norm const. nudge value
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProductionEnergyDistNormConstNudgeValue(
+                                                     const double nudge_value )
+{
+  // Make sure the nudge value is valid
+  testPrecondition( nudge_value >= 0.0 );
+
+  d_adjoint_pair_production_energy_dist_norm_const_nudge_value = nudge_value;
+}
+
+// Get the adjoint pair production energy dist. norm const. nudge value
+double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointPairProductionEnergyDistNormConstNudgeValue() const
+{
+  return d_adjoint_pair_production_energy_dist_norm_const_nudge_value;
+}
+
 // Set the adjoint triplet production energy dist. norm const. evaluation tol.
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProductionEnergyDistNormConstEvaluationTolerance(
                                                   const double evaluation_tol )
@@ -169,6 +189,23 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProd
 double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointTripletProductionEnergyDistNormConstEvaluationTolerance() const
 {
   return d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol;
+}
+
+// Set the adjoint triplet production energy dist. norm const. nudge value
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProductionEnergyDistNormConstNudgeValue(
+                                                     const double nudge_value )
+{
+  // Make sure the nudge value is valid
+  testPrecondition( nudge_value >= 0.0 );
+
+  d_adjoint_triplet_production_energy_dist_norm_const_nudge_value =
+    nudge_value;
+}
+
+// Get the adjoint triplet production energy dist. norm const. nudge value
+double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointTripletProductionEnergyDistNormConstNudgeValue() const
+{
+  return d_adjoint_triplet_production_energy_dist_norm_const_nudge_value;
 }
 
 // Set the adjoint incoherent max energy nudge value
@@ -205,7 +242,7 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoheren
 }
 
 // Set the adjoint incoherent cross section evaluation tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentEvaluationTolerance(
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentCrossSectionEvaluationTolerance(
                                                   const double evaluation_tol )
 {
   // Make sure the evaluation tolerance is valid
@@ -238,8 +275,8 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoheren
   return d_adjoint_incoherent_grid_convergence_tol;
 }
 
-// Set the adjoint incoherent absolute difference tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentAbsoluteDifferenceTolerance(
+// Set the adjoint incoherent grid absolute difference tolerance
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentGridAbsoluteDifferenceTolerance(
                                                const double absolute_diff_tol )
 {
   // Make sure the absolute difference tolerance is valid
@@ -249,14 +286,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentA
   d_adjoint_incoherent_grid_absolute_diff_tol = absolute_diff_tol;
 }
 
-// Get the adjoint incoherent absolute difference tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentAbsoluteDifferenceTolerance() const
+// Get the adjoint incoherent grid absolute difference tolerance
+double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentGridAbsoluteDifferenceTolerance() const
 {
   return d_adjoint_incoherent_grid_absolute_diff_tol;
 }
 
-// Set the adjoint incoherent distance tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentDistanceTolerance(
+// Set the adjoint incoherent grid distance tolerance
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentGridDistanceTolerance(
                                                     const double distance_tol )
 {
   // Make sure the distance tolerance is valid
@@ -266,8 +303,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentD
   d_adjoint_incoherent_grid_distance_tol = distance_tol;
 }
 
-// Get the adjoint incoherent distance tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentDistanceTolerance() const
+// Get the adjoint incoherent grid distance tolerance
+double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentGridDistanceTolerance() const
 {
   return d_adjoint_incoherent_grid_distance_tol;
 }
@@ -290,14 +327,14 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getCutoffAngleCosin
 }
 
 // Set the number of moment preserving angles
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setNumberOfMomentumPreservingAngles(
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setNumberOfMomentPreservingAngles(
                             const unsigned number_of_moment_preserving_angles )
 {
   d_number_of_moment_preserving_angles = number_of_moment_preserving_angles;
 }
 
 // Get the number of moment preserving angles
-unsigned StandardAdjointElectronPhotonRelaxationDataGenerator::getNumberOfMomentumPreservingAngles() const
+unsigned StandardAdjointElectronPhotonRelaxationDataGenerator::getNumberOfMomentPreservingAngles() const
 {
   return d_number_of_moment_preserving_angles;
 }
@@ -328,8 +365,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
   this->setDefaultConvergenceParameters( data_container );
   data_container.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
              d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol );
+  data_container.setAdjointPairProductionEnergyDistNormConstantNudgeValue(
+                d_adjoint_pair_production_energy_dist_norm_const_nudge_value );
   data_container.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(
           d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol );
+  data_container.setAdjointTripletProductionEnergyDistNormConstantNudgeValue(
+             d_adjoint_triplet_production_energy_dist_norm_const_nudge_value );
   data_container.setAdjointIncoherentMaxEnergyNudgeValue(
                                  d_adjoint_incoherent_max_energy_nudge_value );
   data_container.setAdjointIncoherentEnergyToMaxEnergyNudgeValue(
@@ -377,7 +418,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
   (*d_os_log) << "done." << std::endl;
 
   // Set the photon data
-  (*d_os_log) << "Setting the adjoint photon data... " << std::endl;
+  (*d_os_log) << "Setting the adjoint photon data: " << std::endl;
   d_os_log->flush();
   this->setAdjointPhotonData( data_container );
   (*d_os_log) << "done." << std::endl;
@@ -513,6 +554,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomi
   // Extract and set the atomic form
   data_container.setWallerHartreeAtomicFormFactor(
                       d_forward_epr_data->getWallerHartreeAtomicFormFactor() );
+
+  // Extract and set the squared atomic form factor squared momentum grid
+  data_container.setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
+       d_forward_epr_data->getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid() );
+
+  // Extract and set the squared atomic form factor
+  data_container.setWallerHartreeSquaredAtomicFormFactor(
+               d_forward_epr_data->getWallerHartreeSquaredAtomicFormFactor() );
 }
 
 // Set the photon data
@@ -537,36 +586,36 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
        new Utility::TabularDistribution<Utility::LinLin>(
                    d_forward_epr_data->getPhotonEnergyGrid(),
                    d_forward_epr_data->getImpulseApproxTotalCrossSection() ) );
-
+  
   // Create the Waller-Hartree incoherent adjoint cross section evaluator
   std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
     waller_hartree_incoherent_adjoint_cs_evaluator;
 
   this->createWallerHartreeIncoherentAdjointCrossSectionEvaluator(
                               waller_hartree_incoherent_adjoint_cs_evaluator );
-
+  
   // Create the impulse approx. incoherent adjoint cross section evaluators
   Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >
     impulse_approx_incoherent_adjoint_cs_evaluators;
 
   this->createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
                              impulse_approx_incoherent_adjoint_cs_evaluators );
-
+  
   // Create the union energy grid
   (*d_os_log) << " Creating union energy grid";
   d_os_log->flush();
 
   std::list<double> union_energy_grid;
-
+  
   this->initializeAdjointPhotonUnionEnergyGrid( union_energy_grid );
-
+  
   // Calculate the union energy grid
   this->updateAdjointPhotonUnionEnergyGrid(
            union_energy_grid, waller_hartree_incoherent_adjoint_cs_evaluator );
-
+  
   this->updateAdjointPhotonUnionEnergyGrid(
           union_energy_grid, impulse_approx_incoherent_adjoint_cs_evaluators );
-
+  
   this->updateAdjointPhotonUnionEnergyGrid(
                                union_energy_grid, waller_hartree_coherent_cs );
 
@@ -694,8 +743,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   (*d_os_log) << "done." << std::endl;
 
   // Set the adjoint pair production energy distribution
-  (*d_os_log) << "Setting the adjoint pair production energy distribution "
-              << "data...";
+  (*d_os_log) << " Setting the adjoint pair production energy distribution"
+              << " data...";
   d_os_log->flush();
     
   this->setAdjointPairProductionEnergyDistribution( data_container );
@@ -703,8 +752,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   (*d_os_log) << "done." << std::endl;
 
   // Set the adjoint triplet production energy distribution
-  (*d_os_log) << "Setting the adjoint triplet production energy distribution "
-              << "data...";
+  (*d_os_log) << " Setting the adjoint triplet production energy distribution"
+              << " data...";
   d_os_log->flush();
 
   this->setAdjointTripletProductionEnergyDistribution( data_container );
@@ -730,7 +779,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProduct
 
   // Create the energy distribution norm constant grid
   std::vector<double> energy_grid( 2 ), energy_dist_norm_constants;
-  energy_grid[0] = 2*Utility::PhysicalConstants::electron_rest_mass_energy;
+  
+  energy_grid[0] = 2*Utility::PhysicalConstants::electron_rest_mass_energy +
+    d_adjoint_pair_production_energy_dist_norm_const_nudge_value;
   energy_grid[1] = this->getMaxPhotonEnergy();
 
   try{
@@ -744,6 +795,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProduct
                           "for the adjoint pair production energy "
                           "distribution norm constants!" );
 
+  // Add the initial point to the grid (this operation is inefficient with
+  // vectors)
+  energy_grid.insert( energy_grid.begin(),
+                      2*Utility::PhysicalConstants::electron_rest_mass_energy);
+  energy_dist_norm_constants.insert( energy_dist_norm_constants.begin(),
+                                     0.0 );
+ 
   // Set the norm constants
   data_container.setAdjointPairProductionEnergyDistributionNormConstantGrid(
                                                                  energy_grid );
@@ -783,7 +841,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProd
 
   // Create the energy distribution norm constant grid
   std::vector<double> energy_grid( 2 ), energy_dist_norm_constants;
-  energy_grid[0] = 4*Utility::PhysicalConstants::electron_rest_mass_energy;
+  
+  energy_grid[0] = 4*Utility::PhysicalConstants::electron_rest_mass_energy +
+    d_adjoint_triplet_production_energy_dist_norm_const_nudge_value;
   energy_grid[1] = this->getMaxPhotonEnergy();
 
   try{
@@ -796,6 +856,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProd
                           "Error: Could not generate an optimized energy grid "
                           "for the adjoint triplet production energy "
                           "distribution norm constants!" );
+
+  // Add the initial point to the grid (this operation is inefficient with
+  // vectors)
+  energy_grid.insert( energy_grid.begin(),
+                      4*Utility::PhysicalConstants::electron_rest_mass_energy);
+  energy_dist_norm_constants.insert( energy_dist_norm_constants.begin(),
+                                     0.0 );
 
   // Set the norm constants
   data_container.setAdjointTripletProductionEnergyDistributionNormConstantGrid(
@@ -956,6 +1023,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
                            "Waller-Hartree incoherent adjoint cross section "
                            "with the provided adjoint incoherent "
                            "tolerances!" );
+
+  (*d_os_log) << ".";
+  d_os_log->flush();
 }
 
 // Update the adjoint photon union energy grid
@@ -999,6 +1069,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
                              " incoherent adjoint cross section "
                              "with the provided adjoint incoherent "
                              "tolerances!" );
+
+    (*d_os_log) << ".";
+    d_os_log->flush();
   }
 }
 
@@ -1022,6 +1095,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
                            "Error: Unable to generate the energy grid for the "
                            "1-D photon cross section with the default "
                            "tolerances!" );
+
+  (*d_os_log) << ".";
+  d_os_log->flush();
 }
 
 // Create the cross section on the union energy grid

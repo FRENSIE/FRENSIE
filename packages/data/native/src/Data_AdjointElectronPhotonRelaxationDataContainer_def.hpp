@@ -36,7 +36,9 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, min_electron_energy );
   DATA_MAKE_NVP_DEFAULT( ar, max_electron_energy );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_dist_norm_constant_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_incoherent_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_incoherent_energy_to_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_incoherent_evaluation_tol );
@@ -63,6 +65,8 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_scattering_function );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_atomic_form_factor_momentum_grid );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_atomic_form_factor );
+  DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_squared_atomic_form_factor_squared_momentum_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_squared_atomic_form_factor );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hartree_incoherent_max_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hartree_incoherent_cross_section );
@@ -132,7 +136,9 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, min_electron_energy );
   DATA_MAKE_NVP_DEFAULT( ar, max_electron_energy );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_dist_norm_constant_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_incoherent_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_incoherent_energy_to_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_incoherent_evaluation_tol );
@@ -159,6 +165,8 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_scattering_function );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_atomic_form_factor_momentum_grid );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_atomic_form_factor );
+  DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_squared_atomic_form_factor_squared_momentum_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_squared_atomic_form_factor );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hartree_incoherent_max_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hartree_incoherent_cross_section );

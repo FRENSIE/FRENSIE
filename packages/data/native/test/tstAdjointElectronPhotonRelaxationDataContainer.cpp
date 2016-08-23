@@ -102,6 +102,18 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the adjoint pair production energy dist norm constant nudge
+// value can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointPairProductionEnergyDistNormConstantNudgeValue )
+{
+  epr_data_container.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointPairProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the adjoint triplet production energy dist norm constant
 // evaluation tolerance can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
@@ -111,6 +123,18 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
   TEST_EQUALITY_CONST( epr_data_container.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
                        1e-4 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint triplet production energy dist norm constant nudge
+// value can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointTripletProductionEnergyDistNormConstantNudgeValue )
+{
+  epr_data_container.setAdjointTripletProductionEnergyDistNormConstantNudgeValue( 1e-5 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(),
+                       1e-5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -416,6 +440,41 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
   TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeAtomicFormFactor(),
 		       form_factor );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree atomic form factor momentum grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+		   setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid )
+{
+  std::vector<double> squared_momentum_grid( 4 );
+  squared_momentum_grid[0] = 0.0;
+  squared_momentum_grid[1] = 1.0;
+  squared_momentum_grid[2] = 100.0;
+  squared_momentum_grid[3] = 1e16;
+
+  epr_data_container.setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
+                                                       squared_momentum_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(),
+		       squared_momentum_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree atomic form factor can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+		   setWallerHartreeSquaredAtomicFormFactor )
+{
+  std::vector<double> squared_form_factor( 4 );
+  squared_form_factor[0] = 1.0;
+  squared_form_factor[1] = 1.0;
+  squared_form_factor[2] = 0.09;
+  squared_form_factor[3] = 0.0;
+
+  epr_data_container.setWallerHartreeSquaredAtomicFormFactor( squared_form_factor );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeSquaredAtomicFormFactor(),
+		       squared_form_factor );
 }
 
 //---------------------------------------------------------------------------//
@@ -1555,8 +1614,12 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxElectronEnergy(), 1.0e5 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
                        1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
                        1e-4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(),
+                       1e-5 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentMaxEnergyNudgeValue(),
                        0.2 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
@@ -1597,6 +1660,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunction().size(), 4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(), 4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+		       4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactor().size(),
+		       4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPhotonEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentCrossSection().size(), 3 );
@@ -1742,8 +1809,12 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxElectronEnergy(), 1.0e5 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
                        1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
                        1e-4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(),
+                       1e-5 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentMaxEnergyNudgeValue(),
                        0.2 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
@@ -1784,6 +1855,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunction().size(), 4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(), 4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+		       4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactor().size(),
+		       4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPhotonEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentCrossSection().size(), 3 );
@@ -1927,8 +2002,12 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxElectronEnergy(), 1.0e5 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
                        1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistNormConstantNudgeValue(),
+                       1e-6 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
                        1e-4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(),
+                       1e-5 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentMaxEnergyNudgeValue(),
                        0.2 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
@@ -1969,6 +2048,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunction().size(), 4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(), 4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(), 4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+		       4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactor().size(),
+		       4 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPhotonEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentCrossSection().size(), 3 );
