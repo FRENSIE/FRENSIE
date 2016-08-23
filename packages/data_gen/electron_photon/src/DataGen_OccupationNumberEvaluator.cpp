@@ -94,10 +94,8 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
   else if( electron_momentum_projection >
 	   d_compton_profile->getLowerBoundOfMomentum().value() )
   {
-    std::function<double (double pz)> compton_profile_wrapper =
-      std::bind<double>( &OccupationNumberEvaluator::evaluateComptonProfile,
-                         std::cref( *this ),
-                         std::placeholders::_1 );
+    std::function<double(double)> compton_profile_wrapper =
+      this->getComptonProfileEvaluationWrapper();
 
     long double abs_error;
 

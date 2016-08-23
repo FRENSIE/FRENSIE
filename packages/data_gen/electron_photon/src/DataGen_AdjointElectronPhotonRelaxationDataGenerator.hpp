@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Data_AdjointElectronPhotonRelaxationVolatileDataContainer.hpp"
+#include "Utility_GridGenerator.hpp"
 
 namespace DataGen{
 
@@ -54,16 +55,17 @@ public:
   double getDefaultGridConvergenceTolerance() const;
 
   //! Set the default grid absolute difference tolerance
-  void setDefaultAbsoluteDifferenceTolerance( const double absolute_diff_tol );
+  void setDefaultGridAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
 
   //! Get the default grid absolute difference tolerance
-  double getDefaultAbsoluteDifferenceTolerance() const;
+  double getDefaultGridAbsoluteDifferenceTolerance() const;
 
   //! Set the default grid distance tolerance
-  void setDefaultDistanceTolerance( const double distance_tol );
+  void setDefaultGridDistanceTolerance( const double distance_tol );
 
   //! Get the default grid distance tolerance
-  double getDefaultDistanceTolerance() const;
+  double getDefaultGridDistanceTolerance() const;
 
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer(
@@ -84,6 +86,19 @@ protected:
   //! Set the max electron energy
   void setMaxElectronEnergy( const double max_electron_energy );
 
+  //! Set the basic data
+  void setBasicData(Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
+                    data_container ) const;
+
+  //! Set the default convergence parameters
+  void setDefaultConvergenceParameters(
+                    Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
+                    data_container ) const;
+
+  //! Get a default grid generator (Lin-Lin grid)
+  const Utility::GridGenerator<Utility::LinLin>&
+  getDefaultGridGenerator() const;
+
 private:
 
   // The atomic number for which relaxation data can be generated
@@ -101,14 +116,9 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
-  // The default grid convergence tolerance
-  double d_default_grid_convergence_tol;
-
-  // The default absolute difference tolerance
-  double d_default_absolute_diff_tol;
-
-  // The default distance tolerance
-  double d_default_distance_tol;
+  // The default grid generator
+  std::unique_ptr<Utility::GridGenerator<Utility::LinLin> >
+  d_default_grid_generator;
 };
 
 } // end DataGen namespace

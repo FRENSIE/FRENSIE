@@ -64,6 +64,20 @@ public:
   virtual ~StandardAdjointElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
+  //! Set the adjoint pair production energy dist. norm const. evaluation tol.
+  void setAdjointPairProductionEnergyDistNormConstEvaluationTolerance(
+                                                 const double evaluation_tol );
+
+  //! Get the adjoint pair production energy dist. norm const. evaluation tol
+  double getAdjointPairProductionEnergyDistNormConstEvaluationTolerance() const;
+
+  //! Set the adjoint triplet production energy dist. norm const. evaluation tol.
+  void setAdjointTripletProductionEnergyDistNormConstEvaluationTolerance(
+                                                 const double evaluation_tol );
+
+  //! Get the adjoint triplet production energy dist. norm const. evaluation tol
+  double getAdjointTripletProductionEnergyDistNormConstEvaluationTolerance() const;
+
   //! Set the adjoint incoherent max energy nudge value
   void setAdjointIncoherentMaxEnergyNudgeValue( const double max_energy_nudge_value );
   
@@ -78,10 +92,10 @@ public:
   double getAdjointIncoherentEnergyToMaxEnergyNudgeValue() const;
 
   //! Set the adjoint incoherent cross section evaluation tolerance
-  void setAdjointIncoherentEvaluationTolerance( const double integration_tol );
+  void setAdjointIncoherentEvaluationTolerance( const double evaluation_tol );
 
-  //! Return the adjoint incoherent cross section integration tolerance
-  double getAdjointIncoherentCrossSectionIntegrationTolerance() const;
+  //! Return the adjoint incoherent cross section evaluation tolerance
+  double getAdjointIncoherentCrossSectionEvaluationTolerance() const;
 
   //! Set the adjoint incoherent grid convergence tolerance
   void setAdjointIncoherentGridConvergenceTolerance(
@@ -239,6 +253,14 @@ private:
   // Photon Methods //
   ////////////////////
 
+  // Set the adjoint pair production energy distribution
+  void setAdjointPairProductionEnergyDistribution(
+         Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  // Set the adjoint triplet production energy distribution
+  void setAdjointTripletProductionEnergyDistribution(
+         Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;   
+
   // Create the Waller-Hartree incoherent adjoint cs evaluator
   void createWallerHartreeIncoherentAdjointCrossSectionEvaluator(
          std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
@@ -287,6 +309,22 @@ private:
           const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
           std::vector<std::vector<double> >& max_energy_grid,
           std::vector<std::vector<double> >& cross_section ) const;
+
+  // Calculate the impulse approx total incoherent adjoint cross section
+  void calculateAdjointImpulseApproxTotalIncoherentCrossSection(
+                    Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
+                    data_container ) const;
+
+  // Calculate the adjoint photon total cross section
+  void calculateAdjointPhotonTotalCrossSection(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const bool use_waller_hartree_adjoint_incoherent_cs ) const;
+
+  // Evaluate the total cross section at an energy and max energy
+  double evaluateAdjointPhotonTotalCrossSection(
+          const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+          cross_sections,
+          const double max_energy ) const;
 
   //////////////////////
   // Electron Methods //
@@ -337,18 +375,18 @@ private:
     std::map<unsigned,std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
         adjoint_electroionization_cs_evaluators ) const;
 
-  // The threshold energy nudge factor
-  static const double s_threshold_energy_nudge_factor;
-
-  // The minimum tabulated energy loss
-  static const double s_min_tabulated_energy_loss;
-
   // The forward data
   std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
   d_forward_epr_data;
 
   // The log stream
   std::ostream* d_os_log;
+
+  // The adjoint pair production energy dist norm constant evaluation tolerance
+  double d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol;
+
+  // The adjoint triplet production energy dist norm constant evaluation tol
+  double d_adjoint_triplet_production_energy_dist_norm_const_evaluation_tol;
 
   // The adjoint incoherent max energy nudge value
   double d_adjoint_incoherent_max_energy_nudge_value;
@@ -362,11 +400,11 @@ private:
   // The adjoint incoherent grid convergence tolerance
   double d_adjoint_incoherent_grid_convergence_tol;
 
-  // The adjoint incoherent absolute diff tolerance
-  double d_adjoint_incoherent_absolute_diff_tol;
+  // The adjoint incoherent grid absolute diff tolerance
+  double d_adjoint_incoherent_grid_absolute_diff_tol;
 
-  // The adjoint incoherent distance tolerance
-  double d_adjoint_incoherent_distance_tol;
+  // The adjoint incoherent grid distance tolerance
+  double d_adjoint_incoherent_grid_distance_tol;
 
   // The adjoint electron grid convergence tolerance
   double d_adjoint_electron_grid_convergence_tol;
