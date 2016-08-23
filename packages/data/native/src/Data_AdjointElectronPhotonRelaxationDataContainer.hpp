@@ -44,6 +44,13 @@ public:
   { /* ... */ }
 
 //---------------------------------------------------------------------------//
+// GET NOTES
+//---------------------------------------------------------------------------//
+
+  //! Return the table notes
+  const std::string& getNotes() const;
+
+//---------------------------------------------------------------------------//
 // GET TABLE DATA
 //---------------------------------------------------------------------------//
 
@@ -61,6 +68,30 @@ public:
 
   //! Return the maximum electron energy
   double getMaxElectronEnergy() const;
+
+  //! Return the adjoint pair production energy dist norm constant evaluation tol
+  double getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() const;
+
+  //! Return the adjoint triplet production energy dist norm const evaluation tol
+  double getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance() const;
+
+  //! Return the adjoint incoherent max energy nudge value
+  double getAdjointIncoherentMaxEnergyNudgeValue() const;
+
+  //! Return the adjoint incoherent energy to max energy nudge value
+  double getAdjointIncoherentEnergyToMaxEnergyNudgeValue() const;
+
+  //! Return the adjoint incoherent cross section evaluation tolerance
+  double getAdjointIncoherentEvaluationTolerance() const;
+
+  //! Return the adjoint incoherent grid convergence tolerance
+  double getAdjointIncoherentGridConvergenceTolerance() const;
+
+  //! Return the adjoint incoherent grid absolute difference tolerance
+  double getAdjointIncoherentGridAbsoluteDifferenceTolerance() const;
+
+  //! Return the adjoint incoherent grid distance tolerance
+  double getAdjointIncoherentGridDistanceTolerance() const;
 
   //! Return the upper cutoff scattering angle cosine above which moment preserving elastic scattering is used
   double getCutoffAngleCosine() const;
@@ -140,6 +171,14 @@ public:
   const std::vector<std::vector<double> >&
   getAdjointWallerHartreeIncoherentCrossSection() const;
 
+  //! Return the adjoint impulse approx. (IA) incoherent photon max energy grid
+  const std::vector<std::vector<double> >&
+  getAdjointImpulseApproxIncoherentMaxEnergyGrid() const;
+
+  //! Return the adjoint impulse approx. (IA) incoherent photon cross section
+  const std::vector<std::vector<double> >&
+  getAdjointImpulseApproxIncoherentCrossSection() const;
+
   //! Return the subshell adjoint impulse approx. (IA) incoh. max energy grid
   const std::vector<std::vector<double> >&
   getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
@@ -153,6 +192,28 @@ public:
   //! Return the adjoint Waller-Hartree coherent cross section
   const std::vector<double>&
   getAdjointWallerHartreeCoherentCrossSection() const;
+
+  //! Return the adjoint Waller-Hartree total max energy grid
+  const std::vector<std::vector<double> >&
+  getAdjointWallerHartreeTotalMaxEnergyGrid() const;
+
+  //! Return the adjoint Waller-Hartree total cross section
+  const std::vector<std::vector<double> >&
+  getAdjointWallerHartreeTotalCrossSection() const;
+
+  //! Return the adjoint impulse approx. (IA) total max energy grid
+  const std::vector<std::vector<double> >&
+  getAdjointImpulseApproxTotalMaxEnergyGrid() const;
+
+  //! Return the adjoint impulse approx. (IA) total cross section
+  const std::vector<std::vector<double> >&
+  getAdjointImpulseApproxTotalCrossSection() const;
+
+  //! Return the (forward) Waller-Hartree total cross section
+  const std::vector<double>& getWallerHartreeTotalCrossSection() const;
+
+  //! Return the (forward) impulse approx. total cross section
+  const std::vector<double>& getImpulseApproxTotalCrossSection() const;
 
   //! Return the adjoint pair production energy distribution grid
   const std::vector<double>&
@@ -170,11 +231,21 @@ public:
   const std::vector<double>&
   getAdjointPairProductionEnergyDistributionNormConstant() const;
 
-  //! Return the (forward) Waller-Hartree total cross section
-  const std::vector<double>& getWallerHartreeTotalCrossSection() const;
+  //! Return the adjoint triplet production energy distribution grid
+  const std::vector<double>&
+  getAdjointTripletProductionEnergyDistributionGrid() const;
 
-  //! Return the (forward) impulse approx. total cross section
-  const std::vector<double>& getImpulseApproxTotalCrossSection() const;
+  //! Return the adjoint triplet production energy distribution
+  const std::vector<double>&
+  getAdjointTripletProductionEnergyDistribution() const;
+
+  //! Return the adjoint triplet production energy dist. norm grid
+  const std::vector<double>&
+  getAdjointTripletProductionEnergyDistributionNormConstantGrid() const;
+
+  //! Return the adjoint triplet production energy dist. normalization constant
+  const std::vector<double>&
+  getAdjointTripletProductionEnergyDistributionNormConstant() const;
 
 //---------------------------------------------------------------------------//
 // GET ELECTRON DATA
@@ -301,6 +372,13 @@ protected:
   { /* ... */ }
 
 //---------------------------------------------------------------------------//
+// SET NOTES
+//---------------------------------------------------------------------------//
+
+  //! Set the table notes
+  void setNotes( const std::string& notes );
+
+//---------------------------------------------------------------------------//
 // SET TABLE DATA
 //---------------------------------------------------------------------------//
 
@@ -319,6 +397,35 @@ protected:
   //! Set the maximum electron energy
   void setMaxElectronEnergy( const double max_electron_energy );
 
+  //! Set the adjoint pair production energy dist norm constant evaluation tol
+  void setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
+                                                 const double evaluation_tol );
+
+  //! Set the adjoint triplet production energy dist norm const evaluation tol
+  void setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(
+                                                 const double evaluation_tol );
+
+  //! Set the adjoint incoherent max energy nudge value
+  void setAdjointIncoherentMaxEnergyNudgeValue( const double nudge_value );
+
+  //! Set the adjoint incoherent energy to max energy nudge value
+  void setAdjointIncoherentEnergyToMaxEnergyNudgeValue(
+                                                    const double nudge_value );
+
+  //! Set the adjoint incoherent cross section evaluation tolerance
+  void setAdjointIncoherentEvaluationTolerance( const double evaluation_tol );
+
+  //! Set the adjoint incoherent grid convergence tolerance
+  void setAdjointIncoherentGridConvergenceTolerance(
+                                                const double convergence_tol );
+
+  //! Set the adjoint incoherent grid absolute difference tolerance
+  void setAdjointIncoherentGridAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
+
+  //! Set the adjoint incoherent grid distance tolerance
+  void setAdjointIncoherentGridDistanceTolerance( const double distance_tol );
+
   //! Set the upper cutoff scattering angle below which moment preserving elastic scattering is used
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
@@ -327,7 +434,7 @@ protected:
     const unsigned number_of_adjoint_moment_preserving_angles );
 
   //! Set the adjoint bremsstrahlung evaluation tolerance
-  void getAdjointBremsstrahlungEvaluationTolerance(
+  void setAdjointBremsstrahlungEvaluationTolerance(
     const double adjoint_bremsstrahlung_evaluation_tolerance );
 
   //! Set the union energy grid convergence tolerance
@@ -405,6 +512,16 @@ protected:
                                        const std::vector<std::vector<double> >&
                                        adjoint_incoherent_cross_section );
 
+  //! Set the adjoint impulse approx. (IA) incoherent photon max energy grid
+  void setAdjointImpulseApproxIncoherentMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid );
+
+  //! Set the adjoint impulse approx. (IA) incoherent photon cross section
+  void setAdjointImpulseApproxIncoherentCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section );
+
   //! Set the subshell adjoint IA incoherent photon max energy grid
   void setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
                                        const unsigned subshell,
@@ -420,6 +537,34 @@ protected:
   //! Set the adjoint Waller-Hartree coherent cross section
   void setAdjointWallerHartreeCoherentCrossSection(
                            const std::vector<double>& coherent_cross_section );
+
+  //! Set the adjoint Waller-Hartree total max energy grid
+  void setAdjointWallerHartreeTotalMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_max_energy_grid );
+
+  //! Set the adjoint Waller-Hartree total cross section
+  void setAdjointWallerHartreeTotalCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_cross_section );
+
+  //! Set the adjoint impulse approx. (IA) total max energy grid
+  void setAdjointImpulseApproxTotalMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_max_energy_grid );
+
+  //! Set the adjoint impulse approx. (IA) total cross section
+  void setAdjointImpulseApproxTotalCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_cross_section );
+
+  //! Set the (forward) Waller-Hartree total cross section
+  void setWallerHartreeTotalCrossSection(
+                              const std::vector<double>& total_cross_section );
+
+  //! Set the (forward) impulse apprx. total cross section
+  void setImpulseApproxTotalCrossSection(
+                              const std::vector<double>& total_cross_section );
 
   //! Set the adjoint pair production energy distribution grid
   void setAdjointPairProductionEnergyDistributionGrid(
@@ -439,13 +584,23 @@ protected:
                          const std::vector<double>&
                          adjoint_pair_production_energy_dist_norm_const );
 
-  //! Set the (forward) Waller-Hartree total cross section
-  void setWallerHartreeTotalCrossSection(
-                              const std::vector<double>& total_cross_section );
+  //! Set the adjoint triplet production energy distribution grid
+  void setAdjointTripletProductionEnergyDistributionGrid(
+          const std::vector<double>& ajoint_triplet_production_energy_dist_grid );
 
-  //! Set the (forward) impulse apprx. total cross section
-  void setImpulseApproxTotalCrossSection(
-                              const std::vector<double>& total_cross_section );
+  //! Set the adjoint triplet production energy distribution
+  void setAdjointTripletProductionEnergyDistribution(
+              const std::vector<double>& adjoint_triplet_production_energy_dist );
+
+  //! Set the adjoint triplet production energy dist. norm constant grid
+  void setAdjointTripletProductionEnergyDistributionNormConstantGrid(
+                         const std::vector<double>&
+                         adjoint_triplet_production_energy_dist_norm_const_grid );
+
+  //! Set the adjoint triplet production energy dist. norm constant
+  void setAdjointTripletProductionEnergyDistributionNormConstant(
+                         const std::vector<double>&
+                         adjoint_triplet_production_energy_dist_norm_const );
   
 //---------------------------------------------------------------------------//
 // SET ELECTRON DATA
@@ -621,6 +776,13 @@ private:
   friend class boost::serialization::access;
 
 //---------------------------------------------------------------------------//
+// NOTES
+//---------------------------------------------------------------------------//
+
+  // The table notes
+  std::string d_notes;
+
+//---------------------------------------------------------------------------//
 // SET TABLE DATA
 //---------------------------------------------------------------------------//
 
@@ -638,6 +800,30 @@ private:
 
   // The maximum electron energy
   double d_max_electron_energy;
+
+  // The adjoint pair production energy dist norm constant evaluation tol
+  double d_adjoint_pair_production_energy_dist_norm_constant_evaluation_tol;
+
+  // The adjoint triplet production energy dist norm constant evaluation tol
+  double d_adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol;
+
+  // The adjoint incoherent max energy nudge value
+  double d_adjoint_incoherent_max_energy_nudge_value;
+
+  // The adjoint incoherent energy to max energy nudge value
+  double d_adjoint_incoherent_energy_to_max_energy_nudge_value;
+
+  // The adjoint incoherent cross section evaluation tol
+  double d_adjoint_incoherent_evaluation_tol;
+
+  // The adjoint incoherent grid convergence tol
+  double d_adjoint_incoherent_grid_convergence_tol;
+
+  // The adjoint incoherent grid absolute difference tol
+  double d_adjoint_incoherent_grid_absolute_diff_tol;
+
+  // The adjoint incoherent grid distance tol
+  double d_adjoint_incoherent_grid_distance_tol;  
 
   // The elastic cutoff angle
   double d_cutoff_angle_cosine;
@@ -706,6 +892,14 @@ private:
   std::vector<std::vector<double> >
   d_adjoint_waller_hartree_incoherent_cross_section;
 
+  // The impulse approx. incoherent adjoint photon max energy grid (MeV)
+  std::vector<std::vector<double> >
+  d_adjoint_impulse_approx_incoherent_max_energy_grid;
+
+  // The impulse approx. incoherent adjoint photon cross section (b)
+  std::vector<std::vector<double> >
+  d_adjoint_impulse_approx_incoherent_cross_section;
+
   // The impulse approx. subshell incoh. adjoint photon max energy grid (MeV)
   std::map<unsigned,std::vector<std::vector<double> > >
   d_adjoint_impulse_approx_subshell_incoherent_max_energy_grids;
@@ -716,6 +910,28 @@ private:
 
   // The Waller-Hartree coherent cross section (b)
   std::vector<double> d_waller_hartree_coherent_cross_section;
+
+  // The adjoint Waller-Hartree total max energy grid (MeV)
+  std::vector<std::vector<double> >
+  d_adjoint_waller_hatree_total_max_energy_grid;
+
+  // The adjoint Waller-Hartree total cross section (b)
+  std::vector<std::vector<double> >
+  d_adjoint_waller_hatree_total_cross_section;
+
+  // The adjoint impulse approx. total max energ grid (MeV)
+  std::vector<std::vector<double> >
+  d_adjoint_impulse_approx_total_max_energy_grid;
+
+  // The adjoint impulse approx. total cross section (b)
+  std::vector<std::vector<double> >
+  d_adjoint_impulse_approx_total_cross_section;
+
+  // The forward Waller-Hartree total cross section (b)
+  std::vector<double> d_waller_hartree_total_cross_section;
+
+  // The forward impulse approx. total cross section (b)
+  std::vector<double> d_impulse_approx_total_cross_section;
 
   // The adjoint pair production energy distribution grid (MeV)
   std::vector<double> d_adjoint_pair_production_energy_distribution_grid;
@@ -729,11 +945,17 @@ private:
   // The adjoint pair production energy distribution norm constant (b)
   std::vector<double> d_adjoint_pair_production_norm_constant;
 
-  // The (forward) Waller-Hartree total cross section (b)
-  std::vector<double> d_waller_hartree_total_cross_section;
+  // The adjoint triplet production energy distribution grid (MeV)
+  std::vector<double> d_adjoint_triplet_production_energy_distribution_grid;
 
-  // The (forward) impulse approx. total cross section (b)
-  std::vector<double> d_impulse_approx_total_cross_section;
+  // The adjoint triplet production energy distribution (b)
+  std::vector<double> d_adjoint_triplet_production_energy_distribution;
+
+  // The adjoint triplet production energy distribution norm constant grid (MeV)
+  std::vector<double> d_adjoint_triplet_production_norm_constant_grid;
+
+  // The adjoint triplet production energy distribution norm constant (b)
+  std::vector<double> d_adjoint_triplet_production_norm_constant;
   
 //---------------------------------------------------------------------------//
 // ELECTRON DATA

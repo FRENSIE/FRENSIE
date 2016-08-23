@@ -26,8 +26,20 @@
 
 Data::AdjointElectronPhotonRelaxationVolatileDataContainer epr_data_container;
 
+const std::string notes( "This is a test data table. Do not use it for "
+                         "anything other than tests!" );
+
 //---------------------------------------------------------------------------//
 // Tests.
+//---------------------------------------------------------------------------//
+// Check that the table notes can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setNotes )
+{
+  epr_data_container.setNotes( notes );
+
+  TEST_EQUALITY_CONST( epr_data_container.getNotes(), notes );
+}
+
 //---------------------------------------------------------------------------//
 // Check that the atomic number can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setAtomicNumber )
@@ -75,6 +87,99 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setMaxElectronE
 
   TEST_EQUALITY_CONST( epr_data_container.getMaxElectronEnergy(),
                        1.0e+5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint pair production energy dist norm constant evaluation
+// tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance )
+{
+  epr_data_container.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint triplet production energy dist norm constant
+// evaluation tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance )
+{
+  epr_data_container.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-4 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-4 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent max energy nudge value can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointIncoherentMaxEnergyNudgeValue )
+{
+  epr_data_container.setAdjointIncoherentMaxEnergyNudgeValue( 0.2 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointIncoherentMaxEnergyNudgeValue(),
+                       0.2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent energy to max energy nudge value can be
+// set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointIncoherentEnergyToMaxEnergyNudgeValue )
+{
+  epr_data_container.setAdjointIncoherentEnergyToMaxEnergyNudgeValue( 1e-6 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                       1e-6 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent cross section evaluation tolerance can be
+// set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointIncoherentEvaluationTolerance )
+{
+  epr_data_container.setAdjointIncoherentEvaluationTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointIncoherentEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent grid convergence tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointIncoherentGridConvergenceTolerance )
+{
+  epr_data_container.setAdjointIncoherentGridConvergenceTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointIncoherentGridConvergenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent grid absolute difference tolerance can
+// be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointIncoherentGridAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-20 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                       1e-20 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent grid distance tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointIncoherentGridDistanceTolerance )
+{
+  epr_data_container.setAdjointIncoherentGridDistanceTolerance( 1e-15 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointIncoherentGridDistanceTolerance(),
+                       1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -394,6 +499,70 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the adjoint incoherent max energy grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointImpulseApproxIncoherentMaxEnergyGrid )
+{
+  std::vector<std::vector<double> > max_energy_grid( 3 );
+  max_energy_grid[0].resize( 3 );
+  max_energy_grid[0][0] = 1.8e-3;
+  max_energy_grid[0][1] = 2.0;
+  max_energy_grid[0][2] = 20.2;
+
+  max_energy_grid[1].resize( 3 );
+  max_energy_grid[1][0] = 1.3;
+  max_energy_grid[1][1] = 5.0;
+  max_energy_grid[1][2] = 20.2;
+
+  max_energy_grid[2].resize( 2 );
+  max_energy_grid[2][0] = 20.1;
+  max_energy_grid[2][0] = 20.2;
+
+  epr_data_container.setAdjointImpulseApproxIncoherentMaxEnergyGrid( max_energy_grid );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid().size(),
+                       max_energy_grid.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid()[0],
+                       max_energy_grid[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid()[1],
+                       max_energy_grid[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid()[2],
+                       max_energy_grid[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointImpulseApproxIncoherentCrossSection )
+{
+  std::vector<std::vector<double> > cross_section( 3 );
+  cross_section[0].resize( 3 );
+  cross_section[0][0] = 1e-5;
+  cross_section[0][1] = 0.7;
+  cross_section[0][2] = 2.5;
+
+  cross_section[1].resize( 3 );
+  cross_section[1][0] = 1e-4;
+  cross_section[1][1] = 1.7;
+  cross_section[1][2] = 5.0;
+
+  cross_section[2].resize( 2 );
+  cross_section[2][0] = 0.0;
+  cross_section[2][0] = 1e-6;
+
+  epr_data_container.setAdjointImpulseApproxIncoherentCrossSection( cross_section );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointImpulseApproxIncoherentCrossSection().size(),
+                       cross_section.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxIncoherentCrossSection()[0],
+                       cross_section[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxIncoherentCrossSection()[1],
+                       cross_section[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxIncoherentCrossSection()[2],
+                       cross_section[2] );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the subshell adjoint incoherent max energy grid can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid )
@@ -474,6 +643,166 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the adjoint total max energy grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointWallerHartreeTotalMaxEnergyGrid )
+{
+  std::vector<std::vector<double> > max_energy_grid( 3 );
+  max_energy_grid[0].resize( 3 );
+  max_energy_grid[0][0] = 1.0e-3;
+  max_energy_grid[0][1] = 2.0;
+  max_energy_grid[0][2] = 20.2;
+
+  max_energy_grid[1].resize( 3 );
+  max_energy_grid[1][0] = 1.0;
+  max_energy_grid[1][1] = 5.0;
+  max_energy_grid[1][2] = 20.2;
+
+  max_energy_grid[2].resize( 2 );
+  max_energy_grid[2][0] = 20.0;
+  max_energy_grid[2][0] = 20.2;
+
+  epr_data_container.setAdjointWallerHartreeTotalMaxEnergyGrid( max_energy_grid );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid().size(),
+                       max_energy_grid.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid()[0],
+                       max_energy_grid[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid()[1],
+                       max_energy_grid[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid()[2],
+                       max_energy_grid[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint total cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointWallerHartreeTotalCrossSection )
+{
+  std::vector<std::vector<double> > cross_section( 3 );
+  cross_section[0].resize( 3 );
+  cross_section[0][0] = 0.0;
+  cross_section[0][1] = 0.5;
+  cross_section[0][2] = 2.5;
+
+  cross_section[1].resize( 3 );
+  cross_section[1][0] = 0.0;
+  cross_section[1][1] = 1.5;
+  cross_section[1][2] = 5.0;
+
+  cross_section[2].resize( 2 );
+  cross_section[2][0] = 0.0;
+  cross_section[2][0] = 1e-6;
+
+  epr_data_container.setAdjointWallerHartreeTotalCrossSection( cross_section );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointWallerHartreeTotalCrossSection().size(),
+                       cross_section.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeTotalCrossSection()[0],
+                       cross_section[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeTotalCrossSection()[1],
+                       cross_section[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointWallerHartreeTotalCrossSection()[2],
+                       cross_section[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint total max energy grid can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointImpulseApproxTotalMaxEnergyGrid )
+{
+  std::vector<std::vector<double> > max_energy_grid( 3 );
+  max_energy_grid[0].resize( 3 );
+  max_energy_grid[0][0] = 1.0e-3;
+  max_energy_grid[0][1] = 2.0;
+  max_energy_grid[0][2] = 20.2;
+
+  max_energy_grid[1].resize( 3 );
+  max_energy_grid[1][0] = 1.0;
+  max_energy_grid[1][1] = 5.0;
+  max_energy_grid[1][2] = 20.2;
+
+  max_energy_grid[2].resize( 2 );
+  max_energy_grid[2][0] = 20.0;
+  max_energy_grid[2][0] = 20.2;
+
+  epr_data_container.setAdjointImpulseApproxTotalMaxEnergyGrid( max_energy_grid );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid().size(),
+                       max_energy_grid.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid()[0],
+                       max_energy_grid[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid()[1],
+                       max_energy_grid[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid()[2],
+                       max_energy_grid[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint total cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointImpulseApproxTotalCrossSection )
+{
+  std::vector<std::vector<double> > cross_section( 3 );
+  cross_section[0].resize( 3 );
+  cross_section[0][0] = 0.0;
+  cross_section[0][1] = 0.5;
+  cross_section[0][2] = 2.5;
+
+  cross_section[1].resize( 3 );
+  cross_section[1][0] = 0.0;
+  cross_section[1][1] = 1.5;
+  cross_section[1][2] = 5.0;
+
+  cross_section[2].resize( 2 );
+  cross_section[2][0] = 0.0;
+  cross_section[2][0] = 1e-6;
+
+  epr_data_container.setAdjointImpulseApproxTotalCrossSection( cross_section );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointImpulseApproxTotalCrossSection().size(),
+                       cross_section.size() );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxTotalCrossSection()[0],
+                       cross_section[0] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxTotalCrossSection()[1],
+                       cross_section[1] );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointImpulseApproxTotalCrossSection()[2],
+                       cross_section[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Waller-Hartree total cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setWallerHatreeTotalCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setWallerHartreeTotalCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeTotalCrossSection(),
+		       cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the impulse approx. total cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setImpulseApproxTotalCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setImpulseApproxTotalCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getImpulseApproxTotalCrossSection(),
+		       cross_section );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the adjoint pair production energy distribution grid can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setAdjointPairProductionEnergyDistributionGrid )
@@ -539,35 +868,69 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the Waller-Hartree total cross section can be set
+// Check that the adjoint triplet production energy distribution grid can be
+// set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setWallerHatreeTotalCrossSection )
+                   setAdjointTripletProductionEnergyDistributionGrid )
 {
-  std::vector<double> cross_section( 3 );
-  cross_section[0] = 1e-6;
-  cross_section[1] = 1e-1;
-  cross_section[2] = 1.0;
+  std::vector<double> energy_dist_grid( 3 );
+  energy_dist_grid[0] = 2.04399564052;
+  energy_dist_grid[1] = 5.0;
+  energy_dist_grid[2] = 20.2;
 
-  epr_data_container.setWallerHartreeTotalCrossSection( cross_section );
+  epr_data_container.setAdjointTripletProductionEnergyDistributionGrid( energy_dist_grid );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getWallerHartreeTotalCrossSection(),
-		       cross_section );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointTripletProductionEnergyDistributionGrid(),
+                       energy_dist_grid );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the impulse approx. total cross section can be set
+// Check that the adjoint triplet production energy distribution can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setImpulseApproxTotalCrossSection )
+                   setAdjointTripletProductionEnergyDistribution )
 {
-  std::vector<double> cross_section( 3 );
-  cross_section[0] = 1e-6;
-  cross_section[1] = 1e-1;
-  cross_section[2] = 1.0;
+  std::vector<double> energy_dist( 3 );
+  energy_dist[0] = 0.0;
+  energy_dist[1] = 5.0;
+  energy_dist[2] = 0.1;
 
-  epr_data_container.setImpulseApproxTotalCrossSection( cross_section );
+  epr_data_container.setAdjointTripletProductionEnergyDistribution( energy_dist );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getImpulseApproxTotalCrossSection(),
-		       cross_section );
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointTripletProductionEnergyDistribution(),
+                       energy_dist );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint triplet production energy dist norm const grid can be
+// set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointTripletProductionEnergyDistributionNormConstantGrid )
+{
+  std::vector<double> norm_const_grid( 3 );
+  norm_const_grid[0] = 2.04399564052;
+  norm_const_grid[1] = 5.0;
+  norm_const_grid[2] = 20.2;
+
+  epr_data_container.setAdjointTripletProductionEnergyDistributionNormConstantGrid( norm_const_grid );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointTripletProductionEnergyDistributionNormConstantGrid(),
+                       norm_const_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint triplet production energy dist norm constant can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointTripletProductionEnergyDistributionNormConstant )
+{
+  std::vector<double> norm_const( 3 );
+  norm_const[0] = 0.0;
+  norm_const[1] = 10.0;
+  norm_const[2] = 11.0;
+
+  epr_data_container.setAdjointTripletProductionEnergyDistributionNormConstant( norm_const );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getAdjointTripletProductionEnergyDistributionNormConstant(),
+                       norm_const );
 }
 
 //---------------------------------------------------------------------------//
@@ -1190,6 +1553,22 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxElectronEnergy(), 1.0e5 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentMaxEnergyNudgeValue(),
+                       0.2 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                       1e-6 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentGridConvergenceTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                       1e-20 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentGridDistanceTolerance(),
+                       1e-15 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfAdjointMomentPreservingAngles(),
@@ -1221,15 +1600,25 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPhotonEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxIncoherentMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxIncoherentCrossSection().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 ).size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 ).size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeTotalMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxTotalMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistribution().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstantGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstant().size(), 3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(), 3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistributionGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistribution().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistributionNormConstantGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistributionNormConstant().size(), 3 );
   
   // Electron Tests
   TEST_EQUALITY_CONST(
@@ -1351,6 +1740,22 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxElectronEnergy(), 1.0e5 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentMaxEnergyNudgeValue(),
+                       0.2 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                       1e-6 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentGridConvergenceTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                       1e-20 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentGridDistanceTolerance(),
+                       1e-15 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfAdjointMomentPreservingAngles(),
@@ -1382,15 +1787,26 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPhotonEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentMaxEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxIncoherentMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxIncoherentCrossSection().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 ).size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeTotalMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxTotalMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeCoherentCrossSection().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistribution().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstantGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstant().size(), 3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(), 3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistributionGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistribution().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistributionNormConstantGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistributionNormConstant().size(), 3 );
   
   // Electron Tests
   TEST_EQUALITY_CONST(
@@ -1509,6 +1925,22 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getMaxElectronEnergy(), 1.0e5 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(),
+                       1e-4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentMaxEnergyNudgeValue(),
+                       0.2 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                       1e-6 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentGridConvergenceTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                       1e-20 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointIncoherentGridDistanceTolerance(),
+                       1e-15 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfAdjointMomentPreservingAngles(),
@@ -1542,13 +1974,23 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeIncoherentCrossSection().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 ).size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 ).size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxIncoherentMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxIncoherentCrossSection().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeTotalMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointWallerHartreeTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxTotalMaxEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointImpulseApproxTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistribution().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstantGrid().size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointPairProductionEnergyDistributionNormConstant().size(), 3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(), 3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistributionGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistribution().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistributionNormConstantGrid().size(), 3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointTripletProductionEnergyDistributionNormConstant().size(), 3 );
 
   // Electron Tests
   TEST_EQUALITY_CONST(

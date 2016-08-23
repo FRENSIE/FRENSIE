@@ -40,6 +40,16 @@ AdjointElectronPhotonRelaxationDataContainer::AdjointElectronPhotonRelaxationDat
 }
 
 //---------------------------------------------------------------------------//
+// Get Notes
+//---------------------------------------------------------------------------//
+
+// Data table notes
+const std::string& AdjointElectronPhotonRelaxationDataContainer::getNotes() const
+{
+  return d_notes;
+}
+  
+//---------------------------------------------------------------------------//
 // GET TABLE DATA
 //---------------------------------------------------------------------------//
 
@@ -71,6 +81,54 @@ double AdjointElectronPhotonRelaxationDataContainer::getMinElectronEnergy() cons
 double AdjointElectronPhotonRelaxationDataContainer::getMaxElectronEnergy() const
 {
   return d_max_electron_energy;
+}
+
+// Return the adjoint pair production energy dist norm constant evaluation tol
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() const
+{
+  return d_adjoint_pair_production_energy_dist_norm_constant_evaluation_tol;
+}
+
+// Return the adjoint triplet production energy dist norm const evaluation tol
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance() const
+{
+  return d_adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol;
+}
+
+// Return the adjoint incoherent max energy nudge value
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointIncoherentMaxEnergyNudgeValue() const
+{
+  return d_adjoint_incoherent_max_energy_nudge_value;
+}
+
+// Return the adjoint incoherent energy to max energy nudge value
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointIncoherentEnergyToMaxEnergyNudgeValue() const
+{
+  return d_adjoint_incoherent_energy_to_max_energy_nudge_value;
+}
+
+// Return the adjoint incoherent cross section evaluation tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointIncoherentEvaluationTolerance() const
+{
+  return d_adjoint_incoherent_evaluation_tol;
+}
+
+// Return the adjoint incoherent grid convergence tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointIncoherentGridConvergenceTolerance() const
+{
+  return d_adjoint_incoherent_grid_convergence_tol;
+}
+
+// Return the adjoint incoherent grid absolute difference tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointIncoherentGridAbsoluteDifferenceTolerance() const
+{
+  return d_adjoint_incoherent_grid_absolute_diff_tol;
+}
+
+// Return the adjoint incoherent grid distance tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointIncoherentGridDistanceTolerance() const
+{
+  return d_adjoint_incoherent_grid_distance_tol;
 }
 
 // Return the elastic cutoff angle
@@ -245,6 +303,20 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointWallerHartreeIncoherentC
   return d_adjoint_waller_hartree_incoherent_cross_section;
 }
 
+// the adjoint impulse approx. (IA) incoherent photon max energy grid
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxIncoherentMaxEnergyGrid() const
+{
+  return d_adjoint_impulse_approx_incoherent_max_energy_grid;
+}
+
+// Return the adjoint impulse approx. (IA) incoherent photon cross section
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxIncoherentCrossSection() const
+{
+  return d_adjoint_impulse_approx_incoherent_cross_section;
+}
+
 // Return the subshell adjoint impulse approx. (IA) incoh. max energy grid
 const std::vector<std::vector<double> >&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
@@ -276,6 +348,48 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointWallerHartreeCoherentCro
   return d_waller_hartree_coherent_cross_section;
 }
 
+// Return the adjoint Waller-Hartree total max energy grid
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointWallerHartreeTotalMaxEnergyGrid() const
+{
+  return d_adjoint_waller_hatree_total_max_energy_grid;
+}
+
+// Return the adjoint Waller-Hartree total cross section
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointWallerHartreeTotalCrossSection() const
+{
+  return d_adjoint_waller_hatree_total_cross_section;
+}
+
+// Return the adjoint impulse approx. (IA) total max energy grid
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxTotalMaxEnergyGrid() const
+{
+  return d_adjoint_impulse_approx_total_max_energy_grid;
+}
+
+// Return the adjoint impulse approx. (IA) total cross section
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxTotalCrossSection() const
+{
+  return d_adjoint_impulse_approx_total_cross_section;
+}
+
+// Return the (forward) Waller-Hartree total cross section
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeTotalCrossSection() const
+{
+  return d_waller_hartree_total_cross_section;
+}
+
+// Return the (forward) impulse approx. total cross section
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getImpulseApproxTotalCrossSection() const
+{
+  return d_impulse_approx_total_cross_section;
+}
+
 // Return the adjoint pair production energy distribution grid
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDistributionGrid() const
@@ -304,18 +418,32 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDist
   return d_adjoint_pair_production_norm_constant;
 }
 
-// Return the (forward) Waller-Hartree total cross section
+// Return the adjoint triplet production energy distribution grid
 const std::vector<double>&
-AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeTotalCrossSection() const
+AdjointElectronPhotonRelaxationDataContainer::getAdjointTripletProductionEnergyDistributionGrid() const
 {
-  return d_waller_hartree_total_cross_section;
+  return d_adjoint_triplet_production_energy_distribution_grid;
 }
 
-// Return the (forward) impulse approx. total cross section
+// Return the adjoint triplet production energy distribution
 const std::vector<double>&
-AdjointElectronPhotonRelaxationDataContainer::getImpulseApproxTotalCrossSection() const
+AdjointElectronPhotonRelaxationDataContainer::getAdjointTripletProductionEnergyDistribution() const
 {
-  return d_impulse_approx_total_cross_section;
+  return d_adjoint_triplet_production_energy_distribution;
+}
+
+// Return the adjoint triplet production energy dist. norm grid
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointTripletProductionEnergyDistributionNormConstantGrid() const
+{
+  return d_adjoint_triplet_production_norm_constant_grid;
+}
+
+// Return the adjoint triplet production energy dist. normalization constant
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointTripletProductionEnergyDistributionNormConstant() const
+{
+  return d_adjoint_triplet_production_norm_constant;
 }
 
 //---------------------------------------------------------------------------//
@@ -610,6 +738,17 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointAtomicExcitationCrossSec
 }
 
 //---------------------------------------------------------------------------//
+// SET NOTES
+//---------------------------------------------------------------------------//
+
+// Set the table notes
+void AdjointElectronPhotonRelaxationDataContainer::setNotes(
+                                                     const std::string& notes )
+{
+  d_notes = notes;
+}
+
+//---------------------------------------------------------------------------//
 // SET TABLE DATA
 //---------------------------------------------------------------------------//
 
@@ -652,6 +791,88 @@ void AdjointElectronPhotonRelaxationDataContainer::setMinElectronEnergy(
   testPrecondition( min_electron_energy >= 0.0 );
 
   d_min_electron_energy = min_electron_energy;
+}
+
+// Set the adjoint pair production energy dist norm constant evaluation tol
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
+                                                  const double evaluation_tol )
+{
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tol >= 0.0 );
+
+  d_adjoint_pair_production_energy_dist_norm_constant_evaluation_tol =
+    evaluation_tol;
+}
+
+// Set the adjoint triplet production energy dist norm const evaluation tol
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(
+                                                  const double evaluation_tol )
+{
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tol >= 0.0 );
+
+  d_adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol =
+    evaluation_tol;
+}
+
+// Set the adjoint incoherent max energy nudge value
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentMaxEnergyNudgeValue(
+                                                     const double nudge_value )
+{
+  // Make sure the nudge value is valid
+  testPrecondition( nudge_value > 0.0 );
+
+  d_adjoint_incoherent_max_energy_nudge_value = nudge_value;
+}
+
+// Set the adjoint incoherent energy to max energy nudge value
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentEnergyToMaxEnergyNudgeValue(
+                                                     const double nudge_value )
+{
+  // Make sure the nudge value is valid
+  testPrecondition( nudge_value >= 0.0 );
+
+  d_adjoint_incoherent_energy_to_max_energy_nudge_value = nudge_value;
+}
+
+// Set the adjoint incoherent cross section evaluation tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentEvaluationTolerance(
+                                                  const double evaluation_tol )
+{
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tol >= 0.0 );
+
+  d_adjoint_incoherent_evaluation_tol = evaluation_tol;
+}
+
+// Set the adjoint incoherent grid convergence tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentGridConvergenceTolerance(
+                                                 const double convergence_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( convergence_tol >= 0.0 );
+
+  d_adjoint_incoherent_grid_convergence_tol = convergence_tol;
+}
+
+// Set the adjoint incoherent grid absolute difference tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentGridAbsoluteDifferenceTolerance(
+                                               const double absolute_diff_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( absolute_diff_tol >= 0.0 );
+
+  d_adjoint_incoherent_grid_absolute_diff_tol = absolute_diff_tol;
+}
+
+// Set the adjoint incoherent grid distance tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentGridDistanceTolerance(
+                                                    const double distance_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( distance_tol >= 0.0 );
+
+  d_adjoint_incoherent_grid_distance_tol = distance_tol;
 }
 
 // Set the maximum electron energy
@@ -917,6 +1138,32 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointWallerHartreeIncohe
     adjoint_incoherent_cross_section;
 }
 
+// Set the adjoint impulse approx. (IA) incoherent photon max energy grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxIncoherentMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid )
+{
+  // Make sure the max energy grid is valid
+  testPrecondition( adjoint_incoherent_max_energy_grid.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_impulse_approx_incoherent_max_energy_grid =
+    adjoint_incoherent_max_energy_grid;
+}
+
+// Set the adjoint impulse approx. (IA) incoherent photon cross section
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxIncoherentCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section )
+{
+  // Make sure the cross section is valid
+  testPrecondition( adjoint_incoherent_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_impulse_approx_incoherent_cross_section =
+    adjoint_incoherent_cross_section;
+}
+
 // Set the subshell adjoint IA incoherent photon max energy grid
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
                                        const unsigned subshell,
@@ -961,6 +1208,82 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointWallerHartreeCohere
   d_waller_hartree_coherent_cross_section = coherent_cross_section;
 }
 
+// Set the adjoint Waller-Hartree total max energy grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointWallerHartreeTotalMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_max_energy_grid )
+{
+  // Make sure the max energy grid is valid
+  testPrecondition( adjoint_total_max_energy_grid.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_waller_hatree_total_max_energy_grid =
+    adjoint_total_max_energy_grid;
+}
+
+// Set the adjoint Waller-Hartree total cross section
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointWallerHartreeTotalCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_cross_section )
+{
+  // Make sure the cross section is valid
+  testPrecondition( adjoint_total_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_waller_hatree_total_cross_section =
+    adjoint_total_cross_section;
+}
+
+// Set the adjoint impulse approx. (IA) total max energy grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxTotalMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_max_energy_grid )
+{
+  // Make sure the max energy grid is valid
+  testPrecondition( adjoint_total_max_energy_grid.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_impulse_approx_total_max_energy_grid =
+    adjoint_total_max_energy_grid;
+}
+
+// Set the adjoint impulse approx. (IA) total cross section
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxTotalCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_cross_section )
+{
+  // Make sure the cross section is valid
+  testPrecondition( adjoint_total_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_impulse_approx_total_cross_section =
+    adjoint_total_cross_section;
+}
+
+// Set the (forward) Waller-Hartree total cross section
+void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection(
+                               const std::vector<double>& total_cross_section )
+{
+  // Make sure the total cross section is valid
+  testPrecondition( total_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( total_cross_section );
+
+  d_waller_hartree_total_cross_section = total_cross_section;
+}
+
+// Set the (forward) impulse apprx. total cross section
+void AdjointElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
+                               const std::vector<double>& total_cross_section )
+{
+  // Make sure the total cross section is valid
+  testPrecondition( total_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( total_cross_section );
+
+  d_impulse_approx_total_cross_section = total_cross_section;
+}
+
 // Set the adjoint pair production energy distribution grid
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistributionGrid(
           const std::vector<double>& adjoint_pair_production_energy_dist_grid )
@@ -990,7 +1313,8 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnerg
                           adjoint_pair_production_energy_dist_norm_const_grid )
 {
   // Make sure the energy distribution grid is valid
-  testPreconditionEnergyGrid( adjoint_pair_production_energy_dist_norm_const_grid );
+  testPreconditionEnergyGrid(
+                         adjoint_pair_production_energy_dist_norm_const_grid );
   
   d_adjoint_pair_production_norm_constant_grid =
     adjoint_pair_production_energy_dist_norm_const_grid;
@@ -1005,35 +1329,64 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnerg
   testPrecondition( adjoint_pair_production_energy_dist_norm_const.size() ==
                     d_adjoint_pair_production_norm_constant_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending(
-                      adjoint_pair_production_energy_dist_norm_const.begin(),
-                      adjoint_pair_production_energy_dist_norm_const.end() ) );
+                    adjoint_pair_production_energy_dist_norm_const.begin(),
+                    adjoint_pair_production_energy_dist_norm_const.end() ) );
 
   d_adjoint_pair_production_norm_constant =
     adjoint_pair_production_energy_dist_norm_const;
 }
 
-// Set the (forward) Waller-Hartree total cross section
-void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection(
-                               const std::vector<double>& total_cross_section )
+// Set the adjoint triplet production energy distribution grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEnergyDistributionGrid(
+       const std::vector<double>& adjoint_triplet_production_energy_dist_grid )
 {
-  // Make sure the total cross section is valid
-  testPrecondition( total_cross_section.size() ==
-                    d_adjoint_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( total_cross_section );
+  // Make sure the energy distribution grid is valid
+  testPreconditionEnergyGrid( adjoint_triplet_production_energy_dist_grid );
 
-  d_waller_hartree_total_cross_section = total_cross_section;
+  d_adjoint_triplet_production_energy_distribution_grid =
+    adjoint_triplet_production_energy_dist_grid;
 }
 
-// Set the (forward) impulse apprx. total cross section
-void AdjointElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
-                               const std::vector<double>& total_cross_section )
+// Set the adjoint triplet production energy distribution
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEnergyDistribution(
+            const std::vector<double>& adjoint_triplet_production_energy_dist )
 {
-  // Make sure the total cross section is valid
-  testPrecondition( total_cross_section.size() ==
-                    d_adjoint_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( total_cross_section );
+  // Make sure the energy distribution grid is valid
+  testPrecondition(
+                 adjoint_triplet_production_energy_dist.size() ==
+                 d_adjoint_triplet_production_energy_distribution_grid.size());
 
-  d_impulse_approx_total_cross_section = total_cross_section;
+  d_adjoint_triplet_production_energy_distribution =
+    adjoint_triplet_production_energy_dist;
+}
+
+// Set the adjoint triplet production energy dist. norm constant grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEnergyDistributionNormConstantGrid(
+                       const std::vector<double>&
+                       adjoint_triplet_production_energy_dist_norm_const_grid )
+{
+  // Make sure the energy distribution grid is valid
+  testPreconditionEnergyGrid(
+                      adjoint_triplet_production_energy_dist_norm_const_grid );
+  
+  d_adjoint_triplet_production_norm_constant_grid =
+    adjoint_triplet_production_energy_dist_norm_const_grid;
+}
+
+// Set the adjoint triplet production energy dist. norm constant
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEnergyDistributionNormConstant(
+                            const std::vector<double>&
+                            adjoint_triplet_production_energy_dist_norm_const )
+{
+  // Make sure the energy dist. norm constant is valid
+  testPrecondition( adjoint_triplet_production_energy_dist_norm_const.size() ==
+                    d_adjoint_triplet_production_norm_constant_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending(
+                     adjoint_triplet_production_energy_dist_norm_const.begin(),
+                     adjoint_triplet_production_energy_dist_norm_const.end() ) );
+
+  d_adjoint_triplet_production_norm_constant =
+    adjoint_triplet_production_energy_dist_norm_const;
 }
   
 //---------------------------------------------------------------------------//

@@ -89,7 +89,7 @@ protected:
   void setBasicData(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
   
-  //! Set the default converge parameters
+  //! Set the default convergence parameters
   void setDefaultConvergenceParameters(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
@@ -114,6 +114,7 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
+  // The default grid generator
   std::unique_ptr<Utility::GridGenerator<Utility::LinLin> >
   d_default_grid_generator;
 };
