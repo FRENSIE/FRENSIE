@@ -19,8 +19,8 @@
 
 // FRENSIE Includes
 #include "DataGen_StandardENDLDataGenerator.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
-#include "MonteCarlo_AtomType.hpp"
+#include "Data_AtomType.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ENDLFileHandler.hpp"
 #include "Data_ENDLVolatileDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"

@@ -9,8 +9,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_ElectroatomACEFactory.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "MonteCarlo_ElectroatomNativeFactory.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
@@ -49,7 +49,7 @@ ElectroatomFactory::ElectroatomFactory(
 
   while( electroatom_name != electroatom_aliases.end() )
   {
-    CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
+    Data::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
 						  cross_sections_xml_directory,
 						  *electroatom_name,
 						  cross_section_table_info,
@@ -59,7 +59,7 @@ ElectroatomFactory::ElectroatomFactory(
 						  electroatom_file_start_line,
 						  atomic_weight );
 
-    if( electroatom_file_type == CrossSectionsXMLProperties::ace_file )
+    if( electroatom_file_type == Data::CrossSectionsXMLProperties::ace_file )
     {
       createElectroatomFromACETable(
                 *electroatom_name,
@@ -73,7 +73,7 @@ ElectroatomFactory::ElectroatomFactory(
                 use_atomic_relaxation_data,
                 cutoff_angle_cosine );
     }
-    else if( electroatom_file_type == CrossSectionsXMLProperties::native_file )
+    else if( electroatom_file_type == Data::CrossSectionsXMLProperties::native_file )
     {
       createElectroatomFromNativeTable(
                 *electroatom_name,

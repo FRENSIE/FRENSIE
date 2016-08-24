@@ -17,11 +17,11 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomFactory.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -260,7 +260,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   int electroatom_file_start_line;
   double atomic_weight;
 
-  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
+  Data::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
 						  cross_sections_xml_directory,
 						  "Pb-Native",
 						  cross_section_table_info,

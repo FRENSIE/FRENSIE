@@ -19,7 +19,7 @@
 
 // FRENSIE Includes
 #include "DataGen_StandardMomentPreservingElectronDataGenerator.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -93,7 +93,7 @@ int main( int argc, char** argv )
   int data_file_start_line, atomic_number;
   double atomic_weight;
 
-  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
+  Data::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
 						    cross_section_directory,
 						    cross_section_alias,
 						    *cross_sections_table_info,
@@ -156,25 +156,25 @@ int main( int argc, char** argv )
       cross_sections_table_info->sublist( new_cross_section_alias );
 
     double atomic_weight_ratio = 
-        old_table_info.get( MonteCarlo::CrossSectionsXMLProperties::atomic_weight_ratio_prop, 0.0 );
+        old_table_info.get( Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop, 0.0 );
 
     new_table_info.set(
-	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_path_prop,
+	    Data::CrossSectionsXMLProperties::electroatomic_file_path_prop,
 	    oss.str() );
     new_table_info.set(
-	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_type_prop,
-	    MonteCarlo::CrossSectionsXMLProperties::moment_preserving_file );
+	    Data::CrossSectionsXMLProperties::electroatomic_file_type_prop,
+	    Data::CrossSectionsXMLProperties::moment_preserving_file );
     new_table_info.set(
-      MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
+      Data::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
       -1 );
     new_table_info.set(
-	   MonteCarlo::CrossSectionsXMLProperties::electroatomic_table_name_prop,
+	   Data::CrossSectionsXMLProperties::electroatomic_table_name_prop,
 	   "" );
     new_table_info.set(
-	   MonteCarlo::CrossSectionsXMLProperties::atomic_number_prop,
+	   Data::CrossSectionsXMLProperties::atomic_number_prop,
 	   atomic_number );
     new_table_info.set(
-	   MonteCarlo::CrossSectionsXMLProperties::atomic_weight_ratio_prop,
+	   Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop,
 	   atomic_weight_ratio );
 
     Teuchos::writeParameterListToXmlFile( *cross_sections_table_info,

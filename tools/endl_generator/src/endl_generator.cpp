@@ -19,7 +19,7 @@
 
 // FRENSIE Includes
 #include "DataGen_StandardEvaluatedElectronDataGenerator.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ENDLFileHandler.hpp"
 #include "Data_EvaluatedElectronVolatileDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"

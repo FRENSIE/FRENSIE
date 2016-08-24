@@ -19,7 +19,7 @@
 
 // FRENSIE Includes
 #include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_ENDLFileHandler.hpp"
 #include "Data_ENDLDataContainer.hpp"
@@ -40,20 +40,30 @@ int main( int argc, char** argv )
   // Set up the command line options
   Teuchos::CommandLineProcessor epr_generator_clp;
 
+  // General table options
   std::string cross_section_directory, cross_section_alias;
   std::string table_notes;
+  bool modify_cs_xml_file = false;
+
+  // Table energy limits options
   double min_photon_energy = 0.001, max_photon_energy = 20.0;
   double min_electron_energy = 0.00001, max_electron_energy = 100000.0;
+
+  // Photon options
   double occupation_number_evaluation_tol = 1e-3;
   double subshell_incoherent_evaluation_tol = 1e-3;
+
+  // Electron options
   double cutoff_angle_cosine = 1.0;
   int number_of_moment_preserving_angles = 0;
   bool append_moment_preserving_data = false;
+
+  // General grid generation options
   double grid_convergence_tol = 0.001;
   double grid_absolute_diff_tol = 1e-42;
   double grid_distance_tol = 1e-16;
-  bool modify_cs_xml_file = false;
 
+  // Set the general table option names
   epr_generator_clp.setDocString( "Electron-Photon-Relaxation Native Data File"
 				  " Generator\n" );
   epr_generator_clp.setOption( "cross_sec_dir",
@@ -67,7 +77,14 @@ int main( int argc, char** argv )
 			       true );
   epr_generator_clp.setOption( "notes",
                                &table_notes,
-                               "Notes about this table" );
+                               "Notes about this table (e.g. date of "
+                               "generation, owner, copyright, etc.)" );
+  epr_generator_clp.setOption( "modify_cs_xml_file",
+			       "do_not_modify_cs_xml_file",
+			       &modify_cs_xml_file,
+			       "Modify the cross_sections.xml file?" );
+
+  // Set the table energy limits option names
   epr_generator_clp.setOption( "min_photon_energy",
 			       &min_photon_energy,
 			       "Min photon energy for table" );
@@ -80,12 +97,16 @@ int main( int argc, char** argv )
   epr_generator_clp.setOption( "max_electron_energy",
 			       &max_electron_energy,
 			       "Max electron energy for table" );
+
+  // Set the photon option names
   epr_generator_clp.setOption( "occupation_num_tol",
 			       &occupation_number_evaluation_tol,
 			       "Occupation number evaluation tolerance" );
   epr_generator_clp.setOption( "subshell_incoherent_tol",
 			       &subshell_incoherent_evaluation_tol,
 			       "Subshell incoherent evaluation tolerance" );
+  
+  // Set the electron option names
   epr_generator_clp.setOption( "cutoff_angle_cosine",
 			       &cutoff_angle_cosine,
 			       "Cutoff angle cosine for table" );
@@ -96,6 +117,8 @@ int main( int argc, char** argv )
                                "do_not_append_moment_preserving_data",
 			       &append_moment_preserving_data,
 			       "Append a native data file with new moment preserving data" );
+
+  // Set the grid generation option names
   epr_generator_clp.setOption( "grid_convergence_tol",
 			       &grid_convergence_tol,
 			       "Grid convergence tolerance" );
@@ -105,10 +128,6 @@ int main( int argc, char** argv )
   epr_generator_clp.setOption( "grid_absolute_dist_tol",
 			       &grid_distance_tol,
 			       "Grid absolute distance tolerance" );
-  epr_generator_clp.setOption( "modify_cs_xml_file",
-			       "do_not_modify_cs_xml_file",
-			       &modify_cs_xml_file,
-			       "Modify the cross_sections.xml file?" );
 
   epr_generator_clp.throwExceptions( false );
 
@@ -134,7 +153,7 @@ int main( int argc, char** argv )
   int data_file_start_line, atomic_number;
   double atomic_weight;
 
-  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
+  Data::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
 						    cross_section_directory,
 						    cross_section_alias,
 						    *cross_sections_table_info,
@@ -274,29 +293,29 @@ int main( int argc, char** argv )
     new_table_info.setParameters( old_table_info );
 
     new_table_info.set(
-	    MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_path_prop,
+	    Data::CrossSectionsXMLProperties::photoatomic_file_path_prop,
 	    oss.str() );
     new_table_info.set(
-	    MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_type_prop,
-	    MonteCarlo::CrossSectionsXMLProperties::native_file );
+	    Data::CrossSectionsXMLProperties::photoatomic_file_type_prop,
+	    Data::CrossSectionsXMLProperties::native_file );
     new_table_info.set(
-        MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_start_line_prop,
+        Data::CrossSectionsXMLProperties::photoatomic_file_start_line_prop,
         -1 );
     new_table_info.set(
-	   MonteCarlo::CrossSectionsXMLProperties::photoatomic_table_name_prop,
+	   Data::CrossSectionsXMLProperties::photoatomic_table_name_prop,
 	   "" );
 
     new_table_info.set(
-	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_path_prop,
+	    Data::CrossSectionsXMLProperties::electroatomic_file_path_prop,
 	    oss.str() );
     new_table_info.set(
-	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_type_prop,
-	    MonteCarlo::CrossSectionsXMLProperties::native_file );
+	    Data::CrossSectionsXMLProperties::electroatomic_file_type_prop,
+	    Data::CrossSectionsXMLProperties::native_file );
     new_table_info.set(
-        MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
+        Data::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
         -1 );
     new_table_info.set(
-	   MonteCarlo::CrossSectionsXMLProperties::electroatomic_table_name_prop,
+	   Data::CrossSectionsXMLProperties::electroatomic_table_name_prop,
 	   "" );
 
     Teuchos::writeParameterListToXmlFile( *cross_sections_table_info,

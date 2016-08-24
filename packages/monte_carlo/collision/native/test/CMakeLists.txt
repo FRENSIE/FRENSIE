@@ -76,12 +76,6 @@ ADD_TEST(LabSystemConversionPolicy_test
 tstLabSystemConversionPolicy)
 SET_PROPERTY(TEST LabSystemConversionPolicy_test PROPERTY LABELS monte_carlo_collision_native)
 
-ADD_EXECUTABLE(tstCrossSectionsXMLProperties
-  tstCrossSectionsXMLProperties.cpp)
-TARGET_LINK_LIBRARIES(tstCrossSectionsXMLProperties monte_carlo_collision_native)
-ADD_TEST(CrossSectionsXMLProperties_test tstCrossSectionsXMLProperties --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST CrossSectionsXMLProperties_test PROPERTY LABELS monte_carlo_collision_native)
-
 ADD_EXECUTABLE(tstMaterialHelpers
   tstMaterialHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

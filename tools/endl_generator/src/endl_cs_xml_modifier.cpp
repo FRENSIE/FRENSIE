@@ -18,7 +18,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 int main( int argc, char** argv )
@@ -85,30 +85,30 @@ int main( int argc, char** argv )
 
   // photoatom info
   new_table_info.set(
-    MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_path_prop,
+    Data::CrossSectionsXMLProperties::photoatomic_file_path_prop,
     file_path );
   new_table_info.set(
-    MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_type_prop,
-    MonteCarlo::CrossSectionsXMLProperties::endl_file );
+    Data::CrossSectionsXMLProperties::photoatomic_file_type_prop,
+    Data::CrossSectionsXMLProperties::endl_file );
   new_table_info.set(
-    MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_start_line_prop,
+    Data::CrossSectionsXMLProperties::photoatomic_file_start_line_prop,
     -1 );
   new_table_info.set(
-    MonteCarlo::CrossSectionsXMLProperties::photoatomic_table_name_prop,
+    Data::CrossSectionsXMLProperties::photoatomic_table_name_prop,
     "" );
 
   // electroatom info
   new_table_info.set(
-    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_path_prop,
+    Data::CrossSectionsXMLProperties::electroatomic_file_path_prop,
     file_path );
   new_table_info.set(
-    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_type_prop,
-    MonteCarlo::CrossSectionsXMLProperties::endl_file );
+    Data::CrossSectionsXMLProperties::electroatomic_file_type_prop,
+    Data::CrossSectionsXMLProperties::endl_file );
   new_table_info.set(
-    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
+    Data::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
     -1 );
   new_table_info.set(
-    MonteCarlo::CrossSectionsXMLProperties::electroatomic_table_name_prop,
+    Data::CrossSectionsXMLProperties::electroatomic_table_name_prop,
     "" );
 
   Teuchos::writeParameterListToXmlFile(

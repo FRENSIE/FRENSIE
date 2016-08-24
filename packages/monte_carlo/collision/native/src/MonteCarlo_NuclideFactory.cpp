@@ -13,7 +13,7 @@
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NuclideACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Utility_ContractException.hpp"
@@ -45,7 +45,7 @@ NuclideFactory::NuclideFactory(
 
   while( nuclide_name != nuclide_aliases.end() )
   {
-    CrossSectionsXMLProperties::extractInfoFromNuclideTableInfoParameterList(
+    Data::CrossSectionsXMLProperties::extractInfoFromNuclideTableInfoParameterList(
 						  cross_sections_xml_directory,
 						  *nuclide_name,
 						  cross_section_table_info,
@@ -59,7 +59,7 @@ NuclideFactory::NuclideFactory(
 						  atomic_weight_ratio,
 						  temperature );
 
-    if( nuclide_file_type == CrossSectionsXMLProperties::ace_file )
+    if( nuclide_file_type == Data::CrossSectionsXMLProperties::ace_file )
     {
       createNuclideFromACETable( cross_sections_xml_directory,
 				 *nuclide_name,
