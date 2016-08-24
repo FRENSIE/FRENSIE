@@ -43,6 +43,12 @@ public:
   typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> 
     BremsstrahlungReaction;
 
+  typedef DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>
+    BremsstrahlungEvaluator;
+
+  typedef DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction>
+    ElectroionizationEvaluator;
+
   //! Advanced Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
       const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
@@ -352,7 +358,7 @@ private:
   void createAdjointBremsstrahlungCrossSectionEvaluator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >&
+    std::shared_ptr<BremsstrahlungEvaluator>&
         adjoint_bremsstrahlung_cs_evaluator ) const;
 
   // Generate adjoint bremsstrahlung photon energy distribution
@@ -362,7 +368,7 @@ private:
     const unsigned threshold_energy_index,
     const Teuchos::ArrayRCP<const double>& adjoint_cross_section,
     const Teuchos::ArrayRCP<const double>& adjoint_electron_energy_grid,
-    const std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
+    const std::shared_ptr<BremsstrahlungEvaluator>
         adjoint_bremsstrahlung_cs_evaluator,
     const std::vector<double>& adjoint_bremsstrahlung_photon_energy,
     std::vector<double>& adjoint_bremsstrahlung_pdf ) const;
@@ -372,7 +378,7 @@ private:
   void createAdjointElectroionizationSubshellCrossSectionEvaluator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::map<unsigned,std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction> > >&
+    std::map<unsigned,std::shared_ptr<ElectroionizationEvaluator> >&
         adjoint_electroionization_cs_evaluators ) const;
 
   // The forward data

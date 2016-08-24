@@ -153,7 +153,9 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
 
   // If the nudge_incoming_energy >= d_nudged_max_energy return 0.0
   if ( nudged_start_energy >= d_nudged_max_energy )
-    return cross_section;
+  {
+    return 0.0L;
+  }
 
   // Create boost rapper function for the adjoint electroatomic differential cross section
   boost::function<double (double y)> diff_adjoint_cs_wrapper =
@@ -165,7 +167,7 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
   long double cross_section_k, abs_error;
 
   Utility::GaussKronrodIntegrator<long double>
-    integrator( precision, 0.0, 1000 );
+    integrator( precision, 0.0, 5000 );
 
   // Turn of error and warning messages
   integrator.dontEstimateRoundoff();
@@ -214,14 +216,19 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
 
     cross_section += cross_section_k;
   }
-
   return (double) cross_section;
 }
 
 // Return the adjoint cross section value at a given energy
+/* \details This function requires the differential cross section to be in a 
+ * specific format. The integrator has been known to fail f the
+ * max_energy_nudged_value and energy_to_outgoing_energy_nudge_value are zero,
+ * therefore it automatically changes the energy_to_outgoing_energy_nudge_value
+ * if needed.
+ */
 template<typename ElectroatomicReaction>
 template <typename BoostIntegrator>
-double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjointCrossSectionUsingBoost(
+double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjointCrossSection(
     const double incoming_adjoint_energy,
     const BoostIntegrator integrator ) const
 {
@@ -257,7 +264,15 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
   if( d_integration_points[start_index] != nudged_start_energy && start_index > 0)
   {
     // set the first numerical integration step to 1/10 the integration distance
-    double dx = 0.1*( d_integration_points[start_index] - nudged_start_energy );
+    double dx = 0.01*( d_integration_points[start_index] - nudged_start_energy );
+
+    // Make sure the nudge_start_energy > incoming_adjoint_energy
+    if( d_energy_to_outgoing_energy_nudge_value == 0.0 )
+    {
+      double nudge = std::min( 10.0*dx, 1e-7 );
+
+      nudged_start_energy = incoming_adjoint_energy + nudge;
+    }
 
     // integrate from the min_integration_energy to the next highest energy bin
     boost::numeric::odeint::integrate_adaptive(
@@ -266,18 +281,17 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
       cross_section,
       nudged_start_energy,
       d_integration_points[start_index],
-      dx ); 
+      dx );
 //      AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::observer );
+
   }
-  
-  unsigned lower_bin_index = start_index;
   ++start_index;
 
   // Integrate through the energy bins above the given energy and below the max energy
   for ( start_index; start_index < d_integration_points.size(); start_index++ )
   {
     // set the first numerical integration step to 1/10 the integration distance
-    double dx = 0.1*(d_integration_points[start_index] - d_integration_points[start_index-1] );
+    double dx = 0.01*(d_integration_points[start_index] - d_integration_points[start_index-1] );
 
     // Integrate    
     boost::numeric::odeint::integrate_adaptive(
@@ -289,7 +303,95 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
       dx );
 //      AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::observer );
   }
+  return (double) cross_section[0];
+}
 
+// Return the adjoint cross section value at a given energy
+/* \details This function requires the differential cross section to be in a 
+ * specific format. The integrator has been known to fail f the
+ * max_energy_nudged_value and energy_to_outgoing_energy_nudge_value are zero,
+ * therefore it automatically changes the energy_to_outgoing_energy_nudge_value
+ * if needed.
+ */
+template<typename ElectroatomicReaction>
+template <typename BoostIntegrator>
+double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjointCrossSection(
+    const double incoming_adjoint_energy,
+    const BoostIntegrator integrator,
+    const unsigned number_of_steps ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_adjoint_energy > 0.0 );
+
+  state_type cross_section(1);
+
+  // The nudged incoming energy
+  double nudged_start_energy = this->getNudgedEnergy( incoming_adjoint_energy );
+
+  // If the nudge_incoming_energy >= d_nudged_max_energy return 0.0
+  if ( nudged_start_energy >= d_nudged_max_energy )
+    return (double) cross_section[0];
+
+  // Create boost rapper function for the adjoint electroatomic differential cross section
+  boost::function<void (state_type& x, state_type& dxdt, double t )> diff_adjoint_cs_wrapper =
+    boost::bind( &AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::getDifferentialCrossSection,
+                         boost::cref( *this ),
+                         _1,
+                         _2,
+                         _3,
+                         incoming_adjoint_energy );
+
+  // Find the integration point above the nudged incoming adjoint energy
+  unsigned start_index =
+    Utility::Search::binaryUpperBoundIndex(
+              d_integration_points.begin(),
+              d_integration_points.end(),
+              nudged_start_energy );
+
+  // Integrate from the nudged_start_energy to the next highest energy bin (if necessary)
+  if( d_integration_points[start_index] != nudged_start_energy && start_index > 0)
+  {
+    double dx = ( d_integration_points[start_index] - nudged_start_energy )/
+                number_of_steps;
+
+    // Make sure the nudge_start_energy > incoming_adjoint_energy
+    if( d_energy_to_outgoing_energy_nudge_value == 0.0 )
+    {
+      nudged_start_energy = incoming_adjoint_energy + dx;
+
+      dx = ( d_integration_points[start_index] - nudged_start_energy )/
+            number_of_steps;
+    }
+
+    // integrate from the min_integration_energy to the next highest energy bin
+    boost::numeric::odeint::integrate_n_steps(
+      integrator,
+      diff_adjoint_cs_wrapper,
+      cross_section,
+      nudged_start_energy,
+      dx,
+      number_of_steps );
+//      AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::observer );
+
+  }
+  ++start_index;
+
+  // Integrate through the energy bins above the given energy and below the max energy
+  for ( start_index; start_index < d_integration_points.size(); start_index++ )
+  {
+    double dx = ( d_integration_points[start_index] - 
+                  d_integration_points[start_index-1] )/number_of_steps;
+
+    // Integrate  
+    boost::numeric::odeint::integrate_n_steps(
+      integrator,
+      diff_adjoint_cs_wrapper,
+      cross_section,
+      d_integration_points[start_index-1],
+      dx,
+      number_of_steps );
+//      AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::observer );
+  }
   return (double) cross_section[0];
 }
 

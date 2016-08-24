@@ -58,9 +58,17 @@ public:
         
   //! Return the cross section value at a given energy
   template <typename BoostIntegrator>
-  double evaluateAdjointCrossSectionUsingBoost(
+  double evaluateAdjointCrossSection(
         const double adjoint_energy,
         const BoostIntegrator integrator ) const;
+
+  //! Return the adjoint cross section value at a given energy
+  template <typename BoostIntegrator>
+  double evaluateAdjointCrossSection(
+      const double incoming_adjoint_energy,
+      const BoostIntegrator integrator,
+      const unsigned number_of_steps ) const;
+
 
 private:
 

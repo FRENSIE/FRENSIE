@@ -814,7 +814,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
 
       std::ostringstream oss;
       oss.precision( 18 );
-      oss << " The subinterval have become too small - "
+      oss << " Subdivisions have become too small - "
           << "subinterval size(lower boundary, upper boundary) =\n"
           << "subinterval size(" << bin_1.lower_limit << ", "
           << bin_2.upper_limit <<") = " << bin_2.upper_limit - bin_1.lower_limit;
@@ -832,7 +832,6 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
       break;
     }
   }
-
   result = area;
 }
 

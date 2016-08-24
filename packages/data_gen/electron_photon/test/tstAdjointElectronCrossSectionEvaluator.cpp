@@ -22,13 +22,12 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_TabularDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
-#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Typedefs
@@ -49,6 +48,8 @@ std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationR
 std::shared_ptr<DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction> >
   ace_adjoint_brem_cs, native_adjoint_brem_cs;
 
+double binding_energy;
+
 double max_ionization_subshell_adjoint_energy, max_brem_adjoint_energy;
 
 //---------------------------------------------------------------------------//
@@ -58,7 +59,7 @@ double max_ionization_subshell_adjoint_energy, max_brem_adjoint_energy;
 TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
                    evaluateAdjointCrossSection )
 {
-  double precision = 1e-15;
+  double precision = 1e-16;
 
   // Native Electroionization
   double cross_section =
@@ -95,7 +96,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  799.79561529002819498,
+                                  62498.955793047840416,
                                   1e-6 );
 
   cross_section =
@@ -104,18 +105,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.0,
+                                  62415.410824211663567,
                                   1e-6 );
-
-  cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
-        1e5,
-        precision );
-
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.0,
-                                  1e-6 );
-
 
   // ACE Bremsstrahlung
   cross_section =
@@ -177,7 +168,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 //---------------------------------------------------------------------------//
 // Check that the hydrogen adjoint cross section can be evaluated
 TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
-                   evaluateAdjointCrossSectionUsingBoost_bulirsch_stoer )
+                   evaluateAdjointCrossSection_bulirsch_stoer )
 {
   typedef std::vector<long double> state_type;
 
@@ -186,90 +177,90 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 
   // Native Electroionization
   double cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         1.361E-05,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  139697651661425.73438,
+                                  1.39697667397453E+14,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         1.88E-05,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  79238665123921.578125,
+                                  7.92386682832987E+13,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         1.123900E-02,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  206859058.11802884936,
+                                  2.07025626751333E+08,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         8.75350E-01,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  125872.93157279863954,
+                                  1.25942268435020E+05,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         max_ionization_subshell_adjoint_energy - 6.0e-8,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  799.72794636557034664,
+                                  6.25024074584368E+04,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         max_ionization_subshell_adjoint_energy,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.0,
+                                  6.23966194750117E+04,
                                   1e-6 );
 
 
   // ACE Bremsstrahlung
   cross_section =
-    ace_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
         1.0e-5,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  43.506879553872074951,
+                                  4.36682445857224E+01,
                                   1e-6 );
 
   cross_section =
-    ace_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
         5.0e-4,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  27.215919140211685345,
+                                  2.72839592308506E+01,
                                   1e-6 );
 
   cross_section =
-    ace_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
         6.0e4,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.38373862091105143124,
+                                  3.20507974678438E+00,
                                   1e-6 );
 
   cross_section =
-    ace_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
         1.0e5,
         integrator );
 
@@ -278,34 +269,34 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 
   // ACE Bremsstrahlung
   cross_section =
-    native_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
         1.0e-5,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  43.734465226065530885,
+                                  4.35677519110254E+01,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
         5.0e-4,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  27.360271997385154918,
+                                  2.73538849445199E+01,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
         6.0e4,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.23221691232435670571,
+                                  1.03971446875982E+00,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
         1.0e5,
         integrator );
 
@@ -316,99 +307,99 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 //---------------------------------------------------------------------------//
 // Check that the hydrogen adjoint cross section can be evaluated
 TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
-                   evaluateAdjointCrossSectionUsingBoost_runge_kutta_fehlberg78 )
+                   evaluateAdjointCrossSection_runge_kutta_fehlberg78 )
 {
   typedef std::vector<long double> state_type;
 
   boost::numeric::odeint::controlled_runge_kutta< boost::numeric::odeint::runge_kutta_fehlberg78< state_type > >
-    integrator = boost::numeric::odeint::make_controlled( 1.0e-16, 0.0, boost::numeric::odeint::runge_kutta_fehlberg78< state_type >() );
+    integrator = boost::numeric::odeint::make_controlled( 1e-30, 0.0, boost::numeric::odeint::runge_kutta_fehlberg78< state_type >() );
 
   // Native Electroionization
   double cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         1.361E-05,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  139697664902288.5,
+                                  1.39697663987778E+14,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         1.88E-05,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  79238665838762.140625,
+                                  7.92386668832148E+13,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         1.123900E-02,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  205621029.70820000768,
+                                  2.06856200238313E+08,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         8.75350E-01,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  33730.571028846126865,
+                                  3.38847968548376E+04,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         max_ionization_subshell_adjoint_energy - 6.0e-8,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  3988.1727365771776022,
+                                  6.24061742400031E+04,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
         max_ionization_subshell_adjoint_energy,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.0,
+                                  6.23572420814518E+04,
                                   1e-6 );
 
 
   // ACE Bremsstrahlung
   cross_section =
-    ace_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
         1.0e-5,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  44.702393603427729829,
+                                  4.35919675141220E+01,
                                   1e-6 );
 
   cross_section =
-    ace_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
         5.0e-4,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  8.5119722300708797746,
+                                  1.51864794749388E+01,
                                   1e-6 );
 
   cross_section =
-    ace_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
         6.0e4,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.15980729482075045622,
+                                  9.52796360800739E-01,
                                   1e-6 );
 
   cross_section =
-    ace_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
         1.0e5,
         integrator );
 
@@ -417,36 +408,189 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 
   // ACE Bremsstrahlung
   cross_section =
-    native_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
         1.0e-5,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  45.907580577899906871,
+                                  4.33754648058720E+01,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
         5.0e-4,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  8.5674269522115675812,
+                                  1.58384144376514E+01,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
         6.0e4,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  0.15884613700310798445,
+                                  9.53570206185442E-01,
                                   1e-6 );
 
   cross_section =
-    native_adjoint_brem_cs->evaluateAdjointCrossSectionUsingBoost(
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
         1.0e5,
         integrator );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the hydrogen adjoint cross section can be evaluated
+TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
+                   evaluateAdjointCrossSection_runge_kutta_fehlberg78_steps )
+{
+  typedef std::vector<long double> state_type;
+
+  boost::numeric::odeint::runge_kutta_fehlberg78< state_type > integrator;
+
+  unsigned number_of_steps = 10000;
+
+  // Native Electroionization
+  double cross_section =
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
+        1.361E-05,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  1.39697665914982E+14,
+                                  1e-6 );
+
+  cross_section =
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
+        1.88E-05,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  7.92386683377038E+13,
+                                  1e-6 );
+
+  cross_section =
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
+        1.123900E-02,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  2.06855086964100E+08,
+                                  1e-6 );
+
+  cross_section =
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
+        8.75350E-01,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  5.12187501953332E+04,
+                                  1e-6 );
+
+  cross_section =
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
+        max_ionization_subshell_adjoint_energy - 6.0e-8,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  6.24981052463153E+04,
+                                  1e-6 );
+
+  cross_section =
+    native_adjoint_ionization_cs->evaluateAdjointCrossSection(
+        max_ionization_subshell_adjoint_energy,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  6.24146902309549E+04,
+                                  1e-6 );
+
+
+  // ACE Bremsstrahlung
+  cross_section =
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
+        1.0e-5,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  4.37272700164298E+01,
+                                  2e-5 );
+
+  cross_section =
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
+        5.0e-4,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  2.23310895865381E+01,
+                                  1e-6 );
+
+  cross_section =
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
+        6.0e4,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  3.03690935369109E-01,
+                                  1e-6 );
+
+  cross_section =
+    ace_adjoint_brem_cs->evaluateAdjointCrossSection(
+        1.0e5,
+        integrator,
+        number_of_steps );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+
+  // ACE Bremsstrahlung
+  cross_section =
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
+        1.0e-5,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  4.35055262457013E+01,
+                                  2e-5 );
+
+  cross_section =
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
+        5.0e-4,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  2.23202012265406E+01,
+                                  1e-6 );
+
+  cross_section =
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
+        6.0e4,
+        integrator,
+        number_of_steps );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  3.03154232437691E-01,
+                                  1e-6 );
+
+  cross_section =
+    native_adjoint_brem_cs->evaluateAdjointCrossSection(
+        1.0e5,
+        integrator,
+        number_of_steps );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
@@ -459,8 +603,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
   // Native Electroionization
   double diff_cross_section =
     native_adjoint_ionization_cs->evaluateAdjointPDF( 1.88E-05,
-                                      1.0E-04,
-                                      1.0e-16 );
+                                                      1.0E-04,
+                                                      1.0e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
                                   4.99027E+07*12876.48039/79238679438792.5625,
@@ -468,8 +612,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 
   diff_cross_section =
     native_adjoint_ionization_cs->evaluateAdjointPDF( 1.123900E-02,
-                                      3.16228,
-                                      1.0e-16 );
+                                                      3.16228,
+                                                      1.0e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
                                   2.19766977908530E+03/206857228.81668719649,
@@ -477,8 +621,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 
   diff_cross_section =
     native_adjoint_ionization_cs->evaluateAdjointPDF( 8.75350E-01,
-                                      1.0e5,
-                                      1.0e-16 );
+                                                      max_ionization_subshell_adjoint_energy,
+                                                      1.0e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
                                   3.36107129975999E-01/125955.16376563441008,
@@ -523,8 +667,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 
   diff_cross_section =
     native_adjoint_brem_cs->evaluateAdjointPDF( 6.0e4,
-                                      1.0e5,
-                                      1.0e-16 );
+                                                1.0e5,
+                                                1.0e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
                                   6.6256883700079266363e-07,
@@ -532,8 +676,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
 
   diff_cross_section =
     native_adjoint_brem_cs->evaluateAdjointPDF( 1.0e5-5.0e-8,
-                                      1.0e5,
-                                      1.0e-16 );
+                                                1.0e5,
+                                                1.0e-16 );
 
   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 }
@@ -621,12 +765,9 @@ int main( int argc, char** argv )
   // Create the bremsstrahlung scattering functions
   MonteCarlo::TwoDDistribution energy_loss_distribution( N );
 
-  std::vector<double> integration_points( N );
-
   for( unsigned n = 0; n < N; ++n )
   {
     energy_loss_distribution[n].first = electron_energy_grid[n];
-    integration_points[n] = electron_energy_grid[n];
 
     energy_loss_distribution[n].second.reset(
 	  new Utility::HistogramDistribution(
@@ -657,10 +798,14 @@ int main( int argc, char** argv )
             grid_searcher,
             bremsstrahlung_distribution ) );
 
+  std::vector<double> brem_energy_grid(
+    electron_energy_grid.begin(),
+    electron_energy_grid.end() );
+
   // Initialize the hydrogen adjoint cross section evaluator
   ace_adjoint_brem_cs.reset( new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
                     bremsstrahlung_reaction,
-                    integration_points,
+                    brem_energy_grid,
                     1e-5,
                     1e5,
                     0.0,
@@ -691,59 +836,20 @@ int main( int argc, char** argv )
   std::vector<double> brem_energy_grid =
         data_container->getBremsstrahlungEnergyGrid();
 
-  // Create the scattering function
-  MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-         energy_loss_function( brem_energy_grid.size() );
-
-  std::vector<double> integration_points( brem_energy_grid.size() );
-
-  for( unsigned n = 0; n < brem_energy_grid.size(); ++n )
-  {
-    energy_loss_function[n].first = brem_energy_grid[n];
-    integration_points[n] = brem_energy_grid[n];
-
-    // Get the energy of the bremsstrahlung photon at the incoming energy
-    std::vector<double> photon_energy(
-        data_container->getBremsstrahlungPhotonEnergy( brem_energy_grid[n] ) );
-
-    // Get the bremsstrahlung photon pdf at the incoming energy
-    std::vector<double> pdf(
-        data_container->getBremsstrahlungPhotonPDF( brem_energy_grid[n] ) );
-
-    energy_loss_function[n].second.reset(
-	  new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
-                                                               pdf ) );
-  }
-
-  std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-    bremsstrahlung_distribution(
-        new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-            energy_loss_function,
-            data_container->getAtomicNumber() ) );
-
-  // Bremsstrahlung cross section
-  Teuchos::ArrayRCP<double> bremsstrahlung_cross_section;
-  bremsstrahlung_cross_section.assign(
-	   data_container->getBremsstrahlungCrossSection().begin(),
-	   data_container->getBremsstrahlungCrossSection().end() );
-
-  // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index =
-    data_container->getBremsstrahlungCrossSectionThresholdEnergyIndex();
-
+  // Create the reaction
   std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
-    bremsstrahlung_reaction(
-        new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-            energy_grid,
-            bremsstrahlung_cross_section,
-            threshold_energy_index,
-            grid_searcher,
-            bremsstrahlung_distribution ) );
+    bremsstrahlung_reaction;
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction>(
+    *data_container,
+    energy_grid,
+    grid_searcher,
+    bremsstrahlung_reaction,
+    MonteCarlo::TWOBS_DISTRIBUTION );
 
   // Initialize the hydrogen adjoint cross section evaluator
   native_adjoint_brem_cs.reset( new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
                     bremsstrahlung_reaction,
-                    integration_points,
+                    brem_energy_grid,
                     1e-5,
                     1e5,
                     0.0,
@@ -759,88 +865,31 @@ int main( int argc, char** argv )
 
   std::set<unsigned>::iterator shell = subshells.begin();
 
-  // Convert subshell number to enum
-  subshell_type = Data::convertENDFDesignatorToSubshellEnum( *shell );
-
-  // Electroionization cross section
-  Teuchos::ArrayRCP<double> subshell_cross_section;
-  subshell_cross_section.assign(
-    data_container->getElectroionizationCrossSection( *shell ).begin(),
-    data_container->getElectroionizationCrossSection( *shell ).end() );
-
-  // Electroionization cross section threshold energy bin index
-  unsigned threshold_energy_index =
-    data_container->getElectroionizationCrossSectionThresholdEnergyIndex(
-      *shell );
-
-  // The electroionization subshell distribution
-  std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
-    electroionization_subshell_distribution;
-
   // Get the energies for which knock-on sampling tables are given
   std::vector<double> ionization_energy_grid =
     data_container->getElectroionizationEnergyGrid( *shell );
 
-  // Subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-        subshell_distribution( ionization_energy_grid.size() );
-
-  std::vector<double> integration_points( ionization_energy_grid.size() );
-
-  for( unsigned n = 0; n < ionization_energy_grid.size(); ++n )
-  {
-    subshell_distribution[n].first = ionization_energy_grid[n];
-    integration_points[n] = ionization_energy_grid[n];
-
-    // Get the recoil energy distribution at the incoming energy
-    Teuchos::Array<double> recoil_energy(
-        data_container->getElectroionizationRecoilEnergy(
-            *shell,
-            ionization_energy_grid[n] ) );
-
-    // Get the recoil energy pdf at the incoming energy
-    Teuchos::Array<double> pdf(
-        data_container->getElectroionizationRecoilPDF(
-            *shell,
-            ionization_energy_grid[n] ) );
-
-    subshell_distribution[n].second.reset(
-	  new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy,
-                                                             pdf ) );
-  }
-
-  double binding_energy = data_container->getSubshellBindingEnergy( *shell );
-
-  // Set the max allowed adjoint energy
-  max_ionization_subshell_adjoint_energy = 1.0e5 - binding_energy - 1.0e-7;
-
-  integration_points.back() = max_ionization_subshell_adjoint_energy;
-  integration_points.push_back( ionization_energy_grid.back() );
-
-  electroionization_subshell_distribution.reset(
-    new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
-            subshell_distribution,
-            binding_energy ) );
-
   // Create the subshell electroelectric reaction
-  std::shared_ptr<ElectroionizationReaction> 
-    electroionization_subshell_reaction(
-      new ElectroionizationReaction(
-            energy_grid,
-            subshell_cross_section,
-            threshold_energy_index,
-            grid_searcher,
-            subshell_type,
-            electroionization_subshell_distribution ) );
+  std::shared_ptr<ElectroionizationReaction> electroionization_subshell_reaction;
+  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction>(
+    *data_container,
+    energy_grid,
+    grid_searcher,
+    *shell,
+    electroionization_subshell_reaction );
+
+  binding_energy = data_container->getSubshellBindingEnergy( *shell );
+
+  max_ionization_subshell_adjoint_energy = 1e5 - 2.0*binding_energy;
 
   native_adjoint_ionization_cs.reset(
     new DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction>(
       electroionization_subshell_reaction,
-      integration_points,
+      ionization_energy_grid,
       1e-5,
-      1e5,
-      0.0,
-      0.0 ) );
+      max_ionization_subshell_adjoint_energy,
+      2.0*binding_energy,
+      binding_energy + 1.0e-7 ) );
   }
 
   // Run the unit tests
