@@ -70,6 +70,10 @@ public:
   virtual ~StandardAdjointElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
+  ///////////////////////
+  // Photon Table Data //
+  ///////////////////////
+
   //! Set the adjoint pair production energy dist. norm const. evaluation tol.
   void setAdjointPairProductionEnergyDistNormConstEvaluationTolerance(
                                                  const double evaluation_tol );
@@ -122,33 +126,16 @@ public:
 
   //! Get the adjoint incoherent distance tolerance
   double getAdjointIncoherentDistanceTolerance() const;
-/*
-  //! Set the cutoff angle cosine above which screened rutherford is used
-  void setCutoffAngleCosine( const double cutoff_angle_cosine );
-*/
+
+  /////////////////////////
+  // Electron Table Data //
+  /////////////////////////
+
   //! Get the cutoff angle cosine above which screened rutherford is used
   double getCutoffAngleCosine() const;
-/*
-  //! Set the number of moment preserving angles
-  void setNumberOfMomentPreservingAngles(
-                           const unsigned number_of_moment_preserving_angles );
-*/
+
   //! Get the number of moment preserving angles
   unsigned getNumberOfMomentPreservingAngles() const;
-  
-  //! Set the evaluation tolerance for the adjoint bremsstrahlung cross section
-  void setAdjointBremsstrahlungCrossSectionEvaluationTolerance(
-                                           const double evaluation_tolerance );
-  
-  //! Get the evaluation tolerance for the adjoint bremsstrahlung cross section
-  double getAdjointBremsstrahlungCrossSectionEvaluationTolerance() const;
-
-  //! Set the evaluation tolerance for the adjoint electroionization cross section
-  void setAdjointElectroionizationCrossSectionEvaluationTolerance(
-                                           const double evaluation_tolerance );
-  
-  //! Get the evaluation tolerance for the adjoint electroionization cross section
-  double getAdjointElectroionizationCrossSectionEvaluationTolerance() const;
 
   //! Set the adjoint electron grid convergence tolerance
   void setAdjointElectronGridConvergenceTolerance(
@@ -170,6 +157,73 @@ public:
 
   //! Get the adjoint electron distance tolerance
   double getAdjointElectronDistanceTolerance() const;
+
+  //! Set the adjoint bremsstrahlung max energy nudge value
+  void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
+  
+  //! Return the adjoint bremsstrahlung max energy nudge value
+  double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
+
+  //! Set the adjoint bremsstrahlung energy to outgoing energy nudge value
+  void setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
+                          const double energy_to_outgoing_energy_nudge_value );
+
+  //! Return the adjoint bremsstrahlung energy to outgoing energy nudge value
+  double getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const;
+
+  //! Set the adjoint bremsstrahlung cross section evaluation tolerance
+  void setAdjointBremsstrahlungEvaluationTolerance( const double evaluation_tol );
+
+  //! Return the adjoint bremsstrahlung cross section evaluation tolerance
+  double getAdjointBremsstrahlungEvaluationTolerance() const;
+
+  //! Set the adjoint bremsstrahlung grid convergence tolerance
+  void setAdjointBremsstrahlungGridConvergenceTolerance(
+                                                const double convergence_tol );
+
+  //! Return the adjoint bremsstrahlung grid convergence tolerance
+  double getAdjointBremsstrahlungGridConvergenceTolerance() const;
+
+  //! Set the adjoint bremsstrahlung absolute difference tolerance
+  void setAdjointBremsstrahlungAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
+
+  //! Get the adjoint bremsstrahlung absolute difference tolerance
+  double getAdjointBremsstrahlungAbsoluteDifferenceTolerance() const;
+
+  //! Set the adjoint bremsstrahlung distance tolerance
+  void setAdjointBremsstrahlungDistanceTolerance( const double distance_tol );
+
+  //! Get the adjoint bremsstrahlung distance tolerance
+  double getAdjointBremsstrahlungDistanceTolerance() const;
+
+  //! Set the adjoint electroionization cross section evaluation tolerance
+  void setAdjointElectroionizationEvaluationTolerance( const double evaluation_tol );
+
+  //! Return the adjoint electroionization cross section evaluation tolerance
+  double getAdjointElectroionizationEvaluationTolerance() const;
+
+  //! Set the adjoint electroionization grid convergence tolerance
+  void setAdjointElectroionizationGridConvergenceTolerance(
+                                                const double convergence_tol );
+
+  //! Return the adjoint electroionization grid convergence tolerance
+  double getAdjointElectroionizationGridConvergenceTolerance() const;
+
+  //! Set the adjoint electroionization absolute difference tolerance
+  void setAdjointElectroionizationAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
+
+  //! Get the adjoint electroionization absolute difference tolerance
+  double getAdjointElectroionizationAbsoluteDifferenceTolerance() const;
+
+  //! Set the adjoint electroionization distance tolerance
+  void setAdjointElectroionizationDistanceTolerance( const double distance_tol );
+
+  //! Get the adjoint electroionization distance tolerance
+  double getAdjointElectroionizationDistanceTolerance() const;
+
+
 
   //! Populate the adjoint electron-photon-relaxation data container
   void populateEPRDataContainer(
@@ -423,11 +477,35 @@ private:
   // The adjoint electron distance tolerance
   double d_adjoint_electron_distance_tol;
 
+  // The adjoint bremsstrahlung max energy nudge value
+  double d_adjoint_bremsstrahlung_max_energy_nudge_value;
+
+  // The adjoint bremsstrahlung energy to outgoing energy nudge value
+  double d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value;
+
   // The evaluation tolerance for the adjoint bremsstrahlung cross sections
-  double d_adjoint_bremsstrahlung_evaluation_tolerance;
+  double d_adjoint_bremsstrahlung_evaluation_tol;
+
+  // The adjoint bremsstrahlung grid convergence tolerance for the scattering distribution
+  double d_adjoint_bremsstrahlung_grid_convergence_tol;
+
+  // The adjoint bremsstrahlung absolute diff tolerance for the scattering distribution
+  double d_adjoint_bremsstrahlung_absolute_diff_tol;
+
+  // The adjoint bremsstrahlung distance tolerance for the scattering distribution
+  double d_adjoint_bremsstrahlung_distance_tol;
 
   // The evaluation tolerance for the adjoint electroionization cross sections
-  double d_adjoint_electroionization_evaluation_tolerance;
+  double d_adjoint_electroionization_evaluation_tol;
+
+  // The adjoint electroionization grid convergence tolerance for the scattering distribution
+  double d_adjoint_electroionization_grid_convergence_tol;
+
+  // The adjoint electroionization absolute diff tolerance for the scattering distribution
+  double d_adjoint_electroionization_absolute_diff_tol;
+
+  // The adjoint electroionization distance tolerance for the scattering distribution
+  double d_adjoint_electroionization_distance_tol;
 };
 
 // Test if a value is greater than or equal to one

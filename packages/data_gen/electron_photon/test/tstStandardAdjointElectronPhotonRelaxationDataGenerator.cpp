@@ -98,11 +98,22 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
         new TestStandardAdjointElectronPhotonRelaxationDataGenerator(
             h_epr_data_container, 0.001, 20.0, 1.0e-5, 20.0 ) );
 
-  data_generator_h->setAdjointBremsstrahlungCrossSectionEvaluationTolerance( 1e-3 );
-  data_generator_h->setAdjointElectroionizationCrossSectionEvaluationTolerance( 1e-4 );
   data_generator_h->setAdjointElectronGridConvergenceTolerance( 1e-3 );
   data_generator_h->setAdjointElectronAbsoluteDifferenceTolerance( 1e-16 );
-  data_generator_h->setAdjointElectronDistanceTolerance( 1e-8 );
+  data_generator_h->setAdjointElectronDistanceTolerance( 1e-9 );
+
+  data_generator_h->setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
+  data_generator_h->setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 1e-7 );
+  data_generator_h->setAdjointBremsstrahlungEvaluationTolerance( 1e-6 );
+  data_generator_h->setAdjointBremsstrahlungGridConvergenceTolerance( 1e-3 );
+  data_generator_h->setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-12 );
+  data_generator_h->setAdjointBremsstrahlungDistanceTolerance( 1e-14 );
+
+  data_generator_h->setAdjointElectroionizationEvaluationTolerance( 1e-6 );
+  data_generator_h->setAdjointElectroionizationGridConvergenceTolerance( 1e-3 );
+  data_generator_h->setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-12 );
+  data_generator_h->setAdjointElectroionizationDistanceTolerance( 1e-14 );
+
 
   data_generator_h->setTableData( h_data_container );
 
@@ -164,21 +175,26 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   data_generator_h->setAdjointElectronData( h_data_container );
 
   // Check the electron data
-  TEST_EQUALITY_CONST( data_generator_h->getAdjointBremsstrahlungCrossSectionEvaluationTolerance(),
-                       1e-3 );
-  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectroionizationCrossSectionEvaluationTolerance(),
-                       1e-4 );
-  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectronGridConvergenceTolerance(),
-                       1e-3 );
-  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectronAbsoluteDifferenceTolerance(),
-                       1e-16 );
-  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectronDistanceTolerance(),
-                       1e-8 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectronGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectronAbsoluteDifferenceTolerance(), 1e-16 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectronDistanceTolerance(), 1e-9 );
+
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointBremsstrahlungMaxEnergyNudgeValue(), 0.2 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(), 1e-7 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointBremsstrahlungEvaluationTolerance(), 1e-6 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointBremsstrahlungGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-12 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointBremsstrahlungDistanceTolerance(), 1e-14 );
+
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectroionizationEvaluationTolerance(), 1e-6 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectroionizationGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-12 );
+  TEST_EQUALITY_CONST( data_generator_h->getAdjointElectroionizationDistanceTolerance(), 1e-14 );
 
   std::vector<double> energy_grid = h_data_container.getAdjointElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 20 );
-  TEST_EQUALITY_CONST( energy_grid.size(), 848 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 543 );
 
    // Check the elastic data
    unsigned threshold =
@@ -190,24 +206,20 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
      h_data_container.getAdjointCutoffElasticCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 304.72762372903747519, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 848-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
+  TEST_EQUALITY_CONST( cross_section.back(), 304.72762372903747519 );
+  TEST_EQUALITY_CONST( cross_section.size(), 543-threshold );
 
    threshold =
      h_data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 604 );
+  TEST_EQUALITY_CONST( threshold, 412 );
 
    cross_section =
      h_data_container.getAdjointScreenedRutherfordElasticCrossSection();
 
    TEST_EQUALITY_CONST( cross_section.front(), 0.89606536249266355298 );
    TEST_EQUALITY_CONST( cross_section.back(), 12717.394891258003554 );
-   TEST_EQUALITY_CONST( cross_section.size(), 848-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
+   TEST_EQUALITY_CONST( cross_section.size(), 543-threshold );
 
    std::vector<double> angular_grid =
      h_data_container.getAdjointElasticAngularEnergyGrid();
@@ -282,11 +294,9 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
    cross_section =
      h_data_container.getAdjointMomentPreservingCrossSection();
 
-   TEST_FLOATING_EQUALITY( cross_section.front(), 1.0308605152240909636E+07, 1e-15 );
-   TEST_FLOATING_EQUALITY( cross_section.back(), 0.73821976945064415876, 1e-15 );
-   TEST_EQUALITY_CONST( cross_section.size(), 848-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
+   TEST_EQUALITY_CONST( cross_section.front(), 1.0308605152240909636E+07 );
+   TEST_EQUALITY_CONST( cross_section.back(), 0.73821976945064415876 );
+   TEST_EQUALITY_CONST( cross_section.size(), 543-threshold );
 
    // Check the atomic excitation data
    threshold =
@@ -299,9 +309,7 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
 
    TEST_EQUALITY_CONST( cross_section.front(), 6.12229969785753563e+07 );
    TEST_EQUALITY_CONST( cross_section.back(), 0.0 );
-   TEST_EQUALITY_CONST( cross_section.size(), 848-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
+   TEST_EQUALITY_CONST( cross_section.size(), 543-threshold );
 
    std::vector<double> atomic_excitation_energy_grid =
      h_data_container.getAdjointAtomicExcitationEnergyGrid();
@@ -326,11 +334,9 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
    cross_section =
      h_data_container.getAdjointBremsstrahlungElectronCrossSection();
 
-   TEST_EQUALITY_CONST( cross_section.front(), 4.33592710577003047e+01 );
-   TEST_EQUALITY_CONST( cross_section.back(), 8.36680792493486147e-01 );
-   TEST_EQUALITY_CONST( cross_section.size(), 848-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
+   TEST_EQUALITY_CONST( cross_section.front(), 4.33593594283757682e+01 );
+   TEST_EQUALITY_CONST( cross_section.back(), 8.36678200548424122e-01 );
+   TEST_EQUALITY_CONST( cross_section.size(), 543-threshold );
 
    TEST_ASSERT( !h_data_container.seperateAdjointBremsstrahlungEnergyGrid() );
 
@@ -351,15 +357,15 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
    std::vector<double> electron_bremsstrahlung_pdf =
      h_data_container.getAdjointElectronBremsstrahlungPDF( 1e-5 );
 
-   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 7.52701311713711359e+05 );
-   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 3.19715728246970551e-06 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 7.52699777633775375e+05 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 3.19715076634602777e-06 );
    TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 1204 );
 
    electron_bremsstrahlung_pdf =
      h_data_container.getAdjointElectronBremsstrahlungPDF( 20.0 );
 
-   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 3.44252103136061516e+05 );
-   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(),  3.01319268914557292e-01 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 3.44253169594513776e+05 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(),  3.01320202371399670e-01 );
    TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 258 );
 
   // Check the electroionization data
@@ -371,11 +377,9 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
    cross_section =
      h_data_container.getAdjointElectroionizationCrossSection( 1u );
 
-  TEST_EQUALITY_CONST( cross_section.front(), 4.60123626953526840e+10 );
-  TEST_EQUALITY_CONST( cross_section.back(), 6.24366840971903148e+04 );
-  TEST_EQUALITY_CONST( cross_section.size(), 848-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
+  TEST_EQUALITY_CONST( cross_section.front(), 4.60123104210057526e+10 );
+  TEST_EQUALITY_CONST( cross_section.back(), 6.24357803953771509e+04 );
+  TEST_EQUALITY_CONST( cross_section.size(), 543-threshold );
 
 //   std::vector<double> electroionization_energy_grid =
 //     h_data_container.getAdjointElectroionizationEnergyGrid( 1u );
@@ -426,11 +430,22 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
        new TestStandardAdjointElectronPhotonRelaxationDataGenerator(
             c_epr_data_container, 0.001, 20.0, 1.0e-5, 20.0 ) );
 
-  data_generator_c->setAdjointBremsstrahlungCrossSectionEvaluationTolerance( 1e-6 );
-  data_generator_c->setAdjointElectroionizationCrossSectionEvaluationTolerance( 1e-6 );
+  // Set the grid parameters
   data_generator_c->setAdjointElectronGridConvergenceTolerance( 1e-3 );
   data_generator_c->setAdjointElectronAbsoluteDifferenceTolerance( 1e-16 );
-  data_generator_c->setAdjointElectronDistanceTolerance( 1e-8 );
+  data_generator_c->setAdjointElectronDistanceTolerance( 1e-9 );
+
+  data_generator_c->setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
+  data_generator_c->setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 1e-7 );
+  data_generator_c->setAdjointBremsstrahlungEvaluationTolerance( 1e-6 );
+  data_generator_c->setAdjointBremsstrahlungGridConvergenceTolerance( 1e-3 );
+  data_generator_c->setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-12 );
+  data_generator_c->setAdjointBremsstrahlungDistanceTolerance( 1e-14 );
+
+  data_generator_c->setAdjointElectroionizationEvaluationTolerance( 1e-6 );
+  data_generator_c->setAdjointElectroionizationGridConvergenceTolerance( 1e-3 );
+  data_generator_c->setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-12 );
+  data_generator_c->setAdjointElectroionizationDistanceTolerance( 1e-14 );
 
   data_generator_c->setTableData( c_data_container );
 
@@ -443,8 +458,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( c_data_container.getCutoffAngleCosine(), 1.0 );
   TEST_EQUALITY_CONST( c_data_container.getNumberOfAdjointMomentPreservingAngles(), 0 );
   TEST_EQUALITY_CONST( c_data_container.getGridConvergenceTolerance(), 0.001 );
-  TEST_EQUALITY_CONST(
-    c_data_container.getGridAbsoluteDifferenceTolerance(), 1e-12 );
+  TEST_EQUALITY_CONST( c_data_container.getGridAbsoluteDifferenceTolerance(), 1e-12 );
   TEST_EQUALITY_CONST( c_data_container.getGridDistanceTolerance(), 1e-14 );
 
   c_data_container.exportData( "test_c_epr.xml",
@@ -505,6 +519,22 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   data_generator_c->setAdjointElectronData( c_data_container );
 
   // Check the electron data
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointElectronGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointElectronAbsoluteDifferenceTolerance(), 1e-16 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointElectronDistanceTolerance(), 1e-9 );
+
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointBremsstrahlungMaxEnergyNudgeValue(), 0.2 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(), 1e-7 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointBremsstrahlungEvaluationTolerance(), 1e-6 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointBremsstrahlungGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-12 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointBremsstrahlungDistanceTolerance(), 1e-14 );
+
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointElectroionizationEvaluationTolerance(), 1e-6 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointElectroionizationGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-12 );
+  TEST_EQUALITY_CONST( data_generator_c->getAdjointElectroionizationDistanceTolerance(), 1e-14 );
+
    std::vector<double> energy_grid = c_data_container.getAdjointElectronEnergyGrid();
 
    TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
@@ -523,10 +553,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
      c_data_container.getAdjointCutoffElasticCrossSection();
 
    TEST_EQUALITY_CONST( cross_section.front(), 3.06351e+9 );
-   TEST_FLOATING_EQUALITY( cross_section.back(), 10402.358457801836266, 1e-15 );
+   TEST_EQUALITY_CONST( cross_section.back(), 10402.358457801836266 );
    TEST_EQUALITY_CONST( cross_section.size(), 776-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
 
    threshold =
      c_data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
@@ -539,8 +567,6 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
    TEST_EQUALITY_CONST( cross_section.front(), 2.05508471144130453e+01 );
    TEST_EQUALITY_CONST( cross_section.back(), 1.30888131403400272e+05 );
    TEST_EQUALITY_CONST( cross_section.size(), 776-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
 
    std::vector<double> angular_grid =
      c_data_container.getAdjointElasticAngularEnergyGrid();
@@ -589,8 +615,6 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
    TEST_EQUALITY_CONST( cross_section.front(), 5.90068663943557292e+07 );
    TEST_EQUALITY_CONST( cross_section.back(), 0.0 );
    TEST_EQUALITY_CONST( cross_section.size(), 776-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
 
    std::vector<double> atomic_excitation_energy_grid =
      c_data_container.getAdjointAtomicExcitationEnergyGrid();
@@ -615,11 +639,9 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
    cross_section =
      c_data_container.getAdjointBremsstrahlungElectronCrossSection();
 
-   TEST_EQUALITY_CONST( cross_section.front(), 9.10973391010646765e+02 );
-   TEST_EQUALITY_CONST( cross_section.back(), 1.09968948521074097e+01 );
+   TEST_EQUALITY_CONST( cross_section.front(), 9.10973418542864351e+02 );
+   TEST_EQUALITY_CONST( cross_section.back(), 1.09968948719605137e+01 );
    TEST_EQUALITY_CONST( cross_section.size(), 776-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
 
    TEST_ASSERT( !c_data_container.seperateAdjointBremsstrahlungEnergyGrid() );
 
@@ -650,8 +672,6 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
    TEST_EQUALITY_CONST( cross_section.front(), 1.58054886047042942e+09 );
    TEST_EQUALITY_CONST( cross_section.back(), 1.01386550694160269e+04 );
    TEST_EQUALITY_CONST( cross_section.size(), 776-threshold );
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
 
 //   std::vector<double> electroionization_energy_grid =
 //     c_data_container.getAdjointElectroionizationEnergyGrid( 1u );
@@ -700,8 +720,6 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
    TEST_EQUALITY_CONST( cross_section.back(), 1.20330712777701134e+05 );
    TEST_EQUALITY_CONST( cross_section.size(), 776-threshold );
 
-std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
-std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
 //   electroionization_energy_grid =
 //     c_data_container.getAdjointElectroionizationEnergyGrid( 4u );
 
