@@ -419,7 +419,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
 
   // Set the photon data
   (*d_os_log) << "Setting the adjoint photon data: " << std::endl;
-  d_os_log->flush();
   this->setAdjointPhotonData( data_container );
   (*d_os_log) << "done." << std::endl;
 
@@ -604,7 +603,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   // Create the union energy grid
   (*d_os_log) << " Creating union energy grid";
   d_os_log->flush();
-
+  
   std::list<double> union_energy_grid;
   
   this->initializeAdjointPhotonUnionEnergyGrid( union_energy_grid );
@@ -638,7 +637,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   {
     std::vector<std::vector<double> > max_energy_grid, cross_section;
 
-    (*d_os_log) << " Setting the Waller-Hartree incoherent adjoint "
+    (*d_os_log) << " Setting the Waller-Hartree incoherent adjoint"
                 << " cross section...";
     d_os_log->flush();
     
@@ -656,8 +655,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
 
     for( unsigned i = 0u; i < impulse_approx_incoherent_adjoint_cs_evaluators.size(); ++i )
     {
-      (*d_os_log) << " Setting the subshell "
-                  << impulse_approx_incoherent_adjoint_cs_evaluators[i].first
+      (*d_os_log) << " Setting subshell "
+                  << Data::convertENDFDesignatorToSubshellEnum(
+                     impulse_approx_incoherent_adjoint_cs_evaluators[i].first )
                   << " impulse approx incoherent adjoint cross section...";
       d_os_log->flush();
 
@@ -690,7 +690,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   {
     std::vector<double> cross_section;
 
-    (*d_os_log) << " Setting the Waller-Hartree coherent adjoint "
+    (*d_os_log) << " Setting the Waller-Hartree coherent adjoint"
                 << " cross section...";
     d_os_log->flush();
 
@@ -702,7 +702,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
 
     (*d_os_log) << "done." << std::endl;
 
-    (*d_os_log) << " Setting the forward Waller-Hartree total "
+    (*d_os_log) << " Setting the forward Waller-Hartree total"
                 << " cross section...";
     d_os_log->flush();
 
@@ -714,7 +714,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
 
     (*d_os_log) << "done." << std::endl;
 
-    (*d_os_log) << " Setting the forward impulse approx. total "
+    (*d_os_log) << " Setting the forward impulse approx. total"
                 << " cross section...";
     d_os_log->flush();
 
