@@ -359,7 +359,8 @@ private:
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
     std::shared_ptr<BremsstrahlungEvaluator>&
-        adjoint_bremsstrahlung_cs_evaluator ) const;
+        adjoint_bremsstrahlung_cs_evaluator,
+    boost::function<double (double)>& bremsstrahlung_grid_function ) const;
 
   // Generate adjoint bremsstrahlung photon energy distribution
   void evaluateAdjointBremsstrahlungPhotonDistribution(
@@ -373,13 +374,14 @@ private:
     const std::vector<double>& adjoint_bremsstrahlung_photon_energy,
     std::vector<double>& adjoint_bremsstrahlung_pdf ) const;
 
-
   // Create the adjoint electroionization subshell cross section evaluator
   void createAdjointElectroionizationSubshellCrossSectionEvaluator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::map<unsigned,std::shared_ptr<ElectroionizationEvaluator> >&
-        adjoint_electroionization_cs_evaluators ) const;
+    std::shared_ptr<ElectroionizationEvaluator>&
+        adjoint_electroionization_cs_evaluator,
+    boost::function<double (double)>& ionization_grid_function,
+    const unsigned shell ) const;
 
   // The forward data
   std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>

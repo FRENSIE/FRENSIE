@@ -38,8 +38,6 @@ std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>
 std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
   ace_twobs_bremsstrahlung_reaction;
 
-Teuchos::Array<double> bremsstrahlung_energy_grid;
-
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
@@ -472,7 +470,7 @@ int main( int argc, char** argv )
   int N = bremi_block.size()/3;
 
   // Extract the electron energy grid for bremsstrahlung energy distributions
-  bremsstrahlung_energy_grid.resize(bremi_block(0,N));
+  Teuchos::Array<double>bremsstrahlung_energy_grid(bremi_block(0,N));
 
   // Extract the table lengths for bremsstrahlung energy distributions
   Teuchos::Array<double> table_length(bremi_block(N,N));
