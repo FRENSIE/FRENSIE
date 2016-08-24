@@ -319,12 +319,12 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
 
    // Check the bremsstrahlung data
    threshold =
-     h_data_container.getAdjointBremsstrahlungCrossSectionThresholdEnergyIndex();
+     h_data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
 
    TEST_EQUALITY_CONST( threshold, 0 );
 
    cross_section =
-     h_data_container.getAdjointBremsstrahlungCrossSection();
+     h_data_container.getAdjointBremsstrahlungElectronCrossSection();
 
    TEST_EQUALITY_CONST( cross_section.front(), 4.33592710577003047e+01 );
    TEST_EQUALITY_CONST( cross_section.back(), 8.36680792493486147e-01 );
@@ -332,40 +332,35 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
 std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
 std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
 
-//   std::vector<double> bremsstrahlung_energy_grid =
-//     h_data_container.getAdjointBremsstrahlungEnergyGrid();
+   TEST_ASSERT( !h_data_container.seperateAdjointBremsstrahlungEnergyGrid() );
 
-//   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.front(), 1.00000e-5 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.back(), 1.00000e+5 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 11 );
+   std::vector<double> electron_bremsstrahlung_energy =
+     h_data_container.getAdjointElectronBremsstrahlungEnergy( 1e-5 );
 
-//   std::vector<double> bremsstrahlung_photon_energy =
-//     h_data_container.getAdjointBremsstrahlungPhotonEnergy( 1.00000e-5 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.front(), 1e-5 + 2e-7 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.back(), 20.2 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.size(), 1204 );
 
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e-5 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 17 );
+   electron_bremsstrahlung_energy =
+     h_data_container.getAdjointElectronBremsstrahlungEnergy( 20.0 );
 
-//   bremsstrahlung_photon_energy =
-//     h_data_container.getAdjointBremsstrahlungPhotonEnergy( 1.00000e+5 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.front(), 20.0 + 2e-7 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.back(), 20.2 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.size(), 258 );
 
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e+5 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 2 );
+   std::vector<double> electron_bremsstrahlung_pdf =
+     h_data_container.getAdjointElectronBremsstrahlungPDF( 1e-5 );
 
-//   std::vector<double> bremsstrahlung_photon_pdf =
-//     h_data_container.getAdjointBremsstrahlungPhotonPDF( 1.00000e-5 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 7.52701311713711359e+05 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 3.19715728246970551e-06 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 1204 );
 
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(), 1.46394848379322421e+06 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(), 1.46824029287934118e+04 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 17 );
+   electron_bremsstrahlung_pdf =
+     h_data_container.getAdjointElectronBremsstrahlungPDF( 20.0 );
 
-//   bremsstrahlung_photon_pdf =
-//     h_data_container.getAdjointBremsstrahlungPhotonPDF( 1.00000e+5 );
-
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(),  0.0 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  0.0 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 2 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 3.44252103136061516e+05 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(),  3.01319268914557292e-01 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 258 );
 
   // Check the electroionization data
   threshold =
@@ -613,12 +608,12 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
 
    // Check the bremsstrahlung data
    threshold =
-     c_data_container.getAdjointBremsstrahlungCrossSectionThresholdEnergyIndex();
+     c_data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
 
    TEST_EQUALITY_CONST( threshold, 0 );
 
    cross_section =
-     c_data_container.getAdjointBremsstrahlungCrossSection();
+     c_data_container.getAdjointBremsstrahlungElectronCrossSection();
 
    TEST_EQUALITY_CONST( cross_section.front(), 9.10973391010646765e+02 );
    TEST_EQUALITY_CONST( cross_section.back(), 1.09968948521074097e+01 );
@@ -626,41 +621,23 @@ std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section
 std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
 std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
 
-//   std::vector<double> bremsstrahlung_energy_grid =
-//     c_data_container.getAdjointBremsstrahlungEnergyGrid();
+   TEST_ASSERT( !c_data_container.seperateAdjointBremsstrahlungEnergyGrid() );
 
-//   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.front(), 1.00000e-5 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.back(), 1.00000e+5 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 10 );
+   std::vector<double> electron_bremsstrahlung_energy =
+     c_data_container.getAdjointElectronBremsstrahlungEnergy( 1e-5 );
 
-//   std::vector<double> bremsstrahlung_photon_energy =
-//     c_data_container.getAdjointBremsstrahlungPhotonEnergy( 1.00000e-5 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.front(), 1e-5 + 2e-7 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.back(), 20.2 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.size(), 1003 );
 
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e-5 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 17 );
+   electron_bremsstrahlung_energy =
+     c_data_container.getAdjointElectronBremsstrahlungEnergy( 20.0 );
 
-//   bremsstrahlung_photon_energy =
-//     c_data_container.getAdjointBremsstrahlungPhotonEnergy( 1.00000e+5 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.front(), 20.0 + 2e-7 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.back(), 20.2 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.size(), 264 );
 
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e+5 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 2 );
 
-//   std::vector<double> bremsstrahlung_photon_pdf =
-//     c_data_container.getAdjointBremsstrahlungPhotonPDF( 1.00000e-5 );
-
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(),1.40925689457137836e+06 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(), 1.43093090368334142e+04 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 17 );
-
-//   bremsstrahlung_photon_pdf =
-//     c_data_container.getAdjointBremsstrahlungPhotonPDF( 1.00000e+5 );
-
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(), 0.0 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  0.0 );
-//   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 2 );
-// 
    // Check the electroionization data
    threshold =
      c_data_container.getAdjointElectroionizationCrossSectionThresholdEnergyIndex( 1u );

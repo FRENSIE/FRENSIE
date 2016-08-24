@@ -247,6 +247,23 @@ public:
   const std::vector<double>&
   getAdjointTripletProductionEnergyDistributionNormConstant() const;
 
+  //! Return the bremsstrahlung incoming photon energy grid for the scattering spectrum
+  const std::vector<double>& getAdjointPhotonBremsstrahlungEnergyGrid() const;
+
+  //! Return the bremsstrahlung electron energy for an incoming photon energy
+  const std::vector<double>& getAdjointPhotonBremsstrahlungEnergy(
+					       const double incoming_adjoint_energy ) const;
+
+  //! Return the bremsstrahlung pdf for an incoming photon energy
+  const std::vector<double>& getAdjointPhotonBremsstrahlungPDF(
+					       const double incoming_adjoint_energy ) const;
+
+  //! Return the bremsstrahlung photon cross section
+  const std::vector<double>& getAdjointBremsstrahlungPhotonCrossSection() const;
+
+  //! Return the bremsstrahlung photon cross section threshold energy bin index
+  unsigned getAdjointBremsstrahlungPhotonCrossSectionThresholdEnergyIndex() const;
+
 //---------------------------------------------------------------------------//
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
@@ -301,15 +318,18 @@ public:
                            const unsigned subshell,
 					       const double incoming_adjoint_energy ) const;
 
-  //! Return the bremsstrahlung energy grid for the secondary photon spectrum
-  const std::vector<double>& getAdjointBremsstrahlungEnergyGrid() const;
+  //! Return the bremsstrahlung incoming electron energy grid for the scattering spectrum
+  const std::vector<double>& getAdjointElectronBremsstrahlungEnergyGrid() const;
 
-  //! Return the bremsstrahlung photon energy for an incoming energy
-  const std::vector<double>& getAdjointBremsstrahlungPhotonEnergy(
+  //! Return if there is a seperate bremsstrahlung incoming electron energy grid for the scattering spectrum
+  bool seperateAdjointBremsstrahlungEnergyGrid() const;
+
+  //! Return the bremsstrahlung electron energy for an incoming electron energy
+  const std::vector<double>& getAdjointElectronBremsstrahlungEnergy(
 					       const double incoming_adjoint_energy ) const;
 
-  //! Return the bremsstrahlung photon energy pdf for an incoming energy
-  const std::vector<double>& getAdjointBremsstrahlungPhotonPDF(
+  //! Return the bremsstrahlung pdf for an incoming electron energy
+  const std::vector<double>& getAdjointElectronBremsstrahlungPDF(
 					       const double incoming_adjoint_energy ) const;
 
   //! Return the atomic excitation average energy gain energy grid
@@ -354,10 +374,10 @@ public:
     const unsigned subshell ) const;
 
   //! Return the bremsstrahlung electron cross section
-  const std::vector<double>& getAdjointBremsstrahlungCrossSection() const;
+  const std::vector<double>& getAdjointBremsstrahlungElectronCrossSection() const;
 
-  //! Return the bremsstrahlung cross section threshold energy bin index
-  unsigned getAdjointBremsstrahlungCrossSectionThresholdEnergyIndex() const;
+  //! Return the bremsstrahlung electron cross section threshold energy bin index
+  unsigned getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex() const;
 
   //! Return the atomic excitation electron cross section
   const std::vector<double>& getAdjointAtomicExcitationCrossSection() const;
@@ -601,7 +621,39 @@ protected:
   void setAdjointTripletProductionEnergyDistributionNormConstant(
                          const std::vector<double>&
                          adjoint_triplet_production_energy_dist_norm_const );
-  
+
+  //! Set the bremsstrahlung incoming photon energy grid for the scattering spectrum
+  void setAdjointPhotonBremsstrahlungEnergyGrid(
+    const std::vector<double>& adjoint_bremsstrahlung_energy_grid );
+
+  //! Set the bremsstrahlung electron energy for an incoming photon energy
+  void setAdjointPhotonBremsstrahlungEnergyAtIncomingEnergy(
+    const double incoming_adjoint_energy,
+    const std::vector<double>& adjoint_photon_bremsstrahlung_energy );
+
+  //! Set the bremsstrahlung pdf for an incoming photon energy
+  void setAdjointPhotonBremsstrahlungPDFAtIncomingEnergy(
+    const double incoming_adjoint_energy,
+    const std::vector<double>&  adjoint_photon_bremsstrahlung_pdf );
+
+  //! Set the bremsstrahlung electron energy for photons
+  void setAdjointPhotonBremsstrahlungEnergy(
+    const std::map<double,std::vector<double> >&
+    adjoint_photon_bremsstrahlung_energy );
+
+  //! Set the bremsstrahlung pdf for photons
+  void setAdjointPhotonBremsstrahlungPDF(
+    const std::map<double,std::vector<double> >&
+    adjoint_photon_bremsstrahlung_pdf );
+
+  //! Set the bremsstrahlung photon cross section
+  void setAdjointBremsstrahlungPhotonCrossSection(
+			 const std::vector<double>& adjoint_bremsstrahlung_cross_section );
+
+  //! Set the bremsstrahlung photon cross section threshold energy bin index
+  void setAdjointBremsstrahlungPhotonCrossSectionThresholdEnergyIndex(
+                                const unsigned index );
+
 //---------------------------------------------------------------------------//
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
@@ -675,29 +727,29 @@ protected:
     const std::map<double,std::vector<double> >&
     adjoint_electroionization_recoil_pdf );
 
-  //! Set the bremsstrahlung energy grid for the secondary photon spectrum
-  void setAdjointBremsstrahlungEnergyGrid(
+  //! Set the bremsstrahlung incoming electron energy grid for the scattering spectrum
+  void setAdjointElectronBremsstrahlungEnergyGrid(
     const std::vector<double>& adjoint_bremsstrahlung_energy_grid );
 
-  //! Set the bremsstrahlung photon energy for an incoming energy
-  void setAdjointBremsstrahlungPhotonEnergyAtIncomingEnergy(
+  //! Set the bremsstrahlung electron energy for an incoming electron energy
+  void setAdjointElectronBremsstrahlungEnergyAtIncomingEnergy(
     const double incoming_adjoint_energy,
-    const std::vector<double>& adjoint_bremsstrahlung_photon_energy );
+    const std::vector<double>& adjoint_electron_bremsstrahlung_energy );
 
-  //! Set the bremsstrahlung photon energy pdf for an incoming energy
-  void setAdjointBremsstrahlungPhotonPDFAtIncomingEnergy(
+  //! Set the bremsstrahlung pdf for an incoming electron energy
+  void setAdjointElectronBremsstrahlungPDFAtIncomingEnergy(
     const double incoming_adjoint_energy,
-    const std::vector<double>&  adjoint_bremsstrahlung_photon_pdf );
+    const std::vector<double>&  adjoint_electron_bremsstrahlung_pdf );
 
-  //! Set all the bremsstrahlung photon energy data
-  void setAdjointBremsstrahlungPhotonEnergy(
+  //! Set the bremsstrahlung electron energy for electrons
+  void setAdjointElectronBremsstrahlungEnergy(
     const std::map<double,std::vector<double> >&
-    adjoint_bremsstrahlung_photon_energy );
+    adjoint_electron_bremsstrahlung_energy );
 
-  //! Set all the bremsstrahlung photon energy pdf data
-  void setAdjointBremsstrahlungPhotonPDF(
+  //! Set the bremsstrahlung pdf for electrons
+  void setAdjointElectronBremsstrahlungPDF(
     const std::map<double,std::vector<double> >&
-    adjoint_bremsstrahlung_photon_pdf );
+    adjoint_electron_bremsstrahlung_pdf );
 
   //! Set the atomic excitation average energy gain energy grid
   void setAdjointAtomicExcitationEnergyGrid(
@@ -753,18 +805,18 @@ protected:
              const unsigned index );
 
   //! Set the bremsstrahlung electron cross section
-  void setAdjointBremsstrahlungCrossSection(
+  void setAdjointBremsstrahlungElectronCrossSection(
 			 const std::vector<double>& adjoint_bremsstrahlung_cross_section );
 
-  //! Set the bremsstrahlung cross section threshold energy bin index
-  void setAdjointBremsstrahlungCrossSectionThresholdEnergyIndex(
+  //! Set the bremsstrahlung electron cross section threshold energy bin index
+  void setAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(
                                 const unsigned index );
 
   //! Set the atomic excitation electron cross section
   void setAdjointAtomicExcitationCrossSection(
 			 const std::vector<double>& adjoint_atomic_excitation_cross_section );
 
-  //! Set the bremsstrahlung cross section threshold energy bin index
+  //! Set the atomic excitation cross section threshold energy bin index
   void setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(
                                 const unsigned index );
 
@@ -964,7 +1016,22 @@ private:
 
   // The adjoint triplet production energy distribution norm constant (b)
   std::vector<double> d_adjoint_triplet_production_norm_constant;
-  
+
+  // The photon bremsstrahlung energy grid (MeV)
+  std::vector<double> d_adjoint_photon_bremsstrahlung_energy_grid;
+
+  // The photon bremsstrahlung energy
+  std::map<double,std::vector<double> > d_adjoint_photon_bremsstrahlung_energy;
+
+  // The photon bremsstrahlung pdf
+  std::map<double,std::vector<double> > d_adjoint_photon_bremsstrahlung_pdf;
+
+  // The bremsstrahlung photon cross section (b)
+  std::vector<double> d_adjoint_bremsstrahlung_photon_cross_section;
+
+  // The bremsstrahlung photon cross section threshold energy index
+  unsigned d_adjoint_bremsstrahlung_photon_cross_section_threshold_index;
+
 //---------------------------------------------------------------------------//
 // ELECTRON DATA
 //---------------------------------------------------------------------------//
@@ -995,14 +1062,14 @@ private:
   std::map<unsigned,std::map<double,std::vector<double> > >
     d_adjoint_electroionization_recoil_pdf;
 
-  // The bremsstrahlung energy grid (MeV)
-  std::vector<double> d_adjoint_bremsstrahlung_energy_grid;
+  // The electron bremsstrahlung energy grid (MeV)
+  std::vector<double> d_adjoint_electron_bremsstrahlung_energy_grid;
 
-  // The bremsstrahlung photon energy
-  std::map<double,std::vector<double> > d_adjoint_bremsstrahlung_photon_energy;
+  // The electron bremsstrahlung energy
+  std::map<double,std::vector<double> > d_adjoint_electron_bremsstrahlung_energy;
 
-  // The bremsstrahlung photon pdf
-  std::map<double,std::vector<double> > d_adjoint_bremsstrahlung_photon_pdf;
+  // The electron bremsstrahlung pdf
+  std::map<double,std::vector<double> > d_adjoint_electron_bremsstrahlung_pdf;
 
   // The atomic excitation energy grid (MeV)
   std::vector<double> d_adjoint_atomic_excitation_energy_grid;
@@ -1046,10 +1113,10 @@ private:
     d_adjoint_electroionization_subshell_cross_section_threshold_index;
 
   // The bremsstrahlung electron cross section (b)
-  std::vector<double> d_adjoint_bremsstrahlung_cross_section;
+  std::vector<double> d_adjoint_bremsstrahlung_electron_cross_section;
 
   // The bremsstrahlung electron cross section threshold energy index
-  unsigned d_adjoint_bremsstrahlung_cross_section_threshold_index;
+  unsigned d_adjoint_bremsstrahlung_electron_cross_section_threshold_index;
 
   // The atomic excitation electron cross section (b)
   std::vector<double> d_adjoint_atomic_excitation_cross_section;

@@ -85,6 +85,11 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_distribution );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_norm_constant_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_norm_constant );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_bremsstrahlung_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_bremsstrahlung_energy );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_bremsstrahlung_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section_threshold_index );
   
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
@@ -95,9 +100,9 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_recoil_pdf );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_energy_grid );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_energy );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_energy );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_atomic_excitation_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_atomic_excitation_energy_gain );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_energy_grid );
@@ -111,8 +116,8 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_subshell_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_subshell_cross_section_threshold_index );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_cross_section_threshold_index );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_electron_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_electron_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_atomic_excitation_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_atomic_excitation_cross_section_threshold_index );
 }
@@ -181,6 +186,11 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_distribution );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_norm_constant_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_norm_constant );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_bremsstrahlung_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_bremsstrahlung_energy );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_bremsstrahlung_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section_threshold_index );
 
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
@@ -191,9 +201,9 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_recoil_pdf );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_energy_grid );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_energy );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_energy );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_atomic_excitation_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_atomic_excitation_energy_gain );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_energy_grid );
@@ -207,8 +217,8 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_subshell_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_subshell_cross_section_threshold_index );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_cross_section_threshold_index );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_electron_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_electron_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_atomic_excitation_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_atomic_excitation_cross_section_threshold_index );
 }

@@ -16,12 +16,13 @@
 // FRENSIE Includes
 #include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointPairProductionEnergyDistributionNormConstantEvaluator.hpp"
+#include "DataGen_AdjointElectronDistributionGenerator.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_VoidStandardElectroatomicReaction.hpp"
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_StandardOccupationNumber.hpp"
 #include "MonteCarlo_StandardScatteringFunction.hpp"
@@ -1656,16 +1657,18 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Set the adjoint bremsstrahlung cross section data
   std::cout << "   Setting the adjoint bremsstrahlung cross section...";
   std::cout.flush();
+  std::vector<double> bremsstrahlung_cross_section;
+  unsigned bremsstrahlung_threshold_index;
   this->updateCrossSectionOnUnionEnergyGrid(
       union_energy_grid,
       old_adjoint_bremsstrahlung_union_energy_grid,
       old_adjoint_bremsstrahlung_cs,  
       bremsstrahlung_grid_function,
-      cross_section,
-      threshold );
+      bremsstrahlung_cross_section,
+      bremsstrahlung_threshold_index );
 
-  data_container.setAdjointBremsstrahlungCrossSection( cross_section );
-  data_container.setAdjointBremsstrahlungCrossSectionThresholdEnergyIndex( threshold );
+  data_container.setAdjointBremsstrahlungElectronCrossSection( bremsstrahlung_cross_section );
+  data_container.setAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex( bremsstrahlung_threshold_index );
   std::cout << "done." << std::endl;
 
   // Set the adjoint electroionization subshell cross section data
@@ -1723,116 +1726,59 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   std::cout << "done." << std::endl;
 
-////---------------------------------------------------------------------------//
-//// Set Bremsstrahlung Data
-////---------------------------------------------------------------------------//
-//  std::cout << " Setting the bremsstrahlung data...";
-//  std::cout.flush();
+//---------------------------------------------------------------------------//
+// Set Bremsstrahlung Data
+//---------------------------------------------------------------------------//
+  std::cout << " Setting the bremsstrahlung data...";
+  std::cout.flush();
 
-//  std::vector<double> adjoint_bremsstrahlung_energy_grid =
-//    data_container.getAdjointBremsstrahlungEnergyGrid();
+  double max_energy_nudge_value = 0.2;
+  double energy_to_outgoing_energy_nudge_value = 2e-7;
+  double convergence_tol = 1e-3;
+  double absolute_diff_tol = 1e-12;
+  double distance_tol = 1e-14;
 
-//  Teuchos::ArrayRCP<double> adjoint_electron_energy_grid;
-//  adjoint_electron_energy_grid.assign(
-//    union_energy_grid.begin(),
-//    union_energy_grid.end() );
+  std::shared_ptr<DataGen::AdjointElectronDistributionGenerator<Utility::LinLinLin> >
+      grid_generator;
 
-//  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-//      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-//                adjoint_electron_energy_grid,
-//                adjoint_electron_energy_grid[0],
-//                adjoint_electron_energy_grid[adjoint_electron_energy_grid.size()-1],
-//                adjoint_electron_energy_grid.size()/10 + 1 ) );
+  grid_generator.reset(
+    new AdjointElectronDistributionGenerator<Utility::LinLinLin>(
+          this->getMaxElectronEnergy(),
+          max_energy_nudge_value,
+          energy_to_outgoing_energy_nudge_value,
+          convergence_tol,
+          absolute_diff_tol,
+          distance_tol ) );
 
-//  Teuchos::ArrayRCP<double> adjoint_bremsstrahlung_cross_section;
-//  adjoint_bremsstrahlung_cross_section.assign(
-//    data_container.getAdjointBremsstrahlungCrossSection().begin(),
-//    data_container.getAdjointBremsstrahlungCrossSection().end() );
+  std::vector<double> brem_energy_grid, brem_pdf;
 
-//  // Calculate the adjoint PDF at the different incoming adjoint energies and photon energies
-//  std::map<double, std::vector<double> > adjoint_bremsstrahlung_pdf_map;
+  for ( unsigned i = 0; i < bremsstrahlung_cross_section.size(); ++i )
+  {
+    unsigned energy_index = i + bremsstrahlung_threshold_index;
 
-//  // Evaluate the PDF values for all but the max energy
-//  for ( int i = 0; i < adjoint_bremsstrahlung_energy_grid.size()-1; i++ )
-//  {
-//    unsigned bin_index =
-//      grid_searcher->findLowerBinIndex( adjoint_bremsstrahlung_energy_grid.at(i) );
+    grid_generator->generateAndEvaluateDistributionInPlace<BremsstrahlungReaction>(
+      brem_energy_grid,
+      brem_pdf,
+      adjoint_bremsstrahlung_cs_evaluator,
+      d_adjoint_bremsstrahlung_evaluation_tolerance,
+      energy_grid[energy_index],
+      bremsstrahlung_cross_section[i] );
 
-//    std::vector<double> adjoint_bremsstrahlung_photon_energies;
+    // Set the adjoint bremsstrahlung scattering distribution
+    data_container.setAdjointElectronBremsstrahlungEnergyAtIncomingEnergy(
+      energy_grid[energy_index],
+      brem_energy_grid );
 
-//    // When possible use the same photon energies as the forward data
-//    if ( d_forward_epr_data->getBremsstrahlungPhotonEnergy().count(
-//            adjoint_bremsstrahlung_energy_grid.at(i) ) )
-//    {
-//      adjoint_bremsstrahlung_photon_energies =
-//        d_forward_epr_data->getBremsstrahlungPhotonEnergyAtEnergy(
-//            adjoint_bremsstrahlung_energy_grid.at(i) );
+    data_container.setAdjointElectronBremsstrahlungPDFAtIncomingEnergy(
+      energy_grid[energy_index],
+      brem_pdf );
 
-//      data_container.setAdjointBremsstrahlungPhotonEnergyAtIncomingEnergy(
-//        adjoint_bremsstrahlung_energy_grid.at(i),
-//        adjoint_bremsstrahlung_photon_energies );
-//    }
-//    else
-//    {
-//      /* If the min_electron_energy falls between two energies on the forward
-//          bremsstrahlung energy grid a new set of photon energies must be chosen.
-//          This is done by taking the set of photon energies for the forward
-//          energy grid point above the min energy and substracting the photon
-//          energies above the min electron energy.
-//          For the nudge energy (right below the max energy) the photon energies
-//          for the max_electron_energy are used with the max_electron_energy
-//          replaced with the nudge energy.
-//       */
-//      adjoint_bremsstrahlung_photon_energies =
-//        d_forward_epr_data->getBremsstrahlungPhotonEnergyAtEnergy(
-//            adjoint_bremsstrahlung_energy_grid.at(i+1) );
-//   
-//      // Eliminate photon energies above the current electron energy
-//      while ( adjoint_bremsstrahlung_photon_energies.back() >=
-//              adjoint_bremsstrahlung_energy_grid.at(i) )
-//      {
-//        adjoint_bremsstrahlung_photon_energies.pop_back();
-//      }
+    // Clear the data
+    brem_energy_grid.clear();
+    brem_pdf.clear();
+  }
 
-//      // Add the current energy as the max photon energy
-//      adjoint_bremsstrahlung_photon_energies.push_back(
-//        adjoint_bremsstrahlung_energy_grid.at(i) );
-
-//      data_container.setAdjointBremsstrahlungPhotonEnergyAtIncomingEnergy(
-//        adjoint_bremsstrahlung_energy_grid.at(i),
-//        adjoint_bremsstrahlung_photon_energies );
-//    }
-
-//    this->evaluateAdjointBremsstrahlungPhotonDistribution(
-//        adjoint_bremsstrahlung_energy_grid.at(i),
-//        bin_index,
-//        data_container.getAdjointBremsstrahlungCrossSectionThresholdEnergyIndex(),
-//        adjoint_bremsstrahlung_cross_section,
-//        adjoint_electron_energy_grid,
-//        adjoint_bremsstrahlung_cs_evaluator,
-//        adjoint_bremsstrahlung_photon_energies,
-//        adjoint_bremsstrahlung_pdf_map[adjoint_bremsstrahlung_energy_grid.at(i)] );
-//  }
-
-//  // The PDF for the max incoming energy is always zero
-//  std::vector<double> photon_energy( 2 );
-//  photon_energy[0] = 1e-7;
-//  photon_energy[1] = this->getMaxElectronEnergy();
-
-//  data_container.setAdjointBremsstrahlungPhotonEnergyAtIncomingEnergy(
-//    this->getMaxElectronEnergy(),
-//    photon_energy );
-
-//  std::vector<double> photon_pdf( 2 );
-//  photon_energy[0] = 0.0;
-//  photon_energy[1] = 0.0;
-//  adjoint_bremsstrahlung_pdf_map[this->getMaxElectronEnergy()] =
-//    photon_pdf;
-
-//  data_container.setAdjointBremsstrahlungPhotonPDF(
-//    adjoint_bremsstrahlung_pdf_map );
-
-//  std::cout << "done." << std::endl;
+  std::cout << "done." << std::endl;
 
 ////---------------------------------------------------------------------------//
 //// Set Electroionization Data
