@@ -47,9 +47,21 @@ const std::string CrossSectionsXMLProperties::photonuclear_file_type_prop =
   "photonuclear_file_type";
 const std::string CrossSectionsXMLProperties::photonuclear_table_name_prop =
   "photonuclear_table_name";
-const std::string
+  const std::string
 CrossSectionsXMLProperties::photonuclear_file_start_line_prop =
   "photonuclear_file_start_line";
+const std::string
+CrossSectionsXMLProperties::adjoint_photoatomic_file_path_prop =
+  "adjoint_photoatomic_file_path";
+const std::string
+CrossSectionsXMLProperties::adjoint_photoatomic_file_type_prop =
+  "adjoint_photoatomic_file_type";
+const std::string
+CrossSectionsXMLProperties::adjoint_photoatomic_table_name_prop =
+  "adjoint_photoatomic_table_name";
+const std::string
+CrossSectionsXMLProperties::adjoint_photoatomic_file_start_line_prop =
+  "adjoint_photoatomic_file_start_line";
 const std::string CrossSectionsXMLProperties::electroatomic_file_path_prop =
   "electroatomic_file_path";
 const std::string CrossSectionsXMLProperties::electroatomic_file_type_prop =
@@ -59,6 +71,18 @@ const std::string CrossSectionsXMLProperties::electroatomic_table_name_prop =
 const std::string
 CrossSectionsXMLProperties::electroatomic_file_start_line_prop =
   "electroatomic_file_start_line";
+const std::string
+CrossSectionsXMLProperties::adjoint_electroatomic_file_path_prop =
+  "adjoint_electroatomic_file_path";
+const std::string
+CrossSectionsXMLProperties::adjoint_electroatomic_file_type_prop =
+  "adjoint_electroatomic_file_type";
+const std::string
+CrossSectionsXMLProperties::adjoint_electroatomic_table_name_prop =
+  "adjoint_electroatomic_table_name";
+const std::string
+CrossSectionsXMLProperties::adjoint_electroatomic_file_start_line_prop =
+  "adjoint_electroatomic_file_start_line";
 const std::string CrossSectionsXMLProperties::atomic_number_prop =
   "atomic_number";
 const std::string CrossSectionsXMLProperties::atomic_mass_number_prop =
@@ -147,6 +171,79 @@ CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
   atomic_weight *= Utility::PhysicalConstants::neutron_rest_mass_amu;
 }
 
+// Extract the table info from the adjoint photoatom table info param list
+void CrossSectionsXMLProperties::extractInfoFromAdjointPhotoatomTableInfoParameterList(
+                        const std::string& cross_sections_xml_directory,
+			const std::string& adjoint_photoatom_alias,
+			const Teuchos::ParameterList& cross_section_table_info,
+			std::string& data_file_path,
+			std::string& data_file_type,
+			std::string& data_file_table_name,
+			int& data_file_start_line,
+			double& atomic_weight )
+{
+  Teuchos::ParameterList adjoint_photoatom_table_info;
+
+  try{
+    adjoint_photoatom_table_info =
+      cross_section_table_info.sublist( adjoint_photoatom_alias );
+  }
+  EXCEPTION_CATCH_AND_EXIT( std::exception,
+			    "There is no data present in the "
+			    "cross_sections.xml file at "
+			    << cross_sections_xml_directory <<
+			    " for atom " << adjoint_photoatom_alias << "!" );
+
+  data_file_path = cross_sections_xml_directory + "/";
+
+  try{
+    data_file_path += adjoint_photoatom_table_info.get<std::string>(
+              CrossSectionsXMLProperties::adjoint_photoatomic_file_path_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_photoatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+  try{
+    data_file_type = adjoint_photoatom_table_info.get<std::string>(
+              CrossSectionsXMLProperties::adjoint_photoatomic_file_type_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_photoatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+  try{
+    data_file_table_name = adjoint_photoatom_table_info.get<std::string>(
+             CrossSectionsXMLProperties::adjoint_photoatomic_table_name_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_photoatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+   try{
+    data_file_start_line = adjoint_photoatom_table_info.get<int>(
+        CrossSectionsXMLProperties::adjoint_photoatomic_file_start_line_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_photoatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+  try{
+    atomic_weight = adjoint_photoatom_table_info.get<double>(
+			CrossSectionsXMLProperties::atomic_weight_ratio_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_photoatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+  atomic_weight *= Utility::PhysicalConstants::neutron_rest_mass_amu;
+}
+
 // Extract the table info from the electroatom table info parameter list
 void
 CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
@@ -216,6 +313,79 @@ CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
   EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
 			   "Error: cross section table entry "
 			   << electroatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+  atomic_weight *= Utility::PhysicalConstants::neutron_rest_mass_amu;
+}
+
+//! Extract the table info from the adjoint electroatom table info param list
+void CrossSectionsXMLProperties::extractInfoFromAdjointElectroatomTableInfoParameterList(
+                        const std::string& cross_sections_xml_directory,
+			const std::string& adjoint_electroatom_alias,
+			const Teuchos::ParameterList& cross_section_table_info,
+			std::string& data_file_path,
+			std::string& data_file_type,
+			std::string& data_file_table_name,
+			int& data_file_start_line,
+			double& atomic_weight )
+{
+  Teuchos::ParameterList adjoint_electroatom_table_info;
+
+  try{
+    adjoint_electroatom_table_info =
+      cross_section_table_info.sublist( adjoint_electroatom_alias );
+  }
+  EXCEPTION_CATCH_AND_EXIT( std::exception,
+			    "There is no data present in the "
+			    "cross_sections.xml file at "
+			    << cross_sections_xml_directory <<
+			    " for atom " << adjoint_electroatom_alias << "!" );
+
+  data_file_path = cross_sections_xml_directory + "/";
+
+  try{
+    data_file_path += adjoint_electroatom_table_info.get<std::string>(
+            CrossSectionsXMLProperties::adjoint_electroatomic_file_path_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_electroatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+  try{
+    data_file_type = adjoint_electroatom_table_info.get<std::string>(
+            CrossSectionsXMLProperties::adjoint_electroatomic_file_type_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_electroatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+  try{
+    data_file_table_name = adjoint_electroatom_table_info.get<std::string>(
+           CrossSectionsXMLProperties::adjoint_electroatomic_table_name_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_electroatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+   try{
+    data_file_start_line = adjoint_electroatom_table_info.get<int>(
+      CrossSectionsXMLProperties::adjoint_electroatomic_file_start_line_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_electroatom_alias <<
+			   " is invalid! Please fix this entry." );
+
+  try{
+    atomic_weight = adjoint_electroatom_table_info.get<double>(
+                        CrossSectionsXMLProperties::atomic_weight_ratio_prop );
+  }
+  EXCEPTION_CATCH_RETHROW( Teuchos::Exceptions::InvalidParameter,
+			   "Error: cross section table entry "
+			   << adjoint_electroatom_alias <<
 			   " is invalid! Please fix this entry." );
 
   atomic_weight *= Utility::PhysicalConstants::neutron_rest_mass_amu;

@@ -40,10 +40,18 @@ public:
   static const std::string photonuclear_file_type_prop;
   static const std::string photonuclear_table_name_prop;
   static const std::string photonuclear_file_start_line_prop;
+  static const std::string adjoint_photoatomic_file_path_prop;
+  static const std::string adjoint_photoatomic_file_type_prop;
+  static const std::string adjoint_photoatomic_table_name_prop;
+  static const std::string adjoint_photoatomic_file_start_line_prop;
   static const std::string electroatomic_file_path_prop;
   static const std::string electroatomic_file_type_prop;
   static const std::string electroatomic_table_name_prop;
   static const std::string electroatomic_file_start_line_prop;
+  static const std::string adjoint_electroatomic_file_path_prop;
+  static const std::string adjoint_electroatomic_file_type_prop;
+  static const std::string adjoint_electroatomic_table_name_prop;
+  static const std::string adjoint_electroatomic_file_start_line_prop;
   static const std::string atomic_number_prop;
   static const std::string atomic_mass_number_prop;
   static const std::string isomer_number_prop;
@@ -65,6 +73,17 @@ public:
 			int& data_file_start_line,
 			double& atomic_weight );
 
+  //! Extract the table info from the adjoint photoatom table info param list
+  static void extractInfoFromAdjointPhotoatomTableInfoParameterList(
+                        const std::string& cross_sections_xml_directory,
+			const std::string& adjoint_photoatom_alias,
+			const Teuchos::ParameterList& cross_section_table_info,
+			std::string& data_file_path,
+			std::string& data_file_type,
+			std::string& data_file_table_name,
+			int& data_file_start_line,
+			double& atomic_weight );
+
   //! Extract the table info from the electroatom table info parameter list
   static void extractInfoFromElectroatomTableInfoParameterList(
 			const std::string& cross_sections_xml_directory,
@@ -75,6 +94,17 @@ public:
 			std::string& data_file_table_name,
 			int& data_file_start_line,
 			double& atomic_weight );
+
+  //! Extract the table info from the adjoint electroatom table info param list
+  static void extractInfoFromAdjointElectroatomTableInfoParameterList(
+                        const std::string& cross_sections_xml_directory,
+			const std::string& adjoint_electroatom_alias,
+			const Teuchos::ParameterList& cross_section_table_info,
+			std::string& data_file_path,
+			std::string& data_file_type,
+			std::string& data_file_table_name,
+			int& data_file_start_line,
+			double& atomic_weight );                  
 
   //! Extract the table info from the nuclide table info parameter list
   static void extractInfoFromNuclideTableInfoParameterList(

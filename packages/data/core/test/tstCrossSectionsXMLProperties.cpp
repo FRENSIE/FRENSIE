@@ -56,6 +56,34 @@ TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 }
 
 //---------------------------------------------------------------------------//
+// Check that adjoint photoatom cross section info can be extracted
+TEUCHOS_UNIT_TEST( CrossSectionsXMLProperties,
+                   extractInfoFromAdjointPhotoatomicTableInfoParameterList )
+{
+  std::string data_file_path, data_file_type, data_file_table_name;
+  int data_file_start_line;
+  double atomic_weight;
+
+  Data::CrossSectionsXMLProperties::extractInfoFromAdjointPhotoatomTableInfoParameterList(
+                                                  cross_sections_xml_directory,
+						  "H-Native",
+						  *cross_section_info,
+						  data_file_path,
+						  data_file_type,
+						  data_file_table_name,
+						  data_file_start_line,
+						  atomic_weight );
+
+  TEST_EQUALITY( data_file_path,
+		 cross_sections_xml_directory + "/native/test_aepr_1_native.xml" );
+  TEST_EQUALITY_CONST( data_file_type, "Native" );
+  TEST_EQUALITY_CONST( data_file_table_name, "" );
+  TEST_EQUALITY_CONST( data_file_start_line, -1 );
+  TEST_EQUALITY_CONST( atomic_weight,
+		       0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu );
+}
+
+//---------------------------------------------------------------------------//
 // Check that electroatom cross section info can be extracted
 TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 		   extractInfoFromElectroatomTableInfoParameterList )
@@ -79,6 +107,34 @@ TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
   TEST_EQUALITY_CONST( data_file_type, "ACE" );
   TEST_EQUALITY_CONST( data_file_table_name, "1000.12p" );
   TEST_EQUALITY_CONST( data_file_start_line, 1 );
+  TEST_EQUALITY_CONST( atomic_weight,
+		       0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu );
+}
+
+//---------------------------------------------------------------------------//
+// Check that adjoint electroatom cross section info can be extracted
+TEUCHOS_UNIT_TEST( CrossSectionsXMLProperties,
+                   extractInfoFromElectroatomicTableInfoParameterList )
+{
+  std::string data_file_path, data_file_type, data_file_table_name;
+  int data_file_start_line;
+  double atomic_weight;
+
+  Data::CrossSectionsXMLProperties::extractInfoFromAdjointElectroatomTableInfoParameterList(
+                                                  cross_sections_xml_directory,
+						  "H-Native",
+						  *cross_section_info,
+						  data_file_path,
+						  data_file_type,
+						  data_file_table_name,
+						  data_file_start_line,
+						  atomic_weight );
+
+  TEST_EQUALITY( data_file_path,
+		 cross_sections_xml_directory + "/native/test_aepr_1_native.xml" );
+  TEST_EQUALITY_CONST( data_file_type, "Native" );
+  TEST_EQUALITY_CONST( data_file_table_name, "" );
+  TEST_EQUALITY_CONST( data_file_start_line, -1 );
   TEST_EQUALITY_CONST( atomic_weight,
 		       0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu );
 }
