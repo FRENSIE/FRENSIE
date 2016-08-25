@@ -143,6 +143,9 @@ protected:
 	
 	// Elastic S(alpha,beta) angular block
 	Teuchos::ArrayView<const double> d_itca_block;
+
+  // S(alpha,beta) data extractor
+  const Data::XSSSabDataExtractor d_sab_nuclide_data;
 		   
 };
 

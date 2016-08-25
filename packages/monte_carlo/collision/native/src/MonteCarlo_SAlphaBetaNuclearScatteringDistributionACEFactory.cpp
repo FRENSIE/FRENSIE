@@ -46,7 +46,8 @@ SAlphaBetaNuclearScatteringDistributionACEFactory::SAlphaBetaNuclearScatteringDi
                                         raw_nuclide_data.extractLDLWBlock(),
                                         raw_nuclide_data.extractDLWBlock() ),
     d_table_name( table_name ),
-    d_atomic_weight_ratio( atomic_weight_ratio )
+    d_atomic_weight_ratio( atomic_weight_ratio ),
+    d_sab_nuclide_data( sab_nuclide_data )
 {
   initialize( raw_nuclide_data.extractMTRBlock(),
               raw_nuclide_data.extractTYRBlock(),
@@ -208,6 +209,7 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::initializeSAlphaBetaData
   if( !itie_block.is_null() && !itxe_block.is_null() )
   {
     // Assign the itxe_block to the member data
+    
     d_itie_block = itie_block;
     d_itxe_block = itxe_block;
     
@@ -243,21 +245,44 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::initializeSAlphaBetaData
 // Set the inelastic S(alpha,beta) energies
 void SAlphaBetaNuclearScatteringDistributionACEFactory::setInelasticSAlphaBetaEnergies()
 {
-  d_inelastic_energies = d_itie_block( 1, (int)d_itie_block[0] );
+  if( true )
+  {
+    d_inelastic_energies = d_sab_nuclide_data.extractInelasticEnergyGrid();
+  }
+  else
+  {
+    d_inelastic_energies = d_itie_block( 1, (int)d_itie_block[0] );
+  }
 }
 
 // Set the inelastic S(alpha,beta) distribution locators
 void SAlphaBetaNuclearScatteringDistributionACEFactory::setInelasticSAlphaBetaDistributionLocators()
 {
-  d_inelastic_distribution_locators = d_itie_block( 1+2*(int)d_itie_block[0], 
+  if( true )
+  {
+    d_inelastic_distribution_locators = 
+      d_sab_nuclide_data.extractInelasticDistributionLocations();
+  }
+  else
+  {
+    d_inelastic_distribution_locators = d_itie_block( 1+2*(int)d_itie_block[0], 
                                                         (int)d_itie_block[0] );
+  }
 }
 
 // Set the inelastic S(alpha,beta) outgoing energies
 void SAlphaBetaNuclearScatteringDistributionACEFactory::setInelasticSAlphaBetaOutgoingEnergies()
 {
-  d_inelastic_outgoing_energies = d_itie_block( 1+3*(int)d_itie_block[0], 
+  if( true )
+  {
+    d_inelastic_outgoing_energies = 
+      d_sab_nuclide_data.extractNumberOfOutgoingEnergies();
+  }
+  else
+  {
+    d_inelastic_outgoing_energies = d_itie_block( 1+3*(int)d_itie_block[0], 
                                                     (int)d_itie_block[0] );
+  }
 }
   
 // Create S(alpha,beta) distributions
@@ -268,6 +293,10 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::createSAlphaBetaScatteri
   // Create the inelastic scattering distribution
   if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION )
   {
+    std::cout << "Inelastic energies: " << d_inelastic_energies << std::endl;
+    std::cout << "Outgoing energies: " << d_inelastic_outgoing_energies << std::endl;
+  
+  
     NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaInelasticDistribution(
               d_atomic_weight_ratio,
      	        d_inelastic_energies,

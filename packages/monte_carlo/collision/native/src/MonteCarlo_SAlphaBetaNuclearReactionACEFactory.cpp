@@ -158,12 +158,12 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
         double energy_xs = 
           d_scattering_reactions[parent_reaction_type]->getCrossSection( energy );
       }
-        
+
       sab_energy_grid_array.push_back( energy );
       reaction_cross_section_arrays[reaction_type] =
         reaction_cross_section[reaction_type];
       reaction_cross_section_arrays[reaction_type].push_back( energy_xs );
-      
+
     }
     else
     {
@@ -181,13 +181,15 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
   while( reaction_xs != reaction_xs_end )
   {
     reaction_type = reaction_xs->first;
-  
+    
     Teuchos::RCP<NuclearReaction>& reaction =
       d_s_alpha_beta_reactions[reaction_type];
       
     scattering_dist_factory.createSAlphaBetaScatteringDistributions(
       reaction_type,
       scattering_distribution );
+      
+    std::cout << "made it through distribution construction..." << std::endl;
       
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( sab_energy_grid_array );
