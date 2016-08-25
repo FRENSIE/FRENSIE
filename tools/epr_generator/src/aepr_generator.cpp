@@ -203,7 +203,7 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  // Make sure the users requested option values are valid
+  // Make sure the user's requested option values are valid
   // 1.) Either the forward_file option OR the cross_sec_dir and
   //     cross_sec_alias options MUST be specified. If both are specified
   //     warn the user that cross_sec_dir, cross_sec_alias and
@@ -226,7 +226,49 @@ int main( int argc, char** argv )
            << std::endl;
   }
 
-  // 2.) The pair production energy distribution norm constant evaluation
+  // 2.) The min photon energy must be > 0.0
+  if( min_photon_energy <= 0.0 )
+  {
+    (*out) << "Error: the min photon energy is not valid!"
+           << std::endl;
+
+    aepr_generator_clp.printHelpMessage( argv[0], *out );
+
+    return 1;
+  }
+
+  // 3.) The max photon energy must be > min photon energy
+  if( max_photon_energy <= min_photon_energy )
+  {
+    (*out) << "Error: the max photon energy is not valid!"
+           << std::endl;
+
+    aepr_generator_clp.printHelpMessage( argv[0], *out );
+
+    return 1;
+  }
+
+  // 4.) The min electron energy must be > 0.0
+  if( min_electron_energy <= 0.0 )
+  {
+    (*out) << "Error: the min electron energy is not valid!"
+           << std::endl;
+
+    aepr_generator_clp.printHelpMessage( argv[0], *out );
+
+    return 1;
+  }
+
+  // 5.) The max electron energy must be > min electron energy
+  if( max_electron_energy <= min_electron_energy )
+  {
+    (*out) << "Error: the max electron energy is not valid!"
+           << std::endl;
+
+    aepr_generator_clp.printHelpMessage( argv[0], *out );
+  }
+
+  // 6.) The pair production energy distribution norm constant evaluation
   //     tolerance must be in the valid range
   if( adjoint_pp_energy_dist_norm_const_eval_tol <= 0.0 ||
       adjoint_pp_energy_dist_norm_const_eval_tol >= 1.0 )
@@ -240,7 +282,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 3.) The pair production energy distribution norm constant nudge value
+  // 7.) The pair production energy distribution norm constant nudge value
   //     must be >= 0.0
   if( adjoint_pp_energy_dist_norm_const_nudge_value < 0.0 )
   {
@@ -253,7 +295,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 4.) The triplet production energy distribution norm constant evaluation
+  // 8.) The triplet production energy distribution norm constant evaluation
   //     tolerance must be in the valid range
   if( adjoint_tp_energy_dist_norm_const_eval_tol <= 0.0 ||
       adjoint_tp_energy_dist_norm_const_eval_tol >= 1.0 )
@@ -267,7 +309,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 5.) The triplet production energy distribution norm constant nudge value
+  // 9.) The triplet production energy distribution norm constant nudge value
   //     must be >= 0.0
   if( adjoint_tp_energy_dist_norm_const_nudge_value < 0.0 )
   {
@@ -280,7 +322,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 6.) The incoherent max energy nudge value must be > 0.0
+  // 10.) The incoherent max energy nudge value must be > 0.0
   if( adjoint_incoherent_max_energy_nudge_value <= 0.0 )
   {
     (*out) << "Error: the adjoint incoherent max energy nudge value is not "
@@ -292,7 +334,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 7.) The incoherent energy to max energy nudge value must be >= 0.0
+  // 11.) The incoherent energy to max energy nudge value must be >= 0.0
   if( adjoint_incoherent_energy_to_max_energy_nudge_value < 0.0 )
   {
     (*out) << "Error: the adjoint incoherent energy to max energy nudge "
@@ -304,7 +346,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 8.) The adjoint incoherent evaluation tolerance must be in the valid range
+  // 12.) The adjoint incoherent evaluation tolerance must be in the valid range
   if( adjoint_incoherent_evaluation_tol <= 0.0 ||
       adjoint_incoherent_evaluation_tol >= 1.0 )
   {
@@ -317,7 +359,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 9.) The adjoint incoherent grid convergence tolerance must be in the
+  // 13.) The adjoint incoherent grid convergence tolerance must be in the
   //     valid range
   if( adjoint_incoherent_grid_convergence_tol <= 0.0 ||
       adjoint_incoherent_grid_convergence_tol >= 1.0 )
@@ -331,7 +373,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 10.) The adjoint incoherent grid absolute difference tolerance must be
+  // 14.) The adjoint incoherent grid absolute difference tolerance must be
   //      in the valid range
   if( adjoint_incoherent_grid_absolute_diff_tol <= 0.0 ||
       adjoint_incoherent_grid_absolute_diff_tol >= 1.0 )
@@ -345,13 +387,13 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 11.) The adjoint incoherent grid distance tolerance must be in the
+  // 15.) The adjoint incoherent grid distance tolerance must be in the
   //      valid range
   if( adjoint_incoherent_grid_distance_tol <= 0.0 ||
       adjoint_incoherent_grid_distance_tol >= 1.0 )
   {
     (*out) << "Error: the adjoint incoherent grid distance tolerance is "
-           << "note valid!"
+           << "not valid!"
            << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
@@ -359,7 +401,7 @@ int main( int argc, char** argv )
     return 1;
   }
                                
-  // 12.) The cutoff angle cosine must be in the valid range
+  // 16.) The cutoff angle cosine must be in the valid range
   if( cutoff_angle_cosine < -1.0 ||
       cutoff_angle_cosine > 1.0 )
   {
@@ -371,7 +413,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 13.) The number of moment preserving angles must be >= 0
+  // 17.) The number of moment preserving angles must be >= 0
   if( number_of_moment_preserving_angles < 0 )
   {
     (*out) << "Error: the number of moment preserving angles is not valid!"
@@ -382,7 +424,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 14.) The grid convergence tolerance must be in the valid range
+  // 18.) The grid convergence tolerance must be in the valid range
   if( grid_convergence_tol <= 0.0 || grid_convergence_tol >= 1.0 )
   {
     (*out) << "Error: the grid convergence tolerance is not valid!"
@@ -393,7 +435,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 15.) The grid absolute difference tolerance must be in the valid range
+  // 19.) The grid absolute difference tolerance must be in the valid range
   if( grid_absolute_diff_tol <= 0.0 || grid_absolute_diff_tol >= 1.0 )
   {
     (*out) << "Error: the grid absolute difference tolerance is not valid!"
@@ -404,7 +446,7 @@ int main( int argc, char** argv )
     return 1;
   }
   
-  // 16.) The grid distance tolerance must be in the valid range
+  // 20.) The grid distance tolerance must be in the valid range
   if( grid_distance_tol <= 0.0 || grid_distance_tol >= 1.0 )
   {
     (*out) << "Error: the grid distance tolerance is not valid!"
@@ -465,7 +507,13 @@ int main( int argc, char** argv )
                                                             data_file_path ) );
 
     DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
-      generator( forward_data_container );
+      generator( forward_data_container,
+                 min_photon_energy,
+                 max_photon_energy,
+                 min_electron_energy,
+                 max_electron_energy,
+                 out.get(),
+                 out.get() );
 
     // Set the general properties
     generator.setDefaultGridConvergenceTolerance( grid_convergence_tol );
