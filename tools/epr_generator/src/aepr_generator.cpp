@@ -511,9 +511,7 @@ int main( int argc, char** argv )
                  min_photon_energy,
                  max_photon_energy,
                  min_electron_energy,
-                 max_electron_energy,
-                 out.get(),
-                 out.get() );
+                 max_electron_energy );
 
     // Set the general properties
     generator.setDefaultGridConvergenceTolerance( grid_convergence_tol );
