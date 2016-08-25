@@ -55,12 +55,12 @@ protected:
   //! Update the reaction threshold index map
   static void setSAlphaBetaUpperEnergyLimitMap( 
        const Data::XSSSabDataExtractor& sab_nuclide_data,
-       boost::unordered_map<NuclearReactionType, double> upper_energy_limits );
+       boost::unordered_map<NuclearReactionType, double>& upper_energy_limits );
 
   //! Update the reaction cross section map
   static void setSAlphaBetaCrossSectionMap( 
     const Data::XSSSabDataExtractor& sab_nuclide_data,
-    boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
+    boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
       reaction_cross_section  );
 
 private:

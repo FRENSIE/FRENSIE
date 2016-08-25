@@ -105,8 +105,8 @@ void CollisionHandlerFactory::initializeHandler(
 	  sab_table_map );
 	  
 	// Check whether S(alpha,beta) data is in use
-	bool use_sab_data = !sab_use_map.empty();
-
+  bool use_sab_data = !sab_use_map.empty();
+  
   // Create the cell id data maps
   CellIdMatIdMap cell_id_mat_id_map;
   CellIdDensityMap cell_id_density_map;
@@ -245,9 +245,9 @@ void CollisionHandlerFactory::initializeHandler(
 // Create the S(alpha,beta) data maps
 void CollisionHandlerFactory::createSAlphaBetaDataMaps( 
                               const Teuchos::ParameterList& material_reps,
-                              SabUseMap sab_use_map,
-                              SabPathMap sab_path_map,
-                              SabTableMap sab_table_map )
+                              SabUseMap& sab_use_map,
+                              SabPathMap& sab_path_map,
+                              SabTableMap& sab_table_map )
 {
   Teuchos::ParameterList::ConstIterator it = material_reps.begin();
 
@@ -274,11 +274,10 @@ void CollisionHandlerFactory::createSAlphaBetaDataMaps(
         
       for( int i = 0; i < sab_isotopes.length(); ++i )
       {
-        sab_use_map[sab_isotopes[i]] = true;
+        sab_use_map[sab_isotopes[i]] = true;        
         sab_table_map[sab_isotopes[i]] = sab_tables[i];
         sab_path_map[sab_isotopes[i]] = 
           material_rep.get<std::string>( "Sab_Path" ) + "/" + sab_files[i];
-
       }
     }
     else if( !material_rep.isParameter( "Sab_Isotopes" ) &&

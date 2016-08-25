@@ -60,9 +60,9 @@ public:
 		     
   //! Check if S(alpha,beta) data is present
   void createSAlphaBetaDataMaps( const Teuchos::ParameterList& material_reps,
-                                 SabUseMap sab_use_map,
-                                 SabPathMap sab_path_map,
-                                 SabTableMap sab_table_map );
+                                 SabUseMap& sab_use_map,
+                                 SabPathMap& sab_path_map,
+                                 SabTableMap& sab_table_map );
 
 protected:
 

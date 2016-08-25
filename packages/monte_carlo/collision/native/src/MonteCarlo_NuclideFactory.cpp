@@ -135,7 +135,16 @@ NuclideFactory::NuclideFactory(
       std::unordered_map<std::string,bool>::const_iterator use_sab_data_it =
         use_sab_data.find(*nuclide_name);
         
-      bool sab_use_bool = use_sab_data_it->second;
+      bool sab_use_bool;
+      
+      if( use_sab_data_it != use_sab_data.end() )
+      {
+        sab_use_bool = true;
+      }
+      else
+      {
+        sab_use_bool = false;
+      }
     
       if( sab_use_bool )
       {
@@ -202,7 +211,7 @@ NuclideFactory::NuclideFactory(
   }
 
   // Make sure that every nuclide has been created
-  testPostcondition( d_nuclide_name_map.size() == nuclide_aliases.size() );
+  testPostcondition( d_nuclide_name_map.size() >= nuclide_aliases.size() );
 }
 
 // Create the map of nuclides

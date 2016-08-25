@@ -29,12 +29,12 @@ NeutronMaterial::NeutronMaterial(
     d_number_density( density ),
     d_nuclides( nuclide_fractions.size() )
 {
-  std::cout << "**** HERE ****" << std::endl;
   // Make sure the fraction values are valid (all positive or all negative)
   testPrecondition( areFractionValuesValid( nuclide_fractions.begin(),
 					    nuclide_fractions.end() ) );
   testPrecondition( nuclide_fractions.size() == nuclide_names.size() );
 		    
+   
   // Copy the nuclides that make up this material
   for( unsigned i = 0u; i < nuclide_fractions.size(); ++i )
   {
@@ -56,7 +56,7 @@ NeutronMaterial::NeutronMaterial(
   else // Normalize the atom fractions
   {
     normalizeFractionValues<Utility::FIRST>( d_nuclides.begin(), d_nuclides.end() );
-  }
+  } 
     
   // Convert the mass density to a number density
   if( density < 0.0 )

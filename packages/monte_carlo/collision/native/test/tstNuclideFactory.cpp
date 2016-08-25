@@ -24,6 +24,7 @@
 std::string test_cross_sections_xml_directory;
 
 Teuchos::RCP<MonteCarlo::NuclideFactory> nuclide_factory;
+Teuchos::RCP<MonteCarlo::NuclideFactory> sab_nuclide_factory;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -50,7 +51,27 @@ void initializeNuclideFactory()
 					     cross_section_table_info,
 					     nuclide_aliases,
 					     false,
-					     true ) );
+					     true ) );	
+					     
+	// Set up the S(alpha,beta) nuclide factory
+	std::unordered_map<std::string,bool> use_sab_data;
+	use_sab_data["H-1_293.6K"] = true;
+	
+	std::unordered_map<std::string,std::string> sab_file_paths;
+	sab_file_paths["H-1_293.6K"] = "/home/ecmoll/software/mcnpdata/xdata/ENDF71SaB/lwtr.20t";
+	
+	std::unordered_map<std::string,std::string> sab_table_names;
+	sab_table_names["H-1_293.6K"] = "lwtr.20t";			
+	
+  sab_nuclide_factory.reset( new MonteCarlo::NuclideFactory(
+					     test_cross_sections_xml_directory,
+					     cross_section_table_info,
+					     nuclide_aliases,
+					     false,
+					     true,
+					     use_sab_data,
+					     sab_file_paths,
+					     sab_table_names ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -70,6 +91,25 @@ TEUCHOS_UNIT_TEST( NuclideFactory, createNuclideMap )
   TEST_ASSERT( !nuclide_map["H-1_300K"].is_null() );
   TEST_ASSERT( nuclide_map.count( "H-1_900K" ) );
   TEST_ASSERT( !nuclide_map["H-1_900K"].is_null() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a nuclide map can be created
+TEUCHOS_UNIT_TEST( NuclideFactory, createSAlphaBetaNuclideMap )
+{
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > sab_nuclide_map;
+
+  sab_nuclide_factory->createNuclideMap( sab_nuclide_map );
+
+  TEST_EQUALITY_CONST( sab_nuclide_map.size(), 4 );
+  TEST_ASSERT( sab_nuclide_map.count( "H-1_293.6K" ) );
+  TEST_ASSERT( !sab_nuclide_map["H-1_293.6K"].is_null() );
+  TEST_ASSERT( sab_nuclide_map.count( "H-1_293.6K_sab" ) );
+  TEST_ASSERT( !sab_nuclide_map["H-1_293.6K_sab"].is_null() );
+  TEST_ASSERT( sab_nuclide_map.count( "H-1_300K" ) );
+  TEST_ASSERT( !sab_nuclide_map["H-1_300K"].is_null() );
+  TEST_ASSERT( sab_nuclide_map.count( "H-1_900K" ) );
+  TEST_ASSERT( !sab_nuclide_map["H-1_900K"].is_null() );
 }
 
 //---------------------------------------------------------------------------//

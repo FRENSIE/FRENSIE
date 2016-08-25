@@ -38,13 +38,13 @@ SAlphaBetaNuclearReactionACEFactory::SAlphaBetaNuclearReactionACEFactory(
   boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
     reaction_cross_section;
   setSAlphaBetaCrossSectionMap( sab_nuclide_data,
-                                      reaction_cross_section );
+                                reaction_cross_section );
 	
 	// Create a map of the reaction types and the upper energy limits
 	boost::unordered_map<NuclearReactionType, double> upper_energy_limits;
 	setSAlphaBetaUpperEnergyLimitMap( sab_nuclide_data,
-	                                        upper_energy_limits );
-	
+	                                  upper_energy_limits );
+
 	// Initialize the S(alpha,beta) reactions
 	initializeSAlphaBetaReactions( temperature,
 	                               sab_nuclide_data.extractInelasticEnergyGrid(),
@@ -64,7 +64,7 @@ void SAlphaBetaNuclearReactionACEFactory::createSAlphaBetaReactions(
 // Update the reaction threshold map with the new reactions
 void SAlphaBetaNuclearReactionACEFactory::setSAlphaBetaCrossSectionMap( 
   const Data::XSSSabDataExtractor& sab_nuclide_data,
-  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
+  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
     reaction_cross_section )
 {
   // Inelastic cross-section
@@ -83,7 +83,7 @@ void SAlphaBetaNuclearReactionACEFactory::setSAlphaBetaCrossSectionMap(
 // Update the reaction upper threshold index map
 void SAlphaBetaNuclearReactionACEFactory::setSAlphaBetaUpperEnergyLimitMap( 
        const Data::XSSSabDataExtractor& sab_nuclide_data,
-       boost::unordered_map<NuclearReactionType, double> upper_energy_limits )
+       boost::unordered_map<NuclearReactionType, double>& upper_energy_limits )
 {
   // Inelastic upper energy limit
   upper_energy_limits[convertUnsignedToNuclearReactionType( 1004u )] =
@@ -132,16 +132,32 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
         reaction_type == MonteCarlo::SALPHABETA_N__N_ELASTIC_REACTION )
     {
       unsigned index;
+      double energy;
+      double energy_xs;
       
-      Utility::Search::binaryUpperBoundIndex( d_energy_grid.begin(),
-                                              d_energy_grid.end(),
-                                              sab_energy_grid.back() );
+      NuclearReactionType parent_reaction_type;
+      
+      if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION )
+      {
+        parent_reaction_type = MonteCarlo::N__N_INELASTIC_REACTION;
+      }
+      else
+      {
+        parent_reaction_type = MonteCarlo::N__N_ELASTIC_REACTION;
+      }
+      
+      index = Utility::Search::binaryUpperBoundIndex( d_energy_grid.begin(),
+                                                      d_energy_grid.end(),
+                                                      sab_energy_grid.back() );
     
-      d_scattering_reactions[reaction_type]->updateThresholdEnergyIndex( index );
-      
-      double energy = d_energy_grid[index];
-      double energy_xs = 
-        d_scattering_reactions[reaction_type]->getCrossSection( energy );
+      if( d_scattering_reactions.find(parent_reaction_type) != d_scattering_reactions.end() )
+      {
+        std::cout << "Found..." << std::endl;
+        d_scattering_reactions[parent_reaction_type]->updateThresholdEnergyIndex( index );
+        double energy = d_energy_grid[index];
+        double energy_xs = 
+          d_scattering_reactions[parent_reaction_type]->getCrossSection( energy );
+      }
         
       sab_energy_grid_array.push_back( energy );
       reaction_cross_section_arrays[reaction_type] =
@@ -157,7 +173,10 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
     
     ++reaction_xs;
     
-  }  
+  }
+  
+  // Reset the reaction counter
+  reaction_xs = reaction_cross_section.begin();
  
   while( reaction_xs != reaction_xs_end )
   {
@@ -188,6 +207,8 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
     
     ++reaction_xs;
   }
+
+  std::cout << "Any S(a,b) reactions found? " << d_s_alpha_beta_reactions.empty() << std::endl;
 
 }
 
