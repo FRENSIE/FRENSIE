@@ -242,7 +242,7 @@ void CollisionHandlerFactory::initializeHandler(
   }	    
 }
 
-// Check if S(alpha,beta) data is present
+// Create the S(alpha,beta) data maps
 void CollisionHandlerFactory::createSAlphaBetaDataMaps( 
                               const Teuchos::ParameterList& material_reps,
                               SabUseMap sab_use_map,
@@ -258,7 +258,8 @@ void CollisionHandlerFactory::createSAlphaBetaDataMaps(
 
     if( material_rep.isParameter( "Sab_Isotopes" ) &&
         material_rep.isParameter( "Sab_Tables" ) &&
-        material_rep.isParameter( "Sab_Path") )
+        material_rep.isParameter( "Sab_Path") && 
+        material_rep.isParameter( "Sab_Files") )
     {
     
 		  // Get the names of the S(alpha,beta) isotopes
@@ -268,13 +269,23 @@ void CollisionHandlerFactory::createSAlphaBetaDataMaps(
       const Teuchos::Array<std::string>& sab_tables =
         material_rep.get<Teuchos::Array<std::string> >( "Sab_Tables" );
         
+      const Teuchos::Array<std::string>& sab_files =
+        material_rep.get<Teuchos::Array<std::string> >( "Sab_Files" );
+        
       for( int i = 0; i < sab_isotopes.length(); ++i )
       {
         sab_use_map[sab_isotopes[i]] = true;
         sab_table_map[sab_isotopes[i]] = sab_tables[i];
-        sab_path_map[sab_isotopes[i]] = material_rep.get<std::string>( "Sab_Path" );
+        sab_path_map[sab_isotopes[i]] = 
+          material_rep.get<std::string>( "Sab_Path" ) + "/" + sab_files[i];
 
       }
+    }
+    else if( !material_rep.isParameter( "Sab_Isotopes" ) &&
+             !material_rep.isParameter( "Sab_Tables" ) &&
+             !material_rep.isParameter( "Sab_Path" ) )
+    {
+      return;
     }
     else if( !material_rep.isParameter( "Sab_Isotopes" ) ||
              !material_rep.isParameter( "Sab_Tables" ) ||
@@ -282,7 +293,7 @@ void CollisionHandlerFactory::createSAlphaBetaDataMaps(
     {
       THROW_EXCEPTION( std::logic_error,
            "Error: S(alpha,beta) data was only partially requested in the "
-           "material definitions file. User must supply the sab_nuclide,"
+           "material definitions file. User must supply the sab_nuclide, "
            "sab_table, and sab_path for S(alpha,beta) to be utilized." );
     }
   

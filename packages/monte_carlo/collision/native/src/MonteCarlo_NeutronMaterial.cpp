@@ -29,6 +29,7 @@ NeutronMaterial::NeutronMaterial(
     d_number_density( density ),
     d_nuclides( nuclide_fractions.size() )
 {
+  std::cout << "**** HERE ****" << std::endl;
   // Make sure the fraction values are valid (all positive or all negative)
   testPrecondition( areFractionValuesValid( nuclide_fractions.begin(),
 					    nuclide_fractions.end() ) );

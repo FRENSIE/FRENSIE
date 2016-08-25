@@ -62,7 +62,7 @@ void ACEFileHandler::openACEFile( const std::string& file_name,
   TEST_FOR_EXCEPTION( !ace_file_exists, 
 		      std::runtime_error, 
 		      "Fatal Error: ACE file " + file_name + 
-		      " does not exists." );
+		      " does not exist." );
   
   // Check that the file can be opened
   bool ace_file_is_readable = (bool)fileIsReadableUsingFortran( file_name.c_str(),

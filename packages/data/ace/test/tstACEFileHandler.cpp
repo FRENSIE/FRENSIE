@@ -93,22 +93,22 @@ TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_neutron )
 // constructed.
 TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_sab )
 {
-  std::string table_name( "lwtr.10t" );
+  std::string table_name( "lwtr.20t" );
   
   // Create the ace file handler
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
-			      new Data::ACEFileHandler( test_sab_ace_file_name,
-							table_name,
-							1u ) );
+			  new Data::ACEFileHandler( test_sab_ace_file_name,
+						    table_name,
+						    1u ) );
   
   TEST_EQUALITY( ace_file_handler->getLibraryName(), test_sab_ace_file_name );
   TEST_EQUALITY( ace_file_handler->getTableName(), table_name );
   TEST_EQUALITY_CONST( ace_file_handler->getTableAtomicWeightRatio(),
 		       0.999167 );
   TEST_EQUALITY_CONST( ace_file_handler->getTableTemperature(),
-		       2.53010e-08 );
+		       2.5301e-08 );
   TEST_EQUALITY_CONST( ace_file_handler->getTableProcessingDate(),
-		       "10/22/07" );
+		       "01/19/12" );
   TEST_EQUALITY_CONST( ace_file_handler->getTableComment(),
 		       "H in h2o at 293.6k from ENDF/B-VII                                    " );
   TEST_EQUALITY_CONST( ace_file_handler->getTableMatId(),
@@ -126,8 +126,8 @@ TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_sab )
 
   Teuchos::ArrayView<const int> nxs = ace_file_handler->getTableNXSArray();
   Teuchos::Array<int> ref_nxs( 16 );
-  ref_nxs[0] = 195113; ref_nxs[1] = 3; ref_nxs[2] = 19; ref_nxs[3] = 80;
-  ref_nxs[4] = 0;    ref_nxs[5] = 0;    ref_nxs[6] = 1;   ref_nxs[7] = 0;
+  ref_nxs[0] = 1228849; ref_nxs[1] = 3; ref_nxs[2] = 21; ref_nxs[3] = 80;
+  ref_nxs[4] = 0;    ref_nxs[5] = 0;    ref_nxs[6] = 2;   ref_nxs[7] = 0;
   ref_nxs[8] = 0;    ref_nxs[9] = 0;    ref_nxs[10] = 0;  ref_nxs[11] = 0;
   ref_nxs[12] = 0;   ref_nxs[13] = 0;   ref_nxs[14] = 0;  ref_nxs[15] = 0;
   TEST_COMPARE_ARRAYS( nxs, ref_nxs );
@@ -147,7 +147,7 @@ TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_sab )
   Teuchos::ArrayRCP<const double> xss = ace_file_handler->getTableXSSArray();
   TEST_EQUALITY( xss.size(), nxs[0] );
   TEST_EQUALITY_CONST( xss[0], 116 );
-  TEST_EQUALITY_CONST( xss[xss.size()-1], 9.98829728076e-01 );
+  TEST_EQUALITY_CONST( xss[xss.size()-1], 9.88396962963E-01 );
 }
 
 //---------------------------------------------------------------------------//
