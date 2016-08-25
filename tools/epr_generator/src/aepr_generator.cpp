@@ -459,7 +459,6 @@ int main( int argc, char** argv )
 
   // Get the file info
   std::string data_file_path, cross_sections_xml_file;
-  int atomic_number;
   Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info;
 
   if( forward_file_name.size() > 0 )
@@ -500,11 +499,14 @@ int main( int argc, char** argv )
 
   // Create the data generator and populate the new data table
   Data::AdjointElectronPhotonRelaxationVolatileDataContainer data_container;
+  int atomic_number;
   
   {
     std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
       forward_data_container( new Data::ElectronPhotonRelaxationDataContainer(
                                                             data_file_path ) );
+
+    atomic_number = forward_data_container->getAtomicNumber();
 
     DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator
       generator( forward_data_container,
@@ -536,6 +538,8 @@ int main( int argc, char** argv )
     generator.setAdjointBremsstrahlungCrossSectionEvaluationTolerance( adjoint_bremsstrahlung_evaluation_tol );
 
     // Populate the new data container
+    (*out) << "Generating adjoint data! Hang tight - this may take a while..."
+           << std::endl;
     try{
       generator.populateEPRDataContainer( data_container );
     }
