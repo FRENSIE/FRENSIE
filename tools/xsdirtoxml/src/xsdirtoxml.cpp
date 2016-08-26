@@ -19,7 +19,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "DataGen_Xsdir.hpp"
+#include "Data_Xsdir.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 int main( int argc, char** argv )
@@ -55,10 +55,10 @@ int main( int argc, char** argv )
   }
 
   // Create the xsdir object
-  Teuchos::RCP<DataGen::Xsdir> xsdir;
+  Teuchos::RCP<Data::Xsdir> xsdir;
 
   try{
-    xsdir.reset( new DataGen::Xsdir( xsdir_file_name.c_str() ) );
+    xsdir.reset( new Data::Xsdir( xsdir_file_name.c_str() ) );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
 			    "Error creating the xsdir object!" );

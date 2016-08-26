@@ -72,8 +72,14 @@ public:
   //! Return the adjoint pair production energy dist norm constant evaluation tol
   double getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() const;
 
+  //! Return the adjoint pair production energy dist norm constant nudge value
+  double getAdjointPairProductionEnergyDistNormConstantNudgeValue() const;
+
   //! Return the adjoint triplet production energy dist norm const evaluation tol
   double getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance() const;
+
+  //! Return the adjoint triplet production energy dist norm const nudge value
+  double getAdjointTripletProductionEnergyDistNormConstantNudgeValue() const;
 
   //! Return the adjoint incoherent max energy nudge value
   double getAdjointIncoherentMaxEnergyNudgeValue() const;
@@ -159,6 +165,13 @@ public:
 
   //! Return the Waller-Hartree atomic form factor
   const std::vector<double>& getWallerHartreeAtomicFormFactor() const;
+
+  //! Return the Waller-Hartree squared atomic form factor squared mom. grid
+  const std::vector<double>&
+  getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid() const;
+
+  //! Return the Waller-Hartree squared atomic form factor
+  const std::vector<double>& getWallerHartreeSquaredAtomicFormFactor() const;
 
   //! Return the adjoint photon energy grid
   const std::vector<double>& getAdjointPhotonEnergyGrid() const;
@@ -424,9 +437,17 @@ protected:
   void setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
                                                  const double evaluation_tol );
 
+  //! Set the adjoint pair production energy dist norm constant nudge value
+  void setAdjointPairProductionEnergyDistNormConstantNudgeValue(
+                                                    const double nudge_value );
+
   //! Set the adjoint triplet production energy dist norm const evaluation tol
   void setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(
                                                  const double evaluation_tol );
+
+  //! Set the adjoint triplet production energy dist norm const nudge value
+  void setAdjointTripletProductionEnergyDistNormConstantNudgeValue(
+                                                    const double nudge_value );
 
   //! Set the adjoint incoherent max energy nudge value
   void setAdjointIncoherentMaxEnergyNudgeValue( const double nudge_value );
@@ -521,6 +542,14 @@ protected:
   //! Set the Waller-Hartree atomic form factor
   void setWallerHartreeAtomicFormFactor(
                                const std::vector<double>& atomic_form_factor );
+
+  //! Return the Waller-Hartree squared atomic form factor squared mom. grid
+  void setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
+                            const std::vector<double>& squared_momentum_grid );
+
+  //! Return the Waller-Hartree squared atomic form factor
+  void setWallerHartreeSquaredAtomicFormFactor(
+                       const std::vector<double>& squared_atomic_form_factor );
 
   //! Set the adjoint photon energy grid
   void setAdjointPhotonEnergyGrid( const std::vector<double>& energy_grid );
@@ -867,8 +896,14 @@ private:
   // The adjoint pair production energy dist norm constant evaluation tol
   double d_adjoint_pair_production_energy_dist_norm_constant_evaluation_tol;
 
+  // The adjoint pair production energy dist norm constant nudge value
+  double d_adjoint_pair_production_energy_dist_norm_constant_nudge_value;
+
   // The adjoint triplet production energy dist norm constant evaluation tol
   double d_adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol;
+
+  // The adjoint triplet production energy dist norm constant nudge value
+  double d_adjoint_triplet_production_energy_dist_norm_constant_nudge_value;
 
   // The adjoint incoherent max energy nudge value
   double d_adjoint_incoherent_max_energy_nudge_value;
@@ -943,6 +978,13 @@ private:
 
   // The Waller-Hartree atomic form factor
   std::vector<double> d_waller_hartree_atomic_form_factor;
+
+  // The Waller-Hartree squared atomic form factor squared mom. grid (1/cm^2)
+  std::vector<double>
+  d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid;
+
+  // The Waller-Hartree squared atomic form factor
+  std::vector<double> d_waller_hartree_squared_atomic_form_factor;
 
   // The adjoint photon energy grid (MeV)
   std::vector<double> d_adjoint_photon_energy_grid;

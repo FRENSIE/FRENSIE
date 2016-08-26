@@ -10,7 +10,7 @@
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
 #include "MonteCarlo_PhotoatomNativeFactory.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
@@ -50,7 +50,7 @@ PhotoatomFactory::PhotoatomFactory(
   while( photoatom_name != photoatom_aliases.end() )
   {
 
-    CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
+    Data::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
 						  cross_sections_xml_directory,
 						  *photoatom_name,
 						  cross_section_table_info,
@@ -60,7 +60,7 @@ PhotoatomFactory::PhotoatomFactory(
 						  photoatom_file_start_line,
 						  atomic_weight );
 
-    if( photoatom_file_type == CrossSectionsXMLProperties::ace_file )
+    if( photoatom_file_type == Data::CrossSectionsXMLProperties::ace_file )
     {
       createPhotoatomFromACETable( cross_sections_xml_directory,
 				   *photoatom_name,
@@ -75,7 +75,7 @@ PhotoatomFactory::PhotoatomFactory(
 				   use_detailed_pair_production_data,
 				   use_atomic_relaxation_data );
     }
-    else if( photoatom_file_type == CrossSectionsXMLProperties::native_file )
+    else if( photoatom_file_type == Data::CrossSectionsXMLProperties::native_file )
     {
       createPhotoatomFromNativeTable( cross_sections_xml_directory,
 				      *photoatom_name,

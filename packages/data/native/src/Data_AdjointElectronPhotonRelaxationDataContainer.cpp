@@ -89,10 +89,22 @@ double AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEne
   return d_adjoint_pair_production_energy_dist_norm_constant_evaluation_tol;
 }
 
+// Return the adjoint pair production energy dist norm constant nudge value
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDistNormConstantNudgeValue() const
+{
+  return d_adjoint_pair_production_energy_dist_norm_constant_nudge_value;
+}
+
 // Return the adjoint triplet production energy dist norm const evaluation tol
 double AdjointElectronPhotonRelaxationDataContainer::getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance() const
 {
   return d_adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol;
+}
+
+// Return the adjoint triplet production energy dist norm const nudge value
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointTripletProductionEnergyDistNormConstantNudgeValue() const
+{
+  return d_adjoint_triplet_production_energy_dist_norm_constant_nudge_value;
 }
 
 // Return the adjoint incoherent max energy nudge value
@@ -280,6 +292,20 @@ const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeAtomicFormFactor() const
 {
   return d_waller_hartree_atomic_form_factor;
+}
+
+// Return the Waller-Hartree squared atomic form factor squared mom. grid
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid() const
+{
+  return d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid;
+}
+
+// Return the Waller-Hartree squared atomic form factor
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getWallerHartreeSquaredAtomicFormFactor() const
+{
+  return d_waller_hartree_squared_atomic_form_factor;
 }
 
 // Return the adjoint photon energy grid
@@ -891,6 +917,17 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnerg
     evaluation_tol;
 }
 
+// Set the adjoint pair production energy dist norm constant nudge value
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistNormConstantNudgeValue(
+                                                     const double nudge_value )
+{
+  // Make sure the nudge value is valid
+  testPrecondition( nudge_value >= 0.0 );
+
+  d_adjoint_pair_production_energy_dist_norm_constant_nudge_value =
+    nudge_value;
+}
+
 // Set the adjoint triplet production energy dist norm const evaluation tol
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(
                                                   const double evaluation_tol )
@@ -900,6 +937,17 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEn
 
   d_adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol =
     evaluation_tol;
+}
+
+// Set the adjoint triplet production energy dist norm constant nudge value
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEnergyDistNormConstantNudgeValue(
+                                                     const double nudge_value )
+{
+  // Make sure the nudge value is valid
+  testPrecondition( nudge_value >= 0.0 );
+
+  d_adjoint_triplet_production_energy_dist_norm_constant_nudge_value =
+    nudge_value;
 }
 
 // Set the adjoint incoherent max energy nudge value
@@ -1187,6 +1235,39 @@ void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFac
   testPrecondition( atomic_form_factor.back() >= 0.0 );
 
   d_waller_hartree_atomic_form_factor = atomic_form_factor;
+}
+
+// Return the Waller-Hartree squared atomic form factor squared mom. grid
+void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
+                             const std::vector<double>& squared_momentum_grid )
+{
+  // Make sure the momentum grid is valid
+  testPrecondition( squared_momentum_grid.size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+                                               squared_momentum_grid.begin(),
+					       squared_momentum_grid.end() ) );
+  testPreconditionValuesGreaterThanOrEqualToZero( squared_momentum_grid );
+
+  d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid =
+    squared_momentum_grid;
+}
+  
+// Return the Waller-Hartree squared atomic form factor
+void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactor(
+                        const std::vector<double>& squared_atomic_form_factor )
+{
+  // Make sure the atomic form factor is valid
+  testPrecondition(
+     squared_atomic_form_factor.size() ==
+     d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid.size() );
+  testPrecondition( Utility::Sort::isSortedDescending(
+                                          squared_atomic_form_factor.begin(),
+					  squared_atomic_form_factor.end() ) );
+  testPrecondition( squared_atomic_form_factor.front() ==
+                    d_atomic_number*d_atomic_number );
+  testPrecondition( squared_atomic_form_factor.back() >= 0.0 );
+
+  d_waller_hartree_squared_atomic_form_factor = squared_atomic_form_factor;
 }
 
 // Set the adjoint photon energy grid
@@ -1703,7 +1784,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointBremsstrahlungEnergyGrid() )
+  if( this->seperateAdjointElectroionizationEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
@@ -1729,7 +1810,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming_adjoint_energy is valid
-  if( this->seperateAdjointBremsstrahlungEnergyGrid() )
+  if( this->seperateAdjointElectroionizationEnergyGrid() )
   {
     testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );

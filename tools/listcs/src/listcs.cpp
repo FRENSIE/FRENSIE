@@ -19,7 +19,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 int main( int argc, char** argv )
@@ -112,38 +112,38 @@ int main( int argc, char** argv )
 	std::cout.width( 20 );
 	std::cout << std::left << entry_name << " ";
 
-	if( sublist.isParameter( MonteCarlo::CrossSectionsXMLProperties::nuclear_file_path_prop ) )
+	if( sublist.isParameter( Data::CrossSectionsXMLProperties::nuclear_file_path_prop ) )
 	{
 	  std::cout << "N-" << sublist.get<std::string>(
-	       MonteCarlo::CrossSectionsXMLProperties::nuclear_file_type_prop )
+	       Data::CrossSectionsXMLProperties::nuclear_file_type_prop )
 		    << " ";
 	}
 
-	if( sublist.isParameter( MonteCarlo::CrossSectionsXMLProperties::s_alpha_beta_file_path_prop ) )
+	if( sublist.isParameter( Data::CrossSectionsXMLProperties::s_alpha_beta_file_path_prop ) )
 	{
 	  std::cout << "SAB-" << sublist.get<std::string>(
-	  MonteCarlo::CrossSectionsXMLProperties::s_alpha_beta_file_type_prop )
+	  Data::CrossSectionsXMLProperties::s_alpha_beta_file_type_prop )
 		    << " ";
 	}
 
-	if( sublist.isParameter( MonteCarlo::CrossSectionsXMLProperties::photonuclear_file_path_prop ) )
+	if( sublist.isParameter( Data::CrossSectionsXMLProperties::photonuclear_file_path_prop ) )
 	{
 	  std::cout << "GN-" << sublist.get<std::string>(
-	  MonteCarlo::CrossSectionsXMLProperties::photonuclear_file_type_prop )
+	  Data::CrossSectionsXMLProperties::photonuclear_file_type_prop )
 		    << " ";
 	}
 
-	if( sublist.isParameter( MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_path_prop ) )
+	if( sublist.isParameter( Data::CrossSectionsXMLProperties::photoatomic_file_path_prop ) )
 	{
 	  std::cout << "G-" << sublist.get<std::string>(
-	  MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_type_prop )
+	  Data::CrossSectionsXMLProperties::photoatomic_file_type_prop )
 		    << " ";
 	}
 
-	if( sublist.isParameter( MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_path_prop ) )
+	if( sublist.isParameter( Data::CrossSectionsXMLProperties::electroatomic_file_path_prop ) )
 	{
 	  std::cout << "E-" << sublist.get<std::string>(
-	  MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_type_prop );
+	  Data::CrossSectionsXMLProperties::electroatomic_file_type_prop );
 	}
 
 	std::cout << std::endl;

@@ -27,8 +27,8 @@
 // FRENSIE Includes
 #include "samplePhotonDopplerDistributionCore.hpp"
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
@@ -173,7 +173,7 @@ int main( int argc, char** argv )
     int photoatom_file_start_line;
     double atomic_weight;
 
-    MonteCarlo::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
+    Data::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
 						  cross_section_directory,
 						  cross_section_alias,
 						  *cross_sections_table_info,
@@ -183,7 +183,7 @@ int main( int argc, char** argv )
 						  photoatom_file_start_line,
 						  atomic_weight );
 
-    if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::ace_file )
+    if( photoatom_file_type == Data::CrossSectionsXMLProperties::ace_file )
     {
       std::cerr << "Loading ACE photoatomic cross section table "
 		<< photoatom_table_name << " (" << cross_section_alias
@@ -212,7 +212,7 @@ int main( int argc, char** argv )
       EXCEPTION_CATCH_AND_EXIT( std::runtime_error,
                                 "Could not create the desired distribution!" );
     }
-    else if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::native_file )
+    else if( photoatom_file_type == Data::CrossSectionsXMLProperties::native_file )
     {
       std::cerr << "Load native photoatomic cross section table "
                 << photoatom_table_name << " ... ";

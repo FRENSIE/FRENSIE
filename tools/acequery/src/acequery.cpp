@@ -19,7 +19,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -69,7 +69,7 @@ int main( int argc, char** argv )
   int data_file_start_line, atomic_number, atomic_mass_number, isomer_number;
   double atomic_weight_ratio, temperature;
 
-  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromNuclideTableInfoParameterList(
+  Data::CrossSectionsXMLProperties::extractInfoFromNuclideTableInfoParameterList(
 							 cs_directory,
 							 cs_alias,
 							 *cs_table_info,

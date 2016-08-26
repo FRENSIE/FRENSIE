@@ -78,27 +78,17 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
                    evaluatePDF )
 {
+  double pdf = native_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
-  double pdf =
-    native_distribution->evaluatePDF( 8.8290000000000E-02, 1.000000000000E-08 );
+  pdf = native_distribution->evaluatePDF( 8.829e-2 + 2e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.950952406973, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				                  1.111111111111E+07,
-				                  1e-12 );
+  pdf = native_distribution->evaluatePDF( 1.00E+00, 9.71630E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.38239950812861E+00, 1e-12 );
 
-  pdf =
-    native_distribution->evaluatePDF( 1.000000000000E+00, 9.716300000000E-02 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				                  2.38239950812861E+00,
-				                  1e-12 );
-
-  pdf =
-    native_distribution->evaluatePDF( 1.000000000000E+05, 1.752970000000E+02 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				                  4.98650620153625E-07,
-				                  1e-12 );
+  pdf = native_distribution->evaluatePDF( 1.0E+05, 1.752970E+02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.98650620153625E-07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
