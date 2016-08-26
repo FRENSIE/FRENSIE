@@ -248,3 +248,10 @@ ADD_EXECUTABLE(tstIncrementPolicy
 TARGET_LINK_LIBRARIES(tstIncrementPolicy utility_core)
 ADD_TEST(IncrementPolicy_test tstIncrementPolicy)
 SET_PROPERTY(TEST IncrementPolicy_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstStandardOutputFormatter
+  tstStandardOutputFormatter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardOutputFormatter utility_core)
+ADD_TEST(StandardOutputFormatter_test tstStandardOutputFormatter)
+SET_PROPERTY(TEST StandardOutputFormatter_test PROPERTY LABELS utility_core)
