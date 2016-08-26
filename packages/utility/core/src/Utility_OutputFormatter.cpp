@@ -21,12 +21,42 @@ OutputFormatter::OutputFormatter()
 { /* ... */ }
 
 // Place the formatted string in the output stream
+/*! \details Even if your system/terminal supports TTY formatted outputs the
+ * requested ostream object may not support it. This print method will check
+ * the stream object for compatibility with TTY formatting and use either the
+ * raw string or the formatted string depending on what it detects.
+ */
 void OutputFormatter::print( std::ostream& os ) const
 {
   if( this->useFormattedString( os ) )
+    this->print( os, true );
+  else
+    this->print( os, false );
+}
+
+// Place the string in the output stream
+/*! \details This method should be rarely be used directly as it does not
+ * check if the ostream object supports TTY formatted outputs.
+ */
+void OutputFormatter::print( std::ostream& os,
+                             const bool use_formatted_output ) const
+{
+  if( use_formatted_output )
     os << d_formatted_string;
   else
     os << d_raw_string;
+}
+
+// Get the formatted string
+const std::string& OutputFormatter::getFormattedOutput() const
+{
+  return d_formatted_string;
+}
+
+// Get the raw output
+const std::string& OutputFormatter::getRawOutput() const
+{
+  return d_raw_string;
 }
 
 // Format the raw string
