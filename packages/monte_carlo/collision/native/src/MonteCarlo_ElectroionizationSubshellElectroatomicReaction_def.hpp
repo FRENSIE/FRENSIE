@@ -85,12 +85,12 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 template<typename InterpPolicy, bool processed_cross_section>
 double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
     const double incoming_energy,
-    const double outgoing_energy_1 ) const
+    const double outgoing_energy ) const
 {
   // Make sure the energies are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( outgoing_energy_1 >= 0.0 );
-  testPrecondition( outgoing_energy_1 <= incoming_energy );
+  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy <= incoming_energy );
 
   if ( !this->isEnergyWithinEnergyGrid( incoming_energy ) )
     return 0.0;
@@ -98,52 +98,22 @@ double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cro
   // Evaluate the forward cross section at the incoming energy
   double forward_cs = this->getCrossSection( incoming_energy );
 
-  // calcualte the energy of the second outgoing electron
-  double outgoing_energy_2 = incoming_energy - outgoing_energy_1 -
-    d_electroionization_subshell_distribution->getBindingEnergy();
-
-  // If reaction is energetically impossible return zero
-  if ( outgoing_energy_2 <= 0.0 )
-    return 0.0;
-
-  // Assume the lower of the two outgoing energies is the knock-on electron
-  double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
-
-  // The max tabulated knock-on energy for the incoming energy
-  double max_knock_on_energy = 
-    d_electroionization_subshell_distribution->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
-
-  /* Due to roundoff errors in the tabulated data the physically allowable max
-   * knock-on energy can be slightly higher than the max tabulated/interpolated
-   * knock-on energy. In this case the max tabulated/interpolated knock-on
-   * energy will be used instead, to ensure that a non-zero pdf is returned.
-   */
-  if ( knock_on_energy > max_knock_on_energy );
-  {
-    knock_on_energy = max_knock_on_energy;
-  }
-
   // Sample the pdf using the energy of the knock-on electron
   double pdf = d_electroionization_subshell_distribution->evaluatePDF(
           incoming_energy,
-          knock_on_energy );
-
-if ( pdf <= 0.0 )
-{
-std::cout << std::setprecision(20) << "binding energy = " << d_electroionization_subshell_distribution->getBindingEnergy()
-                                 << "\tknock_on_energy = " << knock_on_energy
-                                 << "\tforward_cs = " << forward_cs << std::endl;
-
-std::cout << std::setprecision(20) << "incoming_energy = " << incoming_energy
-                                 << "\toutgoing_energy_1 = " << outgoing_energy_1
-                                 << "\toutgoing_energy_2 = " << outgoing_energy_2 
-                                 << "\tpdf = " << pdf << std::endl;
-}
+          outgoing_energy );
 
   return forward_cs*pdf;
 }
 
 // Return the differential cross section (efficient)
+/*! \details Electroionization produces a secondary electron (knock-on) that is
+ * indistinguishable from the primary scattered electron. The convention is to
+ * treat the outgoing electron with the lower energy as the knock-on electron.
+ * outgoing_energy_1 can be either the primary or secondary scattered electron.
+ * The incoming energy bin must be the the bin index of the subshell
+ * distribution that has an energy right below or equal to the incoming energy.
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
     const unsigned incoming_energy_bin,
@@ -162,34 +132,11 @@ double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cro
   // Evaluate the forward cross section at the incoming energy
   double forward_cs = this->getCrossSection( incoming_energy );
 
-  double pdf;
-
-  // If reaction is energetically impossible return zero
-  if ( incoming_energy - outgoing_energy <=
-       d_electroionization_subshell_distribution->getBindingEnergy() )
-    return 0.0;
-
-  if ( outgoing_energy < incoming_energy*0.5 )
-  {
-    // Take the outgoing energy as the energy of the knock-on electron
-    pdf =
+  // Get the pdf for the incoming_energy and outgoing_energy
+  double pdf =
       d_electroionization_subshell_distribution->evaluatePDF( incoming_energy_bin,
                                                               incoming_energy,
                                                               outgoing_energy );
-  }
-  else
-  {
-  /* Calculate the energy of a knock on electron from a primary electron with
-     outgoing energy = outgoing_energy */
-  double knock_on_energy = incoming_energy - outgoing_energy -
-    d_electroionization_subshell_distribution->getBindingEnergy();
-
-  // Get the pdf for the incoming_energy and knock_on_energy
-  pdf =
-      d_electroionization_subshell_distribution->evaluatePDF( incoming_energy_bin,
-                                                              incoming_energy,
-                                                              knock_on_energy );
-  }
 
   return forward_cs*pdf;
 }

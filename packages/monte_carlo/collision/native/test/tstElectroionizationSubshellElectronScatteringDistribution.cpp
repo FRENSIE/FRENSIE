@@ -55,7 +55,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                                                       8.829E-02 );
 
   // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 1e-7 );
+  TEST_EQUALITY_CONST( max_energy, 0.0 );
 
   // Get max energy
   max_energy =
@@ -63,7 +63,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                                                       1e5 );
 
   // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 5e4 );
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
 
   // Get max energy
   max_energy =
@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                                                       2.0 );
 
   // Test original electron
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 3.528637087695270, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -80,60 +80,31 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 		   evaluatePDF )
 {
 
-  double pdf =
-    ace_electroionization_distribution->evaluatePDF( 8.8290000000000E-02,
-						     1.000000000000E-08 );
+  double pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,0.0,1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.111111111111E+07,
-				  1e-12 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 2e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,11111033.950952406973,1e-12 );
 
-  pdf =
-    ace_electroionization_distribution->evaluatePDF( 1.000000000000E+00,
-						     9.716300000000E-02 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 1.0E+00, 9.7163E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,2.045394577710E+00,1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  2.045394577710E+00,
-				  1e-12 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 1e5, 1.752970e2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.399431656723E-07, 1e-12 );
 
-  pdf =
-    ace_electroionization_distribution->evaluatePDF( 1.000000000000E+05,
-						     1.752970000000E+02 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  4.399431656723E-07,
-				  1e-12 );
 
   // Test the efficient implementation
-  pdf =
-    ace_electroionization_distribution->evaluatePDF(
-        0,
-        8.8290E-02,
-        1.0000E-08 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 0, 8.8290E-02+1e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.111111111111E+07,
-				  1e-12 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 0, 8.829e-2 + 2e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.950952406973, 1e-12 );
 
-  pdf =
-    ace_electroionization_distribution->evaluatePDF(
-        2,
-        1.000000000000E+00,
-        9.716300000000E-02 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 2, 1.0, 9.7163e-2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.045394577710E+00, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  2.045394577710E+00,
-				  1e-12 );
-
-  pdf =
-    ace_electroionization_distribution->evaluatePDF(
-        4,
-        1.000000000000E+05,
-        1.752970000000E+02 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  4.399431656723E-07,
-				  1e-12 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 4, 1e5, 1.75297e2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.399431656723E-07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

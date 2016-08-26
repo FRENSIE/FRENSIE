@@ -389,14 +389,14 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    std::vector<double> electroionization_recoil_energy =
      h_data_container.getAdjointElectroionizationRecoilEnergy( 1u, 1e-5 );
 
-   TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 1e-5 + 1.36100e-5 + 5e-7);
+   TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 1e-5 + 1.361e-5 + 5e-7);
    TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 20.0 + 2.0*1.36100e-5 );
    TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 196 );
 
    electroionization_recoil_energy =
      h_data_container.getAdjointElectroionizationRecoilEnergy( 1u, 20.0 );
 
-   TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 20.0 + 1.36100e-5 + 5e-7 );
+   TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 20.0 + 1.361e-5 + 5e-7 );
    TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 20.0 + 2.0*1.36100e-5 );
    TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 37 );
 

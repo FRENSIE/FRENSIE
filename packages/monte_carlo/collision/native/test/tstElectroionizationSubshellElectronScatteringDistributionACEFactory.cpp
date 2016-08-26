@@ -58,7 +58,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                                       8.829E-02 );
 
   // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 1e-7 );
+  TEST_EQUALITY_CONST( max_energy, 0.0 );
 
   // Get max energy
   max_energy =
@@ -66,7 +66,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                                       1e5 );
 
   // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 5e4 );
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
 
   // Get max energy
   max_energy =
@@ -74,7 +74,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                                       2.0 );
 
   // Test original electron
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 3.528637087695270, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

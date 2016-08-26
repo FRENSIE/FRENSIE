@@ -56,14 +56,14 @@ public:
                    const double scattering_angle ) const
   { /* ... */ }
 
-  //! Evaluate the PDF value for a given incoming and knock-on energy (efficient)
+  //! Evaluate the PDF value for a given incoming and outgoing energy (efficient)
   double evaluatePDF( const unsigned lower_bin_index,
                       const double incoming_energy,
-                      const double knock_on_energy ) const;
+                      const double outgoing_energy_1 ) const;
 
-  //! Evaluate the PDF value for a given incoming and knock-on energy
+  //! Evaluate the PDF value for a given incoming and outgoing energy
   double evaluatePDF( const double incoming_energy,
-                      const double knock_on_energy ) const;
+                      const double outgoing_energy_1 ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,

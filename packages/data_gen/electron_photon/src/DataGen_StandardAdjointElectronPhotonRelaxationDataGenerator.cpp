@@ -1961,12 +1961,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
             d_adjoint_electroionization_distance_tol ) );
 
     std::vector<double> ionization_energy_grid, ionization_pdf;
-std::cout << "*shell = " << *shell << std::endl;
-std::cout << "binding_energy = " << binding_energy << std::endl;
+
     for ( unsigned i = 0; i < energy_grid.size(); ++i )
     {
       unsigned energy_index = i + ionization_cross_section_thresholds[*shell];
-std::cout << "energy_grid[energy_index] = " << energy_grid[energy_index] << std::endl;
+
       distribution_grid_generator->generateAndEvaluateDistributionInPlace<ElectroionizationReaction>(
         ionization_energy_grid,
         ionization_pdf,
@@ -1975,14 +1974,6 @@ std::cout << "energy_grid[energy_index] = " << energy_grid[energy_index] << std:
         energy_grid[energy_index],
         ionization_cross_sections.find(*shell)->second[i] );
 
-for ( int j = 0; j < ionization_energy_grid.size(); ++j )
-{
-std::cout << std::setprecision(20) << "incoming energy: " << energy_grid[energy_index] 
-          << ",\toutgoing energy: " << ionization_energy_grid[j] 
-          << ",\tpdf: " << ionization_pdf[j] << std::endl;
-}
-std::cout << "binding_energy = " << binding_energy << std::endl;
-std::cout << "cross section = " << ionization_cross_sections.find(*shell)->second[i] << std::endl;
       // Set the adjoint bremsstrahlung scattering distribution
       data_container.setAdjointElectroionizationRecoilEnergyAtIncomingEnergy(
         *shell,
