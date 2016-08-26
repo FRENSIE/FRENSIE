@@ -32,68 +32,32 @@ double ElectroionizationSubshellElectronScatteringDistribution::getBindingEnergy
   return d_binding_energy;
 }
 
-// Return the min incoming energy
-double ElectroionizationSubshellElectronScatteringDistribution::getMinEnergy() const
-{
-  return d_electroionization_subshell_scattering_distribution.front().first;
-}
-
-// Return the Max incoming energy
-double ElectroionizationSubshellElectronScatteringDistribution::getMaxEnergy() const
-{
-  return d_electroionization_subshell_scattering_distribution.back().first;
-}
-
-// Return the max incoming electron energy for a given knock-on electron energy
-double ElectroionizationSubshellElectronScatteringDistribution::getMaxIncomingEnergyAtOutgoingEnergy(
+// Return the max secondary (knock-on) electron energy for a given incoming electron energy
+double ElectroionizationSubshellElectronScatteringDistribution::getMaxSecondaryEnergyAtIncomingEnergy(
         const double energy ) const
 {
-  // Start at the largest energy grid point
-  unsigned grid_point = d_electroionization_subshell_scattering_distribution.size();
+  ElectroionizationSubshellDistribution::const_iterator 
+    lower_distribution, upper_distribution;
 
-  MonteCarlo::TwoDDistribution::const_iterator
-    highest_energy_bin, lowest_energy_bin;
+  MonteCarlo::findLowerAndUpperBinBoundary(
+    energy,
+    d_electroionization_subshell_scattering_distribution,
+    lower_distribution,
+    upper_distribution );
 
-  lowest_energy_bin = d_electroionization_subshell_scattering_distribution.begin();
-  highest_energy_bin = d_electroionization_subshell_scattering_distribution.end();
-  highest_energy_bin--;
-
-  // Make sure the knock-on energy is possible
-  testPrecondition( energy <
-                    highest_energy_bin->second->sampleWithRandomNumber( 1.0 ) );
-
-  for ( highest_energy_bin; highest_energy_bin !=lowest_energy_bin; highest_energy_bin -- )
+  if( lower_distribution != upper_distribution )
   {
-    // Find the minimum knock-on energy for an electron at the grid_point energy
-    double min_energy =
-      highest_energy_bin->second->sampleWithRandomNumber( 0.0 );
-
-    /* If the minimum knock-on energy is at or below the given energy then
-       return the grid_point energy */
-    if ( min_energy <= energy )
-    {
-      return highest_energy_bin->first;
-    }
+    return InterpolationPolicy::interpolate(
+            lower_distribution->first,
+            upper_distribution->first,
+            energy,
+            lower_distribution->second->sampleWithRandomNumber( 1.0 ),
+            upper_distribution->second->sampleWithRandomNumber( 1.0 ) );
   }
-/*
-  while( grid_point > 0 )
+  else
   {
-    grid_point--;
-
-    // Find the minimum knock-on energy for an electron at the grid_point energy
-    double min_energy =
-      d_electroionization_subshell_scattering_distribution[grid_point].second->sampleWithRandomNumber( 0.0 );
-
-    /* If the minimum knock-on energy is at or below the given energy then
-       return the grid_point energy /
-    if ( min_energy <= energy )
-    {
-      return d_electroionization_subshell_scattering_distribution[grid_point].first;
-    }
+    return upper_distribution->second->sampleWithRandomNumber( 1.0 );
   }
-*/
-  // If no max energy is found return a max energy of zero
-  return 0.0;
 }
 
 // Evaluate the PDF value for a given incoming and knock-on energy (efficient)

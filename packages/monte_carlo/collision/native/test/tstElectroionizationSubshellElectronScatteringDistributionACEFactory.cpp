@@ -35,7 +35,7 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the subshell binding energy
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    getBindingEnergy )
 {
 
@@ -48,65 +48,38 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the min incoming electron energy
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   getMinEnergy )
-{
-  // Get min energy
-  double min_energy =
-    ace_electroionization_distribution->getMinEnergy();
-
-  // Test original electron
-  TEST_EQUALITY_CONST( min_energy, 8.829000000000E-02 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the max incoming electron energy
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   getMaxEnergy )
-{
-  // Get max energy
-  double min_energy =
-    ace_electroionization_distribution->getMaxEnergy();
-
-  // Test original electron
-  TEST_EQUALITY_CONST( min_energy, 1e5 );
-}
-
-
-//---------------------------------------------------------------------------//
-// Check that the max incoming electron energy for a given outoing electron energy can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   getMaxIncomingEnergyAtOutgoingEnergy )
+// Check that the max secondary (knock-on) electron energy can be returned
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+                   getMaxSecondaryEnergyAtIncomingEnergy )
 {
   // Get max energy
   double max_energy =
-    ace_electroionization_distribution->getMaxIncomingEnergyAtOutgoingEnergy(
-                                                                          1.0 );
+    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy(
+                                                                      8.829E-02 );
 
   // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 1E5 );
+  TEST_EQUALITY_CONST( max_energy, 1e-7 );
 
   // Get max energy
   max_energy =
-    ace_electroionization_distribution->getMaxIncomingEnergyAtOutgoingEnergy(
-                                                                         1e-2 );
+    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy(
+                                                                      1e5 );
 
   // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 1E5 );
+  TEST_EQUALITY_CONST( max_energy, 5e4 );
 
   // Get max energy
   max_energy =
-    ace_electroionization_distribution->getMaxIncomingEnergyAtOutgoingEnergy(
-                                                                         1e-8 );
+    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy(
+                                                                      2.0 );
 
   // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 3.528637087695270, 1e-8 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
 		   evaluatePDF )
 {
 
@@ -137,7 +110,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    sample_knock_on )
 {
   // Set fake random number stream
@@ -164,7 +137,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    sample )
 {
   // Set fake random number stream
@@ -196,7 +169,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials )
 {
   // Set fake random number stream
@@ -228,7 +201,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    scatterElectron )
 {
   // Set fake random number stream

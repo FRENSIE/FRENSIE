@@ -595,6 +595,15 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEnergyG
   return d_adjoint_electroionization_energy_grid.find( subshell )->second;
 }
 
+// Return if there is a seperate electroionization incoming electron energy grid for the scattering spectrum
+/*! \details If the adjoint_electron_electroionization_energy_grid is empty, it is
+ * assumed the electron energy grid should be used instead.
+ */
+bool AdjointElectronPhotonRelaxationDataContainer::seperateAdjointElectroionizationEnergyGrid() const
+{
+  return !d_adjoint_electroionization_energy_grid.empty();
+}
+
 // Return the electroionization recoil energy for a subshell and energy bin
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationRecoilEnergy(
@@ -603,13 +612,17 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationRecoilE
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the incoming energy is valid
-  testPrecondition(
-            incoming_adjoint_energy >=
-            d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
-  testPrecondition(
-            incoming_adjoint_energy <=
-            d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
+  // Make sure the incoming_adjoint_energy is valid
+  if( this->seperateAdjointElectroionizationEnergyGrid() )
+  {
+    testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
+    testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
+  }
+  else
+  {
+    testPrecondition( incoming_adjoint_energy >= d_adjoint_electron_energy_grid.front() );
+    testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_energy_grid.back() );
+  }
 
   return d_adjoint_electroionization_recoil_energy.find( subshell )->second.find( incoming_adjoint_energy )->second;
 }
@@ -622,13 +635,17 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationRecoilP
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the incoming energy is valid
-  testPrecondition(
-            incoming_adjoint_energy >=
-            d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
-  testPrecondition(
-            incoming_adjoint_energy <=
-            d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
+  // Make sure the incoming_adjoint_energy is valid
+  if( this->seperateAdjointElectroionizationEnergyGrid() )
+  {
+    testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
+    testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
+  }
+  else
+  {
+    testPrecondition( incoming_adjoint_energy >= d_adjoint_electron_energy_grid.front() );
+    testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_energy_grid.back() );
+  }
 
   return d_adjoint_electroionization_recoil_pdf.find( subshell )->second.find( incoming_adjoint_energy )->second;
 }
@@ -1685,11 +1702,17 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_adjoint_energy >=
-    d_adjoint_electroionization_energy_grid[subshell].front() );
-  testPrecondition( incoming_adjoint_energy <=
-    d_adjoint_electroionization_energy_grid[subshell].back() );
+  // Make sure the incoming_adjoint_energy is valid
+  if( this->seperateAdjointBremsstrahlungEnergyGrid() )
+  {
+    testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
+    testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
+  }
+  else
+  {
+    testPrecondition( incoming_adjoint_energy >= d_adjoint_electron_energy_grid.front() );
+    testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_energy_grid.back() );
+  }
   // Make sure the electroionization recoil energy is valid
   testPreconditionValuesGreaterThanZero( adjoint_electroionization_recoil_energy );
 
@@ -1705,11 +1728,17 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_adjoint_energy >=
-    d_adjoint_electroionization_energy_grid[subshell].front() );
-  testPrecondition( incoming_adjoint_energy <=
-    d_adjoint_electroionization_energy_grid[subshell].back() );
+  // Make sure the incoming_adjoint_energy is valid
+  if( this->seperateAdjointBremsstrahlungEnergyGrid() )
+  {
+    testPrecondition( incoming_adjoint_energy >= d_adjoint_electroionization_energy_grid.find( subshell )->second.front() );
+    testPrecondition( incoming_adjoint_energy <= d_adjoint_electroionization_energy_grid.find( subshell )->second.back() );
+  }
+  else
+  {
+    testPrecondition( incoming_adjoint_energy >= d_adjoint_electron_energy_grid.front() );
+    testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_energy_grid.back() );
+  }
   // Make sure the electroionization recoil pdf is valid
   testPreconditionValuesGreaterThanZero( adjoint_electroionization_recoil_pdf );
 

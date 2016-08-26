@@ -1188,6 +1188,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check if there is a seperate electroionization incoming electron energy grid for the scattering spectrum
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   seperateAdjointElectroionizationEnergyGrid )
+{
+  TEST_ASSERT( !epr_data_container.seperateAdjointElectroionizationEnergyGrid() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the electroionization energy grid can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setAdjointElectroionizationEnergyGrid )
@@ -1204,6 +1212,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
   TEST_COMPARE_ARRAYS( epr_data_container.getAdjointElectroionizationEnergyGrid( subshell ),
                        energy_grid );
+  TEST_ASSERT( epr_data_container.seperateAdjointElectroionizationEnergyGrid() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1754,6 +1763,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_ASSERT( epr_data_container_copy.hasAdjointMomentPreservingData() );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointMomentPreservingElasticWeights(1.0).size(), 3 );
+  TEST_ASSERT( epr_data_container.seperateAdjointElectroionizationEnergyGrid() );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).size(), 2 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).front(), 1.0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).back(), 2.0 );
@@ -1874,6 +1884,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_ASSERT( epr_data_container_copy.hasAdjointMomentPreservingData() );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointMomentPreservingElasticWeights(1.0).size(), 3 );
+  TEST_ASSERT( epr_data_container.seperateAdjointElectroionizationEnergyGrid() );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).size(), 2 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).front(), 1.0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).back(), 2.0 );
@@ -1990,6 +2001,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_ASSERT( epr_data_container_copy.hasAdjointMomentPreservingData() );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointMomentPreservingElasticWeights(1.0).size(), 3 );
+  TEST_ASSERT( epr_data_container.seperateAdjointElectroionizationEnergyGrid() );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).size(), 2 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).front(), 1.0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointElectroionizationEnergyGrid(1u).back(), 2.0 );

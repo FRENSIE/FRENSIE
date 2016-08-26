@@ -48,14 +48,8 @@ public:
   //! Return the binding energy
   double getBindingEnergy() const;
 
-  //! Return the min incoming energy
-  double getMinEnergy() const;
-
-  //! Return the Max incoming energy
-  double getMaxEnergy() const;
-
-  //! Return the max incoming electron energy for a given knock-on electron energy
-  double getMaxIncomingEnergyAtOutgoingEnergy( const double energy ) const;
+  //! Return the max secondary (knock-on) electron energy for a given incoming electron energy
+  double getMaxSecondaryEnergyAtIncomingEnergy( const double energy ) const;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,

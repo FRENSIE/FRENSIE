@@ -1822,6 +1822,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   std::cout << "   Setting the adjoint electroionization subshell cross section...";
   std::cout.flush();
 
+  std::map<unsigned,std::vector<double> > ionization_cross_sections;
+  std::map<unsigned,unsigned > ionization_cross_section_thresholds;
+
   // Loop through the electroionization subshells
   shell = data_container.getSubshells().begin();
   for ( shell; shell != data_container.getSubshells().end(); shell++ )
@@ -1831,16 +1834,16 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         old_adjoint_electroionization_union_energy_grid[*shell],
         old_adjoint_electroionization_cs[*shell],  
         ionization_grid_functions[*shell],
-        cross_section,
-        threshold );
+        ionization_cross_sections[*shell],
+        ionization_cross_section_thresholds[*shell] );
 
     data_container.setAdjointElectroionizationCrossSection(
       *shell,
-      cross_section );
+      ionization_cross_sections[*shell] );
 
     data_container.setAdjointElectroionizationCrossSectionThresholdEnergyIndex(
       *shell,
-      threshold );
+      ionization_cross_section_thresholds[*shell] );
   }
   std::cout << "done." << std::endl;
 
@@ -1898,7 +1901,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   std::vector<double> brem_energy_grid, brem_pdf;
 
-  for ( unsigned i = 0; i < bremsstrahlung_cross_section.size(); ++i )
+  for ( unsigned i = 0; i < energy_grid.size(); ++i )
   {
     unsigned energy_index = i + bremsstrahlung_threshold_index;
 
@@ -1932,30 +1935,69 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   std::cout << " Setting the electroionization data...";
   std::cout.flush();
   {
-
-//    d_adjoint_bremsstrahlung_max_energy_nudge_value( 0.2 ),
-//    d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value( 1e-7 ),
-//    d_adjoint_bremsstrahlung_evaluation_tol( 0.001 ),
-//    d_adjoint_bremsstrahlung_grid_convergence_tol( 0.001 ),
-//    d_adjoint_bremsstrahlung_absolute_diff_tol( 1e-12 ),
-//    d_adjoint_bremsstrahlung_distance_tol( 1e-14 ),
-
   shell = data_container.getSubshells().begin();
 
   // Loop through electroionization data for every subshell
   for ( shell; shell != data_container.getSubshells().end(); shell++ )
-  {/*
-//    data_container.setAdjointElectroionizationEnergyGrid(
-//        *shell,
-//        d_forward_epr_data->getElectroionizationEnergyGrid( *shell ) );
+  {
+    std::shared_ptr<DataGen::AdjointElectronDistributionGenerator<Utility::LinLinLin> >
+        distribution_grid_generator;
 
-//    data_container.setAdjointElectroionizationRecoilEnergy(
-//        *shell,
-//        d_forward_epr_data->getElectroionizationEnergy( *shell ) );
+    double binding_energy =
+      data_container.getSubshellBindingEnergy( *shell );
 
-//    data_container.setAdjointElectroionizationRecoilPDF(
-//        *shell,
-//        d_forward_epr_data->getElectroionizationRecoilPDF( *shell ) );*/
+    /* The energy to outgoing energy nudge value for the should be set slighty
+     * higher for the distribution_grid_generator than for the electroionization
+     * cross section evaluator. This will ensure that there are no pdf values of
+     * zero in the distribution.
+     */
+    distribution_grid_generator.reset(
+      new AdjointElectronDistributionGenerator<Utility::LinLinLin>(
+            this->getMaxElectronEnergy(),
+            binding_energy*2.0,
+            binding_energy + 5e-7,
+            d_adjoint_electroionization_grid_convergence_tol,
+            d_adjoint_electroionization_absolute_diff_tol,
+            d_adjoint_electroionization_distance_tol ) );
+
+    std::vector<double> ionization_energy_grid, ionization_pdf;
+std::cout << "*shell = " << *shell << std::endl;
+std::cout << "binding_energy = " << binding_energy << std::endl;
+    for ( unsigned i = 0; i < energy_grid.size(); ++i )
+    {
+      unsigned energy_index = i + ionization_cross_section_thresholds[*shell];
+std::cout << "energy_grid[energy_index] = " << energy_grid[energy_index] << std::endl;
+      distribution_grid_generator->generateAndEvaluateDistributionInPlace<ElectroionizationReaction>(
+        ionization_energy_grid,
+        ionization_pdf,
+        adjoint_electroionization_cs_evaluators.find( *shell )->second,
+        d_adjoint_electroionization_evaluation_tol,
+        energy_grid[energy_index],
+        ionization_cross_sections.find(*shell)->second[i] );
+
+for ( int j = 0; j < ionization_energy_grid.size(); ++j )
+{
+std::cout << std::setprecision(20) << "incoming energy: " << energy_grid[energy_index] 
+          << ",\toutgoing energy: " << ionization_energy_grid[j] 
+          << ",\tpdf: " << ionization_pdf[j] << std::endl;
+}
+std::cout << "binding_energy = " << binding_energy << std::endl;
+std::cout << "cross section = " << ionization_cross_sections.find(*shell)->second[i] << std::endl;
+      // Set the adjoint bremsstrahlung scattering distribution
+      data_container.setAdjointElectroionizationRecoilEnergyAtIncomingEnergy(
+        *shell,
+        energy_grid[energy_index],
+        ionization_energy_grid );
+
+      data_container.setAdjointElectroionizationRecoilPDFAtIncomingEnergy(
+        *shell,
+        energy_grid[energy_index],
+        ionization_pdf );
+
+      // Clear the data
+      ionization_energy_grid.clear();
+      ionization_pdf.clear();
+    }
   }
   }
   std::cout << "done." << std::endl;

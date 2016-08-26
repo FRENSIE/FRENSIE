@@ -308,6 +308,9 @@ public:
   const std::vector<double>& getAdjointElectroionizationEnergyGrid(
                            const unsigned subshell ) const;
 
+  //! Return if there is a seperate electroionization incoming electron energy grid for the scattering spectrum
+  bool seperateAdjointElectroionizationEnergyGrid() const;
+
   //! Return the electroionization recoil energy for a subshell and incoming energy
   const std::vector<double>& getAdjointElectroionizationRecoilEnergy(
                            const unsigned subshell,
