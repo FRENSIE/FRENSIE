@@ -1490,8 +1490,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 // Set Electron Cross Section Data Data
 //---------------------------------------------------------------------------//
 
-  std::cout << " Setting the adjoint electron cross section data:" << std::endl;
-  std::cout.flush();
+  (*d_os_log) << " Setting the adjoint electron cross section data:" << std::endl;
+  d_os_log->flush();
 
   // Extract the common electron energy grid
   Teuchos::ArrayRCP<double> forward_electron_energy_grid;
@@ -1511,8 +1511,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
 
   // Create the union energy grid
-  std::cout << "   Creating union energy grid";
-  std::cout.flush();
+  (*d_os_log) << "   Creating union energy grid";
+  d_os_log->flush();
+
   std::list<double> union_energy_grid;
 
   this->initializeAdjointElectronUnionEnergyGrid(
@@ -1554,8 +1555,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   union_energy_grid_generator.generateInPlace( union_energy_grid,
                                                cutoff_elastic_grid_function );
 
-  std::cout << ".";
-  std::cout.flush();
+  (*d_os_log) << ".";
+  d_os_log->flush();
 
   // Extract the total elastic cross section data
   Teuchos::ArrayRCP<double> forward_total_elastic_cs;
@@ -1582,8 +1583,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   union_energy_grid_generator.generateInPlace( union_energy_grid,
                                                total_elastic_grid_function );
 
-  std::cout << ".";
-  std::cout.flush();
+  (*d_os_log) << ".";
+  d_os_log->flush();
 
   //---------------------------------------------------------------------------//
   // Generate Grid Points For The Adjoint Atomic Excitation Cross Section Data
@@ -1610,8 +1611,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     this->getMinElectronEnergy(),
     data_container.getAdjointAtomicExcitationEnergyGrid().back() );
 
-  std::cout << ".";
-  std::cout.flush();
+  (*d_os_log) << ".";
+  d_os_log->flush();
 
 
   //---------------------------------------------------------------------------//
@@ -1641,8 +1642,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   std::list<double> old_adjoint_bremsstrahlung_union_energy_grid(
     union_energy_grid );
 
-  std::cout << ".";
-  std::cout.flush();
+  (*d_os_log) << ".";
+  d_os_log->flush();
 
   //---------------------------------------------------------------------------//
   // Generate Grid Points For The Adjoint Electroionization Subshell Cross Section Data
@@ -1679,11 +1680,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     old_adjoint_electroionization_union_energy_grid[*shell] =
       union_energy_grid;
 
-    std::cout << ".";
-    std::cout.flush();
+    (*d_os_log) << ".";
+    d_os_log->flush();
   }
 
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
   // Set the union energy grid
   std::vector<double> energy_grid(
@@ -1697,8 +1698,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   unsigned threshold;
 
   // Set the adjoint elastic cross section data
-  std::cout << "   Setting the adjoint total elastic cross section...";
-  std::cout.flush();
+  (*d_os_log) << "   Setting the adjoint total elastic cross section...";
+  d_os_log->flush();
   std::vector<double> total_cross_section;
   this->createCrossSectionOnUnionEnergyGrid(
       union_energy_grid,
@@ -1707,10 +1708,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       threshold );
   data_container.setAdjointTotalElasticCrossSection( total_cross_section );
   data_container.setAdjointTotalElasticCrossSectionThresholdEnergyIndex( threshold );
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
-  std::cout << "   Setting the adjoint cutoff elastic cross section...";
-  std::cout.flush();
+  (*d_os_log) << "   Setting the adjoint cutoff elastic cross section...";
+  d_os_log->flush();
   std::vector<double> cutoff_cross_section;
   this->createCrossSectionOnUnionEnergyGrid(
       union_energy_grid,
@@ -1719,11 +1720,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       threshold );
   data_container.setAdjointCutoffElasticCrossSection( cutoff_cross_section );
   data_container.setAdjointCutoffElasticCrossSectionThresholdEnergyIndex( threshold );
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
 
-  std::cout << "   Setting the screened Rutherford elastic cross section...";
-  std::cout.flush();
+  (*d_os_log) << "   Setting the screened Rutherford elastic cross section...";
+  d_os_log->flush();
   {
   std::vector<double> raw_cross_section( total_cross_section.size() );
   for ( int i = 0; i < total_cross_section.size(); ++i )
@@ -1751,12 +1752,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   data_container.setAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(
   threshold );
   }
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
   if( d_forward_epr_data->hasMomentPreservingData() )
   {
-    std::cout << "   Setting the adjoint moment preserving elastic cross section...";
-    std::cout.flush();
+    (*d_os_log) << "   Setting the adjoint moment preserving elastic cross section...";
+    d_os_log->flush();
 
     // Extract the moment preserving elastic cross section data
     Teuchos::ArrayRCP<double> forward_moment_preserving_elastic_cs;
@@ -1784,12 +1785,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         threshold );
     data_container.setAdjointMomentPreservingCrossSection( moment_preserving_cross_section );
     data_container.setAdjointMomentPreservingCrossSectionThresholdEnergyIndex( threshold );
-    std::cout << "done." << std::endl;
+    (*d_os_log) << "done." << std::endl;
   }
 
   // Set the adjoint atomic excitation cross section data
-  std::cout << "   Setting the adjoint atomic excitation cross section...";
-  std::cout.flush();
+  (*d_os_log) << "   Setting the adjoint atomic excitation cross section...";
+  d_os_log->flush();
   std::vector<double> excitation_cross_section;
   this->createCrossSectionOnUnionEnergyGrid(
       union_energy_grid,
@@ -1799,11 +1800,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   data_container.setAdjointAtomicExcitationCrossSection( excitation_cross_section );
   data_container.setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex( threshold );
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
   // Set the adjoint bremsstrahlung cross section data
-  std::cout << "   Setting the adjoint bremsstrahlung cross section...";
-  std::cout.flush();
+  (*d_os_log) << "   Setting the adjoint bremsstrahlung cross section...";
+  d_os_log->flush();
   std::vector<double> bremsstrahlung_cross_section;
   unsigned bremsstrahlung_threshold_index;
   this->updateCrossSectionOnUnionEnergyGrid(
@@ -1816,11 +1817,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   data_container.setAdjointBremsstrahlungElectronCrossSection( bremsstrahlung_cross_section );
   data_container.setAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex( bremsstrahlung_threshold_index );
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
   // Set the adjoint electroionization subshell cross section data
-  std::cout << "   Setting the adjoint electroionization subshell cross section...";
-  std::cout.flush();
+  (*d_os_log) << "   Setting the adjoint electroionization subshell cross section...";
+  d_os_log->flush();
 
   std::map<unsigned,std::vector<double> > ionization_cross_sections;
   std::map<unsigned,unsigned > ionization_cross_section_thresholds;
@@ -1845,13 +1846,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       *shell,
       ionization_cross_section_thresholds[*shell] );
   }
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
 //---------------------------------------------------------------------------//
 // Set Elastic Data
 //---------------------------------------------------------------------------//
-  std::cout << " Setting the adjoint elastic cutoff data...";
-  std::cout.flush();
+  (*d_os_log) << " Setting the adjoint elastic cutoff data...";
+  d_os_log->flush();
 
   // Set elastic angular distribution
   data_container.setAdjointElasticAngularEnergyGrid(
@@ -1863,10 +1864,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   data_container.setAdjointCutoffElasticPDF(
         d_forward_epr_data->getCutoffElasticPDF() );
 
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
-  std::cout << " Setting the adjoint elastic moment preserving data...";
-  std::cout.flush();
+  (*d_os_log) << " Setting the adjoint elastic moment preserving data...";
+  d_os_log->flush();
 
   data_container.setAdjointMomentPreservingElasticDiscreteAngles(
         d_forward_epr_data->getMomentPreservingElasticDiscreteAngles() );
@@ -1874,13 +1875,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   data_container.setAdjointMomentPreservingElasticWeights(
         d_forward_epr_data->getMomentPreservingElasticWeights() );
 
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
 //---------------------------------------------------------------------------//
 // Set Bremsstrahlung Data
 //---------------------------------------------------------------------------//
-  std::cout << " Setting the bremsstrahlung data...";
-  std::cout.flush();
+  (*d_os_log) << " Setting the bremsstrahlung data...";
+  d_os_log->flush();
   {
   std::shared_ptr<DataGen::AdjointElectronDistributionGenerator<Utility::LinLinLin> >
       distribution_grid_generator;
@@ -1927,13 +1928,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     brem_pdf.clear();
   }
   }
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 
 //---------------------------------------------------------------------------//
 // Set Electroionization Data
 //---------------------------------------------------------------------------//
-  std::cout << " Setting the electroionization data...";
-  std::cout.flush();
+  (*d_os_log) << " Setting the electroionization data...";
+  d_os_log->flush();
   {
   shell = data_container.getSubshells().begin();
 
@@ -1955,7 +1956,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       new AdjointElectronDistributionGenerator<Utility::LinLinLin>(
             this->getMaxElectronEnergy(),
             binding_energy*2.0,
-            binding_energy + 5e-7,
+            binding_energy + 2e-7,
             d_adjoint_electroionization_grid_convergence_tol,
             d_adjoint_electroionization_absolute_diff_tol,
             d_adjoint_electroionization_distance_tol ) );
@@ -1991,7 +1992,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     }
   }
   }
-  std::cout << "done." << std::endl;
+  (*d_os_log) << "done." << std::endl;
 }
 
 // Create the adjoint atomic excitation cross section reaction
@@ -2131,49 +2132,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
     _1,
     d_adjoint_bremsstrahlung_evaluation_tol );
 
-}
-
-// Generate adjoint bremsstrahlung photon energy distribution
-void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointBremsstrahlungPhotonDistribution(
-    const double incoming_adjoint_energy,
-    const unsigned bin_index,
-    const unsigned threshold_energy_index,
-    const Teuchos::ArrayRCP<const double>& adjoint_cross_section,
-    const Teuchos::ArrayRCP<const double>& adjoint_electron_energy_grid,
-    const std::shared_ptr<BremsstrahlungEvaluator >
-        adjoint_bremsstrahlung_cs_evaluator,
-    const std::vector<double>& adjoint_bremsstrahlung_photon_energy,
-    std::vector<double>& adjoint_bremsstrahlung_pdf ) const
-{
-  // double adjoint_bremsstrahlung_cs =
-  //   MonteCarlo::StandardElectroatomicReaction<Utility::LinLin, false>::getCrossSection(
-  //       incoming_adjoint_energy,
-  //       bin_index,
-  //       adjoint_cross_section,
-  //       adjoint_electron_energy_grid,
-  //       threshold_energy_index );
-
-  // adjoint_bremsstrahlung_pdf.resize(
-  //   adjoint_bremsstrahlung_photon_energy.size() );
-
-  // // Calculate the adjoint PDF values at the given incoming adjoint energy
-  // for ( int j = 0; j < adjoint_bremsstrahlung_photon_energy.size(); ++j )
-  // {
-  //   double outgoing_adjoint_energy =
-  //     incoming_adjoint_energy + adjoint_bremsstrahlung_photon_energy[j];
-
-  //   if ( outgoing_adjoint_energy <= this->getMaxElectronEnergy() )
-  //   {
-  //     adjoint_bremsstrahlung_pdf[j] =
-  //         adjoint_bremsstrahlung_cs_evaluator->evaluateAdjointPDF(
-  //           adjoint_bremsstrahlung_cs,
-  //           incoming_adjoint_energy,
-  //           outgoing_adjoint_energy,
-  //           d_adjoint_bremsstrahlung_evaluation_tol );
-  //   }
-  //   else
-  //     adjoint_bremsstrahlung_pdf[j] = 0.0;
-  // }
 }
 
 // Create the adjoint electroionization subshell cross section evaluator

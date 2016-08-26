@@ -416,18 +416,6 @@ private:
         adjoint_bremsstrahlung_cs_evaluator,
     boost::function<double (double)>& bremsstrahlung_grid_function ) const;
 
-  // Generate adjoint bremsstrahlung photon energy distribution
-  void evaluateAdjointBremsstrahlungPhotonDistribution(
-    const double incoming_adjoint_energy,
-    const unsigned bin_index,
-    const unsigned threshold_energy_index,
-    const Teuchos::ArrayRCP<const double>& adjoint_cross_section,
-    const Teuchos::ArrayRCP<const double>& adjoint_electron_energy_grid,
-    const std::shared_ptr<BremsstrahlungEvaluator>
-        adjoint_bremsstrahlung_cs_evaluator,
-    const std::vector<double>& adjoint_bremsstrahlung_photon_energy,
-    std::vector<double>& adjoint_bremsstrahlung_pdf ) const;
-
   // Create the adjoint electroionization subshell cross section evaluator
   void createAdjointElectroionizationSubshellCrossSectionEvaluator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
