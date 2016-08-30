@@ -60,6 +60,12 @@ typedef StaticOutputFormatter<UnderlinedTextFormat,DefaultTextColor,DefaultTextB
 //! Bold-red formatter
 typedef StaticOutputFormatter<BoldTextFormat,RedTextColor,DefaultTextBackgroundColor> BoldRed;
 
+//! Bold-green formatter
+typedef StaticOutputFormatter<BoldTextFormat,GreenTextColor,DefaultTextBackgroundColor> BoldGreen;
+
+//! Bold-yellow formatter
+typedef StaticOutputFormatter<BoldTextFormat,YellowTextColor,DefaultTextBackgroundColor> BoldYellow;
+
 //! Bold-cyan formatter
 typedef StaticOutputFormatter<BoldTextFormat,CyanTextColor,DefaultTextBackgroundColor> BoldCyan;
 

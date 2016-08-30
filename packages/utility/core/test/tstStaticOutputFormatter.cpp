@@ -827,6 +827,42 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, bold_red_typedef )
 }
 
 //---------------------------------------------------------------------------//
+// Check the bold-green formatter
+TEUCHOS_UNIT_TEST( StaticOutputFormatter, bold_green_typedef )
+{
+  std::cout << std::endl;
+
+  Utility::BoldGreen formatter( "Testing" );
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;32;49mTesting\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(), "Testing" );
+#endif
+  
+  std::cout << formatter << std::endl;
+}
+
+//---------------------------------------------------------------------------//
+// Check the bold-yellow formatter
+TEUCHOS_UNIT_TEST( StaticOutputFormatter, bold_yellow_typedef )
+{
+  std::cout << std::endl;
+
+  Utility::BoldYellow formatter( "Testing" );
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;33;49mTesting\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(), "Testing" );
+#endif
+  
+  std::cout << formatter << std::endl;
+}
+
+//---------------------------------------------------------------------------//
 // Check the bold-cyan formatter
 TEUCHOS_UNIT_TEST( StaticOutputFormatter, bold_cyan_typedef )
 {

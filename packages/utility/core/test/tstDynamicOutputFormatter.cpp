@@ -554,47 +554,37 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
 
   // Check that the "error:" keyword can be formatted
   {
-    Utility::DynamicOutputFormatter formatter( "error: this is a test!" );
+    Utility::DynamicOutputFormatter formatter( " error: this is a test!" );
 
     formatter.formatStandardErrorKeywords();
 
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;31;49merror:\E[0m this is a test!" );
+                         "\E[1;31;49m error:\E[0m this is a test!" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "error: this is a test!" );
+                         " error: this is a test!" );
 #endif    
   }
 
-  // Check that the "Error" keyword can be formatted
+  // Check that the "Error" keyword will not be formatted
   {
     Utility::DynamicOutputFormatter formatter( "This is an Error test!" );
 
     formatter.formatStandardErrorKeywords();
     
-#ifdef TTY_FORMATTING_SUPPORTED
-    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "This is an \E[1;31;49mError\E[0m test!" );
-#else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is an Error test!" );
-#endif
   }
 
-  // Check that the "error" keyword can be formatted
+  // Check that the "error" keyword will not be formatted
   {
     Utility::DynamicOutputFormatter formatter( "This is an error test!" );
 
     formatter.formatStandardErrorKeywords();
     
-#ifdef TTY_FORMATTING_SUPPORTED
-    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "This is an \E[1;31;49merror\E[0m test!" );
-#else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is an error test!" );
-#endif
   }
 
   // Check that multiple occurances can be formatted
@@ -605,7 +595,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
     
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;31;49mError:\E[0m this is an \E[1;31;49merror\E[0m test!" );
+                         "\E[1;31;49mError:\E[0m this is an error test!" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Error: this is an error test!" );
@@ -634,47 +624,37 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
 
   // Check that the "warning:" keyword can be formatted
   {
-    Utility::DynamicOutputFormatter formatter( "warning: this is a test!" );
+    Utility::DynamicOutputFormatter formatter( " warning: this is a test!" );
 
     formatter.formatStandardWarningKeywords();
     
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;35;49mwarning:\E[0m this is a test!" );
+                         "\E[1;35;49m warning:\E[0m this is a test!" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "warning: this is a test!" );
 #endif
   }
 
-  // Check that the "Warning" keyword can be formatted
+  // Check that the "Warning" keyword will not be formatted
   {
     Utility::DynamicOutputFormatter formatter( "This is a Warning test!" );
 
     formatter.formatStandardWarningKeywords();
     
-#ifdef TTY_FORMATTING_SUPPORTED
-    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "This is a \E[1;35;49mWarning\E[0m test!" );
-#else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is a Warning test!" );
-#endif
   }
 
-  // Check that the "warning" keyword can be formatted
+  // Check that the "warning" keyword will not be formatted
   {
     Utility::DynamicOutputFormatter formatter( "This is a warning test!" );
 
     formatter.formatStandardWarningKeywords();
     
-#ifdef TTY_FORMATTING_SUPPORTED
-    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "This is a \E[1;35;49mwarning\E[0m test!" );
-#else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is a warning test!" );
-#endif
   }
 
   // Check that multiple occurances can be formatted
@@ -685,7 +665,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
     
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;35;49mWarning:\E[0m This is a \E[1;35;49mwarning\E[0m test!" );
+                         "\E[1;35;49mWarning:\E[0m This is a warning test!" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Warning: This is a warning test!" );
@@ -705,10 +685,41 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardFilenameKeywords )
 
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "This is a test file: \E[1;29;49mtest.hpp\E[0m" );
+                         "This is a test file:\E[1;29;49m test.hpp\E[0m" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is a test file: test.hpp" );
+#endif
+  }
+
+  // Check that a filename ending in ".hpp" with a path can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test file: /home/test_dir/test.hpp" );
+
+    formatter.formatStandardFilenameKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test file:\E[1;29;49m /home/test_dir/test.hpp\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test file: /home/test_dir/test.hpp" );
+#endif
+  }
+
+  // Check that a filename ending in ".hpp" with a path and line number
+  // can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test file: /home/test_dir/test.hpp:201" );
+
+    formatter.formatStandardFilenameKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test file:\E[1;29;49m /home/test_dir/test.hpp:201\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test file: /home/test_dir/test.hpp:201" );
 #endif
   }
 
@@ -720,25 +731,56 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardFilenameKeywords )
 
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "This is a test file: \E[1;29;49mtest.cpp\E[0m" );
+                         "This is a test file:\E[1;29;49m test.cpp\E[0m" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is a test file: test.cpp" );
 #endif
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that a filename ending in ".cpp" with a path can be formatted
   {
-    Utility::DynamicOutputFormatter formatter( "These are test files: test.hpp, test.cpp" );
+    Utility::DynamicOutputFormatter formatter( "This is a test file: local_dir/test.cpp" );
 
     formatter.formatStandardFilenameKeywords();
 
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "These are test files: \E[1;29;49mtest.hpp\E[0m, \E[1;29;49mtest.cpp\E[0m" );
+                         "This is a test file:\E[1;29;49m local_dir/test.cpp\E[0m" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "These are test files: test.hpp, test.cpp" );
+                         "This is a test file: local_dir/test.cpp" );
+#endif
+  }
+
+  // Check that a filename ending in ".cpp" with a path and line number can
+  // be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test file: local_dir/test.cpp:16:" );
+
+    formatter.formatStandardFilenameKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test file:\E[1;29;49m local_dir/test.cpp:16:\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test file: local_dir/test.cpp:16:" );
+#endif
+  }
+
+  // Check that multiple occurances can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "These are test files: include/test.hpp, /home/src/test.cpp:1111" );
+
+    formatter.formatStandardFilenameKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "These are test files:\E[1;29;49m include/test.hpp\E[0m,\E[1;29;49m /home/src/test.cpp:1111\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "These are test files: include/test.hpp, home/src/test.cpp:1111" );
 #endif
   }
 }

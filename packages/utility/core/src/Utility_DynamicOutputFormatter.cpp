@@ -89,30 +89,31 @@ void DynamicOutputFormatter::boldWhiteKeyword( const std::string& keyword )
 }
 
 // Format the standard error message keywords in the output
-/*! \details The standard error keyword "[E|e]rror:?". Any matches will 
+/*! \details The standard error keyword "\\s*[E|e]rror:". Any matches will 
  * be formatted in bold-red.
  */
 void DynamicOutputFormatter::formatStandardErrorKeywords()
 {
-  this->boldRedKeyword( "[E|e]rror:?" );
+  this->boldRedKeyword( "\\s*[E|e]rror:" );
 }
 
 // Format the standard warning message keywords in the output
-/*! \details The standard warning keyword is "[W|w]arning:?". Any matches
+/*! \details The standard warning keyword is "\\s*[W|w]arning:". Any matches
  * will be formatted in bold-magenta.
  */
 void DynamicOutputFormatter::formatStandardWarningKeywords()
 {
-  this->boldMagentaKeyword( "[W|w]arning:?" );
+  this->boldMagentaKeyword( "\\s*[W|w]arning:" );
 }
 
 // Format the standard filename keywords in the output
-/*! \details The standard filename keyword "\w+.[h|c]pp\b". Any matches
- * will be formatted in bold.
+/*! \details The standard filename keyword 
+ * "[\\s/|\\s\\w][\\w|/]*\\.[h|c]pp:?\\d*:?". Any matches will be formatted in
+ * bold.
  */
 void DynamicOutputFormatter::formatStandardFilenameKeywords()
 {
-  this->boldKeyword( "\\w+.[h|c]pp\\b" );
+  this->boldKeyword( "[\\s/|\\s\\w][\\w|/]*\\.[h|c]pp:?\\d*:?" );
 }
   
 } // end Utility namespace

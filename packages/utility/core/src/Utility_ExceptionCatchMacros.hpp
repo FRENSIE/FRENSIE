@@ -34,15 +34,28 @@
  * \ingroup exception_macros
  */
 #define __HDF5_EXCEPTION_CATCH_AND_EXIT_BODY__( file, line, msg, exception ) \
-  std::cerr << std::flush;                                              \
-  std::cerr << Utility::Bold( " *** Caught HDF5 H5::Exception *** " )   \
-            << "\n\n";                                                  \
-  std::cerr << Utility::BoldCyan( "File: " ) << file << "\n";           \
-  std::cerr << Utility::BoldCyan( "Line: " ) << line << "\n";           \
-  std::cerr << msg << "\n";                                             \
-  std::cerr << "\t" << exception.getFuncName() << "\n";                 \
-  std::cerr << "\t" << exception.getDetailMsg() << "\n";                \
-  std::cerr << std::flush;                                              \
+  std::cerr << "\n "                                                    \
+            << Utility::Underlined( "*** Caught Exception of Type " )   \
+            << Utility::Underlined( "H5::Exception" )                   \
+            << Utility::Underlined( " ***" )                            \
+            << " \n\n"                                                  \
+            << Utility::BoldCyan( "File: " ) << Utility::Bold( file ) << "\n" \
+            << Utility::BoldCyan( "Line: " ) << line << "\n";           \
+                                                                        \
+  std::ostringstream oss;                                               \
+  oss << msg << "\n";                                                   \
+                                                                        \
+  Utility::DynamicOutputFormatter formatter( oss.str() );               \
+  formatter.formatStandardErrorKeywords();                              \
+  formatter.formatStandardWarningKeywords();                            \
+  formatter.formatStandardFilenameKeywords();                           \
+  formatter.boldCyanKeyword( "\\s*File:" );                             \
+  formatter.boldCyanKeyword( "\\s*Line:" );                             \
+                                                                        \
+  std::cerr << formatter << "\n"                                        \
+            << "\t" << exception.getFuncName() << "\n"                  \
+            << "\t" << exception.getDetailMsg() << std::endl;           \
+                                                                        \
   exit(EXIT_FAILURE)
 
 /*! \brief Catch statement body macro for catching an HDF5:Exception and rethrowing it as a new exception of the desired type.
@@ -66,14 +79,14 @@
  * \ingroup exception_macros
  */
 #define __EXCEPTION_CATCH_AND_EXIT_BODY__( file, line, msg, exception, Exception ) \
-  std::cerr << std::flush;                                              \
-  std::cerr << Utility::Bold( " *** Caught Exception of Type " )        \
-            << Utility::Bold( #Exception )                              \
-            << Utility::Bold( " *** " ) << "\n\n";                      \
-  std::cerr << Utility::BoldCyan( "File: " ) << file << "\n";       \
-  std::cerr << Utility::BoldCyan( "Line: " ) << line << "\n";       \
-                                                                    \
-  std::ostringstream oss;                                           \
+  std::cerr << "\n "                                                      \
+            << Utility::Underlined( "*** Caught Exception of Type " )   \
+            << Utility::Underlined( #Exception )                        \
+            << Utility::Underlined( " ***" ) << " \n\n"                 \
+            << Utility::BoldCyan( "File: " ) << Utility::Bold( file ) << "\n"\
+            << Utility::BoldCyan( "Line: " ) << line << "\n";           \
+                                                                        \
+  std::ostringstream oss;                                               \
   oss << msg << "\n";                                                   \
   oss << exception.what();                                              \
                                                                         \
@@ -81,6 +94,8 @@
   formatter.formatStandardErrorKeywords();                              \
   formatter.formatStandardWarningKeywords();                            \
   formatter.formatStandardFilenameKeywords();                           \
+  formatter.boldCyanKeyword( "\\s*File:" );                             \
+  formatter.boldCyanKeyword( "\\s*Line:" );                             \
                                                                         \
   std::cerr << formatter << std::endl;                                  \
                                                                         \
