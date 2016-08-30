@@ -45,122 +45,62 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the min incoming electron energy
+// Check that the max secondary (knock-on) electron energy can be returned
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   getMinEnergy )
-{
-  // Get min energy
-  double min_energy =
-    ace_electroionization_distribution->getMinEnergy();
-
-  // Test original electron
-  TEST_EQUALITY_CONST( min_energy, 8.829000000000E-02 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the max incoming electron energy
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   getMaxEnergy )
-{
-  // Get max energy
-  double min_energy =
-    ace_electroionization_distribution->getMaxEnergy();
-
-  // Test original electron
-  TEST_EQUALITY_CONST( min_energy, 1e5 );
-}
-
-
-//---------------------------------------------------------------------------//
-// Check that the max incoming electron energy for a given outoing electron energy can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   getMaxIncomingEnergyAtOutgoingEnergy )
+                   getMaxSecondaryEnergyAtIncomingEnergy )
 {
   // Get max energy
   double max_energy =
-    ace_electroionization_distribution->getMaxIncomingEnergyAtOutgoingEnergy(
-                                                                          1.0 );
-
-  // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 1E5 );
-
-  // Get max energy
-  max_energy =
-    ace_electroionization_distribution->getMaxIncomingEnergyAtOutgoingEnergy(
-                                                                         1e-2 );
-
-  // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 1E5 );
-
-  // Get max energy
-  max_energy =
-    ace_electroionization_distribution->getMaxIncomingEnergyAtOutgoingEnergy(
-                                                                         1e-8 );
+    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
 
   // Test original electron
   TEST_EQUALITY_CONST( max_energy, 0.0 );
+
+  // Get max energy
+  max_energy =
+    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
+
+  // Test original electron
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
+
+  // Get max energy
+  max_energy =
+    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
+
+  // Test original electron
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-		   evaluatePDF )
+                   evaluatePDF )
 {
+  double pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,0.0,1e-12 );
 
-  double pdf =
-    ace_electroionization_distribution->evaluatePDF( 8.8290000000000E-02,
-						     1.000000000000E-08 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 2e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,11111033.950952406973,1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.111111111111E+07,
-				  1e-12 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 1.0E+00, 9.7163E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,2.045394577710E+00,1e-12 );
 
-  pdf =
-    ace_electroionization_distribution->evaluatePDF( 1.000000000000E+00,
-						     9.716300000000E-02 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 1e5, 1.752970e2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.399431656723E-07, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  2.045394577710E+00,
-				  1e-12 );
-
-  pdf =
-    ace_electroionization_distribution->evaluatePDF( 1.000000000000E+05,
-						     1.752970000000E+02 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  4.399431656723E-07,
-				  1e-12 );
 
   // Test the efficient implementation
-  pdf =
-    ace_electroionization_distribution->evaluatePDF(
-        0,
-        8.8290E-02,
-        1.0000E-08 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 0, 8.8290E-02+1e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.111111111111E+07,
-				  1e-12 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 0, 8.829e-2 + 2e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.950952406973, 1e-12 );
 
-  pdf =
-    ace_electroionization_distribution->evaluatePDF(
-        2,
-        1.000000000000E+00,
-        9.716300000000E-02 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 2, 1.0, 9.7163e-2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.045394577710E+00, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  2.045394577710E+00,
-				  1e-12 );
-
-  pdf =
-    ace_electroionization_distribution->evaluatePDF(
-        4,
-        1.000000000000E+05,
-        1.752970000000E+02 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  4.399431656723E-07,
-				  1e-12 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 4, 1e5, 1.75297e2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.399431656723E-07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

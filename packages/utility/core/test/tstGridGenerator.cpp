@@ -412,6 +412,102 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateInPlace )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a grid can be refined for the functions
+TEUCHOS_UNIT_TEST( GridGenerator, refineInPlace )
+{
+  // Create the different grid generators
+  Utility::GridGenerator<Utility::LinLin> linlin_generator( 0.001, 1e-12 );
+  Utility::GridGenerator<Utility::LogLin> loglin_generator( 0.001, 1e-12 );
+  Utility::GridGenerator<Utility::LinLog> linlog_generator( 0.001, 1e-12 );
+  Utility::GridGenerator<Utility::LogLog> loglog_generator( 0.001, 1e-12 );
+
+  // Create the initial grid
+  Teuchos::Array<double> initial_grid( 4 );
+  initial_grid[0] = -1.0;
+  initial_grid[1] = 0.0;
+  initial_grid[2] = 10.0;
+  initial_grid[3] = 20.0;
+
+  // Create a lin-lin grid for x^2
+  boost::function<double (double x)> function = &x2;
+
+  Teuchos::Array<double> grid = initial_grid;
+
+  linlin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 323 );
+
+  // Create a log-lin grid for x^2
+  initial_grid[0] = 1e-4;
+  initial_grid[1] = 1e-3;
+  grid = initial_grid;
+
+  loglin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 216 );
+
+
+  // Create a lin-lin grid for cos(x)
+  function = &cos;
+
+  initial_grid[0] = -1.0;
+  initial_grid[1] = 0.0;
+  grid = initial_grid;
+
+  linlin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 131 );
+
+  grid = initial_grid;
+
+  // Create a lin-lin grid for (x-2)^3
+  x3 x_cubed( 2 );
+  function = boost::bind<double>(x_cubed, _1);
+
+  linlin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 710 );
+
+  // Create a log-lin grid for (x-2)^3
+  initial_grid[0] = 2;
+  initial_grid[1] = 2 + 1e-6;
+
+
+  grid = initial_grid;
+
+  loglin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 268 );
+
+  // Create a lin-lin grid for x*cos(x) in [-1, 1]
+  xcosxAB x_cos_x( -1, 1 );
+  function = boost::bind<double>(x_cos_x, _1);
+
+  initial_grid.resize( 9 );
+  initial_grid[0] = -3.0;
+  initial_grid[1] = -2.0;
+  initial_grid[2] = -1.0 - 1e-15;
+  initial_grid[3] = -1.0;
+  initial_grid[4] = 0.0;
+  initial_grid[5] = 1.0;
+  initial_grid[6] = 1.0 + 1e-15;
+  initial_grid[7] = 2.0;
+  initial_grid[8] = 3.0;
+
+  grid = initial_grid;
+
+  linlin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[7] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 71 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a grid can be generated for the functions
 TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
 {
@@ -523,6 +619,180 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
   TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
   TEST_EQUALITY_CONST( grid.size(), 69 );
   TEST_EQUALITY_CONST( evaluated_function.size(), 69 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a grid can be refined for the functions
+TEUCHOS_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
+{
+  // Create the different grid generators
+  Utility::GridGenerator<Utility::LinLin> linlin_generator( 0.001, 1e-12 );
+  Utility::GridGenerator<Utility::LogLin> loglin_generator( 0.001, 1e-12 );
+  Utility::GridGenerator<Utility::LinLog> linlog_generator( 0.001, 1e-12 );
+  Utility::GridGenerator<Utility::LogLog> loglog_generator( 0.001, 1e-12 );
+
+  // Create the initial grid
+  std::vector<double> initial_grid( 4 );
+  initial_grid[0] = -1.0;
+  initial_grid[1] = 0.0;
+  initial_grid[2] = 10.0;
+  initial_grid[3] = 20.0;
+
+  // Create a lin-lin grid for x^2
+  boost::function<double (double x)> function = &x2;
+
+  std::vector<double> grid = initial_grid, evaluated_function;
+
+  linlin_generator.refineAndEvaluateInPlace(
+                        grid,
+                        evaluated_function,
+                        function,
+                        initial_grid[1],
+                        initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 323 );
+  TEST_EQUALITY_CONST( evaluated_function.size(), 323 );
+  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
+  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
+  TEST_ASSERT( grid[2] > initial_grid[1] );
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  grid.pop_back();
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+  grid.pop_back();
+  TEST_ASSERT( grid.back() < initial_grid[2] );
+
+  evaluated_function.clear();
+
+  // Create a log-lin grid for x^2
+  initial_grid[0] = 1e-4;
+  initial_grid[1] = 1e-3;
+  grid = initial_grid;
+
+  loglin_generator.refineAndEvaluateInPlace(
+                        grid,
+                        evaluated_function,
+                        function,
+                        initial_grid[1],
+                        initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 216 );
+  TEST_EQUALITY_CONST( evaluated_function.size(), 216 );
+  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
+  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  grid.pop_back();
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+
+  evaluated_function.clear();
+
+  // Create a lin-lin grid for cos(x)
+  initial_grid[0] = -1.0;
+  initial_grid[1] = 0.0;
+  grid = initial_grid;
+
+  function = &cos;
+
+  linlin_generator.refineAndEvaluateInPlace(
+                        grid,
+                        evaluated_function,
+                        function,
+                        initial_grid[1],
+                        initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 131 );
+  TEST_EQUALITY_CONST( evaluated_function.size(), 131 );
+  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
+  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  grid.pop_back();
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+  grid.pop_back();
+  TEST_ASSERT( grid.back() < initial_grid[2] );
+
+  grid = initial_grid;
+  evaluated_function.clear();
+
+  // Create a lin-lin grid for (x-2)^3
+  x3 x_cubed( 2 );
+  function = boost::bind<double>(x_cubed, _1);
+
+  linlin_generator.refineAndEvaluateInPlace(
+                        grid,
+                        evaluated_function,
+                        function,
+                        initial_grid[1],
+                        initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 710 );
+  TEST_EQUALITY_CONST( evaluated_function.size(), 710 );
+  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
+  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  grid.pop_back();
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+
+  evaluated_function.clear();
+
+  // Create a log-lin grid for (x-2)^3
+  initial_grid[0] = 2.0;
+  initial_grid[1] = 2.0 + 1e-6;
+  grid = initial_grid;
+
+  loglin_generator.refineAndEvaluateInPlace(
+                        grid,
+                        evaluated_function,
+                        function,
+                        initial_grid[1],
+                        initial_grid[2] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 268 );
+  TEST_EQUALITY_CONST( evaluated_function.size(), 268 );
+  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
+  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  grid.pop_back();
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+
+  evaluated_function.clear();
+
+  // Create a lin-lin grid for x*cos(x) in [-1, 1]
+  xcosxAB x_cos_x( -1, 1 );
+  function = boost::bind<double>(x_cos_x, _1);
+
+  initial_grid.resize( 9 );
+  initial_grid[0] = -3.0;
+  initial_grid[1] = -2.0;
+  initial_grid[2] = -1.0 - 1e-15;
+  initial_grid[3] = -1.0;
+  initial_grid[4] = 0.0;
+  initial_grid[5] = 1.0;
+  initial_grid[6] = 1.0 + 1e-15;
+  initial_grid[7] = 2.0;
+  initial_grid[8] = 3.0;
+
+  grid = initial_grid;
+  evaluated_function.clear();
+
+  linlin_generator.refineAndEvaluateInPlace(
+                        grid,
+                        evaluated_function,
+                        function,
+                        initial_grid[1],
+                        initial_grid[7] );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  TEST_EQUALITY_CONST( grid.size(), 71 );
+  TEST_EQUALITY_CONST( evaluated_function.size(), 71 );
+  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
+  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[8] );
+  grid.pop_back();
+  TEST_EQUALITY_CONST( grid.back(), initial_grid[7] );
 }
 
 //---------------------------------------------------------------------------//

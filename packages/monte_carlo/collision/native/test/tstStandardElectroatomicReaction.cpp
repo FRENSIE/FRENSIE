@@ -26,8 +26,8 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ace_ae_reaction;
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ace_b_reaction;
+std::shared_ptr<MonteCarlo::ElectroatomicReaction> ace_ae_reaction;
+std::shared_ptr<MonteCarlo::ElectroatomicReaction> ace_b_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.

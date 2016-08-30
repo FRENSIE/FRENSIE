@@ -533,9 +533,9 @@ int main( int argc, char** argv )
     generator.setAdjointIncoherentGridDistanceTolerance( adjoint_incoherent_grid_distance_tol );
 
     // Set the adjoint electron properties
-    generator.setCutoffAngleCosine( cutoff_angle_cosine );
-    generator.setNumberOfMomentPreservingAngles( number_of_moment_preserving_angles );
-    generator.setAdjointBremsstrahlungCrossSectionEvaluationTolerance( adjoint_bremsstrahlung_evaluation_tol );
+//    generator.setCutoffAngleCosine( cutoff_angle_cosine );
+//    generator.setNumberOfMomentPreservingAngles( number_of_moment_preserving_angles );
+    generator.setAdjointBremsstrahlungEvaluationTolerance( adjoint_bremsstrahlung_evaluation_tol );
 
     // Populate the new data container
     (*out) << "Generating adjoint data! Hang tight - this may take a while..."

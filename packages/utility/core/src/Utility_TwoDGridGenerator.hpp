@@ -131,6 +131,10 @@ protected:
                                    std::vector<double>& secondary_grid,
                                    const double primary_grid_point ) const = 0;
 
+  // The secondary grid generator
+  Utility::GridGenerator<typename TwoDInterpPolicy::ZYInterpPolicy>
+  d_secondary_grid_generator;
+
 private:
 
   // Check for 2D grid convergence
@@ -192,10 +196,6 @@ private:
 
   // The warning output stream
   std::ostream* d_os_warn;
-
-  // The secondary grid generator
-  Utility::GridGenerator<typename TwoDInterpPolicy::ZYInterpPolicy>
-  d_secondary_grid_generator;
 };
   
 } // end Utility namespace

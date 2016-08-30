@@ -14,6 +14,19 @@
 
 namespace MonteCarlo{
 
+// Return the primary grid values of the 2-D distribution
+template<typename DependentTwoDDistribution>
+void getPrimaryGrid(
+	const DependentTwoDDistribution& dependent_distribution,
+  std::vector<double>& primary_grid )
+{
+  primary_grid.resize( dependent_distribution.size() );
+
+  for ( unsigned i = 0; i < dependent_distribution.size(); ++i )
+  {
+    primary_grid[i] = dependent_distribution[i].first;
+  }
+}
 
 // Find the lower and upper bin boundary
 template<typename DependentTwoDDistribution>

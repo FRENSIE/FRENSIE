@@ -17,24 +17,59 @@ namespace MonteCarlo{
 // Create a simple dipole bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const std::vector<double>& bremsstrahlung_energy_grid,
 	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 		scattering_distribution )
 {
-  // Get the energy grid for bremsstrahlung energy distributions
-  std::vector<double> energy_grid =
-        raw_electroatom_data.getBremsstrahlungEnergyGrid();
-
   // Create the scattering function
   BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-         energy_loss_function( energy_grid.size() );
+         energy_loss_function( bremsstrahlung_energy_grid.size() );
 
   BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
         raw_electroatom_data,
-        energy_grid,
+        bremsstrahlung_energy_grid,
         energy_loss_function );
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( energy_loss_function ) );
+}
+
+// Create a simple dipole bremsstrahlung distribution
+void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+		scattering_distribution )
+{
+  // Get the energy grid for bremsstrahlung energy distributions
+  std::vector<double> bremsstrahlung_energy_grid =
+        raw_electroatom_data.getBremsstrahlungEnergyGrid();
+
+  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
+    raw_electroatom_data,
+    bremsstrahlung_energy_grid,
+    scattering_distribution );
+}
+
+// Create a detailed 2BS bremsstrahlung distribution
+void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const std::vector<double>& bremsstrahlung_energy_grid,
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+		scattering_distribution,
+    const int atomic_number )
+{
+  // Create the scattering function
+  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
+        energy_loss_function( bremsstrahlung_energy_grid.size() );
+
+  BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
+        raw_electroatom_data,
+        bremsstrahlung_energy_grid,
+        energy_loss_function );
+
+  scattering_distribution.reset(
+   new BremsstrahlungElectronScatteringDistribution( energy_loss_function,
+                                                     atomic_number ) );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
@@ -45,21 +80,14 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const int atomic_number )
 {
   // Get the energy grid for bremsstrahlung energy distributions
-  std::vector<double> energy_grid =
+  std::vector<double> bremsstrahlung_energy_grid =
         raw_electroatom_data.getBremsstrahlungEnergyGrid();
 
-  // Create the scattering function
-  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-        energy_loss_function( energy_grid.size() );
-
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
-        raw_electroatom_data,
-        energy_grid,
-        energy_loss_function );
-
-  scattering_distribution.reset(
-   new BremsstrahlungElectronScatteringDistribution( energy_loss_function,
-                                                     atomic_number ) );
+  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
+    raw_electroatom_data,
+    bremsstrahlung_energy_grid,
+    scattering_distribution,
+    atomic_number );
 }
 
 // Create the energy loss function

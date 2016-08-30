@@ -33,7 +33,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::Electroatom> ace_electroatom, native_electroatom;
+std::shared_ptr<MonteCarlo::Electroatom> ace_electroatom, native_electroatom;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -862,7 +862,7 @@ int main( int argc, char** argv )
     new MonteCarlo::AtomicExcitationElectronScatteringDistribution(
                       ae_energy_loss_function ) );
 
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ae_reaction(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> ae_reaction(
 	    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
                 energy_grid,
                 ae_cross_section,
@@ -943,7 +943,7 @@ int main( int argc, char** argv )
             xss_data_extractor->extractAtomicNumber() ) );
 
     // Create the scattering distributions
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> b_reaction(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
 	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
                 energy_grid,
                 b_cross_section,
@@ -1019,7 +1019,7 @@ int main( int argc, char** argv )
             new MonteCarlo::AtomicExcitationElectronScatteringDistribution(
                       ae_energy_loss_function ) );
 
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ae_reaction(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> ae_reaction(
 	    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             ae_cross_section,
@@ -1069,7 +1069,7 @@ int main( int argc, char** argv )
 
 
     // Create the bremsstrahlung scattering reaction
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> b_reaction(
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
 	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             b_cross_section,

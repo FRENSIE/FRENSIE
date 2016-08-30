@@ -15,6 +15,9 @@
 // Trillinos Includes
 #include <Teuchos_Array.hpp>
 
+// Boost Includes
+#include <boost/numeric/odeint.hpp>
+
 namespace Utility{
 
 template<typename T>
@@ -59,12 +62,38 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
   //! Constructor
   GaussKronrodIntegrator( const T relative_error_tol,
                           const T absolute_error_tol = 0.0,
-                          const size_t subinterval_limit = 1000,
-                          const bool ignore_errors = false );
+                          const size_t subinterval_limit = 1000 );
 
   //! Destructor
   ~GaussKronrodIntegrator()
   { /* ... */ }
+
+  //! Throw exception on dirty integration
+  void throwExceptionOnDirtyIntegration();
+
+  //! Check if an exception will be thrown on dirty integration
+  bool isExceptionThrownOnDirtyIntegration() const;
+
+  //! Warn on dirty integration (default)
+  void warnOnDirtyIntegration( std::ostream* os_warn = &std::cerr );
+
+  //! Use heuristic roundoff errror estimator (default)
+  void estimateRoundoff();
+
+  //! Don't use heuristic roundoff errror estimator
+  void dontEstimateRoundoff();
+
+  //! Set the realtive error tolerance
+  void setRelativeErrorTolerance( const double relative_error_tol );
+
+  //! Get the relative error tolerance
+  double getRelativeErrorTolerance() const;
+
+  //! Set the absolute error tolerance
+  void setAbsoluteErrorTolerance( const double absolute_error_tol );
+
+  //! Get the absolute error tolerance
+  double getAbsoluteErrorTolerance() const;
 
 /*
   //! Integrate the function
@@ -271,8 +300,14 @@ private:
   // The subinterval limit
   size_t d_subinterval_limit;
 
-  // Bool true = error do not stop the calculation but print warning signs
-  bool d_ignore_errors;
+  // Throw exception on dirty integration
+  bool d_throw_exceptions;
+
+  // Estimate roundoff error and throw exceptions/warnings
+  bool d_estimate_roundoff;
+
+  // The warning output stream
+  std::ostream* d_os_warn;
 
   // return epsilon numerical limit for type T
   T getLimitEpsilon() const;

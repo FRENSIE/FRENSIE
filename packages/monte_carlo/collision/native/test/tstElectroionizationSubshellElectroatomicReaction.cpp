@@ -16,7 +16,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -30,6 +32,11 @@
 
 std::shared_ptr<MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin> >
     ace_first_subshell_reaction, ace_last_subshell_reaction;
+
+std::shared_ptr<MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin> >
+    native_first_subshell_reaction, native_last_subshell_reaction;
+
+double max_ionization_subshell_adjoint_energy;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -157,140 +164,143 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, react_ace )
 //---------------------------------------------------------------------------//
 // Check that the hydrogen differential cross section can be evaluated for the first subshell
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
-                   getDifferentialCrossSection )
+                   getDifferentialCrossSection_ace )
 {
 
   double diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        8.829E-02,
-        1.0E-08 );
-
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        0.0,
-        1e-12 );
+    ace_first_subshell_reaction->getDifferentialCrossSection( 8.829E-02, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 0.0, 1e-12 );
 
   diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        8.829E-02,
-        0.0 );
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1.0, 9.7163E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.143341410953940e1, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        0.0,
-        1e-12 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1.0, 8.145469e-1 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.14334141095394e1, 1e-12 );
 
 
   diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        1.0,
-        9.7163E-02 );
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1.75297e2 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 1.6054362007397e-5, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        2.143341410953940E+01,
-        1e-12 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 9.982461471e4 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 1.6054362007397e-5, 1e-12 );
+
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 888.104518382663, 1e-12 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection(
-        1.0,
-        8.145469E-01 );
+      1.0E+05,
+      max_ionization_subshell_adjoint_energy );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 888.104518382663, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        2.143341410953940E+01,
-        1e-12 );
-
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1e-7 - 1e-10 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 0.0, 1e-12 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection(
-        1.0E+05,
-        1.75297E+02 );
-
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        1.605436200739700E-05,
-        1e-12 );
-
-  diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        1.0E+05,
-        9.982461471000E+04 );
-
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        1.605436200739700E-05,
-        1e-12 );
-
+      1.0E+05,
+      max_ionization_subshell_adjoint_energy+1.0e-10 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 0.0, 1e-12 );
 
   // Test the efficient method
   diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        0,
-        8.829E-02,
-        1.0E-08 );
-
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        0.0,
-        1e-12 );
+    ace_first_subshell_reaction->getDifferentialCrossSection( 0, 8.829E-02, 1.0E-08 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 0.0, 1e-12 );
 
   diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        0,
-        8.829E-02,
-        0.0 );
-
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        0.0,
-        1e-12 );
-
+    ace_first_subshell_reaction->getDifferentialCrossSection( 2, 1.0, 9.7163E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.143341410953940E+01, 1e-12 );
 
   diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        2,
-        1.0,
-        9.7163E-02 );
-
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        2.143341410953940E+01,
-        1e-12 );
+    ace_first_subshell_reaction->getDifferentialCrossSection( 2, 1.0, 8.145469E-01 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.143341410953940E+01, 1e-12 );
 
   diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        2,
-        1.0,
-        8.145469E-01 );
-
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        2.143341410953940E+01,
-        1e-12 );
-
+    ace_first_subshell_reaction->getDifferentialCrossSection( 4, 1.0E+05, 1.75297E+02 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 1.605436200739700E-05, 1e-12 );
 
   diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        4,
-        1.0E+05,
-        1.75297E+02 );
+    ace_first_subshell_reaction->getDifferentialCrossSection( 4, 1e5, 9.982461471e4 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 1.6054362007397e-5, 1e-12 );
+}
 
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        1.605436200739700E-05,
-        1e-12 );
+//---------------------------------------------------------------------------//
+// Check that the hydrogen differential cross section can be evaluated for the first subshell
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
+                   getDifferentialCrossSection_native )
+{
+
+  // First subshell
+  double diff_cross_section =
+    native_first_subshell_reaction->getDifferentialCrossSection(
+        1.70425200079801E-03,
+        8.52126000399011E-04 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 1.01660010790657252e+08 );
 
   diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection(
-        4,
-        1.0E+05,
-        9.982461471000E+04 );
+    native_first_subshell_reaction->getDifferentialCrossSection(
+        1.70425200079802E-03,
+        8.52126000399011E-04 );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
-        diff_cross_section,
-        1.605436200739700E-05,
-        1e-12 );
+  TEST_EQUALITY_CONST( diff_cross_section, 1.01660010790654704e+08 );
+
+  diff_cross_section =
+    native_first_subshell_reaction->getDifferentialCrossSection(
+        1.98284583249127E-03,
+        8.52126000399011E-04 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 6.92755090629492700e+07 );
+
+  diff_cross_section =
+    native_first_subshell_reaction->getDifferentialCrossSection(
+        2.00191878322064E-03,
+        8.52126000399011E-04 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 3.89961071404388276e+04 );
+
+
+  // Last subshell
+  diff_cross_section =
+    native_last_subshell_reaction->getDifferentialCrossSection(
+        0.0025118800000459599528,
+        0.0012514500000459765489 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32396789475891292e+07 );
+
+  diff_cross_section =
+    native_last_subshell_reaction->getDifferentialCrossSection(
+        0.0025118800000459773,
+        0.0012514500000459765489 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32396789475886412e+07 );
+
+  diff_cross_section =
+    native_last_subshell_reaction->getDifferentialCrossSection(
+        0.002511885,
+        0.0012514500000459765489 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32396343619434685e+07 );
+
+  diff_cross_section =
+    native_last_subshell_reaction->getDifferentialCrossSection(
+        0.0025118897153524992472,
+        0.0012514500000459765489 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32395923140572794e+07 );
+
+  diff_cross_section =
+    native_last_subshell_reaction->getDifferentialCrossSection(
+        0.0025118908794333669708,
+        0.0012514500000459765489 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32395845012092143e+07 );
 }
 
 //---------------------------------------------------------------------------//
@@ -298,7 +308,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  std::string test_ace_file_name, test_ace_table_name, test_native_file_name;
 
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
@@ -308,6 +318,9 @@ int main( int argc, char** argv )
   clp.setOption( "test_ace_table",
 		 &test_ace_table_name,
 		 "Test ACE table name" );
+  clp.setOption( "test_native_file",
+		 &test_native_file_name,
+		 "Test Native file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -320,6 +333,8 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
+  // Create ACE distribution
+  {
   // Create a file handler and data extractor
   std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
@@ -443,6 +458,11 @@ int main( int argc, char** argv )
                                            first_subshell_function,
                                            binding_energies[first_subshell] ) );
 
+  double binding_energy = binding_energies[first_subshell];
+
+  // Set the max allowed adjoint energy
+  max_ionization_subshell_adjoint_energy = 9.99999117099E+04;
+
   // Create the reaction
   ace_first_subshell_reaction.reset(
     new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
@@ -543,7 +563,108 @@ int main( int argc, char** argv )
   // Clear setup data
   ace_file_handler.reset();
   xss_data_extractor.reset();
+  }
 
+  // Create Native distribution
+  {
+    // Create the native data file container
+    std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container;
+    data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
+						     test_native_file_name ) );
+
+    // Extract the common electron energy grid
+    Teuchos::ArrayRCP<double> energy_grid;
+    energy_grid.assign(
+      data_container->getElectronEnergyGrid().begin(),
+      data_container->getElectronEnergyGrid().end() );
+
+    // Create the hash-based grid searcher
+    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+                  energy_grid,
+                  energy_grid[0],
+                  energy_grid[energy_grid.size()-1],
+                  energy_grid.size()/10 + 1 ) );
+
+  // Extract the subshell information
+  std::set<unsigned> subshells = data_container->getSubshells();
+
+  std::set<unsigned>::iterator shell = data_container->getSubshells().begin();
+
+    // Convert subshell number to enum
+    Data::SubshellType subshell_type =
+      Data::convertENDFDesignatorToSubshellEnum( *shell );
+
+    // Electroionization cross section
+    Teuchos::ArrayRCP<double> subshell_cross_section;
+    subshell_cross_section.assign(
+        data_container->getElectroionizationCrossSection( *shell ).begin(),
+        data_container->getElectroionizationCrossSection( *shell ).end() );
+
+    // Electroionization cross section threshold energy bin index
+    unsigned threshold_energy_index =
+        data_container->getElectroionizationCrossSectionThresholdEnergyIndex(
+        *shell );
+
+    // The electroionization subshell distribution
+    std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+        electroionization_subshell_distribution;
+
+    // Create the electroionization subshell distribution
+    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
+        *data_container,
+        *shell,
+        data_container->getSubshellBindingEnergy( *shell ),
+        electroionization_subshell_distribution );
+
+
+    // Create the subshell electroelectric reaction
+    native_first_subshell_reaction.reset(
+        new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+                energy_grid,
+                subshell_cross_section,
+                threshold_energy_index,
+                grid_searcher,
+                subshell_type,
+                electroionization_subshell_distribution ) );
+
+  // For the last subshell
+  shell = data_container->getSubshells().end();
+  --shell;
+
+    // Convert subshell number to enum
+    subshell_type =
+      Data::convertENDFDesignatorToSubshellEnum( *shell );
+
+    // Electroionization cross section
+    subshell_cross_section.assign(
+        data_container->getElectroionizationCrossSection( *shell ).begin(),
+        data_container->getElectroionizationCrossSection( *shell ).end() );
+
+    // Electroionization cross section threshold energy bin index
+    threshold_energy_index =
+        data_container->getElectroionizationCrossSectionThresholdEnergyIndex(
+        *shell );
+
+    // Create the electroionization subshell distribution
+    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
+        *data_container,
+        *shell,
+        data_container->getSubshellBindingEnergy( *shell ),
+        electroionization_subshell_distribution );
+
+
+    // Create the subshell electroelectric reaction
+    native_last_subshell_reaction.reset(
+        new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+                energy_grid,
+                subshell_cross_section,
+                threshold_energy_index,
+                grid_searcher,
+                subshell_type,
+                electroionization_subshell_distribution ) );
+
+  }
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 

@@ -112,7 +112,14 @@ double BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>
   testPrecondition( outgoing_energy >= 0.0 );
   testPrecondition( outgoing_energy <= incoming_energy );
 
+  if ( !this->isEnergyWithinEnergyGrid( incoming_energy ) )
+    return 0.0;
+
   double outgoing_photon_energy = incoming_energy - outgoing_energy;
+
+  // If the photon energy is less than the tables min photon energy return 0
+  if ( outgoing_photon_energy < 1e-7 )
+    return 0.0; 
 
   double cross_section = this->getCrossSection( incoming_energy );
 
@@ -134,6 +141,9 @@ double BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>
   // Make sure the energies are valid
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy <= incoming_energy );
+
+  if ( !this->isEnergyWithinEnergyGrid( incoming_energy ) )
+    return 0.0;
 
   double outgoing_photon_energy = incoming_energy - outgoing_energy;
 

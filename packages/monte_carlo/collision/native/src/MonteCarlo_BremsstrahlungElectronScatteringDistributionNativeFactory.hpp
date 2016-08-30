@@ -16,10 +16,17 @@
 namespace MonteCarlo{
 
 //! The bremsstrahlung scattering distribution factory class that uses Native data
-class BremsstrahlungElectronScatteringDistributionNativeFactory //: public BremsstrahlungElectronScatteringDistributionFactory
+class BremsstrahlungElectronScatteringDistributionNativeFactory
 {
 
 public:
+
+  //! Create a simple dipole bremsstrahlung distribution
+  static void createBremsstrahlungDistribution(
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const std::vector<double>& bremsstrahlung_energy_grid,
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+		        	  scattering_distribution );
 
   //! Create a simple dipole bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
@@ -34,10 +41,18 @@ public:
         scattering_distribution,
     const int atomic_number );
 
+  //! Create a detailed 2BS bremsstrahlung distribution
+  static void createBremsstrahlungDistribution(
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const std::vector<double>& bremsstrahlung_energy_grid,
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+        scattering_distribution,
+    const int atomic_number );
+
   //! Create the energy loss function
   static void createEnergyLossFunction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const std::vector<double> energy_grid,
+    const std::vector<double> bremsstrahlung_energy_grid,
     BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
         energy_loss_function );
 };

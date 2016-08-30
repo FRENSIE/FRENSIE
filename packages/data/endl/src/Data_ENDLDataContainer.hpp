@@ -362,6 +362,9 @@ public:
   const std::vector<double>& getElectroionizationAverageRecoilElectronEnergy(
                            const unsigned subshell ) const;
 
+  //! Return the electroionization incident energy grid for the recoil electron spectrum for all subshells
+  const std::map<unsigned,std::vector<double> >& getElectroionizationRecoilEnergyGrid() const;
+
   //! Return the electroionization incident energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getElectroionizationRecoilEnergyGrid(
                            const unsigned subshell ) const;

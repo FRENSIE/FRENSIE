@@ -18,8 +18,8 @@
 
 // FRENSIE Includes
 #include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp"
-#include "DataGen_AdjointBremsstrahlungCrossSectionEvaluator.hpp"
-#include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp"
+#include "DataGen_AdjointElectronCrossSectionEvaluator.hpp"
+#include "DataGen_AdjointElectronDistributionGenerator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
@@ -27,6 +27,8 @@
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
+#include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 
 namespace DataGen{
 
@@ -35,6 +37,18 @@ class StandardAdjointElectronPhotonRelaxationDataGenerator : public AdjointElect
 {
 
 public:
+
+  typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>
+    ElectroionizationReaction;
+
+  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> 
+    BremsstrahlungReaction;
+
+  typedef DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>
+    BremsstrahlungEvaluator;
+
+  typedef DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction>
+    ElectroionizationEvaluator;
 
   //! Advanced Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
@@ -56,6 +70,10 @@ public:
   //! Destructor
   virtual ~StandardAdjointElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
+
+  ///////////////////////
+  // Photon Table Data //
+  ///////////////////////
 
   //! Set the adjoint pair production energy dist. norm const. evaluation tol.
   void setAdjointPairProductionEnergyDistNormConstEvaluationTolerance(
@@ -125,38 +143,113 @@ public:
   //! Get the adjoint incoherent grid distance tolerance
   double getAdjointIncoherentGridDistanceTolerance() const;
 
-  //! Set the cutoff angle cosine above which screened rutherford is used
-  void setCutoffAngleCosine( const double cutoff_angle_cosine );
+  /////////////////////////
+  // Electron Table Data //
+  /////////////////////////
 
   //! Get the cutoff angle cosine above which screened rutherford is used
   double getCutoffAngleCosine() const;
 
-  //! Set the number of moment preserving angles
-  void setNumberOfMomentPreservingAngles(
-                           const unsigned number_of_moment_preserving_angles );
-
   //! Get the number of moment preserving angles
   unsigned getNumberOfMomentPreservingAngles() const;
+
+  //! Set the adjoint electron grid convergence tolerance
+  void setAdjointElectronGridConvergenceTolerance(
+                        const double adjoint_electron_grid_convergence_tol );
+
+  //! Get the adjoint electron grid convergence tolerance
+  double getAdjointElectronGridConvergenceTolerance() const;
+
+  //! Set the adjoint electron absolute diff tolerance
+  void setAdjointElectronAbsoluteDifferenceTolerance(
+                        const double adjoint_electron_absolute_diff_tol );
+
+  //! Get the adjoint electron absolute diff tolerance
+  double getAdjointElectronAbsoluteDifferenceTolerance() const;
+
+  //! Set the adjoint electron distance tolerance
+  void setAdjointElectronDistanceTolerance(
+                        const double adjoint_electron_distance_tol );
+
+  //! Get the adjoint electron distance tolerance
+  double getAdjointElectronDistanceTolerance() const;
+
+  //! Set the adjoint bremsstrahlung max energy nudge value
+  void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
   
-  //! Set the evaluation tolerance for the adjoint bremsstrahlung cross section
-  void setAdjointBremsstrahlungCrossSectionEvaluationTolerance(
-                                           const double evaluation_tolerance );
-  
-  //! Get the evaluation tolerance for the adjoint bremsstrahlung cross section
-  double getAdjointBremsstrahlungCrossSectionEvaluationTolerance() const;
+  //! Return the adjoint bremsstrahlung max energy nudge value
+  double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
+
+  //! Set the adjoint bremsstrahlung energy to outgoing energy nudge value
+  void setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
+                          const double energy_to_outgoing_energy_nudge_value );
+
+  //! Return the adjoint bremsstrahlung energy to outgoing energy nudge value
+  double getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const;
+
+  //! Set the adjoint bremsstrahlung cross section evaluation tolerance
+  void setAdjointBremsstrahlungEvaluationTolerance( const double evaluation_tol );
+
+  //! Return the adjoint bremsstrahlung cross section evaluation tolerance
+  double getAdjointBremsstrahlungEvaluationTolerance() const;
+
+  //! Set the adjoint bremsstrahlung grid convergence tolerance
+  void setAdjointBremsstrahlungGridConvergenceTolerance(
+                                                const double convergence_tol );
+
+  //! Return the adjoint bremsstrahlung grid convergence tolerance
+  double getAdjointBremsstrahlungGridConvergenceTolerance() const;
+
+  //! Set the adjoint bremsstrahlung absolute difference tolerance
+  void setAdjointBremsstrahlungAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
+
+  //! Get the adjoint bremsstrahlung absolute difference tolerance
+  double getAdjointBremsstrahlungAbsoluteDifferenceTolerance() const;
+
+  //! Set the adjoint bremsstrahlung distance tolerance
+  void setAdjointBremsstrahlungDistanceTolerance( const double distance_tol );
+
+  //! Get the adjoint bremsstrahlung distance tolerance
+  double getAdjointBremsstrahlungDistanceTolerance() const;
+
+  //! Set the adjoint electroionization cross section evaluation tolerance
+  void setAdjointElectroionizationEvaluationTolerance( const double evaluation_tol );
+
+  //! Return the adjoint electroionization cross section evaluation tolerance
+  double getAdjointElectroionizationEvaluationTolerance() const;
+
+  //! Set the adjoint electroionization grid convergence tolerance
+  void setAdjointElectroionizationGridConvergenceTolerance(
+                                                const double convergence_tol );
+
+  //! Return the adjoint electroionization grid convergence tolerance
+  double getAdjointElectroionizationGridConvergenceTolerance() const;
+
+  //! Set the adjoint electroionization absolute difference tolerance
+  void setAdjointElectroionizationAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
+
+  //! Get the adjoint electroionization absolute difference tolerance
+  double getAdjointElectroionizationAbsoluteDifferenceTolerance() const;
+
+  //! Set the adjoint electroionization distance tolerance
+  void setAdjointElectroionizationDistanceTolerance( const double distance_tol );
+
+  //! Get the adjoint electroionization distance tolerance
+  double getAdjointElectroionizationDistanceTolerance() const;
+
+
 
   //! Populate the adjoint electron-photon-relaxation data container
   void populateEPRDataContainer(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  //! Repopulate the adjoint electron moment preserving data
-  static void repopulateAdjointMomentPreservingData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const double cutoff_angle_cosine = 0.9,
-    const unsigned number_of_moment_preserving_angles = 1,
-    std::ostream& os_log = std::cout );
-  
 protected:
+
+  //! Set the table data
+  void setTableData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   //! Set the adjoint atomic data
   void setAdjointRelaxationData(
@@ -196,6 +289,41 @@ private:
 
   // The if a value is not equal to zero
   static bool notEqualZero( const double value );
+
+// Find the lower and upper bin boundary for a min and max energy
+  void findLowerAndUpperBinBoundary(
+    const double min_energy,
+    const double max_energy,
+    const std::vector<double>& energy_distribution,
+    std::vector<double>::const_iterator& lower_energy_boundary,
+    std::vector<double>::const_iterator& upper_energy_boundary ) const;
+
+  // Create the cross section on the union energy grid
+  void createCrossSectionOnUnionEnergyGrid(
+          const std::list<double>& union_energy_grid,
+          const std::shared_ptr<const Utility::OneDDistribution>& cs_evaluator,
+          std::vector<double>& cross_section ) const;
+
+  // Create the cross section on the union energy grid
+  template<typename Functor>
+  void createCrossSectionOnUnionEnergyGrid(
+   const std::list<double>& union_energy_grid,
+   Functor& adjoint_cross_section_functor,
+   std::vector<double>& cross_section,
+   unsigned& threshold_index ) const;
+
+  // Update the cross section on the union energy grid
+  template<typename Functor>
+  void updateCrossSectionOnUnionEnergyGrid(
+   const std::list<double>& union_energy_grid,
+   const std::list<double>& old_union_energy_grid,
+   const std::vector<double>& old_cross_section,
+   Functor& adjoint_cross_section_functor,
+   std::vector<double>& cross_section,
+   unsigned& threshold_index ) const;
+
+  // Initialize table generation data
+  void initializeTableGenerationData();
 
   ////////////////////
   // Photon Methods //
@@ -240,9 +368,9 @@ private:
 
   // Update the adjoint photon union energy grid
   void updateAdjointPhotonUnionEnergyGrid(
-                        std::list<double>& union_energy_grid,
-                        const std::shared_ptr<const Utility::OneDDistribution>&
-                        cs_evaluator ) const;
+        std::list<double>& union_energy_grid,
+        const std::shared_ptr<const Utility::OneDDistribution>&
+        cs_evaluator ) const;
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
@@ -257,12 +385,6 @@ private:
           const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
           std::vector<std::vector<double> >& max_energy_grid,
           std::vector<std::vector<double> >& cross_section ) const;
-
-  // Create the cross section on the union energy grid
-  void createCrossSectionOnUnionEnergyGrid(
-          const std::list<double>& union_energy_grid,
-          const std::shared_ptr<const Utility::OneDDistribution>& cs_evaluator,
-          std::vector<double>& cross_section ) const;
 
   // Calculate the impulse approx total incoherent adjoint cross section
   void calculateAdjointImpulseApproxTotalIncoherentCrossSection(
@@ -284,105 +406,58 @@ private:
   // Electron Methods //
   //////////////////////
 
-  // Set the electron cross section union energy grid
-  void setAdjointElectronCrossSectionsData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    bool recalculate_union_energy_grid = false ) const;
-
-  // Set the adjoint moment preserving data
-  static void setAdjointMomentPreservingData(
-    std::vector<double>& elastic_energy_grid,
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container );
-
   // Initialize the electron union energy grid
   void initializeAdjointElectronUnionEnergyGrid(
      const Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
-
-  // Create the cross section on the union energy grid
-  void createCrossSectionOnUnionEnergyGrid(
-   const std::list<double>& union_energy_grid,
-   const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
-   std::vector<double>& cross_section,
-   unsigned& threshold_index ) const;
-  
-  // Create the cross section on the union energy grid
-  void createCrossSectionOnUnionEnergyGrid(
-   const std::list<double>& union_energy_grid,
-   const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
-        adjoint_bremsstrahlung_cs_evaluator,
-   std::vector<double>& cross_section,
-   unsigned& threshold_index ) const;
-
-  // Create the cross section on the union energy grid
-  void createCrossSectionOnUnionEnergyGrid(
-   const std::list<double>& union_energy_grid,
-   const std::list<double>& old_union_energy_grid,
-   const std::vector<double>& old_cross_section,
-   const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
-        adjoint_bremsstrahlung_cs_evaluator,
-   std::vector<double>& cross_section,
-   unsigned& threshold_index ) const;
-
-  // Merge the electron union energy grid
-  void mergeAdjointElectronUnionEnergyGrid(
-    const std::vector<double>& energy_grid,
-    std::list<double>& union_energy_grid ) const;
-
-  // Calculate the elastic anglular distribution for the angle cosine
-  void calculateElasticAngleCosine(
-    const std::vector<double>& raw_elastic_angle,
-    const std::vector<double>& raw_elastic_pdf,
-    std::vector<double>& elastic_angle,
-    std::vector<double>& elastic_pdf ) const;
-
-  // Generate elastic moment preserving discrete angle cosines and weights
-  static void evaluateDisceteAnglesAndWeights(
-    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
-    const double& energy,
-    const int& number_of_moment_preserving_angles,
-    std::vector<double>& discrete_angles,
-    std::vector<double>& weights,
-    double& cross_section_reduction );
-
-  // Generate adjoint elastic moment preserving cross section
-  static void evaluateAdjointMomentPreservingCrossSection(
-    const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
-        analog_reaction,
-    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>&
-        analog_distribution,
-    const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
-    const double cutoff_angle_cosine,
-    const unsigned threshold_energy_index,
-    std::vector<double>& moment_preserving_cross_section );
+ 
+  // Create the adjoint atomic excitation cross section distribution
+  void createAdjointAtomicExcitationCrossSectionDistribution(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
+    std::shared_ptr<const Utility::OneDDistribution>&
+        adjoint_excitation_cross_section_distribution ) const;
 
   // Create the adjoint bremsstrahlung cross section evaluator
   void createAdjointBremsstrahlungCrossSectionEvaluator(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>&
-        adjoint_bremsstrahlung_cs_evaluator ) const;
-
-  // Generate adjoint bremsstrahlung photon energy distribution
-  void evaluateAdjointBremsstrahlungPhotonDistribution(
-    const double incoming_adjoint_energy,
-    const unsigned bin_index,
-    const unsigned threshold_energy_index,
-    const Teuchos::ArrayRCP<const double>& adjoint_cross_section,
-    const Teuchos::ArrayRCP<const double>& adjoint_electron_energy_grid,
-    const std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
+    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
+    std::shared_ptr<BremsstrahlungEvaluator>&
         adjoint_bremsstrahlung_cs_evaluator,
-    const std::vector<double>& adjoint_bremsstrahlung_photon_energy,
-    std::vector<double>& adjoint_bremsstrahlung_pdf ) const;
+    boost::function<double (double)>& bremsstrahlung_grid_function ) const;
+
+  // Set the electroionization data on union energy grid
+  template<typename Functor>
+  void setAdjointBremsstrahlungData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const std::list<double>& old_union_energy_grid,
+    const std::vector<double>& old_cross_section,
+    const std::list<double>& union_energy_grid,
+    const Functor& grid_function,
+    const std::shared_ptr<BremsstrahlungEvaluator>& cs_evaluator,
+    const std::vector<double>& electron_energy_grid ) const;
 
   // Create the adjoint electroionization subshell cross section evaluator
   void createAdjointElectroionizationSubshellCrossSectionEvaluator(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    std::shared_ptr<DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator>&
-        adjoint_electroionization_cs_evaluator ) const;
+    const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
+    std::shared_ptr<ElectroionizationEvaluator>&
+        adjoint_electroionization_cs_evaluator,
+    boost::function<double (double)>& ionization_grid_function,
+    const unsigned shell ) const;
 
-  // The threshold energy nudge factor
-  static const double s_threshold_energy_nudge_factor;
+  // Set the electroionization data on union energy grid
+  template<typename Functor>
+  void setAdjointElectroionzationData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const std::list<double>& old_union_energy_grid,
+    const std::vector<double>& old_cross_section,
+    const std::list<double>& union_energy_grid,
+    const Functor& grid_function,
+    const std::shared_ptr<ElectroionizationEvaluator>& cs_evaluator,
+    const std::vector<double>& electron_energy_grid,
+    const unsigned subshell ) const;
 
   // The forward data
   std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
@@ -421,18 +496,44 @@ private:
   // The adjoint incoherent grid distance tolerance
   double d_adjoint_incoherent_grid_distance_tol;
 
-  // The cutoff angle cosine above which screened rutherford is used
-  double d_cutoff_angle_cosine;
+  // The adjoint electron grid convergence tolerance
+  double d_adjoint_electron_grid_convergence_tol;
 
-  // The number of moment preserving angles
-  unsigned d_number_of_moment_preserving_angles;
+  // The adjoint electron absolute diff tolerance
+  double d_adjoint_electron_absolute_diff_tol;
+
+  // The adjoint electron distance tolerance
+  double d_adjoint_electron_distance_tol;
+
+  // The adjoint bremsstrahlung max energy nudge value
+  double d_adjoint_bremsstrahlung_max_energy_nudge_value;
+
+  // The adjoint bremsstrahlung energy to outgoing energy nudge value
+  double d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value;
 
   // The evaluation tolerance for the adjoint bremsstrahlung cross sections
-  double d_adjoint_bremsstrahlung_evaluation_tolerance;
+  double d_adjoint_bremsstrahlung_evaluation_tol;
 
-  // The adjoint bremsstrahlung cross section evaluator
-  std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
-    d_adjoint_bremsstrahlung_cs_evaluator;
+  // The adjoint bremsstrahlung grid convergence tolerance for the scattering distribution
+  double d_adjoint_bremsstrahlung_grid_convergence_tol;
+
+  // The adjoint bremsstrahlung absolute diff tolerance for the scattering distribution
+  double d_adjoint_bremsstrahlung_absolute_diff_tol;
+
+  // The adjoint bremsstrahlung distance tolerance for the scattering distribution
+  double d_adjoint_bremsstrahlung_distance_tol;
+
+  // The evaluation tolerance for the adjoint electroionization cross sections
+  double d_adjoint_electroionization_evaluation_tol;
+
+  // The adjoint electroionization grid convergence tolerance for the scattering distribution
+  double d_adjoint_electroionization_grid_convergence_tol;
+
+  // The adjoint electroionization absolute diff tolerance for the scattering distribution
+  double d_adjoint_electroionization_absolute_diff_tol;
+
+  // The adjoint electroionization distance tolerance for the scattering distribution
+  double d_adjoint_electroionization_distance_tol;
 };
 
 // Test if a value is greater than or equal to one
@@ -459,6 +560,14 @@ inline bool StandardAdjointElectronPhotonRelaxationDataGenerator::notEqualZero(
 }
 
 } // end DataGen namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end DATA_GEN_STANDARD_ADJOINT_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 

@@ -26,12 +26,13 @@ template<typename T>
 GaussKronrodIntegrator<T>::GaussKronrodIntegrator(
     const T relative_error_tol,
     const T absolute_error_tol,
-    const size_t subinterval_limit,
-    const bool ignore_errors )
+    const size_t subinterval_limit )
   : d_relative_error_tol( relative_error_tol ),
     d_absolute_error_tol( absolute_error_tol ),
     d_subinterval_limit( subinterval_limit ),
-    d_ignore_errors( ignore_errors )
+    d_os_warn( &std::cerr ),
+    d_throw_exceptions(false),
+    d_estimate_roundoff(true)
 {
   // Make sure the error tolerances are valid
   testPrecondition( relative_error_tol >= (T)0 );
@@ -45,6 +46,96 @@ GaussKronrodIntegrator<T>::GaussKronrodIntegrator(
       d_relative_error_tol < 0.5e-28L),
       Utility::IntegratorException,
       "tolerance cannot be acheived with given relative_error_tol and absolute_error_tol" );
+}
+
+// Throw exception on dirty integration
+/*! \details "Dirty Integration" has occured if the absolute or relative error
+ * tolerance was not been reached, the subinterval limit was reached before the
+ * given tolerance, or the roundoff error was too high for the given tolerance
+ * to be reached. This type of integration should be avoided because the 
+ * tolerance ask for was not reached.
+ */
+template<typename T>
+void GaussKronrodIntegrator<T>::throwExceptionOnDirtyIntegration()
+{
+  d_throw_exceptions = true;
+}
+
+// Check if an exception will be thrown on dirty integration
+template<typename T>
+bool GaussKronrodIntegrator<T>::isExceptionThrownOnDirtyIntegration() const
+{
+  return d_throw_exceptions;
+}
+
+// Warn on dirty integration (default)
+/*! \details "Dirty Integration" has occured if the absolute or relative error
+ * tolerance was not been reached, the subinterval limit was reached before the
+ * given tolerance, or the roundoff error was too high for the given tolerance
+ * to be reached. This type of integration should be avoided because the 
+ * tolerance ask for was not reached.
+ */
+template<typename T>
+void GaussKronrodIntegrator<T>::warnOnDirtyIntegration( std::ostream* os_warn )
+{
+  // Make sure the warning stream is valid
+  testPrecondition( os_warn != NULL );
+  
+  d_throw_exceptions = false;
+
+  d_os_warn = os_warn;
+}
+
+// Use heuristic roundoff errror estimator (default)
+template<typename T>
+void GaussKronrodIntegrator<T>::estimateRoundoff()
+{
+  d_estimate_roundoff = true;
+}
+
+// Don't use heuristic roundoff errror estimator
+template<typename T>
+void GaussKronrodIntegrator<T>::dontEstimateRoundoff()
+{
+  d_estimate_roundoff = false;
+}
+
+// Set the relative error tolerance
+template<typename T>
+void GaussKronrodIntegrator<T>::setRelativeErrorTolerance(
+                                              const double relative_error_tol )
+{
+  // Make sure the relative error tolerance is valid
+  testPrecondition( relative_error_tol <= 1.0 );
+  testPrecondition( relative_error_tol > 0.0 );
+
+  d_relative_error_tol = relative_error_tol;
+}
+
+// Get the relative error tolerance
+template<typename T>
+double GaussKronrodIntegrator<T>::getRelativeErrorTolerance() const
+{
+  return d_relative_error_tol;
+}
+
+// Set the absolute error tolerance
+template<typename T>
+void GaussKronrodIntegrator<T>::setAbsoluteErrorTolerance(
+                                               const double absolute_error_tol )
+{
+  // Make sure the absolute error tolerance is valid
+  testPrecondition( absolute_error_tol <= 1.0 );
+  testPrecondition( absolute_error_tol >= 0.0 );
+
+  d_absolute_error_tol = absolute_error_tol;
+}
+
+// Get the absolute error tolerance
+template<typename T>
+double GaussKronrodIntegrator<T>::getAbsoluteErrorTolerance() const
+{
+  return d_absolute_error_tol;
 }
 
 // Rescale absolute error from integration
@@ -116,6 +207,13 @@ void GaussKronrodIntegrator<T>::sortBins(
     smaller_error = bin_2.error;
   }
 
+  if ( bin_order.size() == 1 )
+  {
+    bin_order[0] = 0;
+    bin_order.push_back(1);
+    return;
+  }
+
   // remove old interval from list
   bin_order.remove( nr_max );
 
@@ -130,7 +228,6 @@ void GaussKronrodIntegrator<T>::sortBins(
   {
     nr_max--; //reduce nr_max if the bin above it has larger error
   }
-
 
   int start_bin;
   if ( original_nr_max > nr_max )
@@ -150,17 +247,19 @@ void GaussKronrodIntegrator<T>::sortBins(
    *  subdivisions still allowed.
    */
   Teuchos::Array<int>::iterator max_bin;
+
   if ( (d_subinterval_limit/2+2) < bin_order.size()-1 )
     max_bin = bin_order.begin() + ( d_subinterval_limit - bin_order.size() );
   else
+  {
     max_bin = bin_order.end();
+  }
 
   Teuchos::Array<int>::iterator large_bin = bin_order.begin()+start_bin;
   while ( large_bin != max_bin && larger_error < bin_array[*large_bin].error )
   {
     large_bin++;
   }
-
   bin_order.insert( large_bin, bin_with_larger_error );
   max_bin;
 
@@ -352,6 +451,15 @@ void GaussKronrodIntegrator<T>::getWynnEpsilonAlgorithmExtrapolation(
 
 
 // check the roundoff error
+/*! \details A heuristic check for roundoff error is done. If the change in the
+ * integral estimate is small (<= 1e-5) and the change in error estimate is
+ * small ( >= 99% the original error ) after a bin division, then round_off_1
+ * is incremented by 1. When round_off_1 > 10 it is assumed that roundoff error
+ * has prevented the tolerence from being reached. If it is after the 10th
+ * iteration and the error increases after a bin division, then round_off_2 is
+ * incremented by 1. When round_off_2 > 20 it is assumed that roundoff error
+ * has prevented the tolerence from being reached.
+ */
 template<typename T>
 void GaussKronrodIntegrator<T>::checkRoundoffError(
                        const BinTraits<T>& bin,
@@ -380,16 +488,62 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
        }
      }
 
-    if ( !d_ignore_errors )
+    // Check if the round_off_1 heuristic limit was reached - dirty integration
+    if ( round_off_1 >= 6 )
     {
-      TEST_FOR_EXCEPTION( round_off_1 >= 6 || round_off_2 >= 20,
-                          Utility::IntegratorException,
-                          "Roundoff error prevented tolerance from being achieved" );
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " Roundoff error prevented tolerance from being achieved: "
+          << "The integration and error estimates have minimal change - "
+          << "round_off_1 = " << round_off_1 << " >= 6";
+
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                         "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      }
+    }
+
+    // Check if the round_off_2 heuristic limit was reached - dirty integration
+    if ( round_off_2 >= 20 )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " Roundoff error prevented tolerance from being achieved: "
+          << "The error estimate keeps increasing - "
+          << "round_off_2 = " << round_off_2 << " >= 20";
+
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                         "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      }
     }
 };
 
 
-// check the roundoff error
+// check the roundoff error for a extrapolated integration
+/*! \details A heuristic check for roundoff error is done. If the change in the
+ * integral estimate is small (<= 1e-5) and the change in error estimate is
+ * small ( >= 99% the original error ) after a bin division, then round_off_1
+ * is incremented by 1 unless it is an extrapolated bin, then 
+ * extrapolated_round_off_1 is incremented by 1. When round_off_1 +
+ * extrapolated_round_off_1 > 10 it is assumed that roundoff error
+ * has prevented the tolerence from being reached. If it is after the 10th
+ * iteration and the error increases after a bin division, then round_off_2 is
+ * incremented by 1. When round_off_2 > 20 it is assumed that roundoff error
+ * has prevented the tolerence from being reached.
+ */
 template<typename T>
 void GaussKronrodIntegrator<T>::checkRoundoffError(
                        const ExtrpolatedBinTraits<T>& bin,
@@ -398,54 +552,95 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
                        const T& bin_1_asc,
                        const T& bin_2_asc,
                        int& round_off_1,
+                       int& extrapolated_round_off_1,
                        int& round_off_2,
-                       int& round_off_3,
                        const bool extrapolate,
                        const int number_of_iterations ) const
 {
-    if (bin_1_asc != bin_1.error && bin_2_asc != bin_2.error)
-    {
-       T area_12 = bin_1.result + bin_2.result;
-       T error_12 = bin_1.error + bin_2.error;
-       T delta = bin.result - area_12;
-
-       if ( fabs (delta) <= (1/100000.0) * fabs (area_12) &&
-            error_12 >= (99/100.0) * bin.error )
-       {
-         if ( extrapolate )
-           round_off_2++;
-        else
-           round_off_1++;
-       }
-       if ( number_of_iterations >= 10 && error_12 > bin.error )
-       {
-          round_off_3++;
-       }
-     }
-
-    if ( !d_ignore_errors )
-    {
-      TEST_FOR_EXCEPTION( 10 <= round_off_1 + round_off_2 || 20 <= round_off_3,
-                          Utility::IntegratorException,
-                          "Roundoff error prevented tolerance from being achieved" );
-
-      TEST_FOR_EXCEPTION( 5 <= round_off_2,
-                          Utility::IntegratorException,
-                          "Extremely bad integrand behavior occurs at some points "
-                          "of the integration interval" );
-    }
-  else
+  if (bin_1_asc != bin_1.error && bin_2_asc != bin_2.error)
   {
-    if ( 10 <= round_off_1 + round_off_2 || 20 <= round_off_3 )
+    T area_12 = bin_1.result + bin_2.result;
+    T error_12 = bin_1.error + bin_2.error;
+    T delta = bin.result - area_12;
+
+    if ( fabs (delta) <= (1/100000.0) * fabs (area_12) &&
+        error_12 >= (99/100.0) * bin.error )
     {
-       std::cout << "Warning: "
-        << "Roundoff error prevented tolerance from being achieved" << std::endl;
+      if ( extrapolate )
+        extrapolated_round_off_1++;
+    else
+        round_off_1++;
     }
-    if ( round_off_1 >= 6 || round_off_2 >= 20 )
+    if ( number_of_iterations >= 10 && error_12 > bin.error )
     {
-       std::cout << "Warning: "
-        << "Extremely bad integrand behavior occurs at some points "
-        << "of the integration interval" << std::endl;
+      round_off_2++;
+    }
+  }
+
+  if ( d_estimate_roundoff )
+  {
+    // Check if the round_off_1 + extrapolated_round_off_1 heuristic limit was reached - dirty integration
+    if ( round_off_1 + extrapolated_round_off_1 >= 10 )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " Roundoff error prevented tolerance from being achieved: "
+          << "The integration and error estimates have minimal change - "
+          << "round_off_1 + extrapolated_round_off_1 = "
+          << round_off_1 + extrapolated_round_off_1 << " >= 10";
+
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                         "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      }
+    }
+
+    // Check if the round_off_2 heuristic limit was reached - dirty integration
+    if ( round_off_2 >= 20 )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " Roundoff error prevented tolerance from being achieved: "
+          << "The error estimate keeps increasing - "
+          << "round_off_2 = " << round_off_2 << " >= 20";
+
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                         "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      }
+    }
+
+    // Check if the extrapolated_round_off_1 heuristic limit was reached - dirty integration
+    if ( extrapolated_round_off_1 >= 5 )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " Roundoff error prevented tolerance from being achieved: "
+          << "Extremely bad integrand behavior occurs at some points - "
+          << "extrapolated_round_off_1 = " << extrapolated_round_off_1 << " >= 5";
+
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                         "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      }
     }
   }
 };
@@ -505,19 +700,22 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
   volatile_round_off = 50*std::numeric_limits<T>::epsilon()*result_abs;
   T round_off = volatile_round_off;
 
-  if ( !d_ignore_errors )
+  // Check roundoff on first attempt - dirty integration
+  if ( bin.error <= round_off && bin.error > tolerance )
   {
-    TEST_FOR_EXCEPTION( bin.error <= round_off && bin.error > tolerance,
-                        Utility::IntegratorException,
-                        "cannot reach tolerance because of roundoff error "
-                        "on first attempt" );
-  }
-  else
-  {
-    if ( bin.error <= round_off && bin.error > tolerance )
+    std::ostringstream oss;
+    oss.precision( 18 );
+    oss << " Cannot reach tolerance because of roundoff error on first attempt";
+
+    if ( d_throw_exceptions )
     {
-       std::cout << "Warning: "
-        << "cannot reach tolerance because of roundoff error on first attempt" << std::endl;
+      THROW_EXCEPTION( Utility::IntegratorException,
+                        "Error: " << oss.str() );
+    }
+    else
+    {
+      d_os_warn->precision( 18 );
+      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
     }
   }
 
@@ -566,15 +764,18 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
     absolute_error += bin_1.error + bin_2.error - bin.error;
     area += bin_1.result + bin_2.result - bin.result;
 
-    // Check that the roundoff error is not too high
-    checkRoundoffError( bin,
-                        bin_1,
-                        bin_2,
-                        result_asc_1,
-                        result_asc_2,
-                        round_off_1,
-                        round_off_2,
-                        last+1 );
+    if ( d_estimate_roundoff )
+    {
+      // Check that the roundoff error is not too high
+      checkRoundoffError( bin,
+                          bin_1,
+                          bin_2,
+                          result_asc_1,
+                          result_asc_2,
+                          round_off_1,
+                          round_off_2,
+                          last+1 );
+    }
 
     tolerance =
       getMax( d_absolute_error_tol, d_relative_error_tol * fabs (area));
@@ -582,48 +783,55 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
     if ( absolute_error <= tolerance )
       break;
 
-    if ( !d_ignore_errors )
+    // Check if the subinterval limit was hit - dirty integration
+    if ( last+1 == d_subinterval_limit )
     {
-      TEST_FOR_EXCEPTION( last+1 == d_subinterval_limit,
-                          Utility::IntegratorException,
-                          "Maximum number of subdivisions reached" );
-    }
-    else
-    {
-      if ( bin.error <= round_off && bin.error > tolerance )
+
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " The maximum number of subdivisions ( "
+          << d_subinterval_limit
+          << " ) were reached";
+
+      if ( d_throw_exceptions )
       {
-         std::cout << "Warning: "
-          << "Maximum number of subdivisions reached" << std::endl;
-         break;
+        THROW_EXCEPTION( Utility::IntegratorException,
+                         "Error: " << oss.str() );
       }
-    }
-
-    if ( !d_ignore_errors )
-    {
-      TEST_FOR_EXCEPTION( subintervalTooSmall<Points>( bin_1.lower_limit,
-                                                       bin_2.lower_limit,
-                                                       bin_2.upper_limit ),
-                          Utility::IntegratorException,
-                          "Subdivisions have become too small" );
-    }
-    else
-    {
-      if ( bin.error <= round_off && bin.error > tolerance )
+      else
       {
-         std::cout << "Warning: "
-          << "Subdivisions have become too small" << std::endl;
-         break;
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
       }
+      break;
     }
 
-  }
+    // Check if the subdivisions have gotten too small - dirty integration
+    if ( subintervalTooSmall<Points>( bin_1.lower_limit,
+                                      bin_2.lower_limit,
+                                      bin_2.upper_limit ) )
+    {
 
-  if ( d_ignore_errors && (round_off_1 >= 6 || round_off_2 >= 20) )
-  {
-     std::cout << "Warning: "
-     << "Roundoff error prevented tolerance from being achieved" << std::endl;
-  }
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " Subdivisions have become too small - "
+          << "subinterval size(lower boundary, upper boundary) =\n"
+          << "subinterval size(" << bin_1.lower_limit << ", "
+          << bin_2.upper_limit <<") = " << bin_2.upper_limit - bin_1.lower_limit;
 
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                         "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      }
+      break;
+    }
+  }
   result = area;
 }
 
@@ -642,7 +850,7 @@ template<typename T>
 template<int Points, typename FunctorType, typename ParameterType, typename Functor>
 void GaussKronrodIntegrator<T>::integrateAdaptively(
 						 Functor& integrand,
-                         ParameterType integrand_parameter,
+             ParameterType integrand_parameter,
 						 T lower_limit,
 						 T upper_limit,
 						 T& result,
@@ -684,19 +892,22 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
   volatile_round_off = (T)50*std::numeric_limits<T>::epsilon()*result_abs;
   T round_off = volatile_round_off;
 
-  if ( !d_ignore_errors )
+  // Check roundoff on first attempt - dirty integration
+  if ( bin.error <= round_off && bin.error > tolerance )
   {
-    TEST_FOR_EXCEPTION( bin.error <= round_off && bin.error > tolerance,
-                        Utility::IntegratorException,
-                        "cannot reach tolerance because of roundoff error "
-                        "on first attempt" );
-  }
-  else
-  {
-    if ( bin.error <= round_off && bin.error > tolerance )
+    std::ostringstream oss;
+    oss.precision( 18 );
+    oss << " Cannot reach tolerance because of roundoff error on first attempt";
+
+    if ( d_throw_exceptions )
     {
-       std::cout << "Warning: "
-        << "cannot reach tolerance because of roundoff error on first attempt" << std::endl;
+      THROW_EXCEPTION( Utility::IntegratorException,
+                        "Error: " << oss.str() );
+    }
+    else
+    {
+      d_os_warn->precision( 18 );
+      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
     }
   }
 
@@ -746,15 +957,18 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
     absolute_error += bin_1.error + bin_2.error - bin.error;
     area += bin_1.result + bin_2.result - bin.result;
 
-    // Check that the roundoff error is not too high
-    checkRoundoffError( bin,
-                        bin_1,
-                        bin_2,
-                        result_asc_1,
-                        result_asc_2,
-                        round_off_1,
-                        round_off_2,
-                        last+1 );
+    if ( d_estimate_roundoff )
+    {
+      // Check that the roundoff error is not too high
+      checkRoundoffError( bin,
+                          bin_1,
+                          bin_2,
+                          result_asc_1,
+                          result_asc_2,
+                          round_off_1,
+                          round_off_2,
+                          last+1 );
+    }
 
     tolerance =
       getMax( d_absolute_error_tol, d_relative_error_tol * fabs (area));
@@ -762,46 +976,52 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
     if ( absolute_error <= tolerance )
       break;
 
-    if ( !d_ignore_errors )
+    // Check if the max subinterval limit has been reached - dirty integration
+    if ( last+1 == d_subinterval_limit )
     {
-      TEST_FOR_EXCEPTION( last+1 == d_subinterval_limit,
-                          Utility::IntegratorException,
-                          "Maximum number of subdivisions reached" );
-    }
-    else
-    {
-      if ( bin.error <= round_off && bin.error > tolerance )
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " The maximum number of subdivisions ( "
+          << d_subinterval_limit
+          << " ) were reached";
+
+      if ( d_throw_exceptions )
       {
-         std::cout << "Warning: "
-          << "Maximum number of subdivisions reached" << std::endl;
-         break;
+        THROW_EXCEPTION( Utility::IntegratorException,
+                          "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        break;
       }
     }
 
-    if ( !d_ignore_errors )
+    // Check if a subinterval has become too small - dirty integration
+    if ( subintervalTooSmall<Points>( bin_1.lower_limit,
+                                      bin_2.lower_limit,
+                                      bin_2.upper_limit ) )
     {
-      TEST_FOR_EXCEPTION( subintervalTooSmall<Points>( bin_1.lower_limit,
-                                                       bin_2.lower_limit,
-                                                       bin_2.upper_limit ),
-                          Utility::IntegratorException,
-                          "Subdivisions have become too small" );
-    }
-    else
-    {
-      if ( bin.error <= round_off && bin.error > tolerance )
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " The subinterval have become too small - "
+          << "subinterval size(lower boundary, upper boundary) =\n"
+          << "subinterval size(" << bin_1.lower_limit << ", "
+          << bin_2.upper_limit <<") = " << bin_2.upper_limit - bin_1.lower_limit;
+
+      if ( d_throw_exceptions )
       {
-         std::cout << "Warning: "
-          << "Subdivisions have become too small" << std::endl;
-         break;
+        THROW_EXCEPTION( Utility::IntegratorException,
+                          "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        break;
       }
     }
-
-  }
-
-  if ( d_ignore_errors && (round_off_1 >= 6 || round_off_2 >= 20) )
-  {
-     std::cout << "Warning: "
-     << "Roundoff error prevented tolerance from being achieved" << std::endl;
   }
 
   result = area;
@@ -823,11 +1043,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     const Teuchos::ArrayView<T>& points_of_interest,
     T& result,
     T& absolute_error ) const
-{
+{/*
   // Check that the points of interest are in ascending order
   testPrecondition( Sort::isSortedAscending( points_of_interest.begin(),
                                              points_of_interest.end(),
-                                             true ) );
+                                             true ) );*/
   // check that the number of points don't excees the subinterval limit
   testPrecondition( points_of_interest.size() < d_subinterval_limit );
   // check that there are at least two points
@@ -901,10 +1121,24 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
   T round_off = std::numeric_limits<T>::epsilon()*total_area_abs;
 
-  TEST_FOR_EXCEPTION( absolute_error <= 100*round_off && absolute_error > tolerance,
-                      Utility::IntegratorException,
-                      "cannot reach tolerance because of roundoff error "
-                      "on first attempt" );
+  // Check roundoff on first attempt - dirty integration
+  if ( absolute_error <= 100*round_off && absolute_error > tolerance )
+  {
+    std::ostringstream oss;
+    oss.precision( 18 );
+    oss << " Cannot reach tolerance because of roundoff error on first attempt";
+
+    if ( d_throw_exceptions )
+    {
+      THROW_EXCEPTION( Utility::IntegratorException,
+                        "Error: " << oss.str() );
+    }
+    else
+    {
+      d_os_warn->precision( 18 );
+      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+    }
+  }
 
   if ( absolute_error <= tolerance )
     {
@@ -934,8 +1168,8 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   T extrapolated_tolerance = tolerance;
   int max_level = 1;
   int round_off_1 = 0;
+  int extrapolated_round_off_1 = 0;
   int round_off_2 = 0;
-  int round_off_3 = 0;
   int ierro = 0;
 
 
@@ -985,10 +1219,11 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
                         result_asc_1,
                         result_asc_2,
                         round_off_1,
+                        extrapolated_round_off_1,
                         round_off_2,
-                        round_off_3,
                         extrapolate,
                         number_of_intervals );
+
 
     // Update and sort bin order
     sortBins( bin_order,
@@ -1004,17 +1239,54 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     if ( total_error <= tolerance )
       break;
 
-    TEST_FOR_EXCEPTION( number_of_intervals+1 == d_subinterval_limit,
-                        Utility::IntegratorException,
-                        "Maximum number of subdivisions reached" );
+    // Check if the max subinterval limit has been reached - dirty integration
+    if ( number_of_intervals+1 == d_subinterval_limit )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " The maximum number of subdivisions ( "
+          << d_subinterval_limit
+          << " ) were reached";
 
-    TEST_FOR_EXCEPTION( subintervalTooSmall<21>( bin_1.lower_limit,
-                                                 bin_2.lower_limit,
-                                                 bin_2.upper_limit ),
-                        Utility::IntegratorException,
-                        "Maximum number of subdivisions reached" );
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                          "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        break;
+      }
+    }
 
-    if ( round_off_2 >= 5 )
+    // Check if a subinterval has become too small - dirty integration
+    if ( subintervalTooSmall<21>( bin_1.lower_limit,
+                                  bin_2.lower_limit,
+                                  bin_2.upper_limit ) )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " The subinterval have become too small - "
+          << "subinterval size(lower boundary, upper boundary) =\n"
+          << "subinterval size(" << bin_1.lower_limit << ", "
+          << bin_2.upper_limit <<") = " << bin_2.upper_limit - bin_1.lower_limit;
+
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                          "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        break;
+      }
+    }
+
+    if ( extrapolated_round_off_1 >= 5 )
     {
       bad_integration_behavior = true;
     }
@@ -1092,9 +1364,29 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
     ktmin++;
 
-    TEST_FOR_EXCEPTION( ktmin > 5 && absolute_error < (1/1000.0) * total_error,
-                        Utility::IntegratorException,
-                        "The integral is probably divergent, or slowly convergent." );
+    // Check if the integral converges too slowly - dirty integration
+    if ( ktmin > 5 && absolute_error < (1/1000.0) * total_error )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " The integral is probably divergent, or slowly convergent - "
+          << "ktmin (" << ktmin << ") > 5 && absolute_error ("
+          << absolute_error <<") < 1e-4 * total_error (" 
+          << (1/1000.0) * total_error << ")";
+
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                          "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        break;
+      }
+    }
+
 
     if ( extrapolated_error < absolute_error )
     {
@@ -1141,16 +1433,28 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     return;
   }
 
+  // Check if there is bad integration behavior - dirty integration
   if ( bad_integration_behavior )
   {
     absolute_error += error_correction;
 
-    TEST_FOR_EXCEPTION( bad_integration_behavior,
-                        Utility::IntegratorException,
-                        "extremely bad integrand behavior occurs at some "
-                        "points of the integration interval." );
+    std::ostringstream oss;
+    oss.precision( 18 );
+    oss << " Extremely bad integrand behavior occurs at some "
+        << "points of the integration interval.";
 
+    if ( d_throw_exceptions )
+    {
+      THROW_EXCEPTION( Utility::IntegratorException,
+                        "Error: " << oss.str() );
+    }
+    else
+    {
+      d_os_warn->precision( 18 );
+      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+    }
   }
+
 
 
 
@@ -1166,8 +1470,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
                       total_error > fabs( total_area ),
                       Utility::IntegratorException,
                       "the input is invalid, because d_absolute_error_tol < 0 "
-                      "and d_relative_error_tol < 0, result, absolute_error "
-                      "are set to zero." );
+                      "and d_relative_error_tol < 0." );
 
   return;
 }
@@ -1268,10 +1571,24 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
   T round_off = std::numeric_limits<T>::epsilon()*total_area_abs;
 
-  TEST_FOR_EXCEPTION( absolute_error <= (T)100*round_off && absolute_error > tolerance,
-                      Utility::IntegratorException,
-                      "cannot reach tolerance because of roundoff error "
-                      "on first attempt" );
+  // Check roundoff on first attempt - dirty integration
+  if ( absolute_error <= 100*round_off && absolute_error > tolerance )
+  {
+    std::ostringstream oss;
+    oss.precision( 18 );
+    oss << " Cannot reach tolerance because of roundoff error on first attempt";
+
+    if ( d_throw_exceptions )
+    {
+      THROW_EXCEPTION( Utility::IntegratorException,
+                        "Error: " << oss.str() );
+    }
+    else
+    {
+      d_os_warn->precision( 18 );
+      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+    }
+  }
 
   if ( absolute_error <= tolerance )
     {
@@ -1301,8 +1618,8 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   T extrapolated_tolerance = tolerance;
   int max_level = 1;
   int round_off_1 = 0;
+  int extrapolated_round_off_1 = 0;
   int round_off_2 = 0;
-  int round_off_3 = 0;
   int ierro = 0;
 
 
@@ -1353,8 +1670,8 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
                         result_asc_1,
                         result_asc_2,
                         round_off_1,
+                        extrapolated_round_off_1,
                         round_off_2,
-                        round_off_3,
                         extrapolate,
                         number_of_intervals );
 
@@ -1372,17 +1689,54 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     if ( total_error <= tolerance )
       break;
 
-    TEST_FOR_EXCEPTION( number_of_intervals+1 == d_subinterval_limit,
-                        Utility::IntegratorException,
-                        "Maximum number of subdivisions reached" );
+    // Check if the max subinterval limit has been reached - dirty integration
+    if ( number_of_intervals+1 == d_subinterval_limit )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " The maximum number of subdivisions ( "
+          << d_subinterval_limit
+          << " ) were reached";
 
-    TEST_FOR_EXCEPTION( subintervalTooSmall<21>( bin_1.lower_limit,
-                                                 bin_2.lower_limit,
-                                                 bin_2.upper_limit ),
-                        Utility::IntegratorException,
-                        "Maximum number of subdivisions reached" );
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                          "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        break;
+      }
+    }
 
-    if ( round_off_2 >= 5 )
+    // Check if a subinterval has become too small - dirty integration
+    if ( subintervalTooSmall<21>( bin_1.lower_limit,
+                                  bin_2.lower_limit,
+                                  bin_2.upper_limit ) )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " The subinterval have become too small - "
+          << "subinterval size(lower boundary, upper boundary) =\n"
+          << "subinterval size(" << bin_1.lower_limit << ", "
+          << bin_2.upper_limit <<") = " << bin_2.upper_limit - bin_1.lower_limit;
+
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                          "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        break;
+      }
+    }
+
+    if ( extrapolated_round_off_1 >= 5 )
     {
       bad_integration_behavior = true;
     }
@@ -1460,9 +1814,28 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
     ktmin++;
 
-    TEST_FOR_EXCEPTION( ktmin > 5 && absolute_error < (1/1000.0) * total_error,
-                        Utility::IntegratorException,
-                        "The integral is probably divergent, or slowly convergent." );
+    // Check if the integral converges too slowly - dirty integration
+    if ( ktmin > 5 && absolute_error < (1/1000.0) * total_error )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      oss << " The integral is probably divergent, or slowly convergent - "
+          << "ktmin (" << ktmin << ") > 5 && absolute_error ("
+          << absolute_error <<") < 1e-4 * total_error (" 
+          << (1/1000.0) * total_error << ")";
+
+      if ( d_throw_exceptions )
+      {
+        THROW_EXCEPTION( Utility::IntegratorException,
+                          "Error: " << oss.str() );
+      }
+      else
+      {
+        d_os_warn->precision( 18 );
+        (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+        break;
+      }
+    }
 
     if ( extrapolated_error < absolute_error )
     {
@@ -1509,18 +1882,27 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     return;
   }
 
+  // Check if there is bad integration behavior - dirty integration
   if ( bad_integration_behavior )
   {
     absolute_error += error_correction;
 
-    TEST_FOR_EXCEPTION( bad_integration_behavior,
-                        Utility::IntegratorException,
-                        "extremely bad integrand behavior occurs at some "
-                        "points of the integration interval." );
+    std::ostringstream oss;
+    oss.precision( 18 );
+    oss << " Extremely bad integrand behavior occurs at some "
+        << "points of the integration interval.";
 
+    if ( d_throw_exceptions )
+    {
+      THROW_EXCEPTION( Utility::IntegratorException,
+                        "Error: " << oss.str() );
+    }
+    else
+    {
+      d_os_warn->precision( 18 );
+      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+    }
   }
-
-
 
   // Test on divergence.
   if ( ksgn == (-1) &&

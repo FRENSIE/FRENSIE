@@ -18,6 +18,7 @@
 #include "Utility_ContractException.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ComparePolicy.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
@@ -129,6 +130,45 @@ void GridGenerator<InterpPolicy>::setDistanceTolerance(
   d_distance_tol = distance_tol;
 }
 
+// Refine the grid in place between a min and max value
+/*! \details New grid points will only be generate between the min_value and 
+ * max_value. There must be at least two initial grid points given (the lower
+ * grid boundary and the upper grid boundary). If there are discontinuities in
+ * the function, the grid points just below and just above the discontinuity
+ * should also be given to speed up the algorithm. The convergence tolerance
+ * is used to determine if two consecutive grid points are acceptable - if
+ * the relative error between the estimated value of the function (from
+ * desired interpolation) at the midpoint between two grid points end the
+ * actual value of the function at the midpoint is less that or equal to the
+ * convergence tolerance, the two grid points are kept. Otherwise the midpoint
+ * is inserted into the grid and the process is repeated. Do not process
+ * the grid points before passing them into this function.
+ */
+template<typename InterpPolicy>
+template<typename STLCompliantContainer, typename Functor>
+void GridGenerator<InterpPolicy>::refineInPlace(
+			STLCompliantContainer& grid,
+			const Functor& function,
+            const double min_value,
+            const double max_value ) const
+{
+  // Make sure the container value type is a floating point type
+  testStaticPrecondition( (boost::is_float<typename STLCompliantContainer::value_type>::value) );
+  // Make sure at least 2 initial grid points have been given
+  testPrecondition( grid.size() >= 2 );
+  // Make sure the intial grid points are sorted
+  testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
+
+  STLCompliantContainer evaluated_function;
+
+  this->refineAndEvaluateInPlace(
+        grid,
+        evaluated_function,
+        function,
+        min_value,
+        max_value );
+}
+
 // Get the distance tolerance
 template<typename InterpPolicy>
 double GridGenerator<InterpPolicy>::getDistanceTolerance() const
@@ -167,9 +207,11 @@ void GridGenerator<InterpPolicy>::generateInPlace(
   this->generateAndEvaluateInPlace( grid, evaluated_function, function );
 }
 
-// Generate the grid in place (return evaluated function on grid)
+
+// Generate the grid in place between min and max (return evaluated function on grid)
 /*! \details There must be at least two initial grid points given (the lower
- * grid boundary and the upper grid boundary). If there are discontinuities in
+ * grid boundary and the upper grid boundary). New grid points will only be 
+ * generate between the min_value and max_value. If there are discontinuities in
  * the function, the grid points just below and just above the discontinuity
  * should also be given to speed up the algorithm. The convergence tolerance
  * is used to determine if two consecutive grid points are acceptable - if
@@ -184,10 +226,12 @@ template<typename InterpPolicy>
 template<typename STLCompliantContainerA,
 	 typename STLCompliantContainerB,
 	 typename Functor>
-void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
-				    STLCompliantContainerA& grid,
-				    STLCompliantContainerB& evaluated_function,
-				    const Functor& function ) const
+void GridGenerator<InterpPolicy>::refineAndEvaluateInPlace(
+        STLCompliantContainerA& grid,
+        STLCompliantContainerB& evaluated_function,
+        const Functor& function,
+        const double min_value,
+        const double max_value ) const
 {
   // Make sure the container value type is a floating point type
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainerA::value_type>::value) );
@@ -196,9 +240,41 @@ void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
   testPrecondition( grid.size() >= 2 );
   // Make sure the intial grid points are sorted
   testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
+  // Make sure the min_value and max_value are valid
+  testPrecondition( min_value >= grid.front() );
+  testPrecondition( max_value <= grid.back() );
+
+
+  typename STLCompliantContainerA::iterator min_value_boundary, max_value_boundary;
+
+  // Get iterator above/equal to min_value
+  min_value_boundary = Search::binaryUpperBound(
+                grid.begin(),
+                grid.end(),
+                min_value );
+
+  // Get iterator right above to max_value
+  max_value_boundary = Search::binaryLowerBound(
+                min_value_boundary,
+                grid.end(),
+                max_value );
+  ++max_value_boundary;
 
   // Use a queue data structure to calculate the grid points
-  std::deque<double> grid_queue( grid.begin(), grid.end() );
+  std::deque<double> min_value_queue( grid.begin(), min_value_boundary );
+
+  if ( *min_value_boundary == min_value )
+    ++min_value_boundary;
+
+  // Use a queue data structure to calculate the grid points
+  std::deque<double> grid_queue( min_value_boundary, max_value_boundary );
+
+  // Use a queue data structure to calculate the grid points
+  std::deque<double> max_value_queue( max_value_boundary, grid.end() );
+
+  // Make sure the max value is last entry on the grid_queue
+  if ( grid_queue.back() != max_value )
+    grid_queue.push_back( max_value );
 
   // Clear the initial grid
   grid.clear();
@@ -207,10 +283,20 @@ void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
   // Variables used to calculate the linearized grid
   double x0, x1, x_mid, y0, y1, y_mid_exact, y_mid_estimated;
 
-  // Evaluate the first grid point
-  x0 = grid_queue.front();
-  grid_queue.pop_front();
+  // Evaluate the grid point before the min value
+  while( !min_value_queue.empty() )
+  {
+    x0 = min_value_queue.front();
+    min_value_queue.pop_front();
 
+    y0 = function( x0 );
+
+    grid.push_back( x0 );
+    evaluated_function.push_back( y0 );
+  }
+
+  // Evaluate the grid point at the min value
+  x0 = min_value;
   y0 = function( x0 );
 
   // Calculate the grid points
@@ -250,11 +336,63 @@ void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
   grid.push_back( x0 );
   evaluated_function.push_back( y0 );
 
+  testPostcondition( x0 = max_value );
+
+  // Evaluate the grid point after the max value
+  while( !max_value_queue.empty() )
+  {
+    x0 = max_value_queue.front();
+    max_value_queue.pop_front();
+
+    y0 = function( x0 );
+
+    grid.push_back( x0 );
+    evaluated_function.push_back( y0 );
+  }
+
   // Make sure the linearized grid has at least 2 points
   testPostcondition( grid.size() >= 2 );
   testPostcondition( grid.size() == evaluated_function.size() );
   // Make sure the linearized grid is sorted
   testPostcondition( Sort::isSortedAscending( grid.begin(), grid.end() ) );
+}
+
+// Generate the grid in place (return evaluated function on grid)
+/*! \details There must be at least two initial grid points given (the lower
+ * grid boundary and the upper grid boundary). If there are discontinuities in
+ * the function, the grid points just below and just above the discontinuity
+ * should also be given to speed up the algorithm. The convergence tolerance
+ * is used to determine if two consecutive grid points are acceptable - if
+ * the relative error between the estimated value of the function (from
+ * desired interpolation) at the midpoint between two grid points end the
+ * actual value of the function at the midpoint is less that or equal to the
+ * convergence tolerance, the two grid points are kept. Otherwise the midpoint
+ * is inserted into the grid and the process is repeated. Do not process
+ * the grid points before passing them into this function.
+ */
+template<typename InterpPolicy>
+template<typename STLCompliantContainerA,
+	 typename STLCompliantContainerB,
+	 typename Functor>
+void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
+				    STLCompliantContainerA& grid,
+				    STLCompliantContainerB& evaluated_function,
+				    const Functor& function ) const
+{
+  // Make sure the container value type is a floating point type
+  testStaticPrecondition( (boost::is_float<typename STLCompliantContainerA::value_type>::value) );
+  testStaticPrecondition( (boost::is_float<typename STLCompliantContainerB::value_type>::value) );
+  // Make sure at least 2 initial grid points have been given
+  testPrecondition( grid.size() >= 2 );
+  // Make sure the intial grid points are sorted
+  testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
+
+  this->refineAndEvaluateInPlace<STLCompliantContainerA,STLCompliantContainerB,Functor>(
+            grid,
+            evaluated_function,
+            function,
+            grid.front(),
+            grid.back() );
 }
 
 // Generate the linearized grid

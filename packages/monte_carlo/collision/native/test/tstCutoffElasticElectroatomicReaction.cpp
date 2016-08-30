@@ -26,7 +26,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
+std::shared_ptr<MonteCarlo::ElectroatomicReaction>
     ace_elastic_reaction, test_elastic_reaction;
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_scattering_distribution;

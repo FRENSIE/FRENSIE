@@ -48,28 +48,22 @@ public:
   //! Return the binding energy
   double getBindingEnergy() const;
 
-  //! Return the min incoming energy
-  double getMinEnergy() const;
-
-  //! Return the Max incoming energy
-  double getMaxEnergy() const;
-
-  //! Return the max incoming electron energy for a given knock-on electron energy
-  double getMaxIncomingEnergyAtOutgoingEnergy( const double energy ) const;
+  //! Return the max secondary (knock-on) electron energy for a given incoming electron energy
+  double getMaxSecondaryEnergyAtIncomingEnergy( const double energy ) const;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
                    const double scattering_angle ) const
   { /* ... */ }
 
-  //! Evaluate the PDF value for a given incoming and knock-on energy (efficient)
+  //! Evaluate the PDF value for a given incoming and outgoing energy (efficient)
   double evaluatePDF( const unsigned lower_bin_index,
                       const double incoming_energy,
-                      const double knock_on_energy ) const;
+                      const double outgoing_energy_1 ) const;
 
-  //! Evaluate the PDF value for a given incoming and knock-on energy
+  //! Evaluate the PDF value for a given incoming and outgoing energy
   double evaluatePDF( const double incoming_energy,
-                      const double knock_on_energy ) const;
+                      const double outgoing_energy_1 ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,

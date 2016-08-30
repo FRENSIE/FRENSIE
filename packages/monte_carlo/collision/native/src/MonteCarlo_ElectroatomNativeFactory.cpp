@@ -118,7 +118,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                reaction_pointer );
   }
 
-  Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> > reaction_pointers;
+  std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
   ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
 							   raw_electroatom_data,
