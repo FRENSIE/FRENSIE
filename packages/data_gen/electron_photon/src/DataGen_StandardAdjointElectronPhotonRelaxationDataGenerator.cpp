@@ -16,7 +16,6 @@
 // FRENSIE Includes
 #include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointPairProductionEnergyDistributionNormConstantEvaluator.hpp"
-#include "DataGen_AdjointElectronDistributionGenerator.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
@@ -1602,9 +1601,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                                d_adjoint_electron_absolute_diff_tol,
                                d_adjoint_electron_distance_tol );
 
-  // Calculate the union energy grid
-
-
   //---------------------------------------------------------------------------//
   // Generate Grid Points For The Elastic Cross Section Data
   //---------------------------------------------------------------------------//
@@ -1763,6 +1759,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   (*d_os_log) << "done." << std::endl;
 
+  //---------------------------------------------------------------------------//
+  // Set the Union Energy Grid and Generate Cross Section on it.
+  //---------------------------------------------------------------------------//
+
   // Set the union energy grid
   std::vector<double> energy_grid(
         union_energy_grid.begin(),
@@ -1773,6 +1773,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Create and set the cross sections
   std::vector<double> cross_section;
   unsigned threshold;
+
+//---------------------------------------------------------------------------//
+// Set Elastic Data
+//---------------------------------------------------------------------------//
 
   // Set the adjoint elastic cross section data
   (*d_os_log) << "   Setting the adjoint total elastic cross section...";
@@ -1787,7 +1791,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   data_container.setAdjointTotalElasticCrossSectionThresholdEnergyIndex( threshold );
   (*d_os_log) << "done." << std::endl;
 
-  (*d_os_log) << "   Setting the adjoint cutoff elastic cross section...";
+  (*d_os_log) << "   Setting the adjoint cutoff elastic cross section and distribution...";
   d_os_log->flush();
   std::vector<double> cutoff_cross_section;
   this->createCrossSectionOnUnionEnergyGrid(
@@ -1797,6 +1801,17 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       threshold );
   data_container.setAdjointCutoffElasticCrossSection( cutoff_cross_section );
   data_container.setAdjointCutoffElasticCrossSectionThresholdEnergyIndex( threshold );
+
+  // Set elastic angular distribution
+  data_container.setAdjointElasticAngularEnergyGrid(
+        d_forward_epr_data->getElasticAngularEnergyGrid() );
+
+  data_container.setAdjointCutoffElasticAngles(
+        d_forward_epr_data->getCutoffElasticAngles() );
+
+  data_container.setAdjointCutoffElasticPDF(
+        d_forward_epr_data->getCutoffElasticPDF() );
+
   (*d_os_log) << "done." << std::endl;
 
 
@@ -1833,7 +1848,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   if( d_forward_epr_data->hasMomentPreservingData() )
   {
-    (*d_os_log) << "   Setting the adjoint moment preserving elastic cross section...";
+    (*d_os_log) << "   Setting the adjoint moment preserving elastic cross section and distribution...";
     d_os_log->flush();
 
     // Extract the moment preserving elastic cross section data
@@ -1862,6 +1877,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         threshold );
     data_container.setAdjointMomentPreservingCrossSection( moment_preserving_cross_section );
     data_container.setAdjointMomentPreservingCrossSectionThresholdEnergyIndex( threshold );
+
+  data_container.setAdjointMomentPreservingElasticDiscreteAngles(
+        d_forward_epr_data->getMomentPreservingElasticDiscreteAngles() );
+
+  data_container.setAdjointMomentPreservingElasticWeights(
+        d_forward_epr_data->getMomentPreservingElasticWeights() );
+
     (*d_os_log) << "done." << std::endl;
   }
 
@@ -1879,195 +1901,46 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   data_container.setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex( threshold );
   (*d_os_log) << "done." << std::endl;
 
-  // Set the adjoint bremsstrahlung cross section data
-  (*d_os_log) << "   Setting the adjoint bremsstrahlung cross section...";
-  d_os_log->flush();
-  std::vector<double> bremsstrahlung_cross_section;
-  unsigned bremsstrahlung_threshold_index;
-  this->updateCrossSectionOnUnionEnergyGrid(
-      union_energy_grid,
-      old_adjoint_bremsstrahlung_union_energy_grid,
-      old_adjoint_bremsstrahlung_cs,  
-      bremsstrahlung_grid_function,
-      bremsstrahlung_cross_section,
-      bremsstrahlung_threshold_index );
-
-  data_container.setAdjointBremsstrahlungElectronCrossSection( bremsstrahlung_cross_section );
-  data_container.setAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex( bremsstrahlung_threshold_index );
-  (*d_os_log) << "done." << std::endl;
-
-  // Set the adjoint electroionization subshell cross section data
-  (*d_os_log) << "   Setting the adjoint electroionization subshell cross section...";
-  d_os_log->flush();
-
-  std::map<unsigned,std::vector<double> > ionization_cross_sections;
-  std::map<unsigned,unsigned > ionization_cross_section_thresholds;
-
-  // Loop through the electroionization subshells
-  shell = data_container.getSubshells().begin();
-  for ( shell; shell != data_container.getSubshells().end(); shell++ )
-  {
-    this->updateCrossSectionOnUnionEnergyGrid(
-        union_energy_grid,
-        old_adjoint_electroionization_union_energy_grid[*shell],
-        old_adjoint_electroionization_cs[*shell],  
-        ionization_grid_functions[*shell],
-        ionization_cross_sections[*shell],
-        ionization_cross_section_thresholds[*shell] );
-
-    data_container.setAdjointElectroionizationCrossSection(
-      *shell,
-      ionization_cross_sections[*shell] );
-
-    data_container.setAdjointElectroionizationCrossSectionThresholdEnergyIndex(
-      *shell,
-      ionization_cross_section_thresholds[*shell] );
-  }
-  (*d_os_log) << "done." << std::endl;
-
-//---------------------------------------------------------------------------//
-// Set Elastic Data
-//---------------------------------------------------------------------------//
-  (*d_os_log) << " Setting the adjoint elastic cutoff data...";
-  d_os_log->flush();
-
-  // Set elastic angular distribution
-  data_container.setAdjointElasticAngularEnergyGrid(
-        d_forward_epr_data->getElasticAngularEnergyGrid() );
-
-  data_container.setAdjointCutoffElasticAngles(
-        d_forward_epr_data->getCutoffElasticAngles() );
-
-  data_container.setAdjointCutoffElasticPDF(
-        d_forward_epr_data->getCutoffElasticPDF() );
-
-  (*d_os_log) << "done." << std::endl;
-
-  (*d_os_log) << " Setting the adjoint elastic moment preserving data...";
-  d_os_log->flush();
-
-  data_container.setAdjointMomentPreservingElasticDiscreteAngles(
-        d_forward_epr_data->getMomentPreservingElasticDiscreteAngles() );
-
-  data_container.setAdjointMomentPreservingElasticWeights(
-        d_forward_epr_data->getMomentPreservingElasticWeights() );
-
-  (*d_os_log) << "done." << std::endl;
-
 //---------------------------------------------------------------------------//
 // Set Bremsstrahlung Data
 //---------------------------------------------------------------------------//
-  (*d_os_log) << " Setting the bremsstrahlung data...";
+
+  // Set the adjoint bremsstrahlung cross section data
+  (*d_os_log) << "   Setting the adjoint bremsstrahlung cross section and distribution...";
   d_os_log->flush();
-  {
-  std::shared_ptr<DataGen::AdjointElectronDistributionGenerator<Utility::LinLinLin> >
-      distribution_grid_generator;
 
-  /* The energy to outgoing energy nudge value for the should be set slighty
-   * higher for the distribution_grid_generator than for the bremsstrahlung
-   * cross section evaluator. This will ensure that there are no pdf values of
-   * zero in the distribution.
-   */
-  distribution_grid_generator.reset(
-    new AdjointElectronDistributionGenerator<Utility::LinLinLin>(
-          this->getMaxElectronEnergy(),
-          d_adjoint_bremsstrahlung_max_energy_nudge_value,
-          2.0*d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value,
-          d_adjoint_bremsstrahlung_grid_convergence_tol,
-          d_adjoint_bremsstrahlung_absolute_diff_tol,
-          d_adjoint_bremsstrahlung_distance_tol ) );
+  this->setAdjointBremsstrahlungData(
+          data_container,
+          old_adjoint_bremsstrahlung_union_energy_grid,
+          old_adjoint_bremsstrahlung_cs,
+          union_energy_grid,
+          bremsstrahlung_grid_function,
+          adjoint_bremsstrahlung_cs_evaluator,
+          energy_grid );
 
-  std::vector<double> brem_energy_grid, brem_pdf;
-
-  for ( unsigned i = 0; i < energy_grid.size(); ++i )
-  {
-    unsigned energy_index = i + bremsstrahlung_threshold_index;
-
-    distribution_grid_generator->generateAndEvaluateDistributionInPlace<BremsstrahlungReaction>(
-      brem_energy_grid,
-      brem_pdf,
-      adjoint_bremsstrahlung_cs_evaluator,
-      d_adjoint_bremsstrahlung_evaluation_tol,
-      energy_grid[energy_index],
-      bremsstrahlung_cross_section[i] );
-
-    // Set the adjoint bremsstrahlung scattering distribution
-    data_container.setAdjointElectronBremsstrahlungEnergyAtIncomingEnergy(
-      energy_grid[energy_index],
-      brem_energy_grid );
-
-    data_container.setAdjointElectronBremsstrahlungPDFAtIncomingEnergy(
-      energy_grid[energy_index],
-      brem_pdf );
-
-    // Clear the data
-    brem_energy_grid.clear();
-    brem_pdf.clear();
-  }
-  }
   (*d_os_log) << "done." << std::endl;
 
 //---------------------------------------------------------------------------//
 // Set Electroionization Data
 //---------------------------------------------------------------------------//
-  (*d_os_log) << " Setting the electroionization data...";
-  d_os_log->flush();
-  {
-  shell = data_container.getSubshells().begin();
 
-  // Loop through electroionization data for every subshell
+  // Set the adjoint electroionization subshell cross section data
+  (*d_os_log) << "   Setting the adjoint electroionization subshell cross sections and distributions...";
+  d_os_log->flush();
+
+  // Loop through the electroionization subshells
+  shell = data_container.getSubshells().begin();
   for ( shell; shell != data_container.getSubshells().end(); shell++ )
   {
-    std::shared_ptr<DataGen::AdjointElectronDistributionGenerator<Utility::LinLinLin> >
-        distribution_grid_generator;
-
-    double binding_energy =
-      data_container.getSubshellBindingEnergy( *shell );
-
-    /* The energy to outgoing energy nudge value for the should be set slighty
-     * higher for the distribution_grid_generator than for the electroionization
-     * cross section evaluator. This will ensure that there are no pdf values of
-     * zero in the distribution.
-     */
-    distribution_grid_generator.reset(
-      new AdjointElectronDistributionGenerator<Utility::LinLinLin>(
-            this->getMaxElectronEnergy(),
-            binding_energy*2.0,
-            binding_energy + 2e-7,
-            d_adjoint_electroionization_grid_convergence_tol,
-            d_adjoint_electroionization_absolute_diff_tol,
-            d_adjoint_electroionization_distance_tol ) );
-
-    std::vector<double> ionization_energy_grid, ionization_pdf;
-
-    for ( unsigned i = 0; i < energy_grid.size(); ++i )
-    {
-      unsigned energy_index = i + ionization_cross_section_thresholds[*shell];
-
-      distribution_grid_generator->generateAndEvaluateDistributionInPlace<ElectroionizationReaction>(
-        ionization_energy_grid,
-        ionization_pdf,
-        adjoint_electroionization_cs_evaluators.find( *shell )->second,
-        d_adjoint_electroionization_evaluation_tol,
-        energy_grid[energy_index],
-        ionization_cross_sections.find(*shell)->second[i] );
-
-      // Set the adjoint bremsstrahlung scattering distribution
-      data_container.setAdjointElectroionizationRecoilEnergyAtIncomingEnergy(
-        *shell,
-        energy_grid[energy_index],
-        ionization_energy_grid );
-
-      data_container.setAdjointElectroionizationRecoilPDFAtIncomingEnergy(
-        *shell,
-        energy_grid[energy_index],
-        ionization_pdf );
-
-      // Clear the data
-      ionization_energy_grid.clear();
-      ionization_pdf.clear();
-    }
-  }
+    this->setAdjointElectroionzationData(
+                data_container,
+                old_adjoint_electroionization_union_energy_grid[*shell],
+                old_adjoint_electroionization_cs[*shell],
+                union_energy_grid,
+                ionization_grid_functions[*shell],
+                adjoint_electroionization_cs_evaluators.find( *shell )->second,
+                energy_grid,
+                *shell );
   }
   (*d_os_log) << "done." << std::endl;
 }

@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointElectronCrossSectionEvaluator.hpp"
+#include "DataGen_AdjointElectronDistributionGenerator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
@@ -409,12 +410,7 @@ private:
   void initializeAdjointElectronUnionEnergyGrid(
      const Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
-
-  // Set the electron cross section union energy grid
-  void setAdjointElectronCrossSectionsData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    bool recalculate_union_energy_grid = false ) const;
-  
+ 
   // Create the adjoint atomic excitation cross section distribution
   void createAdjointAtomicExcitationCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
@@ -431,6 +427,17 @@ private:
         adjoint_bremsstrahlung_cs_evaluator,
     boost::function<double (double)>& bremsstrahlung_grid_function ) const;
 
+  // Set the electroionization data on union energy grid
+  template<typename Functor>
+  void setAdjointBremsstrahlungData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const std::list<double>& old_union_energy_grid,
+    const std::vector<double>& old_cross_section,
+    const std::list<double>& union_energy_grid,
+    const Functor& grid_function,
+    const std::shared_ptr<BremsstrahlungEvaluator>& cs_evaluator,
+    const std::vector<double>& electron_energy_grid ) const;
+
   // Create the adjoint electroionization subshell cross section evaluator
   void createAdjointElectroionizationSubshellCrossSectionEvaluator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
@@ -439,6 +446,18 @@ private:
         adjoint_electroionization_cs_evaluator,
     boost::function<double (double)>& ionization_grid_function,
     const unsigned shell ) const;
+
+  // Set the electroionization data on union energy grid
+  template<typename Functor>
+  void setAdjointElectroionzationData(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const std::list<double>& old_union_energy_grid,
+    const std::vector<double>& old_cross_section,
+    const std::list<double>& union_energy_grid,
+    const Functor& grid_function,
+    const std::shared_ptr<ElectroionizationEvaluator>& cs_evaluator,
+    const std::vector<double>& electron_energy_grid,
+    const unsigned subshell ) const;
 
   // The forward data
   std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>

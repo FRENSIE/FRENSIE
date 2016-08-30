@@ -120,7 +120,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronDistributionGenerator,
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung outgoing energy grid can be generated for H
 TEUCHOS_UNIT_TEST( AdjointElectronDistributionGenerator,
-                   generateAndEvaluateDistributionInPlace_brem_h )
+                   generateAndEvaluateDistribution_brem_h )
 {
   DataGen::AdjointElectronDistributionGenerator<Utility::LinLinLin>
     grid_generator(
@@ -128,56 +128,59 @@ TEUCHOS_UNIT_TEST( AdjointElectronDistributionGenerator,
       max_energy_nudge_value,
       energy_to_outgoing_energy_nudge_value );
 
-  std::vector<double> outgoing_energy_grid, pdf;
+
+  // Set the primary energy grid
+  std::vector<double> primary_energy_grid(2);
+  primary_energy_grid[0] = 0.01;
+  primary_energy_grid[1] = 1.0;
+
+  grid_generator.setPrimaryEnergyGrid( primary_energy_grid );
+
+
+  // cross section values
+  std::vector<double> cross_sections(2);
+  cross_sections[0] = 1.0;
+  cross_sections[1] = 1.0;
+
+  
+  std::map<double,std::vector<double> > outgoing_energy_grid, pdf;
 
   // Generate an outgoing energy grid at E=0.01 MeV
-  grid_generator.generateAndEvaluateDistributionInPlace(
+  grid_generator.generateAndEvaluateDistributionOnPrimaryEnergyGrid(
           outgoing_energy_grid,
           pdf,
           bremsstrahlung_adjoint_cs,
           1e-6,
-          0.01,
-          1.0 );
+          cross_sections,
+          0 );
 
   // Check the generated outgoing energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid.size(), 811 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid.front(), 0.01+2e-7, 1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid.back(), 20.2, 1e-6 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 811 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(), 0.01+2e-7, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.2, 1e-6 );
 
   // Check the evaluated pdf
-  TEST_EQUALITY_CONST( pdf.size(), 811 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf.front(),
+  TEST_EQUALITY_CONST( pdf[0.01].size(), 811 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].front(),
                                   1.5200108884210365359e6,
                                   1e-6 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(), 
                                   1.3868414443414270819e-4,
                                   1e-6 );
 
-  outgoing_energy_grid.clear();
-  pdf.clear();
-
-  // Generate an outgoing energy grid at E=1.0 MeV
-  grid_generator.generateAndEvaluateDistributionInPlace(
-          outgoing_energy_grid,
-          pdf,
-          bremsstrahlung_adjoint_cs,
-          1e-6,
-          1.0,
-          1.0 );
-
   // Check the generated max energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid.size(), 570 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid.front(), 1.0+2e-7, 1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid.back(), 20.2, 1e-6 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 570 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(), 1.0+2e-7, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.2, 1e-6 );
 
   // Check the evaluated cross section
-  TEST_EQUALITY_CONST( pdf.size(), 570 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf.front(),
+  TEST_EQUALITY_CONST( pdf[1.0].size(), 570 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].front(),
                                   2.0111957945609613671e5,
                                   1e-6 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf.back(),
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].back(),
                                   1.4440565167576839925e-4,
                                   1e-6 );
 }
