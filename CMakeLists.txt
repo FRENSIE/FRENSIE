@@ -194,6 +194,13 @@ ENABLE_TRILINOS_SUPPORT()
 # the ENABLE_BOOST_SUPPORT macro.
 ENABLE_BOOST_SUPPORT(serialization)
 
+# NOTE: Boost still uses the std::auto_ptr class, which is now depricated.
+#       The newer GNU C++ compilers will generate a large number of warning
+#       messages regarding this usage of the std::auto_ptr class. To avoid
+#       these warning messages that are not direcly related to FRENSIE we
+#       will simply turn them off
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+
 ##---------------------------------------------------------------------------##
 ## Configure Root Support
 ##---------------------------------------------------------------------------##
