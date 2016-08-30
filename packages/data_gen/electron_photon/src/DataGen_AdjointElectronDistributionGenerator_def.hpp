@@ -111,7 +111,7 @@ AdjointElectronDistributionGenerator<TwoDInterpPolicy>::AdjointElectronDistribut
   // Make sure the max energy nudge value is valid
   testPrecondition( max_energy_nudge_value > 0.0 );
   // Make sure the energy to outgoing energy nudge value is valid
-  testPrecondition(  energy_to_outgoing_energy_nudge_value >= 0.0 );
+  testPrecondition( energy_to_outgoing_energy_nudge_value >= 0.0 );
 }
 
 
@@ -267,7 +267,6 @@ void AdjointElectronDistributionGenerator<TwoDInterpPolicy>::generateAndEvaluate
             incoming_energy,
             adjoint_cross_sections[i] );
   }
-
 }
 
 

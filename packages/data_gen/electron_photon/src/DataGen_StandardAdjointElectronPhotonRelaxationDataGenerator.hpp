@@ -18,8 +18,7 @@
 
 // FRENSIE Includes
 #include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp"
-#include "DataGen_AdjointElectronCrossSectionEvaluator.hpp"
-#include "DataGen_AdjointElectronDistributionGenerator.hpp"
+#include "DataGen_AdjointElectronGridGenerator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
@@ -44,11 +43,11 @@ public:
   typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> 
     BremsstrahlungReaction;
 
-  typedef DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>
-    BremsstrahlungEvaluator;
+  typedef DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction, Utility::LinLinLin>
+    BremsstrahlungGridGenerator;
 
-  typedef DataGen::AdjointElectronCrossSectionEvaluator<ElectroionizationReaction>
-    ElectroionizationEvaluator;
+  typedef DataGen::AdjointElectronGridGenerator<ElectroionizationReaction, Utility::LinLinLin>
+    ElectroionizationGridGenerator;
 
   //! Advanced Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
@@ -419,45 +418,20 @@ private:
     std::shared_ptr<const Utility::OneDDistribution>&
         adjoint_excitation_cross_section_distribution ) const;
 
-  // Create the adjoint bremsstrahlung cross section evaluator
-  void createAdjointBremsstrahlungCrossSectionEvaluator(
+  // Create the adjoint bremsstrahlung grid generator
+  void createAdjointBremsstrahlungGridGenerator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::shared_ptr<BremsstrahlungEvaluator>&
-        adjoint_bremsstrahlung_cs_evaluator,
-    boost::function<double (double)>& bremsstrahlung_grid_function ) const;
+    std::shared_ptr<BremsstrahlungGridGenerator>&
+        adjoint_bremsstrahlung_grid_generator ) const;
 
-  // Set the electroionization data on union energy grid
-  template<typename Functor>
-  void setAdjointBremsstrahlungData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const std::list<double>& old_union_energy_grid,
-    const std::vector<double>& old_cross_section,
-    const std::list<double>& union_energy_grid,
-    const Functor& grid_function,
-    const std::shared_ptr<BremsstrahlungEvaluator>& cs_evaluator,
-    const std::vector<double>& electron_energy_grid ) const;
-
-  // Create the adjoint electroionization subshell cross section evaluator
-  void createAdjointElectroionizationSubshellCrossSectionEvaluator(
+  // Create the adjoint electroionization subshell grid generator
+  void createAdjointElectroionizationSubshellGridGenerator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::shared_ptr<ElectroionizationEvaluator>&
-        adjoint_electroionization_cs_evaluator,
-    boost::function<double (double)>& ionization_grid_function,
+    std::shared_ptr<ElectroionizationGridGenerator>&
+        adjoint_electroionization_grid_generator,
     const unsigned shell ) const;
-
-  // Set the electroionization data on union energy grid
-  template<typename Functor>
-  void setAdjointElectroionzationData(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
-    const std::list<double>& old_union_energy_grid,
-    const std::vector<double>& old_cross_section,
-    const std::list<double>& union_energy_grid,
-    const Functor& grid_function,
-    const std::shared_ptr<ElectroionizationEvaluator>& cs_evaluator,
-    const std::vector<double>& electron_energy_grid,
-    const unsigned subshell ) const;
 
   // The forward data
   std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>

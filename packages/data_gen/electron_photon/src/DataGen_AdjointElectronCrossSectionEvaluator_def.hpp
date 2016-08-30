@@ -95,7 +95,6 @@ AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::AdjointElectronCros
   // If neccessary add the nudged max energy to the end of the energy grid
   if ( d_nudged_max_energy != d_max_energy )
     d_integration_points.push_back( d_nudged_max_energy );
-
 }
 
 

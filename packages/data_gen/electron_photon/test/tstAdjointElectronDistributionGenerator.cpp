@@ -50,8 +50,8 @@ double max_energy = 20.0;
 double max_energy_nudge_value = 0.2;
 double energy_to_outgoing_energy_nudge_value = 2e-7;
 double convergence_tol = 0.001;
-double absolute_diff_tol = 1e-12;
-double distance_tol = 1e-14;
+double absolute_diff_tol = 1e-10;
+double distance_tol = 1e-8;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -123,10 +123,12 @@ TEUCHOS_UNIT_TEST( AdjointElectronDistributionGenerator,
                    generateAndEvaluateDistribution_brem_h )
 {
   DataGen::AdjointElectronDistributionGenerator<Utility::LinLinLin>
-    grid_generator(
-      max_energy,
-      max_energy_nudge_value,
-      energy_to_outgoing_energy_nudge_value );
+    grid_generator( max_energy,
+                    max_energy_nudge_value,
+                    energy_to_outgoing_energy_nudge_value,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol );
 
 
   // Set the primary energy grid
@@ -136,13 +138,11 @@ TEUCHOS_UNIT_TEST( AdjointElectronDistributionGenerator,
 
   grid_generator.setPrimaryEnergyGrid( primary_energy_grid );
 
-
   // cross section values
   std::vector<double> cross_sections(2);
   cross_sections[0] = 1.0;
   cross_sections[1] = 1.0;
 
-  
   std::map<double,std::vector<double> > outgoing_energy_grid, pdf;
 
   // Generate an outgoing energy grid at E=0.01 MeV
@@ -213,8 +213,6 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  double nudged_max_energy = max_energy + max_energy_nudge_value;
-
   // Create the H distributions
   {
     // Create the native data file container
@@ -244,43 +242,10 @@ int main( int argc, char** argv )
       bremsstrahlung_reaction,
       MonteCarlo::DIPOLE_DISTRIBUTION );
 
-    std::vector<double> brem_energy_grid =
-      data_container_h->getBremsstrahlungEnergyGrid();
-
-    std::vector<double>::iterator start, end;
-
-    if ( min_energy <= brem_energy_grid.front() )
-    {
-      start = brem_energy_grid.begin();
-    }
-    else
-    {
-      // Find the location of the first grid point that is <= the min energy
-      start = std::upper_bound(
-                  brem_energy_grid.begin(),
-                  brem_energy_grid.end(),
-                  min_energy );
-      --start;
-    }
-
-      // Find the location of the first grid point that is >= the max energy
-    end = std::lower_bound(
-                start,
-                brem_energy_grid.end(),
-                max_energy );
-    ++end;
-
-    std::vector<double> bremsstrahlung_integration_points( start, end );
-
-    // Replace the lower and upper bins with the min and max electron energies
-    bremsstrahlung_integration_points.front() = min_energy;
-    bremsstrahlung_integration_points.back() = max_energy;
-    bremsstrahlung_integration_points.push_back( nudged_max_energy );
-
     bremsstrahlung_adjoint_cs.reset(
       new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
           bremsstrahlung_reaction,
-          bremsstrahlung_integration_points ) );
+          data_container_h->getBremsstrahlungEnergyGrid() ) );
   }
 
   // Create the Pb distributions

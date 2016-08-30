@@ -1691,17 +1691,17 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
   // Generate Grid Points For The Adjoint Bremsstrahlung Cross Section Data
   //---------------------------------------------------------------------------//
-  // Create he adjoint bremsstrahlung cross section evaluator
-  std::shared_ptr<BremsstrahlungEvaluator >
-    adjoint_bremsstrahlung_cs_evaluator;
+  // Create he adjoint bremsstrahlung grid generator
+  std::shared_ptr<BremsstrahlungGridGenerator> brem_grid_generators;
 
-  // Bind the function
-  boost::function<double (double)> bremsstrahlung_grid_function;
-  this->createAdjointBremsstrahlungCrossSectionEvaluator(
-          forward_electron_energy_grid,
-          forward_grid_searcher,
-          adjoint_bremsstrahlung_cs_evaluator,  
-          bremsstrahlung_grid_function );
+  this->createAdjointBremsstrahlungGridGenerator(
+    forward_electron_energy_grid,
+    forward_grid_searcher,
+    brem_grid_generators );
+
+  std::function<double (double)> bremsstrahlung_grid_function =
+    brem_grid_generators->createAdjointCrossSectionFunction(
+            d_adjoint_bremsstrahlung_evaluation_tol );
 
   // Temporarily save cross section values so they don't have to be generated again
   std::vector<double> old_adjoint_bremsstrahlung_cs;
@@ -1721,11 +1721,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
   // Generate Grid Points For The Adjoint Electroionization Subshell Cross Section Data
   //---------------------------------------------------------------------------//
-  // Create the adjoint electroionization subshell cross section evaluator
-  std::map<unsigned,std::shared_ptr<ElectroionizationEvaluator> >
-    adjoint_electroionization_cs_evaluators;
-  std::map<unsigned,boost::function<double (double)> >
-    ionization_grid_functions;
+  // Create the adjoint electroionization subshell grid generator
+  std::map<unsigned,std::shared_ptr<ElectroionizationGridGenerator> >
+    ionization_grid_generators;
+
+  std::map<unsigned,std::function<double (double)> > ionization_grid_functions;
 
   // Temporarily save cross section values so they don't have to be generated again
   std::map<unsigned,std::list<double> > old_adjoint_electroionization_union_energy_grid;
@@ -1736,13 +1736,15 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Loop through electroionization evaluator for every subshell
   for ( shell; shell != data_container.getSubshells().end(); shell++ )
   {
-    // Create the evaluator and boost function for the subshell
-    this->createAdjointElectroionizationSubshellCrossSectionEvaluator(
+    this->createAdjointElectroionizationSubshellGridGenerator(
       forward_electron_energy_grid,
       forward_grid_searcher,
-      adjoint_electroionization_cs_evaluators[*shell],
-      ionization_grid_functions[*shell],
+      ionization_grid_generators[*shell],
       *shell );
+
+    ionization_grid_functions[*shell] =
+      ionization_grid_generators[*shell]->createAdjointCrossSectionFunction(
+            d_adjoint_electroionization_evaluation_tol );
 
     // Generate electroionization (temporarily keep this grid and evaluated function)
     union_energy_grid_generator.generateAndEvaluateInPlace(
@@ -1777,8 +1779,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 //---------------------------------------------------------------------------//
 // Set Elastic Data
 //---------------------------------------------------------------------------//
-
-  // Set the adjoint elastic cross section data
   (*d_os_log) << "   Setting the adjoint total elastic cross section...";
   d_os_log->flush();
   std::vector<double> total_cross_section;
@@ -1887,7 +1887,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     (*d_os_log) << "done." << std::endl;
   }
 
-  // Set the adjoint atomic excitation cross section data
+//---------------------------------------------------------------------------//
+// Set Atomic Excitation Data
+//---------------------------------------------------------------------------//
   (*d_os_log) << "   Setting the adjoint atomic excitation cross section...";
   d_os_log->flush();
   std::vector<double> excitation_cross_section;
@@ -1904,27 +1906,40 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 //---------------------------------------------------------------------------//
 // Set Bremsstrahlung Data
 //---------------------------------------------------------------------------//
-
-  // Set the adjoint bremsstrahlung cross section data
   (*d_os_log) << "   Setting the adjoint bremsstrahlung cross section and distribution...";
   d_os_log->flush();
+  {
+    std::vector<double> cross_section;
+    unsigned threshold;
+    this->updateCrossSectionOnUnionEnergyGrid(
+        union_energy_grid,
+        old_adjoint_bremsstrahlung_union_energy_grid,
+        old_adjoint_bremsstrahlung_cs,  
+        bremsstrahlung_grid_function,
+        cross_section,
+        threshold );
 
-  this->setAdjointBremsstrahlungData(
-          data_container,
-          old_adjoint_bremsstrahlung_union_energy_grid,
-          old_adjoint_bremsstrahlung_cs,
-          union_energy_grid,
-          bremsstrahlung_grid_function,
-          adjoint_bremsstrahlung_cs_evaluator,
-          energy_grid );
+    data_container.setAdjointBremsstrahlungElectronCrossSection( cross_section );
+    data_container.setAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex( threshold );
 
+    std::map<double,std::vector<double> > brem_energy_grid, brem_pdf;
+    brem_grid_generators->generateAndEvaluateDistributionOnPrimaryEnergyGrid(
+      brem_energy_grid,
+      brem_pdf,
+      d_adjoint_bremsstrahlung_evaluation_tol,
+      energy_grid,
+      cross_section,
+      threshold );
+
+    // Set the adjoint bremsstrahlung scattering distribution
+    data_container.setAdjointElectronBremsstrahlungEnergy( brem_energy_grid );
+    data_container.setAdjointElectronBremsstrahlungPDF( brem_pdf );
+  }
   (*d_os_log) << "done." << std::endl;
 
 //---------------------------------------------------------------------------//
 // Set Electroionization Data
 //---------------------------------------------------------------------------//
-
-  // Set the adjoint electroionization subshell cross section data
   (*d_os_log) << "   Setting the adjoint electroionization subshell cross sections and distributions...";
   d_os_log->flush();
 
@@ -1932,15 +1947,44 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   shell = data_container.getSubshells().begin();
   for ( shell; shell != data_container.getSubshells().end(); shell++ )
   {
-    this->setAdjointElectroionzationData(
-                data_container,
-                old_adjoint_electroionization_union_energy_grid[*shell],
-                old_adjoint_electroionization_cs[*shell],
-                union_energy_grid,
-                ionization_grid_functions[*shell],
-                adjoint_electroionization_cs_evaluators.find( *shell )->second,
-                energy_grid,
-                *shell );
+    std::vector<double> cross_section;
+    unsigned threshold;
+
+    // Update cross sections on the union energy grid
+    this->updateCrossSectionOnUnionEnergyGrid(
+        union_energy_grid,
+        old_adjoint_electroionization_union_energy_grid[*shell],
+        old_adjoint_electroionization_cs[*shell],  
+        ionization_grid_functions[*shell],
+        cross_section,
+        threshold );
+
+    // Set the cross section for the subshell
+    data_container.setAdjointElectroionizationCrossSection(
+      *shell,
+      cross_section );
+
+    // Set the threshold energy index for the subshell
+    data_container.setAdjointElectroionizationCrossSectionThresholdEnergyIndex(
+      *shell,
+      threshold );
+
+    double binding_energy = data_container.getSubshellBindingEnergy( *shell );
+
+    std::map<double,std::vector<double> > ionization_energy_grid, ionization_pdf;
+    ionization_grid_generators.find( *shell )->second->generateAndEvaluateDistributionOnPrimaryEnergyGrid(
+      ionization_energy_grid,
+      ionization_pdf,
+      d_adjoint_electroionization_evaluation_tol,
+      energy_grid,
+      cross_section,
+      threshold );
+
+    // Set the adjoint bremsstrahlung scattering distribution
+    data_container.setAdjointElectroionizationRecoilPDF( *shell, ionization_pdf );
+    data_container.setAdjointElectroionizationRecoilEnergy(
+      *shell,
+      ionization_energy_grid );
   }
   (*d_os_log) << "done." << std::endl;
 }
@@ -2039,23 +2083,41 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
   data_container.setAdjointAtomicExcitationEnergyGain(
     adjoint_excitation_energy_gain );
 
+  for ( energy_grid_end; energy_grid_end != d_forward_epr_data->getAtomicExcitationEnergyGrid().end(); )
+  {
+    // Evaluate the cross section at the forward energy
+    adjoint_excitation_cross_section.push_back(
+      atomic_excitation_reaction->getCrossSection( *energy_grid_end ) );
+
+    // Calculate the adjoint energy grid point at the forward energy
+    adjoint_excitation_energy_grid.push_back( *energy_grid_end - *energy_gain_end );
+
+    if( adjoint_excitation_energy_grid.back() >= this->getMaxElectronEnergy() )
+      break;
+    else
+    {
+      ++energy_grid_end;
+      ++energy_gain_end;
+    }
+  }
+
   adjoint_excitation_cross_section_distribution.reset(
     new Utility::TabularDistribution<Utility::LinLin>(
       adjoint_excitation_energy_grid,
       adjoint_excitation_cross_section ) );
+
 }
 
-// Create the adjoint bremsstrahlung cross section evaluator
-    /*! \details This function uses the bremsstrahlung reaction and the primary
-     * (incoming) energy grid of the pdf distribution to construct the adjoint
-     * cross section evaluator. 
-     */
-void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstrahlungCrossSectionEvaluator(
+// Create the adjoint bremsstrahlung grid generator
+/*! \details This function uses the bremsstrahlung reaction and the primary
+  * (incoming) energy grid of the pdf distribution to construct the adjoint
+  * electron grid generator for bremsstrahlung. 
+  */
+void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstrahlungGridGenerator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::shared_ptr<BremsstrahlungEvaluator >&
-        adjoint_bremsstrahlung_cs_evaluator,
-    boost::function<double (double)>& bremsstrahlung_grid_function ) const
+    std::shared_ptr<BremsstrahlungGridGenerator>&
+        brem_grid_generators ) const
 {
   std::shared_ptr<BremsstrahlungReaction> bremsstrahlung_reaction;
 
@@ -2066,35 +2128,29 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
     bremsstrahlung_reaction,
     MonteCarlo::DIPOLE_DISTRIBUTION );
 
-  adjoint_bremsstrahlung_cs_evaluator.reset(
-    new BremsstrahlungEvaluator(
+  brem_grid_generators.reset(
+    new BremsstrahlungGridGenerator(
         bremsstrahlung_reaction,
         d_forward_epr_data->getBremsstrahlungEnergyGrid(),
         this->getMinElectronEnergy(),
         this->getMaxElectronEnergy(),
         d_adjoint_bremsstrahlung_max_energy_nudge_value,
-        d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value ) );
-
-  // Bind the function
-  bremsstrahlung_grid_function =  boost::bind(
-    (double(BremsstrahlungEvaluator::*)(double,double) const)&BremsstrahlungEvaluator::evaluateAdjointCrossSection,
-    boost::cref( *adjoint_bremsstrahlung_cs_evaluator ),
-    _1,
-    d_adjoint_bremsstrahlung_evaluation_tol );
-
+        d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value,
+        d_adjoint_bremsstrahlung_grid_convergence_tol,
+        d_adjoint_bremsstrahlung_absolute_diff_tol,
+        d_adjoint_bremsstrahlung_distance_tol ) );
 }
 
-// Create the adjoint electroionization subshell cross section evaluator
-    /*! \details This function uses the electroionization subshell reaction
-     * and the primary (incoming) energy grids of the pdf subshell distributions
-     * to construct the adjoint cross section evaluator and boost function. 
-     */
-void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroionizationSubshellCrossSectionEvaluator(
+// Create the adjoint electroionization subshell grid generator
+/*! \details This function uses the electroionization subshell reaction
+  * and the primary (incoming) energy grids of the pdf subshell distributions
+  * to construct the adjoint grid generator for the subshell. 
+  */
+void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroionizationSubshellGridGenerator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
-    std::shared_ptr<ElectroionizationEvaluator>&
-        adjoint_electroionization_cs_evaluator,
-    boost::function<double (double)>& ionization_grid_function,
+    std::shared_ptr<ElectroionizationGridGenerator>&
+        adjoint_electroionization_grid_generator,
     const unsigned shell ) const
 {
   // Create the subshell reaction
@@ -2115,20 +2171,17 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
     * section assumes all knock-on electrons with an energy < 1e-7 have a pdf
     * and cross section value of zero.
     */
-  adjoint_electroionization_cs_evaluator.reset(
-    new ElectroionizationEvaluator(
+  adjoint_electroionization_grid_generator.reset(
+    new ElectroionizationGridGenerator(
         electroionization_subshell_reaction,
         d_forward_epr_data->getElectroionizationEnergyGrid( shell),
         this->getMinElectronEnergy(),
         this->getMaxElectronEnergy(),
         2.00 * d_forward_epr_data->getSubshellBindingEnergy( shell ),
-        1e-7 + d_forward_epr_data->getSubshellBindingEnergy( shell ) ) );
-
-  ionization_grid_function = boost::bind(
-    (double(ElectroionizationEvaluator::*)(double,double) const)&ElectroionizationEvaluator::evaluateAdjointCrossSection,
-    boost::cref( *adjoint_electroionization_cs_evaluator ),
-    _1,
-    d_adjoint_bremsstrahlung_evaluation_tol );
+        1e-7 + d_forward_epr_data->getSubshellBindingEnergy( shell ),
+        d_adjoint_electroionization_grid_convergence_tol,
+        d_adjoint_electroionization_absolute_diff_tol,
+        d_adjoint_electroionization_distance_tol ) );
 }
 
 // Initialize the electron union energy grid

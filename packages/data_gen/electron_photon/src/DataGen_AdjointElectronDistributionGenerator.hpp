@@ -81,7 +81,7 @@ public:
     const double incoming_adjoint_energy,
     const double adjoint_cross_section ) const;
 
-  //! Generate and evaluate the distribution grid in place
+  //! Generate and evaluate the distribution grid in place on a primary energy grid
   template< typename ElectroatomicReaction >
   void generateAndEvaluateDistributionOnPrimaryEnergyGrid(
     std::map<double,std::vector<double> >& outgoing_energy_grid,

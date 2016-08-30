@@ -17,12 +17,15 @@
 
 // FRENSIE Includes
 #include "DataGen_AdjointElectronGridGenerator.hpp"
-#include "DataGen_AdjointElectronCrossSectionEvaluator.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Typedefs
+//---------------------------------------------------------------------------//
 
 typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>
   ElectroionizationReaction;
@@ -33,67 +36,57 @@ typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::shared_ptr<const DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>>
-  h_brem_adjoint_cs;
+std::shared_ptr<const BremsstrahlungReaction> h_brem_reaction;
+std::shared_ptr<const ElectroionizationReaction> h_ionization_reaction;
+std::vector<double> brem_energy_grid, ionization_energy_grid;
+double binding_energy;
+double max_ionization_subshell_adjoint_energy;
 
 double min_energy = 1e-5;
 double max_energy = 20.0;
 double max_energy_nudge_value = 0.2;
 double energy_to_outgoing_energy_nudge_value = 2e-7;
 double convergence_tol = 0.001;
-double absolute_diff_tol = 1e-12;
-double distance_tol = 1e-14;
+double absolute_diff_tol = 1e-10;
+double distance_tol = 1e-8;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check that the min energy can be returned 
+TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator, getMinEnergy )
+{
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LinLinLin>
+  grid_generator( h_brem_reaction,
+                  brem_energy_grid );
+
+  TEST_EQUALITY_CONST( grid_generator.getMinEnergy(), 1e-5 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the max energy can be returned 
 TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator, getMaxEnergy )
 {
-  {
-    DataGen::AdjointElectronGridGenerator<Utility::LinLinLin>
-    grid_generator( max_energy,
-                    max_energy_nudge_value,
-                    energy_to_outgoing_energy_nudge_value,
-                    convergence_tol,
-                    absolute_diff_tol,
-                    distance_tol );
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LinLinLin>
+  grid_generator( h_brem_reaction,
+                  brem_energy_grid );
 
-    TEST_EQUALITY_CONST( grid_generator.getMaxEnergy(), 20.0 );
-  }
-
-  {
-    DataGen::AdjointElectronGridGenerator<Utility::LinLinLin>
-      grid_generator( 21.0 );
-
-    TEST_EQUALITY_CONST( grid_generator.getMaxEnergy(), 21.0 );
-  }
+  TEST_EQUALITY_CONST( grid_generator.getMaxEnergy(), 20.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the max energy nudge value can be set
 TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator, setMaxEnergyNudgeValue )
 {
-  {
-    DataGen::AdjointElectronGridGenerator<Utility::LinLinLin>
-    grid_generator( max_energy,
-                    max_energy_nudge_value,
-                    energy_to_outgoing_energy_nudge_value,
-                    convergence_tol,
-                    absolute_diff_tol,
-                    distance_tol );
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LinLinLin>
+  grid_generator( h_brem_reaction,
+                  brem_energy_grid );
 
-    TEST_EQUALITY_CONST( grid_generator.getNudgedMaxEnergy(), 20.2 );
-  }
-
-  DataGen::AdjointElectronGridGenerator<Utility::LinLinLin>
-    grid_generator( 21.0, 0.3 );
-
-  TEST_EQUALITY_CONST( grid_generator.getNudgedMaxEnergy(), 21.3 );
+  TEST_EQUALITY_CONST( grid_generator.getNudgedMaxEnergy(), 20.2 );
 
   grid_generator.setMaxEnergyNudgeValue( 0.5 );
 
-  TEST_EQUALITY_CONST( grid_generator.getNudgedMaxEnergy(), 21.5 );
+  TEST_EQUALITY_CONST( grid_generator.getNudgedMaxEnergy(), 20.5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -101,22 +94,11 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator, setMaxEnergyNudgeValue )
 TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
                    setEnergyToOutgoingEnergyNudgeValue )
 {
-  {
-    DataGen::AdjointElectronGridGenerator<Utility::LinLinLin>
-    grid_generator( max_energy,
-                    max_energy_nudge_value,
-                    energy_to_outgoing_energy_nudge_value,
-                    convergence_tol,
-                    absolute_diff_tol,
-                    distance_tol );
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LinLinLin>
+  grid_generator( h_brem_reaction,
+                  brem_energy_grid );
 
-    TEST_EQUALITY_CONST( grid_generator.getNudgedEnergy( 1.0 ), 1.0000002 );
-  }
-
-  DataGen::AdjointElectronGridGenerator<Utility::LinLinLin>
-    grid_generator( 21.0, 0.2, 1e-3 );
-
-  TEST_EQUALITY_CONST( grid_generator.getNudgedEnergy( 1.0 ), 1.001 );
+  TEST_EQUALITY_CONST( grid_generator.getNudgedEnergy( 1.0 ), 1.000001 );
 
   grid_generator.setEnergyToOutgoingEnergyNudgeValue( 1e-4 );
 
@@ -124,189 +106,266 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that max energy grid can be generated for a free electron
+// Check that the hydrogen adjoint cross section can be evaluated
 TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
-                   generateAndEvaluateSecondaryInPlace_h )
+                   evaluateAdjointCrossSection )
 {
-  DataGen::AdjointElectronGridGenerator<Utility::LinLinLin>
-    grid_generator( max_energy,
+  double precision = 1e-16;
+  double cross_section;
+
+  // Native Electroionization
+  {
+  DataGen::AdjointElectronGridGenerator<ElectroionizationReaction,Utility::LinLinLin>
+    grid_generator( h_ionization_reaction,
+                    ionization_energy_grid,
+                    min_energy,
+                    max_ionization_subshell_adjoint_energy,
+                    2.0*binding_energy,
+                    binding_energy + 1.0e-7,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 1.361E-05, precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  139697665948165.39062,
+                                  1e-6 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 1.88E-05, precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  79238679438795.984375,
+                                  1e-6 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 1.123900E-02, precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  206857228.81656169891,
+                                  1e-6 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 8.75350E-01, precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  125955.16402119601844,
+                                  1e-6 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection(
+        max_ionization_subshell_adjoint_energy - 6.0e-8,
+        precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  62498.955793047840416,
+                                  1e-6 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection(
+        max_ionization_subshell_adjoint_energy,
+        precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  62415.410824211663567,
+                                  1e-6 );
+  }
+
+  // Native Bremsstrahlung
+  {
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LinLinLin>
+    grid_generator( h_brem_reaction,
+                    brem_energy_grid,
+                    min_energy,
+                    1e5 -1e-9,
+                    1e-9,
+                    0.0,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 1.0e-5, precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  43.499364453430203525,
+                                  1e-6 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 5.0e-4, precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  27.374363809080310972,
+                                  1e-6 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 6.0e4, precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  0.95353481301793019398,
+                                  1e-6 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 1.0e5, precision );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  }
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the hydrogen adjoint differential cross section can be evaluated
+TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
+                   evaluateAdjointPDF )
+{
+  double diff_cross_section;
+
+  // Native Electroionization
+  {
+  DataGen::AdjointElectronGridGenerator<ElectroionizationReaction,Utility::LinLinLin>
+    grid_generator( h_ionization_reaction,
+                    ionization_energy_grid,
+                    min_energy,
+                    max_ionization_subshell_adjoint_energy,
+                    2.0*binding_energy,
+                    binding_energy + 1.0e-7,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol );
+
+  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( 1.88E-05, 1.0E-04, 1.0e-16 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  4.99027E+07*12876.48039/79238679438792.5625,
+                                  1e-6 );
+
+  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( 1.123900E-02, 3.16228, 1.0e-16 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  2.19766977908530E+03/206857228.81668719649,
+                                  1e-6 );
+
+  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( 8.75350E-01,
+                                       max_ionization_subshell_adjoint_energy,
+                                       1.0e-16 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  3.36107129975999E-01/125955.16376563441008,
+                                  1.0e-6 );
+  }
+
+  // Native Bremsstrahlung
+  {
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LinLinLin>
+    grid_generator( h_brem_reaction,
+                    brem_energy_grid,
+                    min_energy,
+                    1e5 -1e-9,
+                    1e-9,
+                    0.0,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol );
+
+  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( 5.0e-4, 5.0e-3, 1.0e-16 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  1.2054819285461100264,
+                                  1e-6 );
+
+  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( 6.0e4, 1.0e5, 1.0e-16 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  6.6256883700079266363e-07,
+                                  1e-6 );
+
+  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( 1.0e5-5.0e-8, 1.0e5, 1.0e-16 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung outgoing energy grid can be generated for H
+TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
+                   generateAndEvaluateDistribution_brem_h )
+{
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LinLinLin>
+    grid_generator( h_brem_reaction,
+                    brem_energy_grid,
+                    min_energy,
+                    max_energy,
                     max_energy_nudge_value,
                     energy_to_outgoing_energy_nudge_value,
                     convergence_tol,
                     absolute_diff_tol,
                     distance_tol );
 
-  Teuchos::Array<double> outgoing_energy_grid, pdf;
+  // Set the primary energy grid
+  std::vector<double> primary_energy_grid(2);
+  primary_energy_grid[0] = 0.01;
+  primary_energy_grid[1] = 1.0;
 
-  // Bind the distribution to a cross section evaluator
-  std::function<double(double,double)> cs_evaluator =
-    grid_generator.createCrossSectionEvaluator( h_brem_adjoint_cs, 1e-6 );
+  // cross section values
+  std::vector<double> cross_sections(2);
+  cross_sections[0] = 1.0;
+  cross_sections[1] = 1.0;
 
-  // Generate a max energy grid at E=0.1 MeV
-  grid_generator.generateAndEvaluateSecondaryInPlace( outgoing_energy_grid,
-                                                      pdf,
-                                                      0.01,
-                                                      cs_evaluator );
+  
+  std::map<double,std::vector<double> > outgoing_energy_grid, pdf;
+
+  // Generate an outgoing energy grid at E=0.01 MeV
+  grid_generator.generateAndEvaluateDistributionOnPrimaryEnergyGrid(
+          outgoing_energy_grid,
+          pdf,
+          1e-6,
+          primary_energy_grid,
+          cross_sections,
+          0 );
 
   // Check the generated outgoing energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid.size(), 811 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid.front(), 0.01+2e-7, 1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid.back(), 20.2, 1e-6 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 818 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
+                                  0.01 + 2e-7 + 1e-9,
+                                  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.2, 1e-6 );
 
   // Check the evaluated pdf
-  TEST_EQUALITY_CONST( pdf.size(), 811 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf.front(),
-                                  1.5200108884210365359e6,
+  TEST_EQUALITY_CONST( pdf[0.01].size(), 818 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].front(),
+                                  1511195.5769536844455,
                                   1e-6 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(), 
                                   1.3868414443414270819e-4,
                                   1e-6 );
 
-  outgoing_energy_grid.clear();
-  pdf.clear();
-  
-  // Generate a max energy grid at E=1.0 MeV
-  grid_generator.generateAndEvaluateSecondaryInPlace( outgoing_energy_grid,
-                                                      pdf,
-                                                      1.0,
-                                                      cs_evaluator );
-
-  // Check the generated outgoing energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid.size(), 570 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid.front(), 1.0+2e-7, 1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid.back(), 20.2, 1e-6 );
+  // Check the generated max energy grid
+  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 574 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
+                                  1.0 + 2e-7 + 1e-9,
+                                  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.2, 1e-6 );
 
   // Check the evaluated cross section
-  TEST_EQUALITY_CONST( pdf.size(), 570 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf.front(),
-                                  2.0111957945609613671e5,
+  TEST_EQUALITY_CONST( pdf[1.0].size(), 574 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].front(),
+                                  200312.21738014614675,
                                   1e-6 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf.back(),
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].back(),
                                   1.4440565167576839925e-4,
                                   1e-6 );
 }
 
-//---------------------------------------------------------------------------//
-// Check that a full 2D grid can be generated
-TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
-                   generateAndEvaluateInPlace_h )
-{
-  DataGen::AdjointElectronGridGenerator<Utility::LinLinLin>
-    grid_generator( max_energy,
-                    max_energy_nudge_value,
-                    energy_to_outgoing_energy_nudge_value,
-                    convergence_tol,
-                    absolute_diff_tol,
-                    distance_tol );
-
-  Teuchos::Array<double> energy_grid( 2 );
-  energy_grid[0] = 0.001;
-  energy_grid[1] = 20.0;
-  
-  Teuchos::Array<Teuchos::Array<double> > outgoing_energy_grid, pdf;
-
-  // Bind the distribution to a cross section evaluator
-  std::function<double(double,double)> cs_evaluator =
-    grid_generator.createCrossSectionEvaluator(h_brem_adjoint_cs, 0.001);
-
-  // Generate the 2D grid
-  grid_generator.generateAndEvaluateInPlace( energy_grid,
-                                             outgoing_energy_grid,
-                                             pdf,
-                                             cs_evaluator );
-
-  // Check the energy grid
-  TEST_EQUALITY_CONST( energy_grid.size(), 159 );
-  TEST_EQUALITY_CONST( energy_grid.front(), 1e-5 );
-  TEST_EQUALITY_CONST( energy_grid.back(), 20.0 );
-}
-/*
-//---------------------------------------------------------------------------//
-// Check that a full 2D grid can be generated
-TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
-                   generateAndEvaluateInPlace_pb )
-{
-  DataGen::AdjointElectronGridGenerator<Utility::LinLinLin>
-    grid_generator( max_energy,
-                    max_energy_nudge_value,
-                    energy_to_outgoing_energy_nudge_value,
-                    convergence_tol,
-                    absolute_diff_tol,
-                    distance_tol );
-
-  Teuchos::Array<double> energy_grid( 2 );
-  energy_grid[0] = 0.001;
-  energy_grid[1] = 20.0;
-  
-  Teuchos::Array<Teuchos::Array<double> > outgoing_energy_grid, pdf;
-
-  // Bind the distribution to a cross section evaluator
-  std::function<double(double,double)> cs_evaluator =
-    grid_generator.createCrossSectionEvaluator(
-                                             pb_brem_adjoint_cs, 0.001 );
-
-  // Generate the 2D grid
-  grid_generator.generateAndEvaluateInPlace( energy_grid,
-                                             outgoing_energy_grid,
-                                             pdf,
-                                             cs_evaluator );
-
-  // Check the energy grid
-  TEST_EQUALITY_CONST( energy_grid.size(), 169 );
-  TEST_EQUALITY_CONST( energy_grid.front(), 0.001 );
-  TEST_ASSERT(
-           std::binary_search( energy_grid.begin(),
-                               energy_grid.end(),
-                               DataGen::getEnergyOfMaxCrossSection( 20.2 ) ) );
-  TEST_EQUALITY_CONST( energy_grid.back(), 20.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a full 2D grid can be generated
-TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
-                   generateAndEvaluateInPlace_pb_k_subshell )
-{
-  DataGen::AdjointElectronGridGenerator<Utility::LinLinLin> grid_generator(
-          max_energy,
-          pb_k_subshell_ionization_adjoint_cs->getSubshellBindingEnergy()*2,
-          pb_k_subshell_ionization_adjoint_cs->getSubshellBindingEnergy()+1e-8,
-          convergence_tol,
-          absolute_diff_tol,
-          distance_tol );
-
-  Teuchos::Array<double> energy_grid( 2 );
-  energy_grid[0] = 0.001;
-  energy_grid[1] = 20.0;
-  
-  Teuchos::Array<Teuchos::Array<double> > outgoing_energy_grid, pdf;
-
-  // Bind the distribution to a cross section evaluator
-  std::function<double(double,double)> cs_evaluator =
-    grid_generator.createCrossSectionEvaluator(
-                                   pb_k_subshell_ionization_adjoint_cs, 0.01 );
-
-  // Generate the 2D grid
-  grid_generator.generateAndEvaluateInPlace( energy_grid,
-                                             outgoing_energy_grid,
-                                             pdf,
-                                             cs_evaluator );
-
-  // Check the energy grid
-  TEST_EQUALITY_CONST( energy_grid.size(), 95 );
-  TEST_EQUALITY_CONST( energy_grid.front(), 0.001 );
-
-  const double nudged_max_energy = 20.0 +
-    pb_k_subshell_ionization_adjoint_cs->getSubshellBindingEnergy()*2;
-  
-  TEST_ASSERT( std::binary_search(
-                  energy_grid.begin(),
-                  energy_grid.end(),
-                  DataGen::getEnergyOfMaxCrossSection( nudged_max_energy ) ) );
-  TEST_EQUALITY_CONST( energy_grid.back(), 20.0 );
-}
-*/
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
@@ -317,8 +376,8 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_native_h_file",
-		 &test_native_h_file_name,
-		 "Test Native H file name" );
+                 &test_native_h_file_name,
+                 "Test Native H file name" );
   clp.setOption( "test_native_pb_file",
                  &test_native_pb_file_name,
                  "Test Native Pb file name" );
@@ -335,7 +394,7 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  // Create the H distribution
+  // Create the H distributions
   {
     // Create the native data file container
     Data::ElectronPhotonRelaxationDataContainer
@@ -354,54 +413,37 @@ int main( int argc, char** argv )
                 union_energy_grid[union_energy_grid.size()-1],
                 union_energy_grid.size()/10 + 1 ) );
 
-    std::shared_ptr<BremsstrahlungReaction> bremsstrahlung_reaction;
-
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
       data_container,
       union_energy_grid,
       grid_searcher,
-      bremsstrahlung_reaction,
+      h_brem_reaction,
       MonteCarlo::DIPOLE_DISTRIBUTION );
 
-    std::vector<double> brem_energy_grid =
-      data_container.getBremsstrahlungEnergyGrid();
+    brem_energy_grid = data_container.getBremsstrahlungEnergyGrid();
 
-    std::vector<double>::iterator start, end;
+    // Extract the subshell information
+    std::set<unsigned> subshells = data_container.getSubshells();
 
-    if ( min_energy <= brem_energy_grid.front() )
-    {
-      start = brem_energy_grid.begin();
-    }
-    else
-    {
-      // Find the location of the first grid point that is <= the min energy
-      start = std::upper_bound(
-                  brem_energy_grid.begin(),
-                  brem_energy_grid.end(),
-                  min_energy );
-      --start;
-    }
+    Data::SubshellType subshell_type;
 
-      // Find the location of the first grid point that is >= the max energy
-    end = std::lower_bound(
-                start,
-                brem_energy_grid.end(),
-                max_energy );
-    ++end;
+    std::set<unsigned>::iterator shell = subshells.begin();
 
-    std::vector<double> bremsstrahlung_integration_points( start, end );
+    // Get the energies for which knock-on sampling tables are given
+    ionization_energy_grid =
+      data_container.getElectroionizationEnergyGrid( *shell );
 
-    double nudged_max_energy = max_energy + max_energy_nudge_value;
+    // Create the subshell electroelectric reaction
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
+      data_container,
+      union_energy_grid,
+      grid_searcher,
+      *shell,
+      h_ionization_reaction );
 
-    // Replace the lower and upper bins with the min and max electron energies
-    bremsstrahlung_integration_points.front() = min_energy;
-    bremsstrahlung_integration_points.back() = max_energy;
-    bremsstrahlung_integration_points.push_back( nudged_max_energy );
+    binding_energy = data_container.getSubshellBindingEnergy( *shell );
 
-    h_brem_adjoint_cs.reset(
-      new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
-          bremsstrahlung_reaction,
-          bremsstrahlung_integration_points ) );
+    max_ionization_subshell_adjoint_energy = 1e5 - 2.0*binding_energy;
   }
 
   // Create the Pb distributions
