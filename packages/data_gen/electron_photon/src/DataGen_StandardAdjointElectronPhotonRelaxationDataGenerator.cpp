@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator.hpp
-//! \author Luke Kersting
+//! \author Luke Kersting, Alex Robinson
 //! \brief  The standard adjoint electron-photon-relaxation data generator class def.
 //!
 //---------------------------------------------------------------------------//
@@ -32,11 +32,12 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_GridGenerator.hpp"
+#include "Utility_SloanRadauQuadrature.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
+#include "Utility_StaticOutputFormatter.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
-#include "Utility_SloanRadauQuadrature.hpp"
-#include "Utility_StandardHashBasedGridSearcher.hpp"
 
 namespace DataGen{
 
@@ -93,7 +94,8 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
   {
     this->setMinPhotonEnergy( forward_epr_data->getMinPhotonEnergy() );
 
-    (*os_warn) << "Warning: the min photon energy requested is below the "
+    (*os_warn) << Utility::BoldMagenta( "Warning: " )
+               << "the min photon energy requested is below the "
                << "requested forward table min photon energy! The table's min "
                << "photon energy will be used instead."
                << std::endl;
@@ -104,7 +106,8 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
   {
     this->setMaxPhotonEnergy( forward_epr_data->getMaxPhotonEnergy() );
 
-    (*os_warn) << "Warning: the max photon energy requested is above the "
+    (*os_warn) << Utility::BoldMagenta( "Warning: " )
+               << "the max photon energy requested is above the "
                << "requested forward table max photon energy! The table's max "
                << "photon energy will be used instead."
                << std::endl;
@@ -115,7 +118,8 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
   {
     this->setMinElectronEnergy( forward_epr_data->getMinElectronEnergy() );
 
-    (*os_warn) << "Warning: the min electron energy requested is above the "
+    (*os_warn) << Utility::BoldMagenta( "Warning: " )
+               << "the min electron energy requested is above the "
                << "requested forward table min electron energy! The table's "
                << "min electron energy will be used instead."
                << std::endl;
@@ -126,7 +130,8 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
   {
     this->setMaxElectronEnergy( forward_epr_data->getMaxElectronEnergy() );
 
-    (*os_warn) << "Warning: the max electron energy requested is above the "
+    (*os_warn) << Utility::BoldMagenta( "Warning: " )
+               << "the max electron energy requested is above the "
                << "requested forward table max electron energy! The table's "
                << "max electron energy will be used instead."
                << std::endl;
@@ -543,50 +548,30 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
   // Set the table data
-  (*d_os_log) << std::endl << "Setting the table data...";
+  (*d_os_log) << std::endl << Utility::Bold( "Setting the table data" )
+              << "...";
   d_os_log->flush();
   this->setTableData( data_container );
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
   // Set the relaxation data
-  (*d_os_log) << std::endl << "Setting the adjoint relaxation data...";
+  (*d_os_log) << Utility::Bold( "Setting the adjoint relaxation data" )
+              << "...";
   d_os_log->flush();
   this->setAdjointRelaxationData( data_container );
-  (*d_os_log) << "done." << std::endl;
-
-  // Set the Compton profile data
-  (*d_os_log) << "Setting the Compton profile data...";
-  d_os_log->flush();
-  this->setComptonProfileData( data_container );
-  (*d_os_log) << "done." << std::endl;
-
-  // Set the occupation number data
-  (*d_os_log) << "Setting the occupation number data...";
-  d_os_log->flush();
-  this->setOccupationNumberData( data_container );
-  (*d_os_log) << "done." << std::endl;
-
-  // Set the Waller-Hartree scattering function data
-  (*d_os_log) << "Setting the Waller-Hartree scattering function data...";
-  d_os_log->flush();
-  this->setWallerHartreeScatteringFunctionData( data_container );
-  (*d_os_log) << "done." << std::endl;
-
-  // Set the Waller-Hartree atomic form factor data
-  (*d_os_log) << "Setting the Waller-Hartree atomic form factor data...";
-  d_os_log->flush();
-  this->setWallerHartreeAtomicFormFactorData( data_container );
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
   // Set the photon data
-  (*d_os_log) << "Setting the adjoint photon data: " << std::endl;
+  (*d_os_log) << Utility::Bold( "Setting the adjoint photon data: " )
+              << std::endl;
   this->setAdjointPhotonData( data_container );
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
   // Set the electron data
-  (*d_os_log) << "Setting the adjoint electron data: " << std::endl;
+  (*d_os_log) << Utility::Bold( "Setting the adjoint electron data: " )
+              << std::endl;
   this->setAdjointElectronData( data_container );
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 }
 
 // Set the table data
@@ -740,6 +725,38 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
 			   Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const
 {
+  // Set the Compton profile data
+  (*d_os_log) << " Setting the " << Utility::Italicized( "Compton profile" )
+              << " data...";
+  d_os_log->flush();
+  this->setComptonProfileData( data_container );
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  // Set the occupation number data
+  (*d_os_log) << " Setting the " << Utility::Italicized( "occupation number" )
+              << " data...";
+  d_os_log->flush();
+  this->setOccupationNumberData( data_container );
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  // Set the Waller-Hartree scattering function data
+  (*d_os_log) << " Setting the "
+              << Utility::Italicized( "Waller-Hartree scattering function" )
+              << " data...";
+  d_os_log->flush();
+  this->setWallerHartreeScatteringFunctionData( data_container );
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  // Set the Waller-Hartree atomic form factor data
+  (*d_os_log) << " Setting the "
+              << Utility::Italicized( "Waller-Hartree atomic form factor" )
+              << " data...";
+  d_os_log->flush();
+  this->setWallerHartreeAtomicFormFactorData( data_container );
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+  (*d_os_log) << " Setting the photon cross section data:" << std::endl;
+  
   // Extract the coherent cross section
   std::shared_ptr<const Utility::OneDDistribution> waller_hartree_coherent_cs(
        new Utility::TabularDistribution<Utility::LinLin>(
@@ -773,7 +790,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                              impulse_approx_incoherent_adjoint_cs_evaluators );
   
   // Create the union energy grid
-  (*d_os_log) << " Creating union energy grid";
+  (*d_os_log) << "   Creating " << Utility::Italicized( "union energy grid" );
   d_os_log->flush();
   
   std::list<double> union_energy_grid;
@@ -796,7 +813,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   this->updateAdjointPhotonUnionEnergyGrid(
                           union_energy_grid, impulse_approx_total_forward_cs );
 
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
   // Set the union energy grid
   std::vector<double> energy_grid;
@@ -809,7 +826,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   {
     std::vector<std::vector<double> > max_energy_grid, cross_section;
 
-    (*d_os_log) << " Setting the Waller-Hartree incoherent adjoint"
+    (*d_os_log) << "   Setting the "
+                << Utility::Italicized( "Waller-Hartree incoherent adjoint" )
                 << " cross section...";
     d_os_log->flush();
     
@@ -823,14 +841,15 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                                              max_energy_grid );
     data_container.setAdjointWallerHartreeIncoherentCrossSection(
                                                                cross_section );
-    (*d_os_log) << "done." << std::endl;
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
     for( unsigned i = 0u; i < impulse_approx_incoherent_adjoint_cs_evaluators.size(); ++i )
     {
-      (*d_os_log) << " Setting subshell "
-                  << Data::convertENDFDesignatorToSubshellEnum(
-                     impulse_approx_incoherent_adjoint_cs_evaluators[i].first )
-                  << " impulse approx incoherent adjoint cross section...";
+      (*d_os_log) << "   Setting " << Utility::Italicized( "subshell " )
+                  << Utility::Italicized( Data::convertENDFDesignatorToSubshellEnum(
+                   impulse_approx_incoherent_adjoint_cs_evaluators[i].first ) )
+                  << Utility::Italicized(" impulse approx incoherent adjoint ")
+                  << "cross section...";
       d_os_log->flush();
 
       this->createCrossSectionOnUnionEnergyGrid(
@@ -846,15 +865,16 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                       impulse_approx_incoherent_adjoint_cs_evaluators[i].first,
                       cross_section );
 
-      (*d_os_log) << "done." << std::endl;
+      (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
     }
 
-    (*d_os_log) << " Setting the impulse approx total incoherent adjoint"
+    (*d_os_log) << "   Setting the "
+                << Utility::Italicized( "impulse approx total incoherent adjoint" )
                 << " cross section...";
     d_os_log->flush();
     this->calculateAdjointImpulseApproxTotalIncoherentCrossSection(
                                                               data_container );
-    (*d_os_log) << "done." << std::endl;
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
     
   }
 
@@ -862,7 +882,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   {
     std::vector<double> cross_section;
 
-    (*d_os_log) << " Setting the Waller-Hartree coherent adjoint"
+    (*d_os_log) << "   Setting the "
+                << Utility::Italicized( "Waller-Hartree coherent adjoint" )
                 << " cross section...";
     d_os_log->flush();
 
@@ -872,9 +893,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
 
     data_container.setAdjointWallerHartreeCoherentCrossSection(cross_section);
 
-    (*d_os_log) << "done." << std::endl;
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-    (*d_os_log) << " Setting the forward Waller-Hartree total"
+    (*d_os_log) << "   Setting the "
+                << Utility::Italicized( "forward Waller-Hartree total" )
                 << " cross section...";
     d_os_log->flush();
 
@@ -884,9 +906,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
 
     data_container.setWallerHartreeTotalCrossSection( cross_section );
 
-    (*d_os_log) << "done." << std::endl;
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-    (*d_os_log) << " Setting the forward impulse approx. total"
+    (*d_os_log) << "   Setting the "
+                << Utility::Italicized( "forward impulse approx. total" )
                 << " cross section...";
     d_os_log->flush();
 
@@ -896,41 +919,54 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
 
     data_container.setImpulseApproxTotalCrossSection( cross_section );
 
-    (*d_os_log) << "done." << std::endl;
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
   }
 
   // Set the total adjoint cross sections
-  (*d_os_log) << " Setting the adjoint Waller-Hartree total cross section...";
+  (*d_os_log) << "   Setting the "
+              << Utility::Italicized( "adjoint Waller-Hartree total" )
+              << " cross section...";
   d_os_log->flush();
 
   this->calculateAdjointPhotonTotalCrossSection( data_container, true );
 
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << " Setting the adjoint impulse approx total cross section...";
+  (*d_os_log) << "   Setting the "
+              << Utility::Italicized( "adjoint impulse approx total" )
+              << " cross section...";
   d_os_log->flush();
 
   this->calculateAdjointPhotonTotalCrossSection( data_container, false );
 
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  // Set the adjoint pair production energy distribution
-  (*d_os_log) << " Setting the adjoint pair production energy distribution"
-              << " data...";
-  d_os_log->flush();
+  // Set the adjoint pair/triplet production energy distributions
+  (*d_os_log) << " Setting the adjoint pair/triplet production energy "
+              << "distributions:"
+              << std::endl;
+
+  {
+    // Set the adjoint pair production energy distribution
+    (*d_os_log) << "   Setting the "
+                << Utility::Italicized( "adjoint pair production" )
+                << " energy distribution data...";
+    d_os_log->flush();
     
-  this->setAdjointPairProductionEnergyDistribution( data_container );
+    this->setAdjointPairProductionEnergyDistribution( data_container );
 
-  (*d_os_log) << "done." << std::endl;
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  // Set the adjoint triplet production energy distribution
-  (*d_os_log) << " Setting the adjoint triplet production energy distribution"
-              << " data...";
-  d_os_log->flush();
+    // Set the adjoint triplet production energy distribution
+    (*d_os_log) << "   Setting the "
+                << Utility::Italicized( "adjoint triplet production" )
+                << " energy distribution data...";
+    d_os_log->flush();
 
-  this->setAdjointTripletProductionEnergyDistribution( data_container );
+    this->setAdjointTripletProductionEnergyDistribution( data_container );
 
-  (*d_os_log) << "done." << std::endl;
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  }
 }
 
 // Set the adjoint pair production energy distributions
@@ -1587,7 +1623,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   //---------------------------------------------------------------------------//
 
   // Create the union energy grid
-  (*d_os_log) << "   Creating union energy grid";
+  (*d_os_log) << "   Creating " << Utility::Italicized( "union energy grid" );
   d_os_log->flush();
 
   std::list<double> union_energy_grid;
@@ -1757,7 +1793,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     d_os_log->flush();
   }
 
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
   //---------------------------------------------------------------------------//
   // Set the Union Energy Grid and Generate Cross Section on it.
@@ -1779,7 +1815,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 //---------------------------------------------------------------------------//
 
   // Set the adjoint elastic cross section data
-  (*d_os_log) << "   Setting the adjoint total elastic cross section...";
+  (*d_os_log) << "   Setting the "
+              << Utility::Italicized( "adjoint total elastic" )
+              << " cross section...";
   d_os_log->flush();
   std::vector<double> total_cross_section;
   this->createCrossSectionOnUnionEnergyGrid(
@@ -1789,9 +1827,11 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       threshold );
   data_container.setAdjointTotalElasticCrossSection( total_cross_section );
   data_container.setAdjointTotalElasticCrossSectionThresholdEnergyIndex( threshold );
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  (*d_os_log) << "   Setting the adjoint cutoff elastic cross section and distribution...";
+  (*d_os_log) << "   Setting the "
+              << Utility::Italicized( "adjoint cutoff elastic " )
+              << " cross section and distribution...";
   d_os_log->flush();
   std::vector<double> cutoff_cross_section;
   this->createCrossSectionOnUnionEnergyGrid(
@@ -1812,10 +1852,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   data_container.setAdjointCutoffElasticPDF(
         d_forward_epr_data->getCutoffElasticPDF() );
 
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
 
-  (*d_os_log) << "   Setting the screened Rutherford elastic cross section...";
+  (*d_os_log) << "   Setting the "
+              << Utility::Italicized( "screened Rutherford elastic" )
+              << " cross section...";
   d_os_log->flush();
   {
   std::vector<double> raw_cross_section( total_cross_section.size() );
@@ -1844,11 +1886,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   data_container.setAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(
   threshold );
   }
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
   if( d_forward_epr_data->hasMomentPreservingData() )
   {
-    (*d_os_log) << "   Setting the adjoint moment preserving elastic cross section and distribution...";
+    (*d_os_log) << "   Setting the "
+                << Utility::Italicized( "adjoint moment preserving elastic" )
+                << " cross section and distribution...";
     d_os_log->flush();
 
     // Extract the moment preserving elastic cross section data
@@ -1878,17 +1922,19 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     data_container.setAdjointMomentPreservingCrossSection( moment_preserving_cross_section );
     data_container.setAdjointMomentPreservingCrossSectionThresholdEnergyIndex( threshold );
 
-  data_container.setAdjointMomentPreservingElasticDiscreteAngles(
+    data_container.setAdjointMomentPreservingElasticDiscreteAngles(
         d_forward_epr_data->getMomentPreservingElasticDiscreteAngles() );
 
-  data_container.setAdjointMomentPreservingElasticWeights(
+    data_container.setAdjointMomentPreservingElasticWeights(
         d_forward_epr_data->getMomentPreservingElasticWeights() );
 
-    (*d_os_log) << "done." << std::endl;
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
   }
 
   // Set the adjoint atomic excitation cross section data
-  (*d_os_log) << "   Setting the adjoint atomic excitation cross section...";
+  (*d_os_log) << "   Setting the "
+              << Utility::Italicized( "adjoint atomic excitation" )
+              << " cross section...";
   d_os_log->flush();
   std::vector<double> excitation_cross_section;
   this->createCrossSectionOnUnionEnergyGrid(
@@ -1899,14 +1945,16 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   data_container.setAdjointAtomicExcitationCrossSection( excitation_cross_section );
   data_container.setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex( threshold );
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
 //---------------------------------------------------------------------------//
 // Set Bremsstrahlung Data
 //---------------------------------------------------------------------------//
 
   // Set the adjoint bremsstrahlung cross section data
-  (*d_os_log) << "   Setting the adjoint bremsstrahlung cross section and distribution...";
+  (*d_os_log) << "   Setting the "
+              << Utility::Italicized( "adjoint bremsstrahlung" )
+              << " cross section and distribution...";
   d_os_log->flush();
 
   this->setAdjointBremsstrahlungData(
@@ -1918,14 +1966,16 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
           adjoint_bremsstrahlung_cs_evaluator,
           energy_grid );
 
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
 //---------------------------------------------------------------------------//
 // Set Electroionization Data
 //---------------------------------------------------------------------------//
 
   // Set the adjoint electroionization subshell cross section data
-  (*d_os_log) << "   Setting the adjoint electroionization subshell cross sections and distributions...";
+  (*d_os_log) << "   Setting the "
+              << Utility::Italicized( "adjoint electroionization subshell" )
+              << " cross sections and distributions...";
   d_os_log->flush();
 
   // Loop through the electroionization subshells
@@ -1942,7 +1992,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                 energy_grid,
                 *shell );
   }
-  (*d_os_log) << "done." << std::endl;
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 }
 
 // Create the adjoint atomic excitation cross section reaction
