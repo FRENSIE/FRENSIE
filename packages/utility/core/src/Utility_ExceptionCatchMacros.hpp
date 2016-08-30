@@ -14,13 +14,12 @@
 #include <iostream>
 #include <sstream>
 
-// Trilinos Includes
-#include <Teuchos_FancyOStream.hpp>
-#include <Teuchos_stacktrace.hpp>
-#include <Teuchos_TestForException.hpp>
-
 // HDF5 Includes
 #include <H5Cpp.h>
+
+// FRENSIE Includes
+#include "Utility_StaticOutputFormatter.hpp"
+#include "Utility_DynamicOutputFormatter.hpp"
 
 /*! \defgroup exception_macros Exception Catch Macros
  *
@@ -28,6 +27,78 @@
  * out error messages with the file name and line where the exception
  * occurred and then exit the program.
  */
+
+/*! Catch statement body macro for catching HDF5 H5:Exception exceptions.
+ *
+ * This macro should never be called directly outside of this header file.
+ * \ingroup exception_macros
+ */
+#define __HDF5_EXCEPTION_CATCH_AND_EXIT_BODY__( file, line, msg, exception ) \
+  std::cerr << std::flush;                                              \
+  std::cerr << Utility::Bold( " *** Caught HDF5 H5::Exception *** " )   \
+            << "\n\n";                                                  \
+  std::cerr << Utility::BoldCyan( "File: " ) << file << "\n";           \
+  std::cerr << Utility::BoldCyan( "Line: " ) << line << "\n";           \
+  std::cerr << msg << "\n";                                             \
+  std::cerr << "\t" << exception.getFuncName() << "\n";                 \
+  std::cerr << "\t" << exception.getDetailMsg() << "\n";                \
+  std::cerr << std::flush;                                              \
+  exit(EXIT_FAILURE)
+
+/*! \brief Catch statement body macro for catching an HDF5:Exception and rethrowing it as a new exception of the desired type.
+ *
+ * This macro should never be called directly outside of this header file.
+ * \ingroup exception_macros
+ */
+#define __HDF5_EXCEPTION_CATCH_RETHROW_AS_BODY__( file, line, msg, exception, NewException ) \
+  std::ostringstream detailed_msg;					\
+  detailed_msg << "\n" << "File: " << file << "\n"                      \
+               << "Line: " << line << "\n"                              \
+               << msg << "\n"						\
+               << exception.getFuncName() << "\n"                       \
+               << exception.getDetailMsg() << "\n";                     \
+                                                                        \
+  throw NewException(detailed_msg.str())
+
+/*! Catch statement macro body for catching of user specified exceptions
+ *
+ * This macro should never be called directly outside of this header file.
+ * \ingroup exception_macros
+ */
+#define __EXCEPTION_CATCH_AND_EXIT_BODY__( file, line, msg, exception, Exception ) \
+  std::cerr << std::flush;                                              \
+  std::cerr << Utility::Bold( " *** Caught Exception of Type " )        \
+            << Utility::Bold( #Exception )                              \
+            << Utility::Bold( " *** " ) << "\n\n";                      \
+  std::cerr << Utility::BoldCyan( "File: " ) << file << "\n";       \
+  std::cerr << Utility::BoldCyan( "Line: " ) << line << "\n";       \
+                                                                    \
+  std::ostringstream oss;                                           \
+  oss << msg << "\n";                                                   \
+  oss << exception.what();                                              \
+                                                                        \
+  Utility::DynamicOutputFormatter formatter( oss.str() );               \
+  formatter.formatStandardErrorKeywords();                              \
+  formatter.formatStandardWarningKeywords();                            \
+  formatter.formatStandardFilenameKeywords();                           \
+                                                                        \
+  std::cerr << formatter << std::endl;                                  \
+                                                                        \
+  exit(EXIT_FAILURE)
+
+/*! Catch macro body for catching exceptions, adding error info, and rethrowing
+ *
+ * This macro should never be called directly outside of this header file.
+ * \ingroup exception_macros
+ */
+#define __EXCEPTION_CATCH_RETHROW_AS_BODY__( file, line, msg, exception, NewException ) \
+  std::ostringstream detailed_msg;					\
+  detailed_msg << "\n" << "File: " << file << "\n"                      \
+               << "Line: " << line << "\n"                              \
+               << msg << "\n"						\
+               << exception.what() << "\n";				\
+                                                                        \
+  throw NewException(detailed_msg.str())
 
 /*! Catch statement macro for catching HDF5 H5::Exception exceptions
  *
@@ -38,84 +109,51 @@
  * HDF5 library call that can throw one of these exceptions.
  * \ingroup exception_macros
  */
-#define HDF5_EXCEPTION_CATCH_AND_EXIT()	\
-  catch( const H5::Exception &exception )	\
-  {						\
-    std::ostringstream oss;			     \
-    oss << " *** Caught HDF5 H5::Exception *** \n\n";	\
-    oss << "File: " << __FILE__ << "\n"; \
-    oss << "Line: " << __LINE__ << "\n"; \
-    Teuchos::OSTab scsi_tab(oss); \
-    scsi_tab.o() << exception.getFuncName() << "\n";	\
-    scsi_tab.o() << exception.getDetailMsg() << "\n"; \
-    std::cerr << std::flush; \
-    std::cerr << oss.str(); \
-    exit(EXIT_FAILURE); \
-  } \
+#define HDF5_EXCEPTION_CATCH_AND_EXIT( msg )                            \
+catch( const H5::Exception &exception )                                 \
+{                                                                       \
+  __HDF5_EXCEPTION_CATCH_AND_EXIT_BODY__( __FILE__, __LINE__, msg, exception ); \
+}
+
+/*! \brief Catch statement macro for catching an HDF5:Exception and rethrowing it as a new exception of the desired type.
+ *
+ * This macro should be used anywhere an exception is thrown in order to
+ * properly document the exception and add additional information to it before
+ * throwing it again. This macro should also be used when the exception to
+ * throw is different than the caught exception.
+ * \ingroup exception_macros
+ */
+#define HDF5_EXCEPTION_CATCH_RETHROW_AS( NewException, msg )            \
+catch( const H5::Exception &exception )                                 \
+{									\
+  __HDF5_EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, exception, NewException ); \
+}
 
 /*! \brief Catch statement macro for catching an H5::Exception and either
  * exiting with a message or throwing a new exception of user specified type.
  * \ingroup exception_macros
  */
-#define HDF5_EXCEPTION_CATCH( NewException, Exit, msg )	\
-  catch( const H5::Exception &exception )		\
-    {							\
-    std::ostringstream oss;				\
-    oss << " *** Caught HDF5 H5::Exception *** \n\n";	\
-    oss << "File: " << __FILE__ << "\n";		\
-    oss << "Line: " << __LINE__ << "\n";		\
-    oss << msg << "\n";					\
-    Teuchos::OSTab scsi_tab(oss);			\
-    scsi_tab.o() << exception.getFuncName() << "\n";	\
-    scsi_tab.o() << exception.getDetailMsg() << "\n";	\
-    if( Exit )						\
-    {							\
-      std::cerr << std::flush;				\
-      std::cerr << oss.str();				\
-      exit(EXIT_FAILURE);				\
-    }							\
-    else						\
-      throw NewException( oss.str() );			\
-  }
-
-/*! Catch statement macro for catching std::exception Exceptions
- *
- * This macro is based off of the Teuchos_StandardCatchMacro. This macro
- * should be used anywhere that a std::exception is thrown in order to
- * properly document the exception and exit the program.
- * \ingroup exception_macros
- */
-#define STD_EXCEPTION_CATCH_AND_EXIT() \
-  catch( const std::exception &exception )	\
-  {						\
-    std::ostringstream oss;			\
-    oss << " *** Caught Exception of Type std::exception *** \n\n"; \
-    oss << "File: " << __FILE__ << "\n"; \
-    oss << "Line: " << __LINE__ << "\n"; \
-    Teuchos::OSTab scsi_tab(oss); \
-    scsi_tab.o() << exception.what() << "\n"; \
-    std::cerr << std::flush; \
-    std::cerr << oss.str(); \
-    exit(EXIT_FAILURE); \
-  } \
+#define HDF5_EXCEPTION_CATCH( NewException, Exit, msg )             \
+catch( const H5::Exception& exception )                             \
+{                                                                   \
+  if( Exit )                                                            \
+  {                                                                     \
+    __HDF5_EXCEPTION_CATCH_AND_EXIT_BODY__( __FILE__, __LINE__, msg, exception ); \
+  }                                                                     \
+  else                                                                  \
+  {                                                                     \
+    __HDF5_EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, exception, NewException ); \
+  }                                                                     \
+}
 
 /*! Catch statement macro for catching of user specified exceptions
  * \ingroup exception_macros
  */
 #define EXCEPTION_CATCH_AND_EXIT( Exception, msg ) \
-  catch( const Exception &exception ) \
-  {				      \
-    std::ostringstream oss;	      \
-    oss << " *** Caught Exception of Type " << #Exception << " *** \n\n"; \
-    oss << "File: " << __FILE__ << "\n";				\
-    oss << "Line: " << __LINE__ << "\n";				\
-    oss << msg << "\n";							\
-    Teuchos::OSTab scsi_tab(oss);					\
-    scsi_tab.o() << exception.what() << "\n";				\
-    std::cerr << std::flush;						\
-    std::cerr << oss.str();						\
-    exit(EXIT_FAILURE);							\
-  }
+catch( const Exception &exception ) \
+{				      \
+  __EXCEPTION_CATCH_AND_EXIT_BODY__( __FILE__, __LINE__, msg, exception, Exception ); \
+}
 
 /*! Catch macro for catching exceptions, adding error info, rethrowing
  *
@@ -127,11 +165,7 @@
 #define EXCEPTION_CATCH_RETHROW( Exception, msg ) \
 catch( const Exception &exception )				\
 {								\
-  std::ostringstream detailed_msg;                                      \
-  detailed_msg << "\n" << __FILE__ << ":" << __LINE__ << ":\n"	\
-	       << msg << "\n"                                           \
-	       << exception.what() << "\n";                             \
-  throw Exception(detailed_msg.str());                                  \
+  __EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, exception, Exception ); \
 }
 
 /*! Catch macro for catching exceptions, adding error info, and rethrowing
@@ -145,35 +179,24 @@ catch( const Exception &exception )				\
 #define EXCEPTION_CATCH_RETHROW_AS( ExceptionIn, ExceptionOut, msg )	\
 catch( const ExceptionIn &exception )					\
 {									\
-  std::ostringstream detailed_msg;					\
-  detailed_msg << "\n" << __FILE__ << ":" << __LINE__ << ":\n"          \
-               << msg << "\n"						\
-               << exception.what() << "\n";				\
-  throw ExceptionOut(detailed_msg.str());				\
+  __EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, exception, ExceptionOut ); \
 }
 
 /*! Catch statement macro for catching of user specified exceptions
  * \ingroup exception_macros
  */
 #define EXCEPTION_CATCH( Exception, Exit, msg )	\
-  catch( const Exception &exception ) \
-  {				      \
-    std::ostringstream oss;	      \
-    oss << " *** Caught Exception of Type " << #Exception << " *** \n\n"; \
-    oss << "File: " << __FILE__ << "\n";				\
-    oss << "Line: " << __LINE__ << "\n";				\
-    oss << msg << "\n";							\
-    Teuchos::OSTab scsi_tab(oss);					\
-    scsi_tab.o() << exception.what() << "\n";				\
-    if( Exit )								\
-    {									\
-      std::cerr << std::flush;						\
-      std::cerr << oss.str();						\
-      exit(EXIT_FAILURE);						\
-    }									\
-    else								\
-      throw Exception(oss.str());					\
-  }
+catch( const Exception &exception )                                     \
+{                                                                       \
+  if( Exit )								\
+  {                                                                     \
+    __EXCEPTION_CATCH_AND_EXIT_BODY__( __FILE__, __LINE__, msg, exception, Exception ); \
+  }                                                                     \
+  else                                                                  \
+  {                                                                     \
+    __EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, exception, ExceptionOut ); \
+  }                                                                     \
+}                                                                       \
 
 
 #endif // end UTILITY_EXCEPTION_CATCH_MACROS_HPP

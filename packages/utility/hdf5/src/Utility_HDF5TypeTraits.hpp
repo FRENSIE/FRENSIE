@@ -243,7 +243,7 @@ struct HDF5TypeTraits<Pair<T1,T2> >
 
     }
 
-    HDF5_EXCEPTION_CATCH_AND_EXIT();
+    HDF5_EXCEPTION_CATCH_AND_EXIT( "Error: Unable to crete the HDF5 data type!" );
 
     return memtype;
   }
@@ -298,7 +298,7 @@ struct HDF5TypeTraits<Trip<T1,T2,T3> >
 			    HDF5TypeTraits<T3>::dataType() );
     }
 
-    HDF5_EXCEPTION_CATCH_AND_EXIT();
+    HDF5_EXCEPTION_CATCH_AND_EXIT( "Error: Unable to crete the HDF5 data type!" );
 
     return memtype;
   }
@@ -362,7 +362,7 @@ struct HDF5TypeTraits<Quad<T1,T2,T3,T4> >
 			    HDF5TypeTraits<T4>::dataType() );
     }
 
-    HDF5_EXCEPTION_CATCH_AND_EXIT();
+    HDF5_EXCEPTION_CATCH_AND_EXIT( "Error: Unable to crete the HDF5 data type!" );
 
     return memtype;
   }

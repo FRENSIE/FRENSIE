@@ -12,6 +12,20 @@ TARGET_LINK_LIBRARIES(tstContractException utility_core)
 ADD_TEST(ContractException_test tstContractException)
 SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstStaticOutputFormatter
+  tstStaticOutputFormatter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core)
+ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter)
+SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstDynamicOutputFormatter
+  tstDynamicOutputFormatter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core)
+ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter)
+SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstSerialCommHelpers
   tstSerialCommHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -248,10 +262,3 @@ ADD_EXECUTABLE(tstIncrementPolicy
 TARGET_LINK_LIBRARIES(tstIncrementPolicy utility_core)
 ADD_TEST(IncrementPolicy_test tstIncrementPolicy)
 SET_PROPERTY(TEST IncrementPolicy_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstStandardOutputFormatter
-  tstStandardOutputFormatter.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStandardOutputFormatter utility_core)
-ADD_TEST(StandardOutputFormatter_test tstStandardOutputFormatter)
-SET_PROPERTY(TEST StandardOutputFormatter_test PROPERTY LABELS utility_core)

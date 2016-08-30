@@ -11,6 +11,8 @@
 
 // Std Lib Includes
 #include <string>
+#include <utility>
+#include <list>
 
 // FRENSIE Includes
 #include "Utility_PrintableObject.hpp"
@@ -44,19 +46,53 @@ public:
 
 protected:
 
-  //! Get the text format
-  virtual std::string getTextFormat() const = 0;
+  //! Set the raw string (no formatting)
+  void setRawString( const std::string& raw_string );
 
-  //! Get the text color
-  virtual std::string getTextColor() const = 0;
+  //! Set the raw string (with formatting)
+  template<typename TextFormatPolicy,
+           typename TextColorPolicy,
+           typename TextBackgroundColorPolicy>
+  void setRawStringAndFormat( const std::string& raw_string );
 
-  //! Get the text background color
-  virtual std::string getTextBackgroundColor() const = 0;
-  
-  //! Format the raw string
-  void formatRawString( const std::string& raw_string );
+  //! Add format to raw string keyword
+  template<typename TextFormatPolicy,
+           typename TextColorPolicy,
+           typename TextBackgroundColorPolicy>
+  void addFormatToRawStringKeyword( const std::string& keyword );
   
 private:
+
+  // Compare two format locations
+  static bool compareFormatLocations( const std::pair<size_t,size_t>& loc_a,
+                                      const std::pair<size_t,size_t>& loc_b );
+
+  // Check if a keyword location can be formatted
+  bool canKeywordLocationBeFormatted( const size_t keyword_front_index,
+                                      const size_t keyword_back_index ) const;
+
+  // Add a format location
+  void addFormatLocation( const size_t keyword_front_index,
+                          const size_t keyword_back_index,
+                          const size_t shift );
+  
+  // Format the string
+  template<typename TextFormatPolicy,
+           typename TextColorPolicy,
+           typename TextBackgroundColorPolicy>
+  std::string formatString( const std::string& string ) const;
+
+  // Return the begin format spec string
+  std::string getBeginFormatSpecString() const;
+
+  // Return the format key deliminator string
+  std::string getFormatKeyDeliminatorString() const;
+
+  // Return the end format spec string
+  std::string getEndFormatSpecString() const;
+
+  // Return the reset format spec string
+  std::string getResetFormatSpecString() const;
 
   // Check if the formatted string should be placed in the stream
   bool useFormattedString( std::ostream& os ) const;
@@ -66,9 +102,20 @@ private:
 
   // The formatted string
   std::string d_formatted_string;
+
+  // The format locations
+  std::list<std::pair<size_t,size_t> > d_format_locations;
 };
 
 } // end Utility namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_OutputFormatter_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_OUTPUT_FORMATTER_HPP
 
