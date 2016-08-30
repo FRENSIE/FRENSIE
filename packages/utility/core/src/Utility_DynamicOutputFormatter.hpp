@@ -72,6 +72,10 @@ public:
 };
 
 // Format a keyword in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
 template<typename TextFormatPolicy,
          typename TextColorPolicy,
          typename TextBackgroundColorPolicy>

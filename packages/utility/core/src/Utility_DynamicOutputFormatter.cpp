@@ -19,49 +19,77 @@ DynamicOutputFormatter::DynamicOutputFormatter( const std::string& raw_output )
 }
 
 // Make the keyword bold in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
 void DynamicOutputFormatter::boldKeyword( const std::string& keyword )
 {
   this->formatKeyword<BoldTextFormat,DefaultTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
 // Make the keyword italicized in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
 void DynamicOutputFormatter::italicizedKeyword( const std::string& keyword )
 {
   this->formatKeyword<ItalicizedTextFormat,DefaultTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
 // Make the keyword underlined in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
 void DynamicOutputFormatter::underlinedKeyword( const std::string& keyword )
 {
   this->formatKeyword<UnderlinedTextFormat,DefaultTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
 // Make the keyword bold-red in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
 void DynamicOutputFormatter::boldRedKeyword( const std::string& keyword )
 {
   this->formatKeyword<BoldTextFormat,RedTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
 // Make the keyword bold-cyan in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
 void DynamicOutputFormatter::boldCyanKeyword( const std::string& keyword )
 {
   this->formatKeyword<BoldTextFormat,CyanTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
 // Make the keyword bold-magenta in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
 void DynamicOutputFormatter::boldMagentaKeyword( const std::string& keyword )
 {
   this->formatKeyword<BoldTextFormat,MagentaTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
 // Make the keyword bold-white in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
 void DynamicOutputFormatter::boldWhiteKeyword( const std::string& keyword )
 {
   this->formatKeyword<BoldTextFormat,WhiteTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
 // Format the standard error message keywords in the output
-/*! \details The standard error keywords are "error*" and "Error*". They will 
+/*! \details The standard error keyword "[E|e]rror:?". Any matches will 
  * be formatted in bold-red.
  */
 void DynamicOutputFormatter::formatStandardErrorKeywords()
@@ -70,7 +98,7 @@ void DynamicOutputFormatter::formatStandardErrorKeywords()
 }
 
 // Format the standard warning message keywords in the output
-/*! \details The standard warning keywords are "warning*" and  "Warning*". They
+/*! \details The standard warning keyword is "[W|w]arning:?". Any matches
  * will be formatted in bold-magenta.
  */
 void DynamicOutputFormatter::formatStandardWarningKeywords()
@@ -79,7 +107,7 @@ void DynamicOutputFormatter::formatStandardWarningKeywords()
 }
 
 // Format the standard filename keywords in the output
-/*! \details The standard filename keywords are "*.cpp" and "*.hpp". They
+/*! \details The standard filename keyword "\w+.[h|c]pp\b". Any matches
  * will be formatted in bold.
  */
 void DynamicOutputFormatter::formatStandardFilenameKeywords()
