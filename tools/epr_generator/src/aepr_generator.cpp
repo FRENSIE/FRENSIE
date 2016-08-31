@@ -767,7 +767,6 @@ int main( int argc, char** argv )
   
   {
     // Recalculate the moment preserving data with the desired parameters
-    if( cutoff_angle_cosine < 1.0 & number_of_moment_preserving_angles > 0 )
     {
       Data::ElectronPhotonRelaxationVolatileDataContainer temp_data_container(
             data_file_path,

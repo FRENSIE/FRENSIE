@@ -778,6 +778,15 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container( "test_h_epr.xml",
                     Utility::ArchivableObject::XML_ARCHIVE );
 
+  TEST_ASSERT( data_container.hasMomentPreservingData() );;
+
+  DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+    data_container,
+    1.0,
+    0 );
+
+  TEST_ASSERT( !data_container.hasMomentPreservingData() );;
+
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,
     0.9,

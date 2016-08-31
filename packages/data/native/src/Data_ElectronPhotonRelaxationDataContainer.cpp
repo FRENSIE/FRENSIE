@@ -1531,6 +1531,15 @@ void ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant(
   d_moliere_screening_constant = moliere_screening_constant;
 }
 
+// Clear all the moment preserving data
+void ElectronPhotonRelaxationDataContainer::clearMomentPreservingData()
+{
+ d_moment_preserving_elastic_discrete_angles.clear();
+ d_moment_preserving_elastic_weights.clear();
+ d_moment_preserving_elastic_cross_section.clear();
+ d_moment_preserving_elastic_cross_section_threshold_index = 0;
+}
+
 // Set the moment preserving elastic discrete angles for an incoming energy
 void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles(
 		     const double incoming_energy,
@@ -1829,7 +1838,7 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionThres
         d_moment_preserving_elastic_cross_section.size() + index ==
         d_electron_energy_grid.size() );
 
- d_moment_preserving_elastic_cross_section_threshold_index= index;
+ d_moment_preserving_elastic_cross_section_threshold_index = index;
 }
 
 // Set the electroionization electron cross section

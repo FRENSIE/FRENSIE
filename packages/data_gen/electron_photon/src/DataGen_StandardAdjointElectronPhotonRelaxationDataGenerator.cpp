@@ -75,12 +75,12 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value( 1e-7 ),
     d_adjoint_bremsstrahlung_evaluation_tol( 1e-6 ),
     d_adjoint_bremsstrahlung_grid_convergence_tol( 0.001 ),
-    d_adjoint_bremsstrahlung_absolute_diff_tol( 1e-12 ),
-    d_adjoint_bremsstrahlung_distance_tol( 1e-14 ),
+    d_adjoint_bremsstrahlung_absolute_diff_tol( 1e-16 ),
+    d_adjoint_bremsstrahlung_distance_tol( 1e-8 ),
     d_adjoint_electroionization_evaluation_tol( 1e-6 ),
     d_adjoint_electroionization_grid_convergence_tol( 0.001 ),
-    d_adjoint_electroionization_absolute_diff_tol( 1e-12 ),
-    d_adjoint_electroionization_distance_tol( 1e-14 )
+    d_adjoint_electroionization_absolute_diff_tol( 1e-16 ),
+    d_adjoint_electroionization_distance_tol( 1e-8 )
 {
   // Make sure the forward epr data is valid
   testPrecondition( forward_epr_data.get() );

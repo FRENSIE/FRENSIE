@@ -91,6 +91,7 @@ public:
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF;
   using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant;
   using ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant;
+  using ElectronPhotonRelaxationDataContainer::clearMomentPreservingData;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid;

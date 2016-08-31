@@ -873,6 +873,13 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        discrete_angles );
 
   TEST_ASSERT( epr_data_container.hasMomentPreservingData() );
+
+  epr_data_container.clearMomentPreservingData();
+
+  TEST_ASSERT( !epr_data_container.hasMomentPreservingData() );
+
+  epr_data_container.setMomentPreservingElasticDiscreteAngles( 1.0,
+                                                            discrete_angles );
 }
 
 //---------------------------------------------------------------------------//

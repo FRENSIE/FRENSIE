@@ -625,6 +625,9 @@ protected:
   void setMoliereScreeningConstant(
     const std::vector<double>& moliere_screening_constant );
 
+  //! Clear all the moment preserving data
+  void clearMomentPreservingData();
+
   //! Set the moment preserving elastic discrete angles for an incoming energy
   void setMomentPreservingElasticDiscreteAngles(
 	const double incoming_energy,

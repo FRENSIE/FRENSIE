@@ -286,10 +286,43 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
          << Utility::Bold( "Setting the moment preserving electron data" )
          << "...";
   os_log.flush();
-  StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData( 
-    angular_energy_grid, 
-    data_container );
-  os_log << Utility::BoldGreen( "done." ) << std::endl;
+
+  // Check if moment preserving data can be generated
+  if ( cutoff_angle_cosine > 0.999999 ||
+       number_of_moment_preserving_angles < 1 )
+  {
+    os_log << Utility::BoldYellow( "done." ) << std::endl;
+    
+    if( cutoff_angle_cosine > 0.999999 )
+    {
+      os_log << Utility::BoldCyan( "  Note: " )
+             << "Moment preserving data was not generated because the"
+             << std::endl
+             << "        cutoff angle cosine is greater than 0.999999 (mu"
+             << "=" << cutoff_angle_cosine << ")."
+             << std::endl;
+    }
+
+    if( number_of_moment_preserving_angles < 1 )
+    {
+      os_log << Utility::BoldCyan( "  Note: " )
+             << "Moment preserving data was not generated because the"
+             << std::endl 
+             << "        number of moment preserving angles is less "
+             << "than 1." << std::endl;
+    }
+
+    // Clear the old moment preservinf data
+    data_container.clearMomentPreservingData();
+  }
+  // Set the moment preserving data
+  else
+  {
+    StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData( 
+      angular_energy_grid, 
+      data_container );
+    os_log << Utility::BoldGreen( "done." ) << std::endl;
+  }
 }
 
 // Set the relaxation data

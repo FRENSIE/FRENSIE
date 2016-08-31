@@ -233,69 +233,45 @@
     <Parameter docString="" id="193" isDefault="false" isUsed="true" name="atomic_number" type="int" value="13"/>
     <Parameter docString="" id="194" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.67498000000000005e+01"/>
   </ParameterList>
-  <ParameterList id="202" name="H-MomentPreserving">
-    <Parameter docString="" id="196" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_moment_preserving_1_native.xml"/>
-    <Parameter docString="" id="197" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="MomentPreserving"/>
-    <Parameter docString="" id="198" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
-    <Parameter docString="" id="199" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="200" isDefault="false" isUsed="true" name="atomic_number" type="int" value="1"/>
-    <Parameter docString="" id="201" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="9.99241999999999964e-01"/>
-  </ParameterList>
-  <ParameterList id="209" name="Al-MomentPreserving">
-    <Parameter docString="" id="203" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_moment_preserving_13_native.xml"/>
-    <Parameter docString="" id="204" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="MomentPreserving"/>
-    <Parameter docString="" id="205" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
-    <Parameter docString="" id="206" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="207" isDefault="false" isUsed="true" name="atomic_number" type="int" value="13"/>
-    <Parameter docString="" id="208" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.67498000000000005e+01"/>
-  </ParameterList>
-  <ParameterList id="216" name="Pb-MomentPreserving">
-    <Parameter docString="" id="210" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_moment_preserving_82_native.xml"/>
-    <Parameter docString="" id="211" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="MomentPreserving"/>
-    <Parameter docString="" id="212" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
-    <Parameter docString="" id="213" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="214" isDefault="false" isUsed="true" name="atomic_number" type="int" value="82"/>
-    <Parameter docString="" id="215" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.05419999999999987e+02"/>
-  </ParameterList>
-  <ParameterList id="227" name="Si-Native">
-    <Parameter docString="" id="217" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="native/test_epr_14_native.xml"/>
-    <Parameter docString="" id="218" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
-    <Parameter docString="" id="219" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="220" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
+  <ParameterList id="206" name="Si-Native">
+    <Parameter docString="" id="196" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="native/test_epr_14_native.xml"/>
+    <Parameter docString="" id="197" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="198" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="199" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
     <Parameter docString="" name="adjoint_photoatomic_file_path" type="string" value="native/test_aepr_14_native.xml"/>
     <Parameter docString="" name="adjoint_photoatomic_file_type" type="string" value="Native"/>
     <Parameter docString="" name="adjoint_photoatomic_file_start_line" type="int" value="-1"/>
     <Parameter docString="" name="adjoint_photoatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="221" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_epr_14_native.xml"/>
-    <Parameter docString="" id="222" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
-    <Parameter docString="" id="223" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="224" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="200" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_epr_14_native.xml"/>
+    <Parameter docString="" id="201" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="202" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="203" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
     <Parameter docString="" name="adjoint_electroatomic_file_path" type="string" value="native/test_aepr_14_native.xml"/>
     <Parameter docString="" name="adjoint_electroatomic_file_type" type="string" value="Native"/>
     <Parameter docString="" name="adjoint_electroatomic_file_start_line" type="int" value="-1"/>
     <Parameter docString="" name="adjoint_electroatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="225" isDefault="false" isUsed="true" name="atomic_number" type="int" value="14"/>
-    <Parameter docString="" id="226" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.78446999999999996e+01"/>
+    <Parameter docString="" id="204" isDefault="false" isUsed="true" name="atomic_number" type="int" value="14"/>
+    <Parameter docString="" id="205" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.78446999999999996e+01"/>
   </ParameterList>
-  <ParameterList id="238" name="C-Native">
-    <Parameter docString="" id="228" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="native/test_epr_6_native.xml"/>
-    <Parameter docString="" id="229" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
-    <Parameter docString="" id="230" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="231" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
+  <ParameterList id="217" name="C-Native">
+    <Parameter docString="" id="207" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="native/test_epr_6_native.xml"/>
+    <Parameter docString="" id="208" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="209" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="210" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
     <Parameter docString="" name="adjoint_photoatomic_file_path" type="string" value="native/test_aepr_6_native.xml"/>
     <Parameter docString="" name="adjoint_photoatomic_file_type" type="string" value="Native"/>
     <Parameter docString="" name="adjoint_photoatomic_file_start_line" type="int" value="-1"/>
     <Parameter docString="" name="adjoint_photoatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="232" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_epr_6_native.xml"/>
-    <Parameter docString="" id="233" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
-    <Parameter docString="" id="234" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="235" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="211" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_epr_6_native.xml"/>
+    <Parameter docString="" id="212" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="213" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="214" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
     <Parameter docString="" name="adjoint_electroatomic_file_path" type="string" value="native/test_aepr_6_native.xml"/>
     <Parameter docString="" name="adjoint_electroatomic_file_type" type="string" value="Native"/>
     <Parameter docString="" name="adjoint_electroatomic_file_start_line" type="int" value="-1"/>
     <Parameter docString="" name="adjoint_electroatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="236" isDefault="false" isUsed="true" name="atomic_number" type="int" value="6"/>
-    <Parameter docString="" id="237" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="1.19077999999999999e+01"/>
+    <Parameter docString="" id="215" isDefault="false" isUsed="true" name="atomic_number" type="int" value="6"/>
+    <Parameter docString="" id="216" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="1.19077999999999999e+01"/>
   </ParameterList>
   <Validators/>
 </ParameterList>
