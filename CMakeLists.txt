@@ -53,6 +53,7 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 ## Command Line Options
 ##---------------------------------------------------------------------------##
 OPTION(FRENSIE_ENABLE_DBC "Enable Design-by-Contract checks in FRENSIE" ON)
+OPTION(FRENSIE_ENABLE_COLOR_OUTPUT "Enable color output from FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_PROFILING "Enable profiling with FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_COVERAGE "Enable coverage testing in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_OPENMP "Enable shared-memory parallelism in FRENSIE" ON)
@@ -75,6 +76,26 @@ ENDIF()
 
 # Parse the DBC configure file so it can be used in the source files
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
+
+##---------------------------------------------------------------------------##
+## Enable Color Output Support
+##---------------------------------------------------------------------------##
+# Check if the required header files are present on the system
+# Note: Color output is only supported in tty terminals
+IF(FRENSIE_ENABLE_COLOR_OUTPUT)
+  INCLUDE(CheckIncludeFiles)
+  CHECK_INCLUDE_FILES("unistd.h" IS_TTY_FORMATTING_SUPPORTED)
+  
+  IF(IS_TTY_FORMATTING_SUPPORTED)
+    SET(TTY_FORMATTING_SUPPORTED "1")
+  ENDIF()
+ENDIF()
+
+SET(CMAKEDEFINE \#cmakedefine)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/tty_format_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_tty_format_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_tty_format_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_tty_format_config.hpp)
 
 ##---------------------------------------------------------------------------##
 ## Configure Profiling Support
@@ -172,6 +193,13 @@ ENABLE_TRILINOS_SUPPORT()
 # variable. The boost subpackages that must be found can be passed to
 # the ENABLE_BOOST_SUPPORT macro.
 ENABLE_BOOST_SUPPORT(serialization)
+
+# NOTE: Boost still uses the std::auto_ptr class, which is now depricated.
+#       The newer GNU C++ compilers will generate a large number of warning
+#       messages regarding this usage of the std::auto_ptr class. To avoid
+#       these warning messages that are not direcly related to FRENSIE we
+#       will simply turn them off
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 
 ##---------------------------------------------------------------------------##
 ## Configure Root Support
