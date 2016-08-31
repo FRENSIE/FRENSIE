@@ -50,7 +50,7 @@ public:
   //! Typedef for tuple of estimator moments (1st,2nd,3rd,4th)
   typedef Utility::Quad<double,double,double,double> FourEstimatorMoments;
 
-  //! Typedef for the array of estimator moments 
+  //! Typedef for the array of estimator moments
   typedef Teuchos::Array<TwoEstimatorMoments> TwoEstimatorMomentsArray;
 
   //! Typedef for the array of estimator moments
@@ -62,9 +62,9 @@ protected:
   typedef Teuchos::ScalarTraits<double> ST;
 
   //! Typedef for map of dimension values
-  typedef boost::unordered_map<PhaseSpaceDimension,Teuchos::any> 
+  typedef boost::unordered_map<PhaseSpaceDimension,Teuchos::any>
   DimensionValueMap;
-  
+
 public:
 
   //! Constructor
@@ -78,7 +78,7 @@ public:
   //! Set the bin boundaries for a dimension of the phase space (floating pt)
   template<PhaseSpaceDimension dimension, typename DimensionType>
   void setBinBoundaries( const Teuchos::Array<DimensionType>& bin_boundaries );
-  
+
   //! Return the number of bins for a dimension of the phase space
   unsigned getNumberOfBins( const PhaseSpaceDimension dimension ) const;
 
@@ -86,7 +86,7 @@ public:
   unsigned getNumberOfBins() const;
 
   //! Set the response functions
-  virtual void setResponseFunctions( 
+  virtual void setResponseFunctions(
                       const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
                       response_functions );
 
@@ -94,7 +94,7 @@ public:
   unsigned getNumberOfResponseFunctions() const;
 
   //! Set the particle types that can contribute to the estimator
-  virtual void setParticleTypes( 
+  virtual void setParticleTypes(
 			  const Teuchos::Array<ParticleType>& particle_types );
 
   //! Check if the particle type is assigned to the estimator
@@ -110,10 +110,10 @@ public:
   virtual void enableThreadSupport( const unsigned num_threads );
 
   //! Export the estimator data
-  virtual void exportData( 
+  virtual void exportData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const bool process_data ) const;
-  
+
 protected:
 
   //! Set the has uncommited history contribution flag
@@ -123,14 +123,14 @@ protected:
   void unsetHasUncommittedHistoryContribution( const unsigned thread_id );
 
   //! Assign bin boundaries to an estimator dimension
-  virtual void assignBinBoundaries( 
+  virtual void assignBinBoundaries(
      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
 
   //! Return the estimator constant multiplier
   double getMultiplier() const;
 
   //! Return the response function name
-  const std::string& getResponseFunctionName( 
+  const std::string& getResponseFunctionName(
 				const unsigned response_function_index ) const;
 
   //! Return the name of the bin (with response function)
@@ -143,39 +143,39 @@ protected:
   void printEstimatorBins( std::ostream& os ) const;
 
   //! Print the estimator data stored in an array
-  void printEstimatorBinData( 
+  void printEstimatorBinData(
 			 std::ostream& os,
 			 const TwoEstimatorMomentsArray& estimator_moment_data,
 			 const double norm_constant ) const;
 
   //! Print the total estimator data stored in an array
-  void printEstimatorTotalData( 
+  void printEstimatorTotalData(
 		 std::ostream& os,
 		 const FourEstimatorMomentsArray& total_estimator_moments_data,
 		 const double norm_constant ) const;
 
   //! Evaluate the desired response function
-  double evaluateResponseFunction( 
+  double evaluateResponseFunction(
 				const ParticleState& particle,
 				const unsigned response_function_index ) const;
 
   //! Check if the point is in the estimator phase space
-  bool isPointInEstimatorPhaseSpace( 
+  bool isPointInEstimatorPhaseSpace(
            const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
 
   //! Check if the point is in the estimator phase space
   bool isPointInEstimatorPhaseSpace(
                              const DimensionValueMap& dimension_values ) const;
-			        
+
   //! Calculate the bin index for the desired response function
-  unsigned calculateBinIndex( 
+  unsigned calculateBinIndex(
                    const EstimatorParticleStateWrapper& particle_state_wrapper,
                    const unsigned response_function_index ) const;
 
   //! Calculate the bin index for the desired response function
   unsigned calculateBinIndex( const DimensionValueMap& dimension_values,
 			      const unsigned response_function_index ) const;
-                             
+
 
   //! Calculate the response function index given a bin index
   unsigned calculateResponseFunctionIndex( const unsigned bin_index ) const;
@@ -187,7 +187,7 @@ protected:
 		       double& relative_error ) const;
 
   //! Convert first, second, third, fourth moments to mean, rel. er., vov, fom
-  void processMoments( 
+  void processMoments(
 		     const Utility::Quad<double,double,double,double>& moments,
 		     const double norm_constant,
 		     double& mean,
@@ -201,7 +201,7 @@ private:
   double calculateMean( const double first_moment_contributions ) const;
 
   // Calculate the relative error of a set of contributions
-  double calculateRelativeError( 
+  double calculateRelativeError(
 			      const double first_moment_contributions,
 			      const double second_moment_contributions ) const;
 
@@ -213,7 +213,7 @@ private:
 
   // Calculate the figure of merit (FOM) of an estimator bin
   double calculateFOM( const double relative_error ) const;
-			     
+
   // The tolerance used for relative error and vov calculations
   static double tol;
 
@@ -225,7 +225,7 @@ private:
 
   // The response functions
   Teuchos::Array<std::shared_ptr<ResponseFunction> > d_response_functions;
-  
+
   // The estimator phase space dimension bin boundaries map
   boost::unordered_map<PhaseSpaceDimension,
   		       std::shared_ptr<EstimatorDimensionDiscretization> >
@@ -249,7 +249,7 @@ inline double Estimator::getMultiplier() const
 }
 
 // Return the number of bins for a dimension of the phase space
-inline unsigned Estimator::getNumberOfBins( 
+inline unsigned Estimator::getNumberOfBins(
 				    const PhaseSpaceDimension dimension ) const
 {
   if( d_dimension_bin_boundaries_map.count( dimension ) != 0 )
@@ -262,10 +262,10 @@ inline unsigned Estimator::getNumberOfBins(
 inline unsigned Estimator::getNumberOfBins() const
 {
   unsigned number_of_bins = 1u;
-  
+
   for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
     number_of_bins *= getNumberOfBins( d_dimension_ordering[i] );
-  
+
   return number_of_bins;
 }
 
@@ -276,14 +276,14 @@ inline unsigned Estimator::getNumberOfResponseFunctions() const
 }
 
 // Check if the particle type is assigned to the estimator
-inline bool Estimator::isParticleTypeAssigned( 
+inline bool Estimator::isParticleTypeAssigned(
 					const ParticleType particle_type) const
 {
   return d_particle_types.count( particle_type );
 }
 
 // Return the response function name
-inline const std::string& Estimator::getResponseFunctionName( 
+inline const std::string& Estimator::getResponseFunctionName(
 				 const unsigned response_function_index ) const
 {
   // Make sure the response function index is valid
@@ -293,20 +293,20 @@ inline const std::string& Estimator::getResponseFunctionName(
 }
 
 // Evaluate the desired response function
-inline double Estimator::evaluateResponseFunction( 
+inline double Estimator::evaluateResponseFunction(
 				 const ParticleState& particle,
 				 const unsigned response_function_index ) const
 {
   // Make sure the response function index is valid
   testPrecondition( response_function_index < getNumberOfResponseFunctions() );
-  
+
   return d_response_functions[response_function_index]->evaluate( particle );
 }
 
 // Check if the estimator has uncommitted history contributions
 inline bool Estimator::hasUncommittedHistoryContribution() const
 {
-  return hasUncommittedHistoryContribution( 
+  return hasUncommittedHistoryContribution(
 				 Utility::GlobalOpenMPSession::getThreadId() );
 }
 

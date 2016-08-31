@@ -16,7 +16,7 @@ namespace Data{
 /*! \details A copy of the jxs array will be made so that it can be modified.
  * All indices in the jxs array correspond to a starting index of 1 (1 is
  * subtracted from all indices so that the correct array location is accessed).
- */ 
+ */
 XSSElectronDataExtractor::XSSElectronDataExtractor(
 				  const Teuchos::ArrayView<const int>& nxs,
 				  const Teuchos::ArrayView<const int>& jxs,
@@ -56,56 +56,56 @@ double XSSElectronDataExtractor::extractAugerEmissionEnergy() const
 }
 
 // Extract the radiation stopping power interpolation data block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSElectronDataExtractor::extractStoppingPowersBlock() const
 {
   return d_xss( d_jxs[1], d_nxs[2]*3 );
 }
-  
+
 // Extract the Mott scattering correction points data block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSElectronDataExtractor::extractMottScatteringCorrectionBlock() const
 {
   return d_xss( d_jxs[2], d_nxs[3]*6 );
 }
-  
+
 // Extract the Riley scattering cross section data block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSElectronDataExtractor::extractRileyBlock() const
 {
   return d_xss( d_jxs[3], 14*9 );
 }
 
 // Extract the Bremsstrahlung interpolation data block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSElectronDataExtractor::extractBremsstrahlungInterpolationBlock() const
 {
   return d_xss( d_jxs[4], d_nxs[4] + d_nxs[5] + ( d_nxs[4]*d_nxs[5] ) );
 }
 
 // Extract the photon to electron energy ratios for spectrum calculations (rkt)
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSElectronDataExtractor::extractEnergySpectrumRatios() const
 {
   return d_xss( d_jxs[8], d_nxs[8] );
 }
 
 // Extract the photon to electron energy ratios for angular distribution calculations (rka)
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSElectronDataExtractor::extractEnergyAngularRatios() const
 {
   return d_xss( d_jxs[9], d_nxs[9] );
 }
 
 // Extract the occupation number of electron for each level
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSElectronDataExtractor::extractOccupationNumbers() const
 {
   return d_xss( d_jxs[10], d_nxs[10] );
 }
 
 // Extract the oscillator strength or binding energy for each level
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSElectronDataExtractor::extractBindingEnergy() const
 {
   return d_xss( d_jxs[10] + d_nxs[10], d_nxs[10] );

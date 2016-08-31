@@ -24,7 +24,7 @@ cmake: builds
     tar -xf $(TARS)/cmake.tar --strip-components=1 && \
     cd ../build && \
     ../src/configure --prefix=$(TARS)/../install/cmake
-	$(MAKE) -C builds/cmake/build 
+	$(MAKE) -C builds/cmake/build
 ifneq ($(TEST), "no")
 	$(MAKE) -C builds/cmake/build test
 endif
@@ -38,7 +38,7 @@ moab: builds hdf5
     tar -xf $(TARS)/moab.tar --strip-components=1 && \
     cd ../build && \
     ../src/configure --prefix=$(TARS)/../install/moab --enable-optimize --disable-debug --with-hdf5=$(INSTALL)/hdf5
-	$(MAKE) -C builds/moab/build 
+	$(MAKE) -C builds/moab/build
 ifneq ($(TEST), "no")
 	$(MAKE) -C builds/moab/build check
 endif
@@ -53,8 +53,8 @@ lapack: builds
     tar -xf $(TARS)/lapack.tar --strip-components=1 && \
     cd ../build && \
 	bash lapack.sh
-	
-	$(MAKE) -C builds/lapack/build 
+
+	$(MAKE) -C builds/lapack/build
 ifneq ($(TEST), "no")
 	$(MAKE) -C builds/lapack/build test
 endif
@@ -93,7 +93,7 @@ doxygen: builds
     tar -xf $(TARS)/doxygen.tar --strip-components=1 && \
     cd ../build && \
     ../src/configure --prefix $(INSTALL)/doxygen
-	$(MAKE) -C builds/doxygen/build 
+	$(MAKE) -C builds/doxygen/build
 ifneq ($(TEST), "no")
 	$(MAKE) -C builds/doxygen/build test
 endif
@@ -107,7 +107,7 @@ mpi:  builds
     tar -xf $(TARS)/mpi.tar --strip-components=1 && \
     cd ../build && \
     ../src/configure --prefix=$(TARS)/../install/mpi
-	$(MAKE) -C builds/mpi/build 
+	$(MAKE) -C builds/mpi/build
 ifneq ($(TEST), "no")
 	$(MAKE) -C builds/mpi/build test
 endif
@@ -123,13 +123,13 @@ hdf5: builds
     tar -xf $(TARS)/hdf5.tar --strip-components=1 && \
     cd ../build && \
 	bash hdf5.sh
-	$(MAKE) -C builds/hdf5/build 
+	$(MAKE) -C builds/hdf5/build
 ifneq ($(TEST), "no")
 		$(MAKE) -C builds/hdf5/build test
 endif
 	$(MAKE) -C builds/hdf5/build install
 
-trilinos: builds 
+trilinos: builds
 	mkdir -p builds/trilinos
 	mkdir -p builds/trilinos/src
 	mkdir -p builds/trilinos/build
@@ -138,7 +138,7 @@ trilinos: builds
     tar -xf $(TARS)/trilinos.tar --strip-components=1 && \
     cd ../build && \
 	bash trilinos.sh
-	$(MAKE) -C builds/trilinos/build 
+	$(MAKE) -C builds/trilinos/build
 ifneq ($(TEST), "no")
 	$(MAKE) -C builds/trilinos/build test
 endif

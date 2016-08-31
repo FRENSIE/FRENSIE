@@ -13,7 +13,7 @@ namespace MonteCarlo{
 
 // Constructor
 template<typename StoredArgUnit, template<typename> class SmartPointer>
-StandardScatteringFunction<StoredArgUnit,SmartPointer>::StandardScatteringFunction( 
+StandardScatteringFunction<StoredArgUnit,SmartPointer>::StandardScatteringFunction(
   const SmartPointer<const Utility::UnitAwareOneDDistribution<StoredArgUnit,void> >& raw_scattering_function )
   : d_raw_scattering_function( raw_scattering_function )
 {
@@ -25,7 +25,7 @@ StandardScatteringFunction<StoredArgUnit,SmartPointer>::StandardScatteringFuncti
 template<typename StoredArgUnit, template<typename> class SmartPointer>
 double StandardScatteringFunction<StoredArgUnit,SmartPointer>::getMaxValue() const
 {
-  return d_raw_scattering_function->evaluate( 
+  return d_raw_scattering_function->evaluate(
 			d_raw_scattering_function->getUpperBoundOfIndepVar() );
 }
 
@@ -41,7 +41,7 @@ double StandardScatteringFunction<StoredArgUnit,SmartPointer>::getMinValue() con
 template<typename StoredArgUnit, template<typename> class SmartPointer>
 ScatteringFunction::ArgumentQuantity StandardScatteringFunction<StoredArgUnit,SmartPointer>::getLowerBoundOfArgument() const
 {
-  return ArgumentQuantity( 
+  return ArgumentQuantity(
 			d_raw_scattering_function->getLowerBoundOfIndepVar() );
 }
 
@@ -55,7 +55,7 @@ ScatteringFunction::ArgumentQuantity StandardScatteringFunction<StoredArgUnit,Sm
 
 // Evaluate the scattering function
 template<typename StoredArgUnit, template<typename> class SmartPointer>
-double StandardScatteringFunction<StoredArgUnit,SmartPointer>::evaluate( 
+double StandardScatteringFunction<StoredArgUnit,SmartPointer>::evaluate(
                     const ScatteringFunction::ArgumentQuantity argument ) const
 {
   // Convert the input argument to the stored argument

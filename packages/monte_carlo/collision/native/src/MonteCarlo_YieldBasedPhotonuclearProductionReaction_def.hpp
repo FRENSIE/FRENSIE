@@ -40,7 +40,7 @@ YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::YieldBasedPhotonu
 {
   // Make sure the yield energy grid is valid
   testPrecondition( yield_energy_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( 
+  testPrecondition( Utility::Sort::isSortedAscending(
 					           yield_energy_grid.begin(),
 						   yield_energy_grid.end() ) );
   testPrecondition( yield_energy_grid[0] == incoming_energy_grid[0] );
@@ -51,16 +51,16 @@ YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::YieldBasedPhotonu
   // Make sure the outgoing particle distribution is valid
   testPrecondition( !outgoing_particle_distribution.is_null() );
 }
-  
+
 // Return the number of particle emitted from the rxn at the given energy
 template<typename OutgoingParticleType>
-unsigned YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::getNumberOfEmittedParticles( 
+unsigned YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::getNumberOfEmittedParticles(
 						    const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
-  
-  double average_multiplicity = 
+
+  double average_multiplicity =
     this->getAverageNumberOfEmittedParticles( energy );
 
   return this->sampleNumberOfEmittedParticles( average_multiplicity );
@@ -73,11 +73,11 @@ double YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::getAverage
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
-  
+
   if( energy >= d_yield_energy_grid[0] &&
       energy < d_yield_energy_grid[d_yield_energy_grid.size()-1] )
   {
-    unsigned index = 
+    unsigned index =
       Utility::Search::binaryLowerBoundIndex( d_yield_energy_grid.begin(),
 					      d_yield_energy_grid.end(),
 					      energy );
@@ -99,14 +99,14 @@ double YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::getAverage
 
 // Simulate the reaction
 template<typename OutgoingParticleType>
-void YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::react( 
-						     PhotonState& photon, 
+void YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::react(
+						     PhotonState& photon,
 						     ParticleBank& bank ) const
 {
   // Make sure the photon energy is valid
   testPrecondition( photon.getEnergy() > 0.0 );
-  
-  unsigned num_emitted_particles = 
+
+  unsigned num_emitted_particles =
     this->getNumberOfEmittedParticles( photon.getEnergy() );
 
   // Create the additional particles
@@ -116,11 +116,11 @@ void YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::react(
 			      new OutgoingParticleType( photon, true, true ) );
 
     d_outgoing_particle_distribution->scatterParticle( photon, *new_particle );
-						       
+
     // Add the new particle to the bank
     bank.push( new_particle, this->getReactionType() );
   }
-  
+
   // Kill the original photon
   photon.setAsGone();
 }

@@ -16,6 +16,17 @@
 #include <utility>
 #include <string>
 
+// Boost Includes
+#include <boost/serialization/nvp.hpp>
+
+//! Macro for use with the boost serialization library
+#define DATA_MAKE_NVP( archive, data_field_prefix, data_field_base_name ) \
+  archive & boost::serialization::make_nvp( #data_field_base_name, data_field_prefix ## data_field_base_name )
+
+//! Macro for use with the boost serialization library
+#define DATA_MAKE_NVP_DEFAULT( archive, data_field_base_name ) \
+  DATA_MAKE_NVP( archive, d_, data_field_base_name ) 
+
 namespace Data{
 
   // Test preconditions for energy grids

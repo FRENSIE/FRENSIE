@@ -3,7 +3,7 @@
 ## Geometry.ROOT.initializeRoot method unit tests
 #  \file   tstGeometry.ROOT.initializeRoot.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Geometry.ROOT.initializeRoot method 
+#  \brief  Unit tests for the Geometry.ROOT.initializeRoot method
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     # Add the test cases to the test suite
     suite.addTest(unittest.makeSuite(InitializeRootTestCase))
-    
+
     print >>sys.stderr, \
         "\n************************************\n" + \
         "Testing Geometry.ROOT.initializeRoot \n" + \

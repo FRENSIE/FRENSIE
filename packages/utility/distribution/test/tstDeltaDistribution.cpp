@@ -69,11 +69,11 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, evaluate )
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, evaluate )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*si::seconds ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*si::seconds ),
 		       0.0*si::meters );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*si::seconds ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*si::seconds ),
 		       1.0*si::meters );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 6.0*si::seconds ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 6.0*si::seconds ),
 		       0.0*si::meters );
 }
 
@@ -111,7 +111,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, evaluateCDF )
 // Check that the unit-aware CDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, evaluateCDF )
 {
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_tab_distribution->evaluateCDF( 0.0*si::seconds ),
 		   0.0 );
   TEST_EQUALITY_CONST(
@@ -142,7 +142,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordTrials )
 {
   unsigned trials = 0;
   double sample = distribution->sampleAndRecordTrials( trials );
-  
+
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 1 );
 }
@@ -152,8 +152,8 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordTrials )
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordTrials )
 {
   unsigned trials = 0;
-  
-  quantity<si::time> sample = 
+
+  quantity<si::time> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
 
   TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
@@ -166,7 +166,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordBinIndex )
 {
   unsigned bin_index = 0;
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  
+
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( bin_index, 0 );
 }
@@ -176,8 +176,8 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordBinIndex )
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordBinIndex )
 {
   unsigned bin_index = 0;
-  
-  quantity<si::time> sample = 
+
+  quantity<si::time> sample =
     unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
 
   TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
@@ -189,7 +189,7 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordBinIndex )
 TEUCHOS_UNIT_TEST( DeltaDistribution, sampleWithRandomNumber )
 {
   double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
-  
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleWithRandomNumber( 0.5 );
@@ -201,7 +201,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sampleWithRandomNumber )
 // Check that the unit-aware distribution can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleWithRandomNumber )
 {
-  quantity<si::time> sample = 
+  quantity<si::time> sample =
     unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
 
   TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
@@ -216,7 +216,7 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleWithRandomNumber )
 TEUCHOS_UNIT_TEST( DeltaDistribution, sampleInSubrange )
 {
   double sample = tab_distribution->sampleInSubrange( 1.0 );
-  
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleInSubrange( 0.1 );
@@ -228,7 +228,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sampleInSubrange )
 // Check that the unit-aware distribution can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleInSubrange )
 {
-  quantity<si::time> sample = 
+  quantity<si::time> sample =
     unit_aware_tab_distribution->sampleInSubrange( 4.0*si::seconds );
 
   TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
@@ -242,9 +242,9 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleInSubrange )
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( DeltaDistribution, sampleWithRandomNumberInSubrange )
 {
-  double sample = 
+  double sample =
     tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1.0 );
-  
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.5, 2.0 );
@@ -254,10 +254,10 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sampleWithRandomNumberInSubrange )
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution,
 		   sampleWithRandomNumberInSubrange )
 {
-  quantity<si::time> sample = 
+  quantity<si::time> sample =
     unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 4.0*si::seconds );
 
   TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
@@ -276,7 +276,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, getUpperBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, getUpperBoundOfIndepVar )
 {
@@ -285,7 +285,7 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, getUpperBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the distribution independent variable can 
+// Check that the lower bound of the distribution independent variable can
 // be returned
 TEUCHOS_UNIT_TEST( DeltaDistribution, getLowerBoundOfIndepVar )
 {
@@ -293,11 +293,11 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the unit-aware distribution independent 
+// Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       3.0*si::seconds );
 }
 
@@ -305,7 +305,7 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, getLowerBoundOfIndepVar )
 // Check that the distribution type can be returned
 TEUCHOS_UNIT_TEST( DeltaDistribution, getDistributionType )
 {
-  TEST_EQUALITY_CONST( distribution->getDistributionType(), 
+  TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::DELTA_DISTRIBUTION );
 }
 
@@ -323,23 +323,23 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::DeltaDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Utility::DeltaDistribution>( distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Utility::DeltaDistribution>( "test distribution", 
+
+  parameter_list.set<Utility::DeltaDistribution>( "test distribution",
 						  *true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"delta_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "delta_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
-  
-  Teuchos::RCP<Utility::DeltaDistribution> 
+
+  Teuchos::RCP<Utility::DeltaDistribution>
     copy_distribution( new Utility::DeltaDistribution );
-  
+
   *copy_distribution = read_parameter_list->get<Utility::DeltaDistribution>(
 							  "test distribution");
 
@@ -351,31 +351,31 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, toParameterList )
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toParameterList )
 {
   typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> UnitAwareDeltaDistribution;
-  
+
   Teuchos::RCP<UnitAwareDeltaDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<UnitAwareDeltaDistribution>( unit_aware_distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<UnitAwareDeltaDistribution>( "test distribution", 
+
+  parameter_list.set<UnitAwareDeltaDistribution>( "test distribution",
 						  *true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"unit_aware_delta_dist_test_list.xml");
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "unit_aware_delta_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
-  
-  Teuchos::RCP<UnitAwareDeltaDistribution> 
+
+  Teuchos::RCP<UnitAwareDeltaDistribution>
     copy_distribution( new UnitAwareDeltaDistribution );
-  
+
   *copy_distribution = read_parameter_list->get<UnitAwareDeltaDistribution>(
 							  "test distribution");
 
   TEST_EQUALITY( *copy_distribution, *true_distribution );
-  
+
   std::cout << boost::units::name_string( si::energy() ) << std::endl;
 }
 
@@ -383,21 +383,21 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toParameterList )
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( DeltaDistribution, fromParameterList )
 {
-  Utility::DeltaDistribution xml_distribution = 
+  Utility::DeltaDistribution xml_distribution =
     test_dists_list->get<Utility::DeltaDistribution>( "Delta Distribution A" );
 
   TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0 );
 
-  xml_distribution = 
+  xml_distribution =
     test_dists_list->get<Utility::DeltaDistribution>( "Delta Distribution B" );
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
 		       Utility::PhysicalConstants::pi );
 
-  xml_distribution = 
+  xml_distribution =
     test_dists_list->get<Utility::DeltaDistribution>( "Delta Distribution C" );
-  
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 
+
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
 		       -Utility::PhysicalConstants::pi/2 );
 }
 
@@ -406,17 +406,17 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, fromParameterList )
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromParameterList )
 {
   typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> UnitAwareDeltaDistribution;
-  
-  UnitAwareDeltaDistribution xml_distribution = 
+
+  UnitAwareDeltaDistribution xml_distribution =
     test_dists_list->get<UnitAwareDeltaDistribution>( "Unit-Aware Delta Distribution A" );
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
 		       3.0*si::seconds );
 
-  xml_distribution = 
+  xml_distribution =
     test_dists_list->get<UnitAwareDeltaDistribution>( "Unit-Aware Delta Distribution B" );
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
 		       2*Utility::PhysicalConstants::pi*si::seconds );
 }
 
@@ -431,10 +431,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
 {
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
@@ -446,11 +446,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
   Utility::UnitAwareDeltaDistribution<IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 1.0 );
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 1.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
@@ -458,44 +458,44 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
     Utility::QuantityTraits<InverseIndepQuantityB>::initializeQuantity( 1.0 );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
 
   Utility::setQuantity( indep_quantity_a, 1.0 );
   Utility::setQuantity( inv_indep_quantity_a, 0.0 );
-  Utility::setQuantity( dep_quantity_a, 0.0 );			
+  Utility::setQuantity( dep_quantity_a, 0.0 );
 
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
   Utility::setQuantity( inv_indep_quantity_b, 0.0 );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-6 );
@@ -663,13 +663,13 @@ int main( int argc, char** argv )
 		 &test_dists_xml_file,
 		 "Test distributions xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
@@ -682,7 +682,7 @@ int main( int argc, char** argv )
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

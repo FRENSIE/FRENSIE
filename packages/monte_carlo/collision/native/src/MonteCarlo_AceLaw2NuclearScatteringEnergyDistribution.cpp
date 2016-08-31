@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw2NuclearScatteringEnergyDistribution.cpp
 //! \author Eli Moll
 //! \brief  The nuclear law 2 scattering energy distribution class
@@ -22,7 +22,7 @@
 namespace MonteCarlo{
 
 // Constructor
-AceLaw2NuclearScatteringEnergyDistribution::AceLaw2NuclearScatteringEnergyDistribution( 
+AceLaw2NuclearScatteringEnergyDistribution::AceLaw2NuclearScatteringEnergyDistribution(
                                              int photonType,
                                              double photonEnergy,
                                              const double atomic_weight_ratio )
@@ -37,13 +37,13 @@ AceLaw2NuclearScatteringEnergyDistribution::AceLaw2NuclearScatteringEnergyDistri
 }
 
 // Sample a scattering energy
-double AceLaw2NuclearScatteringEnergyDistribution::sampleEnergy( 
+double AceLaw2NuclearScatteringEnergyDistribution::sampleEnergy(
 						    const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0 );
   testPrecondition( energy < std::numeric_limits<double>::infinity() );
-  
+
   // Outgoing energy is dependent on the photonType
   if ( d_photon_type == 0 || d_photon_type == 1 )
   {
@@ -51,7 +51,7 @@ double AceLaw2NuclearScatteringEnergyDistribution::sampleEnergy(
   }
   else
   {
-    return ( d_photon_energy + 
+    return ( d_photon_energy +
          d_atomic_weight_ratio/( d_atomic_weight_ratio + 1 )*energy );
   }
 }

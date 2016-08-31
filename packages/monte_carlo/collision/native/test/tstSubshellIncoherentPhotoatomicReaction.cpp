@@ -33,7 +33,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::PhotoatomicReaction> 
+Teuchos::RCP<MonteCarlo::PhotoatomicReaction>
   basic_subshell_incoherent_reaction;
 
 Teuchos::RCP<MonteCarlo::PhotoatomicReaction>
@@ -43,7 +43,7 @@ Teuchos::RCP<MonteCarlo::PhotoatomicReaction>
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the subshell can be returned
-TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, 
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction,
 		   getNumberOfEmittedPhotons )
 {
   TEST_EQUALITY_CONST(
@@ -80,12 +80,50 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the subshell can be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction,
+		   getNumberOfEmittedElectrons )
+{
+  TEST_EQUALITY_CONST(
+     basic_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+     0u );
+
+  TEST_EQUALITY_CONST(
+      basic_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 8.82e-2 ),
+      0u );
+
+  TEST_EQUALITY_CONST(
+      basic_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 8.83e-2 ),
+      1u );
+
+  TEST_EQUALITY_CONST(
+	 basic_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 20.0 ),
+	 1u );
+
+  TEST_EQUALITY_CONST(
+  detailed_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+  0u );
+
+  TEST_EQUALITY_CONST(
+   detailed_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 8.82e-2 ),
+   0u );
+
+  TEST_EQUALITY_CONST(
+   detailed_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 8.83e-2 ),
+   1u );
+
+  TEST_EQUALITY_CONST(
+      detailed_subshell_incoherent_reaction->getNumberOfEmittedElectrons( 20.0 ),
+      1u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getReactionType )
 {
   TEST_EQUALITY_CONST( basic_subshell_incoherent_reaction->getReactionType(),
 		       MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION);
-  
+
   TEST_EQUALITY_CONST(detailed_subshell_incoherent_reaction->getReactionType(),
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION);
 }
@@ -96,12 +134,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getThresholdEnergy )
 {
   TEST_FLOATING_EQUALITY(
 		      basic_subshell_incoherent_reaction->getThresholdEnergy(),
-		      8.82900086220703151e-02,
+		      8.82899999999999935e-02,
 		      1e-15 );
-  
+
   TEST_FLOATING_EQUALITY(
 		   detailed_subshell_incoherent_reaction->getThresholdEnergy(),
-		   8.82900086220703151e-02,
+		   8.82899999999999935e-02,
 		   1e-15 );
 }
 
@@ -109,52 +147,52 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getThresholdEnergy )
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     basic_subshell_incoherent_reaction->getCrossSection( 1e-3 );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = 
+  cross_section =
     basic_subshell_incoherent_reaction->getCrossSection( 8.82e-2 );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = 
+  cross_section =
     basic_subshell_incoherent_reaction->getCrossSection( 8.82899999999999935e-02 );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = 
+  cross_section =
     basic_subshell_incoherent_reaction->getCrossSection( 8.82900086220703151e-02 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
-
-  cross_section = 
+  cross_section =
     basic_subshell_incoherent_reaction->getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-6 );
 
-  cross_section = 
+  cross_section =
     detailed_subshell_incoherent_reaction->getCrossSection( 1e-3 );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = 
+  cross_section =
     detailed_subshell_incoherent_reaction->getCrossSection( 8.82e-2 );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = 
+  cross_section =
     detailed_subshell_incoherent_reaction->getCrossSection( 8.82899999999999935e-02 );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = 
+  cross_section =
     detailed_subshell_incoherent_reaction->getCrossSection( 8.82900086220703151e-02 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
-
-  cross_section = 
+  cross_section =
     detailed_subshell_incoherent_reaction->getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-6 );
@@ -165,14 +203,14 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getCrossSection )
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getSubshell )
 {
   typedef MonteCarlo::SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false> Reaction;
-  
-  Teuchos::RCP<Reaction> derived_basic_reaction = 
+
+  Teuchos::RCP<Reaction> derived_basic_reaction =
     Teuchos::rcp_dynamic_cast<Reaction>( basic_subshell_incoherent_reaction );
 
   TEST_EQUALITY_CONST( derived_basic_reaction->getSubshell(),
 		       Data::K_SUBSHELL );
 
-  Teuchos::RCP<Reaction> derived_detailed_reaction = 
+  Teuchos::RCP<Reaction> derived_detailed_reaction =
     Teuchos::rcp_dynamic_cast<Reaction>(detailed_subshell_incoherent_reaction);
 
   TEST_EQUALITY_CONST( derived_basic_reaction->getSubshell(),
@@ -181,18 +219,18 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getSubshell )
 
 //---------------------------------------------------------------------------//
 // Check that the subshell binding energy can be returned
-TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, 
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction,
 		   getSubshellBindingEnergy )
 {
   typedef MonteCarlo::SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false> Reaction;
-  
-  Teuchos::RCP<Reaction> derived_basic_reaction = 
+
+  Teuchos::RCP<Reaction> derived_basic_reaction =
     Teuchos::rcp_dynamic_cast<Reaction>( basic_subshell_incoherent_reaction );
 
   TEST_EQUALITY_CONST( derived_basic_reaction->getSubshellBindingEnergy(),
 		       8.82899999999999935e-02 );
 
-  Teuchos::RCP<Reaction> derived_detailed_reaction = 
+  Teuchos::RCP<Reaction> derived_detailed_reaction =
     Teuchos::rcp_dynamic_cast<Reaction>(detailed_subshell_incoherent_reaction);
 
   TEST_EQUALITY_CONST( derived_basic_reaction->getSubshellBindingEnergy(),
@@ -204,11 +242,11 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction,
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, react_basic )
 {
   MonteCarlo::ParticleBank bank;
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
@@ -228,14 +266,14 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, react_basic )
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
-			  0.9996898054103247, 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+			  0.9996898054103247,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
-			  -0.024905681252821114, 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+			  -0.024905681252821114,
 			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
@@ -250,11 +288,11 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, react_basic )
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, react_detailed )
 {
   MonteCarlo::ParticleBank bank;
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
@@ -275,14 +313,14 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, react_detailed )
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
-			  0.9996898054103247, 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+			  0.9996898054103247,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
-			  0.024905681252821114, 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+			  0.024905681252821114,
 			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
@@ -305,13 +343,13 @@ int main( int argc, char** argv )
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
@@ -319,7 +357,7 @@ int main( int argc, char** argv )
 
   {
     // Create the native data file container
-    Data::ElectronPhotonRelaxationDataContainer 
+    Data::ElectronPhotonRelaxationDataContainer
       data_container( test_native_file_name );
 
     // Extract the photon energy grid
@@ -329,33 +367,33 @@ int main( int argc, char** argv )
 
     // Extract the subshell impulse approx incoherent cross section
     Teuchos::ArrayRCP<double> subshell_incoherent_cs;
-    subshell_incoherent_cs.assign( 
+    subshell_incoherent_cs.assign(
       data_container.getImpulseApproxSubshellIncoherentCrossSection(1).begin(),
       data_container.getImpulseApproxSubshellIncoherentCrossSection(1).end() );
 
-    unsigned threshold_index = 
+    unsigned threshold_index =
       data_container.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(1);
-    
+
     // Extract the Compton profile and occupation number for the first subshell
-    const std::vector<double>& compton_profile_grid_s1 = 
+    const std::vector<double>& compton_profile_grid_s1 =
       data_container.getComptonProfileMomentumGrid( 1 );
-    
-    const std::vector<double>& compton_profile_s1 = 
+
+    const std::vector<double>& compton_profile_s1 =
       data_container.getComptonProfile( 1 );
-    
-    const std::vector<double>& occupation_number_grid_s1 = 
+
+    const std::vector<double>& occupation_number_grid_s1 =
       data_container.getOccupationNumberMomentumGrid( 1 );
-    
-    const std::vector<double>& occupation_number_s1 = 
+
+    const std::vector<double>& occupation_number_s1 =
       data_container.getOccupationNumber( 1 );
-    
+
     // Create the Compton profile and occupation number distributions
     std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
                                                        compton_profile_grid_s1,
 						       compton_profile_s1 ) );
 
-    std::shared_ptr<MonteCarlo::ComptonProfile> compton_profile_s1_dist( 
+    std::shared_ptr<MonteCarlo::ComptonProfile> compton_profile_s1_dist(
            new MonteCarlo::StandardComptonProfile<Utility::Units::MeCMomentum>(
                                                        raw_compton_profile ) );
 
@@ -366,7 +404,7 @@ int main( int argc, char** argv )
 
     // Create the subshell incoherent distributions
     Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
-      basic_distribution( new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution( 
+      basic_distribution( new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution(
 			  Data::convertENDFDesignatorToSubshellEnum( 1 ),
 			  data_container.getSubshellOccupancy( 1 ),
 			  data_container.getSubshellBindingEnergy( 1 ),
@@ -404,7 +442,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -417,7 +455,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);      
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

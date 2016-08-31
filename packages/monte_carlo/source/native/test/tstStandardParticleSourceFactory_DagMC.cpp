@@ -35,17 +35,17 @@ std::string test_compound_source_xml_file_name;
 // Check that a simple source can be constructed from parameter entries
 TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
 {
-  Teuchos::RCP<Teuchos::ParameterList> source_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> source_rep =
     Teuchos::getParametersFromXmlFile( test_simple_source_xml_file_name );
 
   typedef Geometry::ModuleInterface<Geometry::DagMC> GMI;
 
-  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory = 
+  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory =
     MonteCarlo::StandardParticleSourceFactory<GMI>::getInstance();
-  
-  std::shared_ptr<MonteCarlo::ParticleSource> source; 
 
-  TEST_NOTHROW( source = source_factory->createSource( *source_rep, 
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+
+  TEST_NOTHROW( source = source_factory->createSource( *source_rep,
                                                        MonteCarlo::PHOTON_MODE,
                                                        std::cerr ) );
 
@@ -54,7 +54,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
   if( source.get() )
   {
     MonteCarlo::ParticleBank bank;
-    
+
     for( unsigned i = 0; i < 3; ++i )
     {
       source->sampleParticleState( bank, i );
@@ -70,9 +70,9 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
     TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
     TEST_EQUALITY_CONST( bank.top().getTime(), 0.0 );
     TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
-    
+
     bank.pop();
-    
+
     TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
     TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
     TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
@@ -82,9 +82,9 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
     TEST_EQUALITY_CONST( bank.top().getZDirection(), 1.0 );
     TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
     TEST_EQUALITY_CONST( bank.top().getTime(), 0.0 );
-    
+
     bank.pop();
-  
+
     TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
     TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
     TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
@@ -101,16 +101,16 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
 // Check that a complex source can be constructed from parameter entries
 TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
 {
-  Teuchos::RCP<Teuchos::ParameterList> source_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> source_rep =
     Teuchos::getParametersFromXmlFile( test_complex_source_xml_file_name );
 
   typedef Geometry::ModuleInterface<Geometry::DagMC> GMI;
-  
-  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory = 
+
+  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory =
     MonteCarlo::StandardParticleSourceFactory<GMI>::getInstance();
-  
-  std::shared_ptr<MonteCarlo::ParticleSource> source; 
-  TEST_NOTHROW( source = source_factory->createSource(*source_rep, 
+
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  TEST_NOTHROW( source = source_factory->createSource(*source_rep,
                                                       MonteCarlo::NEUTRON_MODE,
                                                       std::cerr ) );
 
@@ -143,9 +143,9 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
     TEST_COMPARE( bank.top().getTime(), >=, 0.0 );
     TEST_COMPARE( bank.top().getTime(), <=, 10.0 );
     TEST_COMPARE( bank.top().getWeight(), !=, 1.0 );
-    
+
     bank.pop();
-    
+
     TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
     TEST_COMPARE( bank.top().getXPosition(), >=, 0.0 );
     TEST_COMPARE( bank.top().getXPosition(), <=, 1.0 );
@@ -164,9 +164,9 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
     TEST_COMPARE( bank.top().getTime(), >=, 0.0 );
     TEST_COMPARE( bank.top().getTime(), <=, 10.0 );
     TEST_COMPARE( bank.top().getWeight(), !=, 1.0 );
-    
+
     bank.pop();
-    
+
     TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
     TEST_COMPARE( bank.top().getXPosition(), >=, 0.0 );
     TEST_COMPARE( bank.top().getXPosition(), <=, 1.0 );
@@ -192,17 +192,17 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
 // Check that a compound source can be constructed from parameter entries
 TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
 {
-  Teuchos::RCP<Teuchos::ParameterList> source_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> source_rep =
     Teuchos::getParametersFromXmlFile( test_compound_source_xml_file_name );
 
   typedef Geometry::ModuleInterface<Geometry::DagMC> GMI;
 
-  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory = 
+  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory =
     MonteCarlo::StandardParticleSourceFactory<GMI>::getInstance();
-  
+
   std::shared_ptr<MonteCarlo::ParticleSource> source;
-  TEST_NOTHROW( source = source_factory->createSource( 
-                                               *source_rep, 
+  TEST_NOTHROW( source = source_factory->createSource(
+                                               *source_rep,
                                                MonteCarlo::NEUTRON_PHOTON_MODE,
                                                std::cerr ) );
 
@@ -211,29 +211,29 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
   if( source.get() )
   {
     MonteCarlo::ParticleBank bank;
-    
+
     std::vector<double> fake_stream( 1 );
     fake_stream[0] = 0.199;
-    
+
     Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-    
+
     source->sampleParticleState( bank, 0 );
-    
+
     TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
     TEST_EQUALITY_CONST( bank.top().getXPosition(), 0.0 );
     TEST_EQUALITY_CONST( bank.top().getYPosition(), 0.0 );
     TEST_EQUALITY_CONST( bank.top().getZPosition(), 0.0 );
     TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
     TEST_EQUALITY_CONST( bank.top().getTime(), 0.0 );
-    
+
     bank.pop();
-    
+
     fake_stream[0] = 0.21;
-    
+
     Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-    
+
     source->sampleParticleState( bank, 1 );
-    
+
     TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
     TEST_EQUALITY_CONST( bank.top().getXPosition(), 0.0 );
     TEST_EQUALITY_CONST( bank.top().getYPosition(), 0.0 );
@@ -249,7 +249,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
-{  
+{
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   std::string test_geometry_xml_file_name;
@@ -270,10 +270,10 @@ int main( int argc, char** argv )
 		 &test_geometry_xml_file_name,
                  "Test DagMC geom xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -283,15 +283,15 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Initialize DagMC
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep =
     Teuchos::getParametersFromXmlFile( test_geometry_xml_file_name );
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

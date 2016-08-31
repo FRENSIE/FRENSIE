@@ -27,18 +27,18 @@ public:
 
   //! Constructor
   StandardDagMCSurfaceHandler( const moab::DagMC* dagmc_instance );
-  
+
 
   //! Destructor
   ~StandardDagMCSurfaceHandler()
   { /* ... */ }
 
   //! Check if the surface exists
-  bool doesSurfaceExist( 
+  bool doesSurfaceExist(
                   const ModuleTraits::InternalSurfaceHandle surface_id ) const;
 
   //! Get the surface id from a surface handle
-  ModuleTraits::InternalSurfaceHandle getSurfaceId( 
+  ModuleTraits::InternalSurfaceHandle getSurfaceId(
                                const moab::EntityHandle surface_handle ) const;
 
   //! Get the surface handle from a surface id

@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
-/*! \brief A macro for the Teuchos Unit Test Harness for creating a 
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a
  * templated unit test on an PhaseSpaceDimension enum.
  * \ingroup unit_test_harness_extensions
  */
@@ -33,7 +33,7 @@
   template<MonteCarlo::PhaseSpaceDimension EPSD_VALUE>		\
   void TEST_GROUP##_##TEST_NAME##_UnitTest<EPSD_VALUE>::runUnitTestImpl(\
 		          Teuchos::FancyOStream &out, bool &success ) const \
-    
+
 
 #endif // end MONTE_CARLO_UNIT_TEST_HARNESS_EXTENSIONS_HPP
 

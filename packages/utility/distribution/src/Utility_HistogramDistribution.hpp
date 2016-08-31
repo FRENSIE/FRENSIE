@@ -77,16 +77,16 @@ public:
 
   //! CDF constructor
   template<typename InputIndepQuantity>
-  UnitAwareHistogramDistribution( 
+  UnitAwareHistogramDistribution(
 		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
 		      const Teuchos::Array<double>& cdf_values );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareHistogramDistribution( 
+  UnitAwareHistogramDistribution(
 		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
 		      const Teuchos::Array<InputDepQuantity>& bin_values );
-  
+
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
   UnitAwareHistogramDistribution( const UnitAwareHistogramDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
@@ -95,7 +95,7 @@ public:
   static UnitAwareHistogramDistribution fromUnitlessDistribution( const UnitAwareHistogramDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
-  UnitAwareHistogramDistribution& operator=( 
+  UnitAwareHistogramDistribution& operator=(
 			 const UnitAwareHistogramDistribution& dist_instance );
 
   //! Destructor
@@ -127,7 +127,7 @@ public:
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a sample from the distribution at the given CDF value in a subrange
-  IndepQuantity sampleWithRandomNumberInSubrange( 
+  IndepQuantity sampleWithRandomNumberInSubrange(
 				     const double random_number,
 				     const IndepQuantity max_indep_var ) const;
 
@@ -156,7 +156,7 @@ protected:
 
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareHistogramDistribution( const UnitAwareHistogramDistribution<void,void>& unitless_dist_instance, int );
-  
+
 private:
 
   // Initialize the distribution
@@ -172,7 +172,7 @@ private:
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  void initializeDistribution( 
+  void initializeDistribution(
 		  const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
 		  const Teuchos::Array<InputDepQuantity>& bin_values );
 
@@ -188,7 +188,7 @@ private:
 
   // Convert the unitless values to the correct units
   template<typename Quantity>
-  static void convertUnitlessValues( 
+  static void convertUnitlessValues(
 		                 const Teuchos::Array<double>& unitless_values,
 				 Teuchos::Array<Quantity>& quantities );
 
@@ -207,7 +207,7 @@ private:
   // Note: The bin_CDF value is the value of the CDF at the lower bin boundary
   typedef Teuchos::Array<Trip<IndepQuantity,DepQuantity,UnnormCDFQuantity> > DistributionArray;
   DistributionArray d_distribution;
-  
+
   // The normalization constant
   DistNormQuantity d_norm_constant;
 };
@@ -234,17 +234,17 @@ public:
   {
     return "Histogram Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 			       const Utility::HistogramDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareHistogramDistribution
  *
- * \details The name function will set the type name that must be used in 
+ * \details The name function will set the type name that must be used in
  * xml files
  */
 template<typename U, typename V>

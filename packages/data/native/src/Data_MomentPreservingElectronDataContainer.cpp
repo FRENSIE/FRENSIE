@@ -1,0 +1,300 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   Data_MomentPreservingElectronDataContainer.cpp
+//! \author Luke Kersting
+//! \brief  The native moment preserving electron data container class def.
+//!
+//---------------------------------------------------------------------------//
+
+// Std Lib Includes
+#include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <typeinfo>
+
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+
+// FRENSIE Includes
+#include "Data_MomentPreservingElectronDataContainer.hpp"
+#include "Utility_SortAlgorithms.hpp"
+#include "Utility_ContractException.hpp"
+
+namespace Data{
+
+// Constructor (from saved archive)
+MomentPreservingElectronDataContainer::MomentPreservingElectronDataContainer(
+		    const std::string& archive_name,
+		    const Utility::ArchivableObject::ArchiveType archive_type )
+{
+  // Import the data in the archive - no way to use initializer list :(
+  this->importData( archive_name, archive_type );
+}
+
+// Return the atomic number
+unsigned MomentPreservingElectronDataContainer::getAtomicNumber() const
+{
+  return d_atomic_number;
+}
+
+// Return the elastic cutoff angle cosine
+double MomentPreservingElectronDataContainer::getCutoffAngleCosine() const
+{
+  return d_cutoff_angle_cosine;
+}
+
+// Return the elastic angular energy grid
+const std::vector<double>&
+MomentPreservingElectronDataContainer::getElasticAngularEnergyGrid() const
+{
+  return d_angular_energy_grid;
+}
+
+// Return the number of discrete angles for an angular energy bin
+unsigned MomentPreservingElectronDataContainer::getNumberOfDiscreteAngles(
+                            const unsigned angular_energy_bin ) const
+{
+  // Make sure the angular energy bin is valid
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
+
+  return d_number_of_discrete_angles.find( angular_energy_bin )->second;
+}
+
+// Return the moment preserving discrete angles for an angular energy bin
+const std::vector<double>&
+MomentPreservingElectronDataContainer::getMomentPreservingDiscreteAngles(
+					        const unsigned angular_energy_bin ) const
+{
+  // Make sure the angular energy bin is valid
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
+
+  return d_moment_preserving_elastic_discrete_angles.find( angular_energy_bin )->second;
+}
+
+// Return the moment preserving weights for an angular energy bin
+const std::vector<double>&
+MomentPreservingElectronDataContainer::getMomentPreservingWeights(
+					        const unsigned angular_energy_bin ) const
+{
+  // Make sure the angular energy bin is valid
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
+
+  return d_moment_preserving_elastic_weights.find( angular_energy_bin )->second;
+}
+/*
+// Return the electron energy grid
+const std::vector<double>&
+MomentPreservingElectronDataContainer::getElectronEnergyGrid() const
+{
+  return d_electron_energy_grid;
+}
+
+// Return the Moment Preserving (MP) moment preserving electron cross section
+const std::vector<double>&
+MomentPreservingElectronDataContainer::getMomentPreservingMomentPreservingCrossSection() const
+{
+  return d_moment_preserving_moment_preserving_elastic_cross_section;
+}
+
+// Return the MP moment preserving cross section threshold energy bin index
+unsigned
+MomentPreservingElectronDataContainer::getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex() const
+{
+  return d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index;
+}
+*/
+// Set the atomic number
+void MomentPreservingElectronDataContainer::setAtomicNumber(
+						 const unsigned atomic_number )
+{
+  // Make sure the atomic number is valid
+  testPrecondition( atomic_number > 0 );
+  testPrecondition( atomic_number <= 100 );
+
+  d_atomic_number = atomic_number;
+}
+
+// Set the elastic cutoff angle cosine
+void MomentPreservingElectronDataContainer::setCutoffAngleCosine(
+                         const double cutoff_angle_cosine )
+{
+  // Make sure the elastic cutoff angle cosine is valid
+  testPrecondition( cutoff_angle_cosine > -1.0 );
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+
+  d_cutoff_angle_cosine = cutoff_angle_cosine;
+}
+
+// Set the elastic angular energy grid
+void MomentPreservingElectronDataContainer::setElasticAngularEnergyGrid(
+				       const std::vector<double>& angular_energy_grid )
+{
+  // Make sure the angular energy grid is valid
+  testPrecondition( angular_energy_grid.size() > 0 );
+  testPrecondition(
+        Utility::Sort::isSortedAscending( angular_energy_grid.begin(),
+			                              angular_energy_grid.end() ) );
+
+  testPrecondition( std::find_if( angular_energy_grid.begin(),
+                                  angular_energy_grid.end(),
+                                  isValueLessThanOrEqualToZero ) ==
+                    angular_energy_grid.end() );
+
+  d_angular_energy_grid = angular_energy_grid;
+}
+
+// Set the number of discrete angles for an angular energy bin
+void MomentPreservingElectronDataContainer::setNumberOfDiscreteAngles(
+             const unsigned angular_energy_bin,
+             const unsigned number_of_discrete_angles )
+{
+  // Make sure the angular_energy_bin is valid
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
+  // Make sure the number of discrete angles is valid
+  testPrecondition( number_of_discrete_angles > 0 );
+
+  d_number_of_discrete_angles[angular_energy_bin] = number_of_discrete_angles;
+}
+
+// Set the moment preserving discrete angles for an angular energy bin
+void MomentPreservingElectronDataContainer::setMomentPreservingDiscreteAngles(
+		     const unsigned angular_energy_bin,
+		     const std::vector<double>& moment_preserving_elastic_discrete_angles )
+{/*
+std::cout << "angular_energy_bin =\t" << angular_energy_bin << std::endl;
+std::cout << "angular_energy =\t" << d_angular_energy_grid[angular_energy_bin] << std::endl;
+std::cout << "# of angles =\t" << moment_preserving_elastic_discrete_angles.size() << std::endl;
+std::cout << "angle 1 =\t" << moment_preserving_elastic_discrete_angles[0] << std::endl;
+std::cout << "angle 2 =\t" << moment_preserving_elastic_discrete_angles[1] << std::endl;
+*/
+  // Make sure the angular_energy_bin is valid
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
+  // Make sure the moment preserving discrete angles are valid
+  testPrecondition( moment_preserving_elastic_discrete_angles.size() ==
+               d_number_of_discrete_angles.find( angular_energy_bin )->second );
+  testPrecondition( std::find_if( moment_preserving_elastic_discrete_angles.begin(),
+                                  moment_preserving_elastic_discrete_angles.end(),
+                                  isValueLessThanMinusOne ) ==
+                    moment_preserving_elastic_discrete_angles.end() );
+  testPrecondition( std::find_if( moment_preserving_elastic_discrete_angles.begin(),
+                                  moment_preserving_elastic_discrete_angles.end(),
+                                  isValueGreaterThanOne ) ==
+                    moment_preserving_elastic_discrete_angles.end() );
+
+  d_moment_preserving_elastic_discrete_angles[angular_energy_bin] =
+        moment_preserving_elastic_discrete_angles;
+}
+
+// Set the moment preserving weights for an angular energy bin
+void MomentPreservingElectronDataContainer::setMomentPreservingWeights(
+			 const unsigned angular_energy_bin,
+			 const std::vector<double>& moment_preserving_elastic_weights )
+{/*
+std::cout << "angular_energy_bin =\t" << angular_energy_bin << std::endl;
+std::cout << "angular_energy =\t" << d_angular_energy_grid[angular_energy_bin] << std::endl;
+std::cout << "# of weights =\t" << moment_preserving_elastic_weights.size() << std::endl;
+std::cout << std::setprecision(20) << "weight 1 =\t" << moment_preserving_elastic_weights[0] << std::endl;
+std::cout << std::setprecision(20) << "weight 2 =\t" << moment_preserving_elastic_weights[1] << std::endl;*/
+
+  // Make sure the angular_energy_bin is valid
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
+  // Make sure the weight is valid
+  testPrecondition( moment_preserving_elastic_weights.size() ==
+               d_number_of_discrete_angles.find( angular_energy_bin )->second );
+  testPrecondition( std::find_if( moment_preserving_elastic_weights.begin(),
+                                  moment_preserving_elastic_weights.end(),
+                                  isValueLessThanZero ) ==
+                    moment_preserving_elastic_weights.end() );
+  testPrecondition( std::find_if( moment_preserving_elastic_weights.begin(),
+                                  moment_preserving_elastic_weights.end(),
+                                  isValueGreaterThanOne ) ==
+                    moment_preserving_elastic_weights.end() );
+
+  d_moment_preserving_elastic_weights[angular_energy_bin] = moment_preserving_elastic_weights;
+}
+/*
+// Set the electron energy grid
+void MomentPreservingElectronDataContainer::setElectronEnergyGrid(
+				       const std::vector<double>& energy_grid )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+						                              energy_grid.end() ) );
+  testPrecondition( energy_grid.front() > 0.0 );
+
+  d_electron_energy_grid = energy_grid;
+}
+
+// Set the moment preserving electron cross section using Moment Preserving (MP) theory
+void MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingCrossSection(
+			 const std::vector<double>& moment_preserving_elastic_cross_section )
+{
+  // Make sure the moment preserving cross section is valid
+  testPrecondition( moment_preserving_elastic_cross_section.size() <=
+                    d_electron_energy_grid.size() );
+  testPrecondition( std::find_if( moment_preserving_elastic_cross_section.begin(),
+                                  moment_preserving_elastic_cross_section.end(),
+                                  isValueLessThanOrEqualToZero ) ==
+                    moment_preserving_elastic_cross_section.end() );
+
+  d_moment_preserving_moment_preserving_elastic_cross_section = moment_preserving_elastic_cross_section;
+}
+
+// Set the MP moment preserving cross section threshold energy bin index
+void MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(
+						        const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition(
+        d_moment_preserving_moment_preserving_elastic_cross_section.size() + index ==
+        d_electron_energy_grid.size() );
+
+ d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index= index;
+}
+*/
+// Test if a value is less than or equal to zero
+bool MomentPreservingElectronDataContainer::isValueLessThanOrEqualToZero(
+							   const double value )
+{
+  return value <= 0.0;
+}
+
+// Test if a value is less than zero
+bool MomentPreservingElectronDataContainer::isValueLessThanZero(
+							   const double value )
+{
+  return value < 0.0;
+}
+
+// Test if a value is greater than one
+bool MomentPreservingElectronDataContainer::isValueGreaterThanOne(
+							   const double value )
+{
+  return value > 1.0;
+}
+
+// Test if a value is less than the angle cosine cutoff
+bool MomentPreservingElectronDataContainer::isValueLessThanMinusOne(
+							   const double value )
+{
+  return value < -1.0;
+}
+
+
+} // end Data namespace
+
+//---------------------------------------------------------------------------//
+// end Data_MomentPreservingElectronDataContainer.cpp
+//---------------------------------------------------------------------------//

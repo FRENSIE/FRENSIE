@@ -8,35 +8,34 @@
 
 // Std Lib Includes
 #include <limits>
-
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 // FRENSIE Includes
 #include "MonteCarlo_CoherentScatteringDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 CoherentScatteringDistribution::CoherentScatteringDistribution(
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    form_factor_function_squared )
+                                const std::shared_ptr<const FormFactorSquared>&
+                                form_factor_function_squared )
   : PhotonScatteringDistribution(),
     d_form_factor_function_squared( form_factor_function_squared )
 {
-  // Make sure the array is valid
-  testPrecondition( !form_factor_function_squared.is_null() );
+  // Make sure the form factor squared is valid
+  testPrecondition( form_factor_function_squared.get() );
 }
 
 // Evaluate the distribution
 /*! The cross section (b) differential in the scattering angle cosine is
  * returned from this function.
  */
-double CoherentScatteringDistribution::evaluate( 
+double CoherentScatteringDistribution::evaluate(
 			           const double incoming_energy,
 			           const double scattering_angle_cosine ) const
 {
@@ -48,17 +47,17 @@ double CoherentScatteringDistribution::evaluate(
 
   const double mult = Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::classical_electron_radius*
-    Utility::PhysicalConstants::classical_electron_radius;
+    Utility::PhysicalConstants::classical_electron_radius*1e24;
 
-  const double form_factor_squared = 
-    this->evaluateFormFactorSquared( incoming_energy, scattering_angle_cosine);
+  const double form_factor_squared =
+    this->evaluateFormFactorSquared(incoming_energy, scattering_angle_cosine);
 
-  return mult*1e24*(1.0 + scattering_angle_cosine*scattering_angle_cosine)*
-    form_factor_squared;    
+  return mult*(1.0 + scattering_angle_cosine*scattering_angle_cosine)*
+    form_factor_squared;
 }
 
 // Evaluate the PDF
-double CoherentScatteringDistribution::evaluatePDF( 
+double CoherentScatteringDistribution::evaluatePDF(
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
@@ -73,7 +72,7 @@ double CoherentScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the integrated cross section (b)
-double CoherentScatteringDistribution::evaluateIntegratedCrossSection( 
+double CoherentScatteringDistribution::evaluateIntegratedCrossSection(
 					         const double incoming_energy,
 					         const double precision ) const
 {
@@ -81,21 +80,21 @@ double CoherentScatteringDistribution::evaluateIntegratedCrossSection(
   testPrecondition( incoming_energy > 0.0 );
 
   // Evaluate the integrated cross section
-  boost::function<double (double x)> diff_cs_wrapper = 
-    boost::bind<double>( &CoherentScatteringDistribution::evaluate,
-			 boost::cref( *this ),
-			 incoming_energy,
-			 _1 );
+  std::function<double (double)> diff_cs_wrapper =
+    std::bind<double>( &CoherentScatteringDistribution::evaluate,
+                       std::cref( *this ),
+                       incoming_energy,
+                       std::placeholders::_1 );
 
   double abs_error, integrated_cs;
 
-  Utility::GaussKronrodIntegrator quadrature_gkq_set( precision );
+  Utility::GaussKronrodIntegrator<double> quadrature_gkq_set( precision );
 
   quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
-					     -1.0,
-					     1.0,
-					     integrated_cs,
-					     abs_error );
+                                              -1.0,
+                                              1.0,
+                                              integrated_cs,
+                                              abs_error );
 
   // Make sure the integrated cross section is valid
   testPostcondition( integrated_cs > 0.0 );
@@ -104,7 +103,7 @@ double CoherentScatteringDistribution::evaluateIntegratedCrossSection(
 }
 
 // Sample an outgoing energy and direction from the distribution
-void CoherentScatteringDistribution::sample( 
+void CoherentScatteringDistribution::sample(
 				     const double incoming_energy,
 				     double& outgoing_energy,
 				     double& scattering_angle_cosine ) const
@@ -121,7 +120,7 @@ void CoherentScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void CoherentScatteringDistribution::sampleAndRecordTrials( 
+void CoherentScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
@@ -129,7 +128,7 @@ void CoherentScatteringDistribution::sampleAndRecordTrials(
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
-  
+
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
 				   scattering_angle_cosine,
@@ -137,10 +136,10 @@ void CoherentScatteringDistribution::sampleAndRecordTrials(
 }
 
 // Randomly scatter the photon
-void CoherentScatteringDistribution::scatterPhoton( 
-				     PhotonState& photon,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+void CoherentScatteringDistribution::scatterPhoton(
+			       PhotonState& photon,
+                               ParticleBank& bank,
+			       Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -154,12 +153,12 @@ void CoherentScatteringDistribution::scatterPhoton(
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
-  photon.rotateDirection( scattering_angle_cosine, 
+  photon.rotateDirection( scattering_angle_cosine,
 			  this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint photon
-void CoherentScatteringDistribution::scatterAdjointPhoton( 
+void CoherentScatteringDistribution::scatterAdjointPhoton(
 				     AdjointPhotonState& adjoint_photon,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -172,36 +171,38 @@ void CoherentScatteringDistribution::scatterAdjointPhoton(
   this->sampleAndRecordTrialsImpl( adjoint_photon.getEnergy(),
 				   scattering_angle_cosine,
 				   trial_dummy );
-  
+
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
-  adjoint_photon.rotateDirection( scattering_angle_cosine, 
+  adjoint_photon.rotateDirection( scattering_angle_cosine,
 				  this->sampleAzimuthalAngle() );
 }
 
 // Evaluate the form factor squared
-double CoherentScatteringDistribution::evaluateFormFactorSquared( 
+double CoherentScatteringDistribution::evaluateFormFactorSquared(
 				  const double incoming_energy,
 				  const double scattering_angle_cosine ) const
 {
   // The inverse wavelength of the photon (1/cm)
-  const double inverse_wavelength = incoming_energy/
-    (Utility::PhysicalConstants::planck_constant*
-     Utility::PhysicalConstants::speed_of_light);
+  FormFactorSquared::ArgumentQuantity inverse_wavelength =
+    (incoming_energy*Utility::Units::MeV)/
+    (Utility::PhysicalConstants::planck_constant_q*
+     Utility::PhysicalConstants::speed_of_light_q);
 
   // The squared form factor argument
-  const double form_factor_arg_squared = ((1.0 - scattering_angle_cosine)/2.0)*
+  const FormFactorSquared::SquaredArgumentQuantity form_factor_arg_squared =
+    ((1.0 - scattering_angle_cosine)/2.0)*
     inverse_wavelength*inverse_wavelength;
 
   // Make sure the squared form factor argument is valid
-  testPostcondition( form_factor_arg_squared >= 0.0 );
+  testPostcondition( form_factor_arg_squared >= Utility::QuantityTraits<FormFactorSquared::SquaredArgumentQuantity>::zero() );
 
   return d_form_factor_function_squared->evaluate( form_factor_arg_squared );
 }
 
 // Basic sampling implementation
-void CoherentScatteringDistribution::sampleAndRecordTrialsBasicImpl( 
+void CoherentScatteringDistribution::sampleAndRecordTrialsBasicImpl(
 					    const double incoming_energy,
 					    double& scattering_angle_cosine,
 					    unsigned& trials ) const
@@ -213,11 +214,11 @@ void CoherentScatteringDistribution::sampleAndRecordTrialsBasicImpl(
   ++trials;
 
   // Use the probability mixing technique to sample an outgoing angle
-  double random_number_1 = 
+  double random_number_1 =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
-  double random_number_2 = 
+  double random_number_2 =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
+
   if( random_number_1 <= 0.75 )
     scattering_angle_cosine = 2*random_number_2 - 1.0;
   else
@@ -237,11 +238,11 @@ void CoherentScatteringDistribution::sampleAndRecordTrialsBasicImpl(
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
-// Return the form factor function squared distribution
-const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+//! Return the form factor squared distribution
+const FormFactorSquared&
 CoherentScatteringDistribution::getFormFactorSquaredDistribution() const
 {
-  return d_form_factor_function_squared;
+  return *d_form_factor_function_squared;
 }
 
 } // end MonteCarlo namespace

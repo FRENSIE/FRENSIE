@@ -16,18 +16,18 @@
 namespace MonteCarlo{
 
 /*! The energy dependent neutron multiplicity reaction class
- * \details This class may function as an absorption reaction and a 
+ * \details This class may function as an absorption reaction and a
  * scattering reaction depending on the neutron multiplicity at the given
  * energy (e.g. N__N_ANYTHING reaction in O16)
  */
 class EnergyDependentNeutronMultiplicityReaction : public NuclearReaction
 {
-  
+
 private:
 
   // Teuchos ScalarTraits typedef
   typedef Teuchos::ScalarTraits<double> ST;
-  
+
 public:
 
   //! Constructor
@@ -40,7 +40,7 @@ public:
 	      const unsigned threshold_energy_index,
 	      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	      const Teuchos::ArrayRCP<const double>& cross_section,
-	      const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
+	      const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
 	      scattering_distribution );
 
   //! Destructor
@@ -58,15 +58,15 @@ public:
 
 private:
 
-  // The energy grid of the number of secondary particles (of the same type as 
+  // The energy grid of the number of secondary particles (of the same type as
   // primary) released
   Teuchos::Array<double> d_multiplicity_energy_grid;
-  
+
   // The number of secondary particles (of the same type as primary) released
   Teuchos::Array<double> d_multiplicity;
 
   // The scattering distribution
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >
   d_scattering_distribution;
 };
 

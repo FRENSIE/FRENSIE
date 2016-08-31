@@ -33,8 +33,8 @@
 namespace Utility{
 
 /*! The unit-aware one-dimensional distribution
- * \details When the IndependentUnit type and/or the DependentUnit type 
- * resolves to void, the IndepQuantity and/or the DepQuantity type reduces to 
+ * \details When the IndependentUnit type and/or the DependentUnit type
+ * resolves to void, the IndepQuantity and/or the DepQuantity type reduces to
  * double respectively.
  * \ingroup one_d_distributions
  */
@@ -124,7 +124,7 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isTabular(
 
 // Test if the distribution has the same bounds
 template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBounds( 
+inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBounds(
 	const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const
 {
   return
@@ -162,24 +162,24 @@ class InvalidDistributionStringRepresentation : public std::logic_error
 {
 
 public:
-  
+
   InvalidDistributionStringRepresentation( const std::string& what_arg )
-    : std::logic_error( what_arg ) 
+    : std::logic_error( what_arg )
   { /* ... */ }
 };
 
 /*! Macro for restricting distribution units to a certain dimension
  *
  * \details Certain distributions only make sense when defined on a certain
- * dimension (e.g. energy). This macro will prevent improper use of a 
+ * dimension (e.g. energy). This macro will prevent improper use of a
  * distribution by preventing the distribution template instance from
  * compiling when the template parameter has the incorrect dimension. Void
  * will also be allowed (needed for creating unit-agnostic distribution). If
  * the compiler shows "__unit_has_invalid_dimension_if_visible__" then you
- * know that an attempt to use a unit with a restricted dimension was made, 
+ * know that an attempt to use a unit with a restricted dimension was made,
  * which should help remedy the error faster (given that boost::units
  * template errors can be intimidating!). This macro can only be used
- * once - using it multiple times in the same header will prevent your 
+ * once - using it multiple times in the same header will prevent your
  * distribution from working with any dimension! It is safe to place it
  * anywhere in the distribution class declaration.
  * \ingroup one_d_distributions
@@ -189,7 +189,7 @@ typedef typename boost::enable_if<boost::mpl::or_<typename boost::is_same<typena
 
 /*! Macro for excluding a unit from a certain dimension
  *
- * \details Certain distributions do not make sense when defined on a 
+ * \details Certain distributions do not make sense when defined on a
  * certain dimension. This macro will prevent improper use of a distribution
  * by preventing the distribution template instance from compiling when
  * the template parameter has the incorrect dimension. If the compiler shows

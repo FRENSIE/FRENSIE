@@ -17,7 +17,7 @@
 #include "Data_SubshellType.hpp"
 
 namespace MonteCarlo{
-  
+
 //! The photoatomic reaction type enum.
 enum PhotoatomicReactionType{
   TOTAL_PHOTOATOMIC_REACTION = 1,
@@ -109,11 +109,11 @@ enum PhotoatomicReactionType{
 };
 
 //! Convert a PhotoatomicReactionType enum to a string
-std::string convertPhotoatomicReactionEnumToString( 
+std::string convertPhotoatomicReactionEnumToString(
 				      const PhotoatomicReactionType reaction );
 
 //! Convert a Data::SubshellType enum to a Photoelectric PhotoatomicReactionType enum
-PhotoatomicReactionType 
+PhotoatomicReactionType
 convertSubshellEnumToPhotoelectricPhotoatomicReactionEnum(
 						 const Data::SubshellType subshell );
 

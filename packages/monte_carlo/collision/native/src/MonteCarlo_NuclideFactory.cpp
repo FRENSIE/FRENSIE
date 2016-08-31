@@ -13,7 +13,7 @@
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NuclideACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Utility_ContractException.hpp"
@@ -22,7 +22,7 @@
 namespace MonteCarlo{
 
 // Constructor
-NuclideFactory::NuclideFactory( 
+NuclideFactory::NuclideFactory(
 		     const std::string& cross_sections_xml_directory,
 		     const Teuchos::ParameterList& cross_section_table_info,
 		     const std::unordered_set<std::string>& nuclide_aliases,
@@ -30,14 +30,14 @@ NuclideFactory::NuclideFactory(
 		     const bool use_photon_production_data,
 		     std::ostream* os_message )
   : d_os_message( os_message )
-{ 
+{
   // Make sure the message output stream is valid
   testPrecondition( os_message != NULL );
-  
+
   // Create each nuclide in the set
-  std::unordered_set<std::string>::const_iterator nuclide_name = 
+  std::unordered_set<std::string>::const_iterator nuclide_name =
     nuclide_aliases.begin();
-  
+
   std::string nuclide_file_path, nuclide_file_type, nuclide_table_name;
   int nuclide_file_start_line;
   int atomic_number, atomic_mass_number, isomer_number;
@@ -45,7 +45,7 @@ NuclideFactory::NuclideFactory(
 
   while( nuclide_name != nuclide_aliases.end() )
   {
-    CrossSectionsXMLProperties::extractInfoFromNuclideTableInfoParameterList(
+    Data::CrossSectionsXMLProperties::extractInfoFromNuclideTableInfoParameterList(
 						  cross_sections_xml_directory,
 						  *nuclide_name,
 						  cross_section_table_info,
@@ -59,7 +59,7 @@ NuclideFactory::NuclideFactory(
 						  atomic_weight_ratio,
 						  temperature );
 
-    if( nuclide_file_type == CrossSectionsXMLProperties::ace_file )
+    if( nuclide_file_type == Data::CrossSectionsXMLProperties::ace_file )
     {
       createNuclideFromACETable( cross_sections_xml_directory,
 				 *nuclide_name,
@@ -92,9 +92,9 @@ NuclideFactory::NuclideFactory(
 /*! \details the nuclide name will be converted to a unique identifier that
  * will be used as its key in the map that is populated.
  */
-void NuclideFactory::createNuclideMap( 
+void NuclideFactory::createNuclideMap(
   std::unordered_map<std::string,Teuchos::RCP<Nuclide> >& nuclide_map ) const
-{   
+{
   // Reset the nuclide map
   nuclide_map.clear();
 
@@ -119,24 +119,24 @@ void NuclideFactory::createNuclideFromACETable(
 			    const bool use_photon_production_data )
 {
   // Load the cross section data with the specified format
-  *d_os_message << "Loading ACE cross section table " 
+  *d_os_message << "Loading ACE cross section table "
 		<< nuclear_table_name << " (" << nuclide_alias << ") ... ";
-  
+
   // The ACE table reader
   Data::ACEFileHandler ace_file_handler( ace_file_path,
 					 nuclear_table_name,
 					 nuclide_file_start_line,
 					 true );
-  
+
   // The XSS neutron data extractor
-  Data::XSSNeutronDataExtractor xss_data_extractor( 
+  Data::XSSNeutronDataExtractor xss_data_extractor(
 					 ace_file_handler.getTableNXSArray(),
 					 ace_file_handler.getTableJXSArray(),
 				         ace_file_handler.getTableXSSArray() );
 
   // Initialize the new nuclide
   Teuchos::RCP<Nuclide>& nuclide = d_nuclide_name_map[nuclide_alias];
-  
+
   // Create the new nuclide
   NuclideACEFactory::createNuclide( xss_data_extractor,
 				    nuclear_table_name,
@@ -148,7 +148,7 @@ void NuclideFactory::createNuclideFromACETable(
 				    nuclide,
 				    use_unresolved_resonance_data,
 				    use_photon_production_data );
-  
+
   *d_os_message << "done." << std::endl;
 }
 

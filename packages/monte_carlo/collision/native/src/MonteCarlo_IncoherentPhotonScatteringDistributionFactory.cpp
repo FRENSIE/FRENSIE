@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_IncoherentPhotonScatteringDistributionFactory.cpp
 //! \author Alex Robinson
-//! \brief  The incoherent photon scattering distribution factory base class 
+//! \brief  The incoherent photon scattering distribution factory base class
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 // Create a Klein-Nishina distribution
-void IncoherentPhotonScatteringDistributionFactory::createKleinNishinaDistribution( 
+void IncoherentPhotonScatteringDistributionFactory::createKleinNishinaDistribution(
 		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 		    incoherent_distribution,
 		    const double kahn_sampling_cutoff_energy )
@@ -23,8 +23,8 @@ void IncoherentPhotonScatteringDistributionFactory::createKleinNishinaDistributi
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
-  
-  incoherent_distribution.reset( new KleinNishinaPhotonScatteringDistribution( 
+
+  incoherent_distribution.reset( new KleinNishinaPhotonScatteringDistribution(
 					       kahn_sampling_cutoff_energy ) );
 }
 

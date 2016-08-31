@@ -44,15 +44,15 @@ ElectronMaterial::ElectronMaterial(
   {
     d_atoms[i].first = electroatom_fractions[i];
 
-    ElectroatomNameMap::const_iterator atom = 
+    ElectroatomNameMap::const_iterator atom =
       electroatom_name_map.find( electroatom_names[i] );
 
     TEST_FOR_EXCEPTION( atom == electroatom_name_map.end(),
 			std::logic_error,
-			"Error: atom " << electroatom_names[i] << 
+			"Error: atom " << electroatom_names[i] <<
 			" has not been loaded!" );
 
-    d_atoms[i].second = atom->second;    
+    d_atoms[i].second = atom->second;
   }
 
   // Convert weight fractions to atom fractions
@@ -69,11 +69,11 @@ ElectronMaterial::ElectronMaterial(
   {
     normalizeFractionValues<Utility::FIRST>( d_atoms.begin(), d_atoms.end() );
   }
-  
+
   // Convert the mass density to a number density
   if( density < 0.0 )
   {
-    d_number_density = 
+    d_number_density =
       convertMassDensityToNumberDensity<Utility::FIRST,Utility::SECOND>(
 					  -1.0*density,
 					  d_atoms.begin(),
@@ -94,7 +94,7 @@ ModuleTraits::InternalMaterialHandle ElectronMaterial::getId() const
 {
   return d_id;
 }
-  
+
 // Return the number density (atom/b-cm)
 double ElectronMaterial::getNumberDensity() const
 {
@@ -102,13 +102,13 @@ double ElectronMaterial::getNumberDensity() const
 }
 
 // Return the macroscopic total cross section (1/cm)
-double ElectronMaterial::getMacroscopicTotalCrossSection( 
+double ElectronMaterial::getMacroscopicTotalCrossSection(
 						    const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
-  
+
   double cross_section = 0.0;
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
@@ -121,7 +121,7 @@ double ElectronMaterial::getMacroscopicTotalCrossSection(
 }
 
 // Return the macroscopic absorption cross section (1/cm)
-double ElectronMaterial::getMacroscopicAbsorptionCrossSection( 
+double ElectronMaterial::getMacroscopicAbsorptionCrossSection(
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -129,7 +129,7 @@ double ElectronMaterial::getMacroscopicAbsorptionCrossSection(
   testPrecondition( energy > 0.0 );
 
   double cross_section = 0.0;
-  
+
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
     cross_section +=
@@ -151,7 +151,7 @@ double ElectronMaterial::getSurvivalProbability( const double energy ) const
 
   if( total_cross_sec > 0.0 )
   {
-    survival_prob = 1.0 - 
+    survival_prob = 1.0 -
       this->getMacroscopicAbsorptionCrossSection( energy )/total_cross_sec;
   }
   else
@@ -173,7 +173,7 @@ double ElectronMaterial::getMacroscopicReactionCrossSection(
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
-  
+
   double cross_section = 0.0;
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
@@ -187,7 +187,7 @@ double ElectronMaterial::getMacroscopicReactionCrossSection(
 
 
 // Collide with a electron
-void ElectronMaterial::collideAnalogue( ElectronState& electron, 
+void ElectronMaterial::collideAnalogue( ElectronState& electron,
 				      ParticleBank& bank ) const
 {
   unsigned atom_index = sampleCollisionAtom( electron.getEnergy() );
@@ -198,14 +198,14 @@ void ElectronMaterial::collideAnalogue( ElectronState& electron,
 // Collide with a electron and survival bias
 /*! \details The method of survival biasing that has been implemented is to
  * first select the nuclide that is collided with. The particle weight is
- * then multiplied by the survival probability associated with the 
+ * then multiplied by the survival probability associated with the
  * microscopic cross sections for the collision nuclide. An alternative method
  * would be to multiply the weight of the particle by the macroscopic
- * survival probability associated with the material and then sample a 
+ * survival probability associated with the material and then sample a
  * collision nuclide. The latter method appears to be more involved than the
  * former, which is why the former was chosen.
  */
-void ElectronMaterial::collideSurvivalBias( ElectronState& electron, 
+void ElectronMaterial::collideSurvivalBias( ElectronState& electron,
 					  ParticleBank& bank ) const
 {
   unsigned atom_index = sampleCollisionAtom( electron.getEnergy() );
@@ -223,7 +223,7 @@ double ElectronMaterial::getAtomicWeight(
 // Sample the atom that is collided with
 unsigned ElectronMaterial::sampleCollisionAtom( const double energy ) const
 {
-  double scaled_random_number = 
+  double scaled_random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
     this->getMacroscopicTotalCrossSection( energy );
 

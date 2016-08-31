@@ -36,7 +36,7 @@
 TEUCHOS_UNIT_TEST( Cell, constructor )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
+
   std::map<unsigned,Teuchos::RCP<FRENSIE::Surface> > global_surface_map;
 
   Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
@@ -51,13 +51,13 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
 
   global_surface_map[2] = surface;
 
-  surface.reset( new FRENSIE::Surface( 3, 
+  surface.reset( new FRENSIE::Surface( 3,
 				      0, 1, 0,
 				      -2 ) );
 
   global_surface_map[3] = surface;
 
-  surface.reset( new FRENSIE::Surface( 4, 
+  surface.reset( new FRENSIE::Surface( 4,
 				      0, 1, 0,
 				      2 ) );
 
@@ -68,7 +68,7 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
 				      -2 ) );
 
   global_surface_map[5] = surface;
-  
+
   surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      2 ) );
@@ -84,7 +84,7 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
   surface.reset( new FRENSIE::Surface( 8,
 				      1, 0, 0,
 				      1 ) );
-  
+
   global_surface_map[8] = surface;
 
   surface.reset( new FRENSIE::Surface( 9,
@@ -102,7 +102,7 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
   surface.reset( new FRENSIE::Surface( 11,
 				      0, 0, 1,
 				      -1 ) );
-  
+
   global_surface_map[11] = surface;
 
   surface.reset( new FRENSIE::Surface( 12,

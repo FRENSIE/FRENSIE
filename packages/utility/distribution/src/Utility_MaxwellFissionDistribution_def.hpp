@@ -54,22 +54,22 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
   testPrecondition( !QuantityTraits<InputIndepQuantityC>::isnaninf( restriction_energy ) );
   testPrecondition( !QT::isnaninf( constant_multiplier ) );
   // Make sure that incident energy and nuclear temperature is positive
-  testPrecondition( incident_energy > 
+  testPrecondition( incident_energy >
 		    QuantityTraits<InputIndepQuantityA>::zero() );
-  testPrecondition( nuclear_temperature > 
+  testPrecondition( nuclear_temperature >
 		    QuantityTraits<InputIndepQuantityB>::zero() );
   // Make sure that the constant multiplier is positive
   testPrecondition( constant_multiplier > 0.0 );
 
-  // Calculate the norm constant 
+  // Calculate the norm constant
   this->calculateNormalizationConstant();
 }
 
 // Copy constructor
-/*! \details Just like boost::units::quantity objects, the unit-aware 
+/*! \details Just like boost::units::quantity objects, the unit-aware
  * distribution can be explicitly cast to a distribution with compatible
  * units. If the units are not compatible, this function will not compile. Note
- * that this allows distributions to be scaled safely (unit conversions 
+ * that this allows distributions to be scaled safely (unit conversions
  * are completely taken care of by boost::units)!
  */
 template<typename IndependentUnit, typename DependentUnit>
@@ -121,11 +121,11 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
-/*! \details Constructing a unit-aware distribution from a unitless 
+/*! \details Constructing a unit-aware distribution from a unitless
  * distribution is potentially dangerous. By forcing users to construct objects
  * using this method instead of a standard constructor we are trying to make
- * sure users are aware of the danger. This is designed to mimic the interface 
- * of the boost::units::quantity, which also has to deal with this issue. 
+ * sure users are aware of the danger. This is designed to mimic the interface
+ * of the boost::units::quantity, which also has to deal with this issue.
  */
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>
@@ -136,7 +136,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromUnitless
 
 // Assignment operator
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>& 
+UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>&
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::operator=(
     const UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
@@ -156,17 +156,17 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::operator=(
     d_multiplier = dist_instance.d_multiplier;
     d_norm_constant = dist_instance.d_norm_constant;
   }
-  
+
   return *this;
 }
 
 // Evaluate the distribution
-/*! \details This is simply the unnormalized distribution. An implicit 
+/*! \details This is simply the unnormalized distribution. An implicit
  * conversion factor (1.0) is used to convert to the correct units.
  */
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::DepQuantity
-UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::evaluate( 
+UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::evaluate(
  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < IQT::zero() )
@@ -181,7 +181,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::evaluate(
 // Evaluate the PDF
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity
-UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::evaluatePDF( 
+UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
 const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   return this->evaluate( indep_var_value )*d_norm_constant;
@@ -237,37 +237,37 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRec
   testPrecondition( !IQT::isnaninf( incident_energy ) );
   testPrecondition( !IQT::isnaninf( nuclear_temperature ) );
   testPrecondition( !IQT::isnaninf( restriction_energy ) );
-  
+
   // Make sure that incident energy and nuclear temperature is positive
   testPrecondition( incident_energy > IQT::zero() );
   testPrecondition( nuclear_temperature > IQT::zero() );
-  
+
   double random_number_1, random_number_2, random_number_3;
   double term_1, term_2, arg;
   IndepQuantity sample;
-  
+
   // Use the method outlined in OpenMC documentation under "5.7.2.4. ACE Law 7 - UnitAwareMaxwell Fission Spectrum"
   while( true )
   {
     // Increment the trial counter
     ++trials;
-    
+
     random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
     random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
     random_number_3 = RandomNumberGenerator::getRandomNumber<double>();
-    
+
     term_1 = log(random_number_1);
-    
+
     arg = cos( PhysicalConstants::pi * random_number_3 * 0.5 );
 
     term_2 = log(random_number_2)*arg*arg;
-    
+
     sample = -nuclear_temperature * ( term_1 + term_2 );
-     
+
     if( sample <= (incident_energy - restriction_energy) )
       break;
   }
-  
+
   return sample;
 }
 
@@ -321,7 +321,7 @@ bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::isConti
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_incident_energy ) 
+  os << "{" << getRawQuantity( d_incident_energy )
      << "," << getRawQuantity( d_nuclear_temperature )
      << "," << getRawQuantity( d_restriction_energy );
 
@@ -340,7 +340,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
   std::string dist_rep;
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
-  
+
   Teuchos::Array<std::string> distribution;
   try{
     distribution = Teuchos::fromStringToArray<std::string>( dist_rep );
@@ -351,17 +351,17 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
                         "constructed because the representation is not valid "
                         "(see details below)!\n" );
     message += error.what();
-    
+
     throw InvalidDistributionStringRepresentation( message );
   }
-  
+
   TEST_FOR_EXCEPTION( distribution.size() > 4,
                      InvalidDistributionStringRepresentation,
                      "Error: the Maxwell Fission distribution cannot "
                      "be constructed because the representation is "
                      "not valid"
                      "(only 4 values or fewer  may be specified)!" );
-  
+
   // Set the incient neutron energy
   if( distribution.size() > 0 )
   {
@@ -373,26 +373,26 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
 			<< distribution[0] );
     {
       double incident_energy;
-      
+
       std::istringstream iss( distribution[0] );
       Teuchos::extractDataFromISS( iss, incident_energy );
 
       setQuantity( d_incident_energy, incident_energy );
     }
-  
+
     TEST_FOR_EXCEPTION( IQT::isnaninf( d_incident_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
 			"constructed because of an invalid incident energy "
 			<< d_incident_energy );
-  
+
     TEST_FOR_EXCEPTION( d_incident_energy < IQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
 			"constructed because of an invalid incident energy "
 			<< d_incident_energy );
   }
-  
+
   // Set the nuclear temperature
   if( distribution.size() > 1 )
   {
@@ -404,19 +404,19 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
 			<< distribution[1] );
     {
       double nuclear_temperature;
-      
+
       std::istringstream iss( distribution[1] );
       Teuchos::extractDataFromISS( iss, nuclear_temperature );
 
       setQuantity( d_nuclear_temperature, nuclear_temperature );
     }
-  
+
     TEST_FOR_EXCEPTION( IQT::isnaninf( d_nuclear_temperature ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
 			"constructed because of an invalid nuclear temperature "
 			<< d_nuclear_temperature );
-  
+
     TEST_FOR_EXCEPTION( d_nuclear_temperature <= IQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
@@ -435,13 +435,13 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
 			<< distribution[2] );
     {
       double restriction_energy;
-      
+
       std::istringstream iss( distribution[2] );
       Teuchos::extractDataFromISS( iss, restriction_energy );
 
       setQuantity( d_restriction_energy, restriction_energy );
     }
-    
+
     TEST_FOR_EXCEPTION( IQT::isnaninf( d_restriction_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
@@ -461,7 +461,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
 
     {
       double multiplier;
-      
+
       std::istringstream iss( distribution[3] );
       Teuchos::extractDataFromISS( iss, multiplier );
 
@@ -485,7 +485,7 @@ bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::isEqual
 {
   return d_incident_energy == other.d_incident_energy &&
     d_nuclear_temperature == other.d_nuclear_temperature &&
-    d_restriction_energy == other.d_restriction_energy && 
+    d_restriction_energy == other.d_restriction_energy &&
     d_multiplier == other.d_multiplier;
 }
 

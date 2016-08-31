@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw1NuclearScatteringEnergyDistribution.cpp
 //! \author Alex Bennett
 //! \brief  The nuclear equiprobable bin scattering energy distribution class
@@ -20,7 +20,7 @@
 namespace MonteCarlo{
 
 // Constructor
-AceLaw1NuclearScatteringEnergyDistribution::AceLaw1NuclearScatteringEnergyDistribution( 
+AceLaw1NuclearScatteringEnergyDistribution::AceLaw1NuclearScatteringEnergyDistribution(
 						 EnergyDistArray& energy_grid )
   : NuclearScatteringEnergyDistribution( 1u ),
     d_energy_grid( energy_grid )
@@ -30,7 +30,7 @@ AceLaw1NuclearScatteringEnergyDistribution::AceLaw1NuclearScatteringEnergyDistri
 }
 
 // Sample a scattering energy
-double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy( 
+double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -38,7 +38,7 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
   testPrecondition( energy < std::numeric_limits<double>::infinity() );
 
   // Sample an energy bin
-  double bin_location = Utility::RandomNumberGenerator::getRandomNumber<double>() * 
+  double bin_location = Utility::RandomNumberGenerator::getRandomNumber<double>() *
                         (d_energy_grid.front().second.size() - 1);
 
   int bin_index = (int)floor(bin_location);
@@ -46,13 +46,13 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
   double outgoing_energy;
 
   // Check if energy is outside the grid
-  if( energy < d_energy_grid.front().first ) 
+  if( energy < d_energy_grid.front().first )
   {
-    outgoing_energy = d_energy_grid.front().second[bin_index] + (bin_location - bin_index) * 
+    outgoing_energy = d_energy_grid.front().second[bin_index] + (bin_location - bin_index) *
                    (d_energy_grid.front().second[bin_index + 1] - d_energy_grid.front().second[bin_index]);
   }
   else if( energy > d_energy_grid.back().first )
-  {  
+  {
     outgoing_energy = d_energy_grid.back().second[bin_index] + (bin_location - bin_index) *
                    (d_energy_grid.back().second[bin_index + 1] - d_energy_grid.back().second[bin_index]);
   }
@@ -70,7 +70,7 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
 
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
- 
+
     // Calculate the interpolation fraction
     double interpolation_fraction = ( energy - lower_bin_boundary->first )/
                                     ( upper_bin_boundary->first - lower_bin_boundary->first );
@@ -94,13 +94,13 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
     }
 
     // Sample the energy location
-    double energy_location = sampled_energy_dist->second[bin_index] + 
-                    Utility::RandomNumberGenerator::getRandomNumber<double>() * 
+    double energy_location = sampled_energy_dist->second[bin_index] +
+                    Utility::RandomNumberGenerator::getRandomNumber<double>() *
                     (sampled_energy_dist->second[bin_index + 1] - sampled_energy_dist->second[bin_index]);
 
     // Calculate the outgoing energy
     outgoing_energy = energy_lower + (energy_location - sampled_energy_dist->second.front()) *
-                    (energy_upper - energy_lower) / 
+                    (energy_upper - energy_lower) /
                     (sampled_energy_dist->second.back() - sampled_energy_dist->second.front());
   }
 

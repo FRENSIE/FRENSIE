@@ -17,7 +17,7 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-CollisionHandler::CellIdNeutronMaterialMap 
+CollisionHandler::CellIdNeutronMaterialMap
 CollisionHandler::master_neutron_map;
 
 CollisionHandler::CellIdPhotonMaterialMap
@@ -36,16 +36,16 @@ void CollisionHandler::addMaterial(
   testPrecondition( !material.is_null() );
   // Make sure the cells are valid
   testPrecondition( cells_containing_material.size() > 0 );
-  
+
   for( unsigned i = 0u; i < cells_containing_material.size(); ++i )
   {
-    TEST_FOR_EXCEPTION( 
+    TEST_FOR_EXCEPTION(
       CollisionHandler::master_neutron_map.find(cells_containing_material[i])!=
 				    CollisionHandler::master_neutron_map.end(),
       std::logic_error,
       "Error: cell " << cells_containing_material[i] << " already has a "
       "material assigned!" );
-    
+
     CollisionHandler::master_neutron_map[cells_containing_material[i]] =
       material;
   }
@@ -61,7 +61,7 @@ void CollisionHandler::addMaterial(
   testPrecondition( !material.is_null() );
   // Make sure the cells are valid
   testPrecondition( cells_containing_material.size() > 0 );
-  
+
   for( unsigned i = 0u; i < cells_containing_material.size(); ++i )
   {
     TEST_FOR_EXCEPTION(
@@ -70,8 +70,8 @@ void CollisionHandler::addMaterial(
       std::logic_error,
       "Error:: cell " << cells_containing_material[i] << " already has a "
       "material assigned!" );
-    
-    CollisionHandler::master_photon_map[cells_containing_material[i]] = 
+
+    CollisionHandler::master_photon_map[cells_containing_material[i]] =
       material;
   }
 }
@@ -88,9 +88,9 @@ void CollisionHandler::addMaterial(
   testPrecondition( !photon_material.is_null() );
   // Make sure the cells are valid
   testPrecondition( cells_containing_material.size() > 0 );
-  
+
   CollisionHandler::addMaterial( neutron_material, cells_containing_material );
-  
+
   CollisionHandler::addMaterial( photon_material, cells_containing_material );
 }
 
@@ -104,7 +104,7 @@ void CollisionHandler::addMaterial(
   testPrecondition( !material.is_null() );
   // Make sure the cells are valid
   testPrecondition( cells_containing_material.size() > 0 );
-  
+
   for( unsigned i = 0u; i < cells_containing_material.size(); ++i )
   {
     TEST_FOR_EXCEPTION(
@@ -113,8 +113,8 @@ void CollisionHandler::addMaterial(
       std::logic_error,
       "Error:: cell " << cells_containing_material[i] << " already has a "
       "material assigned!" );
-    
-    CollisionHandler::master_electron_map[cells_containing_material[i]] = 
+
+    CollisionHandler::master_electron_map[cells_containing_material[i]] =
       material;
   }
 }
@@ -127,7 +127,7 @@ bool CollisionHandler::isCellVoid(
   switch( particle_type )
   {
   case NEUTRON:
-    if( CollisionHandler::master_neutron_map.find( cell ) == 
+    if( CollisionHandler::master_neutron_map.find( cell ) ==
       CollisionHandler::master_neutron_map.end() )
       return true;
     else
@@ -153,7 +153,7 @@ bool CollisionHandler::isCellVoid(
 
 // Get the neutron material contained in a cell
 const Teuchos::RCP<NeutronMaterial>&
-CollisionHandler::getCellNeutronMaterial( 
+CollisionHandler::getCellNeutronMaterial(
 			const Geometry::ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the cell is not void
@@ -191,10 +191,10 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
 						   NEUTRON ) );
-  
-  Teuchos::RCP<NeutronMaterial>& material = 
+
+  Teuchos::RCP<NeutronMaterial>& material =
     CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
-  
+
   return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
 }
 
@@ -206,9 +206,9 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
 						   PHOTON ) );
 
-  Teuchos::RCP<PhotonMaterial>& material = 
+  Teuchos::RCP<PhotonMaterial>& material =
       CollisionHandler::master_photon_map.find( particle.getCell() )->second;
-    
+
   return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
 }
 
@@ -220,9 +220,9 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
 						   ELECTRON ) );
 
-  Teuchos::RCP<ElectronMaterial>& material = 
+  Teuchos::RCP<ElectronMaterial>& material =
       CollisionHandler::master_electron_map.find( particle.getCell() )->second;
-    
+
   return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
 }
 
@@ -233,7 +233,7 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 {
   CellIdNeutronMaterialMap::const_iterator it =
     CollisionHandler::master_neutron_map.find( particle.getCell() );
-  
+
   if( it != CollisionHandler::master_neutron_map.end() )
   {
     return it->second->getMacroscopicReactionCrossSection(particle.getEnergy(),
@@ -248,7 +248,7 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 				      const PhotonState& particle,
 				      const PhotoatomicReactionType reaction )
 {
-  CellIdPhotonMaterialMap::const_iterator it = 
+  CellIdPhotonMaterialMap::const_iterator it =
     CollisionHandler::master_photon_map.find( particle.getCell() );
 
   if( it != CollisionHandler::master_photon_map.end() )
@@ -265,7 +265,7 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 				      const PhotonState& particle,
 				      const PhotonuclearReactionType reaction )
 {
-  CellIdPhotonMaterialMap::const_iterator it = 
+  CellIdPhotonMaterialMap::const_iterator it =
     CollisionHandler::master_photon_map.find( particle.getCell() );
 
   if( it != CollisionHandler::master_photon_map.end() )
@@ -282,7 +282,7 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 				      const ElectronState& particle,
 				      const ElectroatomicReactionType reaction )
 {
-  CellIdElectronMaterialMap::const_iterator it = 
+  CellIdElectronMaterialMap::const_iterator it =
     CollisionHandler::master_electron_map.find( particle.getCell() );
 
   if( it != CollisionHandler::master_electron_map.end() )
@@ -302,10 +302,10 @@ void CollisionHandler::collideWithCellMaterial( NeutronState& particle,
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
 						   NEUTRON ) );
-  
-  const Teuchos::RCP<NeutronMaterial>& material = 
+
+  const Teuchos::RCP<NeutronMaterial>& material =
     CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
-  
+
   if( analogue )
     material->collideAnalogue( particle, bank );
   else
@@ -320,14 +320,14 @@ void CollisionHandler::collideWithCellMaterial( PhotonState& particle,
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
 						   PHOTON ) );
-  
-  const Teuchos::RCP<PhotonMaterial>& material = 
+
+  const Teuchos::RCP<PhotonMaterial>& material =
     CollisionHandler::master_photon_map.find( particle.getCell() )->second;
-  
+
   if( analogue )
     material->collideAnalogue( particle, bank );
   else
-    material->collideSurvivalBias( particle, bank );   
+    material->collideSurvivalBias( particle, bank );
 }
 
 // Collide with the material in a cell
@@ -338,14 +338,14 @@ void CollisionHandler::collideWithCellMaterial( ElectronState& particle,
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
 						   ELECTRON ) );
-  
-  const Teuchos::RCP<ElectronMaterial>& material = 
+
+  const Teuchos::RCP<ElectronMaterial>& material =
     CollisionHandler::master_electron_map.find( particle.getCell() )->second;
-  
+
   if( analogue )
     material->collideAnalogue( particle, bank );
   else
-    material->collideSurvivalBias( particle, bank );   
+    material->collideSurvivalBias( particle, bank );
 }
 
 } // end MonteCarlo namespace

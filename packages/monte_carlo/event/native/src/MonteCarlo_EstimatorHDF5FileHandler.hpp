@@ -37,12 +37,12 @@ public:
   };
 
   //! Constructor (file ownership)
-  EstimatorHDF5FileHandler( 
+  EstimatorHDF5FileHandler(
 	  const std::string& hdf5_file_name,
 	  const EstimatorHDF5FileOps file_op = OVERWRITE_ESTIMATOR_HDF5_FILE );
 
   //! Constructor (file sharing)
-  EstimatorHDF5FileHandler( 
+  EstimatorHDF5FileHandler(
                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file );
 
   //! Destructor
@@ -68,7 +68,7 @@ public:
 
   //! Check if the estimator is a mesh estimator
   bool isMeshEstimator( const unsigned estimator_id ) const;
-  
+
   //! Set the estimator multiplier
   void setEstimatorMultiplier( const unsigned estimator_id,
 			       const double multiplier );
@@ -76,7 +76,7 @@ public:
   //! Get the estimator multiplier
   void getEstimatorMultiplier( const unsigned estimator_id,
 			       double& multiplier ) const;
-  
+
   //! Set the estimator response function ordering
   void setEstimatorResponseFunctionOrdering(
 		  const unsigned estimator_id,
@@ -155,7 +155,7 @@ public:
   //! Get the total normalization constant
   void getEstimatorTotalNormConstant( const unsigned estimator_id,
 				      double& total_norm_constant ) const;
-  
+
   //! Set the raw estimator bin data for an entity (1st, 2nd moments)
   template<typename EntityIdType>
   void setRawEstimatorEntityBinData(
@@ -184,7 +184,7 @@ public:
      const EntityIdType entity_id,
      Teuchos::Array<Utility::Pair<double,double> >& processed_bin_data ) const;
 
-  /*! \brief Set the raw estimator total data for an entity 
+  /*! \brief Set the raw estimator total data for an entity
    * (1st, 2nd, 3rd, 4th moments)
    */
   template<typename EntityIdType>
@@ -194,7 +194,7 @@ public:
              const Teuchos::Array<Utility::Quad<double,double,double,double> >&
 	     raw_total_data );
 
-  /*! \brief Get the raw estimator total data for an entity 
+  /*! \brief Get the raw estimator total data for an entity
    * (1st, 2nd, 3rd, 4th moments)
    */
   template<typename EntityIdType>
@@ -204,7 +204,7 @@ public:
                    Teuchos::Array<Utility::Quad<double,double,double,double> >&
 		   raw_total_data ) const;
 
-  /*! \brief Set the processed estimator total data for an entity 
+  /*! \brief Set the processed estimator total data for an entity
    * (mean, relative error, variance of variance, figure of merit )
    */
   template<typename EntityIdType>
@@ -212,7 +212,7 @@ public:
 	     const unsigned estimator_id,
 	     const EntityIdType entity_id,
              const Teuchos::Array<Utility::Quad<double,double,double,double> >&
-	     processed_total_data ); 
+	     processed_total_data );
 
   /*! \brief Get the processed estimator total data for an entity
    * (mean, relative error, variance of variance, figure of merit)
@@ -244,7 +244,7 @@ public:
      const unsigned estimator_id,
      Teuchos::Array<Utility::Pair<double,double> >& processed_bin_data ) const;
 
-  /*! \brief Set the raw estimator total data over all entities 
+  /*! \brief Set the raw estimator total data over all entities
    * (1st, 2nd, 3rd, 4th moments)
    */
   void setRawEstimatorTotalData(
@@ -293,7 +293,7 @@ private:
 
   // Get the estimator entity location
   template<typename EntityIdType>
-  std::string getEstimatorEntityGroupLocation( 
+  std::string getEstimatorEntityGroupLocation(
 					  const unsigned estimator_id,
 					  const EntityIdType entity_id ) const;
 
@@ -320,20 +320,20 @@ struct HDF5TypeTraits<MonteCarlo::EstimatorHDF5FileHandler::EntityType>
   //! Return the HDF5 data type
   static inline H5::EnumType dataType()
   {
-    H5::EnumType hdf5_estimator_entity_type( 
+    H5::EnumType hdf5_estimator_entity_type(
 		  sizeof( MonteCarlo::EstimatorHDF5FileHandler::EntityType ) );
-    
-    MonteCarlo::EstimatorHDF5FileHandler::EntityType value = 
+
+    MonteCarlo::EstimatorHDF5FileHandler::EntityType value =
       MonteCarlo::EstimatorHDF5FileHandler::SURFACE_ENTITY;
 
     hdf5_estimator_entity_type.insert( "SURFACE_ENTITY", &value );
-    
+
     value = MonteCarlo::EstimatorHDF5FileHandler::CELL_ENTITY;
 
     hdf5_estimator_entity_type.insert( "CELL_ENTITY", &value );
 
     value = MonteCarlo::EstimatorHDF5FileHandler::MESH_VOLUME_ENTITY;
-    
+
     hdf5_estimator_entity_type.insert( "MESH_VOLUME_ENTITY", &value );
 
     return hdf5_estimator_entity_type;
@@ -351,7 +351,7 @@ struct HDF5TypeTraits<MonteCarlo::EstimatorHDF5FileHandler::EntityType>
   {
     return MonteCarlo::EstimatorHDF5FileHandler::SURFACE_ENTITY;
   }
-  
+
   //! Returns the unit value for this type
   static inline MonteCarlo::EstimatorHDF5FileHandler::EntityType
   one()

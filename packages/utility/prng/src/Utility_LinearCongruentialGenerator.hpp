@@ -18,7 +18,7 @@ namespace Utility{
  */
 class LinearCongruentialGenerator
 {
-  
+
 public:
 
   //! Constructor

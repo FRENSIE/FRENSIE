@@ -55,7 +55,7 @@ public:
 
   //! The dependent quantity type
   typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
-  
+
   //! Default constructor
   UnitAwareEquiprobableBinDistribution();
 
@@ -107,14 +107,14 @@ public:
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  IndepQuantity sampleWithRandomNumberInSubrange( 
+  IndepQuantity sampleWithRandomNumberInSubrange(
 				     const double random_number,
 				     const IndepQuantity max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
 
-  //! Return a random sample from the distribution and the sampled index 
+  //! Return a random sample from the distribution and the sampled index
   IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
@@ -133,7 +133,7 @@ public:
   bool isEqual( const UnitAwareEquiprobableBinDistribution& other ) const;
 
 protected:
-  
+
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareEquiprobableBinDistribution( const UnitAwareEquiprobableBinDistribution<void,void>& unitless_dist_instance, int );
 
@@ -156,7 +156,7 @@ private:
   friend class UnitAwareEquiprobableBinDistribution;
 
   // The disribution type
-  static const OneDDistributionType distribution_type = 
+  static const OneDDistributionType distribution_type =
     EQUIPROBABLE_BIN_DISTRIBUTION;
 
   // The distribution
@@ -167,12 +167,12 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareEquiprobableBinDistribution<void,void> EquiprobableBinDistribution;
-  
+
 } // end Utility namespace
 
 namespace Teuchos{
 
-/*! Type name traits specialization for the 
+/*! Type name traits specialization for the
  * Utility::EquiprobableBinDistribution
  *
  * \details The name function will set the type name that must be used in
@@ -186,14 +186,14 @@ public:
   {
     return "Equiprobable Bin Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 		const Utility::EquiprobableBinDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareEquiprobableBinDistribution
  *
  * \details The name function will set the type name that must be used in

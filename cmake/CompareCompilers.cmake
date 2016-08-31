@@ -1,14 +1,14 @@
 # Compare two compilers to make sure that they are the same
 # SAME_VENDOR will store whether the compilers have the same vendor - 0 (false)
 #   or 1 (true)
-# SAME_VERSION will store whether the compilers have the same version - 
+# SAME_VERSION will store whether the compilers have the same version -
 #   0 (false) or 1 (true)
 FUNCTION(COMPARE_COMPILERS LANG COMPILER1 COMPILER2)
-    
+
   DETERMINE_COMPILER_ID(${LANG} ${COMPILER1})
   SET(ID1 ${ID})
   SET(VERSION1 ${VERSION})
-  
+
   DETERMINE_COMPILER_ID(${LANG} ${COMPILER2})
   SET(ID2 ${ID})
   SET(VERSION2 ${VERSION})
@@ -30,7 +30,7 @@ FUNCTION(COMPARE_COMPILERS LANG COMPILER1 COMPILER2)
   # Return the results of the comparison
   SET(SAME_VENDOR ${SAME_VENDOR} PARENT_SCOPE)
   SET(SAME_VERSION ${SAME_VERSION} PARENT_SCOPE)
-  
+
 ENDFUNCTION(COMPARE_COMPILERS)
 
 FUNCTION(DETERMINE_COMPILER_ID LANG COMPILER)
@@ -69,7 +69,7 @@ FUNCTION(DETERMINE_COMPILER_ID LANG COMPILER)
   ENDIF()
 
   SET(TEST_EXE "${CMAKE_${LANG}_COMPILER_ID_DIR}/${TEST_EXE}")
-  
+
   # Check the executable for the compiler info
   FILE(STRINGS ${TEST_EXE}
        ${LANG}_COMPILER_ID_STRINGS LIMIT_COUNT 4 REGEX "INFO:")
@@ -82,7 +82,7 @@ FUNCTION(DETERMINE_COMPILER_ID LANG COMPILER)
       STRING(REGEX REPLACE ".*INFO:compiler\\[([^]]*)\\].*" "\\1"
     	     ID "${INFO}")
     ENDIF()
-	
+
     # Get the version info
     IF("${INFO}" MATCHES ".*INFO:compiler_version\\[([^]\"]*)\\].*")
        STRING(REGEX REPLACE ".*INFO:compiler_version\\[([^]]*)\\].*" "\\1" VERSION "${INFO}")
@@ -90,7 +90,7 @@ FUNCTION(DETERMINE_COMPILER_ID LANG COMPILER)
        STRING(REGEX REPLACE "\\.0+([0-9])" ".\\1" VERSION "${VERSION}")
     ENDIF()
   ENDFOREACH()
-  
+
   # Check if a valid compiler was found
   IF(NOT ID OR COMPILER_ID_TWICE)
     MESSAGE(FATAL_ERROR "Unable to determine ${COMPILER} compiler info!")
@@ -113,7 +113,7 @@ ENDFUNCTION(DETERMINE_COMPILER_ID)
     #     LIST(REMOVE_ITEM COMPILER_FILES ${FILE})
     #   ENDIF()
     # ENDFOREACH()
-  
+
     # IF(NOT COMPILER_FILES)
     #   MESSAGE(FATAL_ERROR "Unable to determine ${COMPILER} compiler info!")
     # ENDIF()

@@ -26,7 +26,7 @@ template<>
 struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
 {
   typedef ParticleState::energyType dimensionType;
-  
+
   static inline std::string name()
   { return "Energy"; }
 
@@ -50,7 +50,7 @@ template<>
 struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
 {
   typedef double dimensionType;
-    
+
   static inline std::string name()
   { return "Cosine"; }
 
@@ -74,7 +74,7 @@ template<>
 struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
 {
   typedef ParticleState::timeType dimensionType;
-    
+
   static inline std::string name()
   { return "Time"; }
 
@@ -99,7 +99,7 @@ template<>
 struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
 {
   typedef ParticleState::collisionNumberType dimensionType;
-    
+
   static inline std::string name()
   { return "Collision Number"; }
 

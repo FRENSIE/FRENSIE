@@ -7,10 +7,10 @@
 //---------------------------------------------------------------------------//
 
 // The PyFrensie_Array.i is a SWIG interface file that provides SWIG
-// directives to handle Teuchos::ArrayRCP and std::vector output types. This 
-// class is not wrapped, but instead typemaps are defined so that the python 
-// user can use NumPy arrays instead. Unfortunately, the Teuchos_Array.i 
-// interface file only provides the output typemaps for Teuchos::Array and 
+// directives to handle Teuchos::ArrayRCP and std::vector output types. This
+// class is not wrapped, but instead typemaps are defined so that the python
+// user can use NumPy arrays instead. Unfortunately, the Teuchos_Array.i
+// interface file only provides the output typemaps for Teuchos::Array and
 // Teuchos::ArrayView. The typemaps in this file will mimic the typemaps
 // in Teuchos_Array.i
 
@@ -34,7 +34,7 @@
 %import <Teuchos_ArrayRCP.hpp>
 
 // This macro takes a C++ data type (TYPE) and a corresponding NumPy typecode
-// (TYPECODE) and define all of the output typemaps needed to handle 
+// (TYPECODE) and define all of the output typemaps needed to handle
 // Teuchos::ArrayRCP<TYPE> -> numpy.array( ..., dtype=TYPECODE ) and
 // std::vector<TYPE> -> numpy.array( ..., dtype=TYPECODE )
 %define %array_typemaps(TYPE, TYPECODE)
@@ -43,7 +43,7 @@
 {
   npy_intp dims[1] = { (npy_intp)$1.size() };
   $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) &($1[0]));
-  if( !$result ) 
+  if( !$result )
     SWIG_fail;
 }
 
@@ -51,7 +51,7 @@
 {
   npy_intp dims[1] = { (npy_intp)$1->size() };
   $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) &((*$1)[0]));
-  if( !$result ) 
+  if( !$result )
     SWIG_fail;
 }
 
@@ -59,7 +59,7 @@
 {
   npy_intp dims[1] = { $1.size() };
   $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) $1.getRawPtr());
-  if( !$result ) 
+  if( !$result )
     SWIG_fail;
 }
 
@@ -67,7 +67,7 @@
 {
   npy_intp dims[1] = { $1->size() };
   $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) $1->getRawPtr());
-  if( !$result ) 
+  if( !$result )
     SWIG_fail;
 }
 
@@ -75,7 +75,7 @@
 {
   npy_intp dims[1] = { $1.size() };
   $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) $1.getRawPtr());
-  if( !$result ) 
+  if( !$result )
     SWIG_fail;
 }
 
@@ -83,7 +83,7 @@
 {
   npy_intp dims[1] = { $1->size() };
   $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) $1->getRawPtr());
-  if( !$result ) 
+  if( !$result )
     SWIG_fail;
 }
 

@@ -5,7 +5,7 @@
 //! \brief  Sorting algorithm declarations.
 //!
 //---------------------------------------------------------------------------//
-  
+
 #ifndef UTILITY_SORT_ALGORITHMS_HPP
 #define UTILITY_SORT_ALGORITHMS_HPP
 
@@ -19,19 +19,33 @@ namespace Utility{
 
 namespace Sort{
 
-/*! Test if the specified member of an array of tuples is sorted in ascending 
+/*! Test if the specified member of an array of tuples is sorted in ascending
  * order
  */
 template<TupleMember member, typename Iterator>
-bool isSortedAscending( Iterator start, 
-			Iterator end, 
+bool isSortedAscending( Iterator start,
+			Iterator end,
 			const bool verbose = false  );
 
 //! Test if an array is sorted in ascending order
 template<typename Iterator>
-bool isSortedAscending( Iterator start, 
+bool isSortedAscending( Iterator start,
 			Iterator end,
-			const bool verbose = false );	        
+			const bool verbose = false );
+
+/*! Test if the specified member of an array of tuples is sorted in descending
+ * order
+ */
+template<TupleMember member, typename Iterator>
+bool isSortedDescending( Iterator start,
+                         Iterator end,
+                         const bool verbose = false  );
+  
+//! Test if an array is sorted in descending order
+template<typename Iterator>
+bool isSortedDescending( Iterator start,
+                         Iterator end,
+                         const bool verbose = false );
 
 } // end Sort namespace
 

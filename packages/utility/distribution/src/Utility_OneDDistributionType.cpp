@@ -16,13 +16,14 @@
 namespace Utility{
 
 // Convert the OneDDistribution type to a string
-std::string convertOneDDistributionTypeToString( 
+std::string convertOneDDistributionTypeToString(
 					      const OneDDistributionType type )
 {
   switch( type )
   {
   case DELTA_DISTRIBUTION: return "Delta Distribution";
   case DISCRETE_DISTRIBUTION: return "Discrete Distribution";
+  case ELASTIC_ELECTRON_DISTRIBUTION: return "Elastic Electron Distribution";
   case EXPONENTIAL_DISTRIBUTION: return "Exponential Distribution";
   case EVAPORATION_DISTRIBUTION: return "Evaporation Distribution";
   case HISTOGRAM_DISTRIBUTION: return "Histogram Distribution";
@@ -38,7 +39,7 @@ std::string convertOneDDistributionTypeToString(
   case POLYNOMIAL_DISTRIBUTION: return "Polynomial Distribution";
   case HYDROGEN_FORM_FACTOR_DISTRIBUTION: return "Hydrogen Form Factor Distribution";
   default:
-    THROW_EXCEPTION( std::logic_error, 
+    THROW_EXCEPTION( std::logic_error,
 		     "The distribution type is missin a name. Please add it!");
   }
 }

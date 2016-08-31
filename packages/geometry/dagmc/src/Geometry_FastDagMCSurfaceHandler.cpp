@@ -13,7 +13,7 @@
 namespace Geometry{
 
 // Constructor
-FastDagMCSurfaceHandler::FastDagMCSurfaceHandler( 
+FastDagMCSurfaceHandler::FastDagMCSurfaceHandler(
                                             const moab::DagMC* dagmc_instance )
   : DagMCSurfaceHandler( dagmc_instance ),
     d_surface_id_handle_map()
@@ -25,18 +25,18 @@ FastDagMCSurfaceHandler::FastDagMCSurfaceHandler(
 
   while( surface_it != this->end() )
   {
-    ModuleTraits::InternalSurfaceHandle surface_id = 
+    ModuleTraits::InternalSurfaceHandle surface_id =
       const_cast<moab::DagMC*>( dagmc_instance )->get_entity_id( *surface_it );
-    
-    d_surface_id_handle_map.insert( 
+
+    d_surface_id_handle_map.insert(
                    SurfaceIdHandleMap::value_type( surface_id, *surface_it ) );
-    
+
     ++surface_it;
   }
 }
 
 // Get the surface id from a surface handle
-ModuleTraits::InternalSurfaceHandle FastDagMCSurfaceHandler::getSurfaceId( 
+ModuleTraits::InternalSurfaceHandle FastDagMCSurfaceHandler::getSurfaceId(
                                 const moab::EntityHandle surface_handle ) const
 {
   // Make sure the surface handle exists
@@ -51,13 +51,13 @@ moab::EntityHandle FastDagMCSurfaceHandler::getSurfaceHandle(
 {
   // Make sure the surface id exists
   testPrecondition( this->doesSurfaceExist( surface_id ) );
-  
+
 
   return d_surface_id_handle_map.left.find( surface_id )->second;
 }
 
 // Check if the surface exists
-bool FastDagMCSurfaceHandler::doesSurfaceExist( 
+bool FastDagMCSurfaceHandler::doesSurfaceExist(
                    const ModuleTraits::InternalSurfaceHandle surface_id ) const
 {
   return d_surface_id_handle_map.left.find( surface_id ) !=
@@ -65,7 +65,7 @@ bool FastDagMCSurfaceHandler::doesSurfaceExist(
 }
 
 // Check if the surface handle exists
-bool FastDagMCSurfaceHandler::doesSurfaceHandleExist( 
+bool FastDagMCSurfaceHandler::doesSurfaceHandleExist(
                                 const moab::EntityHandle surface_handle ) const
 {
   return d_surface_id_handle_map.right.find( surface_handle ) !=

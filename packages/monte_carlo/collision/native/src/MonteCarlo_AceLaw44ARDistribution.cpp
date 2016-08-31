@@ -12,7 +12,7 @@
 namespace MonteCarlo{
 
 // Constructor
-AceLaw44ARDistribution::AceLaw44ARDistribution( 
+AceLaw44ARDistribution::AceLaw44ARDistribution(
 		  const Teuchos::ArrayView<const double>& outgoing_energy_grid,
 		  const Teuchos::ArrayView<const double>& A_array,
 		  const Teuchos::ArrayView<const double>& R_array )

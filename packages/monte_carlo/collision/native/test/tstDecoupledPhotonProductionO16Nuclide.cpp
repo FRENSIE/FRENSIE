@@ -42,7 +42,7 @@ void initializeDecoupledPhotonProductionNuclide( Teuchos::RCP<MonteCarlo::Decoup
 						   1u ) );
 
   Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-  
+
   xss_data_extractor.reset(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
@@ -51,27 +51,27 @@ void initializeDecoupledPhotonProductionNuclide( Teuchos::RCP<MonteCarlo::Decoup
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  MonteCarlo::DecoupledPhotonProductionReactionACEFactory reaction_factory( 
+  MonteCarlo::DecoupledPhotonProductionReactionACEFactory reaction_factory(
 				 ace_table_name,
 				 ace_file_handler->getTableAtomicWeightRatio(),
 				 ace_file_handler->getTableTemperature(),
 				 energy_grid,
 				 *xss_data_extractor );
-  
+
   // Populate the photon production reactions
-  MonteCarlo::DecoupledPhotonProductionNuclide::PhotonProductionReactionMap 
+  MonteCarlo::DecoupledPhotonProductionNuclide::PhotonProductionReactionMap
                                          standard_photon_production_reactions;
-  reaction_factory.createPhotonProductionReactions( 
+  reaction_factory.createPhotonProductionReactions(
                                        standard_photon_production_reactions );
-  
+
   MonteCarlo::Nuclide::ReactionMap standard_scattering_reactions;
   reaction_factory.createScatteringReactions( standard_scattering_reactions );
   reaction_factory.createFissionReactions( standard_scattering_reactions );
 
   MonteCarlo::Nuclide::ReactionMap standard_absorption_reactions;
   reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
-  
-  nuclide.reset( new MonteCarlo::DecoupledPhotonProductionNuclide( 
+
+  nuclide.reset( new MonteCarlo::DecoupledPhotonProductionNuclide(
 			 ace_table_name,
 			 8u,
 			 16u,
@@ -83,7 +83,7 @@ void initializeDecoupledPhotonProductionNuclide( Teuchos::RCP<MonteCarlo::Decoup
 			 standard_absorption_reactions,
 			 standard_photon_production_reactions ) );
 }
-  
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -119,13 +119,13 @@ TEUCHOS_UNIT_TEST( DecoupledPhotonProductionNuclide_O16, getAtomicMassNumber )
 TEUCHOS_UNIT_TEST( DecoupledPhotonProductionNuclide_O16, getIsomerNumber )
 {
   TEST_EQUALITY_CONST( o16_nuclide->getIsomerNumber(), 0u );
-} 
+}
 
 //---------------------------------------------------------------------------//
 // Check that the atomic weight ratio can be returned
 TEUCHOS_UNIT_TEST( DecoupledPhotonProductionNuclide_O16, getAtomicWeightRatio )
 {
-  TEST_EQUALITY_CONST( o16_nuclide->getAtomicWeightRatio(), 
+  TEST_EQUALITY_CONST( o16_nuclide->getAtomicWeightRatio(),
                                                     1.58575099999999996e+01 );
 }
 
@@ -163,10 +163,10 @@ int main( int argc, char** argv )
 		 &test_o16_ace_table_name,
 		 "Test o16 ACE table name in o16 ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -180,7 +180,7 @@ int main( int argc, char** argv )
   initializeDecoupledPhotonProductionNuclide( o16_nuclide,
 		     test_o16_ace_file_name,
 		     test_o16_ace_table_name );
-		     
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -193,7 +193,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

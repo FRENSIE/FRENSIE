@@ -17,7 +17,7 @@
 namespace MonteCarlo{
 
 // Constructor
-NuclearReaction::NuclearReaction( 
+NuclearReaction::NuclearReaction(
 		   const NuclearReactionType reaction_type,
 		   const double temperature,
 		   const double q_value,
@@ -38,7 +38,7 @@ NuclearReaction::NuclearReaction(
   // Make sure the threshold energy index is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the incoming energy grid is valid
-  testPrecondition( Utility::Sort::isSortedAscending( 
+  testPrecondition( Utility::Sort::isSortedAscending(
 					        incoming_energy_grid.begin(),
 						incoming_energy_grid.end() ) );
   testPrecondition( incoming_energy_grid.size() > 0 );

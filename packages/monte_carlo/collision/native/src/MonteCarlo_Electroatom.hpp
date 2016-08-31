@@ -46,12 +46,12 @@ public:
   typedef ElectroatomCore::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as scattering
-  static const boost::unordered_set<ElectroatomicReactionType>& 
+  static const boost::unordered_set<ElectroatomicReactionType>&
   getScatteringReactionTypes();
-					
-  //! Constructor 
+
+  //! Constructor
   template<typename InterpPolicy>
-  Electroatom( 
+  Electroatom(
 	  const std::string& name,
 	  const unsigned atomic_number,
 	  const double atomic_weight,
@@ -87,7 +87,7 @@ public:
   //! Return the nuclear isomer number
   virtual unsigned getIsomerNumber() const;
 
-  //! Return the atomic weight 
+  //! Return the atomic weight
   double getAtomicWeight() const;
 
   //! Return the temperature of the atom
@@ -103,16 +103,16 @@ public:
   double getSurvivalProbability( const double energy ) const;
 
   //! Return the cross section for a specific electroatomic reaction
-  double getReactionCrossSection( 
+  double getReactionCrossSection(
 			        const double energy,
 			        const ElectroatomicReactionType reaction ) const;
 
   //! Collide with a electron
-  virtual void collideAnalogue( ElectronState& electron, 
+  virtual void collideAnalogue( ElectronState& electron,
 				                ParticleBank& bank ) const;
 
   //! Collide with a electron and survival bias
-  virtual void collideSurvivalBias( ElectronState& electron, 
+  virtual void collideSurvivalBias( ElectronState& electron,
 				                    ParticleBank& bank ) const;
 
   //! Return the core

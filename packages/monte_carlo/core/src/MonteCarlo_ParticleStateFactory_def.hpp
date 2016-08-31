@@ -24,7 +24,7 @@ namespace MonteCarlo{
 
 // Create a default particle state with the requested type an history num.
 template<typename SmartPointer>
-void ParticleStateFactory::createState( 
+void ParticleStateFactory::createState(
 			       SmartPointer& particle,
 			       const ParticleType type,
 			       const ParticleState::historyNumberType history )
@@ -48,7 +48,7 @@ void ParticleStateFactory::createState(
 		     "Error: The particle type requested cannot "
 		     "currently be created by the ParticleStateFactory.\n" );
   }
-  
+
   // Make sure the particle has been initialized
   testPostcondition( particle.get() );
 }

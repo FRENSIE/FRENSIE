@@ -42,7 +42,7 @@ public:
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
        doppler_broadened_dist );
-  
+
   //! Create a subshell Doppler broadened photon energy dist
   static void createSubshellDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,

@@ -15,7 +15,7 @@
 namespace Geometry{
 
 // Initialize static member data
-const ModuleTraits::InternalCellHandle 
+const ModuleTraits::InternalCellHandle
 ModuleTraits::invalid_internal_cell_handle = 0;
 
 const ModuleTraits::InternalSurfaceHandle

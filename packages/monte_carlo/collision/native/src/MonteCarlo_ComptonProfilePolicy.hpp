@@ -23,15 +23,30 @@ struct FullComptonProfilePolicy
   //! Get the lower bound of the momentum
   static ComptonProfile::MomentumQuantity getLowerBoundOfMomentum(
                                                const ComptonProfile& profile );
-  
+
   //! Get the upper bound of the momentum
   static ComptonProfile::MomentumQuantity getUpperBoundOfMomentum(
                                                const ComptonProfile& profile );
+
+  //! Get lower limit of integration
+  static ComptonProfile::MomentumQuantity getLowerLimitOfIntegration(
+                          const ComptonProfile::MomentumQuantity upper_limit );
+
+  //! Get upper limit of integration
+  static ComptonProfile::MomentumQuantity getUpperLimitOfIntegration(
+                          const ComptonProfile& profile,
+                          const ComptonProfile::MomentumQuantity upper_limit );
     
   //! Evaluate a full Compton profile
-  static ComptonProfile::ProfileQuantity evaluate( 
+  static ComptonProfile::ProfileQuantity evaluate(
                              const ComptonProfile& profile,
                              const ComptonProfile::MomentumQuantity momentum );
+
+  //! Evaluate a full Compton profile using the max momentum as a limit
+  static ComptonProfile::ProfileQuantity evaluateWithPossibleLimit(
+                         const ComptonProfile& profile,
+                         const ComptonProfile::MomentumQuantity momentum,
+                         const ComptonProfile::MomentumQuantity max_momentum );
   
   //! Sample from a full Compton profile
   static ComptonProfile::MomentumQuantity sample(
@@ -44,14 +59,23 @@ struct HalfComptonProfilePolicyHelper
 {
   //! Check if the half Compton profile is valid
   static bool isValidProfile( const ComptonProfile& profile );
-  
+
   //! Get the lower bound of the momentum
   static ComptonProfile::MomentumQuantity getLowerBoundOfMomentum(
                                                const ComptonProfile& profile );
-  
+
   //! Get the upper bound of the momentum
   static ComptonProfile::MomentumQuantity getUpperBoundOfMomentum(
                                                const ComptonProfile& profile );
+
+  //! Get lower limit of integration
+  static ComptonProfile::MomentumQuantity getLowerLimitOfIntegration(
+                          const ComptonProfile::MomentumQuantity upper_limit );
+
+  //! Get upper limit of integration
+  static ComptonProfile::MomentumQuantity getUpperLimitOfIntegration(
+                          const ComptonProfile& profile,
+                          const ComptonProfile::MomentumQuantity upper_limit );
 
   //! Sample from a half Compton profile
   static ComptonProfile::MomentumQuantity sample(
@@ -66,6 +90,12 @@ struct HalfComptonProfilePolicy : public HalfComptonProfilePolicyHelper
   static ComptonProfile::ProfileQuantity evaluate(
                              const ComptonProfile& profile,
                              const ComptonProfile::MomentumQuantity momentum );
+
+  //! Evaluate a half Compton profile using the max momentum as a limit
+  static ComptonProfile::ProfileQuantity evaluateWithPossibleLimit(
+                         const ComptonProfile& profile,
+                         const ComptonProfile::MomentumQuantity momentum,
+                         const ComptonProfile::MomentumQuantity max_momentum );
 };
 
 //! Policy for using a doubled half Compton profile
@@ -75,6 +105,12 @@ struct DoubledHalfComptonProfilePolicy : public HalfComptonProfilePolicyHelper
   static ComptonProfile::ProfileQuantity evaluate(
                              const ComptonProfile& profile,
                              const ComptonProfile::MomentumQuantity momentum );
+
+  //! Evaluate a double half Compton profile using the max momentum as a limit
+  static ComptonProfile::ProfileQuantity evaluateWithPossibleLimit(
+                         const ComptonProfile& profile,
+                         const ComptonProfile::MomentumQuantity momentum,
+                         const ComptonProfile::MomentumQuantity max_momentum );
 };
 
 } // end MonteCarlo namespace

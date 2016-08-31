@@ -14,7 +14,7 @@ namespace Utility{
 //! The hash-based grid searcher
 class HashBasedGridSearcher
 {
-  
+
 public:
 
   //! Test if a value falls within the bounds of the grid

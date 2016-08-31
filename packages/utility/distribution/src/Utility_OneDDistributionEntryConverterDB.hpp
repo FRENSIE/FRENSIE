@@ -38,11 +38,11 @@ namespace Utility{
 //! The 1D distribution parameter entry converter database
 class OneDDistributionEntryConverterDB
 {
-  
+
 public:
 
   //! Add a converter to the database
-  static void addConverter( 
+  static void addConverter(
      const std::shared_ptr<OneDDistributionEntryConverter>& converter_to_add );
 
   //! Get the appropriate converter for the given parameter entry
@@ -56,7 +56,7 @@ public:
   //! Get the OneDDistribution from the given parameter entry
   static std::shared_ptr<OneDDistribution> convertEntryToSharedPtr(
 		    const Teuchos::RCP<const Teuchos::ParameterEntry>& entry );
-  
+
 private:
 
   // Constructor

@@ -48,7 +48,7 @@ public:
 		   const scalarType z_min,
 		   const scalarType z_max,
 		   const scalarType convergence_ratio = 1e-6 );
-  
+
   //! Destructor
   ~CellBoundingBox()
   { /* ... */ }
@@ -87,7 +87,7 @@ private:
 
   // The convergence tolerance
   scalarType d_convergence_ratio;
-  
+
 };
 
 } // end Geometry namespace

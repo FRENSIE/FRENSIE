@@ -31,9 +31,9 @@ namespace Geometry{
  * interfaces. Once a Root geometry is initialized cell properties can be
  * queried and ray tracing can be done. Note that ray tracing can be done
  * in two ways: with external rays (Geomery::Ray objects) or internal rays,
- * which are completely hidden from the user. When using external rays the 
- * internal root ray will be modified. Mixing external and internal methods 
- * during a ray trace is therefore not recommended. Performance for 
+ * which are completely hidden from the user. When using external rays the
+ * internal root ray will be modified. Mixing external and internal methods
+ * during a ray trace is therefore not recommended. Performance for
  * the internal ray trace should be better than for the external ray trace.
  */
 class Root
@@ -45,7 +45,7 @@ public:
   static const std::string& getMaterialPropertyName();
 
   //! Set the material property name
-  static void setMaterialPropertyName( 
+  static void setMaterialPropertyName(
                                    const std::string& material_property_name );
 
   //! Get the void material property name
@@ -66,7 +66,7 @@ public:
 
   //! Initialize the root geometry manager
   static void initialize( const std::string& filename );
-  
+
   //! Enable thread support
   static void enableThreadSupport( const unsigned num_threads );
 
@@ -79,10 +79,10 @@ public:
 
   //! Get the problem cells
   template<typename Set>
-  static void getCells( Set& cell_set, 
+  static void getCells( Set& cell_set,
                         const bool include_void_cells = true,
                         const bool include_termination_cells = false );
-  
+
   //! Get the cell volume
   static double getCellVolume( const ModuleTraits::InternalCellHandle cell_id);
 
@@ -97,26 +97,26 @@ public:
   //! Get the cell densities
   template<typename Map>
   static void getCellDensities( Map& cell_id_density_map );
-  
+
   //! Check if the cell is a termination cell
-  static bool isTerminationCell( 
+  static bool isTerminationCell(
                               const ModuleTraits::InternalCellHandle cell_id );
 
   //! Check if the cell is a void cell
   static bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id );
 
   //! Get the point location w.r.t. a given cell
-  static PointLocation getPointLocation( 
+  static PointLocation getPointLocation(
                               const double position[3],
                               const ModuleTraits::InternalCellHandle cell_id );
 
   //! Get the point location w.r.t. a given cell
-  static PointLocation getPointLocation( 
+  static PointLocation getPointLocation(
                               const Ray& ray,
                               const ModuleTraits::InternalCellHandle cell_id );
 
   //! Find the cell that contains the external ray
-  static ModuleTraits::InternalCellHandle findCellContainingExternalRay( 
+  static ModuleTraits::InternalCellHandle findCellContainingExternalRay(
                                                               const Ray& ray );
 
   //! Get the distance from the external ray position to the nearest boundary
@@ -125,8 +125,8 @@ public:
   //! Check if the internal ray is set
   static bool isInternalRaySet();
 
-  //! Initialize (or reset) an internal root ray 
-  static void setInternalRay( const double position[3], 
+  //! Initialize (or reset) an internal root ray
+  static void setInternalRay( const double position[3],
                               const double direction[3] );
 
   //! Initialize (or reset) an internal root ray
@@ -157,18 +157,18 @@ public:
 
   //! Advance the internal root ray a substep
   static void advanceInternalRayBySubstep( const double substep_distance );
-  
+
   //! Destructor
   ~Root()
   {/* ... */}
 
 private:
-  
+
   // Constructor
   Root();
 
   // Get the cell
-  static TGeoVolume* getVolumePtr( 
+  static TGeoVolume* getVolumePtr(
                              const ModuleTraits::InternalCellHandle& cell_id );
 
   // Find the node containing the point
@@ -195,7 +195,7 @@ private:
 
   // Root terminal material name
   static std::string s_terminal_material_name;
-  
+
   // Root material property name
   static std::string s_material_property_name;
 };
@@ -236,7 +236,7 @@ inline bool Root::isInitialized()
 }
 
 // Get the cell
-inline TGeoVolume* Root::getVolumePtr( 
+inline TGeoVolume* Root::getVolumePtr(
                               const ModuleTraits::InternalCellHandle& cell_id )
 {
   // Make sure root is initialized

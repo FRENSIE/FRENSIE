@@ -23,7 +23,7 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
 	 const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array,
 	 const std::shared_ptr<Utility::OneDDistribution>& mtp_yield,
 	 const Teuchos::RCP<NuclearReaction>& base_reaction,
-	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
+	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
 	 photon_production_distribution,
 	 const Teuchos::RCP<NuclearReaction>& total_reaction )
   : DecoupledPhotonProductionReaction( base_reaction_type,
@@ -44,7 +44,7 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
 /*! \details The photon production cross section is the base cross section
  * multiplied by the yield.
  */
-double DecoupledYieldBasedPhotonProductionReaction::getBaseReactionCrossSection( 
+double DecoupledYieldBasedPhotonProductionReaction::getBaseReactionCrossSection(
 						    const double energy ) const
 {
   return d_base_reaction->getCrossSection( energy );
@@ -54,12 +54,12 @@ double DecoupledYieldBasedPhotonProductionReaction::getBaseReactionCrossSection(
 /*! \details The photon production cross section is the base cross section
  * multiplied by the yield.
  */
-double DecoupledYieldBasedPhotonProductionReaction::getCrossSection( 
+double DecoupledYieldBasedPhotonProductionReaction::getCrossSection(
 						    const double energy ) const
 {
   // Evaluate the yield at a given energy
   double yield = d_mtp_yield->evaluate( energy );
-  
+
   // Evaluate the cross section at a given energy
   return d_base_reaction->getCrossSection( energy )*yield;
 }

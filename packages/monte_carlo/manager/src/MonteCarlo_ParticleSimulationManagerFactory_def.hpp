@@ -30,7 +30,7 @@ namespace MonteCarlo{
 
 // Initialize the non-geometry modules
 template<typename GeometryHandler>
-void ParticleSimulationManagerFactory::initializeNonGeometryModules( 
+void ParticleSimulationManagerFactory::initializeNonGeometryModules(
                        const Teuchos::ParameterList& source_def,
                        const Teuchos::ParameterList& response_def,
                        const Teuchos::ParameterList& observer_def,
@@ -41,26 +41,26 @@ void ParticleSimulationManagerFactory::initializeNonGeometryModules(
 {
   // Make sure the warning output stream is valid
   testPrecondition( os_warn );
-  
+
   // Initialize the source handler and interface
   {
-    std::shared_ptr<ParticleSourceFactory> source_factory = 
+    std::shared_ptr<ParticleSourceFactory> source_factory =
       StandardParticleSourceFactory<Geometry::ModuleInterface<GeometryHandler> >::getInstance();
 
-    std::shared_ptr<ParticleSource> source = source_factory->createSource( 
-                              source_def, 
+    std::shared_ptr<ParticleSource> source = source_factory->createSource(
+                              source_def,
                               SimulationGeneralProperties::getParticleMode(),
                               *os_warn );
 
     setSourceHandlerInstance( source );
   }
-  
+
   // Initialize the collision handler and interface
   {
-    std::shared_ptr<CollisionHandlerFactory> collision_handler_factory = 
+    std::shared_ptr<CollisionHandlerFactory> collision_handler_factory =
       getCollisionHandlerFactoryInstance<GeometryHandler>( os_warn );
 
-    collision_handler_factory->initializeHandler( 
+    collision_handler_factory->initializeHandler(
                                                 material_def,
                                                 cross_sections_table_info,
                                                 cross_sections_xml_directory );
@@ -72,12 +72,12 @@ void ParticleSimulationManagerFactory::initializeNonGeometryModules(
     boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >
       response_function_id_map;
 
-    ResponseFunctionFactory::createResponseFunctions( 
+    ResponseFunctionFactory::createResponseFunctions(
                                                     response_def,
                                                     response_function_id_map );
-    
-    std::shared_ptr<EventHandler> event_handler = 
-      EventHandlerFactory<GeometryHandler>::createHandler( 
+
+    std::shared_ptr<EventHandler> event_handler =
+      EventHandlerFactory<GeometryHandler>::createHandler(
                                                       observer_def,
                                                       response_function_id_map,
                                                       os_warn );
@@ -91,7 +91,7 @@ template<typename GeometryHandler,
          typename SourceHandler,
          typename EventHandler,
          typename CollisionHandler>
-std::shared_ptr<SimulationManager> 
+std::shared_ptr<SimulationManager>
 ParticleSimulationManagerFactory::createManager(
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process )
@@ -108,8 +108,8 @@ ParticleSimulationManagerFactory::createManager(
   }
   // Create a local simulation manager
   else
-  {   
-    return std::shared_ptr<SimulationManager>( 
+  {
+    return std::shared_ptr<SimulationManager>(
             new ParticleSimulationManager<GeometryHandler,ParticleSource,EventHandler,CollisionHandler>(
                        SimulationGeneralProperties::getNumberOfHistories() ) );
   }

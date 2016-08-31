@@ -3,7 +3,7 @@
 //! \file   Utility_ComparePolicyDecl.hpp
 //! \author Alex Robinson
 //! \brief  Compare policy declaration for all types
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef UTILITY_COMPARE_POLICY_DECL_HPP
@@ -24,9 +24,9 @@
  *
  * The <em> Teuchos Unit Test Harness </em> only supports testing of basic
  * types. The Utility::ComparePolicy allows testing equality of tuple structs
- * as well (either Utility::Pair, Utility::Trip or Utility::Quad). The 
+ * as well (either Utility::Pair, Utility::Trip or Utility::Quad). The
  * Utility::ComparePolicy struct must be specialized in order to work properly.
- * Attempting to use the struct without a specialization will result in a 
+ * Attempting to use the struct without a specialization will result in a
  * compile time error. The compile time error message is defined by the
  * Utility::UndefinedComparePolicy struct.
  */
@@ -42,7 +42,7 @@ namespace Policy{
  * the particular type must be written. When the type does not have a
  * partial specialization, the compiler will attempt to instantiate
  * this struct, which has a function notDefined() that attempts to
- * access a non-existant member, causing a compile time error. 
+ * access a non-existant member, causing a compile time error.
  * \ingroup compare_policy
  */
 template<typename T>
@@ -53,20 +53,20 @@ struct UndefinedComparePolicy
 };
 
 /*! \brief This structure defines the compare policy that will be used while
- * unit testing the code. 
+ * unit testing the code.
  *
  * The goal is to be able to test if the values of two generic types are equal
- * within the <em> Teuchos Unit Test Harness. </em> The functions in the 
- * templated base unspecialized struct are designed not to compile (giving a 
- * nice compile-time error message) and therefore specializations must be 
- * written for each type that will be tested.   
+ * within the <em> Teuchos Unit Test Harness. </em> The functions in the
+ * templated base unspecialized struct are designed not to compile (giving a
+ * nice compile-time error message) and therefore specializations must be
+ * written for each type that will be tested.
  * \tparam T A data type that will be tested.
  * \tparam T2 A second data type that will be tested.
  * \tparam T3 A third data type that will be tested.
  * \tparam T4 A fourth data type that will be tested.
  * \note The default defined specializations are provided for double and
- * unsigned int. There are also partial specializations provided for 
- * Utility::Pair, Utility::Trip and Utility::Quad. 
+ * unsigned int. There are also partial specializations provided for
+ * Utility::Pair, Utility::Trip and Utility::Quad.
  * \ingroup compare_policy
  */
 template<typename T,
@@ -77,19 +77,19 @@ struct ComparePolicy
 {
   //! Typdef for scalar type
   typedef double scalarType;
-  
+
   /*! Compare two values of a type.
    *
    * \details To provide detailed output, it must be known whether the
    * values are elements in an array. If so, the optional index parameter
    * should be used to indicate the index of the element in the array. When
    * testing floating point values it is often necessary to have a testing
-   * tolerance, which can be set with the final parameter. 
+   * tolerance, which can be set with the final parameter.
    * \param[in] first_value The first value that will be tested.
-   * \param[in] first_name The name given to the first value, which will be 
+   * \param[in] first_name The name given to the first value, which will be
    * used to refer to the value if the test fails.
    * \param[in] second_value The second value that will be tested.
-   * \param[in] second_name The name given to the second value, which will be 
+   * \param[in] second_name The name given to the second value, which will be
    * used to refer to the value if the test fails.
    * \param[in,out] out The output stream that will be used to output the
    * results of the test.

@@ -25,7 +25,7 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardEntityEstimator<moab::EntityHandle>
 
 // Constructor (for flux estimators)
 template<typename EntityId>
-StandardEntityEstimator<EntityId>::StandardEntityEstimator( 
+StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 			  const Estimator::idType id,
 			  const double multiplier,
 			  const Teuchos::Array<EntityId>& entity_ids,
@@ -36,26 +36,26 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 			       entity_norm_constants ),
     d_update_tracker( 1 ),
     d_total_estimator_moments( 1 )
-{ 
+{
   initializeMomentsMaps( entity_ids );
 }
 
 // Constructor (for non-flux estimators)
 template<typename EntityId>
-StandardEntityEstimator<EntityId>::StandardEntityEstimator( 
+StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 				   const Estimator::idType id,
 				   const double multiplier,
 			           const Teuchos::Array<EntityId>& entity_ids )
   : EntityEstimator<EntityId>( id, multiplier, entity_ids ),
     d_update_tracker( 1 ),
     d_total_estimator_moments( 1 )
-{ 
+{
   initializeMomentsMaps( entity_ids );
 }
 
 // Constructor with no entities (for mesh estimator)
 template<typename EntityId>
-StandardEntityEstimator<EntityId>::StandardEntityEstimator( 
+StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 				   const Estimator::idType id,
 				   const double multiplier )
   : EntityEstimator<EntityId>( id, multiplier ),
@@ -71,27 +71,27 @@ void StandardEntityEstimator<EntityId>::setResponseFunctions(
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   EntityEstimator<EntityId>::setResponseFunctions( response_functions );
 
   // Resize the entity total estimator momens map arrays
   resizeEntityTotalEstimatorMomentsMapArrays();
-  
+
   // Resize the total estimator moments array
   d_total_estimator_moments.resize( this->getNumberOfResponseFunctions() );
 }
 
 // Commit the contribution from the current history to the estimator
 /*! \details This function must only be called within an omp critical block
- * if multiple threads are being used. Failure to do this may result in 
+ * if multiple threads are being used. Failure to do this may result in
  * race conditions.
- */ 
+ */
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 {
   // Thread id
   unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
-  
+
   // Number of bins per response function
   unsigned num_bins = this->getNumberOfBins();
 
@@ -109,30 +109,30 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 
   // Get the entities with updated data
   typename SerialUpdateTracker::const_iterator entity, end_entity;
-  
+
   getEntityIteratorFromUpdateTracker( thread_id, entity, end_entity );
 
   while( entity != end_entity )
-  {    
+  {
     // Process each updated bin
     BinContributionMap::const_iterator bin_data, end_bin_data;
-    
-    getBinIteratorFromUpdateTrackerIterator( thread_id, 
-					     entity, 
-					     bin_data, 
+
+    getBinIteratorFromUpdateTrackerIterator( thread_id,
+					     entity,
+					     bin_data,
 					     end_bin_data );
 
     while( bin_data != end_bin_data )
     {
-      unsigned response_func_index = 
+      unsigned response_func_index =
 	this->calculateResponseFunctionIndex( bin_data->first );
 
       double bin_contribution = bin_data->second;
-      
+
       entity_totals[response_func_index] += bin_contribution;
-      
+
       totals[response_func_index] += bin_contribution;
-      
+
       if( bin_totals.find( bin_data->first ) != bin_totals.end() )
 	bin_totals[bin_data->first] += bin_contribution;
       else
@@ -151,11 +151,11 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
       commitHistoryContributionToTotalOfEntity( entity->first,
 						i,
 						entity_totals[i] );
-      
+
       // Reset the entity totals
       entity_totals[i] = 0.0;
     }
-    
+
     ++entity;
   }
 
@@ -167,14 +167,14 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
   BinContributionMap::const_iterator bin_data, end_bin_data;
   bin_data = bin_totals.begin();
   end_bin_data = bin_totals.end();
-  
+
   while( bin_data != end_bin_data )
   {
     this->commitHistoryContributionToBinOfTotal( bin_data->first,
 						 bin_data->second );
-    ++bin_data;    
+    ++bin_data;
   }
-  
+
   // Reset the update tracker
   resetUpdateTracker( thread_id );
 
@@ -186,25 +186,25 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::enableThreadSupport(
 						  const unsigned num_threads )
-{  
+{
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   EntityEstimator<EntityId>::enableThreadSupport( num_threads );
-  
+
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
 }
 
 // Reset the estimator data
-/*! 
+/*!
  */
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::resetData()
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   EntityEstimator<EntityId>::resetData();
 
   // Reset the total moments
@@ -212,7 +212,7 @@ void StandardEntityEstimator<EntityId>::resetData()
     d_total_estimator_moments[i]( 0.0, 0.0, 0.0, 0.0 );
 
   // Reset the entity total moments
-  typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
+  typename EntityEstimatorMomentsArrayMap::iterator entity_data,
     end_entity_data;
   entity_data = d_entity_total_estimator_moments_map.begin();
   end_entity_data = d_entity_total_estimator_moments_map.end();
@@ -221,7 +221,7 @@ void StandardEntityEstimator<EntityId>::resetData()
   {
     for( unsigned i = 0; i < entity_data->second.size(); ++i )
       entity_data->second[i]( 0.0, 0.0, 0.0, 0.0 );
-    
+
     ++entity_data;
   }
 
@@ -229,7 +229,7 @@ void StandardEntityEstimator<EntityId>::resetData()
   for( unsigned i = 0; i < d_update_tracker.size(); ++i )
   {
     d_update_tracker[i].clear();
-    
+
     this->unsetHasUncommittedHistoryContribution( i );
   }
 }
@@ -238,7 +238,7 @@ void StandardEntityEstimator<EntityId>::resetData()
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-	    const int root_process )  
+	    const int root_process )
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -254,7 +254,7 @@ void StandardEntityEstimator<EntityId>::reduceData(
     EntityEstimator<EntityId>::reduceData( comm, root_process );
 
     // Reduce total data for each entity
-    typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
+    typename EntityEstimatorMomentsArrayMap::iterator entity_data,
       end_entity_data;
     entity_data = d_entity_total_estimator_moments_map.begin();
     end_entity_data = d_entity_total_estimator_moments_map.end();
@@ -293,7 +293,7 @@ void StandardEntityEstimator<EntityId>::reduceData(
                                "standard entity estimator " << this->getId() <<
                                " for entity " << entity_data->first <<
                                " and array index " << i << "!" );
-        
+
 	// Reset the data on all but the root process
 	if( comm->getRank() == root_process )
         {
@@ -316,7 +316,7 @@ void StandardEntityEstimator<EntityId>::reduceData(
     {
       double first_reduced_value, second_reduced_value,
           third_reduced_value, fourth_reduced_value;
-      
+
       try{
         Teuchos::reduceAll( *comm,
                             Teuchos::REDUCE_SUM,
@@ -369,7 +369,7 @@ void StandardEntityEstimator<EntityId>::exportData(
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   // Export the lower level data first
   EntityEstimator<EntityId>::exportData( hdf5_file, process_data );
 
@@ -378,7 +378,7 @@ void StandardEntityEstimator<EntityId>::exportData(
 
   // Export the raw total data for each entity
   {
-    typename EntityEstimatorMomentsArrayMap::const_iterator entity_data = 
+    typename EntityEstimatorMomentsArrayMap::const_iterator entity_data =
       d_entity_total_estimator_moments_map.begin();
 
     while( entity_data != d_entity_total_estimator_moments_map.end() )
@@ -389,12 +389,12 @@ void StandardEntityEstimator<EntityId>::exportData(
 
       if( process_data )
       {
-	Teuchos::Array<Utility::Quad<double,double,double,double> > 
+	Teuchos::Array<Utility::Quad<double,double,double,double> >
 	  processed_data( entity_data->second.size() );
-	
+
 	for( unsigned i = 0; i < processed_data.size(); ++i )
 	{
-	  this->processMoments( 
+	  this->processMoments(
 			     entity_data->second[i],
 			     this->getEntityNormConstant( entity_data->first ),
 			     processed_data[i].first,
@@ -403,18 +403,18 @@ void StandardEntityEstimator<EntityId>::exportData(
 			     processed_data[i].fourth );
 	}
 
-	estimator_hdf5_file.setProcessedEstimatorEntityTotalData( 
+	estimator_hdf5_file.setProcessedEstimatorEntityTotalData(
                                                             this->getId(),
                                                             entity_data->first,
                                                             processed_data );
       }
-      
+
       ++entity_data;
     }
   }
 
   // Export the raw total data over all entities
-  estimator_hdf5_file.setRawEstimatorTotalData( this->getId(), 
+  estimator_hdf5_file.setRawEstimatorTotalData( this->getId(),
                                                 d_total_estimator_moments );
 
   // Export the processed total data over all entities
@@ -433,7 +433,7 @@ void StandardEntityEstimator<EntityId>::exportData(
 			    processed_data[i].fourth );
     }
 
-    estimator_hdf5_file.setProcessedEstimatorTotalData( this->getId(), 
+    estimator_hdf5_file.setProcessedEstimatorTotalData( this->getId(),
                                                         processed_data );
   }
 }
@@ -447,13 +447,13 @@ void StandardEntityEstimator<EntityId>::assignEntities(
   testPrecondition( entity_norm_data.size() > 0 );
 
   EntityEstimator<EntityId>::assignEntities( entity_norm_data );
-  
+
   // Reset the estimator data
   d_total_estimator_moments.clear();
   d_entity_total_estimator_moments_map.clear();
 
   // Initialize the entity data
-  typename boost::unordered_map<EntityId,double>::const_iterator entity, 
+  typename boost::unordered_map<EntityId,double>::const_iterator entity,
     end_entity;
   entity = entity_norm_data.begin();
   end_entity = entity_norm_data.end();
@@ -467,7 +467,7 @@ void StandardEntityEstimator<EntityId>::assignEntities(
 
   // Resize the entity total estimator momens map arrays
   resizeEntityTotalEstimatorMomentsMapArrays();
-  
+
   // Resize the total estimator moments array
   d_total_estimator_moments.resize( this->getNumberOfResponseFunctions() );
 }
@@ -477,7 +477,7 @@ void StandardEntityEstimator<EntityId>::assignEntities(
  * possibly other multiplier(s) ) but not the response function values.
  */
 template<typename EntityId>
-void StandardEntityEstimator<EntityId>::addPartialHistoryContribution( 
+void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
 		   const EntityId entity_id,
 		   const EstimatorParticleStateWrapper& particle_state_wrapper,
                    const double contribution )
@@ -488,28 +488,28 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure the particle type can contribute
-  testPrecondition( this->isParticleTypeAssigned( 
+  testPrecondition( this->isParticleTypeAssigned(
                particle_state_wrapper.getParticleState().getParticleType() ) );
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
-  
+
   unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
-    
+
   // Only add the contribution if the particle state is in the phase space
   if( this->isPointInEstimatorPhaseSpace( particle_state_wrapper ) )
   {
     unsigned bin_index;
-      
+
     for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
     {
       bin_index = this->calculateBinIndex( particle_state_wrapper, i );
-      
-      double processed_contribution = 
-        contribution*this->evaluateResponseFunction( 
+
+      double processed_contribution =
+        contribution*this->evaluateResponseFunction(
                                 particle_state_wrapper.getParticleState(), i );
 
-      addInfoToUpdateTracker( thread_id, 
-			      entity_id, 
+      addInfoToUpdateTracker( thread_id,
+			      entity_id,
 			      bin_index,
 			      processed_contribution );
     }
@@ -521,32 +521,32 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
 
 // Print the estimator data
 template<typename EntityId>
-void StandardEntityEstimator<EntityId>::printImplementation( 
+void StandardEntityEstimator<EntityId>::printImplementation(
 					 std::ostream& os,
 					 const std::string& entity_type ) const
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   EntityEstimator<EntityId>::printImplementation( os, entity_type );
 
   // Print the entity total estimator data
-  typename EntityEstimatorMomentsArrayMap::const_iterator 
+  typename EntityEstimatorMomentsArrayMap::const_iterator
     entity_id, end_entity_id;
 
   entity_id = d_entity_total_estimator_moments_map.begin();
   end_entity_id = d_entity_total_estimator_moments_map.end();
-  
+
   while( entity_id != end_entity_id )
   {
     os << entity_type << " " << entity_id->first << " Total Data: "<<std::endl;
     os << "--------" << std::endl;
-      
-    this->printEstimatorTotalData( 
+
+    this->printEstimatorTotalData(
 		             os,
 			     entity_id->second,
 		             this->getEntityNormConstant( entity_id->first ) );
-    
+
     os << std::endl;
 
     ++entity_id;
@@ -578,22 +578,22 @@ StandardEntityEstimator<EntityId>::getTotalData() const
  */
 template<typename EntityId>
 const Estimator::FourEstimatorMomentsArray&
-StandardEntityEstimator<EntityId>::getEntityTotalData( 
+StandardEntityEstimator<EntityId>::getEntityTotalData(
 					       const EntityId entity_id ) const
 {
   // Make sure the entity is valid
   testPrecondition( d_entity_total_estimator_moments_map.find( entity_id ) !=
 		    d_entity_total_estimator_moments_map.end() );
-  
+
   return d_entity_total_estimator_moments_map.find( entity_id )->second;
 }
 
 // Resize the entity total estimator moments map arrays
 template<typename EntityId>
-void 
+void
 StandardEntityEstimator<EntityId>::resizeEntityTotalEstimatorMomentsMapArrays()
 {
-  typename EntityEstimatorMomentsArrayMap::iterator 
+  typename EntityEstimatorMomentsArrayMap::iterator
     start, end;
 
   start = d_entity_total_estimator_moments_map.begin();
@@ -602,14 +602,14 @@ StandardEntityEstimator<EntityId>::resizeEntityTotalEstimatorMomentsMapArrays()
   while( start != end )
   {
     start->second.resize( this->getNumberOfResponseFunctions() );
-    
+
     ++start;
   }
 }
 
 // Commit hist. contr. to the total for a response function of an entity
 template<typename EntityId>
-void 
+void
 StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEntity(
 					const EntityId& entity_id,
 					const unsigned response_function_index,
@@ -618,19 +618,19 @@ StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEntity(
   // Make sure the entity is assigned to this estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure the response function index is valid
-  testPrecondition( response_function_index < 
+  testPrecondition( response_function_index <
 		    this->getNumberOfResponseFunctions() );
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
 
-  Estimator::FourEstimatorMomentsArray& entity_total_estimator_moments_array = 
+  Estimator::FourEstimatorMomentsArray& entity_total_estimator_moments_array =
     d_entity_total_estimator_moments_map[entity_id];
 
   // Add the first moment contribution
   double moment_contribution = contribution;
-  
+
   #pragma omp atomic update
-  entity_total_estimator_moments_array[response_function_index].first += 
+  entity_total_estimator_moments_array[response_function_index].first +=
     moment_contribution;
 
   // Add the second moment contribution
@@ -657,13 +657,13 @@ StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEntity(
 
 // Commit history contr. to the total for a response function of an estimator
 template<typename EntityId>
-void 
+void
 StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEstimator(
 					const unsigned response_function_index,
 					const double contribution )
 {
   // Make sure the response function index is valid
-  testPrecondition( response_function_index < 
+  testPrecondition( response_function_index <
 		    this->getNumberOfResponseFunctions() );
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
@@ -672,7 +672,7 @@ StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEstimator(
   double moment_contribution = contribution;
 
   #pragma omp atomic update
-  d_total_estimator_moments[response_function_index].first += 
+  d_total_estimator_moments[response_function_index].first +=
     moment_contribution;
 
   // Add the second moment contribution
@@ -691,7 +691,7 @@ StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEstimator(
 
   // Add the fourth moment contribution
   moment_contribution *= contribution;
-  
+
   #pragma omp atomic update
   d_total_estimator_moments[response_function_index].fourth +=
     moment_contribution;
@@ -716,7 +716,7 @@ void StandardEntityEstimator<EntityId>::initializeMomentsMaps(
 
 // Add info to update tracker
 template<typename EntityId>
-void StandardEntityEstimator<EntityId>::addInfoToUpdateTracker( 
+void StandardEntityEstimator<EntityId>::addInfoToUpdateTracker(
 						    const unsigned thread_id,
 						    const EntityId entity_id,
 						    const unsigned bin_index,
@@ -724,8 +724,8 @@ void StandardEntityEstimator<EntityId>::addInfoToUpdateTracker(
 {
   // Make sure the thread id is valid
   testPrecondition( thread_id < d_update_tracker.size() );
-  
-  BinContributionMap& thread_entity_bin_contribution_map = 
+
+  BinContributionMap& thread_entity_bin_contribution_map =
     d_update_tracker[thread_id][entity_id];
 
   if( thread_entity_bin_contribution_map.find( bin_index ) !=
@@ -737,8 +737,8 @@ void StandardEntityEstimator<EntityId>::addInfoToUpdateTracker(
 
 // Get the bin iterator from an update tracker iterator
 template<typename EntityId>
-inline void 
-StandardEntityEstimator<EntityId>::getEntityIteratorFromUpdateTracker( 
+inline void
+StandardEntityEstimator<EntityId>::getEntityIteratorFromUpdateTracker(
 	      const unsigned thread_id,
 	      typename SerialUpdateTracker::const_iterator& start_entity,
 	      typename SerialUpdateTracker::const_iterator& end_entity ) const
@@ -752,7 +752,7 @@ StandardEntityEstimator<EntityId>::getEntityIteratorFromUpdateTracker(
 
 // Get the bin iterator from an update tracker iterator
 template<typename EntityId>
-inline void 
+inline void
 StandardEntityEstimator<EntityId>::getBinIteratorFromUpdateTrackerIterator(
 	   const unsigned thread_id,
 	   const typename SerialUpdateTracker::const_iterator& entity_iterator,
@@ -770,7 +770,7 @@ StandardEntityEstimator<EntityId>::getBinIteratorFromUpdateTrackerIterator(
 
 // Reset the update tracker
 template<typename EntityId>
-void StandardEntityEstimator<EntityId>::resetUpdateTracker( 
+void StandardEntityEstimator<EntityId>::resetUpdateTracker(
 						     const unsigned thread_id )
 {
   d_update_tracker[thread_id].clear();

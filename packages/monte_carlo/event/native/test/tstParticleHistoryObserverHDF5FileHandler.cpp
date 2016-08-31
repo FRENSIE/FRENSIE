@@ -30,20 +30,20 @@ const std::string hdf5_file_name( "test_pho.h5" );
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the handler can be constructed
-TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler, 
+TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler,
                    constructor_ownership )
 {
   std::shared_ptr<MonteCarlo::ParticleHistoryObserverHDF5FileHandler> file_handler;
-  TEST_NOTHROW( file_handler.reset( 
-		new MonteCarlo::ParticleHistoryObserverHDF5FileHandler( 
+  TEST_NOTHROW( file_handler.reset(
+		new MonteCarlo::ParticleHistoryObserverHDF5FileHandler(
                                                           hdf5_file_name ) ) );
 
   // Make sure setter methods work
   TEST_NOTHROW( file_handler->setSimulationTime( 1.0 ) );
-  
+
   file_handler.reset();
-  
-  TEST_NOTHROW( file_handler.reset( 
+
+  TEST_NOTHROW( file_handler.reset(
                        new MonteCarlo::ParticleHistoryObserverHDF5FileHandler(
 	hdf5_file_name,
 	MonteCarlo::ParticleHistoryObserverHDF5FileHandler::APPEND_PHO_HDF5_FILE ) ) );
@@ -51,7 +51,7 @@ TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler,
   // Make sure file has not been overwritten
   double simulation_time;
   file_handler->getSimulationTime( simulation_time );
-  
+
   TEST_EQUALITY_CONST( simulation_time, 1.0 );
 
   // Make sure setter methods work
@@ -79,35 +79,35 @@ TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler,
 // Check that the handler can be constructed
 TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler, constructor_sharing )
 {
-  std::shared_ptr<Utility::HDF5FileHandler> shared_handler( 
+  std::shared_ptr<Utility::HDF5FileHandler> shared_handler(
 						new Utility::HDF5FileHandler );
   shared_handler->openHDF5FileAndOverwrite( hdf5_file_name );
 
-  std::shared_ptr<MonteCarlo::ParticleHistoryObserverHDF5FileHandler> 
+  std::shared_ptr<MonteCarlo::ParticleHistoryObserverHDF5FileHandler>
     estimator_file_handler(
-                       new MonteCarlo::ParticleHistoryObserverHDF5FileHandler( 
+                       new MonteCarlo::ParticleHistoryObserverHDF5FileHandler(
                                                             shared_handler ) );
 
   estimator_file_handler->setSimulationTime( 1.0 );
-  
+
   estimator_file_handler.reset();
 
   TEST_ASSERT( shared_handler->hasOpenFile() );
-  
+
   shared_handler->closeHDF5File();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the simulation time can be set
-TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler, 
+TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler,
                    set_getSimulationTime )
 {
-  MonteCarlo::ParticleHistoryObserverHDF5FileHandler 
+  MonteCarlo::ParticleHistoryObserverHDF5FileHandler
     file_handler( hdf5_file_name );
 
   // Write new simulation time
   file_handler.setSimulationTime( 1.0 );
-  
+
   double simulation_time;
 
   file_handler.getSimulationTime( simulation_time );
@@ -124,14 +124,14 @@ TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler,
 
 //---------------------------------------------------------------------------//
 // Check that the last history simulated can be set
-TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler, 
+TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler,
                    set_getLastHistorySimulated )
 {
   MonteCarlo::ParticleHistoryObserverHDF5FileHandler file_handler( hdf5_file_name );
 
   // Write new last history simulated
   file_handler.setLastHistorySimulated( 0ull );
-  
+
   unsigned long long last_history_simulated;
 
   file_handler.getLastHistorySimulated( last_history_simulated );
@@ -148,10 +148,10 @@ TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler,
 
 //---------------------------------------------------------------------------//
 // Check that the number of histories simulated can be set
-TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler, 
+TEUCHOS_UNIT_TEST( ParticleHistoryObserverHDF5FileHandler,
                    set_getNumberOfHistoriesSimulated)
 {
-  MonteCarlo::ParticleHistoryObserverHDF5FileHandler 
+  MonteCarlo::ParticleHistoryObserverHDF5FileHandler
     file_handler( hdf5_file_name );
 
   // Write new number of histories simulated

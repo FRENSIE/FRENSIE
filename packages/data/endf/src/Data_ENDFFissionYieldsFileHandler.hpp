@@ -20,21 +20,21 @@ namespace Data{
 /*! \defgroup ENDF Fission Yields Table
  *
  * The header of the ENDF Fission Yields table includes a description of what is
- * included in the file. The primary header end with a line number of 99999. No 
+ * included in the file. The primary header end with a line number of 99999. No
  * information is taken from this section. The file is then broken into 2 halfs.
- * The first half includes the independent(prompt) yields and the second half 
+ * The first half includes the independent(prompt) yields and the second half
  * includes the cumulative(total) yields. The first part of the indepedent yields
- * includes a 2 line header for the independent yields. The information that was 
+ * includes a 2 line header for the independent yields. The information that was
  * parsed from this section is the ZAID number and the number of energy group the
  * yields are given at. The next section includes a one line header block for the
  * yields given at a single energy. The information parsed from this block includes
- * the energy that the data is given at and the number of fission products listed 
- * in this section. The next section includes the data. The data is arranged in 
+ * the energy that the data is given at and the number of fission products listed
+ * in this section. The next section includes the data. The data is arranged in
  * sets of 4 items. The first item is the ZAID of the fission product. The second
  * item is the metastable state for the fission product. The third item gives the
  * yield of the fission product. The forth item gives the standard deviation of
- * the yield. The data block and the header block for the data are repeated for 
- * all the energy levels. The concludes the independent yields section. The 
+ * the yield. The data block and the header block for the data are repeated for
+ * all the energy levels. The concludes the independent yields section. The
  * cumulative yields section is given in the same was as the independent yields
  * section. The task of reading in this data is handled by
  * FRENSIE::ENDFFissionYieldsFileHandler.
@@ -69,7 +69,7 @@ public:
 
   //! Get the standard deviation for the yields of the fission products for the indepedent yields
   Teuchos::ArrayView<const Teuchos::Array<double> > getStdYieldFissionProductsIndependentYields() const;
- 
+
   //! Get the energies for the cumulative yields
   Teuchos::ArrayView<const double> getEnergyCumulativeYields() const;
 

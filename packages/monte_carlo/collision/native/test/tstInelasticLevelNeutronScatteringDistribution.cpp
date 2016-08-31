@@ -26,13 +26,13 @@
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
-void initializeScatteringDistribution( 
+void initializeScatteringDistribution(
   const double atomic_weight_ratio,
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >& scattering_dist )
 {
-  Teuchos::RCP<Utility::TabularOneDDistribution> delta_dist( 
+  Teuchos::RCP<Utility::TabularOneDDistribution> delta_dist(
 			  new Utility::DeltaDistribution( 0.0 ) );
-  
+
   Teuchos::Array<Utility::Pair<double,
 		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
     raw_scattering_distribution( 2 );
@@ -49,13 +49,13 @@ void initializeScatteringDistribution(
   // Q value is 1 and A is 1
   // param_a = (A + 1)/A * |Q| = 2.0
   // param_b = (A/(A + 1)^2 = 0.25
-  Teuchos::RCP<MonteCarlo::NuclearScatteringEnergyDistribution> energy_dist( 
+  Teuchos::RCP<MonteCarlo::NuclearScatteringEnergyDistribution> energy_dist(
        new MonteCarlo::AceLaw3NuclearScatteringEnergyDistribution( 6.516454, 0.8848775 ) );
-  
-  scattering_dist.reset( 
-    new MonteCarlo::IndependentEnergyAngleNuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState,MonteCarlo::CMSystemConversionPolicy>( 
+
+  scattering_dist.reset(
+    new MonteCarlo::IndependentEnergyAngleNuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState,MonteCarlo::CMSystemConversionPolicy>(
 					                   atomic_weight_ratio,
-							   energy_dist, 
+							   energy_dist,
 							   angular_dist ) );
 }
 
@@ -63,13 +63,13 @@ void initializeScatteringDistribution(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an incoming neutron can be scattered
-TEUCHOS_UNIT_TEST( InelasticLevelNeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( InelasticLevelNeutronScatteringDistribution,
 		   scatterParticle_hydrogen )
 {
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
-  
+
   initializeScatteringDistribution( 15.857510, scattering_dist );
-  
+
   MonteCarlo::NeutronState neutron( 0ull );
   double initial_angle[3];
   initial_angle[0] = 0.0;
@@ -83,8 +83,8 @@ TEUCHOS_UNIT_TEST( InelasticLevelNeutronScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( neutron.getEnergy(), 0.452512, 1e-6);
 
-  double angle = Utility::calculateCosineOfAngleBetweenVectors( 
-					      initial_angle, 
+  double angle = Utility::calculateCosineOfAngleBetweenVectors(
+					      initial_angle,
 					      neutron.getDirection() );
   TEST_FLOATING_EQUALITY( angle, 0.233314, 1e-6);
 

@@ -1,4 +1,4 @@
-# Configure the ODEPACK options that will be required in this project. The 
+# Configure the ODEPACK options that will be required in this project. The
 # following variables will be set:
 MACRO(ENABLE_ODEPACK_SUPPORT)
 
@@ -15,7 +15,7 @@ MACRO(ENABLE_ODEPACK_SUPPORT)
    IF(${ODEPACK} MATCHES NOTFOUND)
      MESSAGE(FATAL_ERROR "The odepack library could not be found.")
    ENDIF(${ODEPACK} MATCHES NOTFOUND)
-  
+
   # Set the link paths for HDF5
   LINK_DIRECTORIES(${ODEPACK_LIBRARY_DIR})
 

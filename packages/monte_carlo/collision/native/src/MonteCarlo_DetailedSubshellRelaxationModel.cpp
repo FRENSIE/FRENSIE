@@ -21,7 +21,7 @@
 namespace MonteCarlo{
 
 // Constructor
-DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel( 
+DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
        const Data::SubshellType vacancy_subshell,
        const Teuchos::Array<Data::SubshellType>& primary_transition_vacancy_shells,
        const Teuchos::Array<Data::SubshellType>& secondary_transition_vacancy_shells,
@@ -38,7 +38,7 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
   testPrecondition( vacancy_subshell !=Data::UNKNOWN_SUBSHELL );
   // Make sure the arrays are valid
   testPrecondition( primary_transition_vacancy_shells.size() > 0 );
-  testPrecondition( secondary_transition_vacancy_shells.size() == 
+  testPrecondition( secondary_transition_vacancy_shells.size() ==
 		    primary_transition_vacancy_shells.size() );
   testPrecondition( outgoing_particle_energies.size() ==
 		    primary_transition_vacancy_shells.size() );
@@ -47,7 +47,7 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
 
   // Create the transition distribution
   Teuchos::Array<double> dummy_indep_values( transition_pdf_or_cdf.size() );
-  
+
   d_transition_distribution.reset( new Utility::DiscreteDistribution(
 						         dummy_indep_values,
 						         transition_pdf_or_cdf,
@@ -56,9 +56,9 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
   // Store the transition vacancy shells
   for( unsigned i = 0; i < primary_transition_vacancy_shells.size(); ++i )
   {
-    d_transition_vacancy_shells[i].first = 
+    d_transition_vacancy_shells[i].first =
       primary_transition_vacancy_shells[i];
-    d_transition_vacancy_shells[i].second = 
+    d_transition_vacancy_shells[i].second =
       secondary_transition_vacancy_shells[i];
   }
 }
@@ -71,12 +71,12 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
  * new secondary vacancy shell corresponds to a new vacancy that is created
  * in the transition. In a radiative transition, the vacancy only moves - no
  * new vacancies are created (the new secondary vacancy shell will always
- * be set to Data::INVALID_SUBSHELL). In a non-radiative the secondary vacancy shell 
+ * be set to Data::INVALID_SUBSHELL). In a non-radiative the secondary vacancy shell
  * corresponds to the shell where the Auger electron is actually emitted from.
  * \todo Determine whether incrementing the collision number and/or generation
  * number is appropriate.
- */ 
-void DetailedSubshellRelaxationModel::relaxSubshell( 
+ */
+void DetailedSubshellRelaxationModel::relaxSubshell(
 			      const ParticleState& particle,
 			      ParticleBank& bank,
 			      Data::SubshellType& new_primary_vacancy_shell,
@@ -84,16 +84,16 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
 {
   // Sample the transition that occurs
   unsigned transition_index;
-  
+
   d_transition_distribution->sampleAndRecordBinIndex( transition_index );
-  
+
   double new_particle_energy = d_outgoing_particle_energies[transition_index];
-   
+
   // Set the new vacancies shells
-  new_primary_vacancy_shell = 
+  new_primary_vacancy_shell =
     d_transition_vacancy_shells[transition_index].first;
-  
-  new_secondary_vacancy_shell = 
+
+  new_secondary_vacancy_shell =
     d_transition_vacancy_shells[transition_index].second;
 
   // A secondary transition will only occur with Auger electron emission
@@ -105,10 +105,10 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
 }
 
 // Generate a fluorescence photon
-void DetailedSubshellRelaxationModel::generateFluorescencePhoton( 
+void DetailedSubshellRelaxationModel::generateFluorescencePhoton(
 						const ParticleState& particle,
 					        const double new_photon_energy,
-						ParticleBank& bank ) const     
+						ParticleBank& bank ) const
 {
   // Make sure the new energy is valid
   testPrecondition( new_photon_energy > 0.0 );
@@ -116,7 +116,7 @@ void DetailedSubshellRelaxationModel::generateFluorescencePhoton(
   // Only generate the photon if it is above the cutoff energy
   if( new_photon_energy >= SimulationPhotonProperties::getMinPhotonEnergy() )
   {
-    Teuchos::RCP<ParticleState> fluorescence_photon( 
+    Teuchos::RCP<ParticleState> fluorescence_photon(
 				     new PhotonState( particle, true, true ) );
 
     // Set the new energy
@@ -128,17 +128,17 @@ void DetailedSubshellRelaxationModel::generateFluorescencePhoton(
 
     // Set the new direction
     fluorescence_photon->rotateDirection( angle_cosine, azimuthal_angle );
-  
+
     // Bank the relaxation particle
     bank.push( fluorescence_photon );
   }
 }
 
 // Generate an Auger electron
-void DetailedSubshellRelaxationModel::generateAugerElectron( 
+void DetailedSubshellRelaxationModel::generateAugerElectron(
 					      const ParticleState& particle,
 					      const double new_electron_energy,
-					      ParticleBank& bank ) const       
+					      ParticleBank& bank ) const
 {
   // Make sure the new energy is valid - surprisingly, 0.0 can appear in the
   // table
@@ -146,7 +146,7 @@ void DetailedSubshellRelaxationModel::generateAugerElectron(
 
   if( new_electron_energy >= SimulationElectronProperties::getMinElectronEnergy() )
   {
-    Teuchos::RCP<ParticleState> auger_electron( 
+    Teuchos::RCP<ParticleState> auger_electron(
 				   new ElectronState( particle, true, true ) );
 
     // Set the new energy
@@ -158,21 +158,21 @@ void DetailedSubshellRelaxationModel::generateAugerElectron(
 
     // Set the new direction
     auger_electron->rotateDirection( angle_cosine, azimuthal_angle );
-  
+
     // Bank the relaxation particle
     bank.push( auger_electron );
   }
 }
 
 // Sample emission direction
-void DetailedSubshellRelaxationModel::sampleEmissionDirection( 
+void DetailedSubshellRelaxationModel::sampleEmissionDirection(
 					        double& angle_cosine,
 						double& azimuthal_angle ) const
 {
   // Sample an isotropic outgoing angle cosine for the relaxation particle
-  angle_cosine = -1.0 + 
+  angle_cosine = -1.0 +
     2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
-  
+
   // Sample the azimuthal angle
   azimuthal_angle = 2.0*Utility::PhysicalConstants::pi*
     Utility::RandomNumberGenerator::getRandomNumber<double>();

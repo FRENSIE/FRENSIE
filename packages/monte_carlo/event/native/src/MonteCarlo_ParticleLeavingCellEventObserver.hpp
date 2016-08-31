@@ -19,8 +19,8 @@
 
 /*! \defgroup particle_leaving_cell_event Particle Leaving Cell Event
  * \ingroup entity_events
- * 
- * Infrastructure used to acquire information from particle leaving cell 
+ *
+ * Infrastructure used to acquire information from particle leaving cell
  * events.
  */
 
@@ -30,12 +30,12 @@ namespace MonteCarlo{
  * \ingroup particle_leaving_cell_event
  */
 class ParticleLeavingCellEventObserver{
-  
+
 public:
 
   //! The event tag type
   struct ParticleLeavingCellEvent{};
-  
+
   //! Typedef for the observer event
   typedef ParticleLeavingCellEvent EventTag;
 

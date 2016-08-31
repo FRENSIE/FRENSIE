@@ -27,7 +27,7 @@
 
 namespace Utility{
 
-/*! \brief The QuantityTraitsHelper partial specialization for floating point 
+/*! \brief The QuantityTraitsHelper partial specialization for floating point
  * boost::units::quantity
  * \ingroup quantity_traits
  */
@@ -49,7 +49,7 @@ public:
   { return Teuchos::ScalarTraits<RawType>::isnaninf( a.value() ); }
 };
 
-/*! \brief The partial specialization of QuantityTraits for arithmetic 
+/*! \brief The partial specialization of QuantityTraits for arithmetic
  * boost::units::quantity
  * \ingroup quantity_traits
  */
@@ -84,8 +84,8 @@ struct QuantityTraits<boost::units::quantity<Unit,T>, typename boost::enable_if<
 
   //! Possible bug in boost::units::sqrt
   static inline typename GetQuantityToPowerType<1,2>::type sqrt( const QuantityType& quantity )
-  { 
-    return GetQuantityToPowerType<1,2>::type::from_value( std::sqrt( quantity.value() ) ); 
+  {
+    return GetQuantityToPowerType<1,2>::type::from_value( std::sqrt( quantity.value() ) );
     // return boost::units::sqrt( quantity )
   }
 
@@ -106,7 +106,7 @@ struct QuantityTraits<boost::units::quantity<Unit,T>, typename boost::enable_if<
   { quantity = QuantityType::from_value( raw_quantity ); }
 };
 
-/*! \brief The QuantityTraitsHelper partial specialization for floating point 
+/*! \brief The QuantityTraitsHelper partial specialization for floating point
   types (no units).
  * \ingroup quantity_traits
  */
@@ -166,7 +166,7 @@ struct QuantityTraits<T,typename boost::enable_if<boost::is_arithmetic<T> >::typ
   template<boost::units::integer_type N, boost::units::integer_type D>
   static inline QuantityType rpow( const QuantityType quantity )
   { return boost::units::pow<boost::units::static_rational<N,D> >( quantity ); }
-  
+
   static inline QuantityType initializeQuantity( const RawType& raw_quantity )
   { return raw_quantity; }
 

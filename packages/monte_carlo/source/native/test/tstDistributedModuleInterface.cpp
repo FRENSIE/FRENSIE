@@ -46,7 +46,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, reduceSourceData )
   TEST_EQUALITY_CONST( SMI::getNumberOfSamples(), 10 );
   TEST_EQUALITY_CONST( SMI::getSamplingEfficiency(), 1.0 );
 
-  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm =
     Teuchos::DefaultComm<unsigned long long>::getComm();
 
   comm->barrier();
@@ -76,10 +76,10 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -96,7 +96,7 @@ int main( int argc, char** argv )
   {
     // Create the spatial distribution
     std::shared_ptr<Utility::SpatialDistribution>
-      spatial_distribution( 
+      spatial_distribution(
                       new Utility::PointSpatialDistribution( 0.0, 0.0, 0.0 ) );
 
     // Create the directional distribution
@@ -110,7 +110,7 @@ int main( int argc, char** argv )
       directional_distribution( new Utility::SphericalDirectionalDistribution(
                                                            theta_distribution,
 							   mu_distribution ) );
-    
+
     // Create the energy distribution
     std::shared_ptr<Utility::OneDDistribution>
       energy_distribution( new Utility::DeltaDistribution( 1.0 ) );
@@ -128,7 +128,7 @@ int main( int argc, char** argv )
                                                       energy_distribution,
                                                       time_distribution,
                                                       MonteCarlo::PHOTON ) );
-    
+
     MonteCarlo::setSourceHandlerInstance( source );
   }
 
@@ -136,10 +136,10 @@ int main( int argc, char** argv )
   Utility::RandomNumberGenerator::createStreams();
 
   mpiSession.barrier();
-  
+
   // Run the unit tests
   Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   mpiSession.barrier();

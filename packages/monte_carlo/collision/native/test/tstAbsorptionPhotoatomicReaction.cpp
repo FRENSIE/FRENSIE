@@ -55,10 +55,10 @@ TEUCHOS_UNIT_TEST( AbsorptionPhotoatomicReaction, getThresholdEnergy_ace )
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( AbsorptionPhotoatomicReaction, 
+TEUCHOS_UNIT_TEST( AbsorptionPhotoatomicReaction,
 		   getNumberOfEmittedPhotons_ace )
 {
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		    ace_absorption_reaction->getNumberOfEmittedPhotons( 1e-3 ),
 		    0u );
 
@@ -71,14 +71,14 @@ TEUCHOS_UNIT_TEST( AbsorptionPhotoatomicReaction,
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( AbsorptionPhotoatomicReaction, getCrossSection_ace )
 {
-  double cross_section = 
+  double cross_section =
     ace_absorption_reaction->getCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.916958825662E-07, 1e-12 );
 
-  cross_section = 
+  cross_section =
     ace_absorption_reaction->getCrossSection( exp( 1.151292546497E+01 ) );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 9.999864243970E+04, 1e-12 );
 }
 
@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST( AbsorptionPhotoatomicReaction, react_ace )
 
   TEST_ASSERT( photon.isGone() );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
-}		   
+}
 
 //---------------------------------------------------------------------------//
 // Custom main function
@@ -116,37 +116,37 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
     Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-  
+
     // Extract the energy grid and cross section
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( xss_data_extractor->extractPhotonEnergyGrid() );
-    
-    Teuchos::ArrayView<const double> raw_heating_cross_section = 
+
+    Teuchos::ArrayView<const double> raw_heating_cross_section =
       xss_data_extractor->extractLHNMBlock();
-    
-    Teuchos::ArrayView<const double>::iterator start = 
+
+    Teuchos::ArrayView<const double>::iterator start =
       std::find_if( raw_heating_cross_section.begin(),
 		    raw_heating_cross_section.end(),
 		    notEqualZero );
@@ -157,10 +157,10 @@ int main( int argc, char** argv )
     // Process the heating cross section
     for( unsigned i = 0; i < heating_cross_section.size(); ++i )
       heating_cross_section[i] = log( heating_cross_section[i] );
-    
-    unsigned heating_threshold_index = 
+
+    unsigned heating_threshold_index =
       energy_grid.size() - heating_cross_section.size();
-    
+
     // Create the heating reaction
     ace_absorption_reaction.reset(
 	       new MonteCarlo::AbsorptionPhotoatomicReaction<Utility::LogLog>(
@@ -182,9 +182,9 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1); 
+  return (success ? 0 : 1);
 }
-									      
+
 //---------------------------------------------------------------------------//
 // end tstAbsorptionPhotoatomicReaction.cpp
 //---------------------------------------------------------------------------//

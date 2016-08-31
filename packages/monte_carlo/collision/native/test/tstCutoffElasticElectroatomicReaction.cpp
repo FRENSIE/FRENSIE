@@ -26,11 +26,11 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> 
+std::shared_ptr<MonteCarlo::ElectroatomicReaction>
     ace_elastic_reaction, test_elastic_reaction;
-Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_scattering_distribution;
-Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+std::vector<Utility::Pair<double,std::shared_ptr<const Utility::TabularOneDDistribution> > >
     elastic_scattering_function;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedElectro
 		       0u );
 
   TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedElectrons(20.0),
-		       0u );      
+		       0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -82,24 +82,24 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedPhotons
 		       0u );
 
   TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedPhotons(20.0),
-		       0u );      
+		       0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getCrossSection_ace )
 {
-  double cross_section = 
+  double cross_section =
     ace_elastic_reaction->getCrossSection( 1.0E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09, 1e-12 );
-  
+
   cross_section =
     ace_elastic_reaction->getCrossSection( 1.0E-03 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08, 1e-12 );
 
-  cross_section = 
+  cross_section =
     ace_elastic_reaction->getCrossSection( 1.0E+05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 8.830510000000E-02, 1e-12 );
@@ -107,16 +107,15 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getCrossSection_ace )
 
 //---------------------------------------------------------------------------//
 // Check that the cutoff cross section can be returned
-TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, 
+TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
                    getCrossSection_cutoff_ace )
 {
   double cutoff_angle_cosine = 0.9; // cutoff_delta_mu = 0.1;
   // Create the reaction
-  elastic_scattering_distribution.reset( 
-	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(  
+  elastic_scattering_distribution.reset(
+	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 elastic_scattering_function,
-                cutoff_angle_cosine,
-                true ) );
+                cutoff_angle_cosine ) );
 
   test_elastic_reaction.reset(
 	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
@@ -126,21 +125,21 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
                 elastic_scattering_distribution ) );
 
   // cross section ratio for cutoff angle
-  double ratio = 9.500004750002380E-01;
+  double ratio = 9.5E-01;
 
-  double cross_section = 
+  double cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09*ratio, 1e-12 );
-  
-  ratio = 2.439897074955E-01;
+
+  ratio = 2.439675590438E-01;
   cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-03 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08*ratio, 1e-12 );
-  
-  ratio = 1.410821289154E-05;
-  cross_section = 
+
+  ratio = 7.776633431294E-06;
+  cross_section =
     test_elastic_reaction->getCrossSection( 1.0E+05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 8.830510000000E-02*ratio, 1e-12 );
@@ -174,7 +173,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, react_ace )
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
@@ -184,48 +183,48 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
                                            test_ace_table_name,
                                            1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-  
+
   // Extract the energy grid and cross section
   energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
-  
-  Teuchos::ArrayView<const double> raw_elastic_cross_section = 
+
+  Teuchos::ArrayView<const double> raw_elastic_cross_section =
     xss_data_extractor->extractElasticCrossSection();
-  
-  Teuchos::ArrayView<const double>::iterator start = 
+
+  Teuchos::ArrayView<const double>::iterator start =
     std::find_if( raw_elastic_cross_section.begin(),
                   raw_elastic_cross_section.end(),
                   notEqualZero );
 
   elastic_cross_section.assign( start, raw_elastic_cross_section.end() );
 
-  elastic_threshold_index = 
+  elastic_threshold_index =
     energy_grid.size() - elastic_cross_section.size();
 
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
 				      xss_data_extractor->extractELASIBlock() );
-  
+
   // Extract the number of tabulated distributions
   int size = elasi_block.size()/3;
 
@@ -239,34 +238,33 @@ int main( int argc, char** argv )
   Teuchos::Array<double> offset(elasi_block(2*size,size));
 
   // Extract the elastic scattering angular distributions block (elas)
-  Teuchos::ArrayView<const double> elas_block = 
+  Teuchos::ArrayView<const double> elas_block =
     xss_data_extractor->extractELASBlock();
 
   // Create the elastic scattering distributions
   elastic_scattering_function.resize( size );
-  
+
   for( unsigned n = 0; n < size; ++n )
   {
     elastic_scattering_function[n].first = elastic_energy_grid[n];
 
-    elastic_scattering_function[n].second.reset( 
+    elastic_scattering_function[n].second.reset(
 	  new Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
-  }  
+  }
 
-  // Get the atomic number 
+  // Get the atomic number
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
-  upper_cutoff_angle_cosine = 0.999999;
+  upper_cutoff_angle_cosine = 1.0;
 
-  elastic_scattering_distribution.reset( 
-	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(  
+  elastic_scattering_distribution.reset(
+	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 elastic_scattering_function,
-                upper_cutoff_angle_cosine,
-                true ) );
- 
+                upper_cutoff_angle_cosine ) );
+
   // Create the reaction
   ace_elastic_reaction.reset(
 	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
@@ -281,7 +279,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -294,7 +292,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

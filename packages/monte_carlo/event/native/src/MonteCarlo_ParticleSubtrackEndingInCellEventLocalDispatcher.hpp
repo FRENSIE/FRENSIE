@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_ParticleSubtrackEndingInCellEventLocalDispatcher.hpp
 //! \author Alex Robinson
 //! \brief  Particle subtrack ending in cell event dispatcher class decl.
@@ -26,7 +26,7 @@ namespace MonteCarlo{
  */
 class ParticleSubtrackEndingInCellEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,ParticleSubtrackEndingInCellEventObserver>
 {
-  
+
 public:
 
   //! Constructor

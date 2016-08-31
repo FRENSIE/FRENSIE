@@ -42,7 +42,7 @@ public:
   //! Destructor
   virtual ~ParticleSubtrackEndingGlobalEventObserver()
   { /* ... */ }
-  
+
   //! Update the observer
   virtual void updateFromGlobalParticleSubtrackEndingEvent(
 					       const ParticleState& particle,

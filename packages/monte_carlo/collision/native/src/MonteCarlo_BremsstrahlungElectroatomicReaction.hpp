@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_BremsstrahlungElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The bremsstrahlung Electroatomic reaction class decl.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
@@ -27,20 +27,20 @@ class BremsstrahlungElectroatomicReaction : public StandardElectroatomicReaction
 public:
 
   //! Basic Constructor
-  BremsstrahlungElectroatomicReaction( 
+  BremsstrahlungElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>& 
+      const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution );
 
   //! Constructor
-  BremsstrahlungElectroatomicReaction( 
+  BremsstrahlungElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>& 
+      const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution );
 
   //! Destructor
@@ -56,15 +56,26 @@ public:
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy ) const;
+
+  //! Return the differential cross section (efficient)
+  double getDifferentialCrossSection(
+    const unsigned incoming_energy_bin,
+    const double incoming_energy,
+    const double outgoing_energy ) const;
+
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
 	      ParticleBank& bank,
 	      Data::SubshellType& shell_of_interaction ) const;
 
 private:
 
   // The bremsstrahlung scattering distribution
-  Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution> 
+  std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     d_bremsstrahlung_distribution;
 };
 

@@ -31,7 +31,7 @@ namespace MonteCarlo{
  * specializations of this class. If a GeometryHandler class does not have
  * a specialization the code will not compile.
  * \ingroup collision_module
- */ 
+ */
 template<typename GeometryHandler>
 class StandardCollisionHandlerFactory : public CollisionHandlerFactory
 {
@@ -39,7 +39,7 @@ class StandardCollisionHandlerFactory : public CollisionHandlerFactory
 public:
 
   // Constructor
-  StandardCollisionHandlerFactory( std::ostream* os_warn = &std::cerr ) 
+  StandardCollisionHandlerFactory( std::ostream* os_warn = &std::cerr )
     : CollisionHandlerFactory( os_warn )
   { /* ... */ }
 
@@ -63,7 +63,7 @@ protected:
   { GeometryHandler::geometry_handler_is_missing_specialization(); }
 
   //! Create the cell id data maps using the GeometryHandler
-  inline void createCellIdDataMaps( 
+  inline void createCellIdDataMaps(
                                   CellIdMatIdMap& cell_id_mat_id_map,
                                   CellIdDensityMap& cell_id_density_map ) const
   { GeometryHandler::geometry_handler_is_missing_specialization(); }
@@ -71,7 +71,7 @@ protected:
 
 //! Helper function for creating a collision handler instance
 template<typename GeometryHandler>
-inline std::shared_ptr<CollisionHandlerFactory> 
+inline std::shared_ptr<CollisionHandlerFactory>
 getCollisionHandlerFactoryInstance( std::ostream* os_warn = &std::cerr )
 {
   return std::shared_ptr<CollisionHandlerFactory>( new StandardCollisionHandlerFactory<GeometryHandler>( os_warn ) );

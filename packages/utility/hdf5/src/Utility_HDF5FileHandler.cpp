@@ -43,8 +43,8 @@ HDF5FileHandler::HDF5FileHandler()
     H5::Exception::dontPrint();
   }
 
-  HDF5_EXCEPTION_CATCH( std::runtime_error, 
-			HDF5FileHandler::print_and_exit, 
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
 			"Default Constructor Error" );
 }
 
@@ -59,8 +59,8 @@ void HDF5FileHandler::openHDF5FileAndOverwrite( const std::string &file_name )
   {
     d_hdf5_file.reset( new H5::H5File( file_name, H5F_ACC_TRUNC ) );
   }
-  
-  HDF5_EXCEPTION_CATCH( std::runtime_error, 
+
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
 			"Open and Overwrite Error" );
 }
@@ -76,7 +76,7 @@ void HDF5FileHandler::openHDF5FileAndAppend( const std::string &file_name )
   {
     d_hdf5_file.reset( new H5::H5File( file_name, H5F_ACC_RDWR ) );
   }
-  
+
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
 			"Open and Append Error" );
@@ -128,12 +128,12 @@ bool HDF5FileHandler::doesGroupExist( const std::string &group_location ) const
 }
 
 // Check if the group attribute exists
-bool HDF5FileHandler::doesGroupAttributeExist( 
+bool HDF5FileHandler::doesGroupAttributeExist(
 				      const std::string &group_location,
 				      const std::string &attribute_name ) const
 {
   bool attribute_exists = true;
-  
+
   if( this->doesGroupExist( group_location ) )
   {
     H5::Group group( d_hdf5_file->openGroup( group_location ) );
@@ -153,11 +153,11 @@ bool HDF5FileHandler::doesGroupAttributeExist(
 }
 
 // Check if the data set exists
-bool HDF5FileHandler::doesDataSetExist( 
+bool HDF5FileHandler::doesDataSetExist(
 				    const std::string &dataset_location ) const
 {
   bool data_set_exists = true;
-  
+
   try
   {
     H5::DataSet dataset( d_hdf5_file->openDataSet( dataset_location ) );
@@ -205,17 +205,17 @@ void HDF5FileHandler::createParentGroups( const std::string &path_name )
   // Separate the group names from the dataset name
   Teuchos::Array<std::string> group_names;
   unsigned int loc = path_name.find( "/", 1 );
-  
+
   while( loc < path_name.size() )
   {
     group_names.push_back( path_name.substr( 0, loc ) );
     loc = path_name.find( "/", loc+1 );
   }
-  
+
   // Check if each group has been created and create the group if it hasn't
   for( unsigned int i = 0; i < group_names.size(); ++i )
   {
-    // The H5::File openGroup member function can throw a H5::FileIException 
+    // The H5::File openGroup member function can throw a H5::FileIException
     // exception
     try
     {

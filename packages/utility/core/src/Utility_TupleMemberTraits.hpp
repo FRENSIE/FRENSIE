@@ -70,7 +70,7 @@ struct TupleMemberTraits<Tuple,FOURTH>
   { tuple.fourth = value; }
 };
 
-/*! The partial specialization of the TupleMemberTraits for 
+/*! The partial specialization of the TupleMemberTraits for
  * boost::units::quantity and FIRST
  * \ingroup tuple_member_traits
  */

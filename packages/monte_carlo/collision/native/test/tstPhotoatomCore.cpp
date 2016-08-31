@@ -47,17 +47,17 @@ TEUCHOS_UNIT_TEST( PhotoatomCore, getTotalReaction )
   const MonteCarlo::PhotoatomicReaction& total_reaction =
     ace_photoatom_core->getTotalReaction();
 
-  double cross_section = 
+  double cross_section =
     total_reaction.getCrossSection( exp( -1.214969212306E+01 ) );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     total_reaction.getCrossSection( exp( -1.214720768866E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     total_reaction.getCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY(cross_section,
@@ -69,25 +69,25 @@ TEUCHOS_UNIT_TEST( PhotoatomCore, getTotalReaction )
 // Check that the absorption reaction can be returned
 TEUCHOS_UNIT_TEST( PhotoatomCore, getTotalAbsorptionReaction )
 {
-  const MonteCarlo::PhotoatomicReaction& absorption_reaction = 
+  const MonteCarlo::PhotoatomicReaction& absorption_reaction =
     ace_photoatom_core->getTotalAbsorptionReaction();
 
-  double cross_section = absorption_reaction.getCrossSection( 
+  double cross_section = absorption_reaction.getCrossSection(
 						  exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-    
-  cross_section = absorption_reaction.getCrossSection( 
+
+  cross_section = absorption_reaction.getCrossSection(
 						  exp( -1.214969212306E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
-  cross_section = absorption_reaction.getCrossSection( 
+  cross_section = absorption_reaction.getCrossSection(
 						  exp( -1.214720768866E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
 
-  cross_section = absorption_reaction.getCrossSection( 
+  cross_section = absorption_reaction.getCrossSection(
 						   exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-12 );
@@ -97,19 +97,19 @@ TEUCHOS_UNIT_TEST( PhotoatomCore, getTotalAbsorptionReaction )
 // Check that the scattering reactions can be returned
 TEUCHOS_UNIT_TEST( PhotoatomCore, getScatteringReactions )
 {
-  const MonteCarlo::PhotoatomCore::ConstReactionMap& scattering_reactions = 
+  const MonteCarlo::PhotoatomCore::ConstReactionMap& scattering_reactions =
     ace_photoatom_core->getScatteringReactions();
 
   TEST_EQUALITY_CONST( scattering_reactions.size(), 1 );
 
-  const MonteCarlo::PhotoatomicReaction& pp_reaction = 
+  const MonteCarlo::PhotoatomicReaction& pp_reaction =
     *(scattering_reactions.find(MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION)->second);
 
-  double cross_section = 
+  double cross_section =
     pp_reaction.getCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-  
+
   cross_section = pp_reaction.getCrossSection( exp( 2.480967890857E-02 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
@@ -128,16 +128,16 @@ TEUCHOS_UNIT_TEST( PhotoatomCore, getAbsorptionReactions )
 
   TEST_EQUALITY_CONST( absorption_reactions.size(), 1 );
 
-  const MonteCarlo::PhotoatomicReaction& pe_reaction = 
+  const MonteCarlo::PhotoatomicReaction& pe_reaction =
     *(absorption_reactions.find(MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION)->second);
 
-  double cross_section = 
+  double cross_section =
     pe_reaction.getCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-    
+
   cross_section = pe_reaction.getCrossSection( exp( -1.214969212306E+01 ) );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
   cross_section = pe_reaction.getCrossSection( exp( -1.214720768866E+01 ) );
@@ -153,7 +153,7 @@ TEUCHOS_UNIT_TEST( PhotoatomCore, getAbsorptionReactions )
 // Check that miscellaneous reactions can be returned
 TEUCHOS_UNIT_TEST( PhotoatomCore, getMiscReactions )
 {
-  const MonteCarlo::PhotoatomCore::ConstReactionMap& misc_reactions = 
+  const MonteCarlo::PhotoatomCore::ConstReactionMap& misc_reactions =
     ace_photoatom_core->getMiscReactions();
 
   TEST_EQUALITY_CONST( misc_reactions.size(), 0 );
@@ -172,19 +172,19 @@ TEUCHOS_UNIT_TEST( PhotoatomCore, getAtomicRelaxationModel )
 
   MonteCarlo::ParticleBank bank;
 
-  const MonteCarlo::AtomicRelaxationModel& relaxation_model = 
+  const MonteCarlo::AtomicRelaxationModel& relaxation_model =
     ace_photoatom_core->getAtomicRelaxationModel();
 
   relaxation_model.relaxAtom( vacancy, photon, bank );
 
-  TEST_EQUALITY_CONST( bank.size(), 0u );  
+  TEST_EQUALITY_CONST( bank.size(), 0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the hash-based grid searcher can be returned
 TEUCHOS_UNIT_TEST( PhotoatomCore, getGridSearcher )
 {
-  const Utility::HashBasedGridSearcher& grid_searcher = 
+  const Utility::HashBasedGridSearcher& grid_searcher =
     ace_photoatom_core->getGridSearcher();
 
   unsigned grid_index = grid_searcher.findLowerBinIndex( 1e-3 );
@@ -208,25 +208,25 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
     Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -236,16 +236,16 @@ int main( int argc, char** argv )
     energy_grid.deepCopy( xss_data_extractor->extractPhotonEnergyGrid() );
 
     Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>( 
+        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>(
 					     energy_grid,
 					     energy_grid[0],
 					     energy_grid[energy_grid.size()-1],
 					     100 ) );
-        
-    Teuchos::ArrayView<const double> raw_pe_cross_section = 
+
+    Teuchos::ArrayView<const double> raw_pe_cross_section =
       xss_data_extractor->extractPhotoelectricCrossSection();
-    
-    Teuchos::ArrayView<const double>::iterator start = 
+
+    Teuchos::ArrayView<const double>::iterator start =
       std::find_if( raw_pe_cross_section.begin(),
 		    raw_pe_cross_section.end(),
 		    notEqualZero );
@@ -253,7 +253,7 @@ int main( int argc, char** argv )
     Teuchos::ArrayRCP<double> pe_cross_section;
     pe_cross_section.assign( start, raw_pe_cross_section.end() );
 
-    unsigned pe_threshold_index = 
+    unsigned pe_threshold_index =
       energy_grid.size() - pe_cross_section.size();
 
     Teuchos::RCP<MonteCarlo::PhotoatomicReaction> pe_reaction(
@@ -262,20 +262,20 @@ int main( int argc, char** argv )
 						    pe_cross_section,
 						    pe_threshold_index,
 						    grid_searcher ) );
-    
-    Teuchos::ArrayView<const double> raw_pp_cross_section = 
+
+    Teuchos::ArrayView<const double> raw_pp_cross_section =
       xss_data_extractor->extractPairProductionCrossSection();
-    
+
     start = std::find_if( raw_pp_cross_section.begin(),
 		    raw_pp_cross_section.end(),
 		    notEqualZero );
-  
+
     Teuchos::ArrayRCP<double> pp_cross_section;
     pp_cross_section.assign( start, raw_pp_cross_section.end() );
-    
-    unsigned pp_threshold_index = 
+
+    unsigned pp_threshold_index =
       energy_grid.size() - pp_cross_section.size();
-    
+
     Teuchos::RCP<MonteCarlo::PhotoatomicReaction> pp_reaction(
 	    new MonteCarlo::PairProductionPhotoatomicReaction<Utility::LogLog>(
 							energy_grid,
@@ -284,13 +284,13 @@ int main( int argc, char** argv )
 							grid_searcher ) );
 
     // Create the reaction maps
-    MonteCarlo::PhotoatomCore::ReactionMap scattering_reactions, 
+    MonteCarlo::PhotoatomCore::ReactionMap scattering_reactions,
       absorption_reactions;
-    
+
     scattering_reactions[pp_reaction->getReactionType()] = pp_reaction;
-    
+
     absorption_reactions[pe_reaction->getReactionType()] = pe_reaction;
-    
+
     // Create a void atomic relaxation model
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
 				   new MonteCarlo::VoidAtomicRelaxationModel );
@@ -320,7 +320,7 @@ int main( int argc, char** argv )
 
   return (success ? 0 : 1);
 }
-							   
+
 
 //---------------------------------------------------------------------------//
 // end tstPhotoatomCore.cpp

@@ -77,39 +77,39 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, constructor_test )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonDataFluorescence class returns the correct 
+// Check that the PhotonDataFluorescence class returns the correct
 // photoelectric shell vacancy
 TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getPhotoelectricVacancyShell )
 {
   TestingPhotonDataFluorescence test_photon_data_fluoro( ATOMIC_NUMBER,
 							 ENERGY_MIN,
 							 ENERGY_MAX );
-  
+
   unsigned int shell =
     test_photon_data_fluoro.getPhotoelectricVacancyShell( ENERGY,
 							  CDF_VALUE_1 );
   TEST_EQUALITY_CONST( shell, SHELL_REF_1 );
 
-  shell = 
+  shell =
     test_photon_data_fluoro.getPhotoelectricVacancyShell( ENERGY,
 							  CDF_VALUE_2 );
   TEST_EQUALITY_CONST( shell, SHELL_REF_2 );
 
-  shell = 
+  shell =
     test_photon_data_fluoro.getPhotoelectricVacancyShell( ENERGY,
 							  CDF_VALUE_3 );
   TEST_EQUALITY_CONST( shell, SHELL_REF_3 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonDataFluorescence class returns the correct 
+// Check that the PhotonDataFluorescence class returns the correct
 // probability of a radiative transition for a vacancy in a shell
 TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellRadiativeTransitionProbability )
 {
   TestingPhotonDataFluorescence test_photon_data_fluoro( ATOMIC_NUMBER,
 							 ENERGY_MIN,
 							 ENERGY_MAX );
-  
+
   double probability =
     test_photon_data_fluoro.getShellRadiativeTransitionProbability( SHELL_1 );
   TEST_FLOATING_EQUALITY( probability, RAD_TRANS_PROB_REF_1, SOFT_TOL );
@@ -122,7 +122,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellRadiativeTransitionProbabilit
     test_photon_data_fluoro.getShellRadiativeTransitionProbability( SHELL_3 );
   TEST_FLOATING_EQUALITY( probability, RAD_TRANS_PROB_REF_3, SOFT_TOL );
 }
-							  
+
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataFluorescence class returns the correct
 // radiative transition data for a vacancy and cdf value
@@ -131,7 +131,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellRadiativeTransitionData )
   TestingPhotonDataFluorescence test_photon_data_fluoro( ATOMIC_NUMBER,
 							 ENERGY_MIN,
 							 ENERGY_MAX );
-  
+
   FRENSIE::Pair<unsigned int, double> transition_data, transition_data_ref;
   transition_data =
     test_photon_data_fluoro.getShellRadiativeTransitionData( SHELL_1,
@@ -163,8 +163,8 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellNonradiativeTransitionData )
   TestingPhotonDataFluorescence test_photon_data_fluoro( ATOMIC_NUMBER,
 							 ENERGY_MIN,
 							 ENERGY_MAX );
-  
-  FRENSIE::Trip<unsigned int, unsigned int, double> 
+
+  FRENSIE::Trip<unsigned int, unsigned int, double>
     transition_data, transition_data_ref;
   transition_data =
     test_photon_data_fluoro.getShellNonradiativeTransitionData( SHELL_1,

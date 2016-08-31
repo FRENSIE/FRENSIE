@@ -25,9 +25,9 @@ namespace MonteCarlo{
 template<>
 class CollisionModuleInterface<CollisionHandler>
 {
-  
+
 public:
-  
+
   //! The external material handle class (used within the collision handler)
   typedef ModuleTraits::InternalMaterialHandle ExternalMaterialHandle;
 
@@ -95,8 +95,8 @@ public:
 
 // Set the collision handler instance
 /* \detials The MonteCarlo::CollisionHandler is a singleton class
- */ 
-inline void 
+ */
+inline void
 CollisionModuleInterface<CollisionHandler>::setHandlerInstance(
                    const std::shared_ptr<CollisionHandler>& collision_handler )
 { /* ... */ }
@@ -110,7 +110,7 @@ inline bool CollisionModuleInterface<CollisionHandler>::isCellVoid(
 }
 
 // Get the total macroscopic cross section of a material
-inline double 
+inline double
 CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
 					        const NeutronState& particle )
 {
@@ -118,7 +118,7 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
 }
 
 // Get the total macroscopic cross section of a material
-inline double 
+inline double
 CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
 					   const PhotonState& particle )
 {
@@ -126,7 +126,7 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
 }
 
 // Get the total macroscopic cross section of a material
-inline double 
+inline double
 CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
 					   const ElectronState& particle )
 {
@@ -134,7 +134,7 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
 }
 
 // Get the macroscopic cross section for a specific reaction
-inline double 
+inline double
 CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 					   const NeutronState& particle,
 					   const NuclearReactionType reaction )
@@ -144,7 +144,7 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 }
 
 // Get the macroscopic cross section for a specific reaction
-inline double 
+inline double
 CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 				       const PhotonState& particle,
 				       const PhotoatomicReactionType reaction )
@@ -154,7 +154,7 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 }
 
 // Get the macroscopic cross section for a specific reaction
-inline double 
+inline double
 CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 				      const PhotonState& particle,
 				      const PhotonuclearReactionType reaction )
@@ -164,7 +164,7 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 }
 
 // Get the macroscopic cross section for a specific reaction
-inline double 
+inline double
 CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 				       const ElectronState& particle,
 				       const ElectroatomicReactionType reaction )
@@ -174,15 +174,15 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 }
 
 // Sample the optical path length traveled by a particle before a collision
-inline double 
+inline double
 CollisionModuleInterface<CollisionHandler>::sampleOpticalPathLength()
 {
   return -log( Utility::RandomNumberGenerator::getRandomNumber<double>() );
 }
 
 // Collide with the material in a cell
-inline void 
-CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial( 
+inline void
+CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
 						       NeutronState& particle,
 						       ParticleBank& bank,
 						       const bool analogue )
@@ -193,8 +193,8 @@ CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
 }
 
 // Collide with the material in a cell
-inline void 
-CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial( 
+inline void
+CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
 						       PhotonState& particle,
 						       ParticleBank& bank,
 						       const bool analogue )
@@ -205,8 +205,8 @@ CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
 }
 
 // Collide with the material in a cell
-inline void 
-CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial( 
+inline void
+CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
 						       ElectronState& particle,
 						       ParticleBank& bank,
 						       const bool analogue )

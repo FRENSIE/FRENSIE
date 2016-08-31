@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstXSSPhotonuclearDataExtractor.cpp
 //! \author Ryan Pease
 //! \brief  XSS photonuclear data extractor class unit tests.
@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractESZBlock )
 {
   Teuchos::ArrayView<const double> esz_block =
     h2_xss_data_extractor->extractESZBlock();
-  
+
   TEST_EQUALITY_CONST( esz_block.size() , 35)
   TEST_EQUALITY_CONST( esz_block.front() , 2.2246e0)
   TEST_EQUALITY_CONST( esz_block.back() , 3.0e1)
@@ -72,7 +72,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractTOTBlock )
 TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractNONBlock )
 {
   Teuchos::ArrayView<const double> non_block =
-    h2_xss_data_extractor->extractNONBlock();  
+    h2_xss_data_extractor->extractNONBlock();
 
   TEST_EQUALITY_CONST( non_block.size() , 35)
   TEST_EQUALITY_CONST( non_block.front() , 0)
@@ -87,25 +87,25 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractELSBlock )
     h2_xss_data_extractor->extractELSBlock();
 
   TEST_EQUALITY_CONST( els_block.size() , 0)
- 
+
 }
 
 // Check that the XSSPhotonuclearDataExtractor can extract the THN data block
 TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractTHNBlock )
 {
-  Teuchos::ArrayView<const double> thn_block = 
+  Teuchos::ArrayView<const double> thn_block =
     h2_xss_data_extractor->extractTHNBlock();
 
   TEST_EQUALITY_CONST( thn_block.size() , 35)
   TEST_EQUALITY_CONST( thn_block.front() , 0)
   TEST_EQUALITY_CONST( thn_block.back() , 6.939968e1)
- 
+
 }
 
 // Check that the XSSPhotonuclearDataExtractor can extract the MTR data block
 TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractMTRBlock )
 {
-  Teuchos::ArrayView<const double> mtr_block = 
+  Teuchos::ArrayView<const double> mtr_block =
     h2_xss_data_extractor->extractMTRBlock();
 
   TEST_EQUALITY_CONST( mtr_block.size() , 1)
@@ -116,7 +116,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractMTRBlock )
 // Check that the XSSPhotonuclearDataExtractor can extract the LQR data block
 TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractLQRBlock )
 {
-  Teuchos::ArrayView<const double> lqr_block = 
+  Teuchos::ArrayView<const double> lqr_block =
     h2_xss_data_extractor->extractLQRBlock();
 
   TEST_EQUALITY_CONST( lqr_block.size() , 1)
@@ -132,13 +132,13 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractLSIGBlock )
 
   TEST_EQUALITY_CONST( lsig_block.size() , 1)
   TEST_EQUALITY_CONST( lsig_block.front() , 1)
- 
+
 }
 
 // Check that the XSSPhotonuclearDataExtractor can extract the SIG data block
 TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractSIGBlock )
 {
-  Teuchos::ArrayView<const double> sig_block = 
+  Teuchos::ArrayView<const double> sig_block =
     h2_xss_data_extractor->extractSIGBlock();
 
   TEST_EQUALITY_CONST( sig_block.size() , 37)
@@ -150,7 +150,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractSIGBlock )
 // Check that the XSSPhotonuclearDataExtractor can extract the IXS data block
 TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractIXSBlock )
 {
-  Teuchos::ArrayView<const double> ixs_block = 
+  Teuchos::ArrayView<const double> ixs_block =
     h2_xss_data_extractor->extractIXSBlock();
 
   TEST_EQUALITY_CONST( ixs_block.size() , 3541 )
@@ -181,13 +181,13 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractPXSBlock )
 
   Teuchos::ArrayView<const double> pxs_block_9 =
     h2_xss_data_extractor->extractPXSBlock(9);
- 
+
   Teuchos::ArrayView<const double> pxs_block_2 =
     h2_xss_data_extractor->extractPXSBlock(2);
 
  // True Positive
   TEST_EQUALITY( pxs_block_1.front() , 1 );
-  TEST_EQUALITY( pxs_block_1.back()  , 3.549e-4 );  
+  TEST_EQUALITY( pxs_block_1.back()  , 3.549e-4 );
 
   TEST_EQUALITY( pxs_block_9.front() , 1 );
   TEST_EQUALITY( pxs_block_9.back()  , 3.549e-4 );
@@ -203,7 +203,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractPHNBlock )
     h2_xss_data_extractor->extractPHNBlock(1);
 
   TEST_EQUALITY( phn_block_1.front() , 1 );
-  TEST_EQUALITY( phn_block_1.back()  , 1.386196e1 );  
+  TEST_EQUALITY( phn_block_1.back()  , 1.386196e1 );
 
 }
 
@@ -214,7 +214,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractMTRPBlock )
     h2_xss_data_extractor->extractMTRPBlock(1);
 
   TEST_EQUALITY( mtrp_block_1.front() , 50 );
-  TEST_EQUALITY( mtrp_block_1.back()  , 50 );  
+  TEST_EQUALITY( mtrp_block_1.back()  , 50 );
 
 }
 
@@ -225,7 +225,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractTYRPBlock )
     h2_xss_data_extractor->extractTYRPBlock(1);
 
   TEST_EQUALITY( tyrp_block_1.front() , -1 );
-  TEST_EQUALITY( tyrp_block_1.back()  , -1 );  
+  TEST_EQUALITY( tyrp_block_1.back()  , -1 );
 
 }
 
@@ -236,7 +236,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLSIGPBlock )
     h2_xss_data_extractor->extractLSIGPBlock(1);
 
   TEST_EQUALITY( lsigp_block_1.front() , 1 );
-  TEST_EQUALITY( lsigp_block_1.back()  , 1 );  
+  TEST_EQUALITY( lsigp_block_1.back()  , 1 );
 
 }
 
@@ -247,7 +247,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractSIGPBlock )
     h2_xss_data_extractor->extractSIGPBlock(1);
 
   TEST_EQUALITY( sigp_block_1.front() , 6 );
-  TEST_EQUALITY( sigp_block_1.back()  , 1 );  
+  TEST_EQUALITY( sigp_block_1.back()  , 1 );
 
 }
 
@@ -258,7 +258,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLANDPBlock )
     h2_xss_data_extractor->extractLANDPBlock(1);
 
   TEST_EQUALITY( landp_block_1.front() , 1 );
-  TEST_EQUALITY( landp_block_1.back()  , 1 );  
+  TEST_EQUALITY( landp_block_1.back()  , 1 );
 
 }
 
@@ -269,7 +269,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractANDPBlock )
     h2_xss_data_extractor->extractANDPBlock(1);
 
   TEST_EQUALITY( ANDP_block_1.front() , 35 );
-  TEST_EQUALITY( ANDP_block_1.back()  , 1 );  
+  TEST_EQUALITY( ANDP_block_1.back()  , 1 );
 
 }
 
@@ -280,7 +280,7 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLDLWPBlock )
     h2_xss_data_extractor->extractLDLWPBlock(1);
 
   TEST_EQUALITY( ldlwp_block_1.front() , 1 );
-  TEST_EQUALITY( ldlwp_block_1.back()  , 1 );  
+  TEST_EQUALITY( ldlwp_block_1.back()  , 1 );
 
 }
 
@@ -295,13 +295,13 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractDLWPBlock )
 
   Teuchos::ArrayView<const double> dlwp_block_9 =
     h2_xss_data_extractor->extractDLWPBlock(9);
- 
+
   Teuchos::ArrayView<const double> dlwp_block_2 =
     h2_xss_data_extractor->extractDLWPBlock(2);
 
  // True Positive
   TEST_EQUALITY( dlwp_block_1.front() , 0 );
-  TEST_EQUALITY( dlwp_block_1.back()  , 6.66255e-1 );  
+  TEST_EQUALITY( dlwp_block_1.back()  , 6.66255e-1 );
 
   TEST_EQUALITY( dlwp_block_9.front() , 0 );
   TEST_EQUALITY( dlwp_block_9.back()  , 6.66255e-1 );
@@ -327,25 +327,25 @@ int main( int argc, char** argv )
 		 &h2_ace_table_name,
 		 "Test H2 ACE table name in ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Initialize ace file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 			        new Data::ACEFileHandler( h2_ace_file_name,
 							  h2_ace_table_name,
 							  1u ) );
-  
-  h2_xss_data_extractor.reset( 
-      new Data::XSSPhotonuclearDataExtractor( 
+
+  h2_xss_data_extractor.reset(
+      new Data::XSSPhotonuclearDataExtractor(
 				     ace_file_handler->getTableNXSArray(),
 				     ace_file_handler->getTableJXSArray(),
 				     ace_file_handler->getTableXSSArray() ) );
@@ -365,7 +365,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 
 }
 

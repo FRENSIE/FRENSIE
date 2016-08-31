@@ -23,7 +23,7 @@ AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::Ato
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>& 
+       const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
             energy_loss_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
 				                   incoming_energy_grid,
@@ -38,12 +38,12 @@ AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::Ato
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the energy loss distribution data is valid
-  testPrecondition( !energy_loss_distribution.is_null() );
+  testPrecondition( energy_loss_distribution.use_count() > 0 );
 }
 
 // Constructor
@@ -53,7 +53,7 @@ AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::Ato
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>& 
+       const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
             energy_loss_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                 incoming_energy_grid,
@@ -69,12 +69,12 @@ AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::Ato
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the energy loss distribution data is valid
-  testPrecondition( !energy_loss_distribution.is_null() );
+  testPrecondition( energy_loss_distribution.use_count() > 0 );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -107,8 +107,8 @@ void AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>
 						     ParticleBank& bank,
                              Data::SubshellType& shell_of_interaction ) const
 {
-  d_energy_loss_distribution->scatterElectron( electron, 
-                                               bank, 
+  d_energy_loss_distribution->scatterElectron( electron,
+                                               bank,
                                                shell_of_interaction);
 
   electron.incrementCollisionNumber();

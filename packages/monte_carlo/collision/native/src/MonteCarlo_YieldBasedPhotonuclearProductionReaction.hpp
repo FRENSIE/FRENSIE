@@ -36,7 +36,7 @@ public:
   //! Destructor
   virtual ~YieldBasedPhotonuclearProductionReaction()
   { /* ... */ }
-  
+
   //! Return the number of particle emitted from the rxn at the given energy
   unsigned getNumberOfEmittedParticles( const double energy ) const;
 

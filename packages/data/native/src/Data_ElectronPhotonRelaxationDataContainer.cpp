@@ -29,7 +29,7 @@
 namespace Data{
 
 // Constructor (from saved archive)
-ElectronPhotonRelaxationDataContainer::ElectronPhotonRelaxationDataContainer( 
+ElectronPhotonRelaxationDataContainer::ElectronPhotonRelaxationDataContainer(
 		    const std::string& archive_name,
 		    const Utility::ArchivableObject::ArchiveType archive_type )
 {
@@ -37,6 +37,16 @@ ElectronPhotonRelaxationDataContainer::ElectronPhotonRelaxationDataContainer(
   this->importData( archive_name, archive_type );
 }
 
+//---------------------------------------------------------------------------//
+// GET NOTES
+//---------------------------------------------------------------------------//
+
+// Data table notes
+const std::string& ElectronPhotonRelaxationDataContainer::getNotes() const
+{
+  return d_notes;
+}
+  
 //---------------------------------------------------------------------------//
 // GET TABLE DATA
 //---------------------------------------------------------------------------//
@@ -71,12 +81,6 @@ double ElectronPhotonRelaxationDataContainer::getMaxElectronEnergy() const
   return d_max_electron_energy;
 }
 
-// Return the elastic cutoff angle
-double ElectronPhotonRelaxationDataContainer::getCutoffAngleCosine() const
-{
-  return d_cutoff_angle_cosine;
-}
-
 // Return the occupation number evaluation tolerance
 double
 ElectronPhotonRelaxationDataContainer::getOccupationNumberEvaluationTolerance() const
@@ -85,10 +89,27 @@ ElectronPhotonRelaxationDataContainer::getOccupationNumberEvaluationTolerance() 
 }
 
 // Return the subshell incoherent evaluation tolerance
-double
-ElectronPhotonRelaxationDataContainer::getSubshellIncoherentEvaluationTolerance() const
+double ElectronPhotonRelaxationDataContainer::getSubshellIncoherentEvaluationTolerance() const
 {
   return d_subshell_incoherent_evaluation_tolerance;
+}
+
+// Return the photon threshold energy nudge factor
+double ElectronPhotonRelaxationDataContainer::getPhotonThresholdEnergyNudgeFactor() const
+{
+  return d_photon_threshold_energy_nudge_factor;
+}
+
+// Return the elastic cutoff angle
+double ElectronPhotonRelaxationDataContainer::getCutoffAngleCosine() const
+{
+  return d_cutoff_angle_cosine;
+}
+
+// Return the number of discrete moment preserving angles
+unsigned ElectronPhotonRelaxationDataContainer::getNumberOfMomentPreservingAngles() const
+{
+  return d_number_of_moment_preserving_angles;
 }
 
 // Return the union energy grid convergence tolerance
@@ -115,8 +136,8 @@ double ElectronPhotonRelaxationDataContainer::getGridDistanceTolerance() const
 // GET RELAXATION DATA
 //---------------------------------------------------------------------------//
 
-// Return the atomic subshells 
-const std::set<unsigned>& 
+// Return the atomic subshells
+const std::set<unsigned>&
 ElectronPhotonRelaxationDataContainer::getSubshells() const
 {
   return d_subshells;
@@ -127,9 +148,9 @@ double ElectronPhotonRelaxationDataContainer::getSubshellOccupancy(
 					        const unsigned subshell ) const
 {
   // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != 
+  testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
-  
+
   return d_subshell_occupancies.find( subshell )->second;
 }
 
@@ -138,9 +159,9 @@ double ElectronPhotonRelaxationDataContainer::getSubshellBindingEnergy(
 						const unsigned subshell ) const
 {
   // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != 
+  testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
-  
+
   return d_subshell_binding_energies.find( subshell )->second;
 }
 
@@ -151,19 +172,19 @@ bool ElectronPhotonRelaxationDataContainer::hasRelaxationData() const
 }
 
 // Return if the subshell has relaxation data
-bool ElectronPhotonRelaxationDataContainer::hasSubshellRelaxationData( 
+bool ElectronPhotonRelaxationDataContainer::hasSubshellRelaxationData(
 						const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
-  
-  return d_relaxation_transitions.find( subshell ) != 
+
+  return d_relaxation_transitions.find( subshell ) !=
     d_relaxation_transitions.end();
 }
 
 // Return the number of transitions that can fill a subshell vacancy
-unsigned ElectronPhotonRelaxationDataContainer::getSubshellRelaxationTransitions( 
+unsigned ElectronPhotonRelaxationDataContainer::getSubshellRelaxationTransitions(
 						const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -175,7 +196,7 @@ unsigned ElectronPhotonRelaxationDataContainer::getSubshellRelaxationTransitions
 
 // Return the relaxation vacancies for a subshell
 const std::vector<std::pair<unsigned,unsigned> >&
-ElectronPhotonRelaxationDataContainer::getSubshellRelaxationVacancies( 
+ElectronPhotonRelaxationDataContainer::getSubshellRelaxationVacancies(
 						const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -186,7 +207,7 @@ ElectronPhotonRelaxationDataContainer::getSubshellRelaxationVacancies(
 }
 
 // Return the relaxation particle energies for a subshell
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getSubshellRelaxationParticleEnergies(
 					        const unsigned subshell ) const
 {
@@ -198,7 +219,7 @@ ElectronPhotonRelaxationDataContainer::getSubshellRelaxationParticleEnergies(
 }
 
 // Return the relaxation probabilities for a subshell
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getSubshellRelaxationProbabilities(
 					        const unsigned subshell ) const
 {
@@ -214,67 +235,67 @@ ElectronPhotonRelaxationDataContainer::getSubshellRelaxationProbabilities(
 //---------------------------------------------------------------------------//
 
 // Return the Compton profile momentum grid for a subshell
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getComptonProfileMomentumGrid(
 					        const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
-  
+
   return d_compton_profile_momentum_grids.find( subshell )->second;
 }
 
 // Return the Compton profile for a subshell
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getComptonProfile(
 						const unsigned subshell ) const
 {
   // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != 
+  testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
 
   return d_compton_profiles.find( subshell )->second;
 }
 
 // Return the occupation number momentum grid for a subshell
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getOccupationNumberMomentumGrid(
 						const unsigned subshell ) const
 {
   // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != 
+  testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
-  
+
   return d_occupation_number_momentum_grids.find( subshell )->second;
 }
-  
+
 // Return the occupation number for a subshell
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getOccupationNumber(
 					        const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
-  
+
   return d_occupation_numbers.find( subshell )->second;
 }
 
 // Return the Waller-Hartree scattering function momentum grid
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getWallerHartreeScatteringFunctionMomentumGrid() const
 {
   return d_waller_hartree_scattering_function_momentum_grid;
 }
 
 // Return the Waller-Hartree scattering function
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getWallerHartreeScatteringFunction() const
 {
   return d_waller_hartree_scattering_function;
 }
-  
+
 // Return the Waller-Hartree atomic form factor momentum grid
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getWallerHartreeAtomicFormFactorMomentumGrid() const
@@ -288,22 +309,36 @@ const std::vector<double>& ElectronPhotonRelaxationDataContainer::getWallerHartr
   return d_waller_hartree_atomic_form_factor;
 }
 
+// Return the Waller-Hartree squared atomic form factor squared mom. grid
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid() const
+{
+  return d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid;
+}
+
+// Return the Waller-Hartree squared atomic form factor
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getWallerHartreeSquaredAtomicFormFactor() const
+{
+  return d_waller_hartree_squared_atomic_form_factor;
+}
+
 // Return the photon energy grid
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getPhotonEnergyGrid() const
 {
   return d_photon_energy_grid;
 }
 
 // Return the average heating numbers
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getAveragePhotonHeatingNumbers() const
 {
   return d_average_photon_heating_numbers;
 }
 
-// Return the Waller-Hartree (WH) incoherent photon cross section 
-const std::vector<double>& 
+// Return the Waller-Hartree (WH) incoherent photon cross section
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getWallerHartreeIncoherentCrossSection() const
 {
   return d_waller_hartree_incoherent_cross_section;
@@ -332,7 +367,7 @@ ElectronPhotonRelaxationDataContainer::getImpulseApproxIncoherentCrossSectionThr
 
 // Return the subshell Impulse approx. incoherent photon cross section
 const std::vector<double>&
-ElectronPhotonRelaxationDataContainer::getImpulseApproxSubshellIncoherentCrossSection( 
+ElectronPhotonRelaxationDataContainer::getImpulseApproxSubshellIncoherentCrossSection(
 					        const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -344,14 +379,14 @@ ElectronPhotonRelaxationDataContainer::getImpulseApproxSubshellIncoherentCrossSe
 
 // Return the subshell IA incoherent photon cs threshold energy bin index
 unsigned
-ElectronPhotonRelaxationDataContainer::getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 
+ElectronPhotonRelaxationDataContainer::getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
 					        const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
 
-  return d_impulse_approx_subshell_incoherent_cross_section_theshold_indices.find( subshell )->second;
+  return d_impulse_approx_subshell_incoherent_cross_section_threshold_indices.find( subshell )->second;
 }
 
 // Return the Waller-Hartree coherent cross section
@@ -381,13 +416,26 @@ unsigned ElectronPhotonRelaxationDataContainer::getPairProductionCrossSectionThr
   return d_pair_production_cross_section_threshold_index;
 }
 
+// Return the triplet production cross section
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getTripletProductionCrossSection() const
+{
+  return d_triplet_production_cross_section;
+}
+
+// Return the triplet production cross section threshold energy bin index
+unsigned ElectronPhotonRelaxationDataContainer::getTripletProductionCrossSectionThresholdEnergyIndex() const
+{
+  return d_triplet_production_cross_section_threshold_index;
+}
+
 // Return the Photoelectric effect cross section
 const std::vector<double>& ElectronPhotonRelaxationDataContainer::getPhotoelectricCrossSection() const
 {
   return d_photoelectric_cross_section;
 }
 
-// Return the Photoelectric effect cross section theshold energy bin index
+// Return the Photoelectric effect cross section threshold energy bin index
 unsigned ElectronPhotonRelaxationDataContainer::getPhotoelectricCrossSectionThresholdEnergyIndex() const
 {
   return d_photoelectric_cross_section_threshold_index;
@@ -395,7 +443,7 @@ unsigned ElectronPhotonRelaxationDataContainer::getPhotoelectricCrossSectionThre
 
 // Return the Photoelectric effect cross section for a subshell
 const std::vector<double>&
-ElectronPhotonRelaxationDataContainer::getSubshellPhotoelectricCrossSection( 
+ElectronPhotonRelaxationDataContainer::getSubshellPhotoelectricCrossSection(
 						const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -407,7 +455,7 @@ ElectronPhotonRelaxationDataContainer::getSubshellPhotoelectricCrossSection(
 
 // Return the subshell Photoelectric effect cross section threshold index
 unsigned
-ElectronPhotonRelaxationDataContainer::getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( 
+ElectronPhotonRelaxationDataContainer::getSubshellPhotoelectricCrossSectionThresholdEnergyIndex(
 					        const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -431,18 +479,32 @@ const std::vector<double>& ElectronPhotonRelaxationDataContainer::getImpulseAppr
 
 
 //---------------------------------------------------------------------------//
-// GET ELECTRON DATA 
+// GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
 // Return the elastic angular energy grid
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElasticAngularEnergyGrid() const
 {
   return d_angular_energy_grid;
 }
 
+// Return the elastic angles map
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getCutoffElasticAngles() const
+{
+  return d_cutoff_elastic_angles;
+}
+
+// Return the elastic pdf map
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getCutoffElasticPDF() const
+{
+  return d_cutoff_elastic_pdf;
+}
+
 // Return the elastic angles for an incoming energy
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getCutoffElasticAngles(
 					        const double incoming_energy ) const
 {
@@ -454,7 +516,7 @@ ElectronPhotonRelaxationDataContainer::getCutoffElasticAngles(
 }
 
 // Return the elastic pdf for an incoming energy
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getCutoffElasticPDF(
 					        const double incoming_energy ) const
 {
@@ -465,22 +527,48 @@ ElectronPhotonRelaxationDataContainer::getCutoffElasticPDF(
   return d_cutoff_elastic_pdf.find( incoming_energy )->second;
 }
 
-// Return the screened Rutherford elastic normalization constant 
-const std::vector<double>& 
+// Return if there is screened Rutherford data
+bool ElectronPhotonRelaxationDataContainer::hasScreenedRutherfordData() const
+{
+  return d_screened_rutherford_normalization_constant.size() > 0;
+}
+
+// Return the screened Rutherford elastic normalization constant
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getScreenedRutherfordNormalizationConstant() const
 {
   return d_screened_rutherford_normalization_constant;
 }
 
-// Return Moliere's screening constant 
-const std::vector<double>& 
+// Return Moliere's screening constant
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getMoliereScreeningConstant() const
 {
   return d_moliere_screening_constant;
 }
 
+// Return if there is moment preserving data
+bool ElectronPhotonRelaxationDataContainer::hasMomentPreservingData() const
+{
+  return d_moment_preserving_elastic_discrete_angles.size() > 0;
+}
+
+// Return the moment preserving elastic discrete angles
+const std::map<double,std::vector<double> >
+ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticDiscreteAngles() const
+{
+  return d_moment_preserving_elastic_discrete_angles;
+}
+
+// Return the moment preserving elastic weights
+const std::map<double,std::vector<double> >
+ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticWeights() const
+{
+  return d_moment_preserving_elastic_weights;
+}
+
 // Return the moment preserving elastic discrete angles for an incoming energy
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticDiscreteAngles(
 					        const double incoming_energy ) const
 {
@@ -492,7 +580,7 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticDiscreteAngles(
 }
 
 // Return the moment preserving elastic weights for an incoming energy
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticWeights(
 					        const double incoming_energy ) const
 {
@@ -504,8 +592,8 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticWeights(
 }
 
 // Return the electroionization energy grid for a subshell
-const std::vector<double>& 
-ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid( 
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
                             const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -515,52 +603,52 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
 }
 
 // Return the electroionization recoil energy for a subshell and energy bin
-const std::vector<double>& 
-ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilEnergy( 
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilEnergy(
                            const unsigned subshell,
 					       const double incoming_energy ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming energy is valid
-  testPrecondition( 
-            incoming_energy >= 
+  testPrecondition(
+            incoming_energy >=
             d_electroionization_energy_grid.find( subshell )->second.front() );
-  testPrecondition( 
-            incoming_energy <= 
+  testPrecondition(
+            incoming_energy <=
             d_electroionization_energy_grid.find( subshell )->second.back() );
 
   return d_electroionization_recoil_energy.find( subshell )->second.find( incoming_energy )->second;
 }
 
 // Return the electroionization recoil energy pdf for a subshell and energy bin
-const std::vector<double>&  
-ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF( 
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF(
                            const unsigned subshell,
 					       const double incoming_energy ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming energy is valid
-  testPrecondition( 
-            incoming_energy >= 
+  testPrecondition(
+            incoming_energy >=
             d_electroionization_energy_grid.find( subshell )->second.front() );
-  testPrecondition( 
-            incoming_energy <= 
+  testPrecondition(
+            incoming_energy <=
             d_electroionization_energy_grid.find( subshell )->second.back() );
 
   return d_electroionization_recoil_pdf.find( subshell )->second.find( incoming_energy )->second;
 }
 
 // Return the bremsstrahlung energy grid
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getBremsstrahlungEnergyGrid() const
 {
   return d_bremsstrahlung_energy_grid;
 }
 
 // Return the bremsstrahlung for an incoming energy
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonEnergy(
 					        const double incoming_energy ) const
 {
@@ -572,7 +660,7 @@ ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonEnergy(
 }
 
 // Return the bremsstrahlung photon pdf for an incoming energy
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonPDF(
 					        const double incoming_energy ) const
 {
@@ -584,27 +672,27 @@ ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonPDF(
 }
 
 // Return the atomic excitation energy grid
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getAtomicExcitationEnergyGrid() const
 {
   return d_atomic_excitation_energy_grid;
 }
 
 // Return the atomic excitation energy loss
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getAtomicExcitationEnergyLoss() const
 {
   return d_atomic_excitation_energy_loss;
 }
 
 // Return the electron energy grid
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElectronEnergyGrid() const
 {
   return d_electron_energy_grid;
 }
 // Return the cutoff elastic electron cross section
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getCutoffElasticCrossSection() const
 {
   return d_cutoff_elastic_cross_section;
@@ -617,7 +705,7 @@ ElectronPhotonRelaxationDataContainer::getCutoffElasticCrossSectionThresholdEner
   return d_cutoff_elastic_cross_section_threshold_index;
 }
 // Return the screened Rutherford elastic electron cross section
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getScreenedRutherfordElasticCrossSection() const
 {
   return d_screened_rutherford_elastic_cross_section;
@@ -630,7 +718,7 @@ ElectronPhotonRelaxationDataContainer::getScreenedRutherfordElasticCrossSectionT
   return d_screened_rutherford_elastic_cross_section_threshold_index;
 }
 // Return the total elastic electron cross section
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getTotalElasticCrossSection() const
 {
   return d_total_elastic_cross_section;
@@ -644,7 +732,7 @@ ElectronPhotonRelaxationDataContainer::getTotalElasticCrossSectionThresholdEnerg
 }
 
 // Return the Moment Preserving (MP) elastic electron cross section
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSection() const
 {
   return d_moment_preserving_elastic_cross_section;
@@ -658,8 +746,8 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSectionThresholdE
 }
 
 // Return the electroionization electron cross section for a subshell
-const std::vector<double>& 
-ElectronPhotonRelaxationDataContainer::getElectroionizationCrossSection( 
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getElectroionizationCrossSection(
     const unsigned subshell ) const
 {
   return d_electroionization_subshell_cross_section.find( subshell )->second;
@@ -667,14 +755,14 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationCrossSection(
 
 // Return the electroionization cross section threshold energy bin index for a subshell
 unsigned
-ElectronPhotonRelaxationDataContainer::getElectroionizationCrossSectionThresholdEnergyIndex( 
+ElectronPhotonRelaxationDataContainer::getElectroionizationCrossSectionThresholdEnergyIndex(
     const unsigned subshell ) const
 {
   return d_electroionization_subshell_cross_section_threshold_index.find( subshell )->second;
 }
 
 // Return the bremsstrahlung electron cross section
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getBremsstrahlungCrossSection() const
 {
   return d_bremsstrahlung_cross_section;
@@ -688,7 +776,7 @@ ElectronPhotonRelaxationDataContainer::getBremsstrahlungCrossSectionThresholdEne
 }
 
 // Return the atomic excitation electron cross section
-const std::vector<double>& 
+const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getAtomicExcitationCrossSection() const
 {
   return d_atomic_excitation_cross_section;
@@ -702,11 +790,21 @@ ElectronPhotonRelaxationDataContainer::getAtomicExcitationCrossSectionThresholdE
 }
 
 //---------------------------------------------------------------------------//
+// SET NOTES
+//---------------------------------------------------------------------------//
+
+// Data table notes
+void ElectronPhotonRelaxationDataContainer::setNotes( const std::string& notes )
+{
+  d_notes = notes;
+}
+
+//---------------------------------------------------------------------------//
 // SET TABLE DATA
 //---------------------------------------------------------------------------//
 
 // Set the atomic number
-void ElectronPhotonRelaxationDataContainer::setAtomicNumber( 
+void ElectronPhotonRelaxationDataContainer::setAtomicNumber(
 						 const unsigned atomic_number )
 {
   // Make sure the atomic number is valid
@@ -756,17 +854,6 @@ void ElectronPhotonRelaxationDataContainer::setMaxElectronEnergy(
   d_max_electron_energy = max_electron_energy;
 }
 
-// Set the elastic cutoff angle
-void ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine( 
-                         const double cutoff_angle_cosine )
-{
-  // Make sure the elastic cutoff angle is valid
-  testPrecondition( cutoff_angle_cosine <= 1.0 );
-  testPrecondition( cutoff_angle_cosine > -1.0 );
-
-  d_cutoff_angle_cosine = cutoff_angle_cosine;
-}
-
 // Set the occupation number evaluation tolerance
 void ElectronPhotonRelaxationDataContainer::setOccupationNumberEvaluationTolerance(
     const double occupation_number_evaluation_tolerance )
@@ -787,6 +874,38 @@ void ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationToler
 
   d_subshell_incoherent_evaluation_tolerance =
     subshell_incoherent_evaluation_tolerance;
+}
+
+// Set the photon threshold energy nudge factor
+void ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor(
+                                                    const double nudge_factor )
+{
+  // Make sure the nudge factor is valid
+  testPrecondition( nudge_factor >= 1.0 );
+  
+  d_photon_threshold_energy_nudge_factor = nudge_factor;
+}
+
+
+// Set the elastic cutoff angle
+void ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine(
+                         const double cutoff_angle_cosine )
+{
+  // Make sure the elastic cutoff angle cosine is valid
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+  testPrecondition( cutoff_angle_cosine > -1.0 );
+
+  d_cutoff_angle_cosine = cutoff_angle_cosine;
+}
+
+// Set the number of discrete moment preserving angles
+void ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles(
+    const unsigned number_of_moment_preserving_angles )
+{
+  // Make sure the number of angles is valid
+  testPrecondition( number_of_moment_preserving_angles >= 0 );
+
+  d_number_of_moment_preserving_angles = number_of_moment_preserving_angles;
 }
 
 // Set the union energy grid convergence tolerance
@@ -825,7 +944,7 @@ void ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance(
 
 
 // Set the atomic subshells
-void ElectronPhotonRelaxationDataContainer::setSubshells( 
+void ElectronPhotonRelaxationDataContainer::setSubshells(
 				       const std::set<unsigned>& subshells )
 {
   // Make sure the subshells are valid
@@ -836,7 +955,7 @@ void ElectronPhotonRelaxationDataContainer::setSubshells(
 }
 
 // Set the subshell occupancy
-void ElectronPhotonRelaxationDataContainer::setSubshellOccupancy( 
+void ElectronPhotonRelaxationDataContainer::setSubshellOccupancy(
 						       const unsigned subshell,
 						       const double occupancy )
 {
@@ -862,7 +981,7 @@ void ElectronPhotonRelaxationDataContainer::setSubshellBindingEnergy(
 }
 
 // Set the number of transitions that can fill a subshell vacancy
-void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationTransitions( 
+void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationTransitions(
 						   const unsigned subshell,
 						   const unsigned transitions )
 {
@@ -870,12 +989,12 @@ void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationTransitions(
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the number of transitions is valid
   testPrecondition( transitions > 0 );
-  
+
   d_relaxation_transitions[subshell] = transitions;
 }
 
 // Set the relaxation vacancies for a subshell
-void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationVacancies( 
+void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationVacancies(
        const unsigned subshell,
        const std::vector<std::pair<unsigned,unsigned> >& relaxation_vacancies )
 {
@@ -903,7 +1022,7 @@ void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationParticleEnergie
 }
 
 // Set the relaxation probabilities for a subshell
-void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationProbabilities( 
+void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationProbabilities(
 			  const unsigned subshell,
 			  const std::vector<double>& relaxation_probabilities )
 {
@@ -913,10 +1032,10 @@ void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationProbabilities(
   testPrecondition( relaxation_probabilities.size() ==
 		    d_relaxation_transitions.find( subshell )->second );
   testPreconditionValuesGreaterThanZero( relaxation_probabilities );
-  
+
   d_relaxation_probabilities[subshell] = relaxation_probabilities;
 }
-  
+
 //---------------------------------------------------------------------------//
 // SET PHOTON DATA
 //---------------------------------------------------------------------------//
@@ -930,16 +1049,16 @@ void ElectronPhotonRelaxationDataContainer::setComptonProfileMomentumGrid(
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the momentum grid is valid
   testPrecondition( compton_profile_momentum_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( 
+  testPrecondition( Utility::Sort::isSortedAscending(
 				       compton_profile_momentum_grid.begin(),
 				       compton_profile_momentum_grid.end() ) );
   testPrecondition( compton_profile_momentum_grid.front() == -1.0 );
 
   d_compton_profile_momentum_grids[subshell] = compton_profile_momentum_grid;
 }
-  
+
 // Set the Compton profile for a subshell
-void ElectronPhotonRelaxationDataContainer::setComptonProfile( 
+void ElectronPhotonRelaxationDataContainer::setComptonProfile(
 				   const unsigned subshell,
 				   const std::vector<double>& compton_profile )
 {
@@ -952,9 +1071,9 @@ void ElectronPhotonRelaxationDataContainer::setComptonProfile(
 
   d_compton_profiles[subshell] = compton_profile;
 }
-  
+
 // Set the occupation number momentum grid for a subshell
-void ElectronPhotonRelaxationDataContainer::setOccupationNumberMomentumGrid( 
+void ElectronPhotonRelaxationDataContainer::setOccupationNumberMomentumGrid(
 		    const unsigned subshell,
 		    const std::vector<double>& occupation_number_momentum_grid )
 {
@@ -962,16 +1081,16 @@ void ElectronPhotonRelaxationDataContainer::setOccupationNumberMomentumGrid(
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the occupation number momentum grid is valid
   testPrecondition( occupation_number_momentum_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( 
+  testPrecondition( Utility::Sort::isSortedAscending(
 					occupation_number_momentum_grid.begin(),
 					occupation_number_momentum_grid.end()));
   testPrecondition( occupation_number_momentum_grid.front() == -1.0 );
 
   d_occupation_number_momentum_grids[subshell] = occupation_number_momentum_grid;
 }
-  
+
 // Set the occupation number for a subshell
-void ElectronPhotonRelaxationDataContainer::setOccupationNumber( 
+void ElectronPhotonRelaxationDataContainer::setOccupationNumber(
 				  const unsigned subshell,
 				  const std::vector<double>& occupation_number )
 {
@@ -995,16 +1114,16 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunctionMo
   testPrecondition( Utility::Sort::isSortedAscending( momentum_grid.begin(),
 						      momentum_grid.end() ) );
   testPreconditionValuesGreaterThanOrEqualToZero( momentum_grid );
-  
+
   d_waller_hartree_scattering_function_momentum_grid = momentum_grid;
 }
-  
-// Set the Waller-Hartree scattering function 
+
+// Set the Waller-Hartree scattering function
 void ElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunction(
 			       const std::vector<double>& scattering_function )
 {
   // Make sure the scattering function is valid
-  testPrecondition( scattering_function.size() == 
+  testPrecondition( scattering_function.size() ==
 		    d_waller_hartree_scattering_function_momentum_grid.size());
   testPrecondition( scattering_function.front() >= 0.0 );
   testPrecondition( scattering_function.back() == d_atomic_number );
@@ -1021,28 +1140,61 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactorMome
   testPrecondition( Utility::Sort::isSortedAscending( momentum_grid.begin(),
 						      momentum_grid.end() ) );
   testPreconditionValuesGreaterThanOrEqualToZero( momentum_grid );
-  
+
   d_waller_hartree_atomic_form_factor_momentum_grid = momentum_grid;
 }
-  
-// Set the Waller-Hartree atomic form factor 
+
+// Set the Waller-Hartree atomic form factor
 void ElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactor(
 			        const std::vector<double>& atomic_form_factor )
 {
   // Make sure the atomic form factor is valid
   testPrecondition( atomic_form_factor.size() ==
 		    d_waller_hartree_atomic_form_factor_momentum_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( 
-						 atomic_form_factor.rbegin(),
-						 atomic_form_factor.rend() ) );
+  testPrecondition( Utility::Sort::isSortedDescending(
+                                                  atomic_form_factor.begin(),
+						  atomic_form_factor.end() ) );
   testPrecondition( atomic_form_factor.front() == d_atomic_number );
   testPrecondition( atomic_form_factor.back() >= 0.0 );
 
   d_waller_hartree_atomic_form_factor = atomic_form_factor;
 }
+
+// Return the Waller-Hartree squared atomic form factor squared mom. grid
+void ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(
+                             const std::vector<double>& squared_momentum_grid )
+{
+  // Make sure the momentum grid is valid
+  testPrecondition( squared_momentum_grid.size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+                                               squared_momentum_grid.begin(),
+					       squared_momentum_grid.end() ) );
+  testPreconditionValuesGreaterThanOrEqualToZero( squared_momentum_grid );
+
+  d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid =
+    squared_momentum_grid;
+}
   
+// Return the Waller-Hartree squared atomic form factor
+void ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactor(
+                        const std::vector<double>& squared_atomic_form_factor )
+{
+  // Make sure the atomic form factor is valid
+  testPrecondition(
+     squared_atomic_form_factor.size() ==
+     d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid.size() );
+  testPrecondition( Utility::Sort::isSortedDescending(
+                                          squared_atomic_form_factor.begin(),
+					  squared_atomic_form_factor.end() ) );
+  testPrecondition( squared_atomic_form_factor.front() ==
+                    d_atomic_number*d_atomic_number );
+  testPrecondition( squared_atomic_form_factor.back() >= 0.0 );
+
+  d_waller_hartree_squared_atomic_form_factor = squared_atomic_form_factor;
+}
+
 // Set the photon energy grid
-void ElectronPhotonRelaxationDataContainer::setPhotonEnergyGrid( 
+void ElectronPhotonRelaxationDataContainer::setPhotonEnergyGrid(
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
@@ -1052,7 +1204,7 @@ void ElectronPhotonRelaxationDataContainer::setPhotonEnergyGrid(
 }
 
 // Set the average photon heating numbers
-void ElectronPhotonRelaxationDataContainer::setAveragePhotonHeatingNumbers( 
+void ElectronPhotonRelaxationDataContainer::setAveragePhotonHeatingNumbers(
 				   const std::vector<double>& heating_numbers )
 {
   // Make sure the heating numbers are valid
@@ -1061,16 +1213,16 @@ void ElectronPhotonRelaxationDataContainer::setAveragePhotonHeatingNumbers(
 
   d_average_photon_heating_numbers = heating_numbers;
 }
-  
+
 // Set the incoherent photon cross section using Waller-Hartree (WH) theory
 void ElectronPhotonRelaxationDataContainer::setWallerHartreeIncoherentCrossSection(
 			  const std::vector<double>& incoherent_cross_section )
 {
   // Make sure the incoherent cross section is valid
-  testPrecondition( incoherent_cross_section.size() <= 
+  testPrecondition( incoherent_cross_section.size() <=
 		    d_photon_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( incoherent_cross_section );
-  
+
   d_waller_hartree_incoherent_cross_section = incoherent_cross_section;
 }
 
@@ -1081,19 +1233,19 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeIncoherentCrossSecti
   // Make sure the threshold index is valid
   testPrecondition( d_waller_hartree_incoherent_cross_section.size() + index ==
 		    d_photon_energy_grid.size() );
-  
+
   d_waller_hartree_incoherent_cross_section_threshold_index = index;
 }
-  
+
 // Set the incoherent photon cross section using the impulse approx. (IA)
 void ElectronPhotonRelaxationDataContainer::setImpulseApproxIncoherentCrossSection(
 			  const std::vector<double>& incoherent_cross_section )
 {
   // Make sure the incoherent cross section is valid
-  testPrecondition( incoherent_cross_section.size() <= 
+  testPrecondition( incoherent_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( incoherent_cross_section );
-  
+  testPreconditionValuesGreaterThanOrEqualToZero( incoherent_cross_section );
+
   d_impulse_approx_incoherent_cross_section = incoherent_cross_section;
 }
 
@@ -1104,7 +1256,7 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxIncoherentCrossSecti
   // Make sure the threshold index is valid
   testPrecondition( d_impulse_approx_incoherent_cross_section.size() + index ==
 		    d_photon_energy_grid.size() );
-  
+
   d_impulse_approx_incoherent_cross_section_threshold_index = index;
 }
 
@@ -1116,11 +1268,11 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxSubshellIncoherentCr
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoherent cross section is valid
-  testPrecondition( incoherent_cross_section.size() <= 
+  testPrecondition( incoherent_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( incoherent_cross_section );
-  
-  d_impulse_approx_subshell_incoherent_cross_sections[subshell] = 
+  testPreconditionValuesGreaterThanOrEqualToZero( incoherent_cross_section );
+
+  d_impulse_approx_subshell_incoherent_cross_sections[subshell] =
     incoherent_cross_section;
 }
 
@@ -1134,24 +1286,24 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxSubshellIncoherentCr
   // Make sure the threshold index is valid
   testPrecondition( d_impulse_approx_subshell_incoherent_cross_sections.find( subshell ) !=
 		    d_impulse_approx_subshell_incoherent_cross_sections.end());
-  remember( const std::vector<double>& incoherent_cross_section = 
+  remember( const std::vector<double>& incoherent_cross_section =
 	    d_impulse_approx_subshell_incoherent_cross_sections.find( subshell )->second );
   testPrecondition( incoherent_cross_section.size() + index ==
 		    d_photon_energy_grid.size() );
-  
-  d_impulse_approx_subshell_incoherent_cross_section_theshold_indices[subshell] =
+
+  d_impulse_approx_subshell_incoherent_cross_section_threshold_indices[subshell] =
     index;
 }
-  
-// Set the WH coherent cross section 
+
+// Set the WH coherent cross section
 void ElectronPhotonRelaxationDataContainer::setWallerHartreeCoherentCrossSection(
 			    const std::vector<double>& coherent_cross_section )
 {
   // Make sure the coherent cross section is valid
-  testPrecondition( coherent_cross_section.size() <= 
+  testPrecondition( coherent_cross_section.size() <=
 		    d_photon_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( coherent_cross_section );
-  
+
   d_waller_hartree_coherent_cross_section = coherent_cross_section;
 }
 
@@ -1162,10 +1314,10 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeCoherentCrossSection
   // Make sure the threshold index is valid
   testPrecondition( d_waller_hartree_coherent_cross_section.size() + index ==
 		    d_photon_energy_grid.size() );
-  
+
   d_waller_hartree_coherent_cross_section_threshold_index = index;
 }
-  
+
 // Set the pair production cross section
 void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSection(
 		     const std::vector<double>& pair_production_cross_section )
@@ -1173,20 +1325,43 @@ void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSection(
   // Make sure the pair production cross section is valid
   testPrecondition( pair_production_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( pair_production_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( pair_production_cross_section );
 
   d_pair_production_cross_section = pair_production_cross_section;
 }
 
 // Set the pair production cross section threshold energy bin index
-void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSectionThresholdEnergyIndex( 
+void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSectionThresholdEnergyIndex(
 							 const unsigned index )
 {
   // Make sure the threshold index is valid
   testPrecondition( d_pair_production_cross_section.size() + index ==
 		    d_photon_energy_grid.size() );
-  
+
   d_pair_production_cross_section_threshold_index = index;
+}
+
+// Set the triplet production cross section
+void ElectronPhotonRelaxationDataContainer::setTripletProductionCrossSection(
+		  const std::vector<double>& triplet_production_cross_section )
+{
+  // Make sure the triplet production cross section is valid
+  testPrecondition( triplet_production_cross_section.size() <=
+		    d_photon_energy_grid.size() );
+  testPreconditionValuesGreaterThanOrEqualToZero( triplet_production_cross_section );
+
+  d_triplet_production_cross_section = triplet_production_cross_section;
+}
+
+// Set the triplet production cross section threshold energy bin index
+void ElectronPhotonRelaxationDataContainer::setTripletProductionCrossSectionThresholdEnergyIndex(
+							 const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_triplet_production_cross_section.size() + index ==
+		    d_photon_energy_grid.size() );
+
+  d_triplet_production_cross_section_threshold_index = index;
 }
 
 // Set the Photoelectric effect cross section
@@ -1196,7 +1371,7 @@ void ElectronPhotonRelaxationDataContainer::setPhotoelectricCrossSection(
   // Make sure the photoelectric cross section is valid
   testPrecondition( photoelectric_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  
+
   d_photoelectric_cross_section = photoelectric_cross_section;
 }
 
@@ -1207,26 +1382,26 @@ void ElectronPhotonRelaxationDataContainer::setPhotoelectricCrossSectionThreshol
   // Make sure the threshold index is valid
   testPrecondition( d_photoelectric_cross_section.size() + index ==
 		    d_photon_energy_grid.size() );
-  
+
   d_photoelectric_cross_section_threshold_index = index;
 }
-  
+
 // Set the Photoelectric effect cross section for a subshell
-void ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSection( 
+void ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSection(
 		       const unsigned subshell,
 		       const std::vector<double>& photoelectric_cross_section )
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the photoelectric cross section is valid
-  testPrecondition( photoelectric_cross_section.size() <= 
+  testPrecondition( photoelectric_cross_section.size() <=
 		    d_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( photoelectric_cross_section );
-  
-  d_subshell_photoelectric_cross_sections[subshell] = 
+  testPreconditionValuesGreaterThanOrEqualToZero( photoelectric_cross_section );
+
+  d_subshell_photoelectric_cross_sections[subshell] =
     photoelectric_cross_section;
 }
-  
+
 // Set the subshell Photoelectric effect cross section threshold index
 void ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSectionThresholdEnergyIndex(
 						       const unsigned subshell,
@@ -1237,22 +1412,22 @@ void ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSection
   // Make sure the index is valid
   testPrecondition( d_subshell_photoelectric_cross_sections.find( subshell ) !=
 		    d_subshell_photoelectric_cross_sections.end() );
-  remember( const std::vector<double> photoelectric_cross_section = 
+  remember( const std::vector<double> photoelectric_cross_section =
 	    d_subshell_photoelectric_cross_sections.find( subshell )->second );
   testPrecondition( photoelectric_cross_section.size() + index ==
 		    d_photon_energy_grid.size() );
-  
+
   d_subshell_photoelectric_cross_section_threshold_indices[subshell] = index;
 }
 
 // Set the Waller-Hartree total cross section
-void ElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection( 
+void ElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection(
 			       const std::vector<double>& total_cross_section )
 {
   // Make sure the total cross section is valid
   testPrecondition( total_cross_section.size() == d_photon_energy_grid.size());
   testPreconditionValuesGreaterThanZero( total_cross_section );
-  
+
   d_waller_hartree_total_cross_section = total_cross_section;
 }
 
@@ -1263,22 +1438,22 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
   // Make sure the total cross section is valid
   testPrecondition( total_cross_section.size() == d_photon_energy_grid.size());
   testPreconditionValuesGreaterThanZero( total_cross_section );
-  
+
   d_impulse_approx_total_cross_section = total_cross_section;
 }
 
 
 //---------------------------------------------------------------------------//
-// SET ELECTRON DATA 
+// SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
 // Set the elastic angular energy grid
-void ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid( 
+void ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid(
 				       const std::vector<double>& angular_energy_grid )
 {
   // Make sure the angular energy grid is valid
   testPrecondition( angular_energy_grid.back() > 0 );
-  testPrecondition( 
+  testPrecondition(
         Utility::Sort::isSortedAscending( angular_energy_grid.begin(),
 			                              angular_energy_grid.end() ) );
 
@@ -1309,7 +1484,7 @@ void ElectronPhotonRelaxationDataContainer::setCutoffElasticAnglesAtEnergy(
 }
 
 // Set the total elastic pdf for an incoming energy
-void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDFAtEnergy( 
+void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDFAtEnergy(
     const double incoming_energy,
     const std::vector<double>& cutoff_elastic_pdf )
 {
@@ -1318,7 +1493,7 @@ void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDFAtEnergy(
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
   // Make sure the weight is valid
   testPreconditionValuesGreaterThanZero( cutoff_elastic_pdf );
-  
+
   d_cutoff_elastic_pdf[incoming_energy] = cutoff_elastic_pdf;
 }
 // Set the total elastic angles
@@ -1328,14 +1503,14 @@ void ElectronPhotonRelaxationDataContainer::setCutoffElasticAngles(
   d_cutoff_elastic_angles = cutoff_elastic_angles;
 }
 
-// Set the total elastic pdf 
-void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF( 
+// Set the total elastic pdf
+void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF(
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf )
 {
   d_cutoff_elastic_pdf = cutoff_elastic_pdf;
 }
 
-// Set the screened Rutherford elastic normalization constant 
+// Set the screened Rutherford elastic normalization constant
 void ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant(
 		     const std::vector<double>& screened_rutherford_normalization_constant )
 {
@@ -1345,12 +1520,12 @@ void ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationCo
                                   isValueLessThanZero ) ==
                     screened_rutherford_normalization_constant.end() );
 
-  d_screened_rutherford_normalization_constant = 
+  d_screened_rutherford_normalization_constant =
     screened_rutherford_normalization_constant;
 }
 
-// Set Moliere's screening constant 
-void ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant( 
+// Set Moliere's screening constant
+void ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant(
 			 const std::vector<double>& moliere_screening_constant )
 {
   d_moliere_screening_constant = moliere_screening_constant;
@@ -1376,12 +1551,12 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAn
                                   isValueGreaterThanOne ) ==
                     moment_preserving_elastic_discrete_angles.end() );
 
-  d_moment_preserving_elastic_discrete_angles[incoming_energy] = 
+  d_moment_preserving_elastic_discrete_angles[incoming_energy] =
         moment_preserving_elastic_discrete_angles;
 }
 
 // Set the moment preserving elastic weights for an incoming energy
-void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights( 
+void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights(
 			 const double incoming_energy,
 			 const std::vector<double>& moment_preserving_elastic_weights )
 {
@@ -1396,13 +1571,13 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights(
                                   moment_preserving_elastic_weights.end(),
                                   isValueGreaterThanOne ) ==
                     moment_preserving_elastic_weights.end() );
-  
+
   d_moment_preserving_elastic_weights[incoming_energy] = moment_preserving_elastic_weights;
 }
 
 // Set the electroionization energy grid for a subshell
 void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid(
-            const unsigned subshell, 
+            const unsigned subshell,
             const std::vector<double>& electroionization_energy_grid )
 {
   // Make sure the subshell is valid
@@ -1413,8 +1588,8 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid(
 }
 
 // Set the electroionization recoil energy for a subshell and energy bin
-void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy( 
-            const unsigned subshell, 
+void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy(
+            const unsigned subshell,
             const double incoming_energy,
             const std::vector<double>& electroionization_recoil_energy )
 {
@@ -1449,8 +1624,8 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDFAtIncom
 }
 
 // Set electroionization recoil energy for all incoming energies in a subshell
-void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergy( 
-    const unsigned subshell, 
+void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergy(
+    const unsigned subshell,
     const std::map<double,std::vector<double> >& electroionization_recoil_energy )
 {
   // Make sure the subshell is valid
@@ -1473,7 +1648,7 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDF(
 }
 
 // Set the bremsstrahlung energy grid
-void ElectronPhotonRelaxationDataContainer::setBremsstrahlungEnergyGrid( 
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungEnergyGrid(
 				       const std::vector<double>& bremsstrahlung_energy_grid )
 {
   // Make sure the energy grid is valid
@@ -1493,12 +1668,12 @@ void ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonEnergyAtIncom
   // Make sure the bremsstrahlung photon energies are valid
   testPreconditionValuesGreaterThanZero( bremsstrahlung_photon_energy );
 
-  d_bremsstrahlung_photon_energy[incoming_energy] = 
+  d_bremsstrahlung_photon_energy[incoming_energy] =
     bremsstrahlung_photon_energy;
 }
 
 // Set the bremsstrahlung photon pdf for an incoming energy
-void ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonPDFAtIncomingEnergy( 
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonPDFAtIncomingEnergy(
 			 const double incoming_energy,
 			 const std::vector<double>& bremsstrahlung_photon_pdf )
 {
@@ -1507,7 +1682,7 @@ void ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonPDFAtIncoming
   testPrecondition( incoming_energy <= d_bremsstrahlung_energy_grid.back() );
   // Make sure the pdf is valid
   testPreconditionValuesGreaterThanZero( bremsstrahlung_photon_pdf );
-  
+
   d_bremsstrahlung_photon_pdf[incoming_energy] = bremsstrahlung_photon_pdf;
 }
 
@@ -1519,14 +1694,14 @@ void ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonEnergy(
 }
 
 // Set all the bremsstrahlung photon pdf
-void ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonPDF( 
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonPDF(
     const std::map<double,std::vector<double> >& bremsstrahlung_photon_pdf )
 {
   d_bremsstrahlung_photon_pdf = bremsstrahlung_photon_pdf;
 }
 
 // Set the atomic excitation energy grid
-void ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyGrid( 
+void ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyGrid(
 				       const std::vector<double>& atomic_excitation_energy_grid )
 {
   // Make sure the energy grid is valid
@@ -1542,12 +1717,12 @@ void ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyLoss(
   // Make sure the atomic excitation energy loss are valid
   testPreconditionValuesGreaterThanZero( atomic_excitation_energy_loss );
 
-  d_atomic_excitation_energy_loss = 
+  d_atomic_excitation_energy_loss =
     atomic_excitation_energy_loss;
 }
 
 // Set the electron energy grid
-void ElectronPhotonRelaxationDataContainer::setElectronEnergyGrid( 
+void ElectronPhotonRelaxationDataContainer::setElectronEnergyGrid(
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
@@ -1556,15 +1731,15 @@ void ElectronPhotonRelaxationDataContainer::setElectronEnergyGrid(
   d_electron_energy_grid = energy_grid;
 }
 
-// Set the cutoff elastic electron cross section 
+// Set the cutoff elastic electron cross section
 void ElectronPhotonRelaxationDataContainer::setCutoffElasticCrossSection(
 			 const std::vector<double>& cutoff_elastic_cross_section )
 {
   // Make sure the cutoff elastic cross section is valid
-  testPrecondition( cutoff_elastic_cross_section.size() <= 
+  testPrecondition( cutoff_elastic_cross_section.size() <=
                     d_electron_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( cutoff_elastic_cross_section );
-  
+
   d_cutoff_elastic_cross_section = cutoff_elastic_cross_section;
 }
 
@@ -1573,25 +1748,25 @@ void ElectronPhotonRelaxationDataContainer::setCutoffElasticCrossSectionThreshol
 						        const unsigned index )
 {
   // Make sure the threshold index is valid
-  testPrecondition( 
+  testPrecondition(
         d_cutoff_elastic_cross_section.size() + index ==
         d_electron_energy_grid.size() );
-  
+
  d_cutoff_elastic_cross_section_threshold_index = index;
 }
 
-// Set the screened rutherford elastic electron cross section 
+// Set the screened rutherford elastic electron cross section
 void ElectronPhotonRelaxationDataContainer::setScreenedRutherfordElasticCrossSection(
 			 const std::vector<double>& screened_rutherford_elastic_cross_section )
 {
   // Make sure the screened rutherford elastic cross section is valid
-  testPrecondition( screened_rutherford_elastic_cross_section.size() <= 
+  testPrecondition( screened_rutherford_elastic_cross_section.size() <=
                     d_electron_energy_grid.size() );
   testPrecondition( std::find_if( screened_rutherford_elastic_cross_section.begin(),
                                   screened_rutherford_elastic_cross_section.end(),
                                   isValueLessThanZero ) ==
                     screened_rutherford_elastic_cross_section.end() );
-  
+
   d_screened_rutherford_elastic_cross_section = screened_rutherford_elastic_cross_section;
 }
 
@@ -1600,22 +1775,22 @@ void ElectronPhotonRelaxationDataContainer::setScreenedRutherfordElasticCrossSec
 						        const unsigned index )
 {
   // Make sure the threshold index is valid
-  testPrecondition( 
+  testPrecondition(
         d_screened_rutherford_elastic_cross_section.size() + index ==
         d_electron_energy_grid.size() );
-  
+
  d_screened_rutherford_elastic_cross_section_threshold_index = index;
 }
 
-// Set the total elastic electron cross section 
+// Set the total elastic electron cross section
 void ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSection(
 			 const std::vector<double>& total_elastic_cross_section )
 {
   // Make sure the total elastic cross section is valid
-  testPrecondition( total_elastic_cross_section.size() <= 
+  testPrecondition( total_elastic_cross_section.size() <=
                     d_electron_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( total_elastic_cross_section );
-  
+
   d_total_elastic_cross_section = total_elastic_cross_section;
 }
 
@@ -1624,10 +1799,10 @@ void ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSectionThreshold
 						        const unsigned index )
 {
   // Make sure the threshold index is valid
-  testPrecondition( 
+  testPrecondition(
         d_total_elastic_cross_section.size() + index ==
         d_electron_energy_grid.size() );
-  
+
  d_total_elastic_cross_section_threshold_index = index;
 }
 
@@ -1636,12 +1811,12 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSection(
 			 const std::vector<double>& moment_preserving_elastic_cross_section )
 {
   // Make sure the moment preserving elastic cross section is valid
-  testPrecondition( moment_preserving_elastic_cross_section.size() <= 
+  testPrecondition( moment_preserving_elastic_cross_section.size() <=
                     d_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( 
+  testPreconditionValuesGreaterThanZero(
     moment_preserving_elastic_cross_section );
-  
-  d_moment_preserving_elastic_cross_section = 
+
+  d_moment_preserving_elastic_cross_section =
         moment_preserving_elastic_cross_section;
 }
 
@@ -1650,14 +1825,14 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionThres
 						        const unsigned index )
 {
   // Make sure the threshold index is valid
-  testPrecondition( 
+  testPrecondition(
         d_moment_preserving_elastic_cross_section.size() + index ==
         d_electron_energy_grid.size() );
-  
+
  d_moment_preserving_elastic_cross_section_threshold_index= index;
 }
 
-// Set the electroionization electron cross section 
+// Set the electroionization electron cross section
 void ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSection(
             const unsigned subshell,
             const std::vector<double>& electroionization_cross_section )
@@ -1665,11 +1840,11 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSection(
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the electroionization cross section is valid
-  testPrecondition( electroionization_cross_section.size() <= 
+  testPrecondition( electroionization_cross_section.size() <=
                     d_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero(electroionization_cross_section );
-  
-  d_electroionization_subshell_cross_section[subshell] = 
+  testPreconditionValuesGreaterThanOrEqualToZero(electroionization_cross_section );
+
+  d_electroionization_subshell_cross_section[subshell] =
     electroionization_cross_section;
 }
 
@@ -1681,22 +1856,22 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSectionThre
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the threshold index is valid
-  testPrecondition( 
+  testPrecondition(
         d_electroionization_subshell_cross_section[subshell].size() + index ==
         d_electron_energy_grid.size() );
-  
+
  d_electroionization_subshell_cross_section_threshold_index[subshell] = index;
 }
 
-// Set the bremsstrahlung electron cross section 
+// Set the bremsstrahlung electron cross section
 void ElectronPhotonRelaxationDataContainer::setBremsstrahlungCrossSection(
 			 const std::vector<double>& bremsstrahlung_cross_section )
 {
   // Make sure the bremsstrahlung cross section is valid
-  testPrecondition( bremsstrahlung_cross_section.size() <= 
+  testPrecondition( bremsstrahlung_cross_section.size() <=
                     d_electron_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( bremsstrahlung_cross_section );
-  
+
   d_bremsstrahlung_cross_section = bremsstrahlung_cross_section;
 }
 
@@ -1705,22 +1880,22 @@ void ElectronPhotonRelaxationDataContainer::setBremsstrahlungCrossSectionThresho
 						        const unsigned index )
 {
   // Make sure the threshold index is valid
-  testPrecondition( 
+  testPrecondition(
         d_bremsstrahlung_cross_section.size() + index ==
         d_electron_energy_grid.size() );
-  
+
  d_bremsstrahlung_cross_section_threshold_index = index;
 }
 
-// Set the atomic excitation electron cross section 
+// Set the atomic excitation electron cross section
 void ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSection(
 			 const std::vector<double>& atomic_excitation_cross_section )
 {
   // Make sure the atomic excitation cross section is valid
-  testPrecondition( atomic_excitation_cross_section.size() <= 
+  testPrecondition( atomic_excitation_cross_section.size() <=
                     d_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( atomic_excitation_cross_section );
-  
+  testPreconditionValuesGreaterThanOrEqualToZero( atomic_excitation_cross_section );
+
   d_atomic_excitation_cross_section = atomic_excitation_cross_section;
 }
 
@@ -1729,10 +1904,10 @@ void ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSectionThres
 						        const unsigned index )
 {
   // Make sure the threshold index is valid
-  testPrecondition( 
+  testPrecondition(
         d_atomic_excitation_cross_section.size() + index ==
         d_electron_energy_grid.size() );
-  
+
  d_atomic_excitation_cross_section_threshold_index = index;
 }
 

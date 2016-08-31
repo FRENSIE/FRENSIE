@@ -43,7 +43,7 @@ public:
 
   //! Typedef for direction type
   typedef double directionType;
-  
+
   //! Typedef for energy type
   typedef double energyType;
 
@@ -55,12 +55,12 @@ public:
 
   //! Typedef for generation number type
   typedef unsigned generationNumberType;
-  
+
   //! Typedef for weight type
   typedef double weightType;
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
@@ -68,7 +68,7 @@ public:
 
   //! Default constructor
   ParticleState();
-  
+
   //! Constructor
   ParticleState( const historyNumberType history_number,
 		 const ParticleType type );
@@ -118,7 +118,7 @@ public:
   const double* getPosition() const;
 
   //! Set the position of the particle
-  void setPosition( const double x_position, 
+  void setPosition( const double x_position,
 		    const double y_position,
 		    const double z_position );
 
@@ -169,7 +169,7 @@ public:
 
   //! Return the collision number of the particle
   collisionNumberType getCollisionNumber() const;
-  
+
   //! Increment the collision number of the particle
   void incrementCollisionNumber();
 
@@ -181,7 +181,7 @@ public:
 
   //! Increment the generation number of the particle
   void incrementGenerationNumber();
-  
+
   //! Return the weight of the particle
   double getWeight() const;
 
@@ -232,7 +232,7 @@ private:
   void load( Archive& ar, const unsigned version );
 
   BOOST_SERIALIZATION_SPLIT_MEMBER();
-  
+
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
@@ -247,7 +247,7 @@ private:
 
   // Direction of the particle
   directionType d_direction[3];
-  
+
   // Energy of the particle (MeV)
   energyType d_energy;
 
@@ -271,7 +271,7 @@ private:
 
   // Finished history boolean
   bool d_gone;
-  
+
   // Ray for ray tracing
   Geometry::Ray d_ray;
 };

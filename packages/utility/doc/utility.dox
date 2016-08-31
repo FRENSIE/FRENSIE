@@ -52,9 +52,9 @@
  * another category, add them to this subpackage.
  *
  * \section utility_hdf5_sec The HDF5 Subpackage
- * The hdf5 subpackage provides hdf5 file io functionality. The 
+ * The hdf5 subpackage provides hdf5 file io functionality. The
  * Utility::HDF5FileHandler class is used to interact with hdf5 files
- * and provides all functions for writing to and reading from hdf5 files. 
+ * and provides all functions for writing to and reading from hdf5 files.
  * The functions are all templates and rely on the Utility::HDF5TypeTraits
  * class to convert the type of interest to an appropriate hdf5 type. All
  * types that will be written to and read from hdf5 files must have
@@ -71,8 +71,8 @@
  * All packages that need random number generation capabilities should use
  * the Utility::RandomNumberGenerator class, which is simply a wrapper
  * around the random number generator classes. It also provides support for
- * generating random numbers in multithreaded programs. 
- * 
+ * generating random numbers in multithreaded programs.
+ *
  * \section utility_dist_sec The Distribution Subpackage
  * The distribution subpackage contains a collection of distributions that
  * can be customized and used for Monte Carlo sampling. All 1D distributions
@@ -80,9 +80,9 @@
  * a Utility::SpatialDistribution base class for sampling from 3D distributions
  * and a Utility::DirectionalDistribution for sampling of directions. All
  * distribution classes can be written to and read from XML files. For the
- * 1D distributions, this is accomplished with the 
+ * 1D distributions, this is accomplished with the
  * Utility::XMLCompatibleObject. For details regarding all of the distribution
- * classes, refer to the \ref distribution "distribution" page. 
+ * classes, refer to the \ref distribution "distribution" page.
  *
  * \section utility_integrator_sec The Integrator Subpackage
  *

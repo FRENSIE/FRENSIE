@@ -17,13 +17,13 @@ import sys
 def importPyFrensieModuleFromBuildDir(name, globals={}, locals={}):
     """
     importPyFrensieModuleFromBuildDir(name, globals={}, locals={}) -> module
-    
+
     Return the requested PyFrensie module from the build directory. This
     method should only be used for unit testing and is only designed to work
     from the local build directory. The 'name' must be a valid PyFrensie module
-    name. 
+    name.
     """
-    
+
     pyfrensie_name = "PyFrensie"
 
     # The build directory must be put into the python search path.

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_ElectronState.hpp
 //! \author Luke Kersting
 //! \brief  Electron state class declaration
@@ -17,9 +17,9 @@ namespace MonteCarlo{
 //! The electron state class
 class ElectronState : public MassiveParticleState
 {
-  
+
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 

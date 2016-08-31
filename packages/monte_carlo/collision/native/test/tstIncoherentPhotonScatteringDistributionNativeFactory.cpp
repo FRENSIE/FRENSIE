@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
-Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution> 
+Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>
   distribution;
 
 //---------------------------------------------------------------------------//
@@ -42,16 +42,16 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 					       3.0 );
 
   // Test distribution properties
-  double dist_value = distribution->evaluate( 
+  double dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 4.9893440508834e-1, 1e-12 );
 
-  dist_value = distribution->evaluate( 
+  dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 9.2395260201544e-2, 1e-12 );
 }
 
@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 		   createIncoherentDistribution )
 {
-  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
+  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
                                                *data_container,
 					       distribution,
 					       MonteCarlo::WH_INCOHERENT_MODEL,
@@ -70,21 +70,21 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   double dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
 
-  dist_value = distribution->evaluate( 
+  dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 7.57217551794289268, 1e-15 );
-  
+
   MonteCarlo::ParticleBank bank;
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
@@ -94,7 +94,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   fake_stream[2] = 0.5; // accept x in scattering function rejection loop
   fake_stream[3] = 0.2; // select M3 subshell
   fake_stream[4] = 0.5; // azimuthal_angle = pi
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->scatterPhoton( photon,
@@ -117,7 +117,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 		   createCFPDopplerBroadenedIncoherentDistribution )
 {
-  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
+  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
 		 *data_container,
 		 distribution,
 		 MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
@@ -127,21 +127,21 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   double dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
 
-  dist_value = distribution->evaluate( 
+  dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 7.57217551794289268, 1e-12 );
 
   MonteCarlo::ParticleBank bank;
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
@@ -152,7 +152,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   fake_stream[3] = 0.005; // select first shell for collision
   fake_stream[4] = 0.5; // select pz = 0.0
   fake_stream[5] = 0.5; // azimuthal_angle = pi
-    
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->scatterPhoton( photon,
@@ -184,21 +184,21 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   double dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
 
-  dist_value = distribution->evaluate( 
+  dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
   
-  TEST_FLOATING_EQUALITY( dist_value, 0.18204031443868224, 1e-6 );
+  TEST_FLOATING_EQUALITY( dist_value, 0.182031495370433727, 1e-6 );
 
   MonteCarlo::ParticleBank bank;
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   std::vector<double> fake_stream( 4 );
@@ -234,24 +234,24 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 			  MonteCarlo::FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL,
 			  3.0,
 			  1 );
-  
+
   // Test distribution properties
   double dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
 
-  dist_value = distribution->evaluate( 
+  dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
   MonteCarlo::ParticleBank bank;
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   std::vector<double> fake_stream( 5 );
@@ -289,25 +289,25 @@ int main( int argc, char** argv )
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create the native data file container
-  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
 						     test_native_file_name ) );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -320,8 +320,8 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);      
-}  
+  return (success ? 0 : 1);
+}
 
 //---------------------------------------------------------------------------//
 // end tstIncoherentPhotonScatteringDistributionNativeFactory.cpp

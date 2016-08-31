@@ -23,9 +23,9 @@
 #include "Utility_QuantityTraits.hpp"
 
 /*! \defgroup data_proc Data Processing
- * 
- * A data processing interface is defined which allows the necessary data to 
- * be processed in very simple way. Each type of particle has its own data 
+ *
+ * A data processing interface is defined which allows the necessary data to
+ * be processed in very simple way. Each type of particle has its own data
  * processor defined, which implements the abstract data processing interface.
  */
 
@@ -38,12 +38,12 @@ namespace Utility{
  * These protected member functions comprise the low level data processing
  * functionality that is needed to process any data file.
  * \ingroup data_proc
- */ 
+ */
 class DataProcessor
 {
-  
+
 public:
-  
+
   //! Constructor
   DataProcessor()
   { /* ... */ }
@@ -84,7 +84,7 @@ public:
   static void coarsenConstantRegions( Teuchos::Array<Tuple> &data );
 
   //! Calculate the slope between each pair of data points.
-  template<TupleMember indepMember, 
+  template<TupleMember indepMember,
 	   TupleMember depMember,
 	   TupleMember slopeMember,
 	   typename Array>
@@ -96,7 +96,7 @@ public:
 	   TupleMember cdfMember,
 	   typename Array>
   static typename QuantityTraits<typename TupleMemberTraits<typename ArrayTraits<Array>::value_type,cdfMember>::tupleMemberType>::template GetQuantityToPowerType<-1>::type
-  calculateContinuousCDF( Array &data, 
+  calculateContinuousCDF( Array &data,
 			  const bool normalize = true );
 
   //! Create a pdf from an array of data using a first order, lin. approx.
@@ -113,7 +113,7 @@ public:
   static void calculateDiscreteCDF( Teuchos::Array<Tuple> &data );
 
   //! Copy the data in the desired tuple member of the original tuple to the desired tuple member of the copy tuple.
-  template<TupleMember origMember, 
+  template<TupleMember origMember,
 	   TupleMember copyMember,
 	   typename OrigArray,
 	   typename CopyArray>
@@ -146,4 +146,4 @@ public:
 //---------------------------------------------------------------------------//
 // end Utility_DataProcessor.hpp
 //---------------------------------------------------------------------------//
- 
+

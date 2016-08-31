@@ -26,7 +26,7 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwarePowerDistribution<2,void,void> );
 // Default constructor
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistribution()
-{ 
+{
   // Make sure the exponent is valid
   testStaticPrecondition( N > 0 );
 }
@@ -39,7 +39,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
  */
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistribution( 
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistribution(
 				     const double constant_multiplier,
 				     const InputIndepQuantity min_indep_limit,
 				     const InputIndepQuantity max_indep_limit )
@@ -57,7 +57,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
   testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( min_indep_limit ) );
   testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( max_indep_limit ) );
   // Make sure that the min value is greater than or equal to zero
-  testPrecondition( min_indep_limit >= 
+  testPrecondition( min_indep_limit >=
 		    QuantityTraits<InputIndepQuantity>::zero() );
   // Make sure that the max value is greater than the min value
   testPrecondition( max_indep_limit > min_indep_limit );
@@ -66,15 +66,15 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
 }
 
 // Copy constructor
-/*! \details Just like boost::units::quantity objects, the unit-aware 
+/*! \details Just like boost::units::quantity objects, the unit-aware
  * distribution can be explicitly cast to a distribution with compatible
  * units. If the units are not compatible, this function will not compile. Note
- * that this allows distributions to be scaled safely (unit conversions 
+ * that this allows distributions to be scaled safely (unit conversions
  * are completely taken care of by boost::units)!
  */
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepUnit, typename InputDepUnit>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistribution( 
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistribution(
  const UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>& dist_instance )
   : d_multiplier(),
     d_min_indep_limit( dist_instance.d_min_indep_limit ),
@@ -92,7 +92,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
   // Make sure that the min value is greater than or equal to zero
   testPrecondition( dist_instance.d_min_indep_limit >= InputIQT::zero() );
   // Make sure that the max value is greater than the min value
-  testPrecondition( dist_instance.d_max_indep_limit > 
+  testPrecondition( dist_instance.d_max_indep_limit >
 		    dist_instance.d_min_indep_limit );
 
   typedef typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
@@ -103,7 +103,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
   // problems doing the conversion so we will do it manually)
   d_multiplier = getRawQuantity( dist_instance.d_multiplier )*
     DepQuantity( QuantityTraits<InputDepQuantity>::one() )/
-    PowerDistributionTraits<N>::powN( 
+    PowerDistributionTraits<N>::powN(
 		  IndepQuantity( QuantityTraits<InputIndepQuantity>::one() ) );
 
   this->initializeDistribution();
@@ -128,21 +128,21 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
   // Make sure that the min value is greater than or equal to zero
   testPrecondition( unitless_dist_instance.d_min_indep_limit >= QT::zero() );
   // Make sure that the max value is greater than the min value
-  testPrecondition( unitless_dist_instance.d_max_indep_limit > 
+  testPrecondition( unitless_dist_instance.d_max_indep_limit >
 		    unitless_dist_instance.d_min_indep_limit );
 
   this->initializeDistribution();
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
-/*! \details Constructing a unit-aware distribution from a unitless 
+/*! \details Constructing a unit-aware distribution from a unitless
  * distribution is potentially dangerous. By forcing users to construct objects
  * using this method instead of a standard constructor we are trying to make
- * sure users are aware of the danger. This is designed to mimic the interface 
- * of the boost::units::quantity, which also has to deal with this issue. 
+ * sure users are aware of the danger. This is designed to mimic the interface
+ * of the boost::units::quantity, which also has to deal with this issue.
  */
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit> 
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwarePowerDistribution<N,void,void>& unitless_distribution )
 {
   return ThisType( unitless_distribution, 0 );
@@ -150,39 +150,39 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromUnitlessDistrib
 
 // Assignment operator
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>& 
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::operator=( 
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>&
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::operator=(
    const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>& dist_instance )
 {
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_min_indep_limit >= IQT::zero() );
-  testPrecondition( dist_instance.d_max_indep_limit > 
+  testPrecondition( dist_instance.d_max_indep_limit >
 		    dist_instance.d_min_indep_limit );
-  
+
   if( this != &dist_instance )
   {
     d_multiplier = dist_instance.d_multiplier;
-    
+
     d_min_indep_limit = dist_instance.d_min_indep_limit;
-    
-    d_min_indep_limit_to_power_Np1 = 
+
+    d_min_indep_limit_to_power_Np1 =
       dist_instance.d_min_indep_limit_to_power_Np1;
-    
+
     d_max_indep_limit = dist_instance.d_max_indep_limit;
-    
-    d_max_indep_limit_to_power_Np1 = 
+
+    d_max_indep_limit_to_power_Np1 =
       dist_instance.d_max_indep_limit_to_power_Np1;
-    
+
     d_norm_constant = dist_instance.d_norm_constant;
   }
-  
+
   return *this;
 }
 
 // Evaluate the distribution
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::DepQuantity
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluate( 
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluate(
   const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < d_min_indep_limit )
@@ -196,7 +196,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluate(
 // Evaluate the PDF
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::InverseIndepQuantity
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluatePDF( 
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluatePDF(
   const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   return evaluate( indep_var_value )*d_norm_constant;
@@ -204,20 +204,20 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluatePDF(
 
 // Return a random sample from the distribution
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity 
+typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sample() const
 {
   IndepQuantityNp1 argument = RandomNumberGenerator::getRandomNumber<double>()*
     (d_max_indep_limit_to_power_Np1 - d_min_indep_limit_to_power_Np1 ) +
     d_min_indep_limit_to_power_Np1;
-  
+
   return PowerDistributionTraits<N>::np1Root( argument );
 }
 
 // Return a random sample from the distribution
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity 
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sample( 
+typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sample(
   const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity min_independent_value,
   const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity max_independent_value )
 {
@@ -229,7 +229,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sample(
   // Make sure that the max value is greater than the min value
   testPrecondition( max_independent_value > min_independent_value );
 
-  IndepQuantityNp1 min_indep_limit_to_power_np1 = 
+  IndepQuantityNp1 min_indep_limit_to_power_np1 =
     PowerDistributionTraits<N>::powNp1( min_independent_value );
 
   IndepQuantityNp1 argument = RandomNumberGenerator::getRandomNumber<double>()*
@@ -260,14 +260,14 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getUpperBoundOfInde
 // Return the lower bound of the distribution independent variable
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const 
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
   return d_min_indep_limit;
 }
 
 // Return the distribution type
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-OneDDistributionType 
+OneDDistributionType
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return PowerDistributionTraits<N>::distribution_type;
@@ -275,7 +275,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getDistributionType
 
 // Test if the distribution is continuous
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-bool 
+bool
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::isContinuous() const
 {
   return true;
@@ -283,7 +283,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::isContinuous() cons
 
 // Method for placing the object in an output stream
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::toStream( 
+void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::toStream(
 						       std::ostream& os ) const
 {
   os << "{" << getRawQuantity( d_multiplier )
@@ -294,7 +294,7 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::toStream(
 
 // Method for initializing the object from an input stream
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream( 
+void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
 							     std::istream& is )
 {
   // Read in the distribution representation
@@ -323,7 +323,7 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
 			      "cannot be constructed because the "
 			      "representation is not valid (see details "
 			      "below)!\n" );
-  
+
   TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 3,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the power " << N << " distribution cannot be "
@@ -335,13 +335,13 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
     d_multiplier = DMQT::initializeQuantity( distribution[0] );
   else
     d_multiplier = DMQT::one();
-  
+
   TEST_FOR_EXCEPTION( DMQT::isnaninf( d_multiplier ),
 		      InvalidDistributionStringRepresentation,
 		      "Error: the power " << N << " distribution cannot be "
 		      "constructed because the constant multiplier is not "
 		      "valid!" );
-  
+
   // Read the min independent limit
   if( distribution.size() == 3 )
     d_min_indep_limit = IQT::initializeQuantity( distribution[1] );
@@ -378,7 +378,7 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
 		      "constructed because the max independent limit is not "
 		      "valid!" );
 
-  this->initializeDistribution();	      
+  this->initializeDistribution();
 }
 
 // Method for testing if two objects are equivalent
@@ -395,15 +395,15 @@ template<unsigned N, typename IndependentUnit, typename DependentUnit>
 void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::initializeDistribution()
 {
   // Take the limits to the power N+1
-  d_min_indep_limit_to_power_Np1 = 
+  d_min_indep_limit_to_power_Np1 =
     PowerDistributionTraits<N>::powNp1( d_min_indep_limit );
-  
-  d_max_indep_limit_to_power_Np1 = 
+
+  d_max_indep_limit_to_power_Np1 =
     PowerDistributionTraits<N>::powNp1( d_max_indep_limit );
-  
+
   // Calculate the normalization constant
   d_norm_constant = (N+1.0)/
-    (d_multiplier*(d_max_indep_limit_to_power_Np1 - 
+    (d_multiplier*(d_max_indep_limit_to_power_Np1 -
   		   d_min_indep_limit_to_power_Np1 ));
 }
 

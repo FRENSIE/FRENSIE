@@ -21,7 +21,7 @@ namespace MonteCarlo{
 template<typename Dispatcher>
 class ParticleEventDispatcher
 {
-  
+
 public:
 
   // Constructor
@@ -40,7 +40,7 @@ public:
 	  const typename Dispatcher::EntityHandleType entity_id,
           const ModuleTraits::InternalEventObserverHandle observer_id,
 	  const std::shared_ptr<typename Dispatcher::ObserverType>& observer );
-  
+
   //! Detach an observer from the appropriate local dispatcher
   void detachObserver(
 		const typename Dispatcher::EntityHandleType entity_id,
@@ -54,7 +54,7 @@ public:
   void detachAllObservers();
 
 protected:
-  
+
   // Typedef for the dispatcher map
   typedef typename boost::unordered_map<typename Dispatcher::EntityHandleType,
 					std::shared_ptr<Dispatcher> >

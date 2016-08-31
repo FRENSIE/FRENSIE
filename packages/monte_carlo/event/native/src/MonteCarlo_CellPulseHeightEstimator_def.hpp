@@ -55,13 +55,13 @@ void CellPulseHeightEstimator<
 /*! \details Only photons and electrons can contribute to this estimator
  */
 template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes( 
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
 			   const Teuchos::Array<ParticleType>& particle_types )
 {
   Teuchos::Array<ParticleType> valid_particle_types;
-  
+
   bool warning_issued = false;
-  
+
   for( unsigned i = 0; i < particle_types.size(); ++i )
   {
     if( particle_types[i] != PHOTON )
@@ -73,14 +73,14 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
 		  << "particle types requested for pulse height estimator "
 		  << this->getId() << " will be ignored."
 		  << std::endl;
-      
+
 	warning_issued = true;
       }
     }
     else
       valid_particle_types.push_back( particle_types[i] );
   }
-  
+
   Estimator::setParticleTypes( valid_particle_types );
 
   testPostcondition( !this->isParticleTypeAssigned( NEUTRON ) );
@@ -101,13 +101,13 @@ inline void CellPulseHeightEstimator<
 					       const cellIdType cell_entering )
 {
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {    
+  {
     unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
-    
+
     double contribution = particle.getWeight()*particle.getEnergy();
-    
+
     addInfoToUpdateTracker( thread_id, cell_entering, contribution );
-    
+
     // Indicate that there is an uncommitted history contribution
   this->setHasUncommittedHistoryContribution( thread_id );
   }
@@ -126,9 +126,9 @@ inline void CellPulseHeightEstimator<
 					        const cellIdType cell_leaving )
 {
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {    
+  {
     unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
-    
+
     double contribution = -particle.getWeight()*particle.getEnergy();
 
     addInfoToUpdateTracker( thread_id, cell_leaving, contribution );
@@ -144,37 +144,37 @@ void CellPulseHeightEstimator<
 		     ContributionMultiplierPolicy>::commitHistoryContribution()
 {
   unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
-  
-  typename SerialUpdateTracker::const_iterator 
+
+  typename SerialUpdateTracker::const_iterator
     cell_data, end_cell_data;
 
   getCellIteratorFromUpdateTracker( thread_id, cell_data, end_cell_data );
-  
+
   double energy_deposition_in_all_cells = 0.0;
-  
+
   unsigned bin_index;
   double bin_contribution;
 
-  Estimator::DimensionValueMap& thread_dimension_values = 
+  Estimator::DimensionValueMap& thread_dimension_values =
       d_dimension_values[thread_id];
 
   while( cell_data != end_cell_data )
-  {        
-    thread_dimension_values[ENERGY_DIMENSION] = 
+  {
+    thread_dimension_values[ENERGY_DIMENSION] =
       Teuchos::any( cell_data->second );
-    
+
     if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
     {
       bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
-      
-      bin_contribution = calculateHistoryContribution( 
+
+      bin_contribution = calculateHistoryContribution(
 					      cell_data->second,
 					      ContributionMultiplierPolicy() );
-      
+
       this->commitHistoryContributionToBinOfEntity( cell_data->first,
 						    bin_index,
 						    bin_contribution );
-      
+
       // Add the energy deposition in this cell to the total energy deposition
       energy_deposition_in_all_cells += cell_data->second;
     }
@@ -183,15 +183,15 @@ void CellPulseHeightEstimator<
   }
 
   // Store the total energy deposition in the dimension values map
-  thread_dimension_values[ENERGY_DIMENSION] = 
+  thread_dimension_values[ENERGY_DIMENSION] =
     Teuchos::any( energy_deposition_in_all_cells );
-  
+
   // Determine the pulse bin for the combination of all cells
   if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
   {
     bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
 
-    bin_contribution = calculateHistoryContribution( 
+    bin_contribution = calculateHistoryContribution(
 					      energy_deposition_in_all_cells,
 					      ContributionMultiplierPolicy() );
 
@@ -208,7 +208,7 @@ void CellPulseHeightEstimator<
 
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::printSummary( 
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::printSummary(
 						       std::ostream& os ) const
 {
   os << "Cell Pulse Height Estimator: " << this->getId() << std::endl;
@@ -218,12 +218,12 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::printSummary(
 
 // Enable support for multiple threads
 template<typename ContributionMultiplierPolicy>
-void 
+void
 CellPulseHeightEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
 						   const unsigned num_threads )
 {
   EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::enableThreadSupport( num_threads );
-  
+
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
 
@@ -237,14 +237,14 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   EntityEstimator<CellPulseHeightEstimator::cellIdType>::resetData();
 
   // Reset the update tracker
   for( unsigned i = 0; i < d_update_tracker.size(); ++i )
   {
     d_update_tracker[i].clear();
-    
+
     this->unsetHasUncommittedHistoryContribution( i );
   }
 }
@@ -281,10 +281,10 @@ void CellPulseHeightEstimator<
     std::cerr << "Warning: " << bin_boundaries->getDimensionName()
 	      << " bins cannot be set for pulse height estimators. The bins "
 	      << "requested for pulse height estimator " << this->getId()
-	      << " will be ignored." 
+	      << " will be ignored."
 	      << std::endl;
   }
-}	       
+}
 
 // Calculate the estimator contribution from the entire history
 /*! \details The multiplier policy cannot be used directly since it only
@@ -317,14 +317,14 @@ inline double CellPulseHeightEstimator<
 
 // Add info to update tracker
 template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::addInfoToUpdateTracker( 
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::addInfoToUpdateTracker(
 						   const unsigned thread_id,
 						   const cellIdType cell_id,
 						   const double contribution )
 {
   // Make sure the thread id is valid
   testPrecondition( thread_id < d_update_tracker.size() );
-  
+
   SerialUpdateTracker& thread_update_tracker = d_update_tracker[thread_id];
 
   if( thread_update_tracker.find( cell_id ) != thread_update_tracker.end() )
@@ -342,20 +342,20 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::getCellIteratorFrom
 {
   // Make sure the thread id is valid
   testPrecondition( thread_id < d_update_tracker.size() );
-  
+
   start_cell = d_update_tracker[thread_id].begin();
   end_cell = d_update_tracker[thread_id].end();
 }
 
 // Reset the update tracker
 template<typename ContributionMultiplierPolicy>
-void 
-CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetUpdateTracker( 
+void
+CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetUpdateTracker(
 						     const unsigned thread_id )
 {
   // Make sure the thread id is valid
   testPrecondition( thread_id < d_update_tracker.size() );
-  
+
   d_update_tracker[thread_id].clear();
 }
 

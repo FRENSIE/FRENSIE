@@ -27,7 +27,7 @@
  *
  * The handling of events has been abstracted. Currently, there is only one
  * event package that has been created and it is found within the MonteCarlo
- * package. The event package as well as any other packages that may 
+ * package. The event package as well as any other packages that may
  * exist can be used in this software without having to change other code
  * modules. The other code modules only interact with the generic event
  * module interface that has been created.
@@ -49,13 +49,13 @@ struct UndefinedEventHandler
  * This class specifies the interface to the event module. This class must
  * be specialized for a particular event handling package. Attempting to
  * use this class without a specialization will result in a compile time error.
- * The compile time error message is defined by the 
+ * The compile time error message is defined by the
  * MonteCarlo::UndefinedEventHandler struct.
  */
 template<typename EventHandler>
 class EventModuleInterface
 {
-  
+
 public:
 
   //! The external event observer handle class (used within the event handler)
@@ -135,7 +135,7 @@ public:
   { (void)UndefinedEventHandler<EventHandler>::notDefined(); }
 
   //! Export the observer data
-  static inline void exportObserverData( 
+  static inline void exportObserverData(
 				  const std::string& data_file_name,
 				  const unsigned long long last_history_number,
 				  const unsigned long long histories_completed,

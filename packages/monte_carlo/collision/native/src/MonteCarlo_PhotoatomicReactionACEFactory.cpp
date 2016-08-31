@@ -38,7 +38,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
        const double kahn_sampling_cutoff_energy )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
+  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
 		    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
@@ -46,13 +46,13 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
   // Extract the cross section
   Teuchos::ArrayRCP<double> incoherent_cross_section;
   unsigned threshold_energy_index;
-  
+
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
 			    energy_grid,
 			    raw_photoatom_data.extractIncoherentCrossSection(),
 			    incoherent_cross_section,
 			    threshold_energy_index );
-  
+
   // Create the scattering distribution
   Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
 
@@ -61,7 +61,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 						 distribution,
 						 incoherent_model,
 						 kahn_sampling_cutoff_energy );
-    
+
   // Create the incoherent reaction
   incoherent_reaction.reset(new IncoherentPhotoatomicReaction<Utility::LogLog>(
 						      energy_grid,
@@ -79,7 +79,7 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
        Teuchos::RCP<PhotoatomicReaction>& coherent_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
+  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
 		    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
@@ -99,7 +99,7 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
 
   CoherentScatteringDistributionACEFactory::createEfficientCoherentDistribution(
 					                    raw_photoatom_data,
-							    distribution );  
+							    distribution );
 
   // Create the coherent reaction
   coherent_reaction.reset(new CoherentPhotoatomicReaction<Utility::LogLog>(
@@ -119,7 +119,7 @@ void PhotoatomicReactionACEFactory::createPairProductionReaction(
        const bool use_detailed_pair_production_data )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
+  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
 		    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
@@ -152,7 +152,7 @@ void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
        Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
+  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
 		    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
@@ -185,7 +185,7 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
        subshell_photoelectric_reactions )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
+  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
 		    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
@@ -193,7 +193,7 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
   subshell_photoelectric_reactions.clear();
 
   // Extract the subshell information
-  Teuchos::ArrayView<const double> subshell_endf_designators = 
+  Teuchos::ArrayView<const double> subshell_endf_designators =
     raw_photoatom_data.extractSubshellENDFDesignators();
 
   Teuchos::Array<Data::SubshellType> subshell_order(
@@ -205,11 +205,11 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 				      (unsigned)subshell_endf_designators[i] );
     }
 
-  Teuchos::ArrayView<const double> binding_energies = 
+  Teuchos::ArrayView<const double> binding_energies =
     raw_photoatom_data.extractSubshellBindingEnergies();
 
   // Extract the subshell cross sections
-  Teuchos::ArrayView<const double> raw_subshell_cross_sections = 
+  Teuchos::ArrayView<const double> raw_subshell_cross_sections =
     raw_photoatom_data.extractSPHELBlock();
 
   unsigned num_subshells = subshell_order.size();
@@ -222,7 +222,7 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
     Teuchos::ArrayRCP<double> subshell_cross_section;
     unsigned threshold_energy_index;
 
-    Teuchos::ArrayView<const double> raw_subshell_cross_section = 
+    Teuchos::ArrayView<const double> raw_subshell_cross_section =
       raw_subshell_cross_sections( subshell*num_energy_points,
 				   num_energy_points );
 
@@ -242,7 +242,7 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 						subshell_order[subshell],
 					        binding_energies[subshell] ) );
 
-    subshell_photoelectric_reactions.push_back( 
+    subshell_photoelectric_reactions.push_back(
 					     subshell_photoelectric_reaction );
   }
 
@@ -258,7 +258,7 @@ void PhotoatomicReactionACEFactory::createHeatingReaction(
        Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
+  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
 		    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
@@ -302,7 +302,7 @@ void PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
   cross_section.clear();
 
   // Find the first non-zero cross section value
-  Teuchos::ArrayView<const double>::iterator start = 
+  Teuchos::ArrayView<const double>::iterator start =
     std::find_if( raw_cross_section.begin(),
 		  raw_cross_section.end(),
 		  PhotoatomicReactionACEFactory::notEqualZero );
@@ -311,7 +311,7 @@ void PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
   cross_section.assign( start, raw_cross_section.end() );
 
   // Determine the threshold energy index of the reaction
-  threshold_energy_index = energy_grid.size() - cross_section.size();  
+  threshold_energy_index = energy_grid.size() - cross_section.size();
 
   // Make sure the cross section is valid
   testPostcondition( cross_section.size() > 1 );

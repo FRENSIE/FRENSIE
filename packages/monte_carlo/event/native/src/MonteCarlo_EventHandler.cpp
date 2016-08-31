@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_EventHandler.cpp
 //! \author Alex Robinson
 //! \brief  Event handler class definition.
@@ -26,7 +26,7 @@ unsigned EventHandler::getNumberOfObservers() const
 }
 
 // Check if an observer with the given id exists
-bool EventHandler::doesObserverExist( 
+bool EventHandler::doesObserverExist(
                       const ParticleHistoryObserver::idType observer_id ) const
 {
   return d_particle_history_observers.find( observer_id ) !=
@@ -41,14 +41,14 @@ void EventHandler::enableThreadSupport( const unsigned num_threads )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
-  ParticleHistoryObservers::iterator it = 
+
+  ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
-  
+
   while( it != d_particle_history_observers.end() )
   {
     it->second->enableThreadSupport( num_threads );
-    
+
     ++it;
   }
 }
@@ -56,14 +56,14 @@ void EventHandler::enableThreadSupport( const unsigned num_threads )
 // Commit the estimator history contributions
 void EventHandler::commitObserverHistoryContributions()
 {
-  ParticleHistoryObservers::iterator it = 
+  ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
-  
+
   while( it != d_particle_history_observers.end() )
   {
     if( it->second->hasUncommittedHistoryContribution() )
       it->second->commitHistoryContribution();
-    
+
     ++it;
   }
 }
@@ -76,16 +76,16 @@ void EventHandler::printObserverSummaries( std::ostream& os,
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   ParticleHistoryObserver::setNumberOfHistories( num_histories );
   ParticleHistoryObserver::setStartTime( start_time );
   ParticleHistoryObserver::setEndTime( end_time );
-  
+
   os << "Observers: " << std::endl;
-  
-  ParticleHistoryObservers::const_iterator it = 
+
+  ParticleHistoryObservers::const_iterator it =
     d_particle_history_observers.begin();
-  
+
   while( it != d_particle_history_observers.end() )
   {
     os << *(it->second) << std::endl;
@@ -99,8 +99,8 @@ void EventHandler::resetObserverData()
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
-  ParticleHistoryObservers::iterator it = 
+
+  ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
 
   while( it != d_particle_history_observers.end() )
@@ -118,8 +118,8 @@ void EventHandler::reduceObserverData(
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
-  ParticleHistoryObservers::iterator it = 
+
+  ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
 
   while( it != d_particle_history_observers.end() )
@@ -131,7 +131,7 @@ void EventHandler::reduceObserverData(
 }
 
 // Export the observer data
-void EventHandler::exportObserverData( 
+void EventHandler::exportObserverData(
 		    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const unsigned long long last_history_number,
                     const unsigned long long histories_completed,
@@ -145,26 +145,26 @@ void EventHandler::exportObserverData(
   // Create a particle history observer HDF5 file handler
   {
     ParticleHistoryObserverHDF5FileHandler pho_hdf5_file_handler( hdf5_file );
-  
+
     // Set the simulation time
     pho_hdf5_file_handler.setSimulationTime( end_time - start_time );
-  
+
     ParticleHistoryObserver::setStartTime( start_time );
     ParticleHistoryObserver::setEndTime( end_time );
-  
+
     // Set the last history simulated
     pho_hdf5_file_handler.setLastHistorySimulated( last_history_number );
-  
+
     // Set the number of histories simulated
     pho_hdf5_file_handler.setNumberOfHistoriesSimulated( histories_completed );
-  
+
     ParticleHistoryObserver::setNumberOfHistories( histories_completed );
   }
-  
+
   // Export the data in each estimator
-  ParticleHistoryObservers::iterator it = 
+  ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
-  
+
   while( it != d_particle_history_observers.end() )
   {
     it->second->exportData( hdf5_file, process_data );

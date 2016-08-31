@@ -8,25 +8,27 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
   
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_InverseAngstromUnit.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::AdjointPhotonScatteringDistribution> 
+std::shared_ptr<MonteCarlo::AdjointPhotonScatteringDistribution> 
   distribution;
 
 //---------------------------------------------------------------------------//
@@ -79,7 +81,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 		   evaluatePDF )
 {
   double pdf = distribution->evaluatePDF( 0.1, -1.0 );
-    
+
   TEST_FLOATING_EQUALITY( pdf, 0.879881897438394067, 1e-15 );
 
   pdf = distribution->evaluatePDF( 0.1, 0.0 );
@@ -99,7 +101,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   TEST_FLOATING_EQUALITY( pdf, 1.17065201182352618, 1e-15 );
 
   pdf = distribution->evaluatePDF( 1.0, 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-15 );
 
   pdf = distribution->evaluatePDF( 10.0, 0.9744500544935 );
@@ -107,7 +109,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   TEST_FLOATING_EQUALITY( pdf, 45.4868639688830285, 1e-15 );
 
   pdf = distribution->evaluatePDF( 10.0, 0.99 );
-  
+
   TEST_FLOATING_EQUALITY( pdf, 37.6530807163170067, 1e-15 );
 }
 
@@ -116,7 +118,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 		   evaluateIntegratedCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     distribution->evaluateIntegratedCrossSection( 0.1, 1e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section, 51.5291662208688734, 1e-15 );
@@ -124,7 +126,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section, 32.3480137739510241, 1e-15 );
-  
+
   cross_section = distribution->evaluateIntegratedCrossSection( 10.0, 1e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.10160733569996983, 1e-15 );
@@ -163,22 +165,22 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  distribution->sample( 
+  distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.05677765668111111, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  
-  distribution->sample( 
+
+  distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640392, 1e-15 );
-  
+
   distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
@@ -186,8 +188,8 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.5367431640625e-06, 1e-10 );
-  
-  Utility::RandomNumberGenerator::unsetFakeStream();  
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -220,7 +222,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  distribution->sampleAndRecordTrials( 
+  distribution->sampleAndRecordTrials(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
@@ -229,8 +231,8 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.05677765668111111, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
   TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
-  
-  distribution->sampleAndRecordTrials( 
+
+  distribution->sampleAndRecordTrials(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
@@ -239,7 +241,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640392, 1e-15 );
   TEST_EQUALITY_CONST( 2.0/trials, 2.0/3.0 );
-  
+
   distribution->sampleAndRecordTrials(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
@@ -249,8 +251,8 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.5367431640625e-06, 1e-10 );
   TEST_EQUALITY_CONST( 3.0/trials, 0.6 );
-  
-  Utility::RandomNumberGenerator::unsetFakeStream();  
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -259,7 +261,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 		   scatterAdjointPhoton )
 {
   MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
-  adjoint_photon.setEnergy( 
+  adjoint_photon.setEnergy(
 		  Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
 
@@ -286,7 +288,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 				      shell_of_interaction );
 
   TEST_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
-			  0.05677765668111111, 
+			  0.05677765668111111,
 			  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
@@ -301,10 +303,10 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   distribution->scatterAdjointPhoton( adjoint_photon,
 				      bank,
 				      shell_of_interaction );
-  
+
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 0.08 );
-  TEST_FLOATING_EQUALITY( bank.top().getWeight(), 
+  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  31.7162862019685967,
 			  1e-14 );
 
@@ -317,9 +319,9 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   distribution->scatterAdjointPhoton( adjoint_photon,
 				      bank,
 				      shell_of_interaction );
-  
+
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  1.43055314362791086,
@@ -334,14 +336,14 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   distribution->scatterAdjointPhoton( adjoint_photon,
 				      bank,
 				      shell_of_interaction );
-  
+
   TEST_EQUALITY_CONST( bank.size(), 2 );
   TEST_EQUALITY_CONST( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.401104057813784276,
 			  1e-15 );
-  
+
   bank.pop();
 
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
@@ -356,20 +358,20 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_ace_file",
 		 &test_ace_file_name,
 		 "Test ACE file name" );
   clp.setOption( "test_ace_table",
 		 &test_ace_table_name,
 		 "Test ACE table name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -379,24 +381,24 @@ int main( int argc, char** argv )
 
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler( 
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+    std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-  
+
     // Create the scattering function
     Teuchos::ArrayView<const double> jince_block =
       xss_data_extractor->extractJINCEBlock();
 
     unsigned scatt_func_size = jince_block.size()/2;
-    
+
     Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ) );
-    Teuchos::Array<double> scat_func_values( jince_block( scatt_func_size, 
+    Teuchos::Array<double> scat_func_values( jince_block( scatt_func_size,
 							  scatt_func_size ) );
 
     std::cout.precision( 18 );
@@ -405,26 +407,28 @@ int main( int argc, char** argv )
       std::cout << recoil_momentum[i] << " " << scat_func_values[i] << std::endl;
     }
 
-    Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-	  new Utility::TabularDistribution<Utility::LinLin>( 
+    std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function(
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>( 
 							  recoil_momentum,
 			                                  scat_func_values ) );
-  
-  
+
+  std::shared_ptr<MonteCarlo::ScatteringFunction> scattering_function(
+      new MonteCarlo::StandardScatteringFunction<Utility::Units::InverseAngstrom>( raw_scattering_function ) );
+    
     // Create the scattering distribution
     Teuchos::ArrayRCP<double> critical_line_energies( 3 );
-    
+
     critical_line_energies[0] = 0.08;
-    critical_line_energies[1] = 
+    critical_line_energies[1] =
       Utility::PhysicalConstants::electron_rest_mass_energy;
     critical_line_energies[2] = 1.0;
 
-    Teuchos::RCP<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
+    std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
     incoherent_base_dist( 
               new MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution( 
 						       20.0,
 						       scattering_function ) );
-    
+
     incoherent_base_dist->setCriticalLineEnergies( critical_line_energies );
 
     // Create the scattering distribution
@@ -433,7 +437,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -446,7 +450,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

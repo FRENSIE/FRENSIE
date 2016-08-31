@@ -26,7 +26,7 @@ double getEnergyOfMaxCrossSection( const double max_energy )
   return max_energy/(1.0 + 2.0*max_energy/Utility::PhysicalConstants::electron_rest_mass_energy);
 }
 
-// Check if the energy corresponds to the max cross section value at any max 
+// Check if the energy corresponds to the max cross section value at any max
 // energy
 double doesEnergyCorrespondToAMaxCrossSectionValue( const double energy )
 {
@@ -34,15 +34,15 @@ double doesEnergyCorrespondToAMaxCrossSectionValue( const double energy )
 }
 
 // Return the max energy that results in a max cross section value at energy
-double getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( 
+double getMaxEnergyResultingInMaxCrossSectionValueAtEnergy(
 						          const double energy )
 {
   // Make sure the energy is valid
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
-  testPrecondition( energy < 
+  testPrecondition( energy <
 		    Utility::PhysicalConstants::electron_rest_mass_energy/2.0);
-		    
+
   return energy/(1.0 - 2.0*energy/Utility::PhysicalConstants::electron_rest_mass_energy);
 }
 

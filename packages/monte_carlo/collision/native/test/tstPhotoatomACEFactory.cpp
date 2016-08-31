@@ -39,7 +39,7 @@ Teuchos::RCP<MonteCarlo::Photoatom> atom;
 // Check that a basic photoatom can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom( 
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom(
 					       *xss_data_extractor,
 					       photoatom_name,
 					       atomic_weight,
@@ -50,47 +50,47 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 					       3.0,
 					       false,
 					       false );
-					       
+
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
-  double cross_section = 
+  double cross_section =
     atom->getTotalCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.006275141600000259, 1e-12 );
 
-  cross_section = 
+  cross_section =
     atom->getTotalCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 41.18471143984235, 1e-12 );
 
   // Test that the absorption cross section can be returned
-  cross_section = 
+  cross_section =
     atom->getAbsorptionCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = 
+  cross_section =
     atom->getAbsorptionCrossSection( exp( -1.214969212306E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     atom->getAbsorptionCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-11 );
 
   // Test that the incoherent cross section can be returned
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			   exp( -1.381551055796E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			   exp( -1.364234411496E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
@@ -103,44 +103,44 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
   TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
   // Test that the coherent cross section can be returned
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 				   exp(-1.381551055796E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
-  
-  cross_section = atom->getReactionCrossSection( 
+
+  cross_section = atom->getReactionCrossSection(
 				   exp( -1.364234411496E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 				   exp( 1.151292546497E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -2.309498238246E+01 ), 1e-12 );
 
   // Test that the total photoelectric cross section can be returned
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			exp( -1.381551055796E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-    
-  cross_section = atom->getReactionCrossSection( 
+
+  cross_section = atom->getReactionCrossSection(
 			exp( -1.214969212306E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			exp( -1.214720768866E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			exp( 1.151292546497E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
@@ -153,7 +153,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 		   exp( 1.151292546497E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
@@ -166,20 +166,20 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			    exp( 2.480967890857E-02 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			    exp( 1.151292546497E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
-  
+
   // Test that there is no triplet production cross section
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			 exp( -1.381551055796E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
@@ -198,7 +198,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   photon.setWeight( 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
@@ -208,7 +208,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop
   fake_stream[4] = 0.5; // azimuthal_angle = pi
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   atom->collideAnalogue( photon, bank );
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 // Check that a photoatom with Doppler broadening data can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom( 
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom(
 		 *xss_data_extractor,
 		 photoatom_name,
 		 atomic_weight,
@@ -237,47 +237,47 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 		 3.0,
 		 false,
 		 false );
-  
+
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
-  double cross_section = 
+  double cross_section =
     atom->getTotalCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.006275141600000259, 1e-12 );
 
-  cross_section = 
+  cross_section =
     atom->getTotalCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 41.18471143984235, 1e-12 );
 
   // Test that the absorption cross section can be returned
-  cross_section = 
+  cross_section =
     atom->getAbsorptionCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = 
+  cross_section =
     atom->getAbsorptionCrossSection( exp( -1.214969212306E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     atom->getAbsorptionCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-11 );
 
   // Test that the incoherent cross section can be returned
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			   exp( -1.381551055796E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			   exp( -1.364234411496E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
@@ -290,44 +290,44 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
   TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
   // Test that the coherent cross section can be returned
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 				   exp(-1.381551055796E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
-  
-  cross_section = atom->getReactionCrossSection( 
+
+  cross_section = atom->getReactionCrossSection(
 				   exp( -1.364234411496E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 				   exp( 1.151292546497E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -2.309498238246E+01 ), 1e-12 );
 
   // Test that the total photoelectric cross section can be returned
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			exp( -1.381551055796E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-    
-  cross_section = atom->getReactionCrossSection( 
+
+  cross_section = atom->getReactionCrossSection(
 			exp( -1.214969212306E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			exp( -1.214720768866E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			exp( 1.151292546497E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
@@ -340,7 +340,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 		   exp( 1.151292546497E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
@@ -351,20 +351,20 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			    exp( 2.480967890857E-02 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			    exp( 1.151292546497E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
-  
+
   // Test that there is no triplet production cross section
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			 exp( -1.381551055796E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
@@ -383,7 +383,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   photon.setWeight( 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
@@ -426,7 +426,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 // Check that a photoatom with subshell photoelectric data can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom( 
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom(
 					       *xss_data_extractor,
 					       photoatom_name,
 					       atomic_weight,
@@ -437,47 +437,47 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 					       3.0,
 					       false,
 					       true );
-  
+
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
-  double cross_section = 
+  double cross_section =
     atom->getTotalCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.006275141600000259, 1e-12 );
 
-  cross_section = 
+  cross_section =
     atom->getTotalCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 41.18471143984235, 1e-12 );
 
   // Test that the absorption cross section can be returned
-  cross_section = 
+  cross_section =
     atom->getAbsorptionCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = 
+  cross_section =
     atom->getAbsorptionCrossSection( exp( -1.214969212306E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     atom->getAbsorptionCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-11 );
 
   // Test that the incoherent cross section can be returned
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			   exp( -1.381551055796E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			   exp( -1.364234411496E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
@@ -490,32 +490,32 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
   TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
   // Test that the coherent cross section can be returned
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 				   exp(-1.381551055796E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
-  
-  cross_section = atom->getReactionCrossSection( 
+
+  cross_section = atom->getReactionCrossSection(
 				   exp( -1.364234411496E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 				   exp( 1.151292546497E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -2.309498238246E+01 ), 1e-12 );
 
   // Test that there is no total photoelectric
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			exp( -1.381551055796E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			exp( 1.151292546497E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
@@ -528,20 +528,20 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			    exp( 2.480967890857E-02 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			    exp( 1.151292546497E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
-  
+
   // Test that there is no triplet production cross section
-  cross_section = atom->getReactionCrossSection( 
+  cross_section = atom->getReactionCrossSection(
 			 exp( -1.381551055796E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
@@ -567,7 +567,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
   cross_section = atom->getReactionCrossSection(
 		   exp( 1.151292546497E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.135387253512E+01 ), 1e-12 );
 
   // Test that the P3 subshell photoelectric cross section can be returned
@@ -606,24 +606,24 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-    xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
+    xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -640,7 +640,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

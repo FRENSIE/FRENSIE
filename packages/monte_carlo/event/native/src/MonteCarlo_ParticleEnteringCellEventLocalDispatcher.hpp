@@ -26,7 +26,7 @@ namespace MonteCarlo{
  */
 class ParticleEnteringCellEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,ParticleEnteringCellEventObserver>
 {
-  
+
 public:
 
   //! Constructor
@@ -38,7 +38,7 @@ public:
   { /* ... */ }
 
   //! Dispatch the new event to the observers
-  void dispatchParticleEnteringCellEvent( 
+  void dispatchParticleEnteringCellEvent(
 	      const ParticleState& particle,
 	      const Geometry::ModuleTraits::InternalCellHandle cell_entering );
 };

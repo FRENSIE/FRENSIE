@@ -22,7 +22,7 @@
  * error. Debugging assertions will only be activated when the code has been
  * compiled in debug mode. When compiled in release mode, the macro NDEBUG
  * is set by the compiler, which will prevent the execution of degubbing
- * assertion code. 
+ * assertion code.
  *
  * Use assertions in parts of the code where Design-by-Contract is not used,
  * when writing new pieces of code that have not been unit tested and when
@@ -101,9 +101,9 @@ public:
 
 /*! Assert that a condition is always met.
  *
- * This macro should be used during code development to test that certain 
+ * This macro should be used during code development to test that certain
  * conditions are met in pieces of code where Design-By-Contract is not
- * appropriate. 
+ * appropriate.
  * \ingroup assertion_exceptions_macros
  */
 #define ASSERT(c) \

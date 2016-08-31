@@ -13,7 +13,7 @@ namespace MonteCarlo{
 
 // Convert a subshell enum to an compton profile subshell index
 template<unsigned Z>
-unsigned StandardComptonProfileSubshellConverter<Z>::convertSubshellToIndex( 
+unsigned StandardComptonProfileSubshellConverter<Z>::convertSubshellToIndex(
                                             const Data::SubshellType subshell ) const
 {
   return ComptonProfileTraits<Z>::convertToIndex( subshell );
@@ -30,7 +30,7 @@ struct ComptonProfileTraits<1u>
     {
     case Data::K_SUBSHELL: return 0u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -57,7 +57,7 @@ struct ComptonProfileTraits<3u>
     case Data::K_SUBSHELL: return 0u;
     case Data::L1_SUBSHELL: return 1u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -86,7 +86,7 @@ struct ComptonProfileTraits<5u>
     case Data::L2_SUBSHELL: return 2u;
     case Data::L3_SUBSHELL: return 2u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -152,7 +152,7 @@ struct ComptonProfileTraits<11u>
     case Data::L3_SUBSHELL: return 2u;
     case Data::M1_SUBSHELL: return 3u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -184,7 +184,7 @@ struct ComptonProfileTraits<13u>
     case Data::M2_SUBSHELL: return 4u;
     case Data::M3_SUBSHELL: return 4u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -253,7 +253,7 @@ struct ComptonProfileTraits<19u>
     case Data::M3_SUBSHELL: return 4u;
     case Data::N1_SUBSHELL: return 5u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -288,7 +288,7 @@ struct ComptonProfileTraits<21u>
     case Data::M5_SUBSHELL: return 5u;
     case Data::N1_SUBSHELL: return 6u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -397,7 +397,7 @@ struct ComptonProfileTraits<31u>
     case Data::N2_SUBSHELL: return 7u;
     case Data::N3_SUBSHELL: return 7u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -461,7 +461,7 @@ struct ComptonProfileTraits<36u>
     case Data::N2_SUBSHELL: return 10u;
     case Data::N3_SUBSHELL: return 11u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -490,7 +490,7 @@ struct ComptonProfileTraits<37u>
     case Data::N3_SUBSHELL: return 11u;
     case Data::O1_SUBSHELL: return 12u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -530,7 +530,7 @@ struct ComptonProfileTraits<39u>
     case Data::N5_SUBSHELL: return 12u;
     case Data::O1_SUBSHELL: return 13u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -579,7 +579,7 @@ struct ComptonProfileTraits<42u>
     case Data::N5_SUBSHELL: return 13u;
     case Data::O1_SUBSHELL: return 14u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -636,7 +636,7 @@ struct ComptonProfileTraits<46u>
     case Data::N4_SUBSHELL: return 12u;
     case Data::N5_SUBSHELL: return 13u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -687,7 +687,7 @@ struct ComptonProfileTraits<49u>
     case Data::O2_SUBSHELL: return 15u;
     case Data::O3_SUBSHELL: return 15u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -729,7 +729,7 @@ struct ComptonProfileTraits<51u>
     case Data::O2_SUBSHELL: return 15u;
     case Data::O3_SUBSHELL: return 16u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -790,7 +790,7 @@ struct ComptonProfileTraits<55u>
     case Data::O3_SUBSHELL: return 16u;
     case Data::P1_SUBSHELL: return 17u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -835,7 +835,7 @@ struct ComptonProfileTraits<57u>
     case Data::O5_SUBSHELL: return 17u;
     case Data::P1_SUBSHELL: return 18u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -877,7 +877,7 @@ struct ComptonProfileTraits<58u>
     case Data::O3_SUBSHELL: return 17u;
     case Data::P1_SUBSHELL: return 19u; // 18 (5d-) is skipped
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -911,9 +911,9 @@ struct ComptonProfileTraits<59u>
     case Data::O1_SUBSHELL: return 15u;
     case Data::O2_SUBSHELL: return 16u;
     case Data::O3_SUBSHELL: return 17u;
-    case Data::P1_SUBSHELL: return 18u; 
+    case Data::P1_SUBSHELL: return 18u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -974,9 +974,9 @@ struct ComptonProfileTraits<63u>
     case Data::O1_SUBSHELL: return 16u;
     case Data::O2_SUBSHELL: return 17u;
     case Data::O3_SUBSHELL: return 18u;
-    case Data::P1_SUBSHELL: return 19u; 
+    case Data::P1_SUBSHELL: return 19u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1012,9 +1012,9 @@ struct ComptonProfileTraits<64u>
     case Data::O3_SUBSHELL: return 18u;
     case Data::O4_SUBSHELL: return 19u;
     case Data::O5_SUBSHELL: return 19u;
-    case Data::P1_SUBSHELL: return 20u; 
+    case Data::P1_SUBSHELL: return 20u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1140,9 +1140,9 @@ struct ComptonProfileTraits<75u>
     case Data::O3_SUBSHELL: return 18u;
     case Data::O4_SUBSHELL: return 19u;
     case Data::O5_SUBSHELL: return 20u;
-    case Data::P1_SUBSHELL: return 21u; 
+    case Data::P1_SUBSHELL: return 21u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1158,7 +1158,7 @@ struct ComptonProfileTraits<76u>
 };
 
 /*! Compton profile traits struct for Z=77
- * \details There is a Compton profile for the P1 subshell but the 
+ * \details There is a Compton profile for the P1 subshell but the
  * ENDF/EADL libraries do not have a P1 subshell. The Compton profile for
  * the P1 subshell will be ignored.
  */
@@ -1192,7 +1192,7 @@ struct ComptonProfileTraits<77u>
     case Data::O4_SUBSHELL: return 19u;
     case Data::O5_SUBSHELL: return 20u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1259,7 +1259,7 @@ struct ComptonProfileTraits<81u>
     case Data::P2_SUBSHELL: return 22u;
     case Data::P3_SUBSHELL: return 22u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1308,7 +1308,7 @@ struct ComptonProfileTraits<83u>
     case Data::P2_SUBSHELL: return 22u;
     case Data::P3_SUBSHELL: return 23u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1376,7 +1376,7 @@ struct ComptonProfileTraits<87u>
     case Data::P3_SUBSHELL: return 23u;
     case Data::Q1_SUBSHELL: return 24u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1428,7 +1428,7 @@ struct ComptonProfileTraits<89u>
     case Data::P5_SUBSHELL: return 24u;
     case Data::Q1_SUBSHELL: return 25u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1482,7 +1482,7 @@ struct ComptonProfileTraits<91u>
     case Data::P5_SUBSHELL: return 25u;
     case Data::Q1_SUBSHELL: return 26u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1543,7 +1543,7 @@ struct ComptonProfileTraits<94u>
     case Data::P3_SUBSHELL: return 24u;
     case Data::Q1_SUBSHELL: return 25u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1586,7 +1586,7 @@ struct ComptonProfileTraits<95u>
     case Data::P3_SUBSHELL: return 25u;
     case Data::Q1_SUBSHELL: return 26u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1631,7 +1631,7 @@ struct ComptonProfileTraits<96u>
     case Data::P5_SUBSHELL: return 26u;
     case Data::Q1_SUBSHELL: return 27u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1681,7 +1681,7 @@ struct ComptonProfileTraits<97u>
     case Data::P5_SUBSHELL: return 22u; // Assigned to O7 due to lack of Compton prof
     case Data::Q1_SUBSHELL: return 26u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }
@@ -1724,7 +1724,7 @@ struct ComptonProfileTraits<98u>
     case Data::P3_SUBSHELL: return 25u;
     case Data::Q1_SUBSHELL: return 26u;
     default:
-      THROW_EXCEPTION( std::logic_error, 
+      THROW_EXCEPTION( std::logic_error,
 		       "Error: Subshell " << subshell << " is not valid!" );
     }
   }

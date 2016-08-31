@@ -20,13 +20,13 @@ unsigned GlobalOpenMPSession::threads = 1u;
 
 // Set the number of threads to use in parallel blocks
 /*! \details This function will set the number of threads that will usually
- * be used by omp parallel blocks. 
+ * be used by omp parallel blocks.
  */
 void GlobalOpenMPSession::setNumberOfThreads( const unsigned number_of_threads)
 {
   // Make sure at least one thread has been requested
   testPrecondition( number_of_threads > 0 );
-  
+
 #ifdef HAVE_FRENSIE_OPENMP
   GlobalOpenMPSession::threads = number_of_threads;
 #else

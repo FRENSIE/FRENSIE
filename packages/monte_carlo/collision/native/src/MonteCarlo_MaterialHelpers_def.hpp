@@ -20,8 +20,8 @@ namespace MonteCarlo{
 
 // Test if a set of fractional values are valid
 /*! \details Fractional values for a set of nuclides can be weight fractions or
- * atom fractions but not both. Weight fractions will be given as negative 
- * numbers while atom fractions will be given as positive numbers. This 
+ * atom fractions but not both. Weight fractions will be given as negative
+ * numbers while atom fractions will be given as positive numbers. This
  * function will check that all values are non-zero have a consistent sign.
  */
 template<Utility::TupleMember member, typename Iterator>
@@ -29,7 +29,7 @@ bool areFractionValuesValid( Iterator start, Iterator end )
 {
   // Make sure the container is not empty
   testPrecondition( start != end );
-  
+
   if( Utility::get<member>( *start ) == 0.0 )
     return false;
 
@@ -38,7 +38,7 @@ bool areFractionValuesValid( Iterator start, Iterator end )
   ++start;
 
   bool valid = true;
-  
+
   while( start != end )
   {
     if( Utility::get<member>( *start ) == 0.0 )
@@ -46,7 +46,7 @@ bool areFractionValuesValid( Iterator start, Iterator end )
       valid = false;
       break;
     }
-    
+
     if( (Utility::get<member>( *start ) > 0.0) != sign )
     {
       valid = false;
@@ -83,7 +83,7 @@ bool areFractionValuesNormalized( Iterator start, Iterator end )
   }
 
   sum = Teuchos::ScalarTraits<double>::magnitude( sum );
-  
+
   if( Teuchos::ScalarTraits<double>::magnitude( sum - 1.0 ) <
       Teuchos::ScalarTraits<double>::eps() )
     return true;
@@ -106,7 +106,7 @@ template<Utility::TupleMember member, typename Iterator>
 void normalizeFractionValues( Iterator start, Iterator end )
 {
   Iterator start_copy = start;
-  
+
   double sum = 0.0;
 
   while( start != end )
@@ -117,7 +117,7 @@ void normalizeFractionValues( Iterator start, Iterator end )
   }
 
   sum = Teuchos::ScalarTraits<double>::magnitude( sum );
-  
+
   start = start_copy;
 
   while( start != end )
@@ -147,12 +147,12 @@ inline void normalizeFractionValues( Iterator start, Iterator end )
  * the AtomicWgtIterator. Not that extracting either the atomic weight or
  * the atomic weight ratio is valid due to the normalization that occurs.
  */
-template<Utility::TupleMember fracMember, 
+template<Utility::TupleMember fracMember,
 	 Utility::TupleMember atomicWgtMember,
 	 typename FracIterator,
 	 typename AtomicWgtIterator>
-void convertWeightFractionsToAtomFractions( 
-  FracIterator frac_start, 
+void convertWeightFractionsToAtomFractions(
+  FracIterator frac_start,
   FracIterator frac_end,
   AtomicWgtIterator atomic_wgt_start,
   AtomicWgtIterator atomic_wgt_end,
@@ -173,7 +173,7 @@ void convertWeightFractionsToAtomFractions(
     // Divide each weight fraction by its corresponding atomic weight
     while( frac_start != frac_end )
     {
-      Utility::set<fracMember>( *frac_start, 
+      Utility::set<fracMember>( *frac_start,
 		   -1.0*Utility::get<fracMember>( *frac_start )/
 		   extractor( *atomic_wgt_start ) );
 
@@ -186,7 +186,7 @@ void convertWeightFractionsToAtomFractions(
 
     // Sum all of the ratios
     double sum = 0.0;
-    
+
     while( frac_start != frac_end )
     {
       sum += Utility::get<fracMember>( *frac_start );
@@ -211,27 +211,27 @@ void convertWeightFractionsToAtomFractions(
  * fractions to be converted to atom fractions.
  */
 template<typename FracIterator, typename AtomicWgtIterator>
-inline void convertWeightFractionsToAtomFractions( 
-					    FracIterator frac_start, 
+inline void convertWeightFractionsToAtomFractions(
+					    FracIterator frac_start,
 					    FracIterator frac_end,
 					    AtomicWgtIterator atomic_wgt_start,
 					    AtomicWgtIterator atomic_wgt_end )
 {
   convertWeightFractionsToAtomFractions<Utility::FIRST,
-					Utility::FIRST>( frac_start, 
+					Utility::FIRST>( frac_start,
 							 frac_end,
 							 atomic_wgt_start,
 							 atomic_wgt_end );
 }
 
 // Convert a mass density (g/cm^3) to a number density (atom/b-cm)
-template<Utility::TupleMember fracMember, 
+template<Utility::TupleMember fracMember,
 	 Utility::TupleMember atomicWgtMember,
 	 typename FracIterator,
 	 typename AtomicWgtIterator>
-double convertMassDensityToNumberDensity( 
+double convertMassDensityToNumberDensity(
   const double mass_density,
-  FracIterator frac_start, 
+  FracIterator frac_start,
   FracIterator frac_end,
   AtomicWgtIterator atomic_wgt_start,
   AtomicWgtIterator atomic_wgt_end,
@@ -248,7 +248,7 @@ double convertMassDensityToNumberDensity(
   // Make sure the fractions are normalized
   testPrecondition( areFractionValuesNormalized<fracMember>( frac_start,
 							     frac_end ) );
-  
+
   double effective_atomic_weight = 0.0;
 
   // Calculate the effective atomic weight
@@ -260,7 +260,7 @@ double convertMassDensityToNumberDensity(
     ++frac_start;
     ++atomic_wgt_start;
   }
-  
+
   // Calculate the number density
   return mass_density/effective_atomic_weight*
     Utility::PhysicalConstants::avogadro_constant*1e-24;
@@ -271,9 +271,9 @@ double convertMassDensityToNumberDensity(
  * number density using simple arrays (non-tuple) of atom fractions
  */
 template<typename FracIterator, typename AtomicWgtIterator>
-inline double convertMassDensityToNumberDensity( 
+inline double convertMassDensityToNumberDensity(
 					    const double mass_density,
-					    FracIterator frac_start, 
+					    FracIterator frac_start,
 					    FracIterator frac_end,
 					    AtomicWgtIterator atomic_wgt_start,
 					    AtomicWgtIterator atomic_wgt_end )
@@ -304,7 +304,7 @@ void scaleAtomFractionsByNumberDensity( const double number_density,
 
   while( start != end )
   {
-    Utility::set<member>( *start, 
+    Utility::set<member>( *start,
 			  Utility::get<member>( *start )*number_density );
 
     ++start;
@@ -320,8 +320,8 @@ inline void scaleAtomFractionsByNumberDensity( const double number_density,
 					       Iterator start,
 					       Iterator end )
 {
-  scaleAtomFractionsByNumberDensity<Utility::FIRST>( number_density, 
-						     start, 
+  scaleAtomFractionsByNumberDensity<Utility::FIRST>( number_density,
+						     start,
 						     end );
 }
 

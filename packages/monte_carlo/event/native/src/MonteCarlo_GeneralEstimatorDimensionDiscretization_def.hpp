@@ -35,19 +35,19 @@ inline std::string GeneralEstimatorDimensionDiscretization<dimension>::getDimens
 
 // Check if the value is contained in the dimension discretization
 template<PhaseSpaceDimension dimension>
-inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscretization( 
+inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscretization(
             const EstimatorParticleStateWrapper& particle_state_wrapper ) const
 {
-  return isValueInDiscretization( 
+  return isValueInDiscretization(
                       getDimensionValue<dimension>( particle_state_wrapper ) );
 }
 
 // Check if the value is contained in the dimension discretization
 template<PhaseSpaceDimension dimension>
-inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscretization( 
+inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscretization(
                                           const Teuchos::any& any_value ) const
 {
-  return this->isValueInDiscretization( 
+  return this->isValueInDiscretization(
                                    getDimensionValue<dimension>( any_value ) );
 }
 
@@ -58,8 +58,8 @@ unsigned GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndex(
 {
   // Make sure the value is in the dimension discretization
   testPrecondition( this->isValueInDiscretization( particle_state_wrapper ) );
-  
-  return this->calculateBinIndex( 
+
+  return this->calculateBinIndex(
                       getDimensionValue<dimension>( particle_state_wrapper ) );
 }
 
@@ -70,21 +70,21 @@ unsigned GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndex(
 {
   // Make sure the value is in the dimension discretization
   testPrecondition( this->isValueInDiscretization( any_value ) );
-  
+
   return this->calculateBinIndex( getDimensionValue<dimension>( any_value ) );
 }
 
 // Export the bin boundaries
 template<PhaseSpaceDimension dimension>
-void GeneralEstimatorDimensionDiscretization<dimension>::exportData( 
+void GeneralEstimatorDimensionDiscretization<dimension>::exportData(
                                     const unsigned estimator_id,
                                     EstimatorHDF5FileHandler& hdf5_file ) const
 {
-  hdf5_file.setEstimatorBinBoundaries<dimension>( estimator_id, 
+  hdf5_file.setEstimatorBinBoundaries<dimension>( estimator_id,
 						  this->getBinBoundaries() );
 }
 
-} // end MonteCarlo namespace						     
+} // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
 

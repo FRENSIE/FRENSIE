@@ -41,7 +41,7 @@ struct UnitBaseHelper<LinIndepVarProcessingTag,LogIndepVarProcessingTag>
   //! The YX interpolation policy
   typedef LinLog YXInterpPolicy;
 };
-  
+
 //! Helper class used by unit base interpolation methods (Log-Lin)
 template<>
 struct UnitBaseHelper<LogIndepVarProcessingTag,LinIndepVarProcessingTag>
@@ -64,8 +64,8 @@ struct UnitBaseHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
  * \details A Z-Y interpolation policy and a Z-X interpolation policy must
  * be specified (the Z variable must be processed in the same way in both).
  * This class should never be used directly! It is the base implementation of
- * the concrete policy types that are safe to use as policies 
- * (e.g. LinLinLin, LogLogLog). 
+ * the concrete policy types that are safe to use as policies
+ * (e.g. LinLinLin, LogLogLog).
  */
 template<typename ZYInterpPolicy,typename ZXInterpPolicy>
 struct TwoDInterpolationPolicyImpl
@@ -85,13 +85,13 @@ public:
 
   //! Dependent variable processing tag
   typedef typename ZYInterpPolicy::DepVarProcessingTag DepVarProcessingTag;
-  
+
   //! Second independent variable processing tag
-  typedef typename ZYInterpPolicy::IndepVarProcessingTag 
+  typedef typename ZYInterpPolicy::IndepVarProcessingTag
   SecondIndepVarProcessingTag;
 
   //! First independent variable processing tag
-  typedef typename ZXInterpPolicy::IndepVarProcessingTag 
+  typedef typename ZXInterpPolicy::IndepVarProcessingTag
   FirstIndepVarProcessingTag;
 
   //! Process the dependent variable (z - ZYX)
@@ -117,7 +117,7 @@ public:
   //! Recover the first independent variable (x - ZYX)
   template<typename T>
   static T recoverProcessedFirstIndepVar( const T processed_first_indep_var );
-  
+
   //! Conduct the interpolation between two grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
@@ -150,7 +150,7 @@ public:
 			Iterator end_grid_0,
 			Iterator start_grid_1,
 			Iterator end_grid_1 );
-  
+
   //! Conduct the interpolation between two grids (no tuples)
   template<typename YIterator, typename ZIterator, typename T>
   static T interpolate( const T indep_var_x_0,
@@ -213,11 +213,11 @@ public:
 				YIterator end_indep_var_y_1,
 				ZIterator start_dep_var_1,
 				ZIterator end_dep_var_1 );
-  
+
   //! Calculate the length of a grid
   template<TupleMember YIndepMember,
 	   typename YIterator>
-  static typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType calculateGridLength( 
+  static typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType calculateGridLength(
 						  YIterator start_indep_y_grid,
 						  YIterator end_indep_y_grid );
 
@@ -236,11 +236,11 @@ public:
 					   const T indep_var_x,
 					   const T grid_0_y_limit,
 					   const T grid_1_y_limit );
-  
+
   //! Conduct the interpolation between two processed grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
-	   typename T, 
+	   typename T,
 	   typename YIterator,
 	   typename ZIterator>
   static T interpolateProcessed( const T processed_indep_var_x_0,
@@ -259,7 +259,7 @@ public:
   //! Conduct the interpolation between two processed grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
-	   typename T, 
+	   typename T,
 	   typename Iterator>
   static T interpolateProcessed( const T processed_indep_var_x_0,
 				 const T processed_indep_var_x_1,
@@ -269,7 +269,7 @@ public:
 				 Iterator end_processed_grid_0,
 				 Iterator start_processed_grid_1,
 				 Iterator end_processed_grid_1 );
-  
+
   //! Conduct the interpolation between two processed grids (no tuples)
   template<typename T, typename YIterator, typename ZIterator>
   static T interpolateProcessed( const T processed_indep_var_x_0,
@@ -288,10 +288,10 @@ public:
   //! Conduct unit base interpolation between two processed grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
-	   typename T, 
+	   typename T,
 	   typename YIterator,
 	   typename ZIterator>
-  static T interpolateProcessedUnitBase( 
+  static T interpolateProcessedUnitBase(
 				      const T processed_indep_var_x_0,
 				      const T processed_indep_var_x_1,
 				      const T processed_indep_var_x,
@@ -308,9 +308,9 @@ public:
   //! Conduct unit base interpolation between two processed grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
-	   typename T, 
+	   typename T,
 	   typename Iterator>
-  static T interpolateProcessedUnitBase( 
+  static T interpolateProcessedUnitBase(
 				      const T processed_indep_var_x_0,
 				      const T processed_indep_var_x_1,
 				      const T processed_indep_var_x,
@@ -319,11 +319,11 @@ public:
 				      Iterator end_processed_grid_0,
 				      Iterator start_processed_grid_1,
 				      Iterator end_processed_grid_1 );
-				      
+
 
   //! Conduct unit base interpolation between two processed grids (no tuples)
   template<typename T, typename YIterator, typename ZIterator>
-  static T interpolateProcessedUnitBase( 
+  static T interpolateProcessedUnitBase(
 				      const T processed_indep_var_x_0,
 				      const T processed_indep_var_x_1,
 				      const T processed_indep_var_x,
@@ -340,13 +340,13 @@ public:
   //! Calculate the length of a grid
   template<TupleMember YIndepMember,
 	   typename YIterator>
-  static typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType calculateGridLengthProcessed( 
+  static typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType calculateGridLengthProcessed(
 					YIterator start_processed_indep_y_grid,
 					YIterator end_processed_indep_y_grid );
 
   //! Calculate the length of an intermediate grid
   template<typename T>
-  static T calculateIntermediateGridLengthProcessed( 
+  static T calculateIntermediateGridLengthProcessed(
 					    const T processed_indep_var_x_0,
 					    const T processed_indep_var_x_1,
 					    const T processed_indep_var_x,
@@ -355,7 +355,7 @@ public:
 
   //! Calculate the min value of an intermediate grid
   template<typename T>
-  static T calculateIntermediateProcessedGridLimit( 
+  static T calculateIntermediateProcessedGridLimit(
 					    const T processed_indep_var_x_0,
 					    const T processed_indep_var_x_1,
 					    const T processed_indep_var_x,
@@ -385,7 +385,7 @@ private:
 	   typename YIterator,
 	   typename ZIterator,
 	   typename T>
-  static T interpolateAndProcessOnProcessedYGrid( 
+  static T interpolateAndProcessOnProcessedYGrid(
 					const T processed_indep_var_y,
 					YIterator start_processed_indep_y_grid,
 					YIterator end_processed_indep_y_grid,
@@ -397,7 +397,7 @@ private:
  * is Lin-Lin and Z-X policy interpolation policy is Lin-Lin).
  */
 struct LinLinLin : public TwoDInterpolationPolicyImpl<LinLin,LinLin>
-{ 
+{
   typedef LinLin ZYInterpPolicy;
   typedef LinLin ZXInterpPolicy;
 };
@@ -406,7 +406,7 @@ struct LinLinLin : public TwoDInterpolationPolicyImpl<LinLin,LinLin>
  * is Lin-Log and Z-X policy interpolation policy is Lin-Lin).
  */
 struct LinLogLin : public TwoDInterpolationPolicyImpl<LinLog,LinLin>
-{ 
+{
   typedef LinLog ZYInterpPolicy;
   typedef LinLin ZXInterpPolicy;
 };
@@ -415,7 +415,7 @@ struct LinLogLin : public TwoDInterpolationPolicyImpl<LinLog,LinLin>
  * is Lin-Lin and Z-X policy interpolation policy is Lin-Log).
  */
 struct LinLinLog : public TwoDInterpolationPolicyImpl<LinLin,LinLog>
-{ 
+{
   typedef LinLin ZYInterpPolicy;
   typedef LinLog ZXInterpPolicy;
 };
@@ -424,7 +424,7 @@ struct LinLinLog : public TwoDInterpolationPolicyImpl<LinLin,LinLog>
  * is Lin-Log and Z-X policy interpolation policy is Lin-Log).
  */
 struct LinLogLog : public TwoDInterpolationPolicyImpl<LinLog,LinLog>
-{ 
+{
   typedef LinLog ZYInterpPolicy;
   typedef LinLog ZXInterpPolicy;
 };
@@ -433,7 +433,7 @@ struct LinLogLog : public TwoDInterpolationPolicyImpl<LinLog,LinLog>
  * is Log-Lin and Z-X policy interpolation policy is Log-Lin).
  */
 struct LogLinLin : public TwoDInterpolationPolicyImpl<LogLin,LogLin>
-{ 
+{
   typedef LogLin ZYInterpPolicy;
   typedef LogLin ZXInterpPolicy;
 };
@@ -442,7 +442,7 @@ struct LogLinLin : public TwoDInterpolationPolicyImpl<LogLin,LogLin>
  * is Log-Log and Z-X policy interpolation policy is Log-Lin).
  */
 struct LogLogLin : public TwoDInterpolationPolicyImpl<LogLog,LogLin>
-{ 
+{
   typedef LogLog ZYInterpPolicy;
   typedef LogLin ZXInterpPolicy;
 };
@@ -451,7 +451,7 @@ struct LogLogLin : public TwoDInterpolationPolicyImpl<LogLog,LogLin>
  * is Log-Lin and Z-X policy interpolation policy is Log-Log).
  */
 struct LogLinLog : public TwoDInterpolationPolicyImpl<LogLin,LogLog>
-{ 
+{
   typedef LogLin ZYInterpPolicy;
   typedef LogLog ZXInterpPolicy;
 };

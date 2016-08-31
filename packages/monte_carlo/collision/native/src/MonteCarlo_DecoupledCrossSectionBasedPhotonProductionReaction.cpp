@@ -24,7 +24,7 @@ DecoupledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPh
 		   const unsigned threshold_energy_index,
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
+		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
 		   photon_production_distribution,
 		   const Teuchos::RCP<NuclearReaction>& total_reaction,
 	     const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array )
@@ -42,7 +42,7 @@ DecoupledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPh
   testPrecondition( incoming_energy_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( incoming_energy_grid.begin(),
 					     incoming_energy_grid.end() ) );
-					     
+
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 1 );
 }

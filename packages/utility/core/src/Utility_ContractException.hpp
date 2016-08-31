@@ -49,7 +49,7 @@ public:
   ContractException( const std::string &msg )
     : std::logic_error( msg )
   { /* ... */ }
-  
+
   virtual ~ContractException() throw()
   { /* ... */ }
 };
@@ -62,12 +62,12 @@ public:
 #if HAVE_FRENSIE_DBC
 
 /*! Test a function precondition
- * \ingroup contract_exceptions_macros 
+ * \ingroup contract_exceptions_macros
  */
 #define testPrecondition(c)						\
   TEST_FOR_EXCEPTION( !(c),						\
 		      Utility::ContractException,			\
-		      "Precondition exception" << std::endl ) 
+		      "Precondition exception" << std::endl )
 
 /*! Test a function postcondition
  * \ingroup contract_exceptions_macros
@@ -75,7 +75,7 @@ public:
 #define testPostcondition(c)					\
   TEST_FOR_EXCEPTION( !(c),					\
 		      Utility::ContractException,		\
-		      "Postcondition exception" << std::endl ) 
+		      "Postcondition exception" << std::endl )
 
 /*! Test a function invariant
  * \ingroup contract_exceptions_macros
@@ -87,8 +87,8 @@ public:
 
 /*! Test all nested conditions
  * \details This should be placed around any function call that implements
- * DBC. It can be used to create what is essentially a stacktrace. 
- * 
+ * DBC. It can be used to create what is essentially a stacktrace.
+ *
  * \ingroup contract_exceptions_macros
  */
 #define testNestedConditions(c)				\
@@ -124,14 +124,14 @@ public:
   }								\
   EXCEPTION_CATCH_RETHROW( Utility::ContractException,		\
 			   "Nested condition violated" << std::endl )
-  
+
 /*! Remember a variable, typedef, etc. that is needed for DBC testing
  * \ingroup contract_exceptions_macros
  */
 #define remember(...) __VA_ARGS__
 
 #else
-			      
+
 #define testPrecondition(c)
 #define testPostcondition(c)
 #define testInvariant(c)

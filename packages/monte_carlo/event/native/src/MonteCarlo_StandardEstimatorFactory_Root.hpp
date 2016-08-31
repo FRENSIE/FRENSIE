@@ -22,7 +22,7 @@ namespace MonteCarlo{
 template<>
 class StandardEstimatorFactory<Geometry::Root> : public EstimatorFactory
 {
-  
+
 public:
 
   //! Constructor
@@ -52,12 +52,12 @@ protected:
         const unsigned estimator_id ) const;
 
   //! Get the cached cells (add to set)
-  void getCachedCells( 
+  void getCachedCells(
        boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>& cells,
        const unsigned estimator_id ) const;
 
   //! Get the cell volumes
-  void getCellVolumes( 
+  void getCellVolumes(
      Teuchos::Array<double>& cell_volumes,
      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells );
 
@@ -74,7 +74,7 @@ protected:
            const unsigned estimator_id ) const;
 
   //! Get the surface areas
-  void getSurfaceAreas( 
+  void getSurfaceAreas(
            Teuchos::Array<double>& surface_areas,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
            surfaces );

@@ -53,10 +53,10 @@ private:
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
   typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
-  
+
   // Typedef for QuantityTraits<DepQuantity>
   typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
-  
+
   // Typedef for QuantityTraits<DistMultiplierQuantity>
   typedef QuantityTraits<DistMultiplierQuantity> DMQT;
 
@@ -83,7 +83,7 @@ public:
                                 QuantityTraits<InputIndepQuantityA>::one(),
 				const InputIndepQuantityB nuclear_temperature =
                                 QuantityTraits<InputIndepQuantityB>::one(),
-				const InputIndepQuantityC restriction_energy = 
+				const InputIndepQuantityC restriction_energy =
                                 QuantityTraits<InputIndepQuantityC>::zero(),
 				const double constant_multiplier = 1.0 );
 
@@ -159,7 +159,7 @@ private:
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
   friend class UnitAwareMaxwellFissionDistribution;
- 
+
   // The distribution type
   static const OneDDistributionType distribution_type = MAXWELLFISSION_DISTRIBUTION;
 
@@ -168,7 +168,7 @@ private:
 
   // The nuclear temperature of the distribution
   IndepQuantity d_nuclear_temperature;
-  
+
   // The restriction energy of the distribution
   IndepQuantity d_restriction_energy;
 
@@ -201,14 +201,14 @@ public:
   {
     return "Maxwell Fission Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 				const Utility::MaxwellFissionDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareMaxwellFissionDistribution
  *
  * \details The name function will set the type name that must be used in

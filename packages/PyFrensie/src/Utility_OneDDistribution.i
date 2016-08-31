@@ -100,7 +100,7 @@
 %import "Utility_DeltaDistribution.hpp"
 
 // Add a more detailed docstring for the constructor
-%feature("docstring") 
+%feature("docstring")
 Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
 "The dependent value (multiplier) can be ignored (default value = 1.0)"
 
@@ -126,7 +126,7 @@ Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
 %import "Utility_DiscreteDistribution.hpp"
 
 // Add a more detailed docstring for the constructor
-%feature("docstring") 
+%feature("docstring")
 Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution
 "The independent values and dependent values should be stored in a NumPy array.
 The dependent values can represent the CDF instead of the distribution (pass in
@@ -156,7 +156,7 @@ The dependent values can represent the CDF instead of the distribution (pass in
 
 // Add a more detailed docstring for the constructor
 %feature("docstring") Utility::UnitAwareEvaporationDistribution<void,void>::UnitAwareEvaporationDistribution
-"All of the input parameters can be ignored. The defaults values for each 
+"All of the input parameters can be ignored. The defaults values for each
 input parameter are the following:
 
   incident_energy = 1.0 (MeV)
@@ -206,7 +206,7 @@ and inf)"
 %import "Utility_HistogramDistribution.hpp"
 
 // Add a more detailed docstring for the constructor
-%feature("docstring") 
+%feature("docstring")
 Utility::UnitAwareHistogramDistribution<void,void>::UnitAwareHistogramDistribution
 "The bin boundaries and bin values should be stored in a NumPy array.
 The bin values can represent the CDF instead of the distribution (pass in
@@ -227,7 +227,7 @@ The bin values can represent the CDF instead of the distribution (pass in
 
 // Add a more detailed docstring for the constructor
 %feature("docstring") Utility::UnitAwareMaxwellFissionDistribution<void,void>::UnitAwareMaxwellFissionDistribution
-"All of the input parameters can be ignored. The defaults values for each 
+"All of the input parameters can be ignored. The defaults values for each
 input parameter are the following:
 
   incident_energy = 1.0 (MeV)
@@ -257,7 +257,7 @@ input parameter are the following:
 
 // Add a more detailed docstring for the constructor
 %feature("docstring") Utility::UnitAwareNormalDistribution<void,void>::UnitAwareNormalDistribution
-"All of the input parameters can be ignored. The defaults values for each 
+"All of the input parameters can be ignored. The defaults values for each
 input parameter are the following:
 
   mean = 0.0,
@@ -265,7 +265,7 @@ input parameter are the following:
   constant_multiplier = 1.0,
   min_independent_value = -inf,
   max_independent_value = inf."
-  
+
 // Instantiate the template constructor for double values
 %extend Utility::UnitAwareNormalDistribution<void,void>
 {
@@ -283,7 +283,7 @@ input parameter are the following:
 %import "Utility_PolynomialDistribution.hpp"
 
 // Add a more detailed docstring for the constructor
-%feature("docstring") 
+%feature("docstring")
 Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribution
 "The coefficients should be stored in a NumPy array."
 
@@ -309,7 +309,7 @@ Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribu
 %ignore Utility::UnitAwarePowerDistribution<POWER,void,void>::sample( const IndepQuantity, const IndepQuantity );
 
 // Add a more detailed docstring for the constructor
-%feature("docstring") 
+%feature("docstring")
 Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
 "The constant multiplier can be ignored (default value = 1.0)"
 
@@ -319,27 +319,27 @@ Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
   // Constructor
   UnitAwarePowerDistribution()
   {
-    return new Utility::UnitAwarePowerDistribution<POWER,void,void>( 
+    return new Utility::UnitAwarePowerDistribution<POWER,void,void>(
                                                                1.0, 0.0, 1.0 );
   }
-  
+
   // Constructor
   UnitAwarePowerDistribution( const double min_indep_limit,
                               const double max_indep_limit )
   {
-    return new Utility::UnitAwarePowerDistribution<POWER,void,void>( 
+    return new Utility::UnitAwarePowerDistribution<POWER,void,void>(
                                                              1.0,
                                                              min_indep_limit,
                                                              max_indep_limit );
   }
 
-  // Constructor (mimics the constructor in Utility_PowerDistribution.hpp - 
+  // Constructor (mimics the constructor in Utility_PowerDistribution.hpp -
   // see comment below)
   UnitAwarePowerDistribution( const double constant_multiplier,
                               const double min_indep_limit,
                               const double max_indep_limit )
   {
-    return new Utility::UnitAwarePowerDistribution<POWER,void,void>( 
+    return new Utility::UnitAwarePowerDistribution<POWER,void,void>(
                                                            constant_multiplier,
                                                            min_indep_limit,
                                                            max_indep_limit );
@@ -368,7 +368,7 @@ Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
 %define %tabular_distribution_interface_setup( INTERP )
 
 // Add a more detailed docstring for the constructor
-%feature("docstring") 
+%feature("docstring")
 Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabularDistribution
 "The independent values and dependent values should be stored in a NumPy array.
 "
@@ -425,7 +425,7 @@ Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabul
 
 // Add a more detailed docstring for the constructor
 %feature("docstring") Utility::UnitAwareWattDistribution<void,void>::UnitAwareWattDistribution
-"All of the input parameters can be ignored. The defaults values for each 
+"All of the input parameters can be ignored. The defaults values for each
 input parameter are the following:
 
   incident_energy = 1.0 (MeV)

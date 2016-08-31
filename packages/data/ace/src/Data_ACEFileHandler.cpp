@@ -35,7 +35,7 @@ ACEFileHandler::ACEFileHandler( const std::string& file_name,
     d_nxs(),
     d_jxs(),
     d_xss()
-{ 
+{
   openACEFile( file_name, is_ascii );
   readACETable( table_name, table_start_line );
 }
@@ -45,25 +45,25 @@ ACEFileHandler::~ACEFileHandler()
 {}
 
 // Open an ACE library file
-void ACEFileHandler::openACEFile( const std::string& file_name, 
+void ACEFileHandler::openACEFile( const std::string& file_name,
 				  const bool is_ascii )
 {
   // Make sure no other ace library is open and assigned the desired id
   testPrecondition( !fileIsOpenUsingFortran( d_ace_file_id ) );
-  
+
   // Binary files cannot currently be handled
-  TEST_FOR_EXCEPTION( !is_ascii, 
-		      std::runtime_error, 
+  TEST_FOR_EXCEPTION( !is_ascii,
+		      std::runtime_error,
 		      "Fatal Error: Binary ACE files cannot currently be read ("+ file_name + ")." );
-  
+
   // Check that the file exists
-  bool ace_file_exists = (bool)fileExistsUsingFortran( file_name.c_str(), 
+  bool ace_file_exists = (bool)fileExistsUsingFortran( file_name.c_str(),
 						       file_name.size() );
-  TEST_FOR_EXCEPTION( !ace_file_exists, 
-		      std::runtime_error, 
-		      "Fatal Error: ACE file " + file_name + 
+  TEST_FOR_EXCEPTION( !ace_file_exists,
+		      std::runtime_error,
+		      "Fatal Error: ACE file " + file_name +
 		      " does not exists." );
-  
+
   // Check that the file can be opened
   bool ace_file_is_readable = (bool)fileIsReadableUsingFortran( file_name.c_str(),
 							        file_name.size() );
@@ -71,7 +71,7 @@ void ACEFileHandler::openACEFile( const std::string& file_name,
 		      std::runtime_error,
 		      "Fatal Error: ACE file " + file_name +
 		      " exists but is not readable." );
-  
+
   // Open the file
   openFileUsingFortran( file_name.c_str(), file_name.size(), d_ace_file_id );
 
@@ -99,19 +99,19 @@ void ACEFileHandler::readACETable( const std::string& table_name,
 
   // Test that the table name is the same as the desired table name
   {
-    bool expected_table_name = 
+    bool expected_table_name =
       (table_name.compare( d_ace_table_name ) == 0 ? true : false);
-    
+
     if( !expected_table_name )
     {
       std::stringstream ss;
-      
-      ss << "Fatal Error: Expected table " << table_name << " at line " 
+
+      ss << "Fatal Error: Expected table " << table_name << " at line "
 	 << table_start_line << " of ACE library " << d_ace_library_name
-	 << " but found table " << d_ace_table_name 
+	 << " but found table " << d_ace_table_name
 	 << ". The cross_sections.xml file is likely corrupted."
 	 << std::endl;
-      
+
       TEST_FOR_EXCEPTION( !expected_table_name,
 			  std::runtime_error,
 			  ss.str() );
@@ -133,7 +133,7 @@ void ACEFileHandler::readACETable( const std::string& table_name,
 
   // Read the jxs array
   readAceTableJXSArray( d_ace_file_id, d_jxs.getRawPtr() );
-  
+
   // Resize the xss array
   d_xss.resize( d_nxs[0] );
 
@@ -148,7 +148,7 @@ void ACEFileHandler::readACETable( const std::string& table_name,
 void ACEFileHandler::removeWhiteSpaceFromString( std::string& string ) const
 {
   unsigned white_space_loc = string.find( " " );
-  
+
   while( white_space_loc < string.size() )
   {
     string.erase( white_space_loc, 1 );
@@ -206,7 +206,7 @@ Teuchos::ArrayView<const int> ACEFileHandler::getTableZAIDs() const
 }
 
 // Get the table atomic weight ratios
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 ACEFileHandler::getTableAtomicWeightRatios() const
 {
   return d_atomic_weight_ratios();

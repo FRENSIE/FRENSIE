@@ -21,7 +21,7 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
@@ -36,12 +36,12 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
-  testPrecondition( !scattering_distribution.is_null() );
+  testPrecondition( scattering_distribution.use_count() > 0 );
 }
 
 // Constructor
@@ -51,7 +51,7 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
@@ -67,12 +67,12 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
-  testPrecondition( !scattering_distribution.is_null() );
+  testPrecondition( scattering_distribution.use_count() > 0 );
   // Make sure the grid searcher is valid
   testPrecondition( !grid_searcher.is_null() );
 }
@@ -102,13 +102,13 @@ ElectroatomicReactionType CutoffElasticElectroatomicReaction<InterpPolicy,proces
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     ElectronState& electron, 
+void CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution->scatterElectron( electron, 
-                                              bank, 
+  d_scattering_distribution->scatterElectron( electron,
+                                              bank,
                                               shell_of_interaction);
 
   electron.incrementCollisionNumber();
@@ -120,14 +120,14 @@ void CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::r
 
 // Return the cross section at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
+double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
     const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
 
-  // Get the cross section ratio for the cutoff angle
-  double cross_section_ratio = 
+  // Get the cross section ratio for the cutoff angle cosine
+  double cross_section_ratio =
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 
   double cross_section;
@@ -144,12 +144,12 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 
 // Return the cross section at the given energy (efficient)
 template<typename InterpPolicy, bool processed_cross_section>
-double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
+double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
     const double energy,
     const unsigned bin_index ) const
 {
-  // Get the cross section ratio for the cutoff angle
-  double cross_section_ratio = 
+  // Get the cross section ratio for the cutoff angle cosine
+  double cross_section_ratio =
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 
   double cross_section;

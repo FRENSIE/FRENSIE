@@ -12,46 +12,35 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The cutoff scattering distribution base class
-class CutoffElasticElectronScatteringDistribution : public ElectronScatteringDistribution
+class CutoffElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
+            public AdjointElectronScatteringDistribution
 {
 
 public:
 
   //! Typedef for the  elastic distribution
-  typedef Teuchos::Array<Utility::Pair< double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+  typedef std::vector<Utility::Pair< double,
+		       std::shared_ptr<const Utility::TabularOneDDistribution> > >
   ElasticDistribution;
 
   //! Constructor
   CutoffElasticElectronScatteringDistribution(
         const ElasticDistribution& cutoff_elastic_scattering_distribution,
-        const double upper_cutoff_angle_cosine = 0.999999,
-        const bool angle_cosine_is_used_as_independent_variable = false );
+        const double cutoff_angle_cosine = 1.0 );
 
-  //! Destructor 
+  //! Destructor
   virtual ~CutoffElasticElectronScatteringDistribution()
   { /* ... */ }
-
-  //! Evaluate the distribution
-  double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the distribution
   double evaluate( const unsigned incoming_energy_bin,
@@ -65,8 +54,16 @@ public:
   double evaluatePDF( const unsigned incoming_energy_bin,
                       const double scattering_angle_cosine ) const;
 
+  //! Evaluate the distribution
+  double evaluatePDF( const double incoming_energy,
+                      const double scattering_angle_cosine ) const;
+
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
+                      const double scattering_angle_cosine ) const;
+
+  //! Evaluate the CDF
+  double evaluateCDF( const unsigned incoming_energy_bin,
                       const double scattering_angle_cosine ) const;
 
   //! Evaluate the cross section ratio for the cutoff angle cosine
@@ -90,7 +87,12 @@ public:
   void scatterElectron( ElectronState& electron,
                         ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
-                    
+
+  //! Randomly scatter the adjoint electron
+  void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
+                               ParticleBank& bank,
+                               Data::SubshellType& shell_of_interaction ) const;
+
 protected:
 
    //! Sample an outgoing direction from the distribution
@@ -101,13 +103,7 @@ protected:
 private:
 
   // The cutoff scattering angle cosine (mu) below which the cutoff distribution is used
-  double d_upper_cutoff_angle_cosine;
-
-  // The cutoff change in scattering angle cosine (delta mu) above which the cutoff distribution is used
-  double d_lower_cutoff_delta_mu;
-
-  // Independent parameter flag: true = angle cosine (mu), true = delta angle cosine (delta mu)
-  bool d_angle_cosine_is_used_as_independent_variable;
+  double d_cutoff_angle_cosine;
 
   // cutoff elastic scattering distribution (no screened Rutherford data)
   ElasticDistribution d_elastic_scattering_distribution;

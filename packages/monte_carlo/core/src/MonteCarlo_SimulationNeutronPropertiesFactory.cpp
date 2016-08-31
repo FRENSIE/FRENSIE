@@ -18,7 +18,7 @@ namespace MonteCarlo{
 void SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties(
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn )
-{  
+{
   // Get the free gas thermal treatment temperature threshold - optional
   if( properties.isParameter( "Free Gas Threshold" ) )
   {
@@ -41,9 +41,9 @@ void SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties(
       SimulationNeutronProperties::setMinNeutronEnergy( min_energy );
     else
     {
-      SimulationNeutronProperties::setMinNeutronEnergy( 
+      SimulationNeutronProperties::setMinNeutronEnergy(
 			 SimulationNeutronProperties::getAbsoluteMinNeutronEnergy() );
-      
+
       *os_warn << "Warning: the lowest supported neutron energy is "
 		<< SimulationNeutronProperties::getAbsoluteMinNeutronEnergy()
 		<< ". This value will be used instead of "
@@ -62,7 +62,7 @@ void SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties(
     {
       SimulationNeutronProperties::setMaxNeutronEnergy(
 			 SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy() );
-      
+
       *os_warn << "Warning: the highest supported neutron energy is "
 		<< SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy()
 		<< ". This value will be used instead of "

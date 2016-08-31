@@ -29,7 +29,7 @@ class CylindricalSpatialDistribution : public SpatialDistribution
 {
 
 private:
-  
+
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
@@ -44,7 +44,7 @@ public:
                    const double center_y_position,
                    const double center_z_position,
                    const Axis axis = Z_AXIS );
-  
+
   //! Destructor
   ~CylindricalSpatialDistribution()
   { /* ... */ }
@@ -54,7 +54,7 @@ public:
 
   //! Evaluate the spatial distribution PDF
   double evaluatePDF( const double cartesian_point[3] ) const;
-  
+
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   void sample( double sampled_point[3] ) const;
 

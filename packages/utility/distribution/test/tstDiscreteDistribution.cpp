@@ -67,7 +67,7 @@ Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluate )
-{  
+{
   TEST_EQUALITY_CONST( distribution->evaluate( -2.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 1.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( -0.5 ), 0.0 );
@@ -97,45 +97,45 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluate )
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, evaluate )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*eV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.1*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.1*eV ),
 		       0.25*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*eV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*eV ),
 		       1.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.5*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.5*eV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 5.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 5.0*eV ),
 		       2.7*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 100.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 100.0*eV ),
 		       0.0*si::mole );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1e3*eV ), 
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1e3*eV ),
 				  0.05*si::mole,
 				  1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2e3*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2e3*eV ),
 		       0.0*si::mole );
 
-  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.0*eV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.1*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.1*eV ),
 		       0.0625*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.5*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.5*eV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 1.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 1.0*eV ),
 		       0.25*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 2.5*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 2.5*eV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 5.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 5.0*eV ),
 		       0.675*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 100.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 100.0*eV ),
 		       0.0*si::mole );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			  unit_aware_cdf_cons_distribution->evaluate( 1e3*eV ),
 			  0.0125*si::mole,
 			  1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 2e3*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 2e3*eV ),
 		       0.0*si::mole );
 }
 
@@ -172,25 +172,25 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluatePDF )
 // Check that the unit-aware PDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, evaluatePDF )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*eV ),
 		       0.0/eV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.1*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.1*eV ),
 		       0.0625/eV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.5*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.5*eV ),
 		       0.0/eV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*eV ),
 		       0.25/eV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2.5*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2.5*eV ),
 		       0.0/eV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 5.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 5.0*eV ),
 		       0.675/eV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 100.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 100.0*eV ),
 		       0.0/eV );
   UTILITY_TEST_FLOATING_EQUALITY(
 			        unit_aware_distribution->evaluatePDF( 1e3*eV ),
 				0.0125/eV,
 				1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2e3*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2e3*eV ),
 		       0.0/eV );
 
   TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluatePDF( 0.0*eV ),
@@ -248,11 +248,11 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluateCDF )
 // Check that the unit-aware CDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, evaluateCDF )
 {
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*eV ),
 		       0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.1*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.1*eV ),
 		       0.0625 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.5*eV ), 
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.5*eV ),
 		       0.0625 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 1.0*eV ),
 		       0.3125 );
@@ -267,31 +267,31 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, evaluateCDF )
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 2e3*eV ),
 		       1.0 );
 
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_tab_cdf_cons_distribution->evaluateCDF( 0.0*eV ),
 		   0.0 );
   TEST_EQUALITY_CONST(
 		   unit_aware_tab_cdf_cons_distribution->evaluateCDF( 0.1*eV ),
 		   0.0625 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_tab_cdf_cons_distribution->evaluateCDF( 0.5*eV ),
 		   0.0625 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_tab_cdf_cons_distribution->evaluateCDF( 1.0*eV ),
 		   0.3125 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_tab_cdf_cons_distribution->evaluateCDF( 2.5*eV ),
 		   0.3125 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_tab_cdf_cons_distribution->evaluateCDF( 5.0*eV ),
 		   0.9875 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_tab_cdf_cons_distribution->evaluateCDF(100.0*eV),
 		   0.9875 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_tab_cdf_cons_distribution->evaluateCDF( 1e3*eV ),
 		   1.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   unit_aware_tab_cdf_cons_distribution->evaluateCDF( 2e3*eV ),
 		   1.0 );
 }
@@ -310,59 +310,59 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sample )
   fake_stream[6] = 1.0 - 1.0e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   // Test the first bin
   double sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   // Test the third bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   // Test the first bin
   sample = cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   // Test the third bin
   sample = cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   sample = cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   fake_stream.resize( 10 );
@@ -382,38 +382,38 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sample )
   // Test the first bin
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the third bin
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   // Test the fourth bin
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   // Test the fifth bin
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   sample = repeat_vals_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -431,61 +431,61 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, sample )
   fake_stream[6] = 1.0 - 1.0e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   // Test the first bin
   quantity<ElectronVolt> sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-  
+
   sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-  
+
   // Test the second bin
   sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-  
+
   sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-  
+
   // Test the third bin
   sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 5.0*eV );
-  
+
   sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 5.0*eV );
-  
+
   // Test the fourth bin
   sample = unit_aware_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1e3*eV );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   // Test the first bin
   sample = unit_aware_cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-  
+
   sample = unit_aware_cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-  
+
   // Test the second bin
   sample = unit_aware_cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-  
+
   sample = unit_aware_cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-  
+
   // Test the third bin
   sample = unit_aware_cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 5.0*eV );
-    
+
   sample = unit_aware_cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 5.0*eV );
-  
+
   // Test the fourth bin
   sample = unit_aware_cdf_cons_distribution->sample();
   TEST_EQUALITY_CONST( sample, 1e3*eV );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -503,77 +503,77 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleAndRecordTrials )
   fake_stream[6] = 1.0 - 1.0e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   unsigned trials = 0;
 
   // Test the first bin
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 1 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 2 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 3 );
-  
+
   // Test the second bin
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 4 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 5 );
-  
+
   // Test the third bin
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0 );
   TEST_EQUALITY_CONST( trials, 6 );
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0 );
   TEST_EQUALITY_CONST( trials, 7 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   trials = 0;
-  
+
   // Test the first bin
   sample = cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 1 );
-  
+
   sample = cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 2 );
-  
+
   sample = cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 3 );
-  
+
   // Test the second bin
   sample = cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 4 );
-  
+
   sample = cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 5 );
-  
+
   // Test the third bin
   sample = cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0 );
   TEST_EQUALITY_CONST( trials, 6 );
-  
+
   sample = cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0 );
   TEST_EQUALITY_CONST( trials, 7 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   fake_stream.resize( 10 );
@@ -596,47 +596,47 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleAndRecordTrials )
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 1 );
-  
+
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 2 );
-  
+
   // Test the second bin
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 3 );
-  
+
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( trials, 4 );
-  
+
   // Test the third bin
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 5 );
-  
+
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 6 );
-  
+
   // Test the fourth bin
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0 );
   TEST_EQUALITY_CONST( trials, 7 );
-  
+
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0 );
   TEST_EQUALITY_CONST( trials, 8 );
-  
+
   // Test the fifth bin
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0 );
   TEST_EQUALITY_CONST( trials, 9 );
-  
+
   sample = repeat_vals_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0 );
   TEST_EQUALITY_CONST( trials, 10 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -654,80 +654,80 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, sampleAndRecordTrials )
   fake_stream[6] = 1.0 - 1.0e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   unsigned trials = 0;
 
   // Test the first bin
-  quantity<ElectronVolt> sample = 
+  quantity<ElectronVolt> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
   TEST_EQUALITY_CONST( trials, 1u );
-  
+
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
   TEST_EQUALITY_CONST( trials, 2u );
-  
+
   // Test the second bin
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
   TEST_EQUALITY_CONST( trials, 3u );
-  
+
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
   TEST_EQUALITY_CONST( trials, 4u );
-  
+
   // Test the third bin
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
   TEST_EQUALITY_CONST( trials, 5u );
-  
+
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
   TEST_EQUALITY_CONST( trials, 6u );
-  
+
   // Test the fourth bin
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1e3*eV );
   TEST_EQUALITY_CONST( trials, 7u );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   trials = 0u;
-  
+
   // Test the first bin
   sample = unit_aware_cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
   TEST_EQUALITY_CONST( trials, 1u );
-  
+
   sample = unit_aware_cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
   TEST_EQUALITY_CONST( trials, 2u );
-  
+
   // Test the second bin
   sample = unit_aware_cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
   TEST_EQUALITY_CONST( trials, 3u );
-  
+
   sample = unit_aware_cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
   TEST_EQUALITY_CONST( trials, 4u );
-  
+
   // Test the third bin
   sample = unit_aware_cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
   TEST_EQUALITY_CONST( trials, 5u );
-    
+
   sample = unit_aware_cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
   TEST_EQUALITY_CONST( trials, 6u );
-  
+
   // Test the fourth bin
   sample = unit_aware_cdf_cons_distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 1e3*eV );
   TEST_EQUALITY_CONST( trials, 7u );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -745,7 +745,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleAndRecordBinIndex )
   fake_stream[6] = 1.0 - 1.0e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   unsigned bin_index;
 
   // Test the first bin
@@ -782,7 +782,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleAndRecordBinIndex )
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   // Test the first bin
   sample = tab_cdf_cons_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, -1.0 );
@@ -892,42 +892,42 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, sampleAndRecordBinIndex )
   fake_stream[6] = 1.0 - 1.0e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   unsigned bin_index = 0;
 
   // Test the first bin
-  quantity<ElectronVolt> sample = 
+  quantity<ElectronVolt> sample =
     unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
   TEST_EQUALITY_CONST( bin_index, 0u );
-  
+
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
   TEST_EQUALITY_CONST( bin_index, 0u );
-  
+
   // Test the second bin
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
   TEST_EQUALITY_CONST( bin_index, 1u );
-  
+
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
   TEST_EQUALITY_CONST( bin_index, 1u );
-  
+
   // Test the third bin
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
   TEST_EQUALITY_CONST( bin_index, 2u );
-  
+
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
   TEST_EQUALITY_CONST( bin_index, 2u );
-  
+
   // Test the fourth bin
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 1e3*eV );
   TEST_EQUALITY_CONST( bin_index, 3u );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -936,34 +936,34 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, sampleAndRecordBinIndex )
   sample = unit_aware_tab_cdf_cons_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
   TEST_EQUALITY_CONST( bin_index, 0u );
-  
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
   TEST_EQUALITY_CONST( bin_index, 0u );
-  
+
   // Test the second bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
   TEST_EQUALITY_CONST( bin_index, 1u );
-  
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
   TEST_EQUALITY_CONST( bin_index, 1u );
-  
+
   // Test the third bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
   TEST_EQUALITY_CONST( bin_index, 2u );
-    
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
   TEST_EQUALITY_CONST( bin_index, 2u );
-  
+
   // Test the fourth bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 1e3*eV );
   TEST_EQUALITY_CONST( bin_index, 3u );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -974,83 +974,83 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleWithRandomNumber )
   // Test the first bin
   double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 0.2 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 0.25 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = tab_distribution->sampleWithRandomNumber( 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 0.75 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   // Test the third bin
   sample = tab_distribution->sampleWithRandomNumber( 0.85 );
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumber( 1.0 );
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   // Test the first bin
   sample = tab_cdf_cons_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleWithRandomNumber( 0.2 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleWithRandomNumber( 0.25 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = tab_cdf_cons_distribution->sampleWithRandomNumber( 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleWithRandomNumber( 0.75 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   // Test the third bin
   sample = tab_cdf_cons_distribution->sampleWithRandomNumber( 0.85 );
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleWithRandomNumber( 1.0 );
   TEST_EQUALITY_CONST( sample, 1.0 );
 
   // Test the first bin
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 0.0625 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 0.2 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 0.25 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the third bin
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 0.75 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   // Test the fourth bin
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 0.85 );
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 0.9375 );
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   // Test the fifth bin
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 0.95 );
   TEST_EQUALITY_CONST( sample, 1.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleWithRandomNumber( 1.0 );
   TEST_EQUALITY_CONST( sample, 1.0 );
 }
@@ -1060,52 +1060,52 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleWithRandomNumber )
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, sampleWithRandomNumber )
 {
   // Test the first bin
-  quantity<ElectronVolt> sample = 
+  quantity<ElectronVolt> sample =
     unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.0625 );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   // Test the second bin
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.3 );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.3125 );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   // Test the third bin
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.9 );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
-    
+
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.9875 );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
-    
+
   // Test the fourth bin
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 1.0-1e-15 );
   TEST_EQUALITY_CONST( sample, 1e3*eV );
-    
+
   // Test the first bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumber( 0.0625 );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   // Test the second bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumber( 0.3 );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumber( 0.3125 );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   // Test the third bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumber( 0.9 );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
-      
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumber( 0.9875 );
   TEST_EQUALITY_CONST( sample, 5.0*eV );
-    
+
   // Test the fourth bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumber( 1.0-1e-15 );
   TEST_EQUALITY_CONST( sample, 1e3*eV );
@@ -1127,38 +1127,38 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleInSubrange )
   // Test the first bin
   double sample = tab_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = tab_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = tab_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-    
+
   // Test the first bin
   sample = tab_cdf_cons_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = tab_cdf_cons_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
@@ -1177,21 +1177,21 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleInSubrange )
   // Test the first bin
   sample = tab_repeat_vals_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = tab_repeat_vals_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the third bin
   sample = tab_repeat_vals_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleInSubrange( 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
@@ -1209,22 +1209,22 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, sampleInSubrange )
   fake_stream[3] = 1.0 - 1.0e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   // Test the first bin
-  quantity<ElectronVolt> sample = 
+  quantity<ElectronVolt> sample =
     unit_aware_tab_distribution->sampleInSubrange( 3.0*eV );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   sample = unit_aware_tab_distribution->sampleInSubrange( 3.0*eV );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   // Test the second bin
   sample = unit_aware_tab_distribution->sampleInSubrange( 3.0*eV );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   sample = unit_aware_tab_distribution->sampleInSubrange( 3.0*eV );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -1232,17 +1232,17 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, sampleInSubrange )
   // Test the first bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleInSubrange( 3.0*eV );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-  
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleInSubrange( 3.0*eV );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   // Test the second bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleInSubrange( 3.0*eV );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleInSubrange( 3.0*eV );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -1253,90 +1253,90 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleWithRandomNumberInSubrange )
   // Test the first bin
   double sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.2, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0/3.0, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.5, 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   // Test the first bin
   sample = tab_cdf_cons_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleWithRandomNumberInSubrange( 0.2, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleWithRandomNumberInSubrange( 1.0/3.0, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = tab_cdf_cons_distribution->sampleWithRandomNumberInSubrange( 0.5, 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = tab_cdf_cons_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   // Test the first bin
   sample = tab_repeat_vals_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleWithRandomNumberInSubrange( 1.0/12, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the second bin
   sample = tab_repeat_vals_distribution->sampleWithRandomNumberInSubrange( 0.2, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleWithRandomNumberInSubrange( 1.0/3, 0.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
-  
+
   // Test the third bin
   sample = tab_repeat_vals_distribution->sampleWithRandomNumberInSubrange( 0.5, 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = tab_repeat_vals_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution,
 		   sampleWithRandomNumberInSubrange )
 {
   // Test the first bin
-  quantity<ElectronVolt> sample = 
+  quantity<ElectronVolt> sample =
     unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 3.0*eV );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 0.2, 3.0*eV );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   // Test the second bin
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 0.6, 3.0*eV );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 0.99, 3.0*eV );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   // Test the first bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumberInSubrange( 0.0, 3.0*eV );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumberInSubrange( 0.2, 3.0*eV );
   TEST_EQUALITY_CONST( sample, 0.1*eV );
-    
+
   // Test the second bin
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumberInSubrange( 0.6, 3.0*eV );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
-    
+
   sample = unit_aware_tab_cdf_cons_distribution->sampleWithRandomNumberInSubrange( 0.99, 3.0*eV );
   TEST_EQUALITY_CONST( sample, 1.0*eV );
 }
@@ -1351,7 +1351,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, getUpperBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, getUpperBoundOfIndepVar )
 {
@@ -1431,22 +1431,22 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::DiscreteDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Utility::DiscreteDistribution>( distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Utility::DiscreteDistribution>( "test distribution", 
+
+  parameter_list.set<Utility::DiscreteDistribution>( "test distribution",
 						     *true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"discrete_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "discrete_dist_test_list.xml" );
 
   // Rounding errors prevent us from being able to do this test reliably
   // TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<Utility::DiscreteDistribution> 
+  Teuchos::RCP<Utility::DiscreteDistribution>
     copy_distribution( new Utility::DiscreteDistribution );
 
   *copy_distribution = read_parameter_list->get<Utility::DiscreteDistribution>(
@@ -1460,7 +1460,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, toParameterList )
                           1e-15 );
   TEST_FLOATING_EQUALITY( copy_distribution->getUpperBoundOfIndepVar(),
                           true_distribution->getUpperBoundOfIndepVar(),
-                          1e-15 );                       
+                          1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1468,24 +1468,24 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, toParameterList )
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toParameterList )
 {
   typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> UnitAwareDiscreteDistribution;
-  
+
   Teuchos::RCP<UnitAwareDiscreteDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<UnitAwareDiscreteDistribution>( unit_aware_distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<UnitAwareDiscreteDistribution>( "test distribution", 
+
+  parameter_list.set<UnitAwareDiscreteDistribution>( "test distribution",
 						     *true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"unit_aware_discrete_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "unit_aware_discrete_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<UnitAwareDiscreteDistribution> 
+  Teuchos::RCP<UnitAwareDiscreteDistribution>
     copy_distribution( new UnitAwareDiscreteDistribution );
 
   *copy_distribution = read_parameter_list->get<UnitAwareDiscreteDistribution>(
@@ -1498,19 +1498,19 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toParameterList )
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( DiscreteDistribution, fromParameterList )
 {
-  Utility::DiscreteDistribution xml_distribution = 
+  Utility::DiscreteDistribution xml_distribution =
     test_dists_list->get<Utility::DiscreteDistribution>( "Discrete Distribution A" );
-  
+
   TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 1.0 );
   TEST_EQUALITY_CONST( xml_distribution.evaluatePDF( -1.0 ), 0.25 );
   TEST_EQUALITY_CONST( xml_distribution.evaluatePDF( 0.0 ), 0.5 );
   TEST_EQUALITY_CONST( xml_distribution.evaluatePDF( 1.0 ), 0.25 );
 
-  xml_distribution = 
+  xml_distribution =
     test_dists_list->get<Utility::DiscreteDistribution>( "Discrete Distribution B" );
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
 		       -Utility::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(),
 		       Utility::PhysicalConstants::pi );
@@ -1533,10 +1533,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDiscreteDistribution,
 {
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
@@ -1548,56 +1548,56 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDiscreteDistribution,
   Utility::UnitAwareDiscreteDistribution<IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.5 );
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 2.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
-  InverseIndepQuantityB inv_indep_quantity_b = 
+  InverseIndepQuantityB inv_indep_quantity_b =
     Utility::QuantityTraits<InverseIndepQuantityB>::initializeQuantity( 0.5 );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
 
   Utility::setQuantity( indep_quantity_a, 0.5 );
   Utility::setQuantity( inv_indep_quantity_a, 0.0 );
-  Utility::setQuantity( dep_quantity_a, 0.0 );			
+  Utility::setQuantity( dep_quantity_a, 0.0 );
 
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
   Utility::setQuantity( inv_indep_quantity_b, 0.0 );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
@@ -1757,26 +1757,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDiscreteDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromParameterList )
 {
   typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> UnitAwareDiscreteDistribution;
-  
-  UnitAwareDiscreteDistribution xml_distribution = 
+
+  UnitAwareDiscreteDistribution xml_distribution =
     test_dists_list->get<UnitAwareDiscreteDistribution>( "Unit-Aware Discrete Distribution A" );
-  
+
   TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0.1*eV );
   TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 10.0*eV );
-  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( 0.1*eV ), 
+  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( 0.1*eV ),
 				  0.2/eV,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( 1.0*eV ), 
+  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( 1.0*eV ),
 				  0.6/eV,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( 10.0*eV ), 
+  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( 10.0*eV ),
 				  0.2/eV,
 				  1e-15 );
 
-  xml_distribution = 
+  xml_distribution =
     test_dists_list->get<UnitAwareDiscreteDistribution>( "Unit-Aware Discrete Distribution B" );
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
 		       Utility::PhysicalConstants::pi/2*eV );
   TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(),
 		       Utility::PhysicalConstants::pi*eV );
@@ -1796,17 +1796,17 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromParameterList )
 int main( int argc, char** argv )
 {
   std::string test_dists_xml_file;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_dists_xml_file",
 		 &test_dists_xml_file,
 		 "Test distributions xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -1817,7 +1817,7 @@ int main( int argc, char** argv )
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::DiscreteDistribution );
   typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> UnitAwareDiscreteDistribution;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareDiscreteDistribution );
-  
+
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 
   // Create a distribution using the standard constructor
@@ -1825,18 +1825,18 @@ int main( int argc, char** argv )
   independent_values[0] = -1.0;
   independent_values[1] = 0.0;
   independent_values[2] = 1.0;
-  
+
   Teuchos::Array<double> dependent_values( 3 );
   dependent_values[0] = 1.0;
   dependent_values[1] = 2.0;
   dependent_values[2] = 1.0;
-  
-  tab_distribution.reset( 
+
+  tab_distribution.reset(
 		      new Utility::DiscreteDistribution( independent_values,
 							 dependent_values ) );
 
   distribution = tab_distribution;
-  
+
   // Create a distribution using the cdf constructor
   Teuchos::Array<double> cdf_values( 3 );
   cdf_values[0] = 0.25;
@@ -1883,8 +1883,8 @@ int main( int argc, char** argv )
   dependent_quantities[1] = 1.0*si::mole;
   dependent_quantities[2] = 2.7*si::mole;
   dependent_quantities[3] = 0.05*si::mole;
-  
-  unit_aware_tab_distribution.reset( 
+
+  unit_aware_tab_distribution.reset(
 	   new Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>(
   						      independent_quantities,
   						      dependent_quantities ) );
@@ -1904,10 +1904,10 @@ int main( int argc, char** argv )
   							dependent_values ) );
 
   unit_aware_cdf_cons_distribution = unit_aware_tab_cdf_cons_distribution;
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

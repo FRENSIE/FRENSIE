@@ -60,7 +60,7 @@ void ENDFFissionYieldsFileHandler::openENDFFile( const std::string& file_name)
 
     TEST_FOR_EXCEPTION( !endf_file_is_readable, std::runtime_error,
                         "Fatal Error: ENDF file " + file_name + " is not readable." );
-      
+
     // Open the file
     openFileUsingFortran( file_name.c_str(), file_name.size(), d_file_id );
 
@@ -121,7 +121,7 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
         d_yield_std_independent[i].resize( d_number_data_sets_independent[i] );
 
         // Read the data.
-        readEndfFissionYieldsData( d_file_id, 
+        readEndfFissionYieldsData( d_file_id,
                                   &d_number_data_sets_independent[i],
                                   d_yield_zaid_independent[i].getRawPtr(),
                                   d_yield_meta_state_independent[i].getRawPtr(),
@@ -165,7 +165,7 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
         d_yield_std_cumulative[i].resize( d_number_data_sets_cumulative[i] );
 
         // Read the data.
-        readEndfFissionYieldsData( d_file_id, 
+        readEndfFissionYieldsData( d_file_id,
                                   &d_number_data_sets_cumulative[i],
                                   d_yield_zaid_cumulative[i].getRawPtr(),
                                   d_yield_meta_state_cumulative[i].getRawPtr(),
@@ -186,7 +186,7 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
 
 
     }
-   
+
     // Close the file
     closeFileUsingFortran( d_file_id );
 
@@ -205,28 +205,28 @@ Teuchos::ArrayView<const double> ENDFFissionYieldsFileHandler::getEnergyIndepend
 }
 
 // Get the ZAID of the fission products for the independent yields
-Teuchos::ArrayView<const Teuchos::Array<int> > 
+Teuchos::ArrayView<const Teuchos::Array<int> >
 ENDFFissionYieldsFileHandler::getZaidFissionProductsIndependentYields() const
 {
    return d_yield_zaid_independent();
 }
 
 // Get the Meta State of the fission products for the independent yields
-Teuchos::ArrayView<const Teuchos::Array<int> > 
+Teuchos::ArrayView<const Teuchos::Array<int> >
 ENDFFissionYieldsFileHandler::getMetaStateFissionProductsIndependentYields() const
 {
    return d_yield_meta_state_independent();
 }
 
 // Get the yields of the fission products for the independent yields
-Teuchos::ArrayView<const Teuchos::Array<double> > 
+Teuchos::ArrayView<const Teuchos::Array<double> >
 ENDFFissionYieldsFileHandler::getYieldFissionProductsIndependentYields() const
 {
    return d_yield_independent();
 }
 
 // Get the standard deviation for the yields of the fission products for the indepedent yields
-Teuchos::ArrayView<const Teuchos::Array<double> > 
+Teuchos::ArrayView<const Teuchos::Array<double> >
 ENDFFissionYieldsFileHandler::getStdYieldFissionProductsIndependentYields() const
 {
    return d_yield_std_independent();
@@ -253,14 +253,14 @@ ENDFFissionYieldsFileHandler::getMetaStateFissionProductsCumulativeYields() cons
 }
 
 // Get the yields of the fission products for the cumulative yields
-Teuchos::ArrayView<const Teuchos::Array<double> > 
+Teuchos::ArrayView<const Teuchos::Array<double> >
 ENDFFissionYieldsFileHandler::getYieldFissionProductsCumulativeYields() const
 {
      return d_yield_cumulative();
 }
 
 // Get the standard deviation for the yields of the fission products for the cumulative yields
-Teuchos::ArrayView<const Teuchos::Array<double> > 
+Teuchos::ArrayView<const Teuchos::Array<double> >
 ENDFFissionYieldsFileHandler::getStdYieldFissionProductsCumulativeYields() const
 {
      return d_yield_std_cumulative();
@@ -272,7 +272,7 @@ void ENDFFissionYieldsFileHandler::filterZeroYields( Teuchos::Array<int>& zaid,
                                                      Teuchos::Array<double>& yield,
                                                      Teuchos::Array<double>& yield_std )
 {
-     // Test Precondition 
+     // Test Precondition
      testPrecondition(zaid.size() == meta_state.size());
      testPrecondition(zaid.size() == yield.size());
      testPrecondition(zaid.size() == yield_std.size());
@@ -287,7 +287,7 @@ void ENDFFissionYieldsFileHandler::filterZeroYields( Teuchos::Array<int>& zaid,
 
      while( zaid_it != zaid.end() )
      {
-        
+
           if( *yield_it == 0.0 )
           {
                zaid_it = zaid.erase( zaid_it );

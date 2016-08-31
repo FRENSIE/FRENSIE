@@ -47,7 +47,7 @@ private:
 public:
 
   //! Add a material to the collision handler
-  static void addMaterial( 
+  static void addMaterial(
 	      const Teuchos::RCP<NeutronMaterial>& material,
 	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
 	      cells_containing_material );
@@ -70,14 +70,14 @@ public:
 	      const Teuchos::RCP<ElectronMaterial>& material,
 	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
 	      cells_containing_material );
-  
+
   //! Check if a cell is void
   static bool isCellVoid(const Geometry::ModuleTraits::InternalCellHandle cell,
 			 const ParticleType particle_type );
-    
+
   //! Get the neutron material contained in a cell
-  static const Teuchos::RCP<NeutronMaterial>& 
-  getCellNeutronMaterial( 
+  static const Teuchos::RCP<NeutronMaterial>&
+  getCellNeutronMaterial(
 		       const Geometry::ModuleTraits::InternalCellHandle cell );
 
   //! Get the photon material contained in a cell
@@ -123,7 +123,7 @@ public:
   static void collideWithCellMaterial( PhotonState& particle,
 				       ParticleBank& bank,
 				       const bool analogue );
-  
+
   //! Collide with the material in a cell
   static void collideWithCellMaterial( NeutronState& particle,
 				       ParticleBank& bank,
@@ -135,10 +135,10 @@ public:
 				       const bool analogue );
 
 private:
-  
+
   // The cell id neutron material map
   static CellIdNeutronMaterialMap master_neutron_map;
-  
+
   static CellIdPhotonMaterialMap master_photon_map;
 
   static CellIdElectronMaterialMap master_electron_map;

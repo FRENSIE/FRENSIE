@@ -23,26 +23,26 @@ namespace MonteCarlo{
 DelayedNeutronEmissionDistribution::DelayedNeutronEmissionDistribution(
       const double atomic_weight_ratio,
       const Teuchos::Array<double>& precursor_group_decay_consts,
-      const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& 
+      const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >&
       precursor_group_prob_distributions,
       const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
       precursor_group_emission_distributions )
   : NuclearScatteringDistribution<NeutronState,NeutronState>( atomic_weight_ratio ),
     d_precursor_group_decay_consts( precursor_group_decay_consts ),
     d_precursor_group_prob_distributions( precursor_group_prob_distributions ),
-    d_precursor_group_emission_distributions( 
+    d_precursor_group_emission_distributions(
 				       precursor_group_emission_distributions )
 {
   // Make sure the group data is valid
   testPrecondition( precursor_group_decay_consts.size() > 0 );
   testPrecondition( precursor_group_decay_consts.size() ==
 		    precursor_group_prob_distributions.size() );
-  testPrecondition( precursor_group_decay_consts.size() == 
+  testPrecondition( precursor_group_decay_consts.size() ==
 		    precursor_group_emission_distributions.size() );
 }
 
 // Randomly "scatter" the neutron
-void DelayedNeutronEmissionDistribution::scatterParticle( 
+void DelayedNeutronEmissionDistribution::scatterParticle(
 				          const NeutronState& incoming_neutron,
 					  NeutronState& outgoing_neutron,
 					  const double temperature ) const
@@ -52,24 +52,24 @@ void DelayedNeutronEmissionDistribution::scatterParticle(
 
   double partial_cdf = 0.0;
 
-  double random_number = 
+  double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
-  
+
   for( unsigned i = 0u; i < d_precursor_group_prob_distributions.size(); ++i )
   {
-    partial_cdf += d_precursor_group_prob_distributions[i]->evaluate( 
+    partial_cdf += d_precursor_group_prob_distributions[i]->evaluate(
 						incoming_neutron.getEnergy() );
 
     if( random_number < partial_cdf )
     {
       precursor_group = i;
-      
+
       break;
     }
   }
 
   // Sample the emission time
-  double emission_time = 
+  double emission_time =
     sampleEmissionTime( d_precursor_group_decay_consts[precursor_group] );
 
   // Sample the state after emission
@@ -77,7 +77,7 @@ void DelayedNeutronEmissionDistribution::scatterParticle(
 							      incoming_neutron,
 							      outgoing_neutron,
 							      temperature );
- 
+
   // Set the new neutron time
   outgoing_neutron.setTime( incoming_neutron.getTime() + emission_time );
 }
@@ -85,7 +85,7 @@ void DelayedNeutronEmissionDistribution::scatterParticle(
 // Sample the emission time (s)
 /*! \details The decay constant must have units of 1/s.
  */
-double DelayedNeutronEmissionDistribution::sampleEmissionTime( 
+double DelayedNeutronEmissionDistribution::sampleEmissionTime(
 				      const double group_decay_constant ) const
 {
   return -log(1.0 - Utility::RandomNumberGenerator::getRandomNumber<double>())/

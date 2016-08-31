@@ -52,21 +52,21 @@ void SurfaceFluxEstimator<
 
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
-    double contribution; 
-    
+    double contribution;
+
     // If the angle cosine is very close to zero, set it to eps/2 to
     // prevent large contributions to the estimator
-    if( ST::magnitude( angle_cosine ) > 
+    if( ST::magnitude( angle_cosine ) >
         SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff() )
       contribution = 1.0/ST::magnitude( angle_cosine );
     else
     {
-      contribution = 
+      contribution =
 	2.0/SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
     }
 
     contribution *= ContributionMultiplierPolicy::multiplier( particle );
-  
+
     EstimatorParticleStateWrapper particle_state_wrapper( particle );
     particle_state_wrapper.setAngleCosine( angle_cosine );
 
@@ -81,7 +81,7 @@ void SurfaceFluxEstimator<
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void SurfaceFluxEstimator<
-		 ContributionMultiplierPolicy>::printSummary( 
+		 ContributionMultiplierPolicy>::printSummary(
                                                        std::ostream& os ) const
 {
   os << "Surface Flux Estimator: " << getId() << std::endl;

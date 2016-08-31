@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, hasComptonProfileData )
 // Check that the XSSPhotoatomicDataExtractor can extract the ESZG block
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractESZGBlock )
 {
-  Teuchos::ArrayView<const double> eszg_block = 
+  Teuchos::ArrayView<const double> eszg_block =
     xss_data_extractor->extractESZGBlock();
 
   TEST_EQUALITY_CONST( eszg_block.size(), 6315 );
@@ -72,7 +72,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractESZGBlock )
 // Check that the XSSPhotoatomicDataExtractor can extract the energy grid
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractEnergyGrid )
 {
-  Teuchos::ArrayView<const double> energy_grid = 
+  Teuchos::ArrayView<const double> energy_grid =
     xss_data_extractor->extractEnergyGrid();
 
   TEST_EQUALITY_CONST( energy_grid.size(), 1263 );
@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractEnergyGrid )
 // cross section
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractIncoherentCrossSection )
 {
-  Teuchos::ArrayView<const double> incoherent_cross_section = 
+  Teuchos::ArrayView<const double> incoherent_cross_section =
     xss_data_extractor->extractIncoherentCrossSection();
 
   TEST_EQUALITY_CONST( incoherent_cross_section.size(), 1263 );
@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractIncoherentCrossSection )
 // cross section
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractCoherentCrossSection )
 {
-  Teuchos::ArrayView<const double> coherent_cross_section = 
+  Teuchos::ArrayView<const double> coherent_cross_section =
     xss_data_extractor->extractCoherentCrossSection();
 
   TEST_EQUALITY_CONST( coherent_cross_section.size(), 1263 );
@@ -109,10 +109,10 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractCoherentCrossSection )
 //---------------------------------------------------------------------------//
 // Check that the XSSPhotoatomicDataExtractor can extract the photoelectric
 // cross section
-TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, 
+TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor,
 		   extractPhotoelectricCrossSection )
 {
-  Teuchos::ArrayView<const double> photoelectric_cross_section = 
+  Teuchos::ArrayView<const double> photoelectric_cross_section =
     xss_data_extractor->extractPhotoelectricCrossSection();
 
   TEST_EQUALITY_CONST( photoelectric_cross_section.size(), 1263 );
@@ -126,12 +126,12 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor,
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor,
 		   extractPairProductionCrossSection )
 {
-  Teuchos::ArrayView<const double> pair_production_cross_section = 
+  Teuchos::ArrayView<const double> pair_production_cross_section =
     xss_data_extractor->extractPairProductionCrossSection();
 
   TEST_EQUALITY_CONST( pair_production_cross_section.size(), 1263 );
   TEST_EQUALITY_CONST( pair_production_cross_section.front(), 0.0 );
-  TEST_EQUALITY_CONST( pair_production_cross_section.back(), 
+  TEST_EQUALITY_CONST( pair_production_cross_section.back(),
 		       3.71803283438e+00 );
 }
 
@@ -139,7 +139,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor,
 // Check that the XSSPhotoatomicDataExtractor can extract the JINC block
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractJINCBlock )
 {
-  Teuchos::ArrayView<const double> jinc_block = 
+  Teuchos::ArrayView<const double> jinc_block =
     xss_data_extractor->extractJINCBlock();
 
   TEST_EQUALITY_CONST( jinc_block.size(), 21 );
@@ -151,7 +151,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractJINCBlock )
 // Check that the XSSPhotoatomicDataExtractor can extract the JCOH block
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractJCOHBlock )
 {
-  Teuchos::ArrayView<const double> jcoh_block = 
+  Teuchos::ArrayView<const double> jcoh_block =
     xss_data_extractor->extractJCOHBlock();
 
   TEST_EQUALITY_CONST( jcoh_block.size(), 110 );
@@ -175,19 +175,19 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractJFLOBlock )
 // Check that the XSSPhotoatomicDataExtractor can extract the LHNM block
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractLHNMBlock )
 {
-  Teuchos::ArrayView<const double> lhnm_block = 
+  Teuchos::ArrayView<const double> lhnm_block =
     xss_data_extractor->extractLHNMBlock();
 
   TEST_EQUALITY_CONST( lhnm_block.size(), 1263 );
   TEST_EQUALITY_CONST( lhnm_block.front(), 9.98732853634e-04 );
   TEST_EQUALITY_CONST( lhnm_block.back(), 9.99986424397e+04 );
-}	  
+}
 
 //---------------------------------------------------------------------------//
 // Check that the XSSPhotoatomicDataExtractor can extract the LNEPS block
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractLNEPSBlock )
 {
-  Teuchos::ArrayView<const double> lneps_block = 
+  Teuchos::ArrayView<const double> lneps_block =
     xss_data_extractor->extractLNEPSBlock();
 
   TEST_EQUALITY_CONST( lneps_block.size(), 23 );
@@ -199,7 +199,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractLNEPSBlock )
 // Check that the XSSPhotoatomicDataExtractor can extract the LBEPS block
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractLBEPSBlock )
 {
-  Teuchos::ArrayView<const double> lbeps_block = 
+  Teuchos::ArrayView<const double> lbeps_block =
     xss_data_extractor->extractLBEPSBlock();
 
   TEST_EQUALITY_CONST( lbeps_block.size(), 23 );
@@ -211,7 +211,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractLBEPSBlock )
 // Check that the XSSPhotoatomicDataExtractor can extract the LPIPS block
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractLPIPSBlock )
 {
-  Teuchos::ArrayView<const double> lpips_block = 
+  Teuchos::ArrayView<const double> lpips_block =
     xss_data_extractor->extractLPIPSBlock();
 
   TEST_EQUALITY_CONST( lpips_block.size(), 23 );
@@ -223,7 +223,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractLPIPSBlock )
 // Check that the XSSPhotoatomicDataExtractor can extract the LSWD block
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractLSWDBlock )
 {
-  Teuchos::ArrayView<const double> lswd_block = 
+  Teuchos::ArrayView<const double> lswd_block =
     xss_data_extractor->extractLSWDBlock();
 
   TEST_EQUALITY_CONST( lswd_block.size(), 23 );
@@ -235,7 +235,7 @@ TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractLSWDBlock )
 // Check that the XSSPhotoatomicDataExtractor can extract the SWD block
 TEUCHOS_UNIT_TEST( XSSPhotoatomicDataExtractor, extractSWDBlock )
 {
-  Teuchos::ArrayView<const double> swd_block = 
+  Teuchos::ArrayView<const double> swd_block =
     xss_data_extractor->extractSWDBlock();
 
   TEST_EQUALITY_CONST( swd_block.size(), 2185 );
@@ -257,24 +257,24 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name in ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Initialize ace file handler and data extractor
   ace_file_handler.reset( new Data::ACEFileHandler( test_ace_file_name,
 						    test_ace_table_name,
 						    1u ) );
 
-  xss_data_extractor.reset( 
-   new Data::XSSPhotoatomicDataExtractor( 
+  xss_data_extractor.reset(
+   new Data::XSSPhotoatomicDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -291,7 +291,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

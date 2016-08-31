@@ -44,8 +44,8 @@ public:
   //! Evaluate the CDF
   virtual double evaluateCDF( const IndepQuantity indep_var_value ) const = 0;
 
-  //! Return a random sample from the distribution and the sampled index 
-  virtual IndepQuantity sampleAndRecordBinIndex( 
+  //! Return a random sample from the distribution and the sampled index
+  virtual IndepQuantity sampleAndRecordBinIndex(
 				       unsigned& sampled_bin_index ) const = 0;
 
   //! Return a random sample from the distribution at the given CDF value
@@ -55,7 +55,7 @@ public:
   virtual IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const = 0;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  virtual IndepQuantity sampleWithRandomNumberInSubrange( 
+  virtual IndepQuantity sampleWithRandomNumberInSubrange(
 				 const double random_number,
 				 const IndepQuantity max_indep_var ) const = 0;
 
@@ -63,7 +63,7 @@ public:
   bool isTabular() const;
 };
 
-// Test if the distribution is tabular 
+// Test if the distribution is tabular
 template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::isTabular() const
 {

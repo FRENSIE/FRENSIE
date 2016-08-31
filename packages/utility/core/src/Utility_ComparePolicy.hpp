@@ -3,7 +3,7 @@
 //! \file   Utility_ComparePolicy.hpp
 //! \author Alex Robinson
 //! \brief  Compare policy specializations
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef UTILITY_COMPARE_POLICY_HPP
@@ -36,7 +36,7 @@ namespace Policy{
  * \ingroup compare_policy
  */
 template<typename ScalarType>
-ScalarType relError( const ScalarType first_value, 
+ScalarType relError( const ScalarType first_value,
 		     const ScalarType second_value )
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
@@ -68,8 +68,8 @@ bool compareFirstTupleMembers( const T &first_value,
 			       const int index,
 			       const double tol )
 {
-  bool success = true; 
- 
+  bool success = true;
+
   std::stringstream first_tuple_member_name;
   std::stringstream second_tuple_member_name;
   // Array Element Compare
@@ -84,7 +84,7 @@ bool compareFirstTupleMembers( const T &first_value,
     first_tuple_member_name << first_name << ".first";
     second_tuple_member_name << second_name << ".first";
   }
-  
+
   success = ComparePolicy<T>::compare( first_value,
 				       first_tuple_member_name.str(),
 				       second_value,
@@ -108,7 +108,7 @@ bool compareSecondTupleMembers( const T &first_value,
 				const double tol )
 {
   bool success = true;
-  
+
   std::stringstream first_tuple_member_name;
   std::stringstream second_tuple_member_name;
   // Array Element Compare
@@ -123,7 +123,7 @@ bool compareSecondTupleMembers( const T &first_value,
     first_tuple_member_name << first_name << ".second";
     second_tuple_member_name << second_name << ".second";
   }
-  
+
   success = ComparePolicy<T>::compare( first_value,
 				       first_tuple_member_name.str(),
 				       second_value,
@@ -147,7 +147,7 @@ bool compareThirdTupleMembers( const T &first_value,
 			       const double tol )
 {
   bool success = true;
-  
+
   std::stringstream first_tuple_member_name;
   std::stringstream second_tuple_member_name;
   // Array Element Compare
@@ -162,7 +162,7 @@ bool compareThirdTupleMembers( const T &first_value,
     first_tuple_member_name << first_name << ".third";
     second_tuple_member_name << second_name << ".third";
   }
-  
+
   success = ComparePolicy<T>::compare( first_value,
 				       first_tuple_member_name.str(),
 				       second_value,
@@ -186,7 +186,7 @@ bool compareFourthTupleMembers( const T &first_value,
 				const double tol )
 {
   bool success = true;
-  
+
   std::stringstream first_tuple_member_name;
   std::stringstream second_tuple_member_name;
   // Array Element Compare
@@ -201,7 +201,7 @@ bool compareFourthTupleMembers( const T &first_value,
     first_tuple_member_name << first_name << ".fourth";
     second_tuple_member_name << second_name << ".fourth";
   }
-  
+
   success = ComparePolicy<T>::compare( first_value,
 				       first_tuple_member_name.str(),
 				       second_value,
@@ -219,7 +219,7 @@ template<>
 struct ComparePolicy<const int>
 {
   typedef const int scalarType;
-  
+
   static inline bool compare( const int &first_value,
 			      const std::string &first_name,
 			      const int &second_value,
@@ -229,15 +229,15 @@ struct ComparePolicy<const int>
 			      const scalarType tol = 0 )
   {
     bool success = true;
-      
+
     // Array Element Compare
     if( index >= 0 )
     {
       out << "\nError, " << first_name << "[" << index << "]" << " = "
-	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << first_value << " == " << second_name << "[" << index << "]"
 	  << " = " << second_value << ": ";
       if( first_value != second_value )
-      { 
+      {
 	out << "failed!\n";
 
 	success = false;
@@ -249,7 +249,7 @@ struct ComparePolicy<const int>
     else
     {
       out << first_name << " = " << first_value
-	  << " == " << second_name << " = " << second_value 
+	  << " == " << second_name << " = " << second_value
 	  << ": ";
       if( first_value != second_value )
       {
@@ -260,7 +260,7 @@ struct ComparePolicy<const int>
       else
 	out << "passed\n";
     }
-    
+
     return success;
   }
 };
@@ -272,7 +272,7 @@ template<>
 struct ComparePolicy<int>
 {
   typedef int scalarType;
-  
+
   static inline bool compare( const int &first_value,
 			      const std::string &first_name,
 			      const int &second_value,
@@ -299,7 +299,7 @@ template<>
 struct ComparePolicy<const unsigned int>
 {
   typedef unsigned int scalarType;
-  
+
   static inline bool compare( const unsigned int &first_value,
 			      const std::string &first_name,
 			      const unsigned int &second_value,
@@ -309,12 +309,12 @@ struct ComparePolicy<const unsigned int>
 			      const scalarType tol = 0 )
   {
     bool success = true;
-      
+
     // Array Element Compare
     if( index >= 0 )
     {
       out << "\nError, " << first_name << "[" << index << "]" << " = "
-	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << first_value << " == " << second_name << "[" << index << "]"
 	  << " = " << second_value << ": ";
       if( first_value != second_value )
       {
@@ -329,7 +329,7 @@ struct ComparePolicy<const unsigned int>
     else
     {
       out << first_name << " = " << first_value
-	  << " == " << second_name << " = " << second_value 
+	  << " == " << second_name << " = " << second_value
 	  << ": ";
       if( first_value != second_value )
       {
@@ -340,7 +340,7 @@ struct ComparePolicy<const unsigned int>
       else
 	out << "passed\n";
     }
-    
+
     return success;
   }
 };
@@ -352,7 +352,7 @@ template<>
 struct ComparePolicy<unsigned int>
 {
   typedef unsigned int scalarType;
-  
+
   static inline bool compare( const unsigned int &first_value,
 			      const std::string &first_name,
 			      const unsigned int &second_value,
@@ -379,7 +379,7 @@ template<>
 struct ComparePolicy<const unsigned long int>
 {
   typedef unsigned int scalarType;
-  
+
   static inline bool compare( const unsigned long int &first_value,
 			      const std::string &first_name,
 			      const unsigned long int &second_value,
@@ -389,12 +389,12 @@ struct ComparePolicy<const unsigned long int>
 			      const scalarType tol = 0 )
   {
     bool success = true;
-      
+
     // Array Element Compare
     if( index >= 0 )
     {
       out << "\nError, " << first_name << "[" << index << "]" << " = "
-	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << first_value << " == " << second_name << "[" << index << "]"
 	  << " = " << second_value << ": ";
       if( first_value != second_value )
       {
@@ -409,7 +409,7 @@ struct ComparePolicy<const unsigned long int>
     else
     {
       out << first_name << " = " << first_value
-	  << " == " << second_name << " = " << second_value 
+	  << " == " << second_name << " = " << second_value
 	  << ": ";
       if( first_value != second_value )
       {
@@ -420,12 +420,12 @@ struct ComparePolicy<const unsigned long int>
       else
 	out << "passed\n";
     }
-      
+
     return success;
   }
 };
 
-/*! \brief The specialization of the Utility::ComparePolicy for unsigned long 
+/*! \brief The specialization of the Utility::ComparePolicy for unsigned long
  * int.
  * \ingroup compare_policy
  */
@@ -433,7 +433,7 @@ template<>
 struct ComparePolicy<unsigned long int>
 {
   typedef unsigned int scalarType;
-  
+
   static inline bool compare( const unsigned long int &first_value,
 			      const std::string &first_name,
 			      const unsigned long int &second_value,
@@ -460,7 +460,7 @@ template<>
 struct ComparePolicy<const unsigned long long int>
 {
   typedef unsigned int scalarType;
-  
+
   static inline bool compare( const unsigned long long int &first_value,
 			      const std::string &first_name,
 			      const unsigned long long int &second_value,
@@ -470,12 +470,12 @@ struct ComparePolicy<const unsigned long long int>
 			      const scalarType tol = 0 )
   {
     bool success = true;
-      
+
     // Array Element Compare
     if( index >= 0 )
     {
       out << "\nError, " << first_name << "[" << index << "]" << " = "
-	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << first_value << " == " << second_name << "[" << index << "]"
 	  << " = " << second_value << ": ";
       if( first_value != second_value )
       {
@@ -490,7 +490,7 @@ struct ComparePolicy<const unsigned long long int>
     else
     {
       out << first_name << " = " << first_value
-	  << " == " << second_name << " = " << second_value 
+	  << " == " << second_name << " = " << second_value
 	  << ": ";
       if( first_value != second_value )
       {
@@ -506,7 +506,7 @@ struct ComparePolicy<const unsigned long long int>
   }
 };
 
-/*! \brief The specialization of the Utility::ComparePolicy for unsigned long 
+/*! \brief The specialization of the Utility::ComparePolicy for unsigned long
  * long int.
  * \ingroup compare_policy
  */
@@ -514,7 +514,7 @@ template<>
 struct ComparePolicy<unsigned long long int>
 {
   typedef unsigned int scalarType;
-  
+
   static inline bool compare( const unsigned long long int &first_value,
 			      const std::string &first_name,
 			      const unsigned long long int &second_value,
@@ -549,14 +549,14 @@ struct ComparePolicy<const double>
 			      const scalarType tol = 0.0 )
   {
     bool success = true;
-      
+
     if( tol == 0.0 )
     {
       // Array Element Compare
       if( index >= 0 )
       {
 	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << first_value << " == " << second_name << "[" << index << "]"
 	    << " = " << second_value << ": ";
 	if( first_value != second_value )
 	{
@@ -564,14 +564,14 @@ struct ComparePolicy<const double>
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
       // Single Compare
       else
       {
 	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
+	    << " == " << second_name << " = " << second_value
 	    << ": ";
 	if( first_value != second_value )
 	{
@@ -579,19 +579,19 @@ struct ComparePolicy<const double>
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
     }
     else
     {
       double err = relError( first_value, second_value );
-      
+
       // Array Element Compare
       if( index >= 0 )
       {
 	out << "\nError, relErr(" << first_name << "[" << index << "],"
-	    << second_name << "[" << index << "])" << " = relErr(" 
+	    << second_name << "[" << index << "])" << " = relErr("
 	    << first_value << "," << second_value << ") = " << err
 	    << " <= tol = " << tol << ": ";
 	if( err > tol )
@@ -600,7 +600,7 @@ struct ComparePolicy<const double>
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
       // Single Compare
@@ -615,11 +615,11 @@ struct ComparePolicy<const double>
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
     }
-    
+
     return success;
   }
 };
@@ -665,14 +665,14 @@ struct ComparePolicy<const float>
 			      const scalarType tol = 0.0f )
   {
     bool success = true;
-      
+
     if( tol == 0.0f )
     {
       // Array Element Compare
       if( index >= 0 )
       {
 	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << first_value << " == " << second_name << "[" << index << "]"
 	    << " = " << second_value << ": ";
 	if( first_value != second_value )
 	{
@@ -680,14 +680,14 @@ struct ComparePolicy<const float>
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
       // Single Compare
       else
       {
 	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
+	    << " == " << second_name << " = " << second_value
 	    << ": ";
 	if( first_value != second_value )
 	{
@@ -695,19 +695,19 @@ struct ComparePolicy<const float>
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
     }
     else
     {
       float err = relError( first_value, second_value );
-      
+
       // Array Element Compare
       if( index >= 0 )
       {
 	out << "\nError, relErr(" << first_name << "[" << index << "],"
-	    << second_name << "[" << index << "])" << " = relErr(" 
+	    << second_name << "[" << index << "])" << " = relErr("
 	    << first_value << "," << second_value << ") = " << err
 	    << " <= tol = " << tol << ": ";
 	if( err > tol )
@@ -735,7 +735,7 @@ struct ComparePolicy<const float>
 	  out << "passed\n";
       }
     }
-    
+
     return success;
   }
 };
@@ -756,7 +756,7 @@ struct ComparePolicy<float>
 			      const scalarType tol = 0.0f )
   {
     return ComparePolicy<const float>::compare( first_value,
-						first_name, 
+						first_name,
 						second_value,
 						second_name,
 						out,
@@ -765,8 +765,8 @@ struct ComparePolicy<float>
   }
 };
 
-/*! \brief The partial specialization of the Utility::ComparePolicy for 
- * const Utility::Pair. 
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * const Utility::Pair.
  * \ingroup compare_policy
  */
 template<typename T, typename T2>
@@ -782,7 +782,7 @@ struct ComparePolicy<const Pair<T,T2> >
 			      const scalarType tol = 0.0 )
   {
     bool success = true;
-    
+
     // Compare the first tuple members
     {
       bool local_success = true;
@@ -815,8 +815,8 @@ struct ComparePolicy<const Pair<T,T2> >
   }
 };
 
-/*! \brief The partial specialization of the Utility::ComparePolicy for 
- * Utility::Pair. 
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * Utility::Pair.
  * \ingroup compare_policy
  */
 template<typename T, typename T2>
@@ -858,7 +858,7 @@ struct ComparePolicy<const std::pair<T,T2> >
 			      const scalarType tol = 0.0 )
   {
     bool success = true;
-    
+
     // Compare the first tuple members
     {
       bool local_success = true;
@@ -917,15 +917,15 @@ struct ComparePolicy<std::pair<T,T2> >
   }
 };
 
-/*! \brief The partial specialization of the Utility::ComparePolicy for 
- * const Utility::Trip. 
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * const Utility::Trip.
  * \ingroup compare_policy
  */
 template<typename T, typename T2, typename T3>
 struct ComparePolicy<const Trip<T,T2,T3> >
 {
   typedef const double scalarType;
-  
+
   static inline bool compare( const Trip<T,T2,T3> &first_value,
 			      const std::string &first_name,
 			      const Trip<T,T2,T3> &second_value,
@@ -935,7 +935,7 @@ struct ComparePolicy<const Trip<T,T2,T3> >
 			      const scalarType tol = 0.0 )
   {
     bool success = true;
-    
+
     // Compare the first tuple members
     {
       bool local_success = true;
@@ -963,7 +963,7 @@ struct ComparePolicy<const Trip<T,T2,T3> >
       if( !local_success )
 	success = false;
     }
-    
+
     // Compare the third tuple members
     {
       bool local_success = true;
@@ -982,15 +982,15 @@ struct ComparePolicy<const Trip<T,T2,T3> >
   }
 };
 
-/*! \brief The partial specialization of the Utility::ComparePolicy for 
- * Utility::Trip. 
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * Utility::Trip.
  * \ingroup compare_policy
  */
 template<typename T, typename T2, typename T3>
 struct ComparePolicy<Trip<T,T2,T3> >
 {
   typedef double scalarType;
-  
+
   static inline bool compare( const Trip<T,T2,T3> &first_value,
 			      const std::string &first_name,
 			      const Trip<T,T2,T3> &second_value,
@@ -1009,15 +1009,15 @@ struct ComparePolicy<Trip<T,T2,T3> >
   }
 };
 
-/*! \brief The partial specialization of the Utility::ComparePolicy for 
- * const Utility::Quad. 
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * const Utility::Quad.
  * \ingroup compare_policy
  */
 template<typename T, typename T2, typename T3, typename T4>
 struct ComparePolicy<const Quad<T,T2,T3,T4> >
 {
   typedef const double scalarType;
-  
+
   static inline bool compare( const Quad<T,T2,T3,T4> &first_value,
 			      const std::string &first_name,
 			      const Quad<T,T2,T3,T4> &second_value,
@@ -1027,7 +1027,7 @@ struct ComparePolicy<const Quad<T,T2,T3,T4> >
 			      const scalarType tol = 0.0 )
   {
     bool success = true;
-    
+
     // Compare the first tuple members
     {
       bool local_success = true;
@@ -1055,7 +1055,7 @@ struct ComparePolicy<const Quad<T,T2,T3,T4> >
       if( !local_success )
 	success = false;
     }
-    
+
     // Compare the third tuple members
     {
       bool local_success = true;
@@ -1088,15 +1088,15 @@ struct ComparePolicy<const Quad<T,T2,T3,T4> >
   }
 };
 
-/*! \brief The partial specialization of the Utility::ComparePolicy for 
- * Utility::Quad. 
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * Utility::Quad.
  * \ingroup compare_policy
  */
 template<typename T, typename T2, typename T3, typename T4>
 struct ComparePolicy<Quad<T,T2,T3,T4> >
 {
   typedef double scalarType;
-  
+
   static inline bool compare( const Quad<T,T2,T3,T4> &first_value,
 			      const std::string &first_name,
 			      const Quad<T,T2,T3,T4> &second_value,
@@ -1133,14 +1133,14 @@ struct ComparePolicy<const boost::units::quantity<Unit,T> >
 			     const scalarType tol = 0.0 )
   {
     bool success = true;
-      
+
     if( tol == 0.0 )
     {
       // Array Element Compare
       if( index >= 0 )
       {
 	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << first_value << " == " << second_name << "[" << index << "]"
 	    << " = " << second_value << ": ";
 	if( first_value != second_value )
 	{
@@ -1148,14 +1148,14 @@ struct ComparePolicy<const boost::units::quantity<Unit,T> >
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
       // Single Compare
       else
       {
 	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
+	    << " == " << second_name << " = " << second_value
 	    << ": ";
 	if( first_value != second_value )
 	{
@@ -1163,19 +1163,19 @@ struct ComparePolicy<const boost::units::quantity<Unit,T> >
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
     }
     else
     {
       double err = relError( first_value.value(), second_value.value() );
-      
+
       // Array Element Compare
       if( index >= 0 )
       {
 	out << "\nError, relErr(" << first_name << "[" << index << "],"
-	    << second_name << "[" << index << "])" << " = relErr(" 
+	    << second_name << "[" << index << "])" << " = relErr("
 	    << first_value << "," << second_value << ") = " << err
 	    << " <= tol = " << tol << ": ";
 	if( err > tol )
@@ -1184,7 +1184,7 @@ struct ComparePolicy<const boost::units::quantity<Unit,T> >
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
       // Single Compare
@@ -1199,11 +1199,11 @@ struct ComparePolicy<const boost::units::quantity<Unit,T> >
 
 	  success = false;
 	}
-	else 
+	else
 	  out << "passed\n";
       }
     }
-    
+
     return success;
   }
 };
@@ -1225,7 +1225,7 @@ struct ComparePolicy<boost::units::quantity<Unit,T> >
 			     const int index = -1,
 			     const scalarType tol = 0.0 )
   {
-    return ComparePolicy<const boost::units::quantity<Unit,T> >::compare( 
+    return ComparePolicy<const boost::units::quantity<Unit,T> >::compare(
 							    first_value,
 							    first_name,
 							    second_value,
@@ -1234,7 +1234,7 @@ struct ComparePolicy<boost::units::quantity<Unit,T> >
 							    index,
 							    tol );
   }
-};									 
+};
 
 } // end Policy namespace
 

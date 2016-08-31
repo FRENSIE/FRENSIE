@@ -20,37 +20,37 @@ int samplePhotonDistributionCore(
 	    Teuchos::RCP<std::ofstream>& dist_ofile )
 {
   std::cout << "# Energy Efficiency Timing" << std::endl;
-  
+
   for( unsigned i = 0; i < energies.size(); ++i )
   {
     // Make the requested number of samples
-    std::vector<unsigned> trials( 
+    std::vector<unsigned> trials(
 	     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads(), 0u );
     std::vector<double> sampled_cosines( samples ), sampled_energies( samples);
-      
+
     double start_time = Utility::GlobalOpenMPSession::getTime();
-    
+
     #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
     for( unsigned j = 0; j < samples; ++j )
     {
-      scattering_dist->sampleAndRecordTrials( 
+      scattering_dist->sampleAndRecordTrials(
                          energies[i],
 			 sampled_energies[j],
 			 sampled_cosines[j],
 			 trials[Utility::GlobalOpenMPSession::getThreadId()] );
     }
-  
+
     double end_time = Utility::GlobalOpenMPSession::getTime();
 
     // Do a reduction on the trials array
     unsigned total_trials = 0u;
-    
+
     for( unsigned j = 0; j < trials.size(); ++j )
       total_trials += trials[j];
-  
+
     // Print the efficiency and timing data
     std::cout.precision( 18 );
-    std::cout << energies[i] << " " 
+    std::cout << energies[i] << " "
 	      << samples/(double)total_trials << " "
 	      << end_time - start_time << std::endl;
 
@@ -59,7 +59,7 @@ int samplePhotonDistributionCore(
       for( unsigned j = 0; j < samples; ++j )
 	(*sample_ofile) << sampled_cosines[j] << std::endl;
     }
-    
+
     if( !dist_ofile.is_null() )
     {
       std::vector<double> pdf_values( pdf_evaluation_cosines.size() );
@@ -68,7 +68,7 @@ int samplePhotonDistributionCore(
       #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
       for( unsigned j = 0; j < pdf_values.size(); ++j )
       {
-	pdf_values[j] = 
+	pdf_values[j] =
 	  scattering_dist->evaluatePDF(energies[i], pdf_evaluation_cosines[j]);
       }
 
@@ -84,7 +84,7 @@ int samplePhotonDistributionCore(
 
   return 0;
 }
-				 
+
 //---------------------------------------------------------------------------//
 // end samplePhotonDistributionCore.cpp
 //---------------------------------------------------------------------------//

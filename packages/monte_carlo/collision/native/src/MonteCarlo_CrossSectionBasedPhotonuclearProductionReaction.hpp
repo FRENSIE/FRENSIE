@@ -49,14 +49,14 @@ public:
   void react( PhotonState& photon, ParticleBank& bank ) const;
 
 private:
-  
+
   // The photon production id
   Teuchos::Array<unsigned> d_photon_production_ids;
 
   // The outgoing particle distribution (energy and angle)
   Teuchos::Array<Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >
   d_outgoing_particle_distributions;
-}; 
+};
 
 } // end MonteCarlo namespace
 

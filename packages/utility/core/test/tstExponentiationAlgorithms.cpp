@@ -29,7 +29,7 @@
   typedef unsigned long  uint32;					\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unsigned )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, uint32 )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, uint64 ) 
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, uint64 )
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -41,7 +41,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Exponentiation,
 				   ExponentOrdinalType )
 {
   // Compute 2^30
-  BaseScalarType value = 
+  BaseScalarType value =
     Utility::Exponentiation::recursive<BaseScalarType,ExponentOrdinalType>(2,
 									   30);
   TEST_EQUALITY_CONST( value, 1073741824 );
@@ -56,12 +56,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Exponentiation,
 				   OrdinalType )
 {
   // Compute (2^30)mod(3)
-  OrdinalType value = 
+  OrdinalType value =
     Utility::Exponentiation::recursiveMod<OrdinalType>(2,30,3);
-  
+
   TEST_EQUALITY_CONST( value, 1 );
 
-  OrdinalType value2 = 
+  OrdinalType value2 =
     Utility::Exponentiation::recursiveMod<OrdinalType>(2,15,3);
 }
 

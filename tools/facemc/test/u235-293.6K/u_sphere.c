@@ -10,11 +10,11 @@ void u_sphere()
 {
   // Set up manager of the geometry world
   gSystem->Load( "libGeom" );
-  
-  TGeoManager* geom = new TGeoManager( 
+
+  TGeoManager* geom = new TGeoManager(
                  "u_sphere",
                  "Geometry for the neutron U-235 sphere at 293.6K test prob.");
-  
+
   // Create the Uranium material
   TGeoMaterial* uranium = new TGeoMaterial( "mat_1", 235, 92, -19.1 );
   TGeoMedium* med_1 = new TGeoMedium( "uranium", 1, uranium );
@@ -23,24 +23,24 @@ void u_sphere()
   TGeoMaterial* void_mat = new TGeoMaterial( "void", 0, 0, 0 );
   TGeoMedium* void_med = new TGeoMedium( "void", 2, void_mat );
 
-  // Create the graveyard 
+  // Create the graveyard
   TGeoMaterial* graveyard_mat = new TGeoMaterial( "graveyard", 0, 0, 0 );
   TGeoMedium* graveyard_med = new TGeoMedium( "graveyard", 3, graveyard_mat );
 
   // Create the Uranium volume
-  TGeoVolume* u_sphere_volume = 
+  TGeoVolume* u_sphere_volume =
     geom->MakeSphere( "SPHERE", med_1, 0.0, 1.0 );
-  
+
   u_sphere_volume->SetUniqueID( 1 );
 
   // Create the void volume
-  TGeoVolume* void_cube_volume = geom->MakeBox( 
+  TGeoVolume* void_cube_volume = geom->MakeBox(
                                              "CUBE", void_med, 2.5, 2.5, 2.5 );
-  
+
   void_cube_volume->SetUniqueID( 2 );
 
   // Create the graveyard volume
-  TGeoVolume* graveyard_volume = geom->MakeBox( 
+  TGeoVolume* graveyard_volume = geom->MakeBox(
                                    "GRAVEYARD", graveyard_med, 3.0, 3.0, 3.0 );
 
   graveyard_volume->SetUniqueID( 3 );
@@ -61,7 +61,7 @@ void u_sphere()
 
   // Export the geometry
   geom->Export( "u_sphere.root" );
-  
+
   // Finished
   exit(0);
 }

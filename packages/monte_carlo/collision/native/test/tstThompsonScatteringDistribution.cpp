@@ -9,7 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
-  
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -88,10 +88,10 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, evaluatePDF )
 
 //---------------------------------------------------------------------------//
 // Check that the integrated cross section can be evaluated
-TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution,
 		   evaluateIntegratedCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     distribution->evaluateIntegratedCrossSection( 0.1, 1e-16 );
 
   TEST_FLOATING_EQUALITY( cross_section, 6.652458734511002e-1, 1e-15 );
@@ -106,7 +106,7 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution,
 TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, sample )
 {
   double outgoing_energy, scattering_angle_cosine;
-  
+
   // Set up the random number stream
   std::vector<double> fake_stream( 8 );
   fake_stream[0] = 0.75;
@@ -127,7 +127,7 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, sample )
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  
+
   // Sample the 2nd term
   distribution->sample( 0.1,
 			outgoing_energy,
@@ -135,7 +135,7 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, sample )
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.8434326653017492, 1e-15);
-  
+
   // Sample the 2nd term
   distribution->sample( 0.1,
 			outgoing_energy,
@@ -143,7 +143,7 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, sample )
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15);
-  
+
   // Sample the 2nd term
   distribution->sample( 0.1,
 			outgoing_energy,
@@ -151,14 +151,14 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, sample )
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.8434326653017493, 1e-15 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
-	
+
 //---------------------------------------------------------------------------//
 // Check that outgoing direction can be sampled and the trials can be recoreded
-TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, 
-		   sampleAndRecordTrials )   
+TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution,
+		   sampleAndRecordTrials )
 {
   double outgoing_energy, scattering_angle_cosine;
   unsigned trials = 0;
@@ -263,7 +263,7 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, scatterPhoton )
   TEST_EQUALITY_CONST( photon.getEnergy(), 0.1 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), -0.8434326653017492, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
-  
+
   photon.setDirection( 0.0, 0.0, 1.0 );
 
   // Sample the 2nd term

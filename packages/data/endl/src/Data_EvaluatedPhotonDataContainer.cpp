@@ -33,7 +33,7 @@ namespace Data{
 //---------------------------------------------------------------------------//
 
 // Return the coherent cross section energy grid
-const std::vector<double>& 
+const std::vector<double>&
 ENDLDataContainer::getCoherentCrossSectionEnergyGrid() const
 {
   return d_coherent_cross_section_energy_grid;
@@ -58,7 +58,7 @@ const std::vector<double>& ENDLDataContainer::getCoherentFormFactor() const
 }
 
 // Return the incident energy grid for the coherent imaginary anomalous scattering factor
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getCoherentImaginaryAnomalousFactorIncidentEnergy() const
 {
   return d_coherent_imaginary_anomalous_scattering_factor_incident_energy;
@@ -71,7 +71,7 @@ const std::vector<double>& ENDLDataContainer::getCoherentImaginaryAnomalousFacto
 }
 
 // Return the incident energy grid for the coherent real anomalous scattering factor
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getCoherentRealAnomalousFactorIncidentEnergy() const
 {
   return d_coherent_real_anomalous_scattering_factor_incident_energy;
@@ -84,10 +84,10 @@ const std::vector<double>& ENDLDataContainer::getCoherentRealAnomalousFactor() c
 }
 
 // Return the incident energy grid for the coherent average energy of the scattered photon
-/*! \details By definition for photon scattering, the average energy for the 
- * coherently scattered photon is equal to the energy of the incident photon. 
- * These values are carried in the data files so as not to make any special 
- * unique cases. 
+/*! \details By definition for photon scattering, the average energy for the
+ * coherently scattered photon is equal to the energy of the incident photon.
+ * These values are carried in the data files so as not to make any special
+ * unique cases.
  */
 const std::vector<double>& ENDLDataContainer::getCoherentAveragePhotonIncidentEnergy() const
 {
@@ -175,7 +175,7 @@ const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageResidualInc
 }
 
 // Return the photoelectric average energy of the residual atom
-/*! \details The average energy to the residual atom insures energy 
+/*! \details The average energy to the residual atom insures energy
  * conservation and is deposited locally.
  */
 const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageResidualEnergy() const
@@ -190,8 +190,8 @@ const std::vector<double>& ENDLDataContainer::getPhotoelectricAveragePhotonsInci
 }
 
 // Return the photoelectric average energy of the secondary photons
-/*! \details For the photoelectric effect, photons and electrons are 
- * released from the atom. These are accounted for in energy deposition through 
+/*! \details For the photoelectric effect, photons and electrons are
+ * released from the atom. These are accounted for in energy deposition through
  * the atom relaxation data.
  */
 const std::vector<double>& ENDLDataContainer::getPhotoelectricAveragePhotonsEnergy() const
@@ -206,8 +206,8 @@ const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageElectronsIn
 }
 
 // Return the photoelectric average energy of the secondary electrons
-/*! \details For the photoelectric effect, photons and electrons are 
- * released from the atom. These are accounted for in energy deposition through 
+/*! \details For the photoelectric effect, photons and electrons are
+ * released from the atom. These are accounted for in energy deposition through
  * the atom relaxation data.
  */
 const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageElectronsEnergy() const
@@ -220,7 +220,7 @@ const std::vector<double>& ENDLDataContainer::getPhotoelectricAverageElectronsEn
 //---------------------------------------------------------------------------//
 
 // Return the photoelectric cross section energy grid for a subshell
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getPhotoelectricCrossSectionEnergyGrid( const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -230,7 +230,7 @@ const std::vector<double>&
 }
 
 // Return the photoelectric photon cross section a subshell
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getPhotoelectricCrossSection( const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -240,7 +240,7 @@ const std::vector<double>&
 }
 
 // Return the incident energy grid for the photoelectric average energy of the residual atom a subshell
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getPhotoelectricAverageResidualIncidentEnergy( const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -250,10 +250,10 @@ const std::vector<double>&
 }
 
 // Return the photoelectric average energy of the residual atom a subshell
-/*! \details The average energy to the residual atom insures energy 
+/*! \details The average energy to the residual atom insures energy
  * conservation and is deposited locally.
  */
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getPhotoelectricAverageResidualEnergy( const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -263,7 +263,7 @@ const std::vector<double>&
 }
 
 // Return the incident energy grid for the photoelectric average energy of the secondary photons a subshell
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getPhotoelectricAveragePhotonsIncidentEnergy( const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -273,11 +273,11 @@ const std::vector<double>&
 }
 
 // Return the photoelectric average energy of the secondary photons a subshell
-/*! \details For the photoelectric effect, photons and electrons are 
- * released from the atom. These are accounted for in energy deposition through 
+/*! \details For the photoelectric effect, photons and electrons are
+ * released from the atom. These are accounted for in energy deposition through
  * the atom relaxation data.
  */
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getPhotoelectricAveragePhotonsEnergy( const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -287,7 +287,7 @@ const std::vector<double>&
 }
 
 // Return the incident energy grid for the photoelectric average energy of the secondary electrons a subshell
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getPhotoelectricAverageElectronsIncidentEnergy( const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -297,11 +297,11 @@ const std::vector<double>&
 }
 
 // Return the photoelectric average energy of the secondary electrons a subshell
-/*! \details For the photoelectric effect, photons and electrons are 
- * released from the atom. These are accounted for in energy deposition through 
+/*! \details For the photoelectric effect, photons and electrons are
+ * released from the atom. These are accounted for in energy deposition through
  * the atom relaxation data.
  */
-const std::vector<double>& 
+const std::vector<double>&
   ENDLDataContainer::getPhotoelectricAverageElectronsEnergy( const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -408,7 +408,7 @@ void ENDLDataContainer::setCoherentCrossSectionEnergyGrid(
 void ENDLDataContainer::setCoherentCrossSection( const std::vector<double>& cross_section )
 {
   // Make sure the cross section is valid
-  testPrecondition( cross_section.size() <= 
+  testPrecondition( cross_section.size() <=
     d_coherent_cross_section_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( cross_section );
 
@@ -432,7 +432,7 @@ void ENDLDataContainer::setCoherentFormFactorArgument(
 void ENDLDataContainer::setCoherentFormFactor( const std::vector<double>& form_factor )
 {
   // Make sure the coherent form factor is valid
-  testPrecondition( form_factor.size() == 
+  testPrecondition( form_factor.size() ==
     d_coherent_form_factor_argument.size() );
   testPrecondition( Utility::Sort::isSortedAscending( form_factor.rbegin(),
 						                              form_factor.rend() ) );
@@ -457,7 +457,7 @@ void ENDLDataContainer::setCoherentImaginaryAnomalousFactor(
   const std::vector<double>& anomalous_factor )
 {
   // Make sure the coherent imaginary anomalous scattering factor is valid
-  testPrecondition( anomalous_factor.size() == 
+  testPrecondition( anomalous_factor.size() ==
     d_coherent_imaginary_anomalous_scattering_factor_incident_energy.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( anomalous_factor );
 
@@ -480,7 +480,7 @@ void ENDLDataContainer::setCoherentRealAnomalousFactor(
   const std::vector<double>& anomalous_factor )
 {
   // Make sure the coherent real anomalous scattering factor is valid
-  testPrecondition( anomalous_factor.size() == 
+  testPrecondition( anomalous_factor.size() ==
     d_coherent_real_anomalous_scattering_factor_incident_energy.size() );
 
   d_coherent_real_anomalous_scattering_factor = anomalous_factor;
@@ -502,7 +502,7 @@ void ENDLDataContainer::setCoherentAveragePhotonEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_coherent_average_photon_incident_energy.size() );
   testPreconditionValuesGreaterThanZero( average_energy );
 
@@ -527,7 +527,7 @@ void ENDLDataContainer::setIncoherentCrossSectionEnergyGrid(
 void ENDLDataContainer::setIncoherentCrossSection( const std::vector<double>& cross_section )
 {
   // Make sure the cross section is valid
-  testPrecondition( cross_section.size() <= 
+  testPrecondition( cross_section.size() <=
     d_incoherent_cross_section_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( cross_section );
 
@@ -552,7 +552,7 @@ void ENDLDataContainer::setIncoherentScatteringFunction(
   const std::vector<double>& scattering_function )
 {
   // Make sure the incoherent scattering function is valid
-  testPrecondition( scattering_function.size() == 
+  testPrecondition( scattering_function.size() ==
     d_incoherent_scattering_function_argument.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( scattering_function );
   testPrecondition( scattering_function.front() == 0.0 );
@@ -577,7 +577,7 @@ void ENDLDataContainer::setIncoherentAveragePhotonEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_incoherent_average_photon_incident_energy.size() );
   testPreconditionValuesGreaterThanZero( average_energy );
 
@@ -600,7 +600,7 @@ void ENDLDataContainer::setIncoherentAverageElectronEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_incoherent_average_electron_incident_energy.size() );
   testPreconditionValuesGreaterThanZero( average_energy );
 
@@ -625,7 +625,7 @@ void ENDLDataContainer::setPhotoelectricCrossSectionEnergyGrid(
 void ENDLDataContainer::setPhotoelectricCrossSection( const std::vector<double>& cross_section )
 {
   // Make sure the cross section is valid
-  testPrecondition( cross_section.size() <= 
+  testPrecondition( cross_section.size() <=
     d_photoelectric_cross_section_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( cross_section );
 
@@ -648,7 +648,7 @@ void ENDLDataContainer::setPhotoelectricAverageResidualEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_photoelectric_average_residual_incident_energy.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 
@@ -671,7 +671,7 @@ void ENDLDataContainer::setPhotoelectricAveragePhotonsEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_photoelectric_secondary_photons_incident_energy.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 
@@ -694,7 +694,7 @@ void ENDLDataContainer::setPhotoelectricAverageElectronsEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_photoelectric_secondary_electrons_incident_energy.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 
@@ -722,7 +722,7 @@ void ENDLDataContainer::setPhotoelectricCrossSection(
   const std::vector<double>& cross_section )
 {
   // Make sure the cross section is valid
-  testPrecondition( cross_section.size() <= 
+  testPrecondition( cross_section.size() <=
     d_photoelectric_subshell_cross_section_energy_grid[subshell].size() );
   testPreconditionValuesGreaterThanZero( cross_section );
 
@@ -747,7 +747,7 @@ void ENDLDataContainer::setPhotoelectricAverageResidualEnergy(
   const std::vector<double>& average_energy  )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
     d_photoelectric_subshell_average_residual_incident_energy[subshell].size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 
@@ -772,7 +772,7 @@ void ENDLDataContainer::setPhotoelectricAveragePhotonsEnergy(
   const std::vector<double>& average_energy  )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
     d_photoelectric_subshell_secondary_photons_incident_energy[subshell].size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 
@@ -797,7 +797,7 @@ void ENDLDataContainer::setPhotoelectricAverageElectronsEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
     d_photoelectric_subshell_secondary_electrons_incident_energy[subshell].size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 
@@ -822,7 +822,7 @@ void ENDLDataContainer::setPairProductionCrossSectionEnergyGrid(
 void ENDLDataContainer::setPairProductionCrossSection( const std::vector<double>& cross_section )
 {
   // Make sure the cross section is valid
-  testPrecondition( cross_section.size() <= 
+  testPrecondition( cross_section.size() <=
     d_pair_production_cross_section_energy_grid.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( cross_section );
 
@@ -845,7 +845,7 @@ void ENDLDataContainer::setPairProductionAveragePositronEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_pair_production_average_positron_incident_energy.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 
@@ -868,7 +868,7 @@ void ENDLDataContainer::setPairProductionAverageElectronEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_pair_production_average_electron_incident_energy.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 
@@ -894,7 +894,7 @@ void ENDLDataContainer::setTripletProductionCrossSection(
   const std::vector<double>& cross_section )
 {
   // Make sure the cross section is valid
-  testPrecondition( cross_section.size() <= 
+  testPrecondition( cross_section.size() <=
     d_triplet_production_cross_section_energy_grid.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( cross_section );
 
@@ -917,7 +917,7 @@ void ENDLDataContainer::setTripletProductionAveragePositronEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_triplet_production_average_positron_incident_energy.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 
@@ -940,7 +940,7 @@ void ENDLDataContainer::setTripletProductionAverageElectronEnergy(
   const std::vector<double>& average_energy )
 {
   // Make sure the average energy is valid
-  testPrecondition( average_energy.size() == 
+  testPrecondition( average_energy.size() ==
                     d_triplet_production_average_electron_incident_energy.size() );
   testPreconditionValuesGreaterThanOrEqualToZero( average_energy );
 

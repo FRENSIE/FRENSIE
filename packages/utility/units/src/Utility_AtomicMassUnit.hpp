@@ -3,7 +3,7 @@
 //! \file   Utility_AtomicMassUnit.hpp
 //! \author Alex Robinson
 //! \brief  The atomic mass unit
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef UTILITY_ATOMIC_MASS_UNIT_HPP

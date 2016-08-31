@@ -21,14 +21,20 @@ namespace MonteCarlo{
 //! The Compton profile class
 class ComptonProfile
 {
-   
+
 public:
 
+  //! The Compton profile independent unit type
+  typedef Utility::Units::MeCMomentum MomentumUnit;
+
+  //! The Compton profile dependent unit type
+  typedef Utility::Units::InverseMeCMomentum ProfileUnit;
+
   //! The Compton profile independent quantity type
-  typedef boost::units::quantity<Utility::Units::MeCMomentum> MomentumQuantity;
+  typedef boost::units::quantity<MomentumUnit> MomentumQuantity;
 
   //! The Compton profile dependent quantity type
-  typedef boost::units::quantity<Utility::Units::InverseMeCMomentum> ProfileQuantity;
+  typedef boost::units::quantity<ProfileUnit> ProfileQuantity;
 
   //! Default Constructor
   ComptonProfile()
@@ -45,7 +51,13 @@ public:
   virtual MomentumQuantity sample() const = 0;
 
   //! Sample from the Compton profile in a subrange
-  virtual MomentumQuantity sampleInSubrange( const MomentumQuantity momentum ) const = 0;
+  virtual MomentumQuantity sampleInSubrange(
+                             const MomentumQuantity upper_momentum ) const = 0;
+
+  //! Sample from the Compton profile in a subrange
+  virtual MomentumQuantity sampleInSubrange(
+                             const MomentumQuantity upper_momentum,
+                             const MomentumQuantity lower_momentum ) const = 0;
 
   //! Return the lower bound of the momentum
   virtual MomentumQuantity getLowerBoundOfMomentum() const = 0;

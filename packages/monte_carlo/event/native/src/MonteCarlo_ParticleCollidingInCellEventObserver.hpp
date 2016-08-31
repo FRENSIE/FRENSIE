@@ -19,9 +19,9 @@
 
 /*! \defgroup particle_colliding_in_cell_event Particle Colliding In Cell Event
  * \ingroup entity_events
- * 
+ *
  * Infrastructure used to acquire information from particle colliding
- * in cell events. 
+ * in cell events.
  */
 
 namespace MonteCarlo{
@@ -31,7 +31,7 @@ namespace MonteCarlo{
  */
 class ParticleCollidingInCellEventObserver
 {
-  
+
 public:
 
   //! The event tag type
@@ -47,7 +47,7 @@ public:
   //! Destructor
   virtual ~ParticleCollidingInCellEventObserver()
   { /* ... */ }
-  
+
   //! Update the observer
   virtual void updateFromParticleCollidingInCellEvent(
 	    const ParticleState& particle,

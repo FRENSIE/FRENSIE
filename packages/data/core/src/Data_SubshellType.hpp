@@ -64,15 +64,15 @@ enum SubshellType{
 };
 
 //! Convert an ENDF designator to a Subshell enumeration
-SubshellType convertENDFDesignatorToSubshellEnum( 
+SubshellType convertENDFDesignatorToSubshellEnum(
 					      const unsigned endf_designator );
 
 //! Convert an EADL designator to a Subshell enumeration
-SubshellType convertEADLDesignatorToSubshellEnum( 
+SubshellType convertEADLDesignatorToSubshellEnum(
 					      const unsigned eadl_designator );
 
 //! Convert an EADL designator to an ENDF designator
-unsigned convertEADLDesignatorToENDFDesignator( 
+unsigned convertEADLDesignatorToENDFDesignator(
 					      const unsigned eadl_designator );
 
 //! Convert a Subshell enumeration to a string
@@ -86,7 +86,7 @@ inline std::ostream& operator<<( std::ostream& os,
   return os;
 }
 
-  
+
 } // end Data namespace
 
 #endif // end DATA_SUBSHELL_TYPE_HPP

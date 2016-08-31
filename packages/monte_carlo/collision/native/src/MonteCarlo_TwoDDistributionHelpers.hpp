@@ -9,123 +9,137 @@
 #ifndef MONTE_CARLO_TWO_D_DISTRIBUTION_HELPERS
 #define MONTE_CARLO_TWO_D_DISTRIBUTION_HELPERS
 
-// Trilinos Includse
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_InterpolationPolicy.hpp"
 
 namespace MonteCarlo{
 
-//! Typedef for the two dimensional distribution
-typedef Teuchos::Array<Utility::Pair<double,
-                       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-    TwoDDistribution;
+//! Typedef for a 2-D distribution 
+typedef std::vector<Utility::Pair<double, 
+                       std::shared_ptr<const Utility::TabularOneDDistribution> > > 
+TwoDDistribution; 
+
+//! Return the primary grid values of the 2-D distribution
+template<typename DependentTwoDDistribution>
+void getPrimaryGrid(
+	const DependentTwoDDistribution& dependent_distribution,
+  std::vector<double>& primary_grid );
 
 //! Find the lower and upper bin boundary
 template<typename DependentTwoDDistribution>
-void findLowerAndUpperBinBoundary( 
+void findLowerAndUpperBinIndex(
+    const double independent_variable,
+	const DependentTwoDDistribution& dependent_distribution,
+    unsigned& lower_bin_index,
+    unsigned& upper_bin_index );
+
+//! Find the lower and upper bin boundary
+template<typename DependentTwoDDistribution>
+void findLowerAndUpperBinBoundary(
 	const double independent_variable,
 	const DependentTwoDDistribution& dependent_distribution,
 	typename DependentTwoDDistribution::const_iterator& lower_bin_boundary,
 	typename DependentTwoDDistribution::const_iterator& upper_bin_boundary,
 	double& interpolation_fraction );
 
+//! Find the lower and upper bin boundary
+template<typename DependentTwoDDistribution>
+void findLowerAndUpperBinBoundary(
+	const double independent_variable,
+	const DependentTwoDDistribution& dependent_distribution,
+	typename DependentTwoDDistribution::const_iterator& lower_bin_boundary,
+	typename DependentTwoDDistribution::const_iterator& upper_bin_boundary );
+
 //! Sample a two dimensional distribution using correlated sampling
-template<typename DependentTwoDDistribution> 
-double sampleTwoDDistributionCorrelated( 
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double sampleTwoDDistributionCorrelated(
     const double independent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
-//! Sample a two dimensional distribution with a random number using correlated sampling 
-template<typename DependentTwoDDistribution> 
-double sampleTwoDDistributionCorrelatedWithRandomNumber( 
+//! Sample a two dimensional distribution with a random number using correlated sampling
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double sampleTwoDDistributionCorrelatedWithRandomNumber(
     const double independent_variable,
     const DependentTwoDDistribution& dependent_distribution,
     const double random_number );
 
+//! Sample a two dimensional distribution in a subrange using correlated sampling
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double sampleTwoDDistributionCorrelatedInSubrange(
+    const double independent_variable,
+    const DependentTwoDDistribution& dependent_distribution,
+	const double max_indep_var );
+
 //! Sample a two dimensional distribution using independent sampling
-template<typename DependentTwoDDistribution> 
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
 double sampleTwoDDistributionIndependent(
     const double independent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
+//! Sample continuously across multiple two dimensional distribution bins
+template<typename DependentTwoDDistributionA, typename DependentTwoDDistributionB>
+double sampleContinuouslyAcrossDistributions(
+    const typename DependentTwoDDistributionA::const_iterator& distribution_a_bin,
+    const typename DependentTwoDDistributionB::const_iterator& distribution_b_bin,
+    const double& cross_section_a,
+    const double& cross_section_b,
+    const double& random_number,
+    double& scattering_angle_cosine );
+
+//! Sample continuously across multiple two dimensional distribution using correlated sampling
+template<typename DependentTwoDDistributionA,
+         typename DependentTwoDDistributionB,
+         typename InterpolationPolicy >
+double sampleContinuouslyAcrossDistributions(
+    const typename DependentTwoDDistributionA::const_iterator& distribution_a_lower_bin,
+    const typename DependentTwoDDistributionA::const_iterator& distribution_a_upper_bin,
+    const typename DependentTwoDDistributionB::const_iterator& distribution_b_lower_bin,
+    const typename DependentTwoDDistributionB::const_iterator& distribution_b_upper_bin,
+    const double& lower_cross_section_a,
+    const double& upper_cross_section_a,
+    const double& lower_cross_section_b,
+    const double& upper_cross_section_b,
+    const double& independent_variable,
+    double& scattering_angle_cosine );
+
 //! Evaluate a correlated value from a two dimensional distribution
-template<typename DependentTwoDDistribution> 
-double evaluateTwoDDistributionCorrelated( 
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelated(
     const double independent_variable,
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
 //! Evaluate a correlated PDF from a two dimensional distribution
-template<typename DependentTwoDDistribution> 
-double evaluateTwoDDistributionCorrelatedPDF( 
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelatedPDF(
+    const double independent_variable,
+    const double dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution );
+
+//! Evaluate a correlated PDF from a two dimensional distribution
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelatedPDF(
+    const unsigned lower_bin_index,
     const double independent_variable,
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
 //! Evaluate a correlated CDF from a two dimensional distribution
-template<typename DependentTwoDDistribution> 
-double evaluateTwoDDistributionCorrelatedCDF( 
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelatedCDF(
     const double independent_variable,
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
-
-//! Sample an upper and lower distribution using a common random variable
-template<typename DependentDistribution> 
-double correlatedSample(
-    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
-	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
-	const double interpolation_fraction );
-
-
-//! Sample an upper and lower distribution using a common given random variable
-template<typename DependentDistribution> 
-double correlatedSampleWithRandomNumber(
-    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
-	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
-	const double interpolation_fraction,
-	const double random_number );
-
-//! Sample an upper and lower distribution using a common random variable in a subrange
-template<typename DependentDistribution> 
-double correlatedSampleInSubrange( 
-    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
-	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
-	const double interpolation_fraction,
-	const double max_indep_var );
-
-//! Evaluate a correlated value
-template<typename DependentDistribution> 
-double evaluateCorrelated(
-   const Teuchos::RCP<const DependentDistribution>& upper_distribution,
-   const Teuchos::RCP<const DependentDistribution>& lower_distribution,
-   const double interpolation_fraction,
-   const double independent_value );
-
-//! Evaluate a correlated pdf value
-template<typename DependentDistribution> 
-double evaluateCorrelatedPDF(
-    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
-    const Teuchos::RCP<const DependentDistribution>& lower_distribution,
-    const double interpolation_fraction,
-    const double independent_value );
-
-//! Evaluate a correlated cdf value
-template<typename DependentDistribution> 
-double evaluateCorrelatedCDF(
-	const Teuchos::RCP<const DependentDistribution>& upper_distribution,
-	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
-	const double interpolation_fraction,
-	const double independent_value );
-
-//! Sample from either the lower or upper distribution depending on interp frac
-template<typename DependentDistribution> 
-double independentSample(
-    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
-    const Teuchos::RCP<const DependentDistribution>& lower_distribution,
-	const double interpolation_fraction );
 
 } // end MonteCarlo namespace
 

@@ -24,7 +24,7 @@ class IncoherentPhotonScatteringDistributionFactory
 protected:
 
   //! Create a Klein-Nishina distribution
-  static void createKleinNishinaDistribution( 
+  static void createKleinNishinaDistribution(
 		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 		    incoherent_distribution,
 		    const double kahn_sampling_cutoff_energy );

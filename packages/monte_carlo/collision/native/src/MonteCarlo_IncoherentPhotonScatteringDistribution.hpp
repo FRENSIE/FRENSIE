@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_IncoherentPhotonScatteringDistribution.hpp
 //! \author Alex Robinson
 //! \brief  The incoherent photon scattering distribution declaration.
@@ -37,7 +37,7 @@ protected:
   //! Evaluate the Klein-Nishina distribution
   double evaluateKleinNishinaDist(const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
-  
+
 
   //! Klein-Nishina sampling implementation
   void sampleAndRecordTrialsKleinNishina( const double incoming_energy,
@@ -50,7 +50,7 @@ protected:
 			      const double scattering_angle_cosine,
 			      const double azimuthal_angle,
 			      ParticleBank& bank ) const;
-			      
+
 private:
 
   // The Kahn rejection sampling cutoff energy

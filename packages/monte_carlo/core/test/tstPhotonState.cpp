@@ -38,7 +38,7 @@ TEUCHOS_UNIT_TEST( PhotonState, getSpeed )
 {
   MonteCarlo::PhotonState particle( 1ull );
 
-  TEST_EQUALITY_CONST( particle.getSpeed(), 
+  TEST_EQUALITY_CONST( particle.getSpeed(),
 		       Utility::PhysicalConstants::speed_of_light );
 }
 
@@ -47,16 +47,16 @@ TEUCHOS_UNIT_TEST( PhotonState, getSpeed )
 TEUCHOS_UNIT_TEST( PhotonState, advance )
 {
   const double position[3] = {1.0, 1.0, 1.0};
-  const double direction[3] = {0.5773502691896258, 
+  const double direction[3] = {0.5773502691896258,
 			       0.5773502691896258,
 			       0.5773502691896258};
-  
+
   MonteCarlo::PhotonState particle( 1ull );
   particle.setPosition( position );
   particle.setDirection( direction );
   particle.setEnergy( 1.0 );
   particle.setTime( 0.0 );
-  
+
   particle.advance( 1.7320508075688772 );
 
   TEST_FLOATING_EQUALITY( particle.getXPosition(), 2.0, 1e-12 );
@@ -76,10 +76,10 @@ TEUCHOS_UNIT_TEST( PhotonState, clone )
   particle->setEnergy( 1.0 );
   particle->setTime( 0.5 );
   particle->setWeight( 0.25 );
-  
-  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone(
                                                            particle->clone() );
-  
+
   TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
@@ -92,7 +92,7 @@ TEUCHOS_UNIT_TEST( PhotonState, clone )
   TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
   TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 0ull );
-  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(),
 		       MonteCarlo::PHOTON );
 }
 
@@ -107,10 +107,10 @@ TEUCHOS_UNIT_TEST( PhotonState, clone_new_hist )
   particle->setEnergy( 1.0 );
   particle->setTime( 0.5 );
   particle->setWeight( 0.25 );
-  
-  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone(
 						    particle->clone( 10ull ) );
-  
+
   TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
@@ -123,7 +123,7 @@ TEUCHOS_UNIT_TEST( PhotonState, clone_new_hist )
   TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
   TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 10ull );
-  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(),
 		       MonteCarlo::PHOTON );
 }
 
@@ -146,7 +146,7 @@ TEUCHOS_UNIT_TEST( PhotonState, archive )
     boost::archive::xml_oarchive ar(ofs);
     ar << BOOST_SERIALIZATION_NVP( particle );
   }
-  
+
   // Load the archived particle
   MonteCarlo::PhotonState loaded_particle;
 
@@ -183,18 +183,18 @@ TEUCHOS_UNIT_TEST( PhotonState, copy_constructor )
   particle_gen_a.setWeight( 0.5 );
 
   MonteCarlo::PhotonState particle_gen_a_copy( particle_gen_a );
-  
-  TEST_EQUALITY( particle_gen_a_copy.getXPosition(), 
+
+  TEST_EQUALITY( particle_gen_a_copy.getXPosition(),
 		 particle_gen_a.getXPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getYPosition(), 
+  TEST_EQUALITY( particle_gen_a_copy.getYPosition(),
 		 particle_gen_a.getYPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getZPosition(), 
+  TEST_EQUALITY( particle_gen_a_copy.getZPosition(),
 		 particle_gen_a.getZPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getXDirection(), 
+  TEST_EQUALITY( particle_gen_a_copy.getXDirection(),
 		 particle_gen_a.getXDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getYDirection(), 
+  TEST_EQUALITY( particle_gen_a_copy.getYDirection(),
 		 particle_gen_a.getYDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getZDirection(), 
+  TEST_EQUALITY( particle_gen_a_copy.getZDirection(),
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_a_copy.getEnergy(),
 		 particle_gen_a.getEnergy() );
@@ -212,17 +212,17 @@ TEUCHOS_UNIT_TEST( PhotonState, copy_constructor )
   // Create a second generation particle with the same collision number
   MonteCarlo::PhotonState particle_gen_b( particle_gen_a, true );
 
-  TEST_EQUALITY( particle_gen_b.getXPosition(), 
+  TEST_EQUALITY( particle_gen_b.getXPosition(),
 		 particle_gen_a.getXPosition() );
-  TEST_EQUALITY( particle_gen_b.getYPosition(), 
+  TEST_EQUALITY( particle_gen_b.getYPosition(),
 		 particle_gen_a.getYPosition() );
-  TEST_EQUALITY( particle_gen_b.getZPosition(), 
+  TEST_EQUALITY( particle_gen_b.getZPosition(),
 		 particle_gen_a.getZPosition() );
-  TEST_EQUALITY( particle_gen_b.getXDirection(), 
+  TEST_EQUALITY( particle_gen_b.getXDirection(),
 		 particle_gen_a.getXDirection() );
-  TEST_EQUALITY( particle_gen_b.getYDirection(), 
+  TEST_EQUALITY( particle_gen_b.getYDirection(),
 		 particle_gen_a.getYDirection() );
-  TEST_EQUALITY( particle_gen_b.getZDirection(), 
+  TEST_EQUALITY( particle_gen_b.getZDirection(),
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_b.getEnergy(),
 		 particle_gen_a.getEnergy() );
@@ -233,22 +233,22 @@ TEUCHOS_UNIT_TEST( PhotonState, copy_constructor )
   TEST_EQUALITY( particle_gen_b.getGenerationNumber(),
 		 particle_gen_a.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_b.getWeight(),
-		 particle_gen_a.getWeight() );  
+		 particle_gen_a.getWeight() );
 
   // Create a third generation particle and reset the collision counter
   MonteCarlo::PhotonState particle_gen_c( particle_gen_b, true, true );
 
-  TEST_EQUALITY( particle_gen_c.getXPosition(), 
+  TEST_EQUALITY( particle_gen_c.getXPosition(),
 		 particle_gen_b.getXPosition() );
-  TEST_EQUALITY( particle_gen_c.getYPosition(), 
+  TEST_EQUALITY( particle_gen_c.getYPosition(),
 		 particle_gen_b.getYPosition() );
-  TEST_EQUALITY( particle_gen_c.getZPosition(), 
+  TEST_EQUALITY( particle_gen_c.getZPosition(),
 		 particle_gen_b.getZPosition() );
-  TEST_EQUALITY( particle_gen_c.getXDirection(), 
+  TEST_EQUALITY( particle_gen_c.getXDirection(),
 		 particle_gen_b.getXDirection() );
-  TEST_EQUALITY( particle_gen_c.getYDirection(), 
+  TEST_EQUALITY( particle_gen_c.getYDirection(),
 		 particle_gen_b.getYDirection() );
-  TEST_EQUALITY( particle_gen_c.getZDirection(), 
+  TEST_EQUALITY( particle_gen_c.getZDirection(),
 		 particle_gen_b.getZDirection() );
   TEST_EQUALITY( particle_gen_c.getEnergy(),
 		 particle_gen_b.getEnergy() );

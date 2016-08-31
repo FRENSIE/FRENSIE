@@ -1,14 +1,14 @@
 <ParameterList name="cross sections">
-  
+
   <Parameter name="is_ascii" type="bool" value="true"/>
-  
+
   <ParameterList name="alias map">
     <Parameter name="1001" type="string" value="H-1_293.6K"/>
     <Parameter name="8016" type="string" value="O-16_293.6K"/>
     <Parameter name="H-1" type="string" value="H-1_239.6K"/>
     <Parameter name="O-16" type="string" value="O-16_239.6K"/>
   </ParameterList>
-  
+
   <ParameterList name="H-1_293.6K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="1001.70c"/>
@@ -19,7 +19,7 @@
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="H-1_300K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="1001.71c"/>
@@ -30,7 +30,7 @@
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="H-1_900K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="1001.72c"/>
@@ -41,7 +41,7 @@
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="H-1_1200K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="1001.73c"/>
@@ -52,7 +52,7 @@
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="H-1_2500K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="1001.74c"/>
@@ -63,7 +63,7 @@
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="O-16_293.6K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="8016.70c"/>
@@ -74,7 +74,7 @@
     <Parameter name="atomic_mass_number" type="int" value="16"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="O-16_600K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="8016.71c"/>
@@ -85,7 +85,7 @@
     <Parameter name="atomic_mass_number" type="int" value="16"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="O-16_900K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="8016.72c"/>
@@ -96,7 +96,7 @@
     <Parameter name="atomic_mass_number" type="int" value="16"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="O-16_1200K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="8016.73c"/>
@@ -107,7 +107,7 @@
     <Parameter name="atomic_mass_number" type="int" value="16"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="O-16_2500K">
     <Parameter name="file_path" type="string" value="endf70a"/>
     <Parameter name="table_name" type="string" value="8016.74c"/>
@@ -118,5 +118,5 @@
     <Parameter name="atomic_mass_number" type="int" value="16"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
 </ParameterList>

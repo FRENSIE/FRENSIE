@@ -1,14 +1,14 @@
 <ParameterList name="Source">
-  
+
   <ParameterList name="Distributed Source">
     <Parameter name="Id" type="int" value="1"/>
-    
+
     <ParameterList name="Spatial Distribution">
-      <Parameter name="X Distribution" type="Uniform Distribution" 
+      <Parameter name="X Distribution" type="Uniform Distribution"
 		 value="{0,1}"/>
-      <Parameter name="Y Distribution" type="Uniform Distribution" 
+      <Parameter name="Y Distribution" type="Uniform Distribution"
 		 value="{0,1}"/>
-      <Parameter name="Z Distribution" type="Uniform Distribution" 
+      <Parameter name="Z Distribution" type="Uniform Distribution"
 		 value="{0,1}"/>
     </ParameterList>
 
@@ -22,18 +22,18 @@
     </ParameterList>
 
     <ParameterList name="Directional Importance Function">
-      <Parameter name="Mu Distribution" type="Histogram Distribution" 
+      <Parameter name="Mu Distribution" type="Histogram Distribution"
 		 value="{{-1,0,1},{2,1}}"/>
       <Parameter name="Theta Distribution" type="Histogram Distribution"
 		 value="{{0,pi,2pi},{2,1}}"/>
     </ParameterList>
-    
-    <Parameter name="Energy Distribution" type="Uniform Distribution" 
+
+    <Parameter name="Energy Distribution" type="Uniform Distribution"
 	       value="{1e-5,1}"/>
-    
-    <Parameter name="Energy Importance Function" 
+
+    <Parameter name="Energy Importance Function"
 	       type="Normal Distribution" value="{1,1,1e-5,1}"/>
-    
+
     <Parameter name="Time Distribution" type="Uniform Distribution"
 	       value="{0,10}"/>
 

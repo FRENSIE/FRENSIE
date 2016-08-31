@@ -111,8 +111,8 @@
 //---------------------------------------------------------------------------//
 // Check that the linear-log-linear interpolation policy between four points
 // can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL( 
-					      LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
+					      LinLogLin,
 					      interpolate_separate_tuple_grids,
 					      ymember,
 					      zmember,
@@ -125,23 +125,23 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   Utility::set<ymember>( y_0_grid[1], 1e-2 );
   Utility::set<ymember>( y_0_grid[2], 1e-1 );
   Utility::set<ymember>( y_0_grid[3], 1.0 );
-  
+
   Teuchos::Array<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 100.0 );
   Utility::set<zmember>( z_0_grid[1], 0.0 );
   Utility::set<zmember>( z_0_grid[2], 1.0 );
   Utility::set<zmember>( z_0_grid[3], 10.0 );
-  
+
   Teuchos::Array<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0], 1e-3 );
   Utility::set<ymember>( y_1_grid[1], 1e-1 );
   Utility::set<ymember>( y_1_grid[2], 1.0 );
-  
+
   Teuchos::Array<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 50.0 );
   Utility::set<zmember>( z_1_grid[1], 10.0 );
   Utility::set<zmember>( z_1_grid[2], 5.0 );
-  
+
   double z = Utility::LinLogLin::interpolate<ymember,zmember>(x0,
 							      x1,
 							      x,
@@ -175,7 +175,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
-  
+
   z = Utility::LinLogLin::interpolate<ymember,zmember>( x0,
 							x1,
 							x,
@@ -192,14 +192,14 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION_2_TUPLE( LinLogLin, 
+UNIT_TEST_INSTANTIATION_2_TUPLE( LinLogLin,
 				 interpolate_separate_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the linear-log-linear interpolation policy between four points
 // can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL( 
-					      LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
+					      LinLogLin,
 					      interpolate_combined_tuple_grids,
 					      ymember,
 					      zmember,
@@ -215,7 +215,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   Utility::set<zmember>( grid_0[1], 0.0 );
   Utility::set<zmember>( grid_0[2], 1.0 );
   Utility::set<zmember>( grid_0[3], 10.0 );
-  
+
   Teuchos::Array<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0], 1e-3 );
   Utility::set<ymember>( grid_1[1], 1e-1 );
@@ -249,7 +249,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
-  
+
   z = Utility::LinLogLin::interpolate<ymember,zmember>( x0,
 							x1,
 							x,
@@ -262,7 +262,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( LinLogLin, 
+UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( LinLogLin,
 					  interpolate_combined_tuple_grids );
 
 //---------------------------------------------------------------------------//
@@ -326,7 +326,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolate_no_tuple_grids )
   TEST_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
-  
+
   z = Utility::LinLogLin::interpolate( x0,
 				       x1,
 				       x,
@@ -345,7 +345,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolate_no_tuple_grids )
 
 //---------------------------------------------------------------------------//
 // Check that the grid length can be calculated
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LinLogLin,
 						  calculateGridLength,
 						  member,
 						  tuple )
@@ -355,7 +355,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LinLogLin,
   Utility::set<member>( tuple_grid[1], 1e-2 );
   Utility::set<member>( tuple_grid[2], 1e-1 );
   Utility::set<member>( tuple_grid[3], 1.0 );
-    
+
   double grid_length = Utility::LinLogLin::calculateGridLength<member>(
 							    tuple_grid.begin(),
 							    tuple_grid.end() );
@@ -375,7 +375,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateGridLength_no_tuple )
   grid[2] = 1e-1;
   grid[3] = 1.0;
 
-  double grid_length = 
+  double grid_length =
     Utility::LinLogLin::calculateGridLength<Utility::FIRST>( grid.begin(),
 							     grid.end() );
 
@@ -389,13 +389,13 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateIntermediateGridLength )
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double L0 = 3.0, L1 = 5.0;
 
-  double Lx = Utility::LinLogLin::calculateIntermediateGridLength( 
+  double Lx = Utility::LinLogLin::calculateIntermediateGridLength(
 							   x0, x1, x, L0, L1 );
-  
+
   TEST_FLOATING_EQUALITY( Lx, 4.0, 1e-15 );
 
   x = 0.0;
-  
+
   Lx = Utility::LinLogLin::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
 
   TEST_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
@@ -430,7 +430,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateIntermediateGridLimit )
 
   yx_min = Utility::LinLogLin::calculateIntermediateGridLimit(
 						   x0, x1, x, y0_min, y1_min );
-  
+
   TEST_FLOATING_EQUALITY( yx_min, 1e-2, 1e-12 );
 }
 
@@ -469,9 +469,9 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateGridIndepVar )
   TEST_FLOATING_EQUALITY( y, 0.0044816890703382, 1e-12 );
 
   eta = 0.0;
-  
+
   y = Utility::LinLogLin::calculateGridIndepVar( eta, y_min, L );
-  
+
   TEST_FLOATING_EQUALITY( y, 1e-3, 1e-12 );
 
   eta = 1.0;
@@ -484,8 +484,8 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateGridIndepVar )
 //---------------------------------------------------------------------------//
 // Check that the linear-log-linear unit base interpolation policy between
 // four points can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL( 
-				      LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
+				      LinLogLin,
 				      interpolateUnitBase_separate_tuple_grids,
 				      ymember,
 				      zmember,
@@ -493,29 +493,29 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 				      ztuple )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.03;
-  
+
   Teuchos::Array<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[0], 1e-3 );
   Utility::set<ymember>( y_0_grid[1], 1e-2 );
   Utility::set<ymember>( y_0_grid[2], 1e-1 );
   Utility::set<ymember>( y_0_grid[3], 1.0 );
-  
+
   Teuchos::Array<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 0.0 );
   Utility::set<zmember>( z_0_grid[1], 1.0 );
   Utility::set<zmember>( z_0_grid[2], 2.0 );
   Utility::set<zmember>( z_0_grid[3], 3.0 );
-  
+
   Teuchos::Array<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0], 1e-2 );
   Utility::set<ymember>( y_1_grid[1], 1e-1 );
   Utility::set<ymember>( y_1_grid[2], 1.0 );
-  
+
   Teuchos::Array<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 1.0 );
   Utility::set<zmember>( z_1_grid[1], 2.0 );
   Utility::set<zmember>( z_1_grid[2], 3.0 );
-  
+
   double z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
 							      x0,
 							      x1,
@@ -533,7 +533,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
   y = 0.0031622776601684; // min possible y at x = 0.5
-  
+
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
 							      x0,
 							      x1,
@@ -679,21 +679,21 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION_2_TUPLE( LinLogLin, 
+UNIT_TEST_INSTANTIATION_2_TUPLE( LinLogLin,
 				 interpolateUnitBase_separate_tuple_grids);
 
 //---------------------------------------------------------------------------//
 // Check that the linear-log-linear unit base interpolation policy between
 // four points can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL( 
-				      LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
+				      LinLogLin,
 				      interpolateUnitBase_combined_tuple_grids,
 				      ymember,
 				      zmember,
 				      tuple )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.03;
-  
+
   Teuchos::Array<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[0], 1e-3 );
   Utility::set<ymember>( grid_0[1], 1e-2 );
@@ -703,7 +703,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   Utility::set<zmember>( grid_0[1], 1.0 );
   Utility::set<zmember>( grid_0[2], 2.0 );
   Utility::set<zmember>( grid_0[3], 3.0 );
-  
+
   Teuchos::Array<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0], 1e-2 );
   Utility::set<ymember>( grid_1[1], 1e-1 );
@@ -725,7 +725,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
   y = 0.0031622776601684; // min possible y at x = 0.5
-  
+
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>( x0,
 								x1,
 								x,
@@ -747,7 +747,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 								grid_0.end(),
 								grid_1.begin(),
 								grid_1.end() );
-  
+
 
   TEST_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -832,7 +832,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( 
+UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE(
 			            LinLogLin,
 				    interpolateUnitBase_combined_tuple_grids );
 
@@ -842,7 +842,7 @@ UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE(
 TEUCHOS_UNIT_TEST( LinLogLin, interpolateUnitBase_no_tuple_grids )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.03;
-  
+
   Teuchos::Array<double> y_0_grid( 4 );
   y_0_grid[0] = 1e-3;
   y_0_grid[1] = 1e-2;
@@ -881,7 +881,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolateUnitBase_no_tuple_grids )
   TEST_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
   y = 0.0031622776601684; // min possible y at x = 0.5
-  
+
   z = Utility::LinLogLin::interpolateUnitBase( x0,
 					       x1,
 					       x,
@@ -998,7 +998,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolateUnitBase_no_tuple_grids )
 					       y_1_grid.end(),
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
-    
+
   TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 1.0;
@@ -1041,10 +1041,10 @@ TEUCHOS_UNIT_TEST( LinLogLin, recoverProcessedDepVar )
 // Check that the second independent variable can be processed
 TEUCHOS_UNIT_TEST( LinLogLin, processSecondIndepVar )
 {
-  TEST_FLOATING_EQUALITY( log(0.1), 
+  TEST_FLOATING_EQUALITY( log(0.1),
 			  Utility::LinLogLin::processSecondIndepVar(0.1),
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( log(1.0), 
+  TEST_FLOATING_EQUALITY( log(1.0),
 			  Utility::LinLogLin::processSecondIndepVar(1.0),
 			  1e-15 );
 }
@@ -1053,12 +1053,12 @@ TEUCHOS_UNIT_TEST( LinLogLin, processSecondIndepVar )
 // Check that a processed second independent variable can be recovered
 TEUCHOS_UNIT_TEST( LinLogLin, recoverProcessedSecondIndepVar )
 {
-  TEST_FLOATING_EQUALITY( 
-		  0.1, 
+  TEST_FLOATING_EQUALITY(
+		  0.1,
 		  Utility::LinLogLin::recoverProcessedSecondIndepVar(log(0.1)),
 		  1e-15 );
-  TEST_FLOATING_EQUALITY( 
-		  1.0, 
+  TEST_FLOATING_EQUALITY(
+		  1.0,
 		  Utility::LinLogLin::recoverProcessedSecondIndepVar(log(1.0)),
 		  1e-15 );
 }
@@ -1076,20 +1076,20 @@ TEUCHOS_UNIT_TEST( LinLogLin, processFirstIndepVar )
 // Check that a processed first independent variable can be processed
 TEUCHOS_UNIT_TEST( LinLogLin, recoverProcessedFirstIndepVar )
 {
-  TEST_EQUALITY_CONST( 
-		     -1.0, 
+  TEST_EQUALITY_CONST(
+		     -1.0,
 		     Utility::LinLogLin::recoverProcessedFirstIndepVar(-1.0) );
-  TEST_EQUALITY_CONST(0.0, 
+  TEST_EQUALITY_CONST(0.0,
 		      Utility::LinLogLin::recoverProcessedFirstIndepVar(0.0) );
-  TEST_EQUALITY_CONST(1.0, 
+  TEST_EQUALITY_CONST(1.0,
 		      Utility::LinLogLin::recoverProcessedFirstIndepVar(1.0) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the linear-log-linear interpolation policy between four points
 // can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL( 
-				     LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
+				     LinLogLin,
 				     interpolateProcessed_separate_tuple_grids,
 				     ymember,
 				     zmember,
@@ -1098,36 +1098,36 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double y = Utility::LinLogLin::processSecondIndepVar(3e-2);
-  
+
   Teuchos::Array<ytuple> y_0_grid( 4 );
-  Utility::set<ymember>( y_0_grid[0], 
+  Utility::set<ymember>( y_0_grid[0],
 			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
-  Utility::set<ymember>( y_0_grid[1], 
+  Utility::set<ymember>( y_0_grid[1],
 			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
-  Utility::set<ymember>( y_0_grid[2], 
+  Utility::set<ymember>( y_0_grid[2],
 			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
-  Utility::set<ymember>( y_0_grid[3], 
+  Utility::set<ymember>( y_0_grid[3],
 			 Utility::LinLogLin::processSecondIndepVar(1.0) );
-  
+
   Teuchos::Array<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 100.0 );
   Utility::set<zmember>( z_0_grid[1], 0.0 );
   Utility::set<zmember>( z_0_grid[2], 1.0 );
   Utility::set<zmember>( z_0_grid[3], 10.0 );
-  
+
   Teuchos::Array<ytuple> y_1_grid( 3 );
-  Utility::set<ymember>( y_1_grid[0], 
+  Utility::set<ymember>( y_1_grid[0],
 			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
-  Utility::set<ymember>( y_1_grid[1], 
+  Utility::set<ymember>( y_1_grid[1],
 			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
-  Utility::set<ymember>( y_1_grid[2], 
+  Utility::set<ymember>( y_1_grid[2],
 			 Utility::LinLogLin::processSecondIndepVar(1.0) );
-  
+
   Teuchos::Array<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 50.0 );
   Utility::set<zmember>( z_1_grid[1], 10.0 );
   Utility::set<zmember>( z_1_grid[2], 5.0 );
-  
+
   double z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
 							      x0,
 							      x1,
@@ -1146,7 +1146,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 
   x = 0.0;
 
-  z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>( 
+  z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
 							x0,
 							x1,
 							x,
@@ -1163,8 +1163,8 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
-  
-  z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>( 
+
+  z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
 							x0,
 							x1,
 							x,
@@ -1181,14 +1181,14 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION_2_TUPLE( LinLogLin, 
+UNIT_TEST_INSTANTIATION_2_TUPLE( LinLogLin,
 				 interpolateProcessed_separate_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the linear-log-linear interpolation policy between four points
 // can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL( 
-				     LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
+				     LinLogLin,
 				     interpolateProcessed_combined_tuple_grids,
 				     ymember,
 				     zmember,
@@ -1198,31 +1198,31 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   double y = Utility::LinLogLin::processSecondIndepVar(3e-2);
 
   Teuchos::Array<tuple> grid_0( 4 );
-  Utility::set<ymember>( grid_0[0], 
+  Utility::set<ymember>( grid_0[0],
 			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
-  Utility::set<ymember>( grid_0[1], 
+  Utility::set<ymember>( grid_0[1],
 			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
-  Utility::set<ymember>( grid_0[2], 
+  Utility::set<ymember>( grid_0[2],
 			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
-  Utility::set<ymember>( grid_0[3], 
+  Utility::set<ymember>( grid_0[3],
 			 Utility::LinLogLin::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_0[0], 100.0 );
   Utility::set<zmember>( grid_0[1], 0.0 );
   Utility::set<zmember>( grid_0[2], 1.0 );
   Utility::set<zmember>( grid_0[3], 10.0 );
-  
+
   Teuchos::Array<tuple> grid_1( 3 );
-  Utility::set<ymember>( grid_1[0], 
+  Utility::set<ymember>( grid_1[0],
 			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
-  Utility::set<ymember>( grid_1[1], 
+  Utility::set<ymember>( grid_1[1],
 			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
-  Utility::set<ymember>( grid_1[2], 
+  Utility::set<ymember>( grid_1[2],
 			 Utility::LinLogLin::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_1[0], 50.0 );
   Utility::set<zmember>( grid_1[1], 10.0 );
   Utility::set<zmember>( grid_1[2], 5.0 );
 
-  double z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>( 
+  double z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
 							       x0,
 							       x1,
 							       x,
@@ -1236,7 +1236,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 
   x = 0.0;
 
-  z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>( 
+  z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
 							x0,
 							x1,
 							x,
@@ -1249,8 +1249,8 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
-  
-  z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>( 
+
+  z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
 							x0,
 							x1,
 							x,
@@ -1263,8 +1263,8 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( 
-				   LinLogLin, 
+UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE(
+				   LinLogLin,
 				   interpolateProcessed_combined_tuple_grids );
 
 //---------------------------------------------------------------------------//
@@ -1309,9 +1309,9 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolateProcessed_no_tuple_grids )
 						       y_1_grid.end(),
 						       z_1_grid.begin(),
 						       z_1_grid.end() );
-  
+
   TEST_FLOATING_EQUALITY( z, 10.467348080163, 1e-12 );
-  
+
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateProcessed( x0,
@@ -1326,11 +1326,11 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolateProcessed_no_tuple_grids )
 						y_1_grid.end(),
 						z_1_grid.begin(),
 						z_1_grid.end() );
-  
+
   TEST_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
-  
+
   z = Utility::LinLogLin::interpolateProcessed( x0,
 						x1,
 						x,
@@ -1349,23 +1349,23 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolateProcessed_no_tuple_grids )
 
 //---------------------------------------------------------------------------//
 // Check that the grid length can be calculated
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LinLogLin,
 						  calculateGridLengthProcessed,
 						  member,
 						  tuple )
 {
   Teuchos::Array<tuple> tuple_grid( 4 );
-  Utility::set<member>( tuple_grid[0], 
+  Utility::set<member>( tuple_grid[0],
 			Utility::LinLogLin::processSecondIndepVar(1e-3) );
-  Utility::set<member>( tuple_grid[1], 
+  Utility::set<member>( tuple_grid[1],
 			Utility::LinLogLin::processSecondIndepVar(1e-2) );
-  Utility::set<member>( tuple_grid[2], 
+  Utility::set<member>( tuple_grid[2],
 			Utility::LinLogLin::processSecondIndepVar(1e-1) );
-  Utility::set<member>( tuple_grid[3], 
+  Utility::set<member>( tuple_grid[3],
 			Utility::LinLogLin::processSecondIndepVar(1.0) );
-  
-  double grid_length = 
-    Utility::LinLogLin::calculateGridLengthProcessed<member>( 
+
+  double grid_length =
+    Utility::LinLogLin::calculateGridLengthProcessed<member>(
 							    tuple_grid.begin(),
 							    tuple_grid.end() );
 
@@ -1384,8 +1384,8 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateGridLengthProcessed_no_tuple )
   grid[2] = Utility::LinLogLin::processSecondIndepVar(1e-1);
   grid[3] = Utility::LinLogLin::processSecondIndepVar(1.0);
 
-  double grid_length = 
-    Utility::LinLogLin::calculateGridLengthProcessed<Utility::FIRST>( 
+  double grid_length =
+    Utility::LinLogLin::calculateGridLengthProcessed<Utility::FIRST>(
 								  grid.begin(),
 								  grid.end() );
 
@@ -1399,13 +1399,13 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateIntermediateGridLengthProcessed )
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double L0 = 3.0, L1 = 5.0;
 
-  double Lx = Utility::LinLogLin::calculateIntermediateGridLengthProcessed( 
+  double Lx = Utility::LinLogLin::calculateIntermediateGridLengthProcessed(
 							   x0, x1, x, L0, L1 );
-  
+
   TEST_FLOATING_EQUALITY( Lx, 4.0, 1e-15 );
 
   x = 0.0;
-  
+
   Lx = Utility::LinLogLin::calculateIntermediateGridLengthProcessed(
 							   x0, x1, x, L0, L1 );
 
@@ -1430,8 +1430,8 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateIntermediateProcessedGridLimit )
   double yx_min = Utility::LinLogLin::calculateIntermediateProcessedGridLimit(
 						   x0, x1, x, y0_min, y1_min );
 
-  TEST_FLOATING_EQUALITY( 
-		 yx_min, 
+  TEST_FLOATING_EQUALITY(
+		 yx_min,
 		 Utility::LinLogLin::processSecondIndepVar(3.1622776601686e-3),
 		 1e-12 );
 
@@ -1440,17 +1440,17 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateIntermediateProcessedGridLimit )
   yx_min = Utility::LinLogLin::calculateIntermediateProcessedGridLimit(
 						   x0, x1, x, y0_min, y1_min );
 
-  TEST_FLOATING_EQUALITY( yx_min, 
-			  Utility::LinLogLin::processSecondIndepVar(1e-3), 
+  TEST_FLOATING_EQUALITY( yx_min,
+			  Utility::LinLogLin::processSecondIndepVar(1e-3),
 			  1e-12 );
 
   x = 1.0;
 
   yx_min = Utility::LinLogLin::calculateIntermediateProcessedGridLimit(
 						   x0, x1, x, y0_min, y1_min );
-  
-  TEST_FLOATING_EQUALITY( yx_min, 
-			  Utility::LinLogLin::processSecondIndepVar(1e-2), 
+
+  TEST_FLOATING_EQUALITY( yx_min,
+			  Utility::LinLogLin::processSecondIndepVar(1e-2),
 			  1e-12 );
 }
 
@@ -1462,7 +1462,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateUnitBaseIndepVarProcessed )
   double y = Utility::LinLogLin::processSecondIndepVar(1e-2);
   double L = 3.0;
 
-  double eta = Utility::LinLogLin::calculateUnitBaseIndepVarProcessed( 
+  double eta = Utility::LinLogLin::calculateUnitBaseIndepVarProcessed(
 								 y, y_min, L );
 
   TEST_FLOATING_EQUALITY( eta, 0.76752836433133, 1e-12 );
@@ -1488,28 +1488,28 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateProcessedGridIndepVar )
   double y_min = Utility::LinLogLin::processSecondIndepVar(1e-3);
   double L = 3.0, eta = 0.5;
 
-  double y =  Utility::LinLogLin::calculateProcessedGridIndepVar( 
+  double y =  Utility::LinLogLin::calculateProcessedGridIndepVar(
 							       eta, y_min, L );
 
-  TEST_FLOATING_EQUALITY( 
-		 y, 
+  TEST_FLOATING_EQUALITY(
+		 y,
 		 Utility::LinLogLin::processSecondIndepVar(0.0044816890703382),
 		 1e-12 );
 
   eta = 0.0;
-  
+
   y = Utility::LinLogLin::calculateProcessedGridIndepVar( eta, y_min, L );
-  
-  TEST_FLOATING_EQUALITY( y, 
-			  Utility::LinLogLin::processSecondIndepVar(1e-3), 
+
+  TEST_FLOATING_EQUALITY( y,
+			  Utility::LinLogLin::processSecondIndepVar(1e-3),
 			  1e-12 );
 
   eta = 1.0;
 
   y = Utility::LinLogLin::calculateProcessedGridIndepVar( eta, y_min, L );
 
-  TEST_FLOATING_EQUALITY( 
-		  y, 
+  TEST_FLOATING_EQUALITY(
+		  y,
 		  Utility::LinLogLin::processSecondIndepVar(0.020085536923187),
 		  1e-12 );
 }
@@ -1517,8 +1517,8 @@ TEUCHOS_UNIT_TEST( LinLogLin, calculateProcessedGridIndepVar )
 //---------------------------------------------------------------------------//
 // Check that the linear-log-linear unit base interpolation policy between
 // four points can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL( 
-			     LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
+			     LinLogLin,
 			     interpolateProcessedUnitBase_separate_tuple_grids,
 			     ymember,
 			     zmember,
@@ -1527,36 +1527,36 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double y = Utility::LinLogLin::processSecondIndepVar(0.03);
-  
+
   Teuchos::Array<ytuple> y_0_grid( 4 );
-  Utility::set<ymember>( y_0_grid[0], 
+  Utility::set<ymember>( y_0_grid[0],
 			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
-  Utility::set<ymember>( y_0_grid[1], 
+  Utility::set<ymember>( y_0_grid[1],
 			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
-  Utility::set<ymember>( y_0_grid[2], 
+  Utility::set<ymember>( y_0_grid[2],
 			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
-  Utility::set<ymember>( y_0_grid[3], 
+  Utility::set<ymember>( y_0_grid[3],
 			 Utility::LinLogLin::processSecondIndepVar(1.0) );
-  
+
   Teuchos::Array<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 0.0 );
   Utility::set<zmember>( z_0_grid[1], 1.0 );
   Utility::set<zmember>( z_0_grid[2], 2.0 );
   Utility::set<zmember>( z_0_grid[3], 3.0 );
-  
+
   Teuchos::Array<ytuple> y_1_grid( 3 );
-  Utility::set<ymember>( y_1_grid[0], 
+  Utility::set<ymember>( y_1_grid[0],
 			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
-  Utility::set<ymember>( y_1_grid[1], 
+  Utility::set<ymember>( y_1_grid[1],
 			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
-  Utility::set<ymember>( y_1_grid[2], 
+  Utility::set<ymember>( y_1_grid[2],
 			 Utility::LinLogLin::processSecondIndepVar(1.0) );
-  
+
   Teuchos::Array<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 1.0 );
   Utility::set<zmember>( z_1_grid[1], 2.0 );
   Utility::set<zmember>( z_1_grid[2], 3.0 );
-  
+
   double z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
 							      x0,
 							      x1,
@@ -1574,8 +1574,8 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
   // min possible y at x = 0.5
-  y = Utility::LinLogLin::processSecondIndepVar(0.0031622776601684); 
-  
+  y = Utility::LinLogLin::processSecondIndepVar(0.0031622776601684);
+
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
 							      x0,
 							      x1,
@@ -1593,7 +1593,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 0.4, 1e-12 );
 
   // max possible y at x = 0.5
-  y = Utility::LinLogLin::processSecondIndepVar(1.0); 
+  y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
 							      x0,
@@ -1722,15 +1722,15 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION_2_TUPLE( 
-			   LinLogLin, 
+UNIT_TEST_INSTANTIATION_2_TUPLE(
+			   LinLogLin,
 			   interpolateProcessedUnitBase_separate_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the linear-log-linear unit base interpolation policy between
 // four points can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL( 
-			     LinLogLin, 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
+			     LinLogLin,
 			     interpolateProcessedUnitBase_combined_tuple_grids,
 			     ymember,
 			     zmember,
@@ -1738,27 +1738,27 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double y = Utility::LinLogLin::processSecondIndepVar(0.03);
-  
+
   Teuchos::Array<tuple> grid_0( 4 );
-  Utility::set<ymember>( grid_0[0], 
+  Utility::set<ymember>( grid_0[0],
 			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
-  Utility::set<ymember>( grid_0[1], 
+  Utility::set<ymember>( grid_0[1],
 			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
-  Utility::set<ymember>( grid_0[2], 
+  Utility::set<ymember>( grid_0[2],
 			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
-  Utility::set<ymember>( grid_0[3], 
+  Utility::set<ymember>( grid_0[3],
 			 Utility::LinLogLin::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_0[0], 0.0 );
   Utility::set<zmember>( grid_0[1], 1.0 );
   Utility::set<zmember>( grid_0[2], 2.0 );
   Utility::set<zmember>( grid_0[3], 3.0 );
-  
+
   Teuchos::Array<tuple> grid_1( 3 );
-  Utility::set<ymember>( grid_1[0], 
+  Utility::set<ymember>( grid_1[0],
 			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
-  Utility::set<ymember>( grid_1[1], 
+  Utility::set<ymember>( grid_1[1],
 			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
-  Utility::set<ymember>( grid_1[2], 
+  Utility::set<ymember>( grid_1[2],
 			 Utility::LinLogLin::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_1[0], 1.0 );
   Utility::set<zmember>( grid_1[1], 2.0 );
@@ -1777,8 +1777,8 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
   // min possible y at x = 0.5
-  y = Utility::LinLogLin::processSecondIndepVar(0.0031622776601684); 
-  
+  y = Utility::LinLogLin::processSecondIndepVar(0.0031622776601684);
+
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
 								x1,
 								x,
@@ -1791,7 +1791,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 0.4, 1e-12 );
 
   // max possible y at x = 0.5
-  y = Utility::LinLogLin::processSecondIndepVar(1.0); 
+  y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
 								x1,
@@ -1801,7 +1801,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 								grid_0.end(),
 								grid_1.begin(),
 								grid_1.end() );
-  
+
 
   TEST_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -1886,7 +1886,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   TEST_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( 
+UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE(
 			            LinLogLin,
 				    interpolateProcessedUnitBase_combined_tuple_grids );
 
@@ -1897,7 +1897,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolateProcessedUnitBase_no_tuple_grids )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double y = Utility::LinLogLin::processSecondIndepVar(0.03);
-  
+
   Teuchos::Array<double> y_0_grid( 4 );
   y_0_grid[0] = Utility::LinLogLin::processSecondIndepVar(1e-3);
   y_0_grid[1] = Utility::LinLogLin::processSecondIndepVar(1e-2);
@@ -1936,8 +1936,8 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolateProcessedUnitBase_no_tuple_grids )
   TEST_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
   // min possible y at x = 0.5
-  y = Utility::LinLogLin::processSecondIndepVar(0.0031622776601684); 
-  
+  y = Utility::LinLogLin::processSecondIndepVar(0.0031622776601684);
+
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
 					       x1,
 					       x,
@@ -1954,7 +1954,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolateProcessedUnitBase_no_tuple_grids )
   TEST_FLOATING_EQUALITY( z, 0.4, 1e-12 );
 
   // max possible y at x = 0.5
-  y = Utility::LinLogLin::processSecondIndepVar(1.0); 
+  y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
 					       x1,
@@ -2055,7 +2055,7 @@ TEUCHOS_UNIT_TEST( LinLogLin, interpolateProcessedUnitBase_no_tuple_grids )
 					       y_1_grid.end(),
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
-    
+
   TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1.0);

@@ -60,7 +60,7 @@ protected:
    * in cell event dispatcher.
    */
   template<typename Observer, typename EntityHandle>
-  void registerObserverWithTag( 
+  void registerObserverWithTag(
                          const std::shared_ptr<Observer>& observer,
 			 const Teuchos::Array<EntityHandle>& entity_ids,
 			 ParticleSubtrackEndingInCellEventObserver::EventTag );
@@ -75,18 +75,18 @@ private:
 // Register an observer with the appropriate particle subtrack ending in cell
 // event dispatcher
 template<typename Observer, typename EntityHandle>
-inline void ParticleSubtrackEndingInCellEventHandler::registerObserverWithTag( 
+inline void ParticleSubtrackEndingInCellEventHandler::registerObserverWithTag(
                           const std::shared_ptr<Observer>& observer,
                           const Teuchos::Array<EntityHandle>& entity_ids,
                           ParticleSubtrackEndingInCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the expected event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleSubtrackEndingInCellEventObserver::EventTag>::value));
-  
-  std::shared_ptr<ParticleSubtrackEndingInCellEventObserver> observer_base = 
-    std::dynamic_pointer_cast<ParticleSubtrackEndingInCellEventObserver>( 
+
+  std::shared_ptr<ParticleSubtrackEndingInCellEventObserver> observer_base =
+    std::dynamic_pointer_cast<ParticleSubtrackEndingInCellEventObserver>(
 								    observer );
-  
+
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
   {
     d_particle_subtrack_ending_in_cell_event_dispatcher.attachObserver(

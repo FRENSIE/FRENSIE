@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 #define MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 //#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
@@ -28,22 +25,22 @@ public:
   //! Create a simple dipole bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 		        	  scattering_distribution );
 
   //! Create a detailed tabular bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 			          scattering_distribution,
-        Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
+        std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
         const double lower_cutoff_energy,
         const double upper_cutoff_energy );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 		                  scattering_distribution,
         const int atomic_number );
 
@@ -52,7 +49,7 @@ protected:
   //! Create the energy loss function
   static void createScatteringFunction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
+      BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
                                                         scattering_function );
 };
 

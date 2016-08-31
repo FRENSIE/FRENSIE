@@ -23,8 +23,8 @@ namespace MonteCarlo{
 /*! The standard Electroatomic reaction base class
  * \details Use the InterpPolicy template parameter and the
  * processed_cross_section template parameter to customize the behavior of
- * this class. Raw cross section data from a EPR library would use a LinLin 
- * policy with processed_cross_section = false. When data is processed, 
+ * this class. Raw cross section data from a EPR library would use a LinLin
+ * policy with processed_cross_section = false. When data is processed,
  * the policy is used to indicate how the data was processed.
  */
 template<typename InterpPolicy, bool processed_cross_section>
@@ -34,13 +34,13 @@ class StandardElectroatomicReaction : public ElectroatomicReaction
 public:
 
   //! Basic Constructor
-  StandardElectroatomicReaction( 
+  StandardElectroatomicReaction(
 	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	const Teuchos::ArrayRCP<const double>& cross_section,
 	const unsigned threshold_energy_index );
 
   //! Constructor
-  StandardElectroatomicReaction( 
+  StandardElectroatomicReaction(
 	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	const Teuchos::ArrayRCP<const double>& cross_section,
 	const unsigned threshold_energy_index,
@@ -60,8 +60,40 @@ public:
   double getCrossSection( const double energy,
                           const unsigned bin_index ) const;
 
+  //! Return the cross section at the given energy
+  double getCrossSection( 
+            const double energy,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index ) const;
+
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection(
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index ) const;
+
+  //! Return the cross section at the given energy
+  static double getCrossSection( 
+            const double energy,
+            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index );
+
+  //! Return the cross section at the given energy (efficient)
+  static double getCrossSection(
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index );
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
+
+  //! Return the threshold energy
+  double getThresholdEnergy( const unsigned threshold_energy_index ) const;
 
 protected:
 
@@ -90,13 +122,13 @@ class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicRea
   public:
 
   //! Basic Constructor
-  StandardElectroatomicReaction( 
+  StandardElectroatomicReaction(
 	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	const Teuchos::ArrayRCP<const double>& cross_section,
 	const unsigned threshold_energy_index );
 
   //! Constructor
-  StandardElectroatomicReaction( 
+  StandardElectroatomicReaction(
 	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
@@ -116,8 +148,40 @@ class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicRea
   double getCrossSection( const double energy,
 			  const unsigned bin_index ) const;
 
+  //! Return the cross section at the given energy
+  double getCrossSection( 
+            const double energy,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index ) const;
+
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection(
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index ) const;
+
+  //! Return the cross section at the given energy
+  static double getCrossSection( 
+            const double energy,
+            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index );
+
+  //! Return the cross section at the given energy (efficient)
+  static double getCrossSection(
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index );
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
+
+  //! Return the threshold energy
+  double getThresholdEnergy( const unsigned threshold_energy_index ) const;
 
 protected:
 

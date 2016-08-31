@@ -26,14 +26,14 @@ namespace MonteCarlo{
  * \ingroup particle_entering_cell_event
  * \ingroup particle_leaving_cell_event
  * \details This class has been set up to get correct results with multiple
- * threads. However, the commitHistoryContribution member function call 
+ * threads. However, the commitHistoryContribution member function call
  * should only appear within an omp critical block. Use the enable thread
  * support member function to set up an instance of this class for the
  * requested number of threads. The classes default initialization is for
  * a single thread.
  */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>, 
+class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>,
 				 public ParticleEnteringCellEventObserver,
 				 public ParticleLeavingCellEventObserver
 {
@@ -46,7 +46,7 @@ private:
   SerialUpdateTracker;
 
   // Typedef for the parallel update tracker
-  typedef Teuchos::Array<SerialUpdateTracker> 
+  typedef Teuchos::Array<SerialUpdateTracker>
   ParallelUpdateTracker;
 
 public:
@@ -63,13 +63,13 @@ public:
   CellPulseHeightEstimator( const Estimator::idType id,
 			    const double multiplier,
 			    const Teuchos::Array<cellIdType>& entity_ids );
-  
+
   //! Destructor
   ~CellPulseHeightEstimator()
   { /* ... */ }
 
   //! Set the response functions
-  void setResponseFunctions( 
+  void setResponseFunctions(
                       const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
                       response_functions );
 
@@ -83,7 +83,7 @@ public:
   //! Add current history estimator contribution
   void updateFromParticleLeavingCellEvent( const ParticleState& particle,
 					   const cellIdType cell_leaving );
-  
+
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
 
@@ -135,7 +135,7 @@ private:
   Teuchos::Array<Estimator::DimensionValueMap> d_dimension_values;
 };
 
-} // end MonteCarlo namespace 
+} // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes

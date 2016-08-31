@@ -27,7 +27,7 @@
 namespace MonteCarlo{
 
 //! The generic particle simulation manager class
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
@@ -38,20 +38,20 @@ protected:
 
   // Typedef for geometry module interface
   typedef Geometry::ModuleInterface<GeometryHandler> GMI;
-  
+
   // Typedef for source module interface
   typedef SourceModuleInterface<SourceHandler> SMI;
-  
+
   // Typedef for event module interface
   typedef EventModuleInterface<EstimatorHandler> EMI;
-  
+
   // Typedef for collision module interface
   typedef CollisionModuleInterface<CollisionHandler> CMI;
 
 public:
 
-  //! Constructor 
-  ParticleSimulationManager( 
+  //! Constructor
+  ParticleSimulationManager(
 		const unsigned long long number_of_histories,
 		const unsigned long long start_history = 0ull,
 		const unsigned long long previously_completed_histories = 0ull,
@@ -77,7 +77,7 @@ public:
 protected:
 
   //! Run the simulation batch
-  void runSimulationBatch( const unsigned long long start_history, 
+  void runSimulationBatch( const unsigned long long start_history,
 			   const unsigned long long end_history );
 
   //! Return the number of histories
@@ -93,7 +93,7 @@ protected:
 
   //! Set the start time
   void setStartTime( const double start_time );
-  
+
   //! Set the end time
   void setEndTime( const double end_time );
 
@@ -117,11 +117,11 @@ private:
                               const int line,
                               const std::string& error_message,
                               const ParticleState& particle ) const;
-                              
+
 
   // Starting history
   unsigned long long d_start_history;
-  
+
   // Number of particle histories to simulate
   unsigned long long d_history_number_wall;
 

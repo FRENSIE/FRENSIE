@@ -22,7 +22,7 @@ double ParticleHistoryObserver::start_time = 0.0;
 double ParticleHistoryObserver::end_time = ParticleHistoryObserver::start_time;
 
 // Set the number of particle histories that have been observed
-void ParticleHistoryObserver::setNumberOfHistories( 
+void ParticleHistoryObserver::setNumberOfHistories(
                                        const unsigned long long num_histories )
 {
   ParticleHistoryObserver::num_histories = num_histories;
@@ -38,7 +38,7 @@ unsigned long long ParticleHistoryObserver::getNumberOfHistories()
 void ParticleHistoryObserver::setStartTime( const double start_time )
 {
   testPrecondition( start_time >= 0.0 );
-  
+
   ParticleHistoryObserver::start_time = start_time;
 }
 
@@ -46,14 +46,14 @@ void ParticleHistoryObserver::setStartTime( const double start_time )
 void ParticleHistoryObserver::setEndTime( const double end_time )
 {
   testPrecondition( end_time > ParticleHistoryObserver::start_time );
-  
+
   ParticleHistoryObserver::end_time = end_time;
 }
 
 // Get the elapsed time (for analysis of observer data)
 double ParticleHistoryObserver::getElapsedTime()
 {
-  return ParticleHistoryObserver::end_time - 
+  return ParticleHistoryObserver::end_time -
     ParticleHistoryObserver::start_time;
 }
 

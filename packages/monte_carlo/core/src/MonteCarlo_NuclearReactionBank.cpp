@@ -13,7 +13,7 @@
 namespace MonteCarlo{
 
 // Constructor
-NuclearReactionBank::NuclearReactionBank( 
+NuclearReactionBank::NuclearReactionBank(
 			 const Teuchos::Array<NuclearReactionType>& reactions )
   : d_nuclear_reaction_banks()
 {
@@ -29,7 +29,7 @@ NuclearReactionBank::NuclearReactionBank(
 void NuclearReactionBank::push( const NeutronState& neutron,
 				const NuclearReactionType reaction )
 {
-  if( d_nuclear_reaction_banks.find( reaction ) != 
+  if( d_nuclear_reaction_banks.find( reaction ) !=
       d_nuclear_reaction_banks.end() )
     d_nuclear_reaction_banks[reaction].emplace_back( neutron.clone() );
   else

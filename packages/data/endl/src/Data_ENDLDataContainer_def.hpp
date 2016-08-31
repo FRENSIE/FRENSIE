@@ -20,7 +20,7 @@ namespace Data{
 
 // Save the data to an archive
 template<typename Archive>
-void ENDLDataContainer::save( Archive& ar, 
+void ENDLDataContainer::save( Archive& ar,
 						  const unsigned version) const
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
@@ -29,27 +29,27 @@ void ENDLDataContainer::save( Archive& ar,
 // RELAXATION DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
-  ar & boost::serialization::make_nvp( "subshell_occupancies", 
+  ar & boost::serialization::make_nvp( "subshell_occupancies",
         d_subshell_occupancies );
-  ar & boost::serialization::make_nvp( "subshell_binding_energies", 
+  ar & boost::serialization::make_nvp( "subshell_binding_energies",
         d_subshell_binding_energies );
-  ar & boost::serialization::make_nvp( "subshell_kinetic_energies", 
+  ar & boost::serialization::make_nvp( "subshell_kinetic_energies",
         d_subshell_kinetic_energies );
-  ar & boost::serialization::make_nvp( "subshell_average_radii", 
+  ar & boost::serialization::make_nvp( "subshell_average_radii",
         d_subshell_average_radii );
-  ar & boost::serialization::make_nvp( "subshell_radiative_levels", 
+  ar & boost::serialization::make_nvp( "subshell_radiative_levels",
         d_subshell_radiative_levels );
-  ar & boost::serialization::make_nvp( "subshell_non_radiative_levels", 
+  ar & boost::serialization::make_nvp( "subshell_non_radiative_levels",
         d_subshell_non_radiative_levels );
-  ar & boost::serialization::make_nvp( "subshell_local_depositions", 
+  ar & boost::serialization::make_nvp( "subshell_local_depositions",
         d_subshell_local_depositions );
-  ar & boost::serialization::make_nvp( "subshell_average_photon_numbers", 
+  ar & boost::serialization::make_nvp( "subshell_average_photon_numbers",
         d_subshell_average_photon_numbers );
-  ar & boost::serialization::make_nvp( "subshell_average_photon_energies", 
+  ar & boost::serialization::make_nvp( "subshell_average_photon_energies",
         d_subshell_average_photon_energies );
-  ar & boost::serialization::make_nvp( "subshell_average_electron_numbers", 
+  ar & boost::serialization::make_nvp( "subshell_average_electron_numbers",
         d_subshell_average_electron_numbers );
-  ar & boost::serialization::make_nvp( "subshell_average_electron_energies", 
+  ar & boost::serialization::make_nvp( "subshell_average_electron_energies",
         d_subshell_average_electron_energies );
   ar & boost::serialization::make_nvp( "radiative_transition_probabilities",
         d_radiative_transition_probabilities );
@@ -72,10 +72,10 @@ void ENDLDataContainer::save( Archive& ar,
         d_coherent_form_factor_argument );
   ar & boost::serialization::make_nvp( "coherent_form_factor",
         d_coherent_form_factor );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "coherent_imaginary_anomalous_scattering_factor_incident_energy",
         d_coherent_imaginary_anomalous_scattering_factor_incident_energy );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "coherent_imaginary_anomalous_scattering_factor",
         d_coherent_imaginary_anomalous_scattering_factor );
   ar & boost::serialization::make_nvp(
@@ -84,7 +84,7 @@ void ENDLDataContainer::save( Archive& ar,
   ar & boost::serialization::make_nvp(
         "coherent_real_anomalous_scattering_factor",
         d_coherent_real_anomalous_scattering_factor );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "coherent_average_photon_incident_energy",
         d_coherent_average_photon_incident_energy );
   ar & boost::serialization::make_nvp( "coherent_average_photon_energy",
@@ -98,17 +98,17 @@ void ENDLDataContainer::save( Archive& ar,
         d_incoherent_cross_section_energy_grid );
   ar & boost::serialization::make_nvp( "incoherent_cross_section",
         d_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "incoherent_scattering_function_argument",
         d_incoherent_scattering_function_argument );
   ar & boost::serialization::make_nvp( "incoherent_scattering_function",
         d_incoherent_scattering_function );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "incoherent_average_photon_incident_energy",
         d_incoherent_average_photon_incident_energy );
   ar & boost::serialization::make_nvp( "incoherent_average_photon_energy",
         d_incoherent_average_photon_energy );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "incoherent_average_electron_incident_energy",
         d_incoherent_average_electron_incident_energy );
   ar & boost::serialization::make_nvp( "incoherent_average_electron_energy",
@@ -215,67 +215,67 @@ void ENDLDataContainer::save( Archive& ar,
         d_triplet_production_average_electron_energy );
 
 //---------------------------------------------------------------------------//
-// ELASTIC DATA 
+// ELASTIC DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp( "elastic_energy_grid",
 				                        d_elastic_energy_grid );
   ar & boost::serialization::make_nvp( "elastic_transport_cross_section",
 				                        d_elastic_transport_cross_section );
-  ar & boost::serialization::make_nvp( "cutoff_elastic_cross_section", 
+  ar & boost::serialization::make_nvp( "cutoff_elastic_cross_section",
                                         d_cutoff_elastic_cross_section );
 
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_residual_incident_energy", 
+    "cutoff_elastic_residual_incident_energy",
     d_cutoff_elastic_residual_incident_energy );
-  ar & boost::serialization::make_nvp( "cutoff_elastic_residual_energy", 
+  ar & boost::serialization::make_nvp( "cutoff_elastic_residual_energy",
                                         d_cutoff_elastic_residual_energy );
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_scattered_electron_incident_energy", 
+    "cutoff_elastic_scattered_electron_incident_energy",
     d_cutoff_elastic_scattered_electron_incident_energy );
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_scattered_electron_energy", 
+    "cutoff_elastic_scattered_electron_energy",
     d_cutoff_elastic_scattered_electron_energy );
   ar & boost::serialization::make_nvp( "cutoff_elastic_angular_energy_grid",
 				                        d_cutoff_elastic_angular_energy_grid );
 
-  ar & boost::serialization::make_nvp( "cutoff_elastic_angles", 
+  ar & boost::serialization::make_nvp( "cutoff_elastic_angles",
                                         d_cutoff_elastic_angles );
-  ar & boost::serialization::make_nvp( "cutoff_elastic_pdf", 
+  ar & boost::serialization::make_nvp( "cutoff_elastic_pdf",
                                         d_cutoff_elastic_pdf );
-  ar & boost::serialization::make_nvp( "total_elastic_cross_section", 
+  ar & boost::serialization::make_nvp( "total_elastic_cross_section",
                                         d_total_elastic_cross_section );
 /*
-  ar & boost::serialization::make_nvp( 
-            "screened_rutherford_elastic_cross_section", 
+  ar & boost::serialization::make_nvp(
+            "screened_rutherford_elastic_cross_section",
             d_screened_rutherford_elastic_cross_section );
-  ar & boost::serialization::make_nvp( 
-            "screened_rutherford_normalization_constant", 
+  ar & boost::serialization::make_nvp(
+            "screened_rutherford_normalization_constant",
             d_screened_rutherford_normalization_constant );
-  ar & boost::serialization::make_nvp( "moliere_screening_constant", 
+  ar & boost::serialization::make_nvp( "moliere_screening_constant",
                                         d_moliere_screening_constant );
 */
 
 //---------------------------------------------------------------------------//
-// ELECTROIONIZATION DATA 
+// ELECTROIONIZATION DATA
 //---------------------------------------------------------------------------//
-  ar & boost::serialization::make_nvp( 
-    "electroionization_subshell_cross_section_energy_grid", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_subshell_cross_section_energy_grid",
     d_electroionization_subshell_cross_section_energy_grid );
-  ar & boost::serialization::make_nvp( 
-    "electroionization_subshell_cross_section", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_subshell_cross_section",
     d_electroionization_subshell_cross_section );
 
-  ar & boost::serialization::make_nvp( 
-    "electroionization_average_scattered_electron_incident_energy", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_average_scattered_electron_incident_energy",
     d_electroionization_average_scattered_electron_incident_energy );
-  ar & boost::serialization::make_nvp( 
-    "electroionization_average_scattered_electron_energy", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_average_scattered_electron_energy",
     d_electroionization_average_scattered_electron_energy );
-  ar & boost::serialization::make_nvp( 
-    "electroionization_average_recoil_electron_incident_energy", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_average_recoil_electron_incident_energy",
     d_electroionization_average_recoil_electron_incident_energy );
-  ar & boost::serialization::make_nvp( 
-    "electroionization_average_recoil_electron_energy", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_average_recoil_electron_energy",
     d_electroionization_average_recoil_electron_energy );
   ar & boost::serialization::make_nvp( "electroionization_recoil_energy_grid",
 				                        d_electroionization_recoil_energy_grid );
@@ -285,18 +285,18 @@ void ENDLDataContainer::save( Archive& ar,
 				                        d_electroionization_recoil_pdf );
 
 //---------------------------------------------------------------------------//
-// BREMSSTRAHLUNG DATA 
+// BREMSSTRAHLUNG DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_cross_section_energy_grid", 
+    "bremsstrahlung_cross_section_energy_grid",
     d_bremsstrahlung_cross_section_energy_grid );
-  ar & boost::serialization::make_nvp( "bremsstrahlung_cross_section", 
+  ar & boost::serialization::make_nvp( "bremsstrahlung_cross_section",
                                         d_bremsstrahlung_cross_section );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_photon_incident_energy", 
+    "bremsstrahlung_average_photon_incident_energy",
     d_bremsstrahlung_average_photon_incident_energy );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_photon_energy", 
+    "bremsstrahlung_average_photon_energy",
     d_bremsstrahlung_average_photon_energy );
   ar & boost::serialization::make_nvp( "bremsstrahlung_photon_energy_grid",
 				                        d_bremsstrahlung_photon_energy_grid );
@@ -305,27 +305,27 @@ void ENDLDataContainer::save( Archive& ar,
   ar & boost::serialization::make_nvp( "bremsstrahlung_photon_pdf",
 				                        d_bremsstrahlung_photon_pdf );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_electron_incident_energy", 
+    "bremsstrahlung_average_electron_incident_energy",
     d_bremsstrahlung_average_electron_incident_energy );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_electron_energy", 
+    "bremsstrahlung_average_electron_energy",
     d_bremsstrahlung_average_electron_energy );
 
 //---------------------------------------------------------------------------//
-// ATOMIC EXCITAION DATA 
+// ATOMIC EXCITAION DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp(
-    "atomic_excitation_energy_grid", 
+    "atomic_excitation_energy_grid",
     d_atomic_excitation_energy_grid );
-  ar & boost::serialization::make_nvp( "atomic_excitation_cross_section", 
+  ar & boost::serialization::make_nvp( "atomic_excitation_cross_section",
                                         d_atomic_excitation_cross_section );
   ar & boost::serialization::make_nvp( "atomic_excitation_energy_loss",
 				                        d_atomic_excitation_energy_loss );
 }
-  
+
 // Load the data from an archive
 template<typename Archive>
-void ENDLDataContainer::load( Archive& ar, 
+void ENDLDataContainer::load( Archive& ar,
 						  const unsigned version )
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
@@ -334,27 +334,27 @@ void ENDLDataContainer::load( Archive& ar,
 // RELAXATION DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
-  ar & boost::serialization::make_nvp( "subshell_occupancies", 
+  ar & boost::serialization::make_nvp( "subshell_occupancies",
         d_subshell_occupancies );
-  ar & boost::serialization::make_nvp( "subshell_binding_energies", 
+  ar & boost::serialization::make_nvp( "subshell_binding_energies",
         d_subshell_binding_energies );
-  ar & boost::serialization::make_nvp( "subshell_kinetic_energies", 
+  ar & boost::serialization::make_nvp( "subshell_kinetic_energies",
         d_subshell_kinetic_energies );
-  ar & boost::serialization::make_nvp( "subshell_average_radii", 
+  ar & boost::serialization::make_nvp( "subshell_average_radii",
         d_subshell_average_radii );
-  ar & boost::serialization::make_nvp( "subshell_radiative_levels", 
+  ar & boost::serialization::make_nvp( "subshell_radiative_levels",
         d_subshell_radiative_levels );
-  ar & boost::serialization::make_nvp( "subshell_non_radiative_levels", 
+  ar & boost::serialization::make_nvp( "subshell_non_radiative_levels",
         d_subshell_non_radiative_levels );
-  ar & boost::serialization::make_nvp( "subshell_local_depositions", 
+  ar & boost::serialization::make_nvp( "subshell_local_depositions",
         d_subshell_local_depositions );
-  ar & boost::serialization::make_nvp( "subshell_average_photon_numbers", 
+  ar & boost::serialization::make_nvp( "subshell_average_photon_numbers",
         d_subshell_average_photon_numbers );
-  ar & boost::serialization::make_nvp( "subshell_average_photon_energies", 
+  ar & boost::serialization::make_nvp( "subshell_average_photon_energies",
         d_subshell_average_photon_energies );
-  ar & boost::serialization::make_nvp( "subshell_average_electron_numbers", 
+  ar & boost::serialization::make_nvp( "subshell_average_electron_numbers",
         d_subshell_average_electron_numbers );
-  ar & boost::serialization::make_nvp( "subshell_average_electron_energies", 
+  ar & boost::serialization::make_nvp( "subshell_average_electron_energies",
         d_subshell_average_electron_energies );
   ar & boost::serialization::make_nvp( "radiative_transition_probabilities",
         d_radiative_transition_probabilities );
@@ -377,10 +377,10 @@ void ENDLDataContainer::load( Archive& ar,
         d_coherent_form_factor_argument );
   ar & boost::serialization::make_nvp( "coherent_form_factor",
         d_coherent_form_factor );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "coherent_imaginary_anomalous_scattering_factor_incident_energy",
         d_coherent_imaginary_anomalous_scattering_factor_incident_energy );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "coherent_imaginary_anomalous_scattering_factor",
         d_coherent_imaginary_anomalous_scattering_factor );
   ar & boost::serialization::make_nvp(
@@ -389,7 +389,7 @@ void ENDLDataContainer::load( Archive& ar,
   ar & boost::serialization::make_nvp(
         "coherent_real_anomalous_scattering_factor",
         d_coherent_real_anomalous_scattering_factor );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "coherent_average_photon_incident_energy",
         d_coherent_average_photon_incident_energy );
   ar & boost::serialization::make_nvp( "coherent_average_photon_energy",
@@ -403,17 +403,17 @@ void ENDLDataContainer::load( Archive& ar,
         d_incoherent_cross_section_energy_grid );
   ar & boost::serialization::make_nvp( "incoherent_cross_section",
         d_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "incoherent_scattering_function_argument",
         d_incoherent_scattering_function_argument );
   ar & boost::serialization::make_nvp( "incoherent_scattering_function",
         d_incoherent_scattering_function );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "incoherent_average_photon_incident_energy",
         d_incoherent_average_photon_incident_energy );
   ar & boost::serialization::make_nvp( "incoherent_average_photon_energy",
         d_incoherent_average_photon_energy );
-  ar & boost::serialization::make_nvp( 
+  ar & boost::serialization::make_nvp(
         "incoherent_average_electron_incident_energy",
         d_incoherent_average_electron_incident_energy );
   ar & boost::serialization::make_nvp( "incoherent_average_electron_energy",
@@ -520,65 +520,65 @@ void ENDLDataContainer::load( Archive& ar,
         d_triplet_production_average_electron_energy );
 
 //---------------------------------------------------------------------------//
-// ELASTIC DATA 
+// ELASTIC DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp( "elastic_energy_grid",
 				                        d_elastic_energy_grid );
   ar & boost::serialization::make_nvp( "elastic_transport_cross_section",
 				                        d_elastic_transport_cross_section );
-  ar & boost::serialization::make_nvp( "cutoff_elastic_cross_section", 
+  ar & boost::serialization::make_nvp( "cutoff_elastic_cross_section",
                                         d_cutoff_elastic_cross_section );
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_residual_incident_energy", 
+    "cutoff_elastic_residual_incident_energy",
     d_cutoff_elastic_residual_incident_energy );
-  ar & boost::serialization::make_nvp( "cutoff_elastic_residual_energy", 
+  ar & boost::serialization::make_nvp( "cutoff_elastic_residual_energy",
                                         d_cutoff_elastic_residual_energy );
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_scattered_electron_incident_energy", 
+    "cutoff_elastic_scattered_electron_incident_energy",
     d_cutoff_elastic_scattered_electron_incident_energy );
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_scattered_electron_energy", 
+    "cutoff_elastic_scattered_electron_energy",
     d_cutoff_elastic_scattered_electron_energy );
   ar & boost::serialization::make_nvp( "cutoff_elastic_angular_energy_grid",
 				                        d_cutoff_elastic_angular_energy_grid );
-  ar & boost::serialization::make_nvp( "cutoff_elastic_angles", 
+  ar & boost::serialization::make_nvp( "cutoff_elastic_angles",
                                         d_cutoff_elastic_angles );
-  ar & boost::serialization::make_nvp( "cutoff_elastic_pdf", 
+  ar & boost::serialization::make_nvp( "cutoff_elastic_pdf",
                                         d_cutoff_elastic_pdf );
-  ar & boost::serialization::make_nvp( "total_elastic_cross_section", 
+  ar & boost::serialization::make_nvp( "total_elastic_cross_section",
                                         d_total_elastic_cross_section );
 /*
-  ar & boost::serialization::make_nvp( 
-            "screened_rutherford_elastic_cross_section", 
+  ar & boost::serialization::make_nvp(
+            "screened_rutherford_elastic_cross_section",
             d_screened_rutherford_elastic_cross_section );
-  ar & boost::serialization::make_nvp( 
-            "screened_rutherford_normalization_constant", 
+  ar & boost::serialization::make_nvp(
+            "screened_rutherford_normalization_constant",
             d_screened_rutherford_normalization_constant );
-  ar & boost::serialization::make_nvp( "moliere_screening_constant", 
+  ar & boost::serialization::make_nvp( "moliere_screening_constant",
                                         d_moliere_screening_constant );
 */
 
 //---------------------------------------------------------------------------//
-// ELECTROIONIZATION DATA 
+// ELECTROIONIZATION DATA
 //---------------------------------------------------------------------------//
-  ar & boost::serialization::make_nvp( 
-    "electroionization_subshell_cross_section_energy_grid", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_subshell_cross_section_energy_grid",
     d_electroionization_subshell_cross_section_energy_grid );
-  ar & boost::serialization::make_nvp( 
-    "electroionization_subshell_cross_section", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_subshell_cross_section",
     d_electroionization_subshell_cross_section );
 
-  ar & boost::serialization::make_nvp( 
-    "electroionization_average_scattered_electron_incident_energy", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_average_scattered_electron_incident_energy",
     d_electroionization_average_scattered_electron_incident_energy );
-  ar & boost::serialization::make_nvp( 
-    "electroionization_average_scattered_electron_energy", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_average_scattered_electron_energy",
     d_electroionization_average_scattered_electron_energy );
-  ar & boost::serialization::make_nvp( 
-    "electroionization_average_recoil_electron_incident_energy", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_average_recoil_electron_incident_energy",
     d_electroionization_average_recoil_electron_incident_energy );
-  ar & boost::serialization::make_nvp( 
-    "electroionization_average_recoil_electron_energy", 
+  ar & boost::serialization::make_nvp(
+    "electroionization_average_recoil_electron_energy",
     d_electroionization_average_recoil_electron_energy );
   ar & boost::serialization::make_nvp( "electroionization_recoil_energy_grid",
 				                        d_electroionization_recoil_energy_grid );
@@ -588,18 +588,18 @@ void ENDLDataContainer::load( Archive& ar,
 				                        d_electroionization_recoil_pdf );
 
 //---------------------------------------------------------------------------//
-// BREMSSTRAHLUNG DATA 
+// BREMSSTRAHLUNG DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_cross_section_energy_grid", 
+    "bremsstrahlung_cross_section_energy_grid",
     d_bremsstrahlung_cross_section_energy_grid );
-  ar & boost::serialization::make_nvp( "bremsstrahlung_cross_section", 
+  ar & boost::serialization::make_nvp( "bremsstrahlung_cross_section",
                                         d_bremsstrahlung_cross_section );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_photon_incident_energy", 
+    "bremsstrahlung_average_photon_incident_energy",
     d_bremsstrahlung_average_photon_incident_energy );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_photon_energy", 
+    "bremsstrahlung_average_photon_energy",
     d_bremsstrahlung_average_photon_energy );
   ar & boost::serialization::make_nvp( "bremsstrahlung_photon_energy_grid",
 				                        d_bremsstrahlung_photon_energy_grid );
@@ -608,19 +608,19 @@ void ENDLDataContainer::load( Archive& ar,
   ar & boost::serialization::make_nvp( "bremsstrahlung_photon_pdf",
 				                        d_bremsstrahlung_photon_pdf );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_electron_incident_energy", 
+    "bremsstrahlung_average_electron_incident_energy",
     d_bremsstrahlung_average_electron_incident_energy );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_electron_energy", 
+    "bremsstrahlung_average_electron_energy",
     d_bremsstrahlung_average_electron_energy );
 
 //---------------------------------------------------------------------------//
-// ATOMIC EXCITAION DATA 
+// ATOMIC EXCITAION DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp(
-    "atomic_excitation_energy_grid", 
+    "atomic_excitation_energy_grid",
     d_atomic_excitation_energy_grid );
-  ar & boost::serialization::make_nvp( "atomic_excitation_cross_section", 
+  ar & boost::serialization::make_nvp( "atomic_excitation_cross_section",
                                         d_atomic_excitation_cross_section );
   ar & boost::serialization::make_nvp( "atomic_excitation_energy_loss",
 				                        d_atomic_excitation_energy_loss );

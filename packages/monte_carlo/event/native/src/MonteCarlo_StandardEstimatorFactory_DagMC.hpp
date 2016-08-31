@@ -47,7 +47,7 @@ protected:
                                        const std::string& estimator_type ) const;
 
   //! Get the estimator particle types - required
-  void getEstimatorParticleType( 
+  void getEstimatorParticleType(
                            Teuchos::Array<ParticleType>& particle_types,
                            const unsigned estimator_id,
                            const Teuchos::ParameterList& estimator_rep ) const;
@@ -59,12 +59,12 @@ protected:
         const unsigned estimator_id ) const;
 
   //! Get the cached cells (add to set)
-  void getCachedCells( 
+  void getCachedCells(
        boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>& cells,
        const unsigned estimator_id ) const;
 
   //! Get the cell volumes
-  void getCellVolumes( 
+  void getCellVolumes(
      Teuchos::Array<double>& cell_volumes,
      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells );
 
@@ -81,14 +81,14 @@ protected:
      const unsigned estimator_id ) const;
 
   //! Get the surface areas
-  void getSurfaceAreas( 
+  void getSurfaceAreas(
            Teuchos::Array<double>& surface_areas,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
            surfaces );
 
   //! Update the estimator cache info
   void updateEstimatorCacheInfo( const unsigned id );
-  
+
 private:
 
   // Load estimator id maps with cell estimator properties

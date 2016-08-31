@@ -20,11 +20,11 @@
 namespace MonteCarlo{
 
 // Constructor
-PhotonuclearScatteringDistributionACEFactory::PhotonuclearScatteringDistributionACEFactory( 
+PhotonuclearScatteringDistributionACEFactory::PhotonuclearScatteringDistributionACEFactory(
 		       const std::string& table_name,
 		       const double atomic_weight_ratio,
 		       const Data::XSSPhotonuclearDataExtractor& raw_nuclide_data )
-  : NuclearScatteringDistributionACEFactory<MonteCarlo::PhotonState,MonteCarlo::PhotonState>( 
+  : NuclearScatteringDistributionACEFactory<MonteCarlo::PhotonState,MonteCarlo::PhotonState>(
 					   table_name,
 					   atomic_weight_ratio )
 {

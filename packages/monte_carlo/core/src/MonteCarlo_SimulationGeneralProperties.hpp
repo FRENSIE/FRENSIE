@@ -20,7 +20,7 @@ namespace MonteCarlo{
  */
 class SimulationGeneralProperties
 {
-  
+
 public:
 
   //! Set the particle mode
@@ -60,10 +60,10 @@ public:
 
   //! Return if implicit capture mode has been set
   static bool isImplicitCaptureModeOn();
-          
+
   //! Set the number of batches for an MPI configuration
   static void setNumberOfBatchesPerProcessor( const unsigned batches_per_processor );
-  
+
   //! Return the number of batches for an MPI configuration
   static unsigned getNumberOfBatchesPerProcessor();
 
@@ -83,9 +83,9 @@ private:
 
   // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
-           
+
   // The number of batches to run for MPI configuration
-  static unsigned number_of_batches_per_processor; 
+  static unsigned number_of_batches_per_processor;
 };
 
 // Return the particle mode type

@@ -36,8 +36,8 @@ AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::Absorptio
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 }
@@ -65,13 +65,13 @@ ElectroatomicReactionType AbsorptionElectroatomicReaction<InterpPolicy,processed
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     ElectronState& electron, 
+void AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
   electron.setAsGone();
-  
+
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 

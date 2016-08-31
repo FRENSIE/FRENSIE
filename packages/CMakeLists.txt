@@ -5,6 +5,8 @@ SET(GLOBAL_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files)
 SET(GLOBAL_TEST_DATA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_files)
 
 SET(GLOBAL_ACE_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/ace)
+SET(GLOBAL_ENDF_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/endf)
+SET(GLOBAL_ENDL_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/endl)
 SET(GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/native)
 SET(GLOBAL_DAGMC_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/dagmc)
 SET(GLOBAL_DAGMC_TEST_DATA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_files/dagmc)
@@ -26,7 +28,7 @@ ADD_SUBDIRECTORY(monte_carlo)
 INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_carlo/collision/native/src)
 
 ADD_SUBDIRECTORY(data_gen)
-INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src data_gen/endl/src)
+INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src data_gen/endl/src data_gen/electron_photon/src)
 
 IF(FRENSIE_ENABLE_PYTHON)
   ADD_SUBDIRECTORY(PyFrensie)

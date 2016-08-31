@@ -3,7 +3,7 @@
 ## Geometry.DagMC.initializeDagMC method unit tests
 #  \file   tstGeometry.DagMC.initializeDagMC.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Geometry.DagMC.initializeDagMC method 
+#  \brief  Unit tests for the Geometry.DagMC.initializeDagMC method
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     # Add the test cases to the test suite
     suite.addTest(unittest.makeSuite(InitializeDagMCTestCase))
-    
+
     print >>sys.stderr, \
         "\n**************************************\n" + \
         "Testing Geometry.DagMC.initializeDagMC \n" + \

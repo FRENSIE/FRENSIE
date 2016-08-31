@@ -12,11 +12,11 @@ PyFrensie.Utility.Prng is the python inteface to the FRENSIE utility/prng
 subpackage.
 
 The purpose of Prng is to provide a variety of pseudo-random number generators
-that can be used in FRENSIE and PyFrensie. All FRENSIE packages interact with 
+that can be used in FRENSIE and PyFrensie. All FRENSIE packages interact with
 the random number generators through the Utility::RandomNumberGenerator class.
 In PyFrensie the Prng.RandomNumberGenerator proxy class is used. Before using
-classes in other PyFrensie modules (e.g. the distribution classes in 
-PyFrensie.Utility.Distribution), make sure to initialize the 
+classes in other PyFrensie modules (e.g. the distribution classes in
+PyFrensie.Utility.Distribution), make sure to initialize the
 Prng.RandomNumberGenerator proxy class.
 "
 %enddef
@@ -81,7 +81,7 @@ this class is shown below:
   generator = PyFrensie.Utility.Prng.LinearCongruentialGenerator()
   generator.getRandomNumber()
   generator.getGeneratorState()
-  
+
   generator.nextHistory()
   generator.getRandomNumber()
   generator.getGeneratorState()
@@ -107,7 +107,7 @@ this class is shown below:
   PyObject* __repr__() const
   {
     std::ostringstream oss;
-    oss << "LinearCongruentialGenerator(stream state: " 
+    oss << "LinearCongruentialGenerator(stream state: "
         << $self->getGeneratorState() << ")";
 
     return PyString_FromString( oss.str().c_str() );
@@ -124,24 +124,24 @@ this class is shown below:
 %feature("docstring")
 Utility::RandomNumberGenerator
 "
-All FRENSIE packages interact with the random number generators through the 
-Utility::RandomNumberGenerator class. In PyFrensie the this proxy class is 
-used. Before using classes in other PyFrensie modules (e.g. the distribution 
-classes in PyFrensie.Utility.Distribution), make sure to initialize the 
+All FRENSIE packages interact with the random number generators through the
+Utility::RandomNumberGenerator class. In PyFrensie the this proxy class is
+used. Before using classes in other PyFrensie modules (e.g. the distribution
+classes in PyFrensie.Utility.Distribution), make sure to initialize the
 Prng.RandomNumberGenerator proxy class (by calling 'createStreams'). It is
 usually not necessary to interact with this class directly. However, it can
 be useful to interact with it when debugging or exploring sampling methods by
-using the setFakeStream method. The setFakeStream method allows one to specify 
-a fake random number stream that will be used instead of the stream from the 
+using the setFakeStream method. The setFakeStream method allows one to specify
+a fake random number stream that will be used instead of the stream from the
 underlying random number generator. Make sure to call the 'unsetFakeStream'
-method after completing the task that needed the fake stream. Note that a 
+method after completing the task that needed the fake stream. Note that a
 numpy array should be used to specify the fake stream.
 "
 
 %feature("docstring")
 Utility::RandomNumberGenerator::hasStreams
 "
-This method can be used to check if the random number streams have been 
+This method can be used to check if the random number streams have been
 created (from a call to 'createStreams()').
 "
 
@@ -149,7 +149,7 @@ created (from a call to 'createStreams()').
 Utility::RandomNumberGenerator::createStreams
 "
 This method must be called before using classes in other PyFrensie modules that
-use the RandomNumberGenerator internally (e.g. the distribution classes in 
+use the RandomNumberGenerator internally (e.g. the distribution classes in
 PyFrensie.Utility.Distribution).
 "
 
@@ -170,8 +170,8 @@ number.
 %feature("docstring")
 Utility::RandomNumberGenerator::setFakeStream
 "
-Allows one to specify a fake random number stream that will be used instead of 
-the stream from the underlying random number generator. Make sure to call the 
+Allows one to specify a fake random number stream that will be used instead of
+the stream from the underlying random number generator. Make sure to call the
 'unsetFakeStream' method after completing the task that needed the fake stream.
 Only numpy arrays should be used to specify the fake stream.
 "

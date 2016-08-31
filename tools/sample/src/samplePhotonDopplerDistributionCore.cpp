@@ -18,7 +18,7 @@
 #include "Utility_ExceptionTestMacros.hpp"
 
 // Initialize the Doppler broadened photon energy distribution
-void initializeACEDistribution( 
+void initializeACEDistribution(
                              const Data::XSSEPRDataExtractor& data_extractor,
                              const int model_type,
                              const int raw_subshell,
@@ -29,54 +29,54 @@ void initializeACEDistribution(
     // Half Decoupled-Complete
     case 0:
     {
-      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution( 
+      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
                                                          data_extractor,
                                                          doppler_dist,
                                                          false );
-      break;        
+      break;
     }
     // Full Decoupled-Complete
     case 1:
     {
-      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution( 
+      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
                                                          data_extractor,
                                                          doppler_dist,
                                                          true );
-      
+
       break;
     }
     // Half Coupled-Complete
     case 2:
     {
-      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution( 
+      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
                                                          data_extractor,
                                                          doppler_dist,
                                                          false );
-      
+
       break;
     }
     // Full Coupled-Complete
     case 3:
     {
-      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution( 
+      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
                                                          data_extractor,
                                                          doppler_dist,
                                                          true );
-      
+
       break;
     }
     // Full Subshell
     case 4:
     {
-      Data::SubshellType subshell = 
+      Data::SubshellType subshell =
         Data::convertENDFDesignatorToSubshellEnum( raw_subshell );
-      
-      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution( 
+
+      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution(
                                                             data_extractor,
                                                             subshell,
                                                             doppler_dist,
                                                             true );
-      
+
       break;
     }
     // Invalid model
@@ -85,12 +85,12 @@ void initializeACEDistribution(
       THROW_EXCEPTION( std::runtime_error,
                        "Error: model " << model_type << " is invalid (see "
                        "help message)!" );
-    }                   
+    }
   }
 }
 
 // Initialize the Doppler broadened photon energy distribution
-void initializeNativeDistribution( 
+void initializeNativeDistribution(
              const Data::ElectronPhotonRelaxationDataContainer& data_container,
              const int model_type,
              const int raw_subshell,
@@ -122,23 +122,23 @@ void initializeNativeDistribution(
     // Full Coupled-Complete
     case 3:
     {
-      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution( 
+      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution(
                                                          data_container,
                                                          doppler_dist );
-      
+
       break;
     }
     // Full Subshell
     case 4:
     {
-      Data::SubshellType subshell = 
+      Data::SubshellType subshell =
         Data::convertENDFDesignatorToSubshellEnum( raw_subshell );
-      
-      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution( 
+
+      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution(
                                                             data_container,
                                                             subshell,
                                                             doppler_dist );
-      
+
       break;
     }
     // Invalid model
@@ -147,7 +147,7 @@ void initializeNativeDistribution(
       THROW_EXCEPTION( std::runtime_error,
                        "Error: model " << model_type << " is invalid (see "
                        "help message)!" );
-    }                   
+    }
   }
 }
 
@@ -166,7 +166,7 @@ int samplePhotonDopplerDistributionCore(
 {
   std::cout << "# Energy Mu Efficiency Timing" << std::endl;
   std::cout.precision( 18 );
-  std::cout << incoming_energy << " " 
+  std::cout << incoming_energy << " "
             << scattering_angle_cosine << " ";
 
   // The pdf values
@@ -187,27 +187,27 @@ int samplePhotonDopplerDistributionCore(
     std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
       complete_doppler_dist = std::dynamic_pointer_cast<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>( doppler_dist );
 
-    Data::SubshellType subshell = 
+    Data::SubshellType subshell =
         Data::convertENDFDesignatorToSubshellEnum( raw_subshell );
-    
+
     // Evaluate the pdf
     for( unsigned i = 0; i < pdf_values.size(); ++i )
     {
-      pdf_values[i] = 
+      pdf_values[i] =
         complete_doppler_dist->evaluateSubshellPDF( incoming_energy,
                                                     pdf_evaluation_energies[i],
                                                     scattering_angle_cosine,
                                                     subshell );
-      
+
     }
 
     // Start the timer
     start_time = Utility::GlobalOpenMPSession::getTime();
-    
+
     // Generate the samples
     for( unsigned i = 0; i < num_samples; ++i )
     {
-      samples[i] = 
+      samples[i] =
         complete_doppler_dist->sampleSubshellMomentum( incoming_energy,
                                                        scattering_angle_cosine,
                                                        subshell );
@@ -224,7 +224,7 @@ int samplePhotonDopplerDistributionCore(
     // Evaluate the pdf
     for( unsigned i = 0; i < pdf_values.size(); ++i )
     {
-      pdf_values[i] = 
+      pdf_values[i] =
         doppler_dist->evaluatePDF( incoming_energy,
                                    pdf_evaluation_energies[i],
                                    scattering_angle_cosine );
@@ -237,7 +237,7 @@ int samplePhotonDopplerDistributionCore(
     for( unsigned i = 0; i < num_samples; ++i )
     {
       Data::SubshellType sampled_subshell;
-      
+
       doppler_dist->sampleMomentumAndRecordTrials( incoming_energy,
                                                    scattering_angle_cosine,
                                                    samples[i],
@@ -248,7 +248,7 @@ int samplePhotonDopplerDistributionCore(
     // Stop the timer
     end_time = Utility::GlobalOpenMPSession::getTime();
   }
-  
+
   // Print the efficiency and timing data
   std::cout.precision( 18 );
   std::cout << num_samples/(double)trials << " "
@@ -260,26 +260,26 @@ int samplePhotonDopplerDistributionCore(
     for( unsigned i = 0; i < num_samples; ++i )
     {
       bool possible;
-      double outgoing_energy = 
+      double outgoing_energy =
         MonteCarlo::calculateDopplerBroadenedEnergy( samples[i],
                                                      incoming_energy,
                                                      scattering_angle_cosine,
                                                      possible );
-                                                     
+
       (*sample_ofile) << samples[i] << " "
                       << outgoing_energy << std::endl;
     }
   }
-  
+
   if( dist_ofile.get() )
   {
     for( unsigned i = 0; i < pdf_values.size(); ++i )
     {
-      double pz = MonteCarlo::calculateElectronMomentumProjection( 
+      double pz = MonteCarlo::calculateElectronMomentumProjection(
                                                     incoming_energy,
                                                     pdf_evaluation_energies[i],
                                                     scattering_angle_cosine );
-      
+
       (*dist_ofile) << incoming_energy << " "
                     << scattering_angle_cosine << " "
                     << pdf_evaluation_energies[i] << " "

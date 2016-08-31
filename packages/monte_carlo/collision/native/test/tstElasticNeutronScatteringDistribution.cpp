@@ -25,13 +25,13 @@
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
-void initializeScatteringDistribution( 
+void initializeScatteringDistribution(
   const double atomic_weight_ratio,
   Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution>& scattering_dist )
 {
-  Teuchos::RCP<Utility::OneDDistribution> uniform_dist( 
+  Teuchos::RCP<Utility::OneDDistribution> uniform_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
-  
+
   Teuchos::Array<Utility::Pair<double,
 			       Teuchos::RCP<const Utility::OneDDistribution> > >
     raw_scattering_distribution( 5 );
@@ -50,8 +50,8 @@ void initializeScatteringDistribution(
   Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution> angular_dist(
                              new MonteCarlo::NeutronScatteringAngularDistribution(
 					       raw_scattering_distribution ) );
-  
-  scattering_dist.reset( new MonteCarlo::ElasticNeutronScatteringDistribution( 
+
+  scattering_dist.reset( new MonteCarlo::ElasticNeutronScatteringDistribution(
 					                   atomic_weight_ratio,
 							   angular_dist ) );
 }
@@ -60,13 +60,13 @@ void initializeScatteringDistribution(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an incoming neutron can be scattered
-TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
 		   scatterNeutron )
 {
   Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> scattering_dist;
-  
+
   initializeScatteringDistribution( 2.0, scattering_dist );
-  
+
   MonteCarlo::NeutronState neutron( 0ull );
   double initial_angle[3];
   initial_angle[0] = 0.0;
@@ -75,17 +75,17 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
   neutron.setDirection( initial_angle );
   double start_energy = 1.0;
   neutron.setEnergy( start_energy );
-  
+
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0; // go to second branch (alpha)
   fake_stream[1] = 0.0; // \
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
 
-  double angle = Utility::calculateCosineOfAngleBetweenVectors( 
-					      initial_angle, 
+  double angle = Utility::calculateCosineOfAngleBetweenVectors(
+					      initial_angle,
 					      neutron.getDirection() );
 
   TEST_FLOATING_EQUALITY( neutron.getEnergy(),0.1111111, 1e-6);
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
 
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.5;
- 
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   neutron.setDirection( initial_angle );
@@ -101,8 +101,8 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
 
   scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
 
-  angle = Utility::calculateCosineOfAngleBetweenVectors( 
-					      initial_angle, 
+  angle = Utility::calculateCosineOfAngleBetweenVectors(
+					      initial_angle,
 					      neutron.getDirection() );
 
   TEST_FLOATING_EQUALITY( neutron.getEnergy(),0.555556, 1e-6);
@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
 
   fake_stream[0] = 0.99999999999;
   fake_stream[1] = 0.99999999999;
- 
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   neutron.setDirection( initial_angle );
@@ -118,8 +118,8 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
 
   scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
 
-  angle = Utility::calculateCosineOfAngleBetweenVectors( 
-					      initial_angle, 
+  angle = Utility::calculateCosineOfAngleBetweenVectors(
+					      initial_angle,
 					      neutron.getDirection() );
 
   TEST_FLOATING_EQUALITY( neutron.getEnergy(),1.0, 1e-11);

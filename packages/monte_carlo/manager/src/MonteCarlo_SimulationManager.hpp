@@ -20,7 +20,7 @@ namespace MonteCarlo{
 //! The simulation manager base class
 class SimulationManager
 {
-  
+
 public:
 
   //! Default constructor.
@@ -43,7 +43,7 @@ public:
 
   //! Return a signal handler function
   virtual void signalHandler(int signal) = 0;
-}; 
+};
 
 } // end MonteCarlo namespace
 
