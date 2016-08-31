@@ -210,10 +210,10 @@ int main( int argc, char** argv )
   //     modify_cs_xml_file options will be ignored.
   if( forward_file_name.size() == 0 && cross_section_alias.size() == 0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "either the forward_file option or the cross_sec_alias option "
-           << "must be used!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "either the forward_file option or the cross_sec_alias option"
+              << " must be used!"
+              << std::endl;
     
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -221,18 +221,18 @@ int main( int argc, char** argv )
   }
   else if( forward_file_name.size() != 0 && cross_section_alias.size() != 0 )
   {
-    (*out) << Utility::BoldMagenta( "Warning: " )
-           << "both the foward_file option and the cross_sec_alias option "
-           << "were used. The cross_sec_alias option will be ignored!"
-           << std::endl;
+    std::cerr << Utility::BoldMagenta( "Warning: " )
+              << "both the foward_file option and the cross_sec_alias option "
+              << "were used. The cross_sec_alias option will be ignored!"
+              << std::endl;
   }
 
   // 2.) The min photon energy must be > 0.0
   if( min_photon_energy <= 0.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the min photon energy is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the min photon energy is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -242,9 +242,9 @@ int main( int argc, char** argv )
   // 3.) The max photon energy must be > min photon energy
   if( max_photon_energy <= min_photon_energy )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the max photon energy is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the max photon energy is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -254,9 +254,9 @@ int main( int argc, char** argv )
   // 4.) The min electron energy must be > 0.0
   if( min_electron_energy <= 0.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the min electron energy is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the min electron energy is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -266,9 +266,9 @@ int main( int argc, char** argv )
   // 5.) The max electron energy must be > min electron energy
   if( max_electron_energy <= min_electron_energy )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the max electron energy is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the max electron energy is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
   }
@@ -278,10 +278,10 @@ int main( int argc, char** argv )
   if( adjoint_pp_energy_dist_norm_const_eval_tol <= 0.0 ||
       adjoint_pp_energy_dist_norm_const_eval_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint pair production energy distribution evaluation "
-           << "tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint pair production energy distribution evaluation "
+              << "tolerance is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -292,10 +292,10 @@ int main( int argc, char** argv )
   //     must be >= 0.0
   if( adjoint_pp_energy_dist_norm_const_nudge_value < 0.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint pair production energy distribution nudge value is "
-           << "not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint pair production energy distribution nudge value "
+              << "is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -307,10 +307,10 @@ int main( int argc, char** argv )
   if( adjoint_tp_energy_dist_norm_const_eval_tol <= 0.0 ||
       adjoint_tp_energy_dist_norm_const_eval_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint triplet production energy distribution "
-           << "evaluation tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint triplet production energy distribution "
+              << "evaluation tolerance is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -321,10 +321,10 @@ int main( int argc, char** argv )
   //     must be >= 0.0
   if( adjoint_tp_energy_dist_norm_const_nudge_value < 0.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint triplet production energy distribution nudge value "
-           << "is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint triplet production energy distribution nudge "
+              << "value is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -334,9 +334,9 @@ int main( int argc, char** argv )
   // 10.) The incoherent max energy nudge value must be > 0.0
   if( adjoint_incoherent_max_energy_nudge_value <= 0.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint incoherent max energy nudge value is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint incoherent max energy nudge value is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -346,10 +346,10 @@ int main( int argc, char** argv )
   // 11.) The incoherent energy to max energy nudge value must be >= 0.0
   if( adjoint_incoherent_energy_to_max_energy_nudge_value < 0.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint incoherent energy to max energy nudge value is not "
-           << "valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint incoherent energy to max energy nudge value is "
+              << "not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -360,10 +360,10 @@ int main( int argc, char** argv )
   if( adjoint_incoherent_evaluation_tol <= 0.0 ||
       adjoint_incoherent_evaluation_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint incoherent evaluation tolerance is not valid!"
-           << std::endl;
-
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint incoherent evaluation tolerance is not valid!"
+              << std::endl;
+    
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
     return 1;
@@ -374,12 +374,13 @@ int main( int argc, char** argv )
   if( adjoint_incoherent_grid_convergence_tol <= 0.0 ||
       adjoint_incoherent_grid_convergence_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint incoherent grid convergence tolerance is not valid!"
-           << std::endl;
-
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint incoherent grid convergence tolerance is not "
+              << "valid!"
+              << std::endl;
+    
     aepr_generator_clp.printHelpMessage( argv[0], *out );
-
+    
     return 1;
   }
 
@@ -388,10 +389,10 @@ int main( int argc, char** argv )
   if( adjoint_incoherent_grid_absolute_diff_tol <= 0.0 ||
       adjoint_incoherent_grid_absolute_diff_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint incoherent grid absolute difference tolerance is "
-           << "not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint incoherent grid absolute difference tolerance "
+              << "is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -403,9 +404,9 @@ int main( int argc, char** argv )
   if( adjoint_incoherent_grid_distance_tol <= 0.0 ||
       adjoint_incoherent_grid_distance_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the adjoint incoherent grid distance tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the adjoint incoherent grid distance tolerance is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -416,9 +417,9 @@ int main( int argc, char** argv )
   if( cutoff_angle_cosine < -1.0 ||
       cutoff_angle_cosine > 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the cutoff angle cosine is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the cutoff angle cosine is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -428,9 +429,9 @@ int main( int argc, char** argv )
   // 17.) The number of moment preserving angles must be >= 0
   if( number_of_moment_preserving_angles < 0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the number of moment preserving angles is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the number of moment preserving angles is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -440,9 +441,9 @@ int main( int argc, char** argv )
   // 18.) The grid convergence tolerance must be in the valid range
   if( grid_convergence_tol <= 0.0 || grid_convergence_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the grid convergence tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the grid convergence tolerance is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -452,9 +453,9 @@ int main( int argc, char** argv )
   // 19.) The grid absolute difference tolerance must be in the valid range
   if( grid_absolute_diff_tol <= 0.0 || grid_absolute_diff_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the grid absolute difference tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the grid absolute difference tolerance is not valid!"
+              << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -464,9 +465,9 @@ int main( int argc, char** argv )
   // 20.) The grid distance tolerance must be in the valid range
   if( grid_distance_tol <= 0.0 || grid_distance_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the grid distance tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the grid distance tolerance is not valid!"
+              << std::endl;
     
     aepr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -510,10 +511,10 @@ int main( int argc, char** argv )
     // The data file type must be a native file
     if( data_file_type != "Native" )
     {
-      (*out) << Utility::BoldRed( "Error: " )
-             << "the cross section alias provided does not correspond to a "
-             << "Native photon data file!"
-             << std::endl;
+      std::cerr << Utility::BoldRed( "Error: " )
+                << "the cross section alias provided does not correspond to a "
+                << "Native photon data file!"
+                << std::endl;
 
       return 1;
     }

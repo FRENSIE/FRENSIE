@@ -157,9 +157,9 @@ int main( int argc, char** argv )
   // 1.) The min photon energy must be > 0.0
   if( min_photon_energy <= 0.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the min photon energy is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the min photon energy is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -169,9 +169,9 @@ int main( int argc, char** argv )
   // 2.) The max photon energy must be > min photon energy
   if( max_photon_energy <= min_photon_energy )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the max photon energy is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the max photon energy is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -181,9 +181,9 @@ int main( int argc, char** argv )
   // 3.) The min electron energy must be > 0.0
   if( min_electron_energy <= 0.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the min electron energy is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the min electron energy is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -193,9 +193,9 @@ int main( int argc, char** argv )
   // 4.) The max electron energy must be > min electron energy
   if( max_electron_energy <= min_electron_energy )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the max electron energy is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the max electron energy is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
   }
@@ -204,9 +204,9 @@ int main( int argc, char** argv )
   if( occupation_number_evaluation_tol <= 0.0 ||
       occupation_number_evaluation_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the occupation number evaluation tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the occupation number evaluation tolerance is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -218,9 +218,9 @@ int main( int argc, char** argv )
   if( subshell_incoherent_evaluation_tol <= 0.0 ||
       subshell_incoherent_evaluation_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the subshell incoherent evaluation tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the subshell incoherent evaluation tolerance is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -231,9 +231,9 @@ int main( int argc, char** argv )
   if( cutoff_angle_cosine < -1.0 ||
       cutoff_angle_cosine > 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the cutoff angle cosine is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the cutoff angle cosine is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -243,9 +243,9 @@ int main( int argc, char** argv )
   // 8.) The number of moment preserving angles must be >= 0
   if( number_of_moment_preserving_angles < 0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the number of moment preserving angles is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the number of moment preserving angles is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -255,9 +255,9 @@ int main( int argc, char** argv )
   // 9.) The grid convergence tolerance must be in the valid range
   if( grid_convergence_tol <= 0.0 || grid_convergence_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the grid convergence tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the grid convergence tolerance is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -267,9 +267,9 @@ int main( int argc, char** argv )
   // 10.) The grid absolute difference tolerance must be in the valid range
   if( grid_absolute_diff_tol <= 0.0 || grid_absolute_diff_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the grid absolute difference tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the grid absolute difference tolerance is not valid!"
+              << std::endl;
 
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -279,9 +279,9 @@ int main( int argc, char** argv )
   // 11.) The grid distance tolerance must be in the valid range
   if( grid_distance_tol <= 0.0 || grid_distance_tol >= 1.0 )
   {
-    (*out) << Utility::BoldRed( "Error: " )
-           << "the grid distance tolerance is not valid!"
-           << std::endl;
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the grid distance tolerance is not valid!"
+              << std::endl;
     
     epr_generator_clp.printHelpMessage( argv[0], *out );
 
@@ -337,7 +337,7 @@ int main( int argc, char** argv )
     }
     else
     {
-      (*out) << Utility::BoldRed( "Error: " )
+      std::cerr << Utility::BoldRed( "Error: " )
              << "Photoatomic file type " << data_file_type
              << " is not supported!";
 
@@ -410,9 +410,9 @@ int main( int argc, char** argv )
     }
     else
     {
-      (*out) << Utility::BoldRed( "Error: " )
-             << "Photoatomic file type " << data_file_type
-             << " is not supported!";
+      std::cerr << Utility::BoldRed( "Error: " )
+                << "Photoatomic file type " << data_file_type
+                << " is not supported!";
 
       return 1;
     }
