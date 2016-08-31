@@ -20,7 +20,11 @@
 namespace DataGen{
 
 // Constructor
-/*! \details The max energy will be used to test the input incoming energy grid
+/*! \details The Adjoint Electron Grid Generator should only be used for
+ * adjoint bremsstrahlung and electroionization subshell reactions and requires
+ * the proper forward electroatomic reaction. The primary energy grid should be
+ * the incoming energy grid for the 2-D distribution of the electroatomic
+ * reaction.The max energy will be used to test the input incoming energy grid
  * (if values in the input grid that are greater than the max energy are found
  * an exception will be thrown). The max incoming energy plus the max energy
  * nudge value will be used as the upper limit for the outgoing energy grid.
@@ -37,8 +41,8 @@ namespace DataGen{
  * grids that converge faster). Note: when generating grids for subshell
  * electroionization distributions the max energy nudge value should be greater
  * than the binding energy and the energy to outgoing energy nudge value should
- * be greater than or equal to the binding energy since the cross section goes to
- * zero when the incoming energy is equal to the outgoing energy minus the
+ * be greater than or equal to the binding energy since the cross section goes
+ * to zero when the incoming energy is equal to the outgoing energy minus the
  * binding energy.
  */
 template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
@@ -133,8 +137,8 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::get
 }
 
 // Set the max energy nudge value
-/*! The max energy plus the max energy nudge value will be used as the upper
- * limit for the outgoing energy grid. The max energy nudge value must be
+/*! \details The max energy plus the max energy nudge value will be used as the
+ * upper limit for the outgoing energy grid. The max energy nudge value must be
  * greater than 0.0 to avoid an invalid outgoing energy grid at the max incoming
  * energy (each outgoing energy grid must have at least two distinct points).
  * Note: when generating grids for subshell electroionization distributions the
@@ -160,14 +164,14 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::get
 }
 
 // Set the incoming energy to max outgoing energy nudge value
-/*! The incoming energy plus the energy to outgoing energy nudge value will be used 
- * as the lower limit for the outgoing energy grid. Setting a value of 0.0 means
- * that every outgoing energy grid will start at the corresponding energy. This
- * can be problematic for log interpolation since the adjoint electron cross
- * section is zero when the incoming energy is equal to the outgoing energy
- * (for inelastic reactions).
- * By pushing the first outgoing energy slightly above the
- * corresponding incoming energy with this value, that problem can be avoided
+/*! \details The incoming energy plus the energy to outgoing energy nudge value
+ * will be used as the lower limit for numerical integration and the basis for
+ * the outgoing energy grid. Setting a value of 0.0 means that every outgoing
+ * energy grid will start at the corresponding energy. This can be problematic
+ * for log interpolation since the adjoint electron cross section is zero when
+ * the incoming energy is equal to the outgoing energy (for inelastic reactions).
+ * By pushing the first outgoing energy slightly above the corresponding
+ * incoming energy with this value, that problem can be avoided
  * (usually leading to smaller grids that converge faster). Note: when
  * generating grids for subshell electroionization distributions the energy to
  * max energy nudge value should be greater than or equal to the binding energy
@@ -313,8 +317,8 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
 }
 
 // Create a differential cross section evaluator
-/*! The std::function returned from this method can be used with the
- * generate methods to generate the two-dimensional grid.
+/*! The std::function returned from this method can be used with a grid
+ * generator to generate the primary energy grid.
  */
 template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
 std::function<double (double)>
@@ -403,7 +407,8 @@ void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::gener
 
 // Initialize the max energy grid at an energy grid point
 /*! \details The min energy on the secondary grid should be slightly higher than
- * the NudgedEnergy to ensure a non-zero pdf value at the min energy.
+ * the NudgedEnergy to ensure a non-zero pdf value at the min energy. To ensure
+ * this a set value of 1e-9 is always added to the NudgeEnergy.
  */
 template<typename ElectroatomicReaction, typename TwoDInterpPolicy>
 void AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::initializeSecondaryGrid(

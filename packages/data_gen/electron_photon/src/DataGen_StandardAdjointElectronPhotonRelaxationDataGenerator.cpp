@@ -2083,6 +2083,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
   data_container.setAdjointAtomicExcitationEnergyGain(
     adjoint_excitation_energy_gain );
 
+  // Make sure the adjoint cross section data included data up to the max electron energy
   for ( energy_grid_end; energy_grid_end != d_forward_epr_data->getAtomicExcitationEnergyGrid().end(); )
   {
     // Evaluate the cross section at the forward energy
