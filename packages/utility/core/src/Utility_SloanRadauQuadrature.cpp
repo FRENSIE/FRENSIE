@@ -369,11 +369,17 @@ void SloanRadauQuadrature::evaluateOrthogonalNormalizationRatio(
   testPrecondition( i > 0 );
   testPrecondition( 2*i - 1 <= radau_moments.size() );
 
+  // There is a bug in the Teuchos::TwoDArray that prevents us from using
+  // the [] operator. We must remove the const from the input reference
+  // to use the [] operator (no data will be modified).
+  Teuchos::TwoDArray<long_float>& orthogonal_coefficients_copy =
+    const_cast<Teuchos::TwoDArray<long_float>&>( orthogonal_coefficients );
+
   long_float normalization_factor_L = long_float(0);
 
   for ( int k = 0; k <= i-1; k++ )
   {
-    normalization_factor_L += orthogonal_coefficients[i-1][k]*
+    normalization_factor_L += orthogonal_coefficients_copy[i-1][k]*
                               radau_moments[k+i];
   }
   normalization_ratios[i] = normalization_factor_L.convert_to<long_float>()
@@ -466,11 +472,17 @@ void SloanRadauQuadrature::evaluateOrthogonalNormalizationFactor(
   // Make sure i is valid
   testPrecondition( 2*i < radau_moments.size() );
 
+  // There is a bug in the Teuchos::TwoDArray that prevents us from using
+  // the [] operator. We must remove the const from the input reference
+  // to use the [] operator (no data will be modified).
+  Teuchos::TwoDArray<long_float>& orthogonal_coefficients_copy =
+    const_cast<Teuchos::TwoDArray<long_float>&>( orthogonal_coefficients );
+
   long_float normalization_factor_N = long_float(0);
 
   for ( int k = 0; k <= i; k++ )
   {
-    normalization_factor_N += orthogonal_coefficients[i][k]*
+    normalization_factor_N += orthogonal_coefficients_copy[i][k]*
                               radau_moments[k+i];
   }
 

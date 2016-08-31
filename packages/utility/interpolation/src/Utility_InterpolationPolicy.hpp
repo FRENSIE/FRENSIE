@@ -251,21 +251,6 @@ struct LinLog : public InterpolationHelper<LinLog>
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
-  //! Interpolate between two points
-  template<typename IndepType, typename DepType>
-  static DepType interpolate( const IndepType indep_var_0,
-			      const IndepType indep_var_1,
-			      const IndepType indep_var,
-			      const DepType dep_var_0,
-			      const DepType dep_var_1 );
-
-  //! Interpolate between two processed points
-  template<typename T>
-  static T interpolate( const T processed_indep_var_0,
-			const T processed_indep_var,
-			const T processed_dep_var_0,
-			const T processed_slope );
-
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
   static typename QuantityTraits<DepType>::RawType
@@ -335,21 +320,6 @@ struct LinLin : public InterpolationHelper<LinLin>
                               const IndepType indep_var,
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
-
-  //! Interpolate between two points
-  template<typename IndepType, typename DepType>
-  static DepType interpolate( const IndepType indep_var_0,
-			      const IndepType indep_var_1,
-			      const IndepType indep_var,
-			      const DepType dep_var_0,
-			      const DepType dep_var_1 );
-
-  //! Interpolate between two processed points
-  template<typename T>
-  static T interpolate( const T processed_indep_var_0,
-			const T processed_indep_var,
-			const T processed_dep_var_0,
-			const T processed_slope );
 
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
