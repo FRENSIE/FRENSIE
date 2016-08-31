@@ -66,16 +66,16 @@ int main( int argc, char** argv )
 
   // Set the general table option names
   epr_generator_clp.setDocString( "Electron-Photon-Relaxation Native Data File"
-				  " Generator\n" );
+                                  " Generator\n" );
   epr_generator_clp.setOption( "cross_sec_dir",
-			       &cross_section_directory,
-			       "Directory containing desired cross section "
-			       "tables",
-			       true );
+                               &cross_section_directory,
+                               "Directory containing desired cross section "
+                               "tables",
+                               true );
   epr_generator_clp.setOption( "cross_sec_alias",
-			       &cross_section_alias,
-			       "Photon cross section table alias",
-			       true );
+                               &cross_section_alias,
+                               "Photon cross section table alias",
+                               true );
   epr_generator_clp.setOption( "subdir",
                                &subdirectory_name,
                                "Subdirectory in the cross section directory "
@@ -85,59 +85,59 @@ int main( int argc, char** argv )
                                "Notes about this table (e.g. date of "
                                "generation, owner, copyright, etc.)" );
   epr_generator_clp.setOption( "modify_cs_xml_file",
-			       "do_not_modify_cs_xml_file",
-			       &modify_cs_xml_file,
-			       "Modify the cross_sections.xml file?" );
+                               "do_not_modify_cs_xml_file",
+                               &modify_cs_xml_file,
+                               "Modify the cross_sections.xml file?" );
 
   // Set the table energy limits option names
   epr_generator_clp.setOption( "min_photon_energy",
-			       &min_photon_energy,
-			       "Min photon energy for table (E>0.0)" );
+                               &min_photon_energy,
+                               "Min photon energy for table (E>0.0)" );
   epr_generator_clp.setOption( "max_photon_energy",
-			       &max_photon_energy,
-			       "Max photon energy for table (E>E_min)" );
+                               &max_photon_energy,
+                               "Max photon energy for table (E>E_min)" );
   epr_generator_clp.setOption( "min_electron_energy",
-			       &min_electron_energy,
-			       "Min electron energy for table (E>0.0)" );
+                               &min_electron_energy,
+                               "Min electron energy for table (E>0.0)" );
   epr_generator_clp.setOption( "max_electron_energy",
-			       &max_electron_energy,
-			       "Max electron energy for table (E>E_min)" );
+                               &max_electron_energy,
+                               "Max electron energy for table (E>E_min)" );
 
   // Set the photon option names
   epr_generator_clp.setOption( "occupation_num_tol",
-			       &occupation_number_evaluation_tol,
-			       "Occupation number evaluation tolerance "
+                               &occupation_number_evaluation_tol,
+                               "Occupation number evaluation tolerance "
                                "(0.0<tol<1.0)" );
   epr_generator_clp.setOption( "subshell_incoherent_tol",
-			       &subshell_incoherent_evaluation_tol,
-			       "Subshell incoherent evaluation tolerance "
+                               &subshell_incoherent_evaluation_tol,
+                               "Subshell incoherent evaluation tolerance "
                                "(0.0<tol<1.0)" );
   
   // Set the electron option names
   epr_generator_clp.setOption( "cutoff_angle_cosine",
-			       &cutoff_angle_cosine,
-			       "Cutoff angle cosine for table "
+                               &cutoff_angle_cosine,
+                               "Cutoff angle cosine for table "
                                "(-1.0<=mu<=1.0)" );
   epr_generator_clp.setOption( "number_of_moment_preserving_angles",
-			       &number_of_moment_preserving_angles,
-			       "Number of moment preserving angles for table "
+                               &number_of_moment_preserving_angles,
+                               "Number of moment preserving angles for table "
                                "(angles>=0)" );
   epr_generator_clp.setOption( "append_moment_preserving_data",
                                "do_not_append_moment_preserving_data",
-			       &append_moment_preserving_data,
-			       "Append a native data file with new moment preserving data" );
+                               &append_moment_preserving_data,
+                               "Append a native data file with new moment preserving data" );
 
   // Set the grid generation option names
   epr_generator_clp.setOption( "grid_convergence_tol",
-			       &grid_convergence_tol,
-			       "Grid convergence tolerance (0.0<tol<1.0)" );
+                               &grid_convergence_tol,
+                               "Grid convergence tolerance (0.0<tol<1.0)" );
   epr_generator_clp.setOption( "grid_absolute_diff_tol",
-			       &grid_absolute_diff_tol,
-			       "Grid absolute difference tolerance "
+                               &grid_absolute_diff_tol,
+                               "Grid absolute difference tolerance "
                                "(0.0<tol<1.0)" );
   epr_generator_clp.setOption( "grid_absolute_dist_tol",
-			       &grid_distance_tol,
-			       "Grid absolute distance tolerance "
+                               &grid_distance_tol,
+                               "Grid absolute distance tolerance "
                                "(0.0<tol<1.0)" );
 
   epr_generator_clp.throwExceptions( false );
@@ -366,7 +366,7 @@ int main( int argc, char** argv )
       oss << "endl_" << atomic_number << "_native.xml";
       
       std::string endl_file_path = cross_section_directory;
-      endl_file_path += "endldata/";
+      endl_file_path += "/endldata/";
       endl_file_path += oss.str();
 
       std::shared_ptr<Data::ENDLDataContainer> endl_data_container;

@@ -21,7 +21,6 @@
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "Data_ENDLDataContainer.hpp"
-#include "Data_MomentPreservingElectronDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"

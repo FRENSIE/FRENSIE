@@ -2,12 +2,12 @@
 //!
 //! \file   DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp
 //! \author Luke Kersting, Alex Robinson
-//! \brief  The electron-photon-relaxation data generator base class decl.
+//! \brief  The adjoint electron-photon-relaxation data generator base class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
-#define DATA_GEN_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#ifndef DATA_GEN_ADJOINT_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#define DATA_GEN_ADJOINT_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
 // FRENSIE Includes
 #include "Data_AdjointElectronPhotonRelaxationVolatileDataContainer.hpp"
@@ -123,7 +123,7 @@ private:
 
 } // end DataGen namespace
 
-#endif // end DATA_GEN_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#endif // end DATA_GEN_ADJOINT_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp
