@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_BasicParticleSource.cpp
+//! \file   MonteCarlo_StandardParticleSource.cpp
 //! \author Alex Robinson
 //! \brief  Distributed source class definition.
 //!
@@ -11,7 +11,7 @@
 #include <numeric>
 
 // FRENSIE Includes
-#include "MonteCarlo_BasicParticleSource.hpp"
+#include "MonteCarlo_StandardParticleSource.hpp"
 #include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "MonteCarlo_ParticleStateFactory.hpp"
 #include "Utility_CommHelpers.hpp"
@@ -27,7 +27,7 @@ namespace MonteCarlo{
  * used to calculate the necessary starting particle weight to keep the 
  * estimators unbiased.
  */
-BasicParticleSource::BasicParticleSource( 
+StandardParticleSource::StandardParticleSource( 
      const unsigned id,
      const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
      const std::shared_ptr<Utility::DirectionalDistribution>& 
@@ -61,7 +61,7 @@ BasicParticleSource::BasicParticleSource(
 // Enable thread support
 /*! \details Only the master thread should call this method.
  */
-void BasicParticleSource::enableThreadSupport( const unsigned threads )
+void StandardParticleSource::enableThreadSupport( const unsigned threads )
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -75,7 +75,7 @@ void BasicParticleSource::enableThreadSupport( const unsigned threads )
 // Reset the source data
 /*! \details Only the master thread should call this method.
  */
-void BasicParticleSource::resetData()
+void StandardParticleSource::resetData()
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -90,7 +90,7 @@ void BasicParticleSource::resetData()
 // Reduce the source data
 /*! \details Only the master thread should call this method.
  */
-void BasicParticleSource::reduceData(
+void StandardParticleSource::reduceData(
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process )
 {
@@ -133,7 +133,7 @@ void BasicParticleSource::reduceData(
 // Export the source data
 /*! \details Only the master thread should call this method.
  */
-void BasicParticleSource::exportData( 
+void StandardParticleSource::exportData( 
              const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const
 {
   // Make sure only the root process calls this function
@@ -163,12 +163,12 @@ void BasicParticleSource::exportData(
 // Print a summary of the source data
 /*! \details Only the master thread should call this method.
  */
-void BasicParticleSource::printSummary( std::ostream& os ) const
+void StandardParticleSource::printSummary( std::ostream& os ) const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
-  this->printStandardSummary( "Basic Source",
+  this->printStandardSummary( "Standard Source",
                               this->getNumberOfTrials(),
                               this->getNumberOfSamples(),
                               this->getSamplingEfficiency(),
@@ -181,7 +181,7 @@ void BasicParticleSource::printSummary( std::ostream& os ) const
  * the necessary weight of the particle to prevent biasing the estimators.
  * Only the master thread should call this method.
  */ 
-void BasicParticleSource::setSpatialImportanceDistribution(
+void StandardParticleSource::setSpatialImportanceDistribution(
     const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution )
 {
   // Make sure only the root process calls this function
@@ -198,7 +198,7 @@ void BasicParticleSource::setSpatialImportanceDistribution(
  * determine the necessary weight of the particle to prevent biasing the 
  * estimators. Only the master thread should call this method.
  */ 
-void BasicParticleSource::setDirectionalImportanceDistribution( 
+void StandardParticleSource::setDirectionalImportanceDistribution( 
                        const std::shared_ptr<Utility::DirectionalDistribution>&
 		       directional_distribution )
 {
@@ -216,7 +216,7 @@ void BasicParticleSource::setDirectionalImportanceDistribution(
  * the necessary weight of the particle to prevent biasing the estimators.
  * Only the master thread should call this method.
  */
-void BasicParticleSource::setEnergyImportanceDistribution(
+void StandardParticleSource::setEnergyImportanceDistribution(
 	const std::shared_ptr<Utility::OneDDistribution>& energy_distribution )
 {
   // Make sure only the root process calls this function
@@ -233,7 +233,7 @@ void BasicParticleSource::setEnergyImportanceDistribution(
  * the necessary weight of the particle to prevent biasing the estimators.
  * Only the master thread should call this method.
  */ 
-void BasicParticleSource::setTimeImportanceDistribution(
+void StandardParticleSource::setTimeImportanceDistribution(
 	  const std::shared_ptr<Utility::OneDDistribution>& time_distribution )
 {
   // Make sure only the root process calls this function
@@ -249,7 +249,7 @@ void BasicParticleSource::setTimeImportanceDistribution(
  * thread-safe. The cell that contains the sampled particle state will
  * not be set and must be determined by the geometry module.
  */
-void BasicParticleSource::sampleParticleState( 
+void StandardParticleSource::sampleParticleState( 
                                              ParticleBank& bank,
 					     const unsigned long long history )
 {  
@@ -286,7 +286,7 @@ void BasicParticleSource::sampleParticleState(
 // Return the number of sampling trials
 /*! \details Only the master thread should call this method.
  */
-unsigned long long BasicParticleSource::getNumberOfTrials() const
+unsigned long long StandardParticleSource::getNumberOfTrials() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -297,7 +297,7 @@ unsigned long long BasicParticleSource::getNumberOfTrials() const
 // Return the number of samples
 /*! \details Only the master thread should call this method.
  */
-unsigned long long BasicParticleSource::getNumberOfSamples() const
+unsigned long long StandardParticleSource::getNumberOfSamples() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -308,7 +308,7 @@ unsigned long long BasicParticleSource::getNumberOfSamples() const
 // Get the sampling efficiency from the source distribution
 /*! \details Only the master thread should call this method.
  */
-double BasicParticleSource::getSamplingEfficiency() const
+double StandardParticleSource::getSamplingEfficiency() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -326,7 +326,7 @@ double BasicParticleSource::getSamplingEfficiency() const
 }
 
 // Get the source id
-unsigned BasicParticleSource::getId() const
+unsigned StandardParticleSource::getId() const
 {
   return d_id;
 }
@@ -343,7 +343,7 @@ unsigned BasicParticleSource::getId() const
  * \note The particle direction must be sampled first in case cell rejection
  * sampling is done (which requires a particle direction to work effectively).
  */
-void BasicParticleSource::sampleParticlePosition( ParticleState& particle )
+void StandardParticleSource::sampleParticlePosition( ParticleState& particle )
 {
   // Make sure thread support has been set up correctly
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() < 
@@ -426,7 +426,7 @@ void BasicParticleSource::sampleParticlePosition( ParticleState& particle )
  * PDF value of the original function divided by the importance PDF value
  * corresponding to the sampled point.
  */
-void BasicParticleSource::sampleParticleDirection( ParticleState& particle )
+void StandardParticleSource::sampleParticleDirection( ParticleState& particle )
 {
   double direction[3];
   double direction_weight = 1.0;
@@ -468,7 +468,7 @@ void BasicParticleSource::sampleParticleDirection( ParticleState& particle )
  * PDF value of the original function divided by the importance PDF value
  * corresponding to the sampled point.
  */
-void BasicParticleSource::sampleParticleEnergy( ParticleState& particle )
+void StandardParticleSource::sampleParticleEnergy( ParticleState& particle )
 {
   double energy;
   double energy_weight = 1.0;
@@ -506,7 +506,7 @@ void BasicParticleSource::sampleParticleEnergy( ParticleState& particle )
  * PDF value of the original function divided by the importance PDF value
  * corresponding to the sampled point.
  */
-void BasicParticleSource::sampleParticleTime( ParticleState& particle )
+void StandardParticleSource::sampleParticleTime( ParticleState& particle )
 {
   
   double time;
@@ -539,7 +539,7 @@ void BasicParticleSource::sampleParticleTime( ParticleState& particle )
 
 // Reduce the local samples counters
 unsigned long long 
-BasicParticleSource::reduceLocalSamplesCounters() const
+StandardParticleSource::reduceLocalSamplesCounters() const
 {
   return std::accumulate( d_number_of_samples.begin(),
                           d_number_of_samples.end(),
@@ -547,7 +547,7 @@ BasicParticleSource::reduceLocalSamplesCounters() const
 }
 
 // Reduce the local trials counters
-unsigned long long BasicParticleSource::reduceLocalTrialsCounters() const
+unsigned long long StandardParticleSource::reduceLocalTrialsCounters() const
 {
   return std::accumulate( d_number_of_trials.begin(),
                           d_number_of_trials.end(),
@@ -557,5 +557,5 @@ unsigned long long BasicParticleSource::reduceLocalTrialsCounters() const
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_BasicParticleSource.cpp
+// end MonteCarlo_StandardParticleSource.cpp
 //---------------------------------------------------------------------------//

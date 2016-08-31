@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_BasicParticleSource.hpp
+//! \file   MonteCarlo_StandardParticleSource.hpp
 //! \author Alex Robinson
-//! \brief  Basic source class declaration.
+//! \brief  Standard source class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_BASIC_PARTICLE_SOURCE_HPP
-#define MONTE_CARLO_BASIC_PARTICLE_SOURCE_HPP
+#ifndef MONTE_CARLO_STANDARD_PARTICLE_SOURCE_HPP
+#define MONTE_CARLO_STANDARD_PARTICLE_SOURCE_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -20,7 +20,7 @@
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_Array.hpp>
 
-// FRENSIE Includes
+// MONTE_CARLO Includes
 #include "MonteCarlo_ParticleSource.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
@@ -31,8 +31,8 @@
 
 namespace MonteCarlo{
 
-//! The basic source class
-class BasicParticleSource : public ParticleSource
+//! The standard source class
+class StandardParticleSource : public ParticleSource
 {
 
 private:
@@ -44,7 +44,7 @@ private:
 public:
   
   //! Constructor
-  BasicParticleSource( 
+  StandardParticleSource( 
      const ModuleTraits::InternalSourceHandle id,
      const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
      const std::shared_ptr<Utility::DirectionalDistribution>& 
@@ -56,7 +56,7 @@ public:
      const ParticleType particle_type );
   
   //! Destructor
-  ~BasicParticleSource()
+  ~StandardParticleSource()
   { /* ... */ }
 
   //! Enable thread support
@@ -186,7 +186,7 @@ private:
  * method.
  */
 template<typename PointLocationFunction>
-inline void BasicParticleSource::setRejectionCell( 
+inline void StandardParticleSource::setRejectionCell( 
                         const Geometry::ModuleTraits::InternalCellHandle& cell,
                         PointLocationFunction location_function )
 {
@@ -204,8 +204,8 @@ inline void BasicParticleSource::setRejectionCell(
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_BASIC_PARTICLE_SOURCE_HPP
+#endif // end MONTE_CARLO_STANDARD_PARTICLE_SOURCE_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_BasicParticleSource.hpp
+// end MonteCarlo_StandardParticleSource.hpp
 //---------------------------------------------------------------------------//
