@@ -61,7 +61,9 @@ public:
 
   //! Constructor
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
-                                        const DistributionType& distribution );
+                                         const DistributionType& distribution )
+    : ParentType( distribution )
+  { /* ... */ }
   
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -234,7 +236,7 @@ public:
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 };
 
-//! The interpolated tabular two-d dist. impl. class (partiall tabular)
+//! The interpolated tabular two-d dist. impl. class (partially tabular)
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,

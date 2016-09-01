@@ -14,28 +14,6 @@
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
-
-// Constructor
-template<typename TwoDInterpPolicy, typename Distribution>
-UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::UnitAwareInterpolatedTabularTwoDDistributionImplBase(
-                                         const DistributionType& distribution )
-  : ParentType( distribution )
-{
-
-}
-
-// Constructor
-template<typename TwoDInterpPolicy, typename Distribution>
-template<template<typename T, typename... Args> class ArrayA,
-         template<typename T, typename... Args> class ArrayB>
-UnitAwareInterpolatedTabularTwoDDistributionImplBase(
-                const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
-                secondary_distributions )
-    : ParentType( primary_indep_grid, secondary_distributions )
-{
-
-}
  
 // Evaluate the distribution
 template<typename TwoDInterpPolicy, typename Distribution>
@@ -53,104 +31,38 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
 
   // Calculate the length of the lower secondary grid
   const typename QuantityTraits<SecondaryIndepQuantity>::RawType L0 =
-    TwoDInterpPolicy::calculateLength(
+    TwoDInterpPolicy::calculateGridLength(
                        lower_bin_boundary->second->getLowerBoundOfIndepVar(),
                        lower_bin_boundary->second->getUpperBoundOfIndepVar() );
 
   // Calculate the length of the upper secondary grid
   const typename QuantityTraits<SecondaryIndepQuantity>::RawType L1 =
-    TwoDInterpPolicy::calculateLength(
+    TwoDInterpPolicy::calculateGridLength(
                        upper_bin_boundary->second->getLowerBoundOfIndepVar(),
                        upper_bin_boundary->second->getUpperBoundOfIndepVar() );
 
-  // Calculate the length of the intermediate grid
-  const typename QuantityTraits<SecondaryIndepQuantity>::RawType L_mid =
-    TwoDInterpPolicy::calculateIntermediateGridLength(
-                                                     lower_bin_boundary->first,
-                                                     upper_bin_boundary->first,
-                                                     primary_indep_var_value,
-                                                     L0,
-                                                     L1 );
+  // Create the grid evaluation functors
+  std::function<DepQuantity(IndepQuantity)> evaluate_grid_0_functor =
+    std::bind<DepQuantity>( &BaseOneDDistributionType::evaluate,
+                            std::cref( lower_bin_boundary->second ),
+                            std::placeholders::_1 );
 
-  // Calculate the intermediate secondary indep lower bound
-  const typename QuantityTraits<SecondaryIndepQuantity>::RawType
-    secondary_indep_lower_bound_value_mid =
-    TwoDInterpPolicy::calculateIntermediateGridLimit(
-                       lower_bin_boundary->first,
-                       upper_bin_boundary->first,
-                       primary_indep_var_value,
-                       lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                       upper_bin_boundary->second->getLowerBoundOfIndepVar() );
-
-  // Calculate the unit base independent variable
-  const typename QuantityTraits<SecondaryIndepQuantity>::RawType eta =
-    TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
-                                         secondary_indep_var_value,
-                                         secondary_indep_lower_bound_value_mid,
-                                         L_mid );
-
-  // Calculate the secondary independent value on the first grid
-  const typename QuantityTraits<SecondaryIndepQuantity>::RawType
-    lower_secondary_indep_var_value =
-    TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
-                         eta,
-                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                         L0 );
-
-  // Evaluate the lower distribution
-  DepQuantity lower_dep_var_value =
-    lower_bin_boundary->second->evaluate( lower_secondary_indep_var_value  );
-
-  const typename QuantityTraits<DepQuantity>::RawType
-    processed_lower_dep_var_value =
-    TwoDInterpPolicy::ZYInterpPolicy::processDepVar( lower_dep_var_value );
-
-  // Calculate the secondary independent value on the second grid
-  const typename QuantityTraits<SecondaryIndepQuantity>::RawType
-    upper_secondary_indep_var_value =
-    TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
-                         eta,
-                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                         L0 );
-
-  // Evaluate the upper distribution
-  DepQuantity upper_dep_var_value =
-    upper_bin_boundary->second->evaluate( upper_secondary_indep_var_value );
-
-  const typename QuantityTraits<DepQuantity>::RawType
-    processed_upper_dep_var_value =
-    TwoDInterpPolicy::ZYInterpPolicy::processDepVar( upper_dep_var_value );
-
-  // Conduct the primary-dependent interpolation
-  const typename QuantityTraits<PrimaryIndepQuantity>::RawType
-    processed_lower_primary_indep_var_value =
-    TwoDInterpPolicy::ZXInterpPolicy::processIndepVar( lower_bin_boundary->first );
-
-  const typename QuantityTraits<PrimaryIndepQuantity>::RawType
-    processed_upper_primary_indep_var_value =
-    TwoDInterpPolicy::ZXInterpPolicy::processIndepVar( upper_bin_boundary->first );
-
-  const typename QuantityTraitss<PrimaryIndepQuantity>::RawType
-    processed_primary_indep_var_value =
-    TwoDInterpPolicy::ZXInterpPolicy::processIndepVar( primary_indep_var_value );
-
-  const typename QuantityTraitss<PrimaryIndepQuantity>::RawType
-    processed_slope =
-    (processed_upper_dep_var_value*L1 - processed_lower_dep_var_value*L0)/
-    (processed_upper_primary_indep_var_value -
-     processed_lower_primary_indep_var_value);
+  std::function<DepQuantity(IndepQuantity)> evaluate_grid_1_functor =
+    std::bind<DepQuantity>( &BaseOneDDistributionType::evaluate,
+                            std::cref( upper_bin_boundary->second ),
+                            std::placeholders::_1 );
   
-  const typename QuantityTraits<SecondaryIndepQuantity>::RawType
-    processed_dep_var_value =
-    TwoDInterpPolicy::ZXInterpPolicy::interpolateAndProcess(
-                                        procesed_lower_primary_indep_var_value,
-                                        processed_primary_indep_var_value,
-                                        processed_lower_dep_var_value*L0,
-                                        processed_slope )/L_mid;
-  
-  return QuantityTraits<DepQuantity>::initializeQuantity(
-                      TwoDInterpPolicy::ZXInterpPolicy::recoverProcessedDepVar(
-                                                   processed_dep_var_value ) );
+  return TwoDInterpPolicy::interpolateUnitBase(
+                         lower_bin_boundary->first,
+                         upper_bin_boundary->first,
+                         primary_indep_var_value,
+                         secondary_indep_var_value,
+                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                         L0,
+                         L1,
+                         evaluate_grid_0_functor,
+                         evaluate_grid_1_functor );
 }
 
 // Evaluate the secondary conditional PDF
@@ -159,7 +71,47 @@ InverseSecondaryIndepQuantity UnitAwareInterpolatedTabularTwoDDistributionImplBa
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
 
+  // Calculate the length of the lower secondary grid
+  const typename QuantityTraits<SecondaryIndepQuantity>::RawType L0 =
+    TwoDInterpPolicy::calculateGridLength(
+                       lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                       lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+  // Calculate the length of the upper secondary grid
+  const typename QuantityTraits<SecondaryIndepQuantity>::RawType L1 =
+    TwoDInterpPolicy::calculateGridLength(
+                       upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                       upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+  // Create the grid evaluation functors
+  std::function<DepQuantity(IndepQuantity)> evaluate_grid_0_functor =
+    std::bind<DepQuantity>( &BaseOneDDistributionType::evaluatePDF,
+                            std::cref( lower_bin_boundary->second ),
+                            std::placeholders::_1 );
+
+  std::function<DepQuantity(IndepQuantity)> evaluate_grid_1_functor =
+    std::bind<DepQuantity>( &BaseOneDDistributionType::evaluatePDF,
+                            std::cref( upper_bin_boundary->second ),
+                            std::placeholders::_1 );
+  
+  return TwoDInterpPolicy::interpolateUnitBase(
+                         lower_bin_boundary->first,
+                         upper_bin_boundary->first,
+                         primary_indep_var_value,
+                         secondary_indep_var_value,
+                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                         L0,
+                         L1,
+                         evaluate_grid_0_functor,
+                         evaluate_grid_1_functor );
 }
 
 // Return a random sample from the secondary conditional PDF

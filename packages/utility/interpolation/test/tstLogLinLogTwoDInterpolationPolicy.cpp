@@ -438,53 +438,6 @@ TEUCHOS_UNIT_TEST( LogLinLog, calculateIntermediateGridLimit )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit base independent can be calculated
-TEUCHOS_UNIT_TEST( LogLinLog, calculateUnitBaseIndepVar )
-{
-  double y_min = -1.0, y = 0.0, L = 2.0;
-
-  double eta = Utility::LogLinLog::calculateUnitBaseIndepVar( y, y_min, L );
-
-  TEST_FLOATING_EQUALITY( eta, 0.5, 1e-15 );
-
-  y = -1.0;
-
-  eta = Utility::LogLinLog::calculateUnitBaseIndepVar( y, y_min, L );
-
-  TEST_FLOATING_EQUALITY( eta, 0.0, 1e-15 );
-
-  y = 1.0;
-
-  eta = Utility::LogLinLog::calculateUnitBaseIndepVar( y, y_min, L );
-
-  TEST_FLOATING_EQUALITY( eta, 1.0, 1e-15 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the grid independent y variable can be calculated given a
-// unit base independent variable
-TEUCHOS_UNIT_TEST( LogLinLog, calculateGridIndepVar )
-{
-  double y_min = -1.0, L = 2.0, eta = 0.5;
-
-  double y =  Utility::LogLinLog::calculateGridIndepVar( eta, y_min, L );
-
-  TEST_FLOATING_EQUALITY( y, 0.0, 1e-15 );
-
-  eta = 0.0;
-
-  y = Utility::LogLinLog::calculateGridIndepVar( eta, y_min, L );
-
-  TEST_FLOATING_EQUALITY( y, -1.0, 1e-15 );
-
-  eta = 1.0;
-
-  y = Utility::LogLinLog::calculateGridIndepVar( eta, y_min, L );
-
-  TEST_FLOATING_EQUALITY( y, 1.0, 1e-15 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the log-linear-log unit base interpolation policy between
 // four points can be done
 UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
@@ -1462,55 +1415,6 @@ TEUCHOS_UNIT_TEST( LogLinLog, calculateIntermediateProcessedGridLimit )
 						   x0, x1, x, y0_min, y1_min );
 
   TEST_FLOATING_EQUALITY( yx_min, 10.0, 1e-15 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit base independent can be calculated
-TEUCHOS_UNIT_TEST( LogLinLog, calculateUnitBaseIndepVarProcessed )
-{
-  double y_min = -1.0, y = 0.0, L = 2.0;
-
-  double eta = Utility::LogLinLog::calculateUnitBaseIndepVarProcessed(
-								 y, y_min, L );
-
-  TEST_FLOATING_EQUALITY( eta, 0.5, 1e-15 );
-
-  y = -1.0;
-
-  eta = Utility::LogLinLog::calculateUnitBaseIndepVarProcessed( y, y_min, L );
-
-  TEST_FLOATING_EQUALITY( eta, 0.0, 1e-15 );
-
-  y = 1.0;
-
-  eta = Utility::LogLinLog::calculateUnitBaseIndepVarProcessed( y, y_min, L );
-
-  TEST_FLOATING_EQUALITY( eta, 1.0, 1e-15 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the grid independent y variable can be calculated given a
-// unit base independent variable
-TEUCHOS_UNIT_TEST( LogLinLog, calculateProcessedGridIndepVar )
-{
-  double y_min = -1.0, L = 2.0, eta = 0.5;
-
-  double y =  Utility::LogLinLog::calculateProcessedGridIndepVar(
-							       eta, y_min, L );
-
-  TEST_FLOATING_EQUALITY( y, 0.0, 1e-15 );
-
-  eta = 0.0;
-
-  y = Utility::LogLinLog::calculateProcessedGridIndepVar( eta, y_min, L );
-
-  TEST_FLOATING_EQUALITY( y, -1.0, 1e-15 );
-
-  eta = 1.0;
-
-  y = Utility::LogLinLog::calculateProcessedGridIndepVar( eta, y_min, L );
-
-  TEST_FLOATING_EQUALITY( y, 1.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
