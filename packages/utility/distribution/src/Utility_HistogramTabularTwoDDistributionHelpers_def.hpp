@@ -26,7 +26,7 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  lower_bin_boundary->second->evaluate( secondary_indep_var_value );
+  return lower_bin_boundary->second->evaluate( secondary_indep_var_value );
 }
 
 // Evaluate the secondary conditional PDF
