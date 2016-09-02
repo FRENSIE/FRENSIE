@@ -102,8 +102,8 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar(
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
   testPrecondition( ParentInterpolationType::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var >= indep_var_min ||
-		    Policy::relError( indep_var,
-				      indep_var_min ) <= s_tol);
+		    Policy::relError( getRawQuantity(indep_var),
+                                      getRawQuantity(indep_var_min) )<= s_tol);
   remember( typename QuantityTraits<IndepType>::RawType test_difference = 
 	    ParentInterpolationType::processIndepVar(indep_var) -
 	    ParentInterpolationType::processIndepVar(indep_var_min) );
@@ -178,7 +178,7 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
   testPrecondition( ParentInterpolationType::isIndepVarInValidRange( indep_var_min ) );
   // Make sure the grid length is valid
   testPrecondition( !QuantityTraits<typename QuantityTraits<IndepType>::RawType>::isnaninf( indep_grid_length ) );
-  testPrecondition( indep_grid_length >= QuantityTraits<IndepType>::zero() );
+  testPrecondition( indep_grid_length >= 0.0 );
 
   IndepType grid_indep_var( QuantityTraits<IndepType>::initializeQuantity(
     ParentInterpolationType::recoverProcessedIndepVar( 
@@ -187,7 +187,8 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
 
   // Check for rounding errors
   if( grid_indep_var < indep_var_min &&
-      Policy::relError( grid_indep_var, indep_var_min ) <= s_tol )
+      Policy::relError( getRawQuantity(grid_indep_var),
+                        getRawQuantity(indep_var_min) ) <= s_tol)
     grid_indep_var = indep_var_min;
 
   // Make sure the calculated independent variable is valid

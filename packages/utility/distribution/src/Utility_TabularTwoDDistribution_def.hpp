@@ -88,6 +88,20 @@ bool UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependen
   return true;
 }
 
+// Set the distribution
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseOneDDistribution>
+void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::setDistribution( const DistributionType distribution )
+{
+  // Make sure the distribution is valid
+  testPrecondition( Sort::isSortedAscending<FIRST>( distribution.begin(),
+                                                    distribution.end() ) );
+
+  d_distribution = distribution;
+}
+
 // Find the bin boundaries
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,

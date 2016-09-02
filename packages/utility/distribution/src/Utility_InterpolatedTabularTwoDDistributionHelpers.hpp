@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_PartiallyTabularTwoDDistribution.hpp"
 #include "Utility_FullyTabularTwoDDistribution.hpp"
+#include "Utility_TwoDInterpolationPolicy.hpp"
 
 namespace Utility{
 
@@ -71,7 +72,7 @@ public:
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
-                secondary_distributions );
+                secondary_distributions )
     : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
@@ -108,6 +109,15 @@ public:
 
   //! Test if the distribution is continuous in the primary dimension
   bool isPrimaryDimensionContinuous() const;
+
+protected:
+
+  //! Sample the bin boundary that will be used for stochastic sampling
+  typename DistributionType::const_iterator
+  sampleBinBoundary(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const typename DistributionType::const_iterator lower_bin_boundary,
+    const typename DistributionType::const_iterator upper_bin_boundary ) const;
 };
 
 //! The interpolated tabular two-d dist. impl. class (fully tabular)
@@ -116,13 +126,13 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          bool FullyTabular>
-class UnitAwareInterpolatedTabularTwoDDistributionImpl : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
+class UnitAwareInterpolatedTabularTwoDDistributionImpl : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
 
 private:
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
 
   // The base one-dimensional distribution type
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -175,6 +185,17 @@ public:
     : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
+  //! Raw constructor
+  template<template<typename T, typename... Args> class ArrayA,
+           template<typename T, typename... Args> class ArrayB,
+           template<typename T, typename... Args> class SubarrayB,
+           template<typename T, typename... Args> class ArrayC,
+           template<typename T, typename... Args> class SubarrayC>
+  UnitAwareInterpolatedTabularTwoDDistributionImpl(
+       const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+       const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
+       const ArrayC<SubarrayC<DepQuantity> >& dependent_values );
+
   //! Destructor
   virtual ~UnitAwareInterpolatedTabularTwoDDistributionImpl()
   { /* ... */ }
@@ -187,16 +208,6 @@ public:
   //! Return a random sample from the secondary conditional PDF 
   SecondaryIndepQuantity sampleSecondaryConditionalExact(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
-
-  //! Return a random sample and record the number of trials
-  SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const;
-
-  //! Return a random sample and record the number of trials
-  SecondaryIndepQuantity sampleSecondaryConditionalExactAndRecordTrials(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndex(
@@ -241,13 +252,13 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false> : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwarePartiallyTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
+class UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false> : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
 
 private:
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
 
   // The base one-dimensional distribution type
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -306,6 +317,14 @@ public:
 };
   
 } // end Utility namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_InterpolatedTabularTwoDDistributionHelpers_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_HELPERS_HPP
 

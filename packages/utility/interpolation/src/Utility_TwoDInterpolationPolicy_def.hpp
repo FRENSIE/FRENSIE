@@ -398,55 +398,64 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
                                                       indep_var_y_0_min,
                                                       indep_var_y_1_min ) );
   testPrecondition( indep_var_y >= test_y_min ||
-		    Policy::relError( indep_var_y, test_y_min ) <= s_tol );
+		    Policy::relError( getRawQuantity(indep_var_y),
+                                      getRawQuantity(test_y_min) ) <= s_tol );
   // Make sure the grid lengths are valid
   testPrecondition( grid_0_length > 0.0 );
   testPrecondition( grid_1_length > 0.0 );
 
   // Calculate the intermediate grid length
-  const auto Lx = calculateIntermediateGridLength( indep_var_x_0,
-                                                   indep_var_x_1,
-                                                   indep_var_x,
-                                                   grid_0_length,
-                                                   grid_1_length );
+  const typename QuantityTraits<SecondIndepType>::RawType Lx =
+    calculateIntermediateGridLength( indep_var_x_0,
+                                     indep_var_x_1,
+                                     indep_var_x,
+                                     grid_0_length,
+                                     grid_1_length );
 
   // Calculate the intermediate y min
-  const auto y_x_min = calculateIntermediateGridLimit( indep_var_x_0,
-                                                       indep_var_x_1,
-                                                       indep_var_x,
-                                                       indep_var_y_0_min,
-                                                       indep_var_y_1_min );
+  const SecondIndepType y_x_min =
+    calculateIntermediateGridLimit( indep_var_x_0,
+                                    indep_var_x_1,
+                                    indep_var_x,
+                                    indep_var_y_0_min,
+                                    indep_var_y_1_min );
 
   // Calculate the unit base independent variable
-  const auto eta =
+  const typename QuantityTraits<SecondIndepType>::RawType eta =
     ZYInterpPolicy::calculateUnitBaseIndepVar( indep_var_y, y_x_min, Lx );
 
   // Calculate the y value on the first grid
-  const auto indep_var_y_0 =
+  const SecondIndepType indep_var_y_0 =
     ZYInterpPolicy::calculateIndepVar( eta, indep_var_y_0_min, grid_0_length );
 
   // Calculate the y value on the second grid
-  const auto indep_var_y_1 =
+  const SecondIndepType indep_var_y_1 =
     ZYInterpPolicy::calculateIndepVar( eta, indep_var_y_1_min, grid_1_length );
 
   // Evaluate the dependent value on the first y grid
-  const auto dep_var_0 = evaluate_z_with_y_0_functor( indep_var_y_0 );
+  const typename ZYLowerFunctor::result_type dep_var_0 =
+    evaluate_z_with_y_0_functor( indep_var_y_0 );
 
   // Evaluate the dependent value on the second y grid
-  const auto dep_var_1 = evaluate_z_with_y_1_functor( indep_var_y_1 );
+  const typename ZYUpperFunctor::result_type dep_var_1 =
+    evaluate_z_with_y_1_functor( indep_var_y_1 );
 
   // Process and scale the dependent values
-  const auto scaled_processed_dep_var_0 =
+  const typename QuantityTraits<typename ZYLowerFunctor::result_type>::RawType
+    scaled_processed_dep_var_0 =
     ThisType::processDepVar( dep_var_0 )*grid_0_length;
 
-  const auto scaled_processed_dep_var_1 =
+  const typename QuantityTraits<typename ZYUpperFunctor::result_type>::RawType
+    scaled_processed_dep_var_1 =
     ThisType::processDepVar( dep_var_1)*grid_1_length;
 
   // Calculate the processed slope
-  const auto processed_indep_var_x_0 =
+  const typename QuantityTraits<FirstIndepType>::RawType
+    processed_indep_var_x_0 =
     ThisType::processFirstIndepVar( indep_var_x_0 );
 
-  const auto processed_indep_var_x_1 =
+  const typename QuantityTraits<FirstIndepType>::RawType
+    processed_indep_var_x_1 =
     ThisType::processFirstIndepVar( indep_var_x_1 );
   
   const auto processed_slope =
@@ -454,7 +463,8 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
     (processed_indep_var_x_1 - processed_indep_var_x_0);
 
   // Interpolate to find the processed dependent value at (x,y)
-  const auto processed_indep_var_x =
+  const typename QuantityTraits<FirstIndepType>::RawType
+    processed_indep_var_x =
     ThisType::processFirstIndepVar( indep_var_x );
   
   const auto processed_dep_var_yx = ZXInterpPolicy::interpolateAndProcess(

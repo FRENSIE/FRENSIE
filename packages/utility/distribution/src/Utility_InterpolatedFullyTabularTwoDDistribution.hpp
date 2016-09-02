@@ -61,6 +61,19 @@ public:
     : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
+  //! Raw constructor
+  template<template<typename T, typename... Args> class ArrayA,
+           template<typename T, typename... Args> class ArrayB,
+           template<typename T, typename... Args> class SubarrayB,
+           template<typename T, typename... Args> class ArrayC,
+           template<typename T, typename... Args> class SubarrayC>
+  UnitAwareInterpolatedFullyTabularTwoDDistribution(
+       const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+       const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
+       const ArrayC<SubarrayC<DepQuantity> >& dependent_values )
+    : ParentType( primary_indep_grid, secondary_indep_grids, dependent_values )
+  { /* ... */ }
+
   //! Destructor
   ~UnitAwareInterpolatedFullyTabularTwoDDistribution()
   { /* ... */ }

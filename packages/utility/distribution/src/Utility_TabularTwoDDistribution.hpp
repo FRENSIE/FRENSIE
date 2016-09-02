@@ -102,13 +102,16 @@ public:
 
 protected:
 
-  // Find the bin boundaries
+  //! Set the distribution
+  void setDistribution( const DistributionType distribution );
+
+  //! Find the bin boundaries
   void findBinBoundaries(
          const PrimaryIndepQuantity primary_indep_var_value,
          typename DistributionType::const_iterator& lower_bin_boundary,
          typename DistributionType::const_iterator& upper_bin_boundary ) const;
 
-  // Calculate the interpolation fraction
+  //! Calculate the interpolation fraction
   double calculateInterpolationFraction(
    const PrimaryIndepQuantity primary_indep_var_value,
    const typename DistributionType::const_iterator& lower_bin_boundary,

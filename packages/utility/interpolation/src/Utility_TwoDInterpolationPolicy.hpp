@@ -98,6 +98,12 @@ public:
   typedef typename ZXInterpPolicy::IndepVarProcessingTag
   FirstIndepVarProcessingTag;
 
+  //! The ZX interpolation policy
+  typedef ZXInterpPolicy PrimaryBasePolicy;
+
+  //! The ZY interpolation policy
+  typedef ZYInterpPolicy SecondaryBasePolicy;
+
   //! Process the dependent variable (z - ZYX)
   template<typename T>
   static typename QuantityTraits<T>::RawType processDepVar( const T dep_var );

@@ -88,6 +88,10 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
+  //! Return a random sample from the secondary conditional PDF 
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalExact(
+                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndex(
                             const PrimaryIndepQuantity primary_indep_var_value,
@@ -98,17 +102,103 @@ public:
                             const PrimaryIndepQuantity primary_indep_var_value,
                             const double random_number ) const = 0;
 
+  //! Return a random sample from the secondary conditional PDF at the CDF val
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumber(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const;
+
   //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalExactInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
         const PrimaryIndepQuantity primary_indep_var_value,
         const double random_number,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 };
+
+// Return a random sample from the secondary conditional PDF
+/*! \details There are often multiple ways to sample from two-dimensional
+ * distributions (e.g. stochastic and correlated sampling). Ideally the 
+ * "non-exact" method will be faster and stochastically correct.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExact(
+                     const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  return this->sampleSecondaryConditional( primary_indep_var_value );
+}
+
+// Return a random sample from the secondary conditional PDF at the CDF val
+/*! \details There are often multiple ways to sample from two-dimensional
+ * distributions (e.g. stochastic and correlated sampling). Ideally the 
+ * "non-exact" method will be faster and stochastically correct.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const
+  -> SecondaryIndepQuantity
+{
+  return this->sampleSecondaryConditionalWithRandomNumber(
+                                      primary_indep_var_value, random_number );
+}
+
+// Return a random sample from the secondary conditional PDF in the subrange
+/*! \details There are often multiple ways to sample from two-dimensional
+ * distributions (e.g. stochastic and correlated sampling). Ideally the 
+ * "non-exact" method will be faster and stochastically correct.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  return this->sampleSecondaryConditionalInSubrange(
+                                               primary_indep_var_value,
+                                               max_secondary_indep_var_value );
+}
+
+// Return a random sample from the secondary conditional PDF in the subrange
+/*! \details There are often multiple ways to sample from two-dimensional
+ * distributions (e.g. stochastic and correlated sampling). Ideally the 
+ * "non-exact" method will be faster and stochastically correct.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  this->sampleSecondaryConditionalWithRandomNumberInSubrange(
+                                               primary_indep_var_value,
+                                               random_number,
+                                               max_secondary_indep_var_value );
+}
 
 /*! The fully tabular two-dimensional distribution (unit-agnostic)
  * \ingroup two_d_distributions
