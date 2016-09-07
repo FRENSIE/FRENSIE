@@ -120,12 +120,6 @@ protected:
          typename DistributionType::const_iterator& lower_bin_boundary,
          typename DistributionType::const_iterator& upper_bin_boundary ) const;
 
-  //! Calculate the interpolation fraction
-  double calculateInterpolationFraction(
-   const PrimaryIndepQuantity primary_indep_var_value,
-   const typename DistributionType::const_iterator& lower_bin_boundary,
-   const typename DistributionType::const_iterator& upper_bin_boundary ) const;
-
 private:
 
   // Check that all secondary distributions are continuous

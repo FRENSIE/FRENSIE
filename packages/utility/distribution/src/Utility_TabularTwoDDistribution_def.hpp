@@ -202,20 +202,6 @@ inline void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryInd
   }
 }
 
-// Calculate the interpolation fraction
-template<typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         template<typename T, typename U> class BaseOneDDistribution>
-inline double UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::calculateInterpolationFraction(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const typename DistributionType::const_iterator& lower_bin_boundary,
-    const typename DistributionType::const_iterator& upper_bin_boundary ) const
-{
-  return (primary_indep_var_value - lower_bin_boundary->first)/
-    (upper_bin_boundary->first - lower_bin_boundary->first);
-}
-
 // Check that all secondary distributions are continuous
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,

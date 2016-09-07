@@ -95,7 +95,12 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
 }
 
 // Return a random sample from the secondary conditional PDF
-/*! \details A stochastic sampling procedure is used.
+/*! \details A stochastic sampling procedure is used. If the primary value
+ * provided is outside of the primary grid limits the appropriate limiting
+ * secondary distribution will be used to create the sample. The alternative
+ * to this behavior is to throw an exception unless the distribution has 
+ * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
+ * this is a performance critical method we decided against this behavior.
  */
 template<typename TwoDInterpPolicy, typename Distribution>
 auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleSecondaryConditional(
@@ -108,17 +113,6 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
-
-  // Check for a primary value outside of the primary grid limits
-  TEST_FOR_EXCEPTION( lower_bin_boundary == upper_bin_boundary &&
-                      !this->arePrimaryLimitsExtended(),
-                      std::runtime_error,
-                      "Error: A sample cannot be made outside of the primary "
-                      "grid limits unless the distribution has been "
-                      "extended!\nNote: primary value ("
-                      << primary_indep_var_value << ") is not in ["
-                      << this->getLowerBoundOfPrimaryIndepVar() << ","
-                      << this->getUpperBoundOfPrimaryIndepVar() << "]" );
   
   typename DistributionType::const_iterator sampled_bin_boundary =
     this->sampleBinBoundary( primary_indep_var_value,
@@ -129,7 +123,12 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
 }
 
 // Return a random sample and record the number of trials
-/*! \details A stochastic sampling procedure is used.
+/*! \details A stochastic sampling procedure is used. If the primary value
+ * provided is outside of the primary grid limits the appropriate limiting
+ * secondary distribution will be used to create the sample. The alternative
+ * to this behavior is to throw an exception unless the distribution has 
+ * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
+ * this is a performance critical method we decided against this behavior.
  */
 template<typename TwoDInterpPolicy, typename Distribution>
 auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleSecondaryConditionalAndRecordTrials(
@@ -164,11 +163,18 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distributi
   if( lower_bin_boundary != upper_bin_boundary )
   {
     // Calculate the interpolation fraction
-    double interpolation_fraction =
-      this->calculateInterpolationFraction( primary_indep_var_value,
-                                            lower_bin_boundary,
-                                            upper_bin_boundary );
-    
+    double interpolation_fraction;
+
+    {
+      const double processed_lower_bin_boundary = 
+        TwoDInterpPolicy::processFirstIndepVar( lower_bin_boundary->first );
+
+      interpolation_fraction =
+        (TwoDInterpPolicy::processFirstIndepVar( primary_indep_var_value ) -
+         processed_lower_bin_boundary)/
+        (TwoDInterpPolicy::processFirstIndepVar( upper_bin_boundary->first ) -
+         processed_lower_bin_boundary );
+    }
 
     // Sample to determine the distribution that will be used
     double random_number =

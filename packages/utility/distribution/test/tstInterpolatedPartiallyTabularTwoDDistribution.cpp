@@ -219,10 +219,50 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
                    sampleSecondaryConditional )
 {
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
   // Before the first bin
   double sample = distribution->sampleSecondaryConditional( -1.0 );
 
   TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = distribution->sampleSecondaryConditional( -1.0 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = distribution->sampleSecondaryConditional( -1.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  // On the second bin
+  fake_stream.resize( 6 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.0;
+  fake_stream[2] = 0.0;
+  fake_stream[3] = 0.5;
+  fake_stream[4] = 0.0;
+  fake_stream[5] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditional( 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = distribution->sampleSecondaryConditional( 0.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 0.6931017816607284, 1e-15 );
+
+  sample = distribution->sampleSecondaryConditional( 0.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+
+  // In the second bin
+  fake_stream.resize( 12 );
 }
 
 //---------------------------------------------------------------------------//
