@@ -127,6 +127,103 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution, evaluate )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the secondary conditional PDF can be evaluated
+TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+                   evaluateSecondaryConditionalPDF )
+{
+  // Before the first bin - no extension
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0 ), 0.0 );
+
+  // Before the first bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0 ), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin boundary
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ),
+                          1.0000454019910097,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.0, 10.0 ),
+                          4.540199100968777e-05,
+                          1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, 11.0 ), 0.0 );
+
+  // In the second bin
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, -1.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 0.0 ),
+                          0.5500227009955049,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 5.0 ),
+                          0.05336912645764728,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 10.0 ),
+                          0.05002270099550485,
+                          1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 11.0 ), 0.0 );
+
+  // On the third bin boundary
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 11.0 ), 0.0 );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 11.0 ), 0.0 );
+
+  // On the upper bin boundary
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 11.0 ), 0.0 );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0 ), 0.0 );
+
+  // After the third bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0 ), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+                   sampleSecondaryConditional )
+{
+  // Before the first bin
+  double sample = distribution->sampleSecondaryConditional( -1.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )

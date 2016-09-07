@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -108,6 +109,17 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
                            lower_bin_boundary,
                            upper_bin_boundary );
 
+  // Check for a primary value outside of the primary grid limits
+  TEST_FOR_EXCEPTION( lower_bin_boundary == upper_bin_boundary &&
+                      !this->arePrimaryLimitsExtended(),
+                      std::runtime_error,
+                      "Error: A sample cannot be made outside of the primary "
+                      "grid limits unless the distribution has been "
+                      "extended!\n Note: primary value ("
+                      << primary_indep_var_value << ") is not in ["
+                      << this->getLowerBoundOfPrimaryIndepVar() << ","
+                      << this->getUpperBoundOfPrimaryIndepVar() << "]" );
+  
   typename DistributionType::const_iterator sampled_bin_boundary =
     this->sampleBinBoundary( primary_indep_var_value,
                              lower_bin_boundary,
