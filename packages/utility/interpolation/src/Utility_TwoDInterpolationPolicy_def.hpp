@@ -351,7 +351,9 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
 
 // Conduct unit base interpolation
 /*! \details Make sure that the y variable is valid (call
- * calculateIntermediateGridLimit to get the y range at x).
+ * calculateIntermediateGridLimit to get the y range at x). If 
+ * indep_var_x_0 == indep_var_x_1, the evaluate_z_with_y_0_functor will be
+ * called with indep_var_y.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
 template<typename FirstIndepType,
@@ -365,9 +367,9 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
          const FirstIndepType indep_var_x,
          const SecondIndepType indep_var_y,
          const SecondIndepType indep_var_y_0_min,
+         const SecondIndepType indep_var_y_0_max,
          const SecondIndepType indep_var_y_1_min,
-         const typename QuantityTraits<SecondIndepType>::RawType grid_0_length,
-         const typename QuantityTraits<SecondIndepType>::RawType grid_1_length,
+         const SecondIndepType indep_var_y_1_max,
          const ZYLowerFunctor& evaluate_z_with_y_0_functor,
          const ZYUpperFunctor& evaluate_z_with_y_1_functor )
 {
@@ -383,98 +385,114 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_1) );
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf( indep_var_x ) );
   testPrecondition( ThisType::isFirstIndepVarInValidRange( indep_var_x_0 ) );
-  testPrecondition( indep_var_x_0 < indep_var_x_1 );
+  testPrecondition( indep_var_x_0 <= indep_var_x_1 );
   testPrecondition( indep_var_x >= indep_var_x_0 );
   testPrecondition( indep_var_x <= indep_var_x_1 );
   // Make sure the second independent variables are valid
   testPrecondition( ThisType::isSecondIndepVarInValidRange(
                                                          indep_var_y_0_min ) );
+  testPrecondition( indep_var_y_0_min < indep_var_y_0_max );
   testPrecondition( ThisType::isSecondIndepVarInValidRange(
                                                          indep_var_y_1_min ) );
-  remember( SecondIndepType test_y_min =
-            ThisType::calculateIntermediateGridLimit( indep_var_x_0,
-                                                      indep_var_x_1,
-                                                      indep_var_x,
-                                                      indep_var_y_0_min,
-                                                      indep_var_y_1_min ) );
-  testPrecondition( indep_var_y >= test_y_min ||
-		    Policy::relError( getRawQuantity(indep_var_y),
-                                      getRawQuantity(test_y_min) ) <= s_tol );
-  // Make sure the grid lengths are valid
-  testPrecondition( grid_0_length > 0.0 );
-  testPrecondition( grid_1_length > 0.0 );
-
-  // Calculate the intermediate grid length
-  const typename QuantityTraits<SecondIndepType>::RawType Lx =
-    calculateIntermediateGridLength( indep_var_x_0,
-                                     indep_var_x_1,
-                                     indep_var_x,
-                                     grid_0_length,
-                                     grid_1_length );
-
-  // Calculate the intermediate y min
-  const SecondIndepType y_x_min =
-    calculateIntermediateGridLimit( indep_var_x_0,
-                                    indep_var_x_1,
-                                    indep_var_x,
-                                    indep_var_y_0_min,
-                                    indep_var_y_1_min );
-
-  // Calculate the unit base independent variable
-  const typename QuantityTraits<SecondIndepType>::RawType eta =
-    ZYInterpPolicy::calculateUnitBaseIndepVar( indep_var_y, y_x_min, Lx );
-
-  // Calculate the y value on the first grid
-  const SecondIndepType indep_var_y_0 =
-    ZYInterpPolicy::calculateIndepVar( eta, indep_var_y_0_min, grid_0_length );
-
-  // Calculate the y value on the second grid
-  const SecondIndepType indep_var_y_1 =
-    ZYInterpPolicy::calculateIndepVar( eta, indep_var_y_1_min, grid_1_length );
-
-  // Evaluate the dependent value on the first y grid
-  const typename ZYLowerFunctor::result_type dep_var_0 =
-    evaluate_z_with_y_0_functor( indep_var_y_0 );
-
-  // Evaluate the dependent value on the second y grid
-  const typename ZYUpperFunctor::result_type dep_var_1 =
-    evaluate_z_with_y_1_functor( indep_var_y_1 );
-
-  // Process and scale the dependent values
-  const typename QuantityTraits<typename ZYLowerFunctor::result_type>::RawType
-    scaled_processed_dep_var_0 =
-    ThisType::processDepVar( dep_var_0 )*grid_0_length;
-
-  const typename QuantityTraits<typename ZYUpperFunctor::result_type>::RawType
-    scaled_processed_dep_var_1 =
-    ThisType::processDepVar( dep_var_1)*grid_1_length;
-
-  // Calculate the processed slope
-  const typename QuantityTraits<FirstIndepType>::RawType
-    processed_indep_var_x_0 =
-    ThisType::processFirstIndepVar( indep_var_x_0 );
-
-  const typename QuantityTraits<FirstIndepType>::RawType
-    processed_indep_var_x_1 =
-    ThisType::processFirstIndepVar( indep_var_x_1 );
+  testPrecondition( indep_var_y_1_min < indep_var_y_1_max );
   
-  const auto processed_slope =
-    (scaled_processed_dep_var_1 - scaled_processed_dep_var_0)/
-    (processed_indep_var_x_1 - processed_indep_var_x_0);
+  if( indep_var_x_0 < indep_var_x_1 )
+  {
+    // Calculate the intermediate grid lengths
+    const typename QuantityTraits<SecondIndepType>::RawType L0 =
+      calculateGridLength( indep_var_y_0_min, indep_var_y_0_max );
 
-  // Interpolate to find the processed dependent value at (x,y)
-  const typename QuantityTraits<FirstIndepType>::RawType
-    processed_indep_var_x =
-    ThisType::processFirstIndepVar( indep_var_x );
-  
-  const auto processed_dep_var_yx = ZXInterpPolicy::interpolateAndProcess(
+    const typename QuantityTraits<SecondIndepType>::RawType L1 =
+      calculateGridLength( indep_var_y_1_min, indep_var_y_1_max );
+    
+    const typename QuantityTraits<SecondIndepType>::RawType Lx =
+      calculateIntermediateGridLength( indep_var_x_0,
+                                       indep_var_x_1,
+                                       indep_var_x,
+                                       L0,
+                                       L1 );
+
+    // Calculate the intermediate y min
+    const SecondIndepType y_x_min =
+      calculateIntermediateGridLimit( indep_var_x_0,
+                                      indep_var_x_1,
+                                      indep_var_x,
+                                      indep_var_y_0_min,
+                                      indep_var_y_1_min );
+
+    // Calculate the intermediate y max
+    const SecondIndepType y_x_max =
+      calculateIntermediateGridLimit( indep_var_x_0,
+                                      indep_var_x_1,
+                                      indep_var_x,
+                                      indep_var_y_0_max,
+                                      indep_var_y_1_max );
+
+    // Check if the secondary indep value is in the intermediate grid
+    if( (indep_var_y >= y_x_min*(1 - s_tol)) &&
+        (indep_var_y <= y_x_max*(1 + s_tol)) )
+    {
+      // Calculate the unit base independent variable
+      const typename QuantityTraits<SecondIndepType>::RawType eta =
+        ZYInterpPolicy::calculateUnitBaseIndepVar( indep_var_y, y_x_min, Lx );
+      
+      // Calculate the y value on the first grid
+      const SecondIndepType indep_var_y_0 = ZYInterpPolicy::calculateIndepVar(
+                                       eta, indep_var_y_0_min, L0 );
+    
+      // Calculate the y value on the second grid
+      const SecondIndepType indep_var_y_1 = ZYInterpPolicy::calculateIndepVar(
+                                       eta, indep_var_y_1_min, L1 );
+    
+      // Evaluate the dependent value on the first y grid
+      const typename ZYLowerFunctor::result_type dep_var_0 =
+        evaluate_z_with_y_0_functor( indep_var_y_0 );
+    
+      // Evaluate the dependent value on the second y grid
+      const typename ZYUpperFunctor::result_type dep_var_1 =
+        evaluate_z_with_y_1_functor( indep_var_y_1 );
+    
+      // Process and scale the dependent values
+      const typename QuantityTraits<typename ZYLowerFunctor::result_type>::RawType
+        scaled_processed_dep_var_0 =
+        ThisType::processDepVar( dep_var_0 )*L0;
+    
+      const typename QuantityTraits<typename ZYUpperFunctor::result_type>::RawType
+        scaled_processed_dep_var_1 =
+        ThisType::processDepVar( dep_var_1)*L1;
+      
+      // Calculate the processed slope
+      const typename QuantityTraits<FirstIndepType>::RawType
+        processed_indep_var_x_0 =
+        ThisType::processFirstIndepVar( indep_var_x_0 );
+      
+      const typename QuantityTraits<FirstIndepType>::RawType
+        processed_indep_var_x_1 =
+        ThisType::processFirstIndepVar( indep_var_x_1 );
+      
+      const auto processed_slope =
+        (scaled_processed_dep_var_1 - scaled_processed_dep_var_0)/
+        (processed_indep_var_x_1 - processed_indep_var_x_0);
+
+      // Interpolate to find the processed dependent value at (x,y)
+      const typename QuantityTraits<FirstIndepType>::RawType
+        processed_indep_var_x =
+        ThisType::processFirstIndepVar( indep_var_x );
+    
+      const auto processed_dep_var_yx = ZXInterpPolicy::interpolateAndProcess(
                                                     processed_indep_var_x_0,
                                                     processed_indep_var_x,
                                                     scaled_processed_dep_var_0,
                                                     processed_slope )/Lx;
 
-  return QuantityTraits<typename ZYLowerFunctor::result_type>::initializeQuantity(
+      return QuantityTraits<typename ZYLowerFunctor::result_type>::initializeQuantity(
                     ThisType::recoverProcessedDepVar( processed_dep_var_yx ) );
+    }
+    else // indep_var_y < intermediate_y
+      return QuantityTraits<typename ZYLowerFunctor::result_type>::zero();
+  }
+  else // indep_var_x_0 == indep_var_x_1
+    return evaluate_z_with_y_0_functor( indep_var_y );
 }
 
 // Conduct unit base interpolation
@@ -509,14 +527,6 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType,T>::value) );
   // The z iterator must have T as the value type
   testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<ZIterator>::value_type,DepMember>::tupleMemberType,T>::value) );
-  // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x ) );
-  testPrecondition( ThisType::isFirstIndepVarInValidRange( indep_var_x_0 ) );
-  testPrecondition( indep_var_x_0 < indep_var_x_1 );
-  testPrecondition( indep_var_x >= indep_var_x_0 );
-  testPrecondition( indep_var_x <= indep_var_x_1 );
   // Make sure the second independent variables are valid
   testPrecondition( start_indep_y_grid_0 != end_indep_y_grid_0 );
   testPrecondition( Sort::isSortedAscending<YIndepMember>(start_indep_y_grid_0,
@@ -536,16 +546,16 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 			        get<YIndepMember>( *start_indep_y_grid_1 ) ) );
   testPrecondition( indep_var_y >= test_y_min ||
 		    Policy::relError( indep_var_y, test_y_min ) <= s_tol );
-  remember( YIterator true_end_indep_y_grid_0 = end_indep_y_grid_0 );
-  remember( --true_end_indep_y_grid_0 );
-  remember( YIterator true_end_indep_y_grid_1 = end_indep_y_grid_1 );
-  remember( --true_end_indep_y_grid_1 );
+  remember( YIterator test_end_indep_y_grid_0 = end_indep_y_grid_0 );
+  remember( --test_end_indep_y_grid_0 );
+  remember( YIterator test_end_indep_y_grid_1 = end_indep_y_grid_1 );
+  remember( --test_end_indep_y_grid_1 );
   remember( T test_y_max = calculateIntermediateGridLimit(
 			     indep_var_x_0,
 			     indep_var_x_1,
 			     indep_var_x,
-			     get<YIndepMember>( *true_end_indep_y_grid_0 ),
-			     get<YIndepMember>( *true_end_indep_y_grid_1 ) ) );
+			     get<YIndepMember>( *test_end_indep_y_grid_0 ),
+			     get<YIndepMember>( *test_end_indep_y_grid_1 ) ) );
   testPrecondition( indep_var_y <= test_y_max ||
 		    Policy::relError( indep_var_y, test_y_max ) <= s_tol );
   // Make sure the dependent variables are valid
@@ -556,13 +566,12 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   testPrecondition( std::distance( start_indep_y_grid_1, end_indep_y_grid_1 )==
 		    std::distance( start_dep_grid_1, end_dep_grid_1 ) );
 
-  // Calculate the length of the first y grid
-  const T L0 = calculateGridLength<YIndepMember>( start_indep_y_grid_0,
-						  end_indep_y_grid_0 );
+  // The max grid values
+  YIterator true_end_indep_y_grid_0 = end_indep_y_grid_0;
+  --true_end_indep_y_grid_0;
 
-  // Calculate the length of the first y grid
-  const T L1 = calculateGridLength<YIndepMember>( start_indep_y_grid_1,
-						  end_indep_y_grid_1 );
+  YIterator true_end_indep_y_grid_1 = end_indep_y_grid_1;
+  --true_end_indep_y_grid_1;
 
   // Create the grid interpolation functors
   std::function<T(T)> interpolate_grid_0_functor =
@@ -582,16 +591,16 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                   end_dep_grid_1 );
   
   return ThisType::interpolateUnitBase(
-                                    indep_var_x_0,
-                                    indep_var_x_1,
-                                    indep_var_x,
-                                    indep_var_y,
-                                    get<YIndepMember>( *start_indep_y_grid_0 ),
-                                    get<YIndepMember>( *start_indep_y_grid_1 ),
-                                    L0,
-                                    L1,
-                                    interpolate_grid_0_functor,
-                                    interpolate_grid_1_functor );
+                                 indep_var_x_0,
+                                 indep_var_x_1,
+                                 indep_var_x,
+                                 indep_var_y,
+                                 get<YIndepMember>( *start_indep_y_grid_0 ),
+                                 get<YIndepMember>( *true_end_indep_y_grid_0 ),
+                                 get<YIndepMember>( *start_indep_y_grid_1 ),
+                                 get<YIndepMember>( *true_end_indep_y_grid_1 ),
+                                 interpolate_grid_0_functor,
+                                 interpolate_grid_1_functor );
 }
 
 // Conduct the interpolation between two grids
@@ -679,6 +688,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateGridLength(
 {
   // Make sure the grid is valid
   testPrecondition( grid_front_value <= grid_back_value );
+  testPrecondition( ThisType::isSecondIndepVarInValidRange(grid_front_value) );
 
   const typename QuantityTraits<T>::RawType grid_length =
     ThisType::processSecondIndepVar( grid_back_value ) -

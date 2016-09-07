@@ -214,9 +214,9 @@ public:
          const FirstIndepType indep_var_x,
          const SecondIndepType indep_var_y,
          const SecondIndepType indep_var_y_0_min,
+         const SecondIndepType indep_var_y_0_max,
          const SecondIndepType indep_var_y_1_min,
-         const typename QuantityTraits<SecondIndepType>::RawType grid_0_length,
-         const typename QuantityTraits<SecondIndepType>::RawType grid_1_length,
+         const SecondIndepType indep_var_y_1_max,
          const ZYLowerFunctor& evaluate_z_with_y_0_functor,
          const ZYUpperFunctor& evaluate_z_with_y_1_functor );
 

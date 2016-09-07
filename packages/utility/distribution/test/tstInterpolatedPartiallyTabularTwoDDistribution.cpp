@@ -38,10 +38,10 @@ namespace cgs = boost::units::cgs;
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::shared_ptr<Utility::UnitAwareTwoDDistribution<MegaElectronVolt,cgs::length,Barn> >
+std::shared_ptr<Utility::UnitAwarePartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn> >
   unit_aware_distribution;
 
-std::shared_ptr<Utility::TwoDDistribution> distribution;
+std::shared_ptr<Utility::PartiallyTabularTwoDDistribution> distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -49,10 +49,81 @@ std::shared_ptr<Utility::TwoDDistribution> distribution;
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution, evaluate )
 {
-  // Before the first bin
+  // Before the first bin - no extension
   TEST_EQUALITY_CONST( distribution->evaluate( -1.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 5.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 10.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 11.0 ), 0.0 );
+
+  // Before the first bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 11.0 ), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin boundary
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 10.0 ), exp( -10.0 ) );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 11.0 ), 0.0 );
+
+  // In the second bin
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, -1.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 0.0 ),
+                          1.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 5.0 ),
+                          0.5033689734995427,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 10.0 ),
+                          0.5000226999648812,
+                          1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 11.0 ), 0.0 );
+
+  // On the third bin boundary
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 5.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 10.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 11.0 ), 0.0 );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 0.0 ), 0.55 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 5.0 ), 0.55 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 10.0 ), 0.55 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 11.0 ), 0.0 );
+
+  // On the upper bin boundary
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 11.0 ), 0.0 );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 5.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 10.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 11.0 ), 0.0 );
+
+  // After the third bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 11.0 ), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
@@ -80,12 +151,12 @@ int main( int argc, char** argv )
 
     // Create the secondary distribution in the first bin
     distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::DeltaDistribution( 0.0 ) );
+    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
     
 
     // Create the secondary distribution in the second bin
     distribution_data[1].first = 0.0;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0 ) );
+    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
     // Create the secondary distribution in the third bin
     distribution_data[2].first = 1.0;
@@ -107,11 +178,11 @@ int main( int argc, char** argv )
 
     // Create the secondary distribution in the first bin
     primary_bins[0] = 0.0*MeV;
-    secondary_dists[0].reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 0.0*cgs::centimeter ) );
+    secondary_dists[0].reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 0.1*barn ) );
 
     // Create the secondary distribution in the second bin
     primary_bins[1] = 0.0*MeV;
-    secondary_dists[1].reset( new Utility::UnitAwareExponentialDistribution<cgs::length,Barn>( 1.0*barn, 1.0/cgs::centimeter ) );
+    secondary_dists[1].reset( new Utility::UnitAwareExponentialDistribution<cgs::length,Barn>( 1.0*barn, 1.0/cgs::centimeter, 0.0*cgs::centimeter, 10.0*cgs::centimeter ) );
 
     // Create the secondary distribution in the third bin
     primary_bins[2] = 1.0*MeV;

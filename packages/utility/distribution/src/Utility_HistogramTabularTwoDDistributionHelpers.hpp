@@ -109,6 +109,15 @@ public:
 
   //! Test if the distribution is continuous in the primary dimension
   bool isPrimaryDimensionContinuous() const;
+
+protected:
+
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename ReturnType, typename EvaluationMethod>
+  ReturnType evaluateImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluate ) const;
 };
 
 //! The histogram tabular two-dimensional dist. impl. class (fully tabular)

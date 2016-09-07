@@ -24,11 +24,13 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
 UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::UnitAwareTabularTwoDDistribution( const DistributionType& distribution )
-  : d_distribution( distribution.begin(), distribution.end() )
+  : d_distribution( distribution.begin(), distribution.end() ),
+    d_extend_beyond_primary_limits( false )
 {
   // Make sure the distribution is valid
   testPrecondition( Sort::isSortedAscending<FIRST>( distribution.begin(),
                                                     distribution.end() ) );
+  testPrecondition( this->areSecondaryDistributionsContinuous() );
 }
 
 // Constructor
@@ -42,7 +44,8 @@ UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
                 secondary_distributions )
-  : d_distribution( primary_indep_grid.size() )
+  : d_distribution( primary_indep_grid.size() ),
+    d_extend_beyond_primary_limits( false )
 {
   // Make sure the independent grid is valid
   testPrecondition( Sort::isSortedAscending( primary_indep_grid.begin(),
@@ -56,6 +59,57 @@ UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit
     d_distribution[i].first = primary_indep_grid[i];
     d_distribution[i].second = secondary_distributions[i];
   }
+
+  // Make sure the constructed distribution is valid
+  testPostcondition( this->areSecondaryDistributionsContinuous() );
+}
+
+// Extend the distribution beyond the primary independent variable limits
+/*! \details The default behavior of this class when evaluating the
+ * the distribution outside of the primary independent variable limits is
+ * to return zero. After calling this function that behavior will instead
+ * be to use the appropriate limiting secondary distribution for all 
+ * primary values beyond the defined primary limits.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseOneDDistribution>
+void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::extendBeyondPrimaryIndepLimits()
+{
+  d_extend_beyond_primary_limits = true;
+}
+
+// Limit the distribution to the primary independent variable limits
+/*! \details The default behavior of this class when evaluating the
+ * the distribution outside of the primary independent variable limits is
+ * to return zero. This method does not need to be called unless
+ * the extendDistributionBeyondPrimaryIndepLimits method has been called
+ * (this method will restore the default behavior).
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseOneDDistribution>
+void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::limitToPrimaryIndepLimits()
+{
+  d_extend_beyond_primary_limits = false;
+}
+
+// Check if the distribution is being extended beyond the primary limits
+/*! \details The default behavior of this class when evaluating the
+ * the distribution outside of the primary independent variable limits is
+ * to return zero. When the limits have been extended that behavior will 
+ * instead be to use the appropriate limiting secondary distribution for all 
+ * primary values beyond the defined primary limits.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseOneDDistribution>
+bool UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::arePrimaryLimitsExtended() const
+{
+  return d_extend_beyond_primary_limits;
 }
 
 // Return the upper bound of the distribution primary independent variable
@@ -103,6 +157,9 @@ void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependen
 }
 
 // Find the bin boundaries
+/*! \details The lower and upper boundary will only be equal when the 
+ * primary_independent_var_value is outside of the primary grid limits.
+ */
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
@@ -117,11 +174,19 @@ inline void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryInd
     lower_bin_boundary = d_distribution.begin();
     upper_bin_boundary = lower_bin_boundary;
   }
-  else if( primary_independent_var_value >= d_distribution.back().first )
+  else if( primary_independent_var_value > d_distribution.back().first )
   {
     lower_bin_boundary = d_distribution.end();
     --lower_bin_boundary;
     upper_bin_boundary = lower_bin_boundary;
+  }
+  else if( primary_independent_var_value == d_distribution.back().first )
+  {
+    lower_bin_boundary = d_distribution.end();
+    --lower_bin_boundary;
+    upper_bin_boundary = lower_bin_boundary;
+
+    --lower_bin_boundary;
   }
   else
   {
@@ -149,6 +214,28 @@ inline double UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryI
 {
   return (primary_indep_var_value - lower_bin_boundary->first)/
     (upper_bin_boundary->first - lower_bin_boundary->first);
+}
+
+// Check that all secondary distributions are continuous
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseOneDDistribution>
+bool UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::areSecondaryDistributionsContinuous() const
+{
+  bool all_continuous = true;
+  
+  for( size_t i = 0; i < d_distribution.size(); ++i )
+  {
+    if( !d_distribution[i].second->isContinuous() )
+    {
+      all_continuous = false;
+
+      break;
+    }
+  }
+
+  return all_continuous;
 }
 
 } // end Utility namespace

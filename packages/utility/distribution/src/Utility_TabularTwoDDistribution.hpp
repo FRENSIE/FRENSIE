@@ -91,6 +91,15 @@ public:
   virtual ~UnitAwareTabularTwoDDistribution()
   { /* ... */ }
 
+  //! Extend the distribution beyond the primary independent variable limits
+  void extendBeyondPrimaryIndepLimits();
+
+  //! Limit the distribution to the primary independent variable limits
+  void limitToPrimaryIndepLimits();
+
+  //! Check if the distribution is being extended beyond the primary limits
+  bool arePrimaryLimitsExtended() const;
+
   //! Return the upper bound of the distribution primary independent variable
   PrimaryIndepQuantity getUpperBoundOfPrimaryIndepVar() const;
 
@@ -119,8 +128,14 @@ protected:
 
 private:
 
+  // Check that all secondary distributions are continuous
+  bool areSecondaryDistributionsContinuous() const;
+
   // The distribution
   DistributionType d_distribution;
+
+  // Extend beyond primary limits
+  bool d_extend_beyond_primary_limits;
 };
   
 } // end Utility namespace

@@ -20,13 +20,9 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
   const PrimaryIndepQuantity primary_indep_var_value,
   const SecondaryIndepQuantity secondary_indep_var_value ) const -> DepQuantity
 {
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  return lower_bin_boundary->second->evaluate( secondary_indep_var_value );
+  return this->evaluateImpl<DepQuantity>( primary_indep_var_value,
+                                          secondary_indep_var_value,
+                                          &BaseOneDDistributionType::evaluate);
 }
 
 // Evaluate the secondary conditional PDF
@@ -36,13 +32,36 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSe
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> InverseSecondaryIndepQuantity
 {
+  return this->evaluateImpl<InverseSecondaryIndepQuantity>(
+                                      primary_indep_var_value,
+                                      secondary_indep_var_value,
+                                      &BaseOneDDistributionType::evaluatePDF );
+}
+
+// Evaluate the distribution using the desired evaluation method
+template<typename Distribution>
+template<typename ReturnType, typename EvaluationMethod>
+inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluate ) const
+{
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->second->evaluatePDF( secondary_indep_var_value );
+  // Check for a primary value outside of the primary grid limits
+  if( lower_bin_boundary == upper_bin_boundary )
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
+    else
+      return QuantityTraits<ReturnType>::zero();
+  }
+  else
+    return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF
@@ -121,13 +140,10 @@ double UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,Seco
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  return lower_bin_boundary->second->evaluateCDF( secondary_indep_var_value );
+  return this->template evaluateImpl<double>(
+                                      primary_indep_var_value,
+                                      secondary_indep_var_value,
+                                      &BaseOneDDistributionType::evaluateCDF );
 }
 
 // Return a random sample from the secondary conditional PDF and the index

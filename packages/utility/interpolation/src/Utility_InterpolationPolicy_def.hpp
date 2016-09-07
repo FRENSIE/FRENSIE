@@ -84,6 +84,9 @@ T InterpolationHelper<ParentInterpolationType>::interpolateAndProcess(
 }
 
 // Calculate the unit base independent variable (eta)
+/*! \details The independent grid length is calculated using the 
+ * processed independent grid limits.
+ */
 template<typename ParentInterpolationType>
 template<typename IndepType>
 inline typename QuantityTraits<IndepType>::RawType

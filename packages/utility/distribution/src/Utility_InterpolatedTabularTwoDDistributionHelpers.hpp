@@ -112,6 +112,13 @@ public:
 
 protected:
 
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename ReturnType, typename EvaluationMethod>
+  ReturnType evaluateImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluate ) const;
+
   //! Sample the bin boundary that will be used for stochastic sampling
   typename DistributionType::const_iterator
   sampleBinBoundary(
@@ -185,7 +192,7 @@ public:
     : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
-  //! Raw constructor
+  //! Raw distribution constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB,
            template<typename T, typename... Args> class SubarrayB,
