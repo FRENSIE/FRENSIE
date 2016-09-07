@@ -115,7 +115,7 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
                       std::runtime_error,
                       "Error: A sample cannot be made outside of the primary "
                       "grid limits unless the distribution has been "
-                      "extended!\n Note: primary value ("
+                      "extended!\nNote: primary value ("
                       << primary_indep_var_value << ") is not in ["
                       << this->getLowerBoundOfPrimaryIndepVar() << ","
                       << this->getUpperBoundOfPrimaryIndepVar() << "]" );
