@@ -352,6 +352,98 @@ double evaluateTwoDDistributionCorrelated(
     return lower_bin_boundary->second->evaluate( dependent_variable );
 }
 
+// Evaluate a correlated value from a two dimensional distribution
+template<typename DependentTwoDDistribution, typename InterpolationPolicy>
+double evaluateTwoDDistributionCorrelated(
+    const unsigned lower_bin_index,
+    const double independent_variable,
+    const double dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution )
+{
+  // Make sure the lower_bin_index is valid
+  testPrecondition( lower_bin_index >= 0 );
+  testPrecondition( lower_bin_index < dependent_distribution.size() );
+
+  if( dependent_distribution[lower_bin_index].first != independent_variable )
+  {
+    return InterpolationPolicy::interpolate(
+            dependent_distribution[lower_bin_index].first,
+            dependent_distribution[lower_bin_index+1].first,
+            independent_variable,
+            dependent_distribution[lower_bin_index].second->evaluate( dependent_variable ),
+            dependent_distribution[lower_bin_index+1].second->evaluate( dependent_variable ) );
+  }
+  else
+    return dependent_distribution[lower_bin_index].second->evaluate( dependent_variable );
+}
+
+// Evaluate a correlated value from a two dimensional distribution
+template<typename DependentTwoDDistribution, typename InterpolationPolicy>
+double evaluateTwoDDistributionCorrelatedWithWeightedVariable(
+    const double independent_variable,
+    const double weighted_dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution )
+{
+  typename DependentTwoDDistribution::const_iterator lower_bin_boundary,
+                                                     upper_bin_boundary;
+
+  findLowerAndUpperBinBoundary<DependentTwoDDistribution>(
+        independent_variable,
+        dependent_distribution,
+        lower_bin_boundary,
+        upper_bin_boundary );
+
+  double lower_dependent_variable = weighted_dependent_variable*
+      lower_bin_boundary->second->getUpperBoundOfIndepVar();
+
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    double upper_dependent_variable = weighted_dependent_variable*
+      upper_bin_boundary->second->getUpperBoundOfIndepVar();
+
+    return InterpolationPolicy::interpolate(
+            lower_bin_boundary->first,
+            upper_bin_boundary->first,
+            independent_variable,
+            lower_bin_boundary->second->evaluate( lower_dependent_variable ),
+            upper_bin_boundary->second->evaluate( upper_dependent_variable ) );
+  }
+  else
+    return lower_bin_boundary->second->evaluate( lower_dependent_variable );
+}
+
+// Evaluate a correlated value from a two dimensional distribution
+template<typename DependentTwoDDistribution, typename InterpolationPolicy>
+double evaluateTwoDDistributionCorrelatedWithWeightedVariable(
+    const unsigned lower_bin_index,
+    const double independent_variable,
+    const double weighted_dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution )
+{
+  // Make sure the lower_bin_index is valid
+  testPrecondition( lower_bin_index >= 0 );
+  testPrecondition( lower_bin_index < dependent_distribution.size() );
+
+  double lower_dependent_variable = weighted_dependent_variable*
+      dependent_distribution[lower_bin_index].second->getUpperBoundOfIndepVar();
+
+  if( dependent_distribution[lower_bin_index].first != independent_variable )
+  {
+    double upper_dependent_variable = weighted_dependent_variable*
+      dependent_distribution[lower_bin_index+1].second->getUpperBoundOfIndepVar();
+
+    return InterpolationPolicy::interpolate(
+            dependent_distribution[lower_bin_index].first,
+            dependent_distribution[lower_bin_index+1].first,
+            independent_variable,
+            dependent_distribution[lower_bin_index].second->evaluate( lower_dependent_variable ),
+            dependent_distribution[lower_bin_index+1].second->evaluate( upper_dependent_variable ) );
+  }
+  else
+    return dependent_distribution[lower_bin_index].second->evaluate( lower_dependent_variable );
+}
+
+
 
 // Evaluate a correlated PDF from a two dimensional distribution
 template<typename DependentTwoDDistribution, typename InterpolationPolicy>
@@ -405,6 +497,77 @@ double evaluateTwoDDistributionCorrelatedPDF(
   }
   else
     return dependent_distribution[lower_bin_index].second->evaluatePDF( dependent_variable );
+}
+
+// Evaluate a correlated PDF from a two dimensional distribution
+template<typename DependentTwoDDistribution, typename InterpolationPolicy>
+double evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable(
+    const double independent_variable,
+    const double weighted_dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution )
+{
+  // Make sure the weighted dependent variable is valid
+  testPrecondition( weighted_dependent_variable <= 1.0 );
+
+  typename DependentTwoDDistribution::const_iterator lower_bin_boundary,
+                                                     upper_bin_boundary;
+
+  findLowerAndUpperBinBoundary<DependentTwoDDistribution>(
+        independent_variable,
+        dependent_distribution,
+        lower_bin_boundary,
+        upper_bin_boundary );
+
+  double lower_dependent_variable = weighted_dependent_variable*
+      lower_bin_boundary->second->getUpperBoundOfIndepVar();
+
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    double upper_dependent_variable = weighted_dependent_variable*
+      upper_bin_boundary->second->getUpperBoundOfIndepVar();
+
+    return InterpolationPolicy::interpolate(
+            lower_bin_boundary->first,
+            upper_bin_boundary->first,
+            independent_variable,
+            lower_bin_boundary->second->evaluatePDF( lower_dependent_variable ),
+            upper_bin_boundary->second->evaluatePDF( upper_dependent_variable ) );
+  }
+  else
+    return lower_bin_boundary->second->evaluatePDF( lower_dependent_variable );
+}
+
+// Evaluate a correlated PDF from a two dimensional distribution
+template<typename DependentTwoDDistribution, typename InterpolationPolicy>
+double evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable(
+    const unsigned lower_bin_index,
+    const double independent_variable,
+    const double weighted_dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution )
+{
+  // Make sure the lower_bin_index is valid
+  testPrecondition( lower_bin_index >= 0 );
+  testPrecondition( lower_bin_index < dependent_distribution.size() );
+  // Make sure the weighted dependent variable is valid
+  testPrecondition( weighted_dependent_variable <= 1.0 );
+
+  double lower_dependent_variable = weighted_dependent_variable*
+      dependent_distribution[lower_bin_index].second->getUpperBoundOfIndepVar();
+
+  if( dependent_distribution[lower_bin_index].first != independent_variable )
+  {
+    double upper_dependent_variable = weighted_dependent_variable*
+      dependent_distribution[lower_bin_index+1].second->getUpperBoundOfIndepVar();
+
+    return InterpolationPolicy::interpolate(
+            dependent_distribution[lower_bin_index].first,
+            dependent_distribution[lower_bin_index+1].first,
+            independent_variable,
+            dependent_distribution[lower_bin_index].second->evaluatePDF( lower_dependent_variable ),
+            dependent_distribution[lower_bin_index+1].second->evaluatePDF( upper_dependent_variable ) );
+  }
+  else
+    return dependent_distribution[lower_bin_index].second->evaluatePDF( lower_dependent_variable );
 }
 
 

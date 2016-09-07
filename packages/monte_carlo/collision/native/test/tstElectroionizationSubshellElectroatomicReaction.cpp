@@ -242,28 +242,28 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         1.70425200079801E-03,
         8.52126000399011E-04 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 1.01660010790657252e+08 );
+  TEST_EQUALITY_CONST( diff_cross_section, 9.04314628126545525e+09 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         1.70425200079802E-03,
         8.52126000399011E-04 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 1.01660010790654704e+08 );
+  TEST_EQUALITY_CONST( diff_cross_section, 9.04314628126508331e+09 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         1.98284583249127E-03,
         8.52126000399011E-04 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 6.92755090629492700e+07 );
+  TEST_EQUALITY_CONST( diff_cross_section, 4.05416988790885389e+08 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         2.00191878322064E-03,
         8.52126000399011E-04 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 3.89961071404388276e+04 );
+  TEST_EQUALITY_CONST( diff_cross_section, 6.84938501003222466e+07 );
 
 
   // Last subshell
@@ -272,35 +272,35 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         0.0025118800000459599528,
         0.0012514500000459765489 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 2.32396789475891292e+07 );
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32902371072375067e+07 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118800000459773,
         0.0012514500000459765489 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 2.32396789475886412e+07 );
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32902371071580835e+07 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.002511885,
         0.0012514500000459765489 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 2.32396343619434685e+07 );
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32649637287535295e+07 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118897153524992472,
         0.0012514500000459765489 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 2.32395923140572794e+07 );
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32411290601508170e+07 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118908794333669708,
         0.0012514500000459765489 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 2.32395845012092143e+07 );
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32396920675203465e+07 );
 }
 
 //---------------------------------------------------------------------------//

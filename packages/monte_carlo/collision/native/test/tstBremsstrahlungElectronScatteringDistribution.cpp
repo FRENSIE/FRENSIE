@@ -98,52 +98,85 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PDF can be evaluated for a given incoming and knock-on energy
+// Check that the distribution can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-		   evaluatePDF )
+		               evaluate )
 {
 
-  double pdf =
-    twobs_bremsstrahlung_distribution->evaluatePDF(
-                            1.000000000000E-05,
-						    1.000000000000E-06  );
+  double pdf = twobs_bremsstrahlung_distribution->evaluate( 1.0e-5, 1.0e-6 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
 				  1.819250066065520E+05,
 				  1e-12 );
 
-  pdf =
-    twobs_bremsstrahlung_distribution->evaluatePDF(
-                            0u,
-                            1.000000000000E-05,
-						    1.000000000000E-06  );
+  pdf = twobs_bremsstrahlung_distribution->evaluate( 0u, 1.0e-5, 1.e-6  );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
 				  1.819250066065520E+05,
 				  1e-12 );
 
-  pdf =
-    twobs_bremsstrahlung_distribution->evaluatePDF( 3.162280000000E-01,
-						    1.124040000000E-04  );
+  pdf = twobs_bremsstrahlung_distribution->evaluate( 9.0e-4, 9.0e-4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  5.616248254228210E+02,
+				  2.54862854225938E+02,
 				  1e-12 );
 
-  pdf =
-    twobs_bremsstrahlung_distribution->evaluatePDF(
-                            1.000000000000E+05,
-						    2.000000000000E+04 );
+  pdf = twobs_bremsstrahlung_distribution->evaluate( 3u, 9.0e-4, 9.0e-4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,
+				  2.54862854225938E+02,
+				  1e-12 );
+
+  pdf = twobs_bremsstrahlung_distribution->evaluate( 1.0e5, 2.0e4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
 				  1.363940131180460E-06,
 				  1e-12 );
 
-  pdf =
-    twobs_bremsstrahlung_distribution->evaluatePDF(
-                            8u,
-                            1.000000000000E+05,
-						    2.000000000000E+04 );
+  pdf = twobs_bremsstrahlung_distribution->evaluate( 8u, 1.0e5, 2.0e4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,
+				  1.363940131180460E-06,
+				  1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PDF can be evaluated for a given incoming and knock-on energy
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
+		               evaluatePDF )
+{
+
+  double pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 1.0e-5, 1.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,
+				  1.819250066065520E+05,
+				  1e-12 );
+
+  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 0u, 1.0e-5, 1.e-6  );
+
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,
+				  1.819250066065520E+05,
+				  1e-12 );
+
+  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 9.0e-4, 9.0e-4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,
+				  2.54862854225938E+02,
+				  1e-12 );
+
+  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 3u, 9.0e-4, 9.0e-4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,
+				  2.54862854225938E+02,
+				  1e-12 );
+
+  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 1.0e5, 2.0e4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,
+				  1.363940131180460E-06,
+				  1e-12 );
+
+  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 8u, 1.0e5, 2.0e4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
 				  1.363940131180460E-06,
@@ -751,24 +784,24 @@ int main( int argc, char** argv )
 
   // Create the scattering distributions
   dipole_bremsstrahlung_distribution.reset(
-		   new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-						       scattering_distribution ) );
+    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
+      scattering_distribution ) );
 
 
   double upper_cutoff_energy = 1000;
   double lower_cutoff_energy = 0.001;
 
   tabular_bremsstrahlung_distribution.reset(
-		      new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-							scattering_distribution,
-							angular_distribution,
-                            lower_cutoff_energy,
-                            upper_cutoff_energy ) );
+    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
+      scattering_distribution,
+      angular_distribution,
+      lower_cutoff_energy,
+      upper_cutoff_energy ) );
 
   twobs_bremsstrahlung_distribution.reset(
-		      new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-							scattering_distribution,
-                            xss_data_extractor->extractAtomicNumber() ) );
+    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
+      scattering_distribution,
+      xss_data_extractor->extractAtomicNumber() ) );
 
   // Clear setup data
   ace_file_handler.reset();

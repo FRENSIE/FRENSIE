@@ -168,9 +168,9 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelatedCD
   double sampled_variable;
 
   sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedCDF(
-                                                   energy,
-                                                   independent_value,
-                                                   twod_distribution );
+                                    energy,
+                                    independent_value,
+                                    twod_distribution );
 
   TEST_FLOATING_EQUALITY( sampled_variable, 0.4259259259259260, 1e-15  );
 }
@@ -182,19 +182,41 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelatedPD
   double sampled_variable;
 
   sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF(
-                        energy,
-                        independent_value,
-                        twod_distribution );
+                                    energy,
+                                    independent_value,
+                                    twod_distribution );
 
   TEST_FLOATING_EQUALITY( sampled_variable, 1.5/9.0, 1e-15  );
 
   sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF(
-                        1u,
-                        energy,
-                        independent_value,
-                        twod_distribution );
+                                    1u,
+                                    energy,
+                                    independent_value,
+                                    twod_distribution );
 
   TEST_FLOATING_EQUALITY( sampled_variable, 1.5/9.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlated pdf value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable )
+{
+  double sampled_variable;
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable(
+                                    energy,
+                                    independent_value,
+                                    twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0/3.0, 1e-15  );
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable(
+                                    1u,
+                                    energy,
+                                    independent_value,
+                                    twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0/3.0, 1e-15  );
 }
 
 //---------------------------------------------------------------------------//
@@ -204,11 +226,41 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelated )
   double sampled_variable;
 
   sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelated(
-                                                   energy,
-                                                   independent_value,
-                                                   twod_distribution );
+                                    energy,
+                                    independent_value,
+                                    twod_distribution );
 
   TEST_FLOATING_EQUALITY( sampled_variable, 1.0, 1e-15  );
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelated(
+                                    1u, 
+                                    energy,
+                                    independent_value,
+                                    twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlated value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelatedWithWeightedVariable )
+{
+  double sampled_variable;
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedWithWeightedVariable(
+                                    energy,
+                                    independent_value,
+                                    twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 2.0, 1e-15  );
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedWithWeightedVariable(
+                                    1u,
+                                    energy,
+                                    independent_value,
+                                    twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 2.0, 1e-15  );
 }
 
 //---------------------------------------------------------------------------//
@@ -246,8 +298,8 @@ int main( int argc, char** argv )
   bin_values[2] = 2.0;
 
   twod_distribution[0].second.reset( new Utility::HistogramDistribution(
-                                                          dist_1_bin_boundaries,
-							                              bin_values) );
+                                     dist_1_bin_boundaries,
+                                     bin_values) );
 
   twod_distribution[1].first = 0.01;
 
@@ -259,8 +311,8 @@ int main( int argc, char** argv )
   dist_2_bin_boundaries[3] = 3.0;
 
   twod_distribution[1].second.reset( new Utility::HistogramDistribution(
-                                                          dist_2_bin_boundaries,
-							                              bin_values) );
+                                     dist_2_bin_boundaries,
+                                     bin_values) );
 
   twod_distribution[2].first = 0.1;
 
@@ -272,8 +324,8 @@ int main( int argc, char** argv )
   dist_3_bin_boundaries[3] = 4.0;
 
   twod_distribution[2].second.reset( new Utility::HistogramDistribution(
-                                                          dist_3_bin_boundaries,
-							                              bin_values) );
+                                     dist_3_bin_boundaries,
+                                     bin_values) );
 
   bin_1 = twod_distribution.begin();
   bin_2 = bin_1;

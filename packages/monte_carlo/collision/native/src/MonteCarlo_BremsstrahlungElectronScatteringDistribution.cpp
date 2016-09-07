@@ -103,13 +103,13 @@ double BremsstrahlungElectronScatteringDistribution::getMaxIncomingEnergyAtOutgo
 
   // Make sure the outgoing energy is possible
   testPrecondition( energy < highest_energy_bin->first -
-                    highest_energy_bin->second->sampleWithRandomNumber( 0.0 ) );
+                    highest_energy_bin->second->getLowerBoundOfIndepVar();
 
   for ( highest_energy_bin; highest_energy_bin !=lowest_energy_bin; highest_energy_bin -- )
   {
     // Find the maximum photon energy for an electron at the grid_point energy
     double max_photon_energy =
-      highest_energy_bin->second->sampleWithRandomNumber( 1.0 );
+      highest_energy_bin->second->getUpperBoundOfIndepVar();
 
     // Calculate the corresponding minimum outgoing electron energy
     double min_energy = highest_energy_bin->first - max_photon_energy;
@@ -122,6 +122,41 @@ double BremsstrahlungElectronScatteringDistribution::getMaxIncomingEnergyAtOutgo
     }
   }
   return 0.0;
+}
+
+// Evaluate the distribution for a given incoming and photon energy (efficient)
+double BremsstrahlungElectronScatteringDistribution::evaluate(
+                    const unsigned lower_bin_index,
+                    const double incoming_energy,
+                    const double photon_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( lower_bin_index >= 0 );
+  testPrecondition( lower_bin_index <
+                    d_bremsstrahlung_scattering_distribution.size() );
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( photon_energy > 0.0 );
+
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedWithWeightedVariable<BremsstrahlungDistribution, InterpolationPolicy>(
+            lower_bin_index,
+            incoming_energy,
+            photon_energy/incoming_energy,
+            d_bremsstrahlung_scattering_distribution );
+}
+
+// Evaluate the distribution for a given incoming and photon energy
+double BremsstrahlungElectronScatteringDistribution::evaluate(
+                     const double incoming_energy,
+                     const double photon_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( photon_energy > 0.0 );
+
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedWithWeightedVariable<BremsstrahlungDistribution, InterpolationPolicy>(
+            incoming_energy,
+            photon_energy/incoming_energy,
+            d_bremsstrahlung_scattering_distribution );
 }
 
 // Evaluate the PDF value for a given incoming and photon energy (efficient)
@@ -137,10 +172,10 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( photon_energy > 0.0 );
 
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<BremsstrahlungDistribution, InterpolationPolicy>(
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable<BremsstrahlungDistribution, InterpolationPolicy>(
             lower_bin_index,
             incoming_energy,
-            photon_energy,
+            photon_energy/incoming_energy,
             d_bremsstrahlung_scattering_distribution );
 }
 
@@ -153,9 +188,9 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( photon_energy > 0.0 );
 
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<BremsstrahlungDistribution, InterpolationPolicy>(
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable<BremsstrahlungDistribution, InterpolationPolicy>(
             incoming_energy,
-            photon_energy,
+            photon_energy/incoming_energy,
             d_bremsstrahlung_scattering_distribution );
 }
 

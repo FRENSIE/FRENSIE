@@ -67,10 +67,14 @@ public:
   //! Return the max incoming electron energy for a given photon energy
   double getMaxIncomingEnergyAtOutgoingEnergy( const double energy ) const;
 
-  //! Evaluate the distribution
+  //! Evaluate the distribution for a given incoming and photon energy (efficient)
+  double evaluate( const unsigned lower_bin_index,
+                   const double incoming_energy,
+                   const double photon_energy ) const;
+
+  //! Evaluate the distribution for a given incoming and photon energy
   double evaluate( const double incoming_energy,
-                   const double scattering_angle ) const
-  { /* ... */ }
+                   const double photon_energy ) const;
 
   //! Evaluate the PDF value for a given incoming and photon energy (efficient)
   double evaluatePDF( const unsigned lower_bin_index,

@@ -87,12 +87,21 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 2e-8, 1e-8 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.950952406973, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.955696992576, 1e-12 );
 
-  pdf = ace_electroionization_distribution->evaluatePDF( 1.0, 9.7163e-2 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
+
+  pdf = ace_electroionization_distribution->evaluatePDF( 1e-1, 1e-2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 657.05096239747513209, 1e-12 );
+
+  pdf = ace_electroionization_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );
+
+  pdf = ace_electroionization_distribution->evaluatePDF( 1.0, 9.7163E-02 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.045394577710E+00, 1e-12 );
 
-  pdf = ace_electroionization_distribution->evaluatePDF( 1e5, 1.75297e2 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 1e5, 1.752970e2 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.399431656723E-07, 1e-12 );
 }
 
