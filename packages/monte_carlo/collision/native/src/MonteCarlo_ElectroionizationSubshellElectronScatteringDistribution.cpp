@@ -94,11 +94,11 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
 
     // Calculate the lower knock-on energy using the knock on energy ratio
     double lower_knock_on_energy = knock_on_energy_ratio*
-              lower_distribution->second->sampleWithRandomNumber( 1.0 );
+              lower_distribution->second->getUpperBoundOfIndepVar();
 
     // Calculate the lower knock-on energy using the knock on energy ratio
     double upper_knock_on_energy = knock_on_energy_ratio*
-              upper_distribution->second->sampleWithRandomNumber( 1.0 );
+              upper_distribution->second->getUpperBoundOfIndepVar();
 
     return InterpolationPolicy::interpolate(
             lower_distribution->first,
@@ -111,7 +111,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   {
     // get the max tabulated knock-on energy for the lower distribution
     double max_knock_on_energy =
-      lower_distribution->second->sampleWithRandomNumber( 1.0 );
+      lower_distribution->second->getUpperBoundOfIndepVar();
 
     /* Make sure the knock on energy isn't above the max tabulated knock on
      * energy. This can sometimes happen do to roundoff of tabulated data.
@@ -164,11 +164,11 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
 
     // Weight the lower knock-on energy to the same ratio of the max knock on energy.
     double lower_knock_on_energy = knock_on_energy_ratio*
-              lower_distribution->second->sampleWithRandomNumber( 1.0 );
+              lower_distribution->second->getUpperBoundOfIndepVar();
 
     // Weight the upper knock-on energy to the same ratio of the max knock on energy.
     double upper_knock_on_energy = knock_on_energy_ratio*
-              upper_distribution->second->sampleWithRandomNumber( 1.0 );
+              upper_distribution->second->getUpperBoundOfIndepVar();
 
     return InterpolationPolicy::interpolate(
             lower_distribution->first,
@@ -181,7 +181,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   {
     // get the max tabulated knock-on energy for the lower distribution
     double max_knock_on_energy =
-      lower_distribution->second->sampleWithRandomNumber( 1.0 );
+      lower_distribution->second->getUpperBoundOfIndepVar();
 
     /* Make sure the knock on energy isn't above the max tabulated knock on
      * energy. This can sometimes happen do to roundoff of tabulated data.

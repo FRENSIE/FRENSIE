@@ -155,33 +155,37 @@ TEUCHOS_UNIT_TEST( AdjointElectronDistributionGenerator,
           0 );
 
   // Check the generated outgoing energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 811 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(), 0.01+2e-7, 1e-6 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 489 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
+                                  0.01 + 2e-7,
+                                  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.2, 1e-6 );
 
   // Check the evaluated pdf
-  TEST_EQUALITY_CONST( pdf[0.01].size(), 811 );
+  TEST_EQUALITY_CONST( pdf[0.01].size(), 489 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].front(),
-                                  1.5200108884210365359e6,
+                                  18693.011406562847696,
                                   1e-6 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(), 
-                                  1.3868414443414270819e-4,
+                                  6.070850573859183565e-06,
                                   1e-6 );
 
   // Check the generated max energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 570 );
-  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(), 1.0+2e-7, 1e-6 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 391 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
+                                  1.0 + 2e-7,
+                                  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.2, 1e-6 );
 
   // Check the evaluated cross section
-  TEST_EQUALITY_CONST( pdf[1.0].size(), 570 );
+  TEST_EQUALITY_CONST( pdf[1.0].size(), 391 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].front(),
-                                  2.0111957945609613671e5,
+                                  233027.65888165618526,
                                   1e-6 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].back(),
-                                  1.4440565167576839925e-4,
+                                  2.4063406981884109793e-4,
                                   1e-6 );
 }
 

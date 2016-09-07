@@ -103,7 +103,7 @@ double BremsstrahlungElectronScatteringDistribution::getMaxIncomingEnergyAtOutgo
 
   // Make sure the outgoing energy is possible
   testPrecondition( energy < highest_energy_bin->first -
-                    highest_energy_bin->second->getLowerBoundOfIndepVar();
+                    highest_energy_bin->second->getLowerBoundOfIndepVar() );
 
   for ( highest_energy_bin; highest_energy_bin !=lowest_energy_bin; highest_energy_bin -- )
   {
