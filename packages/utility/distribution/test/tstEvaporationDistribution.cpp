@@ -377,6 +377,27 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, isContinuous )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the distribution is compatible with the interpolation type
+TEUCHOS_UNIT_TEST( EvaporationDistribution, isCompatibleWithInterpType )
+{
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is compatible with the interpolation type
+TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution,
+                   isCompatibleWithInterpType )
+{
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file
 TEUCHOS_UNIT_TEST( EvaporationDistribution, toParameterList )
 {

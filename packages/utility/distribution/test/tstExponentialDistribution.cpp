@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <sstream>
 #include <limits>
 
 // Boost Includes
@@ -24,6 +25,7 @@
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_DynamicOutputFormatter.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -403,6 +405,46 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, isContinuous )
 TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, isContinuous )
 {
   TEST_ASSERT( unit_aware_distribution->isContinuous() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is compatible with the interpolation type
+TEUCHOS_UNIT_TEST( ExponentialDistribution, isCompatibleWithInterpType )
+{
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Utility::ExponentialDistribution test_dist( 1.0, 1.0, 0.1, 1.0 );
+
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is compatible with the interp type
+TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution,
+                   isCompatibleWithInterpType )
+{
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>
+    test_dist( 1.0*si::mole, 1.0/si::meter, 0.1*si::meter, 1.0*si::meter );
+
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLog>() );
 }
 
 //---------------------------------------------------------------------------//
