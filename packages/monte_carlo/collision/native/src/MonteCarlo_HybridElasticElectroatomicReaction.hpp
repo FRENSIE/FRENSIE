@@ -27,25 +27,21 @@ public:
 
   //! Basic Constructor
   HybridElasticElectroatomicReaction(
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
-	  const unsigned cutoff_threshold_energy_index,
-	  const Teuchos::ArrayRCP<const double>& moment_preserving_cross_section,
-	  const unsigned moment_preserving_threshold_energy_index,
-      const double cutoff_angle_cosine,
-      const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const double cutoff_angle_cosine,
+    const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution );
 
   //! Constructor
   HybridElasticElectroatomicReaction(
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
-	  const unsigned cutoff_threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-	  const Teuchos::ArrayRCP<const double>& moment_preserving_cross_section,
-	  const unsigned moment_preserving_threshold_energy_index,
-      const double cutoff_angle_cosine,
-      const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const double cutoff_angle_cosine,
+    const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution );
 
 
@@ -67,56 +63,11 @@ public:
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
 
-  //! Return the cross section at the given energy
-  double getCrossSection( const double energy ) const;
-
-  //! Return the cross section at the given energy (efficient)
-  double getCrossSection( const double energy,
-                          const unsigned bin_index ) const;
-
-  //! Return the cutoff cross section at the given energy
-  double getCutoffCrossSection( const double energy ) const;
-
-  //! Return the cutoff cross section at the given energy (efficient)
-  double getCutoffCrossSection( const double energy,
-                                const unsigned bin_index ) const;
-
-  //! Return the screened Rutherford cross section at the given energy
-  double getMomentPreservingCrossSection( const double energy ) const;
-
-  //! Return the screened Rutherford cross section at the given energy (efficient)
-  double getMomentPreservingCrossSection( const double energy,
-                                            const unsigned bin_index ) const;
-
-  //! Return the threshold energy
-  double getThresholdEnergy() const;
-
-  //! Return the cutoff threshold energy
-  double getCutoffThresholdEnergy() const;
-
-  //! Return the screened Rutherford threshold energy
-  double getMomentPreservingThresholdEnergy() const;
-
 private:
 
   // The hybrid elastic scattering distribution
   std::shared_ptr<const HybridElasticElectronScatteringDistribution>
     d_hybrid_distribution;
-
-  // The cutoff cross section values evaluated on the incoming energy grid
-  Teuchos::ArrayRCP<const double> d_cutoff_cross_section;
-
-  // The screened rutherford cross section values evaluated on the incoming energy grid
-  Teuchos::ArrayRCP<const double> d_moment_preserving_cross_section;
-
-  // The screened rutherford threshold energy index
-  unsigned d_cutoff_threshold_energy_index;
-
-  // The screened rutherford threshold energy index
-  unsigned d_moment_preserving_threshold_energy_index;
- 
-  // The cutoff angle cosine
-  double d_cutoff_angle_cosine;
 };
 
 } // end MonteCarlo namespace

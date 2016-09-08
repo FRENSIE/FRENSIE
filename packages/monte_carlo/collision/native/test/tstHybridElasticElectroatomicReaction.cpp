@@ -50,22 +50,6 @@ TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getReactionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cutoff threshold energy can be returned
-TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getCutoffThresholdEnergy )
-{
-  TEST_EQUALITY_CONST( hybrid_elastic_reaction->getCutoffThresholdEnergy(),
-                       1.0e-5 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the screened Rutherford threshold energy can be returned
-TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getMomentPreservingThresholdEnergy )
-{
-  TEST_EQUALITY_CONST( hybrid_elastic_reaction->getMomentPreservingThresholdEnergy(),
-                       1.0e-5 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getThresholdEnergy )
 {
@@ -95,49 +79,6 @@ TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getNumberOfEmittedPhotons
 		       0u );
 }
 
-//---------------------------------------------------------------------------//
-// Check that the cutoff cross section can be returned
-TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction,
-                   getCutoffCrossSection )
-{
-
-  double cross_section =
-    hybrid_elastic_reaction->getCutoffCrossSection( 1.0E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 3444568722.2843613625, 1e-12 );
-
-  cross_section =
-    hybrid_elastic_reaction->getCutoffCrossSection( 1.0E-03 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 18557880.33652209118, 1e-12 );
-
-  cross_section =
-    hybrid_elastic_reaction->getCutoffCrossSection( 1.0E+05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 1.9264754607947520206e-08, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the screened Rutherford cross section can be returned
-TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction,
-                   getMomentPreservingCrossSection )
-{
-
-  double cross_section =
-    hybrid_elastic_reaction->getMomentPreservingCrossSection( 1.0E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 1.611494138359350E+08, 1e-12 );
-
-  cross_section =
-    hybrid_elastic_reaction->getMomentPreservingCrossSection( 1.0E-03 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 5.730253976136980E+07, 1e-12 );
-
-  cross_section =
-    hybrid_elastic_reaction->getMomentPreservingCrossSection( 1.0E+05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 6.808061009771560E-05, 1e-12 );
-}
 
 //---------------------------------------------------------------------------//
 // Check that the hybrid cross section can be returned
@@ -287,14 +228,57 @@ int main( int argc, char** argv )
         data_container.getMomentPreservingCrossSection().begin(),
         data_container.getMomentPreservingCrossSection().end() );
 
+  // Calculate the hybrid cross section
+  unsigned hybrid_threshold_energy_index =
+    std::min( data_container.getMomentPreservingCrossSectionThresholdEnergyIndex(),
+              data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() );
+
+  unsigned mp_threshold_diff =
+    data_container.getMomentPreservingCrossSectionThresholdEnergyIndex() -
+    hybrid_threshold_energy_index;
+  unsigned cutoff_threshold_diff =
+    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() - 
+    hybrid_threshold_energy_index;
+
+  Teuchos::Array<double> combined_cross_section(
+                           energy_grid.size() - hybrid_threshold_energy_index );
+
+  for (unsigned i = 0; i < combined_cross_section.size(); ++i )
+  {
+    double energy = energy_grid[i + hybrid_threshold_energy_index];
+
+    if ( i < mp_threshold_diff )
+    {
+      double cutoff_cdf =
+        hybrid_elastic_distribution->evaluateCDF( energy, cutoff_angle_cosine );
+
+      combined_cross_section[i] = cutoff_cross_section[i]*cutoff_cdf;
+    }
+    else if ( i < cutoff_threshold_diff )
+    {
+      combined_cross_section[i] = mp_cross_section[i];
+    }
+    else
+    {
+      double cutoff_cdf =
+        hybrid_elastic_distribution->evaluateCDF( energy, cutoff_angle_cosine );
+
+      combined_cross_section[i] =
+        cutoff_cross_section[i-cutoff_threshold_diff]*cutoff_cdf + 
+        mp_cross_section[i-mp_threshold_diff];
+    }
+  }
+
+  Teuchos::ArrayRCP<double> hybrid_cross_section;
+  hybrid_cross_section.assign( combined_cross_section.begin(),
+                               combined_cross_section.end() );
+
     // Create the reaction
     hybrid_elastic_reaction.reset(
       new MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLin>(
             energy_grid,
-            cutoff_cross_section,
-            data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-            mp_cross_section,
-            data_container.getMomentPreservingCrossSectionThresholdEnergyIndex(),
+            hybrid_cross_section,
+            hybrid_threshold_energy_index,
             cutoff_angle_cosine,
             hybrid_elastic_distribution ) );
   }
