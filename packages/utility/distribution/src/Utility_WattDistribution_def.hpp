@@ -175,7 +175,9 @@ typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::DepQuantity
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::evaluate(
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < IQT::zero() )
+  if( indep_var_value < this->getLowerBoundOfIndepVar() )
+    return DQT::zero();
+  else if( indep_var_value > this->getUpperBoundOfIndepVar() )
     return DQT::zero();
   else
   {
@@ -542,6 +544,13 @@ bool UnitAwareWattDistribution<IndependentUnit,DependentUnit>::isEqual(
   d_b_parameter == other.d_b_parameter &&
   d_restriction_energy == other.d_restriction_energy &&
   d_multiplier == other.d_multiplier;
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareWattDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return true;
 }
 
 } // end Utility namespace

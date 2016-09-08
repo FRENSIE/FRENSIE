@@ -355,6 +355,13 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::isEqual(
     d_multiplier == other.d_multiplier;
 }
 
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return false;
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_DELTA_DISTRIBUTION_DEF_HPP

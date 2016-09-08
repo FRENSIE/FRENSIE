@@ -491,6 +491,19 @@ bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::isEqual( const 
     d_max_independent_value == other.d_max_independent_value;
 }
 
+// Test if the dependent variable can be zero within the indep bounds
+/*! \details If the absolute value of the lower or upper limit is Inf then it 
+ * is possible for the distribution to return 0.0 from one of the evaluate 
+ * methods. However, the 0.0 value will only occur if the distribution is 
+ * evaluated at +/- Inf, which should never actually be done in practice, so we
+ *  will return false from this method.
+ */
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return false;
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_NORMAL_DISTRIBUTION_DEF_HPP

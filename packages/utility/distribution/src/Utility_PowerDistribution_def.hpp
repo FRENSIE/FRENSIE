@@ -407,6 +407,16 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::initializeDist
   		   d_min_indep_limit_to_power_Np1 ));
 }
 
+// Test if the dependent variable can be zero within the indep bounds
+template<unsigned N, typename IndependentUnit, typename DependentUnit>
+bool UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  if( d_min_indep_limit == IQT::zero() )
+    return true;
+  else
+    return false;
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_POWER_DISTRIBUTION_DEF_HPP

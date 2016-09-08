@@ -515,6 +515,23 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isValidSamp
   return valid;
 }
 
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  if( d_coefficients[0] == 0 )
+  {
+    if( d_indep_limits_to_series_powers_p1.front().first == 0.0 )
+      return true;
+    else if( d_indep_limits_to_series_powers_p1.front().second == 0.0 )
+      return true;
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_POLYNOMIAL_DISTRIBUTION_DEF_HPP

@@ -414,6 +414,13 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initia
     d_bin_boundaries[i] = IndepQuantity( bin_boundaries[i] );
 }
 
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return false;
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_EQUIPROBABLE_BIN_DISTRIBUTION_DEF_HPP

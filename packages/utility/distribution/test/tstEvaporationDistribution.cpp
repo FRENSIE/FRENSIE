@@ -57,22 +57,25 @@ Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
 TEUCHOS_UNIT_TEST( EvaporationDistribution, evaluate )
 {
   double test_value_1 = 0.0 ;
-  double test_value_2 = exp( -1.0 );
+  double test_value_2 = 0.9*exp( -0.9 );
 
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.9 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, evaluate )
 {
-  double scale_factor = exp(-1.0);
+  double scale_factor = 0.9*exp(-0.9);
 
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
 		       0.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.9*MeV ),
+                       scale_factor*si::mole );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
-		       scale_factor*si::mole );
+		       0.0*si::mole );
 }
 
 //---------------------------------------------------------------------------//
@@ -80,22 +83,28 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, evaluate )
 TEUCHOS_UNIT_TEST( EvaporationDistribution, evaluatePDF )
 {
   double test_value_1 = 0.0 ;
-  double test_value_2 = pow( 1.0 - exp(-0.9) * (1.0 + 0.9), -1.0 ) * exp( -1.0 );
+  double test_value_2 = 0.9*exp(-0.9)/(1.0 - exp(-0.9)*(1.0+0.9));
 
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), test_value_2 );
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 0.9 ),
+                          test_value_2,
+                          1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), test_value_1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware PDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, evaluatePDF )
 {
-  double scale_factor = exp(-1.0)/(1.0 - exp(-0.9)*(1.0+0.9));
+  double scale_factor = 0.9*exp(-0.9)/(1.0 - exp(-0.9)*(1.0+0.9));
 
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ),
 		       0.0/MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluatePDF( 0.9*MeV ),
+                                  scale_factor/MeV,
+                                  1e-15 );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*MeV ),
-		       scale_factor/MeV );
+                       0.0/MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -437,10 +446,13 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, fromParameterList )
     test_dists_list->get<Utility::EvaporationDistribution>( "Evaporation Distribution A" );
 
   test_value_1 = 0.0 ;
-  test_value_2 = pow( 1.0 - exp(-0.9) * (1.0 + 0.9), -1.0 ) * exp( -1.0 );
+  test_value_2 = 0.9*exp(-0.9)/(1.0 - exp(-0.9)*(1.0+0.9));
 
   TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
+  TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.9 ),
+                          test_value_2,
+                          1e-15 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_1 );
 
   read_distribution =
     test_dists_list->get<Utility::EvaporationDistribution>( "Evaporation Distribution B" );
@@ -472,14 +484,18 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, fromParameterList )
   UnitAwareEvaporationDistribution read_distribution =
     test_dists_list->get<UnitAwareEvaporationDistribution>( "Unit-Aware Evaporation Distribution A" );
 
-  double scale_factor = exp(-1.0)/(1.0 - exp(-0.9)*(1.0+0.9));
+  double scale_factor = 0.9*exp(-0.9)/(1.0 - exp(-0.9)*(1.0+0.9));
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*MeV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*MeV ),
-		       10.0*exp(-1.0)*si::mole );
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0*MeV ),
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.9*MeV ),
+		       10.0*0.9*exp(-0.9)*si::mole );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.9*MeV ),
 		       scale_factor/MeV );
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*MeV ),
+                       0.0*si::mole );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0*MeV ),
+                       0.0/MeV );
 
   read_distribution =
     test_dists_list->get<UnitAwareEvaporationDistribution>( "Unit-Aware Evaporation Distribution B" );
@@ -560,10 +576,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareEvaporationDistribution,
 			inv_indep_quantity_b,
 			1e-15 );
 
-  Utility::setQuantity( indep_quantity_a, 1.0 );
+  Utility::setQuantity( indep_quantity_a, 0.89999999999999 );
   Utility::setQuantity( inv_indep_quantity_a,
-			exp(-1.0)/(1.0 - exp(-0.9)*(1.0+0.9)) );
-  Utility::setQuantity( dep_quantity_a, exp(-1.0) );
+			0.9*exp(-0.9)/(1.0 - exp(-0.9)*(1.0+0.9)) );
+  Utility::setQuantity( dep_quantity_a, 0.9*exp(-0.9) );
 
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
@@ -572,19 +588,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareEvaporationDistribution,
   UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
-			   1e-15 );
+			   1e-14 );
   UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
-			1e-15 );
+			1e-14 );
   UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
-			   1e-15 );
+			   1e-14 );
   UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
-			1e-15 );
+			1e-14 );
 }
 
 typedef si::energy si_energy;

@@ -657,6 +657,13 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::convertUnitle
     setQuantity( quantities[i], unitless_values[i] );
 }
 
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit,typename DependentUnit>
+bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return true;
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_DISCRETE_DISTRIBUTION_DEF_HPP

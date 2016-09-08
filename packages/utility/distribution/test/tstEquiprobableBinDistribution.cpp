@@ -2008,6 +2008,58 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, isContinuous )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the distribution is compatible with the interpolation type
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, isCompatibleWithInterpType )
+{
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Check an alternative distribution that is compatible with all interp types
+  Teuchos::Array<double> bin_boundaries( 4 );
+
+  bin_boundaries[0] = 1.0;
+  bin_boundaries[1] = 2.0;
+  bin_boundaries[2] = 3.0;
+  bin_boundaries[3] = 4.0;
+
+  Utility::EquiprobableBinDistribution test_dist( bin_boundaries );
+
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is compatible with the interp type
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
+                   isCompatibleWithInterpType )
+{
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Check an alternative distribution that is compatible with all interp types
+  Teuchos::Array<double> bin_boundaries( 4 );
+
+  bin_boundaries[0] = 1.0;
+  bin_boundaries[1] = 2.0;
+  bin_boundaries[2] = 3.0;
+  bin_boundaries[3] = 4.0;
+
+  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>
+    test_dist( bin_boundaries );
+
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be written to and read from an xml file
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, toParameterList )
 {

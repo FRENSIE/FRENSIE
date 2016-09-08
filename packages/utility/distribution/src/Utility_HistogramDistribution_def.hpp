@@ -672,6 +672,25 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::convertUnitl
     setQuantity( quantities[i], unitless_values[i] );
 }
 
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  bool possible_zero = false;
+  
+  for( size_t i = 0; i < d_distribution.size(); ++i )
+  {
+    if( d_distribution[i].second == DQT::zero() )
+    {
+      possible_zero = true;
+
+      break;
+    }
+  }
+
+  return possible_zero;
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_HISTOGRAM_DISTRIBUTION_DEF_HPP

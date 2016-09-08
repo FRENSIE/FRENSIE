@@ -436,6 +436,13 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::calculatePDFVa
   d_pdf_value = 1.0/(d_max_independent_value - d_min_independent_value);
 }
 
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return false;
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_UNIFORM_DISTRIBUTION_DEF_HPP

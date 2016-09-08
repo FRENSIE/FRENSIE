@@ -169,7 +169,9 @@ typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::Dep
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::evaluate(
  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < IQT::zero() )
+  if( indep_var_value < this->getLowerBoundOfIndepVar() )
+    return DQT::zero();
+  else if( indep_var_value > this->getUpperBoundOfIndepVar() )
     return DQT::zero();
   else
   {
@@ -487,6 +489,13 @@ bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::isEqual
     d_nuclear_temperature == other.d_nuclear_temperature &&
     d_restriction_energy == other.d_restriction_energy &&
     d_multiplier == other.d_multiplier;
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return true;
 }
 
 } // end Utility namespace
