@@ -111,22 +111,22 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_basic )
 
   // Test that the absorption cross section can be returned
   cross_section =
-    atom->getAbsorptionCrossSection( 1.000000000E-02 );
+    atom->getAbsorptionCrossSection( 1e-02 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
-    atom->getAbsorptionCrossSection( 2.000000000000E-03 );
+    atom->getAbsorptionCrossSection( 2e-03 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
-    atom->getAbsorptionCrossSection( 4.000000000000E-04 );
+    atom->getAbsorptionCrossSection( 4e-04 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
-    atom->getAbsorptionCrossSection( 9.000000000000E-05 );
+    atom->getAbsorptionCrossSection( 9e-05 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
@@ -448,8 +448,8 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
     cutoff_elastic_distribution->evaluateCDF( 1.E+05, cutoff_angle_cosine );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.830509999999990E-02*cross_section_ratio + 2.203770304996720E-03,
-                          1e-12 );
+                          8.83051e-2*cross_section_ratio + 2.20377030499672E-03,
+                          1e-11 );
 
   cross_section = atom->getReactionCrossSection(
                     1.00E-03,
