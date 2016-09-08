@@ -33,7 +33,7 @@ BOOST_UNITS_STATIC_CONSTANT(cgs_momentum,boost::units::cgs::momentum);
 TEUCHOS_UNIT_TEST( InverseMeCMomentumUnit, initialize )
 {
   quantity<InverseMeCMomentum> inverse_momentum( 1.0*inverse_mec_momentum );
-  
+
   TEST_EQUALITY_CONST( inverse_momentum.value(), 1.0 );
 
   inverse_momentum = 2.0*inverse_mec_momentum;

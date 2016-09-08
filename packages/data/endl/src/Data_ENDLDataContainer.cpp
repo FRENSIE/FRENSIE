@@ -29,7 +29,7 @@
 namespace Data{
 
 // Constructor (from saved archive)
-ENDLDataContainer::ENDLDataContainer( 
+ENDLDataContainer::ENDLDataContainer(
 		    const std::string& archive_name,
 		    const Utility::ArchivableObject::ArchiveType archive_type )
 {
@@ -44,7 +44,7 @@ unsigned ENDLDataContainer::getAtomicNumber() const
 }
 
 // Set the atomic number
-void ENDLDataContainer::setAtomicNumber( 
+void ENDLDataContainer::setAtomicNumber(
 						 const unsigned atomic_number )
 {
   // Make sure the atomic number is valid

@@ -14,8 +14,8 @@
 
 namespace MonteCarlo{
 
-// Constructor 
-NeutronScatteringReaction::NeutronScatteringReaction( 
+// Constructor
+NeutronScatteringReaction::NeutronScatteringReaction(
 		   const NuclearReactionType reaction_type,
 		   const double temperature,
 		   const double q_value,
@@ -23,10 +23,10 @@ NeutronScatteringReaction::NeutronScatteringReaction(
 		   const unsigned threshold_energy_index,
 	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
+		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
 		   scattering_distribution )
-  : NuclearReaction( reaction_type, 
-		     temperature, 
+  : NuclearReaction( reaction_type,
+		     temperature,
 		     q_value,
 		     threshold_energy_index,
 		     incoming_energy_grid,
@@ -48,13 +48,13 @@ unsigned NeutronScatteringReaction::getNumberOfEmittedNeutrons(
 }
 
 // Simulate the reaction
-void NeutronScatteringReaction::react( NeutronState& neutron, 
+void NeutronScatteringReaction::react( NeutronState& neutron,
 				       ParticleBank& bank ) const
 {
   neutron.incrementCollisionNumber();
-  
+
   // There should always be at least one outgoing neutron (>= 0 additional)
-  unsigned num_additional_neutrons = 
+  unsigned num_additional_neutrons =
     this->getNumberOfEmittedNeutrons( neutron.getEnergy() ) - 1u;
 
   // Create the additional neutrons (multiplicity - 1)
@@ -62,14 +62,14 @@ void NeutronScatteringReaction::react( NeutronState& neutron,
   {
     Teuchos::RCP<NeutronState> new_neutron(
 				   new NeutronState( neutron, true, false ) );
-					   
-    d_scattering_distribution->scatterParticle( *new_neutron, 
+
+    d_scattering_distribution->scatterParticle( *new_neutron,
 						this->getTemperature() );
 
     // Add the new neutron to the bank
     bank.push( new_neutron, this->getReactionType() );
   }
-  
+
   // Scatter the "original" neutron
   d_scattering_distribution->scatterParticle( neutron,
 					      this->getTemperature() );

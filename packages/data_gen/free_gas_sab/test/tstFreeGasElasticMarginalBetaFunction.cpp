@@ -46,9 +46,9 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, evaluatePDF )
   std::cout << "norm: " << beta_function->getNormalizationConstant()
 	    << std::endl;
   double pdf_value = (*beta_function)( beta_function->getBetaMin() );
-  
+
   TEST_EQUALITY_CONST( pdf_value, 0.0 );
-  
+
   pdf_value = (*beta_function)( 0.0 );
   //std::cout << pdf_value << std::endl;
   TEST_ASSERT( pdf_value > 0.0 );
@@ -66,7 +66,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, evaluatePDF )
   // pdf_value = (*beta_function)( beta_function->getBetaMin() );
   // //std::cout << beta_function->getNormalizationConstant() << std::endl;
   // TEST_EQUALITY_CONST( pdf_value, 0.0 );
-  
+
   // pdf_value = (*beta_function)( 0.0 );
   // //std::cout << pdf_value << std::endl;
   // TEST_ASSERT( pdf_value > 0.0 );
@@ -83,10 +83,10 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -108,18 +108,18 @@ int main( int argc, char** argv )
 
   distribution[0].first = 0.0;
   distribution[0].second = isotropic_distribution;
-  
+
   distribution[1].first = 20.0;
   distribution[1].second = isotropic_distribution;
 
-  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution> 
-    scattering_distribution( 
+  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>
+    scattering_distribution(
 			 new MonteCarlo::NuclearScatteringAngularDistribution(
 							      distribution ) );
 
   // Initialize the gkq_set factor
   beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
-						    cross_section, 
+						    cross_section,
 						    scattering_distribution,
 						    0.999167,
 						    2.53010e-8,
@@ -137,7 +137,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

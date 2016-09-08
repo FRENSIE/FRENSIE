@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file DataFileNames.hpp
 //! \author Alex Robinson
 //! \brief Names of the processed HDF5 data files
@@ -80,7 +80,7 @@
 // Define the HDF5 photon data file atomic relaxation shell attribute name
 #define ATOMIC_RELAXATION_SHELL_ATTRIBUTE "Atomic_Relaxation_Shells"
 
-// Define the HDF5 photon data file total radiative transition probabililty 
+// Define the HDF5 photon data file total radiative transition probabililty
 // attribute name
 #define TOTAL_RAD_TRANS_PROB_ATTRIBUTE "Total_Radiative_Transition_Probability"
 

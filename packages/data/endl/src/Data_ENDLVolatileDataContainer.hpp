@@ -32,7 +32,7 @@ public:
   using ENDLDataContainer::setAtomicNumber;
 
 //---------------------------------------------------------------------------//
-// SET RELAXATION DATA 
+// SET RELAXATION DATA
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setSubshells;
   using ENDLDataContainer::setSubshellOccupancy;
@@ -128,7 +128,7 @@ public:
   using ENDLDataContainer::setTripletProductionAverageElectronEnergy;
 
 //---------------------------------------------------------------------------//
-// SET ELASTIC DATA 
+// SET ELASTIC DATA
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setElasticEnergyGrid;
   using ENDLDataContainer::setElasticTransportCrossSection;
@@ -149,7 +149,7 @@ public:
   using ENDLDataContainer::setMoliereScreeningConstant;
 */
 //---------------------------------------------------------------------------//
-// SET ELECTROIONIZATION DATA 
+// SET ELECTROIONIZATION DATA
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setElectroionizationCrossSectionEnergyGrid;
   using ENDLDataContainer::setElectroionizationCrossSection;
@@ -163,7 +163,7 @@ public:
   using ENDLDataContainer::setElectroionizationRecoilEnergy;
   using ENDLDataContainer::setElectroionizationRecoilPDF;
 //---------------------------------------------------------------------------//
-// SET BREMSSTRAHLUNG DATA 
+// SET BREMSSTRAHLUNG DATA
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setBremsstrahlungCrossSectionEnergyGrid;
   using ENDLDataContainer::setBremsstrahlungCrossSection;
@@ -177,7 +177,7 @@ public:
   using ENDLDataContainer::setBremsstrahlungAverageElectronIncidentEnergy;
   using ENDLDataContainer::setBremsstrahlungAverageElectronEnergy;
 //---------------------------------------------------------------------------//
-// SET ATOMIC EXCITAION DATA 
+// SET ATOMIC EXCITAION DATA
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setAtomicExcitationEnergyGrid;
   using ENDLDataContainer::setAtomicExcitationCrossSection;

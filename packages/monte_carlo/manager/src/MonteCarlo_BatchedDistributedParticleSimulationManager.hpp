@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 //! The batched distributed memory particle simulation manager class
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
@@ -29,7 +29,7 @@ private:
 
   // Typedef for estimator module interface
   typedef typename ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::EMI EMI;
-  
+
 public:
 
   //! Constructor
@@ -68,23 +68,23 @@ private:
   void stopWorkersAndRecordWork();
 
   // Check for idle worker
-  bool isIdleWorkerPresent( 
+  bool isIdleWorkerPresent(
     Teuchos::RCP<Teuchos::CommStatus<unsigned long long> >& idle_worker_info );
-  
+
   // Assign work to idle workers
   void assignWorkToIdleWorker(
                const Teuchos::CommStatus<unsigned long long>& idle_worker_info,
 	       const Teuchos::Tuple<unsigned long long,2>& task );
-  
+
   // Complete work for the master
-  void work();  
+  void work();
 
   // The mpi communicator
   Teuchos::RCP<const Teuchos::Comm<unsigned long long> > d_comm;
 
   // The root process
   int d_root_process;
-  
+
   // The ideal umber of batches per processor
   unsigned d_number_of_batches_per_processor;
 

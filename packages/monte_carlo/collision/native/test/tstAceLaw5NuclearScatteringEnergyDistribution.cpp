@@ -23,28 +23,28 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution,
 		   sampleEnergy_lower_bound )
 {
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution;
 
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[0].second = 1.0;
-   
+
    energy_distribution[1].first = 2.0;
    energy_distribution[1].second = 2.0;
-   
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
-     probabilistic_function;   
-     
+
+   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution
+     probabilistic_function;
+
    probabilistic_function.resize(2);
 
    probabilistic_function[0].first = 0.0;
    probabilistic_function[0].second = 1.0;
-   
+
    probabilistic_function[1].first = 1.0;
    probabilistic_function[1].second = 2.0;
 
@@ -60,28 +60,28 @@ TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution,
 		   sampleEnergy_upper_bound )
 {
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution;
 
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[0].second = 1.0;
-   
+
    energy_distribution[1].first = 2.0;
    energy_distribution[1].second = 2.0;
-   
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
-     probabilistic_function;   
-     
+
+   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution
+     probabilistic_function;
+
    probabilistic_function.resize(2);
 
    probabilistic_function[0].first = 0.0;
    probabilistic_function[0].second = 1.0;
-   
+
    probabilistic_function[1].first = 1.0;
    probabilistic_function[1].second = 2.0;
 
@@ -97,28 +97,28 @@ TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution,
 		   sampleProb_lower_bound )
 {
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution;
 
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[0].second = 1.0;
-   
+
    energy_distribution[1].first = 2.0;
    energy_distribution[1].second = 2.0;
-   
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
-     probabilistic_function;   
-     
+
+   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution
+     probabilistic_function;
+
    probabilistic_function.resize(2);
 
    probabilistic_function[0].first = 0.0;
    probabilistic_function[0].second = 1.0;
-   
+
    probabilistic_function[1].first = 1.0;
    probabilistic_function[1].second = 2.0;
 
@@ -134,28 +134,28 @@ TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution,
 		   sampleEnergy )
 {
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution;
 
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[0].second = 1.0;
-   
+
    energy_distribution[1].first = 2.0;
    energy_distribution[1].second = 2.0;
-   
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
-     probabilistic_function;   
-     
+
+   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution
+     probabilistic_function;
+
    probabilistic_function.resize(2);
 
    probabilistic_function[0].first = 0.0;
    probabilistic_function[0].second = 1.0;
-   
+
    probabilistic_function[1].first = 1.0;
    probabilistic_function[1].second = 2.0;
 

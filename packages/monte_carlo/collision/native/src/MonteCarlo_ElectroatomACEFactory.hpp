@@ -28,15 +28,15 @@ class ElectroatomACEFactory
 public:
 
   //! Create a electroatom core (using the provided atomic relaxation model)
-  static void createElectroatomCore( 
+  static void createElectroatomCore(
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<ElectroatomCore>& electroatom_core,
 	    const unsigned hash_grid_bins,
-        const BremsstrahlungAngularDistributionType 
+        const BremsstrahlungAngularDistributionType
                 photon_distribution_function,
 	    const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine = 0.999999 );
+        const double cutoff_angle_cosine = 1.0 );
 
   //! Create a electroatom (using the provided atomic relaxation model)
   static void createElectroatom(
@@ -46,10 +46,11 @@ public:
 	    const unsigned hash_grid_bins,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
-        const BremsstrahlungAngularDistributionType 
+        const BremsstrahlungAngularDistributionType
                 photon_distribution_function,
 	    const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine = 0.999999 );
+        const double cutoff_angle_cosine = 1.0 );
+
 private:
 
   // Constructor

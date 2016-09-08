@@ -31,35 +31,35 @@ TEUCHOS_UNIT_TEST( SurfaceInputValidator, validateSurface )
 {
   Teuchos::ParameterList valid_surface( "test/surface" );
   valid_surface.set( "type", "x cylinder" );
-  valid_surface.set<Teuchos::Array<double> >( "definition", 
+  valid_surface.set<Teuchos::Array<double> >( "definition",
 					      Teuchos::tuple( 1.0, 1.0, 1.0 ));
   valid_surface.set( "special attribute", "reflecting" );
-  
-  TEST_NOTHROW( Geometry::SurfaceInputValidator::validateSurface( 
+
+  TEST_NOTHROW( Geometry::SurfaceInputValidator::validateSurface(
 						      valid_surface,
 						      valid_surface.name() ) );
-  
+
   Teuchos::ParameterList invalid_surface_1( "test_surface" );
 
-  TEST_THROW( Geometry::SurfaceInputValidator::validateSurface( 
+  TEST_THROW( Geometry::SurfaceInputValidator::validateSurface(
 						    invalid_surface_1,
 						    invalid_surface_1.name() ),
 	      std::invalid_argument );
-  
+
   Teuchos::ParameterList invalid_surface_2( "test__surface" );
   invalid_surface_2.set( "type", "y cylinder" );
-  
-  TEST_THROW( Geometry::SurfaceInputValidator::validateSurface( 
+
+  TEST_THROW( Geometry::SurfaceInputValidator::validateSurface(
 						    invalid_surface_2,
 						    invalid_surface_2.name() ),
 	      std::invalid_argument );
 
   Teuchos::ParameterList invalid_surface_3;
   invalid_surface_3.set( "type", "z cylinder" );
-  invalid_surface_3.set<Teuchos::Array<double> >( "definition", 
+  invalid_surface_3.set<Teuchos::Array<double> >( "definition",
 						  Teuchos::tuple( 1.0 ) );
 
-  TEST_THROW( Geometry::SurfaceInputValidator::validateSurface( 
+  TEST_THROW( Geometry::SurfaceInputValidator::validateSurface(
 						    invalid_surface_3,
 						    invalid_surface_3.name() ),
 	      std::invalid_argument );
@@ -73,13 +73,13 @@ TEUCHOS_UNIT_TEST( SurfaceInputValidator, validateAllSurfaces )
 {
   // Read in the parameter list from the xml file
   Teuchos::ParameterList surfaces( "surfaces" );
-  
-  Teuchos::updateParametersFromXmlFile( test_xml_file_name, 
+
+  Teuchos::updateParametersFromXmlFile( test_xml_file_name,
 					Teuchos::inoutArg( surfaces ) );
-  
+
   // Validate the surfaces
   TEST_NOTHROW( Geometry::SurfaceInputValidator::validateAllSurfaces(surfaces) );
-  
+
   // Print the parameter list
   surfaces.print();
 }

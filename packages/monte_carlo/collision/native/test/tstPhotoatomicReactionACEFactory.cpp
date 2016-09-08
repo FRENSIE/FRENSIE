@@ -35,7 +35,7 @@ Teuchos::RCP<MonteCarlo::PhotoatomicReaction> reaction;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an incoherent reaction without Doppler data can be created
-TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 		   createIncoherentReaction_no_doppler )
 {
   MonteCarlo::PhotoatomicReactionACEFactory::createIncoherentReaction(
@@ -51,11 +51,11 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
 		       exp( -1.381551055796E+01 ) );
-  
+
   // Test that the stored cross section is correct
-  double cross_section = 
+  double cross_section =
     reaction->getCrossSection(exp( -1.381551055796E+01 ));
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
   cross_section = reaction->getCrossSection(exp( -1.364234411496E+01 ));
@@ -88,11 +88,11 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
 		       exp( -1.381551055796E+01 ) );
-  
+
   // Test that the stored cross section is correct
-  double cross_section = 
+  double cross_section =
     reaction->getCrossSection(exp( -1.381551055796E+01 ));
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
   cross_section = reaction->getCrossSection(exp( -1.364234411496E+01 ));
@@ -109,9 +109,9 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   MonteCarlo::ParticleBank bank;
-  
+
   reaction->react( photon, bank, shell_of_interaction );
 
   TEST_ASSERT( shell_of_interaction != Data::UNKNOWN_SUBSHELL );
@@ -142,9 +142,9 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory, createCoherentReaction )
     reaction->getCrossSection( exp(-1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
-  
+
   cross_section = reaction->getCrossSection( exp( -1.364234411496E+01 ) );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
 
   cross_section = reaction->getCrossSection( exp( 1.151292546497E+01 ) );
@@ -157,7 +157,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory, createCoherentReaction )
 
 //---------------------------------------------------------------------------//
 // Check that a basic pair production reaction can be created
-TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 		   createPairProductionReaction_basic )
 {
   MonteCarlo::PhotoatomicReactionACEFactory::createPairProductionReaction(
@@ -170,11 +170,11 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
 		       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
 		       exp( 2.480967890857E-02 ) );
 
   // Test that the stored cross section is correct
-  double cross_section = 
+  double cross_section =
     reaction->getCrossSection( reaction->getThresholdEnergy() );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
@@ -186,7 +186,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
   cross_section = reaction->getCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
-  
+
   // Clear the reaction
   reaction.reset();
 }
@@ -196,7 +196,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 // TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 // 		   createPairProductionReaction_detailed )
 // {
-  
+
 // }
 
 //---------------------------------------------------------------------------//
@@ -221,7 +221,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
     reaction->getCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-    
+
   cross_section = reaction->getCrossSection( exp( -1.214969212306E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
@@ -254,29 +254,29 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
   TEST_EQUALITY_CONST( reactions.size(), 24 );
 
   // Test the first shell's reaction properties
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   reactions.front()->getReactionType(),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
 		       exp( -2.427128314806E+00 ) );
 
   // Test the first shell's stored cross section is correct
-  double cross_section = 
+  double cross_section =
     reactions.front()->getCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-  
-  cross_section = 
+
+  cross_section =
     reactions.front()->getCrossSection( exp( -2.427128314806E+00 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 7.578565567350E+00 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     reactions.front()->getCrossSection( exp( -2.406201463890E+00 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 7.527375050980E+00 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     reactions.front()->getCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.135387253512E+01 ), 1e-12 );
@@ -288,22 +288,22 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
   TEST_EQUALITY_CONST( reactions.back()->getThresholdEnergy(),
 		       exp( -1.214969212306E+01 ) );
 
-  cross_section = 
+  cross_section =
     reactions.back()->getCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section = 
+  cross_section =
     reactions.back()->getCrossSection( exp( -1.214969212306E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     reactions.back()->getCrossSection( exp( -1.214665892126E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.718675283782E+01 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     reactions.back()->getCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -2.364731020721E+01 ), 1e-12 );
@@ -330,7 +330,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory, createHeatingReaction )
     reaction->getCrossSection( exp( -1.381551055796E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.916958825662E-07, 1e-12 );
-    
+
   cross_section = reaction->getCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.999864243970E+04, 1e-12 );
@@ -355,24 +355,24 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-    xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
+    xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -381,7 +381,7 @@ int main( int argc, char** argv )
     energy_grid.deepCopy( xss_data_extractor->extractPhotonEnergyGrid() );
 
     // Create the hash-based grid searcher
-    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>( 
+    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>(
 					     energy_grid,
 					     energy_grid[0],
 					     energy_grid[energy_grid.size()-1],
@@ -390,7 +390,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

@@ -20,23 +20,23 @@
 #include "Data_ENDFFissionYieldsFileHandler.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Variables 
+// Testing Variables
 //---------------------------------------------------------------------------//
- 
+
 std::string test_endf_file_name, zaid_name_input;
 Teuchos::RCP<Data::ENDFFissionYieldsFileHandler> file_handler;
 
 //---------------------------------------------------------------------------//
-// Tests 
+// Tests
 //---------------------------------------------------------------------------//
 // Check read ENDF Fission Yields Header
 TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getZaid )
 {
     int zaid_name;
- 
+
     std::istringstream iss( zaid_name_input );
     iss >> zaid_name;
- 
+
     file_handler.reset( new Data::ENDFFissionYieldsFileHandler( test_endf_file_name.c_str(), zaid_name ));
 
     TEST_COMPARE( file_handler->getZaid(), ==, 92235 );
@@ -44,9 +44,9 @@ TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getZaid )
 
 TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getEnergyIndependentYields )
 {
-    TEST_FLOATING_EQUALITY(file_handler->getEnergyIndependentYields()[0], 0.0253 , 1e-15 ) 
-    TEST_FLOATING_EQUALITY(file_handler->getEnergyIndependentYields()[1], 0.5e6 , 1e-15 ) 
-    TEST_FLOATING_EQUALITY(file_handler->getEnergyIndependentYields()[2], 14e6 , 1e-15 ) 
+    TEST_FLOATING_EQUALITY(file_handler->getEnergyIndependentYields()[0], 0.0253 , 1e-15 )
+    TEST_FLOATING_EQUALITY(file_handler->getEnergyIndependentYields()[1], 0.5e6 , 1e-15 )
+    TEST_FLOATING_EQUALITY(file_handler->getEnergyIndependentYields()[2], 14e6 , 1e-15 )
 }
 
 TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getZaidFissionProductsIndependentYields )
@@ -115,9 +115,9 @@ TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getStdYieldFissionProductsIndep
 
 TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getEnergyCumulativeYields )
 {
-    TEST_FLOATING_EQUALITY(file_handler->getEnergyCumulativeYields()[0], 0.0253 , 1e-15 ) 
-    TEST_FLOATING_EQUALITY(file_handler->getEnergyCumulativeYields()[1], 0.5e6 , 1e-15 ) 
-    TEST_FLOATING_EQUALITY(file_handler->getEnergyCumulativeYields()[2], 14e6 , 1e-15 ) 
+    TEST_FLOATING_EQUALITY(file_handler->getEnergyCumulativeYields()[0], 0.0253 , 1e-15 )
+    TEST_FLOATING_EQUALITY(file_handler->getEnergyCumulativeYields()[1], 0.5e6 , 1e-15 )
+    TEST_FLOATING_EQUALITY(file_handler->getEnergyCumulativeYields()[2], 14e6 , 1e-15 )
 }
 
 TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getZaidFissionProductsCumulativeYields )
@@ -185,12 +185,12 @@ TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getStdYieldFissionProductsCumul
 }
 
 //---------------------------------------------------------------------------//
-// Custom Main Function 
+// Custom Main Function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
    Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-   
+
    clp.setOption( "test_endf_file",
                   &test_endf_file_name,
                   "Test file for checking ENDF fission yields helpers." );
@@ -203,7 +203,7 @@ int main( int argc, char** argv )
    return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 
- 
+
 //---------------------------------------------------------------------------//
-// end tstEndfFissionYieldsHelpers.cpp 
+// end tstEndfFissionYieldsHelpers.cpp
 //---------------------------------------------------------------------------//

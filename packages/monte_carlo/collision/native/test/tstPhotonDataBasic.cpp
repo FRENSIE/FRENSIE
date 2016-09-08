@@ -86,10 +86,10 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getAtomicNumber )
 						 ENERGY_MIN,
 						 ENERGY_MAX );
 
-  TEST_EQUALITY_CONST( test_photon_data_basic.getAtomicNumber(), 
+  TEST_EQUALITY_CONST( test_photon_data_basic.getAtomicNumber(),
 		       ATOMIC_NUMBER );
 }
-  
+
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct atomic weight
 TEUCHOS_UNIT_TEST( PhotonDataBasic, getAtomicWeight )
@@ -103,7 +103,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getAtomicWeight )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonDataBasic class returns the correct coherent cross 
+// Check that the PhotonDataBasic class returns the correct coherent cross
 // section
 TEUCHOS_UNIT_TEST( PhotonDataBasic, getCoherentCrossSection )
 {
@@ -111,9 +111,9 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getCoherentCrossSection )
 						 ENERGY_MIN,
 						 ENERGY_MAX );
 
-  double coherent_cross_section = 
+  double coherent_cross_section =
     test_photon_data_basic.getCoherentCrossSection( ENERGY );
-  
+
   TEST_FLOATING_EQUALITY( coherent_cross_section,
 			  COHERENT_CROSS_SECTION_REF,
 			  TOL );
@@ -127,8 +127,8 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getFormFactorCDF )
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
 						 ENERGY_MAX );
-    
-  double form_factor_cdf = 
+
+  double form_factor_cdf =
     test_photon_data_basic.getFormFactorCDF( ARGUMENT );
 
   TEST_FLOATING_EQUALITY( form_factor_cdf,
@@ -137,15 +137,15 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getFormFactorCDF )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonDataBasic class returns the correct form factor 
+// Check that the PhotonDataBasic class returns the correct form factor
 // argument value
 TEUCHOS_UNIT_TEST( PhotonDataBasic, getFormFactorArgument )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
 						 ENERGY_MAX );
-    
-  double form_factor_argument = 
+
+  double form_factor_argument =
     test_photon_data_basic.getFormFactorArgument( CDF_VALUE );
 
   TEST_FLOATING_EQUALITY( form_factor_argument,
@@ -161,8 +161,8 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getIncoherentCrossSection )
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
 						 ENERGY_MAX );
-  
-  double incoherent_cross_section = 
+
+  double incoherent_cross_section =
     test_photon_data_basic.getIncoherentCrossSection( ENERGY );
 
   TEST_FLOATING_EQUALITY( incoherent_cross_section,
@@ -178,17 +178,17 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getScatteringFunction )
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
 						 ENERGY_MAX );
-  
-  double scattering_function_value = 
+
+  double scattering_function_value =
     test_photon_data_basic.getScatteringFunction( ARGUMENT );
 
   TEST_FLOATING_EQUALITY( scattering_function_value,
 			  SCATTERING_FUNCTION_REF,
 			  TOL );
 
-  scattering_function_value = 
+  scattering_function_value =
     test_photon_data_basic.getScatteringFunction( ARGUMENT_2 );
-  
+
   TEST_EQUALITY( scattering_function_value, 0.0 );
 }
 
@@ -200,8 +200,8 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getPhotoelectricCrossSection )
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
 						 ENERGY_MAX );
-  
-  double photoelectric_cross_section = 
+
+  double photoelectric_cross_section =
     test_photon_data_basic.getPhotoelectricCrossSection( ENERGY );
 
   TEST_FLOATING_EQUALITY( photoelectric_cross_section,
@@ -210,15 +210,15 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getPhotoelectricCrossSection )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonDataBasic class returns the correct pair production 
+// Check that the PhotonDataBasic class returns the correct pair production
 // cross section
 TEUCHOS_UNIT_TEST( PhotonDataBasic, getPairProductionCrossSection )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
 						 ENERGY_MAX );
-  
-  double pair_production_cross_section = 
+
+  double pair_production_cross_section =
     test_photon_data_basic.getPairProductionCrossSection( ENERGY );
 
   TEST_FLOATING_EQUALITY( pair_production_cross_section,
@@ -228,15 +228,15 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getPairProductionCrossSection )
 
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonDataBasic class returns the correct triplet production 
+// Check that the PhotonDataBasic class returns the correct triplet production
 // cross section
 TEUCHOS_UNIT_TEST( PhotonDataBasic, getTripletProductionCrossSection )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
 						 ENERGY_MAX );
-  
-  double triplet_production_cross_section = 
+
+  double triplet_production_cross_section =
     test_photon_data_basic.getTripletProductionCrossSection( ENERGY );
 
   TEST_FLOATING_EQUALITY( triplet_production_cross_section,
@@ -251,8 +251,8 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getTotalCrossSection )
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
 						 ENERGY_MAX );
-  
-  double total_cross_section = 
+
+  double total_cross_section =
     test_photon_data_basic.getTotalCrossSection( ENERGY );
 
   TEST_FLOATING_EQUALITY( total_cross_section,
@@ -268,8 +268,8 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, getNonabsorptionProbability )
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
 						 ENERGY_MAX );
-  
-  double nonabsorption_probability = 
+
+  double nonabsorption_probability =
     test_photon_data_basic.getNonabsorptionProbability( ENERGY );
 
   TEST_FLOATING_EQUALITY( nonabsorption_probability,

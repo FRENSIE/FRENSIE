@@ -25,7 +25,7 @@ namespace MonteCarlo{
  */
 class ParticleSubtrackEndingGlobalEventDispatcher : public ParticleGlobalEventDispatcher<ParticleSubtrackEndingGlobalEventObserver>
 {
-  
+
 public:
 
   //! Constructor

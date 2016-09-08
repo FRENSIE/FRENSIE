@@ -8,7 +8,7 @@
 //---------------------------------------------------------------------------//
 
 #ifndef UTILITY_EVAPORATION_DISTRIBUTION_DEF_HPP
-#define UTILITY_EVAPORATION_DISTRIBUTION_DEF_HPP 
+#define UTILITY_EVAPORATION_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_RandomNumberGenerator.hpp"
@@ -30,7 +30,7 @@ template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantityA,
 	 typename InputIndepQuantityB,
 	 typename InputIndepQuantityC>
-UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvaporationDistribution( 
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvaporationDistribution(
 				 const InputIndepQuantityA incident_energy,
 				 const InputIndepQuantityB nuclear_temperature,
 				 const InputIndepQuantityC restriction_energy,
@@ -47,9 +47,9 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   testPrecondition( !QuantityTraits<InputIndepQuantityC>::isnaninf( restriction_energy ) );
   testPrecondition( !QT::isnaninf( constant_multiplier ) );
   // Make sure that incident energy and nuclear temperature are positive
-  testPrecondition( incident_energy > 
+  testPrecondition( incident_energy >
 		    QuantityTraits<InputIndepQuantityA>::zero() );
-  testPrecondition( nuclear_temperature > 
+  testPrecondition( nuclear_temperature >
 		    QuantityTraits<InputIndepQuantityB>::zero() );
   // Make sure that the constant multiplier is positive
   testPrecondition( constant_multiplier > 0.0 );
@@ -59,10 +59,10 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
 }
 
 // Copy constructor
-/*! \details Just like boost::units::quantity objects, the unit-aware 
+/*! \details Just like boost::units::quantity objects, the unit-aware
  * distribution can be explicitly cast to a distribution with compatible
  * units. If the units are not compatible, this function will not compile. Note
- * that this allows distributions to be scaled safely (unit conversions 
+ * that this allows distributions to be scaled safely (unit conversions
  * are completely taken care of by boost::units)!
  */
 template<typename IndependentUnit, typename DependentUnit>
@@ -114,14 +114,14 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
-/*! \details Constructing a unit-aware distribution from a unitless 
+/*! \details Constructing a unit-aware distribution from a unitless
  * distribution is potentially dangerous. By forcing users to construct objects
  * using this method instead of a standard constructor we are trying to make
- * sure users are aware of the danger. This is designed to mimic the interface 
- * of the boost::units::quantity, which also has to deal with this issue. 
+ * sure users are aware of the danger. This is designed to mimic the interface
+ * of the boost::units::quantity, which also has to deal with this issue.
  */
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> 
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareEvaporationDistribution<void,void>& unitless_distribution )
 {
   return ThisType( unitless_distribution, 0 );
@@ -129,7 +129,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromUnitlessDis
 
 // Assignment operator
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>& 
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>&
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::operator=(
    const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
@@ -149,14 +149,14 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::operator=(
     d_multiplier = dist_instance.d_multiplier;
     d_norm_constant = dist_instance.d_norm_constant;
   }
-  
+
   return *this;
 }
 
 // Evaluate the distribution
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::DepQuantity
-UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::evaluate( 
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::evaluate(
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < IQT::zero() )
@@ -173,7 +173,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::evaluate(
  */
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity
-UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::evaluatePDF( 
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
 const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   return this->evaluate( indep_var_value )*d_norm_constant;
@@ -201,7 +201,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sample(
 
   return ThisType::sampleAndRecordTrials( incident_energy,
 					  nuclear_temperature,
-					  restriction_energy, 
+					  restriction_energy,
 					  trials );
 }
 
@@ -232,11 +232,11 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecord
   // Make sure that incident energy and nuclear temperature are positive
   testPrecondition( incident_energy > IQT::zero() );
   testPrecondition( nuclear_temperature > IQT::zero() );
-  
+
   double random_number_1, random_number_2;
   IndepQuantity sample;
-  
-  double argument = 1.0 - exp( -(incident_energy - restriction_energy) 
+
+  double argument = 1.0 - exp( -(incident_energy - restriction_energy)
     / nuclear_temperature );
 
   // Use the method outlined in LA-UR-14-27694
@@ -244,18 +244,18 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecord
   {
     // Increment the trials counter
     ++trials;
-    
+
     random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
     random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
-    
-    sample = - nuclear_temperature 
+
+    sample = - nuclear_temperature
       * log( (1.0 - argument * random_number_1) * (1.0 - argument * random_number_2) );
-  
+
     if( sample <= (incident_energy - restriction_energy) )
       break;
   }
 
-  return sample;  
+  return sample;
 }
 
 // Calculate the normalization constant of the distribution
@@ -291,7 +291,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getLowerBoundOf
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType 
+OneDDistributionType
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -308,8 +308,8 @@ bool UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::isContinuo
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_incident_energy ) 
-     << "," << getRawQuantity( d_nuclear_temperature ) 
+  os << "{" << getRawQuantity( d_incident_energy )
+     << "," << getRawQuantity( d_nuclear_temperature )
      << "," << getRawQuantity( d_restriction_energy );
 
   // Only print the multiplier when a scaling has been done
@@ -327,7 +327,7 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
   std::string dist_rep;
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
-  
+
   Teuchos::Array<std::string> distribution;
   try{
     distribution = Teuchos::fromStringToArray<std::string>( dist_rep );
@@ -338,17 +338,17 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
                         "constructed because the representation is not valid "
                         "(see details below)!\n" );
     message += error.what();
-    
+
     throw InvalidDistributionStringRepresentation( message );
   }
-  
+
   TEST_FOR_EXCEPTION( distribution.size() > 4,
                      InvalidDistributionStringRepresentation,
                      "Error: the Evaporation distribution cannot "
                      "be constructed because the representation is "
                      "not valid"
                      "(only 4 values or fewer  may be specified)!" );
-  
+
   // Set the incient neutron energy
   if( distribution.size() > 0 )
   {
@@ -360,19 +360,19 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
 			<< distribution[0] );
     {
       double incident_energy;
-      
+
       std::istringstream iss( distribution[0] );
       Teuchos::extractDataFromISS( iss, incident_energy );
-      
+
       setQuantity( d_incident_energy, incident_energy );
     }
-  
+
     TEST_FOR_EXCEPTION( IQT::isnaninf( d_incident_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Evaporation distribution cannot be "
 			"constructed because of an invalid incident energy "
 			<< d_incident_energy );
-    
+
     TEST_FOR_EXCEPTION( d_incident_energy < IQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Evaporation distribution cannot be "
@@ -391,27 +391,27 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
 			<< distribution[1] );
     {
       double nuclear_temperature;
-      
+
       std::istringstream iss( distribution[1] );
       Teuchos::extractDataFromISS( iss, nuclear_temperature );
-      
+
       setQuantity( d_nuclear_temperature, nuclear_temperature );
     }
-    
+
     TEST_FOR_EXCEPTION(IQT::isnaninf( d_nuclear_temperature ),
 		       InvalidDistributionStringRepresentation,
 		       "Error: the Evaporation distribution cannot be "
 		       "constructed because of an invalid nuclear temperature "
 		       << d_nuclear_temperature );
-    
+
     TEST_FOR_EXCEPTION(d_nuclear_temperature <= IQT::zero(),
 		       InvalidDistributionStringRepresentation,
 		       "Error: the Evaporation distribution cannot be "
 		       "constructed because of an invalid nuclear temperature "
 		       << d_nuclear_temperature );
-    
+
   }
-  
+
   // Set the restriction energy
   if( distribution.size() > 2 )
   {
@@ -423,13 +423,13 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
 		       << distribution[2] );
     {
       double restriction_energy;
-      
+
       std::istringstream iss( distribution[2] );
       Teuchos::extractDataFromISS( iss, restriction_energy );
-      
+
       setQuantity( d_restriction_energy, restriction_energy );
     }
-    
+
     TEST_FOR_EXCEPTION( IQT::isnaninf( d_restriction_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Evaporation distribution cannot be "
@@ -454,21 +454,21 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
 
       setQuantity( d_multiplier, multiplier );
     }
-    
+
     TEST_FOR_EXCEPTION( DMQT::isnaninf( d_multiplier ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Evaporation distribution cannot be "
 			"constructed because of an invalid multiplier "
 			<< getRawQuantity( d_multiplier ) );
   }
-  
+
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
 }
 
 // Method for testing if two objects are equivalent
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::isEqual( 
+bool UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::isEqual(
 const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_incident_energy == other.d_incident_energy &&
@@ -479,7 +479,7 @@ const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>& other ) c
 
 } // end Utility namespace
 
-#endif // end UTILITY_EVAPORATION_DISTRIBUTION_DEF_HPP 
+#endif // end UTILITY_EVAPORATION_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_EvaporationDistribution_def.hpp

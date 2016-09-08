@@ -49,20 +49,20 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
   testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( min_indep_limit ) );
   testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( max_indep_limit ) );
   // Make sure the polynomial can be used for sampling
-  testPrecondition( ThisType::isValidSamplingDistribution( 
+  testPrecondition( ThisType::isValidSamplingDistribution(
 					  coefficients,
 					  IndepQuantity( min_indep_limit ),
 					  IndepQuantity( max_indep_limit ) ) );
 
-  this->initializeDistribution( IndepQuantity( min_indep_limit ), 
+  this->initializeDistribution( IndepQuantity( min_indep_limit ),
 				IndepQuantity( max_indep_limit ) );
 }
 
 // Copy constructor
-/*! \details Just like boost::units::quantity objects, the unit-aware 
+/*! \details Just like boost::units::quantity objects, the unit-aware
  * distribution can be explicitly cast to a distribution with compatible
  * units. If the units are not compatible, this function will not compile. Note
- * that this allows distributions to be scaled safely (unit conversions 
+ * that this allows distributions to be scaled safely (unit conversions
  * are completely taken care of by boost::units)!
  */
 template<typename IndependentUnit, typename DependentUnit>
@@ -92,17 +92,17 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
   for( unsigned i = 0u; i < d_coefficients.size(); ++i )
   {
     d_coefficients[i] = dist_instance.d_coefficients[i]*coeff_scale_factor;
-      
+
     coeff_scale_factor /=
       getRawQuantity(IndepQuantity(QuantityTraits<InputIndepQuantity>::one()));
   }
 
-  IndepQuantity min_indep_limit( 
-    QuantityTraits<InputIndepQuantity>::initializeQuantity( 
+  IndepQuantity min_indep_limit(
+    QuantityTraits<InputIndepQuantity>::initializeQuantity(
 	    dist_instance.d_indep_limits_to_series_powers_p1.front().first ) );
 
   IndepQuantity max_indep_limit(
-    QuantityTraits<InputIndepQuantity>::initializeQuantity( 
+    QuantityTraits<InputIndepQuantity>::initializeQuantity(
 	   dist_instance.d_indep_limits_to_series_powers_p1.front().second ) );
 
   this->initializeDistribution( min_indep_limit, max_indep_limit );
@@ -112,7 +112,7 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynomialDistribution(
 	       const UnitAwarePolynomialDistribution<void,void>& dist_instance,
-	       int ) 
+	       int )
   : d_coefficients( dist_instance.d_coefficients ),
     d_term_sampling_cdf( dist_instance.d_term_sampling_cdf ),
     d_indep_limits_to_series_powers_p1(
@@ -127,15 +127,15 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
-/*! \details Constructing a unit-aware distribution from a unitless 
+/*! \details Constructing a unit-aware distribution from a unitless
  * distribution is potentially dangerous. By forcing users to construct objects
  * using this method instead of a standard constructor we are trying to make
- * sure users are aware of the danger. This is designed to mimic the interface 
- * of the boost::units::quantity, which also has to deal with this issue. 
+ * sure users are aware of the danger. This is designed to mimic the interface
+ * of the boost::units::quantity, which also has to deal with this issue.
  */
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit> 
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( 
+UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>
+UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution(
       const UnitAwarePolynomialDistribution<void,void>& unitless_distribution )
 {
   return ThisType( unitless_distribution, 0 );
@@ -143,8 +143,8 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromUnitlessDist
 
 // Assignment operator
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>& 
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::operator=( 
+UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>&
+UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::operator=(
   const UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
   // Make sure there is at least one term
@@ -168,14 +168,14 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::operator=(
 // Evaluate the distribution
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::DepQuantity
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::evaluate( 
+UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::evaluate(
 const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   double raw_indep_var_value = getRawQuantity( indep_var_value );
-  
+
   if( raw_indep_var_value < d_indep_limits_to_series_powers_p1.front().first )
     return DQT::zero();
-  else if( raw_indep_var_value > 
+  else if( raw_indep_var_value >
 	   d_indep_limits_to_series_powers_p1.front().second )
     return DQT::zero();
   else
@@ -197,7 +197,7 @@ const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::I
 // Evaluate the PDF
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::evaluatePDF( 
+UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
  const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value) const
 {
   return this->evaluate( indep_var_value )*d_norm_constant;
@@ -213,13 +213,13 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   double random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
 
-  unsigned sampled_term = 
+  unsigned sampled_term =
     Search::binaryUpperBoundIndex( d_term_sampling_cdf.begin(),
 				   d_term_sampling_cdf.end(),
 				   random_number_1 );
 
   double argument = RandomNumberGenerator::getRandomNumber<double>()*
-    (d_indep_limits_to_series_powers_p1[sampled_term].second - 
+    (d_indep_limits_to_series_powers_p1[sampled_term].second -
      d_indep_limits_to_series_powers_p1[sampled_term].first) +
     d_indep_limits_to_series_powers_p1[sampled_term].first;
 
@@ -263,7 +263,7 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfI
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType 
+OneDDistributionType
 UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return UnitAwarePolynomialDistribution::distribution_type;
@@ -299,7 +299,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
 		      InvalidDistributionStringRepresentation,
 		      "Error: the input stream is not a valid polynomial "
 		      "distribution representation!" );
-  
+
   std::string coeffs_rep;
   std::getline( is, coeffs_rep, '}' );
   coeffs_rep += '}';
@@ -324,17 +324,17 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
 			      "Error: the polynomial distribution cannot be "
 			      "constructed because the representation is not "
 			      "valid (see details below)!\n" );
-  
+
   // Read the ","
   std::string separator;
   std::getline( is, separator, ',' );
-  
+
   // Read the rest of the values
   std::string limits_rep( "{" );
   std::string raw_limits_rep;
   std::getline( is, raw_limits_rep, '}' );
   raw_limits_rep += '}';
-  
+
   limits_rep += raw_limits_rep;
 
   try{
@@ -348,7 +348,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   Teuchos::Array<double> independent_limits;
   try{
-    independent_limits = 
+    independent_limits =
       Teuchos::fromStringToArray<double>( limits_rep );
   }
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
@@ -356,7 +356,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
 			      "Error: the polynomial distribution cannot be "
 			      "constructed because the representation is not "
 			      "valid (see details below)!\n" );
-    
+
   TEST_FOR_EXCEPTION( independent_limits.size() != 2,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the polynomial distribution cannot be "
@@ -364,7 +364,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
 		      "given - "
 		      << independent_limits.size() << " limits were given "
 		      << independent_limits << "!" );
-  
+
   TEST_FOR_EXCEPTION( independent_limits[0] >= independent_limits[1],
 		      InvalidDistributionStringRepresentation,
 		      "Error: the polynomial distribution cannot be "
@@ -373,7 +373,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
 		      << independent_limits[1] << ")!" );
 
   // Make sure the distribution is valid for sampling
-  TEST_FOR_EXCEPTION( !ThisType::isValidSamplingDistribution( 
+  TEST_FOR_EXCEPTION( !ThisType::isValidSamplingDistribution(
 			    d_coefficients,
 			    IQT::initializeQuantity( independent_limits[0] ),
 			    IQT::initializeQuantity( independent_limits[1] ) ),
@@ -382,14 +382,14 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
 		      "a positive functions and can therefor not be used for "
 		      "sampling!" );
 
-  this->initializeDistribution( 
+  this->initializeDistribution(
 			    IQT::initializeQuantity( independent_limits[0] ),
 			    IQT::initializeQuantity( independent_limits[1] ) );
 }
 
 // Method for testing if two objects are equivalent
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isEqual( 
+bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isEqual(
  const UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_coefficients == other.d_coefficients &&
@@ -401,7 +401,7 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isEqual(
 
 // Initialize the distribution
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::initializeDistribution(		            
+void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
  const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity min_indep_limit,
  const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_limit )
 {
@@ -411,9 +411,9 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::initializeD
 
   for( unsigned i = 0; i < d_coefficients.size(); ++i )
   {
-    d_indep_limits_to_series_powers_p1[i].first = 
+    d_indep_limits_to_series_powers_p1[i].first =
       min_indep_limit_to_term_power_p1;
-    d_indep_limits_to_series_powers_p1[i].second = 
+    d_indep_limits_to_series_powers_p1[i].second =
       max_indep_limit_to_term_power_p2;
 
     min_indep_limit_to_term_power_p1 *= getRawQuantity( max_indep_limit );
@@ -422,7 +422,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::initializeD
 
   // Calculate the norm constant and the term sampling cdf
   d_term_sampling_cdf.resize( d_coefficients.size() );
-  
+
   for( unsigned i = 0; i < d_coefficients.size(); ++i )
   {
     d_term_sampling_cdf[i] = d_coefficients[i]/(i+1u)*
@@ -444,7 +444,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::initializeD
   // Check for round-off error
   if( fabs( d_term_sampling_cdf.back() - 1.0 ) < 1e-9 )
     d_term_sampling_cdf.back() = 1.0;
-  
+
   // Make sure the term sampling cdf has been constructed correctly
   testPostcondition( d_term_sampling_cdf.back() == 1.0 );
 }
@@ -458,7 +458,7 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isValidSamp
   const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_limit )
 {
   bool valid = true;
-  
+
   // There must be at least one term
   if( coefficients.size() == 0 )
     valid = false;
@@ -467,19 +467,19 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isValidSamp
   Teuchos::Array<double>::const_iterator element, end;
   element = coefficients.begin();
   end = coefficients.end();
-  
+
   while( element != end )
   {
     if( *element != 0.0 )
       break;
-    
+
     ++element;
   }
 
   // All terms are zero
   if( element == end )
     valid = false;
-  
+
   // The term coefficients must all have the same sign (sign of limits)
   if( min_indep_limit < IQT::zero() &&
       max_indep_limit > IQT::zero() )

@@ -73,7 +73,7 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, setNumberOfSourceSamplingTrials )
 
   file_handler.setNumberOfSourceSamplingTrials( 0, 10000ull );
   file_handler.setNumberOfSourceSamplingTrials( 1, 1001ull );
-  
+
   TEST_EQUALITY_CONST( file_handler.getNumberOfSourceSamplingTrials( 0 ),
                        10000ull );
   TEST_EQUALITY_CONST( file_handler.getNumberOfSourceSamplingTrials( 1 ),
@@ -82,14 +82,14 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, setNumberOfSourceSamplingTrials )
 
 //---------------------------------------------------------------------------//
 // Check that default source trials can be set
-TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, 
+TEUCHOS_UNIT_TEST( SourceHDF5FileHandler,
                    setNumberOfDefaultSourceSamplingTrials )
 {
   MonteCarlo::SourceHDF5FileHandler file_handler( hdf5_file_name );
 
   file_handler.setNumberOfDefaultSourceSamplingTrials( 100000ull );
-  
-  
+
+
   TEST_EQUALITY_CONST( file_handler.getNumberOfDefaultSourceSamplingTrials(),
                        100000ull );
 }
@@ -102,7 +102,7 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, setNumberOfSourceSamples )
 
   file_handler.setNumberOfSourceSamples( 0, 10000ull );
   file_handler.setNumberOfSourceSamples( 1, 1001ull );
-  
+
   TEST_EQUALITY_CONST( file_handler.getNumberOfSourceSamples( 0 ), 10000ull );
   TEST_EQUALITY_CONST( file_handler.getNumberOfSourceSamples( 1 ), 1001ull );
 }
@@ -114,8 +114,8 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, setNumberOfDefaultSourceSamples )
   MonteCarlo::SourceHDF5FileHandler file_handler( hdf5_file_name );
 
   file_handler.setNumberOfDefaultSourceSamples( 100001ull );
-  
-  
+
+
   TEST_EQUALITY_CONST( file_handler.getNumberOfDefaultSourceSamples(),
                        100001ull );
 }
@@ -136,7 +136,7 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, doesSourceExist )
   TEST_ASSERT( file_handler.doesSourceExist( 0 ) );
   TEST_ASSERT( file_handler.doesSourceExist( 1 ) );
   TEST_ASSERT( !file_handler.doesSourceExist( 2 ) );
-  
+
 }
 
 //---------------------------------------------------------------------------//

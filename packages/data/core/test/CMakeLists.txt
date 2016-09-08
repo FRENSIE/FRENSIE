@@ -1,0 +1,5 @@
+ADD_EXECUTABLE(tstCrossSectionsXMLProperties
+  tstCrossSectionsXMLProperties.cpp)
+TARGET_LINK_LIBRARIES(tstCrossSectionsXMLProperties data_core)
+ADD_TEST(CrossSectionsXMLProperties_test tstCrossSectionsXMLProperties --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST CrossSectionsXMLProperties_test PROPERTY LABELS data_core)

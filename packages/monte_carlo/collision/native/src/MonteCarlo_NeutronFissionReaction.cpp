@@ -27,7 +27,7 @@ NeutronFissionReaction::NeutronFissionReaction(
 		   fission_neutron_multiplicity_distribution,
 		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
 		   prompt_neutron_emission_distribution )
-  : NuclearReaction( reaction_type, 
+  : NuclearReaction( reaction_type,
 		     temperature,
 		     q_value,
 		     threshold_energy_index,
@@ -42,29 +42,29 @@ NeutronFissionReaction::NeutronFissionReaction(
 }
 
 // Return the number of neutrons emitted from the rxn at the given energy
-unsigned NeutronFissionReaction::getNumberOfEmittedNeutrons( 
+unsigned NeutronFissionReaction::getNumberOfEmittedNeutrons(
 						    const double energy ) const
 {
   double average_multiplicity = getAverageNumberOfEmittedNeutrons( energy );
 
   return sampleNumberOfEmittedNeutrons( average_multiplicity );
 }
-  
+
 // Return the number of prompt neutrons emitted from the rxn
-unsigned NeutronFissionReaction::getNumberOfPromptNeutrons( 
+unsigned NeutronFissionReaction::getNumberOfPromptNeutrons(
 						    const double energy ) const
 {
-  double average_prompt_multiplicity = 
+  double average_prompt_multiplicity =
     getAverageNumberOfPromptNeutrons( energy );
 
   return sampleNumberOfEmittedNeutrons( average_prompt_multiplicity );
 }
 
 // Return the number of delayed neutrons emitted from the rxn
-unsigned NeutronFissionReaction::getNumberOfDelayedNeutrons( 
+unsigned NeutronFissionReaction::getNumberOfDelayedNeutrons(
 						    const double energy ) const
 {
-  double average_delayed_multiplicity = 
+  double average_delayed_multiplicity =
     getAverageNumberOfDelayedNeutrons( energy );
 
   return sampleNumberOfEmittedNeutrons( average_delayed_multiplicity );
@@ -74,7 +74,7 @@ unsigned NeutronFissionReaction::getNumberOfDelayedNeutrons(
 /*! \details This will only sample prompt neutrons since there is no outgoing
  * energy distribution to use for the delayed neutrons.
  */
-void NeutronFissionReaction::react( NeutronState& neutron, 
+void NeutronFissionReaction::react( NeutronState& neutron,
 				    ParticleBank& bank ) const
 {
   reactImplementation( neutron, bank, true );
@@ -85,15 +85,15 @@ void NeutronFissionReaction::react( NeutronState& neutron,
  * energy distribution to use for the delayed neutrons. This function should
  * be used by derived classes to sample the prompt neutrons.
  */
-void NeutronFissionReaction::reactImplementation( 
-				  NeutronState& neutron, 
+void NeutronFissionReaction::reactImplementation(
+				  NeutronState& neutron,
 				  ParticleBank& bank,
 				  const bool increment_collision_number ) const
 {
   if( increment_collision_number )
     neutron.incrementCollisionNumber();
 
-  int num_prompt_neutrons = 
+  int num_prompt_neutrons =
     this->getNumberOfPromptNeutrons( neutron.getEnergy() );
 
   // Create the additional prompt neutrons
@@ -102,13 +102,13 @@ void NeutronFissionReaction::reactImplementation(
     Teuchos::RCP<NeutronState> new_neutron(
 				    new NeutronState( neutron, true, false ) );
 
-    d_prompt_neutron_emission_distribution->scatterParticle( 
+    d_prompt_neutron_emission_distribution->scatterParticle(
 						      *new_neutron,
 						      this->getTemperature() );
-    
+
     bank.push( new_neutron, this->getReactionType() );
   }
-  
+
   // Kill the original neutron
   neutron.setAsGone();
 }

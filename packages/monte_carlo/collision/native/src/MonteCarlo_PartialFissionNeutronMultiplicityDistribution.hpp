@@ -55,7 +55,7 @@ private:
 struct PromptTotalFissionNeutronMultiplicityPolicy
 {
   //! Return the total nu-bar
-  static inline double getTotalNuBar( 
+  static inline double getTotalNuBar(
 				 const Teuchos::RCP<Utility::OneDDistribution>&
 				 d_prompt_multiplicity_distribution,
 				 const Teuchos::RCP<Utility::OneDDistribution>&
@@ -84,7 +84,7 @@ struct PromptTotalFissionNeutronMultiplicityPolicy
 				 d_total_multiplicity_distribution,
 				 const double energy )
   {
-    return d_total_multiplicity_distribution->evaluate( energy ) - 
+    return d_total_multiplicity_distribution->evaluate( energy ) -
       d_prompt_multiplicity_distribution->evaluate( energy );
   }
 };
@@ -93,7 +93,7 @@ struct PromptTotalFissionNeutronMultiplicityPolicy
 struct DelayedTotalFissionNeutronMultiplicityPolicy
 {
   //! Return the total nu-bar
-  static inline double getTotalNuBar( 
+  static inline double getTotalNuBar(
 				 const Teuchos::RCP<Utility::OneDDistribution>&
 				 d_delayed_multiplicity_distribution,
 				 const Teuchos::RCP<Utility::OneDDistribution>&
@@ -111,7 +111,7 @@ struct DelayedTotalFissionNeutronMultiplicityPolicy
 				 d_total_multiplicity_distribution,
 				 const double energy )
   {
-    return d_total_multiplicity_distribution->evaluate( energy ) - 
+    return d_total_multiplicity_distribution->evaluate( energy ) -
       d_delayed_multiplicity_distribution->evaluate( energy );
   }
 
@@ -131,7 +131,7 @@ struct DelayedTotalFissionNeutronMultiplicityPolicy
 struct DelayedPromptFissionNeutronMultiplicityPolicy
 {
   //! Return the total nu-bar
-  static inline double getTotalNuBar( 
+  static inline double getTotalNuBar(
 				 const Teuchos::RCP<Utility::OneDDistribution>&
 				 d_delayed_multiplicity_distribution,
 				 const Teuchos::RCP<Utility::OneDDistribution>&

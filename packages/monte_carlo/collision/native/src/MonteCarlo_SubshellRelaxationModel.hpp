@@ -20,7 +20,7 @@ namespace MonteCarlo{
 class SubshellRelaxationModel
 {
 public:
-  
+
   //! Constructor
   SubshellRelaxationModel( const Data::SubshellType vacancy_subshell );
 
@@ -29,7 +29,7 @@ public:
   { /* ... */ }
 
   //! Relax the shell
-  virtual void relaxSubshell( 
+  virtual void relaxSubshell(
 			 const ParticleState& particle,
 			 ParticleBank& bank,
 			 Data::SubshellType& new_primary_vacancy_shell,

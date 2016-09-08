@@ -22,7 +22,7 @@ namespace Data{
  * "EPR Table" is recommended instead.
  * \todo Add reference for table layout.
  *
- * After a continuous energy photoatomic table has been read by the 
+ * After a continuous energy photoatomic table has been read by the
  * Data::ACEFileHandler the individual data blocks must be extracted from the
  * XSS array using the Data::XSSPhotoatomicDataExtractor. Both the NXS array
  * and the JXS array are required to successfully extract the blocks. The NXS

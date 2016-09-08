@@ -21,7 +21,7 @@
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
 
-// Trilinos Includes 
+// Trilinos Includes
 #include <Teuchos_Tuple.hpp>
 #include <Teuchos_any.hpp>
 
@@ -38,15 +38,15 @@ public:
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleSubtrackEndingGlobalEventObserver::EventTag>
   EventTags;
-  
+
   //! Constructor
   ParticleTracker( const ParticleHistoryObserver::idType id,
                    const unsigned number_of_histories = 100 );
-  
+
   //! Destructor
   ~ParticleTracker()
   { /* ... */ }
-  
+
   //! Add current history contribution
   void updateFromGlobalParticleSubtrackEndingEvent(
 						 const ParticleState& particle,
@@ -55,38 +55,38 @@ public:
 
   //! Commit current history data to overall maps
   void commitParticleTrackData();
-  
+
   //! Reset particle track data for next particle
   void resetParticleTrackData();
 
   //! Get the x position data
   void getXPositionData( std::vector< double >& array );
-  
+
   //! Get the y position data
   void getYPositionData( std::vector< double >& array );
-  
+
   //! Get the z position data
   void getZPositionData( std::vector< double >& array );
-  
+
   //! Get the x direction data
   void getXDirectionData( std::vector< double >& array );
-  
+
   //! Get the y direction data
   void getYDirectionData( std::vector< double >& array );
-  
+
   //! Get the z direction data
   void getZDirectionData( std::vector< double >& array );
-  
+
   //! Get the energy data
   void getEnergyData( std::vector< double >& array );
-  
+
   //! Get the collision number data
   void getCollisionNumberData( std::vector< double >& array );
-  
+
   //! Get the weight data
   void getWeightData( std::vector< double >& array );
-  
-  //! Check if particle is reset 
+
+  //! Check if particle is reset
   bool isParticleReset();
 
   //! Get the data map
@@ -104,24 +104,24 @@ public:
 
   //! Reset data
   void resetData();
-  
+
   //! Reduce estimator data in multiple nodes
-  void reduceData( 
+  void reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process );
 
   //! Export the particle tracker data via hdf5
   void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                    const bool process_data ) const;
-                   
+
   //! Print a summary of the data
   void printSummary( std::ostream& os ) const;
 
   //! Serialize the data and pack it into a string
   std::string packDataInString();
-  
+
   //! Unpack the data from the serialized string
-  void unpackDataFromString( 
+  void unpackDataFromString(
               std::string& packed_string,
               ParticleTrackerHDF5FileHandler::OverallHistoryMap& history_map );
 
@@ -132,8 +132,8 @@ private:
 
   //! Contribute the data from the workers
   void contributeDataFromWorkers( std::string packaged_data );
-  
-  // Flag for new particle 
+
+  // Flag for new particle
   std::unordered_map< unsigned, bool > d_particle_reset;
 
   // Number of histories to be tracked
@@ -141,48 +141,48 @@ private:
 
   // Position data set - x
   std::unordered_map< unsigned, std::vector< double > > d_x_pos;
-  
+
   // Position data set - y
   std::unordered_map< unsigned, std::vector< double > > d_y_pos;
-  
+
   // Position data set - z
   std::unordered_map< unsigned, std::vector< double > > d_z_pos;
-  
+
   // Direction data set - u
   std::unordered_map< unsigned, std::vector< double > > d_x_dir;
-  
+
   // Direction data set - v
   std::unordered_map< unsigned, std::vector< double > > d_y_dir;
-  
+
   // Direction data set - w
   std::unordered_map< unsigned, std::vector< double > > d_z_dir;
-  
+
   // Energy data set
   std::unordered_map< unsigned, std::vector< double > > d_energy;
-  
+
   // Collision Number data set
   std::unordered_map< unsigned, std::vector< double > > d_col_num;
-  
+
   // Weight data set
   std::unordered_map< unsigned, std::vector< double > > d_weight;
-  
+
   // History Number
   std::unordered_map< unsigned, unsigned > d_history_number;
-  
+
   // Generation Number
   std::unordered_map< unsigned, unsigned > d_generation_number;
-  
+
   // Particle Type
   std::unordered_map< unsigned, unsigned > d_particle_type;
-       
+
   // Map of history number to particle type
   ParticleTrackerHDF5FileHandler::OverallHistoryMap d_history_number_map;
-  
+
   // First particle
   bool d_first_particle;
-  
+
   friend class boost::serialization::access;
-  
+
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version)
   {

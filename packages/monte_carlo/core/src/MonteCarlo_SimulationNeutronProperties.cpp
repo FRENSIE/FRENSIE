@@ -19,18 +19,18 @@ double SimulationNeutronProperties::free_gas_threshold = 400.0;
 const double SimulationNeutronProperties::absolute_min_neutron_energy = 1e-11;
 
 // The minimum neutron energy (MeV)
-double SimulationNeutronProperties::min_neutron_energy = 
+double SimulationNeutronProperties::min_neutron_energy =
   SimulationNeutronProperties::absolute_min_neutron_energy;
 
 // The absolute max neutron energy (MeV)
 const double SimulationNeutronProperties::absolute_max_neutron_energy = 20.0;
 
 // The max neutron energy (MeV)
-double SimulationNeutronProperties::max_neutron_energy = 
+double SimulationNeutronProperties::max_neutron_energy =
   SimulationNeutronProperties::absolute_max_neutron_energy;
 
 // Set the free gas thermal treatment temperature threshold
-/*! \details The value given is the number of times above the material 
+/*! \details The value given is the number of times above the material
  * temperature that the energy of a neutron can be before the free gas
  * thermal treatment is not used anymore.
  */
@@ -38,7 +38,7 @@ void SimulationNeutronProperties::setFreeGasThreshold( const double threshold )
 {
   // Make sure the threshold is valid
   testPrecondition( threshold > 0.0 );
-  
+
   SimulationNeutronProperties::free_gas_threshold = threshold;
 }
 
@@ -48,7 +48,7 @@ void SimulationNeutronProperties::setMinNeutronEnergy( const double energy )
   // Make sure the energy is valid
   testPrecondition(energy >= SimulationNeutronProperties::absolute_min_neutron_energy);
   testPrecondition( energy < SimulationNeutronProperties::max_neutron_energy );
-  
+
   SimulationNeutronProperties::min_neutron_energy = energy;
 }
 

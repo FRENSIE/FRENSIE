@@ -21,7 +21,7 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = true>
 class AbsorptionPhotoatomicReaction : public StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>
 {
-  
+
 public:
 
   //! Basic constructor
@@ -53,7 +53,7 @@ public:
   PhotoatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( PhotonState& photon, 
+  void react( PhotonState& photon,
 	      ParticleBank& bank,
 	      Data::SubshellType& shell_of_interaction ) const;
 

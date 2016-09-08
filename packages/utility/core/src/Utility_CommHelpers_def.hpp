@@ -36,7 +36,7 @@ inline std::string getMpiErrorString( const int error_code )
 
   return std::string( error_string );
 }
-  
+
 //! The extended MPI Comm status
 template<typename OrdinalType>
 class ExtendedMpiCommStatus : public Teuchos::CommStatus<OrdinalType>
@@ -66,7 +66,7 @@ public:
   int getMessageSize() const
   {
     T t;
-    
+
     MPI_Datatype raw_mpi_type = Utility::MpiTypeTraits<T>::getType( t );
 
     int count = 0;
@@ -90,7 +90,7 @@ private:
   // The raw MPI_Status struct (we need access to this so we store it again)
   MPI_Status d_status;
 };
-  
+
 #endif // end HAVE_FRENSIE_MPI
 
 // Nonblocking test for a message from source with no status
@@ -129,14 +129,14 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm,
     THROW_EXCEPTION( std::logic_error,
                      "Error: you can not call iprobe(...) when you only have "
                      "one process!" );
-    
+
     status.reset( new Teuchos::SerialCommStatus<Ordinal> );
   }
   else
   {
     int waiting_flag;
     MPI_Status raw_status;
-    
+
     int return_value = ::MPI_Iprobe( source_rank,
                                      mpi_comm->getTag(),
                                      *mpi_comm->getRawMpiComm(),
@@ -167,7 +167,7 @@ template<typename Ordinal>
 bool iprobe( const Teuchos::Comm<Ordinal>& comm )
 {
   Teuchos::RCP<Teuchos::CommStatus<Ordinal> > dummy_status;
-  
+
   return iprobe( comm, dummy_status );
 }
 

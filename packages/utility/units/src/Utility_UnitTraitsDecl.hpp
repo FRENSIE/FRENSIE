@@ -39,7 +39,7 @@ struct UnitTraits
 {
   //! The unit type
   typedef T Unit;
-  
+
   //! The dimension of the unit
   typedef void Dimension;
 

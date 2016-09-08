@@ -19,7 +19,7 @@ ParticleEventDispatcher<Dispatcher>::ParticleEventDispatcher()
 
 // Get the appropriate local dispatcher for the given entity id
 template<typename Dispatcher>
-inline Dispatcher& 
+inline Dispatcher&
 ParticleEventDispatcher<Dispatcher>::getLocalDispatcher(
 		        const typename Dispatcher::EntityHandleType entity_id )
 {
@@ -29,7 +29,7 @@ ParticleEventDispatcher<Dispatcher>::getLocalDispatcher(
     return *(it->second);
   else
   {
-    std::shared_ptr<Dispatcher>& new_dispatcher = 
+    std::shared_ptr<Dispatcher>& new_dispatcher =
       d_dispatcher_map[entity_id];
 
     new_dispatcher.reset( new Dispatcher( entity_id ) );
@@ -47,7 +47,7 @@ inline void ParticleEventDispatcher<Dispatcher>::attachObserver(
 {
   this->getLocalDispatcher( entity_id ).attachObserver( observer_id, observer);
 }
-  
+
 // Detach an observer from the appropriate dispatcher
 template<typename Dispatcher>
 inline void ParticleEventDispatcher<Dispatcher>::detachObserver(

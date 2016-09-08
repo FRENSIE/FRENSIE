@@ -23,8 +23,8 @@ namespace MonteCarlo{
 
 /*! The standard entity estimator class
  * \details This class has been set up to get correct results with multiple
- * threads. However, the commitHistoryContribution member function call should 
- * only appear within an omp critical block. Use the enable thread support 
+ * threads. However, the commitHistoryContribution member function call should
+ * only appear within an omp critical block. Use the enable thread support
  * member function to set up an instance of this class for the requested number
  * of threads. The classes default initialization is for a single thread.
  */
@@ -41,7 +41,7 @@ private:
   typedef typename boost::unordered_map<EntityId,BinContributionMap>
   SerialUpdateTracker;
 
-  // Typedef for parallel update tracker 
+  // Typedef for parallel update tracker
   typedef typename Teuchos::Array<SerialUpdateTracker>
   ParallelUpdateTracker;
 
@@ -51,7 +51,7 @@ protected:
   typedef Teuchos::ScalarTraits<double> ST;
 
   // Typedef for the map of entity ids and estimator first moments
-  typedef typename boost::unordered_map<EntityId,Teuchos::TwoDArray<double> > 
+  typedef typename boost::unordered_map<EntityId,Teuchos::TwoDArray<double> >
   EntityEstimatorFirstMomentsArrayMap;
 
   // Typedef for the map of entity ids and estimator moments array
@@ -62,7 +62,7 @@ protected:
 public:
 
   //! Constructor (for flux estimators)
-  StandardEntityEstimator( 
+  StandardEntityEstimator(
 			 const Estimator::idType id,
 			 const double multiplier,
 			 const Teuchos::Array<EntityId>& entity_ids,
@@ -78,7 +78,7 @@ public:
   { /* ... */ }
 
   //! Set the response functions
-  virtual void setResponseFunctions( 
+  virtual void setResponseFunctions(
                       const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
                       response_functions );
 
@@ -97,10 +97,10 @@ public:
 	    const int root_process );
 
   //! Export the estimator data
-  virtual void exportData( 
+  virtual void exportData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const bool process_data ) const;
-  
+
 protected:
 
   //! Constructor with no entities (for mesh estimators)
@@ -108,12 +108,12 @@ protected:
 			   const double multiplier );
 
   //! Assign entities
-  void assignEntities( 
+  void assignEntities(
 	       const boost::unordered_map<EntityId,double>& entity_norm_data );
-  
+
 
   //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( 
+  void addPartialHistoryContribution(
                    const EntityId entity_id,
                    const EstimatorParticleStateWrapper& particle_state_wrapper,
                    const double contribution );
@@ -126,7 +126,7 @@ protected:
   const Estimator::FourEstimatorMomentsArray& getTotalData() const;
 
   //! Get the total data for an entity
-  const Estimator::FourEstimatorMomentsArray& 
+  const Estimator::FourEstimatorMomentsArray&
   getEntityTotalData( const EntityId entity_id ) const;
 
 private:
@@ -135,13 +135,13 @@ private:
   void resizeEntityTotalEstimatorMomentsMapArrays();
 
   // Commit history contr. to the total for a response function of an entity
-  void commitHistoryContributionToTotalOfEntity( 
+  void commitHistoryContributionToTotalOfEntity(
 					const EntityId& entity_id,
 					const unsigned response_function_index,
 					const double contribution );
 
   // Commit hist. contr. to the total for a response function of the estimator
-  void commitHistoryContributionToTotalOfEstimator( 
+  void commitHistoryContributionToTotalOfEstimator(
 					const unsigned response_function_index,
 					const double contribution );
 
@@ -155,7 +155,7 @@ private:
 			       const double contribution );
 
   // Get entity iterators from update tracker
-  void getEntityIteratorFromUpdateTracker( 
+  void getEntityIteratorFromUpdateTracker(
 	      const unsigned thread_id,
 	      typename SerialUpdateTracker::const_iterator& start_entity,
 	      typename SerialUpdateTracker::const_iterator& end_entity ) const;
@@ -166,7 +166,7 @@ private:
 	   const typename SerialUpdateTracker::const_iterator& entity_iterator,
 	   BinContributionMap::const_iterator& start_bin,
 	   BinContributionMap::const_iterator& end_bin ) const;
-	
+
   // Reset the update tracker
   void resetUpdateTracker( const unsigned thread_id );
 
@@ -178,7 +178,7 @@ private:
 
   // The total estimator moments for each entity and response functions
   EntityEstimatorMomentsArrayMap d_entity_total_estimator_moments_map;
-}; 
+};
 
 } // end MonteCarlo namespace
 

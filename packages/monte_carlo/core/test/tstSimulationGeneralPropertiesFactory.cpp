@@ -33,12 +33,12 @@ TEUCHOS_UNIT_TEST( SimulationGeneralPropertiesFactory,
 		   initializeSimulationGeneralProperties )
 {
 
-  Teuchos::ParameterList general_properties = 
+  Teuchos::ParameterList general_properties =
       properties.get<Teuchos::ParameterList>( "General Properties" );
 
-  MonteCarlo::SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties( 
+  MonteCarlo::SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
 						general_properties );
-  
+
   TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
 		       MonteCarlo::NEUTRON_PHOTON_MODE );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getNumberOfHistories(),
@@ -46,7 +46,7 @@ TEUCHOS_UNIT_TEST( SimulationGeneralPropertiesFactory,
   TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
 		       0.1 );
   TEST_ASSERT( !MonteCarlo::SimulationGeneralProperties::displayWarnings() );
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );	
+  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getNumberOfBatchesPerProcessor(),
 	  25 );
 }
@@ -57,17 +57,17 @@ TEUCHOS_UNIT_TEST( SimulationGeneralPropertiesFactory,
 int main( int argc, char** argv )
 {
   std::string test_properties_xml_file_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_properties_xml_file",
 		 &test_properties_xml_file_name,
 		 "Test properties.xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -91,7 +91,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);				      
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

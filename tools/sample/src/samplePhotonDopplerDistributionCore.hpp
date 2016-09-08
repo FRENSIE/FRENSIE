@@ -25,14 +25,14 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
 //! Initialize the Doppler broadened photon energy distribution
-void initializeACEDistribution( 
+void initializeACEDistribution(
                              const Data::XSSEPRDataExtractor& data_extractor,
                              const int model_type,
                              const int raw_subshell,
                              std::shared_ptr<const MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>& doppler_dist );
 
 //! Initialize the Doppler broadened photon energy distribution
-void initializeNativeDistribution( 
+void initializeNativeDistribution(
              const Data::ElectronPhotonRelaxationDataContainer& data_container,
              const int model_type,
              const int raw_subshell,

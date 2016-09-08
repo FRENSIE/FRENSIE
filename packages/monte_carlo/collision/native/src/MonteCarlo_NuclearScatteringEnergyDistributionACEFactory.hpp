@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp
 //! \author Alex Robinson, Alex Bennett, Eli Moll
 //! \brief  Nuclear scattering energy distribution factory class declaration
@@ -28,7 +28,7 @@ class NuclearScatteringEnergyDistributionACEFactory
 public:
 
   //! Create the energy distribution
-  static void createDistribution( 
+  static void createDistribution(
 	  const Teuchos::ArrayView<const double>& dlw_block_array,
 	  const unsigned dlw_block_array_start_index,
 	  const std::string& table_name,
@@ -68,7 +68,7 @@ public:
 private:
 
   // Create an Ace Law 1 energy distribution
-  static void createAceLaw1EnergyDistribution( 
+  static void createAceLaw1EnergyDistribution(
 	  const Teuchos::ArrayView<const double>& dlw_block_array,
 	  const unsigned dlw_block_array_start_index,
 	  const std::string& table_name,
@@ -76,7 +76,7 @@ private:
 	  Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
 
   // Create an Ace Law 2 energy distribution
-  static void createAceLaw2EnergyDistribution( 
+  static void createAceLaw2EnergyDistribution(
 	  const Teuchos::ArrayView<const double>& dlw_block_array,
 	  const unsigned dlw_block_array_start_index,
 	  const std::string& table_name,

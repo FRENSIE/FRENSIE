@@ -18,7 +18,7 @@ namespace MonteCarlo{
 //! The standard cell estimator base class
 class StandardCellEstimator : public StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>
 {
-  
+
 public:
 
   //! Typedef for the cell id type

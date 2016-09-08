@@ -28,7 +28,7 @@ class AceLaw44ARDistribution
 public:
 
   //! Constructor
-  AceLaw44ARDistribution( 
+  AceLaw44ARDistribution(
 		  const Teuchos::ArrayView<const double>& outgoing_energy_grid,
 		  const Teuchos::ArrayView<const double>& A_array,
 		  const Teuchos::ArrayView<const double>& R_array );
@@ -58,7 +58,7 @@ private:
 
   // The outgoing energy grid
   Teuchos::Array<double> d_outgoing_energy_grid;
-  
+
   // The A array
   Teuchos::Array<double> d_A;
 
@@ -67,27 +67,27 @@ private:
 };
 
 // Return the outgoing energy grid
-inline double AceLaw44ARDistribution::getOutgoingEnergyGridPoint( 
+inline double AceLaw44ARDistribution::getOutgoingEnergyGridPoint(
 				         const unsigned outgoing_index ) const
 {
   // Make sure the outgoing index is valid
   testPrecondition( outgoing_index < d_outgoing_energy_grid.size() );
-  
+
   return d_outgoing_energy_grid[outgoing_index];
 }
 
 // Return the A value
-inline double AceLaw44ARDistribution::getAValue( 
+inline double AceLaw44ARDistribution::getAValue(
 					  const unsigned outgoing_index ) const
 {
   // Make sure the outgoing index is valid
   testPrecondition( outgoing_index < d_A.size() );
-  
+
   return d_A[outgoing_index];
 }
 
 // Return the R value
-inline double AceLaw44ARDistribution::getRValue( 
+inline double AceLaw44ARDistribution::getRValue(
 					  const unsigned outgoing_index ) const
 {
   // Make sure the outgoing index is valid

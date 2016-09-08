@@ -1,10 +1,10 @@
 Installation {#installation}
 =====
 
-## Dependencies 
+## Dependencies
 To promote rapid scientific software development and research, FRENSIE is built
-off of a large number of software libraries. The software that FRENSIE
-depends on is listed below.
+off of a large number of software libraries. The software libraries that FRENSIE
+depends on are listed below.
 
 1. [HDF5 1.8.13+](http://www.hdfgroup.org/HDF5)
 2. [OpenMPI 1.8.2](http://www.open-mpi.org/) - optional
@@ -24,28 +24,28 @@ distributed memory system. Cubit is only required if you plan on using CAD
 geometries for particle simulations. If Cubit is used, CGM must also be
 built. If you do not plan on doing particle simulations both ROOT and Cubit
 can be neglected. If the FRENSIE python interfaces will be used the Python,
-SWIG, Numpy and H5Py packages will also be required. Building FRENSIE without 
-these optional packages will result in faster build times which can be useful 
+SWIG, Numpy and H5Py packages will also be required. Building FRENSIE without
+these optional packages will result in faster build times which can be useful
 for certain development tasks.
 
-FRENSIE also requires a GNU compiler (4.7.3 or greater), CMake (3.0.1 or 
+FRENSIE also requires a GNU compiler (4.7.3 or greater), CMake (3.0.1 or
 greater) and git (1.9.1 or greater) to build correctly. If you plan on building
 the FRENSIE documentation, Doxygen (1.8.6 or greater) is also required. Several
-of the above software libraries will be built from source. Others can be 
-installed using your system's package manager. This process will be described 
-in the next section. 
+of the above software libraries will be built from source. Others can be
+installed using your system's package manager. This process will be described
+in the next section.
 
 ## Building Dependent Software Libraries
-Before any of the software libraries are built, verify that the system has 
+Before any of the software libraries are built, verify that the system has
 CMake version 3.0.1 or greater installed. If CMake is not installed or an older
 version is present, build CMake using the instructions below.
 
-When building software libraries and executables from source, the following 
-directory structure should be adopted: software/package/package.xx.xx.xx, 
+When building software libraries and executables from source, the following
+directory structure should be adopted: software/package/package.xx.xx.xx,
 software/package/build, software/package/src. "package" will be the name of the
-particular software package. "package.xx.xx.xx" comes from unpacking the 
-compressed source files (e.g. package.tar.gz). The src directory is created by 
-making a softlink to the package.xx.xx.xx directory. This is done to make the 
+particular software package. "package.xx.xx.xx" comes from unpacking the
+compressed source files (e.g. package.tar.gz). The src directory is created by
+making a softlink to the package.xx.xx.xx directory. This is done to make the
 build a bit easier.
 
 Please note that the software libraries should be built in the order that they
@@ -192,7 +192,7 @@ are described.
 11. run `make install`
 12. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/cgm/lib:$LD_LIBRARY_PATH`
 
-### Building MOAB 
+### Building MOAB
 1. download the [MOAB 4.6.3 source](http://ftp.mcs.anl.gov/pub/fathom/moab-4.6.3.tar.gz)
 2. move the moab-4.6.3.tar.gz file to the moab directory (e.g. software/moab)
 3. move to the moab directory
@@ -200,13 +200,13 @@ are described.
 5. run `ln -s moab-4.6.3 src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/moab/build)
-8. 
+8.
   * **Basic HDF5 Build:**
-    * if DagMC is desired (Cubit 14.0 and CGM must be built): 
+    * if DagMC is desired (Cubit 14.0 and CGM must be built):
     run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-cgm=absolute-path-to_software/cgm/ --with-hdf5 --prefix=absolute-path-to_software/moab/`
     * else run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5 --prefix=absolute-path-to_software/moab/`
   * **Advanced HDF5 Build:**
-    * if DagMC is desired (Cubit 14.0 and CGM must be built): 
+    * if DagMC is desired (Cubit 14.0 and CGM must be built):
     run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
     * else run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
 9. run `make -j n`
@@ -234,7 +234,7 @@ are described.
 9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
 10. run `exec bash`
 
-### Building Trilinos 
+### Building Trilinos
 1. download the [Trilinos 11.14.3 source](http://trilinos.org/download/)
 2. move the trilinos-11.14.3-Source.tar.gz file to the trilinos directory (e.g. software/trilinos)
 3. move to the trilinos directory
@@ -242,7 +242,7 @@ are described.
 5. run `ln -s trilinos-11.14.3.Source src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/trilinos/build)
-8. copy `FRENSIE/scripts/trilinos-basic.sh` into the build directory 
+8. copy `FRENSIE/scripts/trilinos-basic.sh` into the build directory
 9. change the variables in the script to reflect the desired system paths
 10. run `./trilinos-basic.sh` to configure trilinos
 11. run `make -j n`
@@ -265,7 +265,7 @@ you to specify the location of your custom build LAPACK package.
 
 Note: If on Ubuntu 16.04 this is the recommended way to install lapack. The
 advanced install below will result in an runtime error when importing numpy in
-python. 
+python.
 
 **Advanced:**
 
@@ -333,13 +333,13 @@ At this point all of the dependent software libraries should have been built. If
 9. run `make manual`
 10. run `make install`
 
-**Note 1**: There are several other configure options that can be changed in 
+**Note 1**: There are several other configure options that can be changed in
 the frensie.sh script:
- * `-D FRENSIE_ENABLE_DBC:BOOL=OFF` turns off very thorough Design-by-Contract checks (commonly done with release builds). 
+ * `-D FRENSIE_ENABLE_DBC:BOOL=OFF` turns off very thorough Design-by-Contract checks (commonly done with release builds).
  * `-D FRENSIE_ENABLE_PROFILING:BOOL=ON` enables profiling (only in debug builds).
  * `-D FRENSIE_ENABLE_CONVERAGE:BOOL=ON` enables coverage testing (only in debug builds).
- * `-D FRENSIE_ENABLE_OPENMP:BOOL=OFF` disables OpenMP thread support. 
- * `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. 
+ * `-D FRENSIE_ENABLE_OPENMP:BOOL=OFF` disables OpenMP thread support.
+ * `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support.
  * `-D FRENSIE_ENABLE_PYTHON:BOOL=ON` enables the FRENSIE python interfaces.
  * `-D FRENSIE_ENABLE_ROOT:BOOL=ON` enables the ROOT geometry interfaces.
  * `-D FRENSIE_ENABLE_DAGMC:BOOL=ON` enables the DagMC geometry interfaces.
@@ -357,14 +357,14 @@ the following CMake variables can be set:
  * `-D BOOST_PREFIX:PATH=path-to-boost-install-dir` indicates where the custom Boost install directory is located.
  * `-D ROOT_PREFIX:PATH=path-to-root-install-dir` indicates where the custom ROOT install directory is located.
  * `-D SWIG_PREFIX:PATH=path-to-swig-install-dir` indicates where the custom SWIG install directory is located.
- * `-D DOXYGEN_PREFIX:PATH=path-to-doxygen-install-dir` indicates where the doxygen install directory is located. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8 and this option can be deleted from the frensie.sh script. 
+ * `-D DOXYGEN_PREFIX:PATH=path-to-doxygen-install-dir` indicates where the doxygen install directory is located. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8 and this option can be deleted from the frensie.sh script.
  * `-D BUILDNAME_PREFIX:STRING=my-build-name` sets the custom build name that will be displayed on the CDash dashboard (only used when FRENSIE_ENABLE_DASHBOARD_CLIENT is set to ON).
  * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. When this configure option is used, the FACEMC executable can be tested using the nuclear data used by MCNP6 by running `make test` or `make test-slow`. To disable these tests delete this configure option from the frensie.sh script.
 
 The FRENSIE build system needs to know where the Trilinos source files
-and Moab source files are. Therefore, there are two optional CMake variables 
-called TRILINOS_SOURCE and MOAB_SOURCE that can be set if the source files are 
-in a non-standard location (not in TRILINOS_PREFIX/src or MOAB_PREFIX/src ). 
+and Moab source files are. Therefore, there are two optional CMake variables
+called TRILINOS_SOURCE and MOAB_SOURCE that can be set if the source files are
+in a non-standard location (not in TRILINOS_PREFIX/src or MOAB_PREFIX/src ).
 This variable is shown in the frensie.sh script.
 
 There are two reasons why the Trilinos source file location is needed. The
@@ -388,7 +388,7 @@ condition close to linear thread scaling should be observed.
 ## Dashboard
 A private [dashboard](http://cdash.ep.wisc.edu) has been set up for developers. Please register with the dashboard and send an email to [Alex Robinson](https://github.com/aprobinson) indicating that you would like to have access to the dashboard.
 
-To set up a dashboard client, simply set the dashboard client setup configure option to on (e.g. `-D SETUP_DASHBOARD_CLIENT:BOOL=ON`). This will add three new make targets: `make Experimental`, `make Nightly` and `make Continuous`. The experimental target should be used to test that the client has been set up correctly. The nightly and continuous targets can be executed on the client machine at regular intervals using cron and crontab (if on a Linux system). However, it is recommended that these targets are never used and instead the shell scripts frensie-run-nightly.sh and frensie-run-ci.sh (found in the scripts directory) are used. Because cron only loads a few environment variables when it executes commands, it is necessary to write shell scripts that load the necessary environment variables, which is what the two scripts do. 
+To set up a dashboard client, simply set the dashboard client setup configure option to on (e.g. `-D SETUP_DASHBOARD_CLIENT:BOOL=ON`). This will add three new make targets: `make Experimental`, `make Nightly` and `make Continuous`. The experimental target should be used to test that the client has been set up correctly. The nightly and continuous targets can be executed on the client machine at regular intervals using cron and crontab (if on a Linux system). However, it is recommended that these targets are never used and instead the shell scripts frensie-run-nightly.sh and frensie-run-ci.sh (found in the scripts directory) are used. Because cron only loads a few environment variables when it executes commands, it is necessary to write shell scripts that load the necessary environment variables, which is what the two scripts do.
 
 Before setting up the crontab entries, a separate frensie build should be created (following the steps above) for nightly builds (e.g. software/frensie-nightly) and for continuous builds (e.g. software/frensie-ci, if a continuous integration system is desired). Once those builds have been completed, the crontab entries can be created by executing `crontab -e`. This will open up the table with the default text editor. At the bottom of this file, add the following lines:
 * `0 1 * * * abs-path-to-nightly-build-dir/frensie-run-nightly.sh`

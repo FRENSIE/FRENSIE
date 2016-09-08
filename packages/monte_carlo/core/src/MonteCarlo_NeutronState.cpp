@@ -20,7 +20,7 @@ NeutronState::NeutronState()
 { /* ... */ }
 
 // Constructor
-NeutronState::NeutronState( 
+NeutronState::NeutronState(
 		        const ParticleState::historyNumberType history_number )
   : MassiveParticleState( history_number, NEUTRON )
 { /* ... */ }
@@ -29,7 +29,7 @@ NeutronState::NeutronState(
 NeutronState::NeutronState( const ParticleState& existing_base_state,
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
-  : MassiveParticleState( existing_base_state, 
+  : MassiveParticleState( existing_base_state,
 			  NEUTRON,
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  increment_generation_number,
@@ -40,7 +40,7 @@ NeutronState::NeutronState( const ParticleState& existing_base_state,
 NeutronState::NeutronState( const NeutronState& existing_state,
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
-  : MassiveParticleState( existing_state, 
+  : MassiveParticleState( existing_state,
 			  NEUTRON,
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  increment_generation_number,

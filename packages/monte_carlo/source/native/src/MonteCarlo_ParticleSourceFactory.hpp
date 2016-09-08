@@ -69,7 +69,7 @@ private:
 
   // Create a standard source
   template<typename GeometryModuleInterface, typename SourceType>
-  static double 
+  static double
   createStandardSource( const Teuchos::ParameterList& source_rep,
                         const ParticleModeType& particle_mode,
                         std::shared_ptr<SourceType>& source,
@@ -98,7 +98,7 @@ private:
 //! The invalid particle source representation error
 class InvalidParticleSourceRepresentation : public std::runtime_error
 {
-  
+
 public:
 
   InvalidParticleSourceRepresentation( const std::string& what_arg )

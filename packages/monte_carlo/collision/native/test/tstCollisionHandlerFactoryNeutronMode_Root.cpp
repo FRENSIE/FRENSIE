@@ -45,9 +45,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   std::string cross_section_xml_file = test_cross_sections_xml_directory;
   cross_section_xml_file += "/cross_sections.xml";
 
-  // Read in the xml file storing the cross section table information 
+  // Read in the xml file storing the cross section table information
   Teuchos::ParameterList cross_section_table_info;
-  Teuchos::updateParametersFromXmlFile( 
+  Teuchos::updateParametersFromXmlFile(
                                  cross_section_xml_file,
                                  Teuchos::inoutArg(cross_section_table_info) );
 
@@ -59,7 +59,7 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   // Set the particle mode to NEUTRON_MODE
   MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::NEUTRON_MODE );
 
-  MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>()->initializeHandler( 
+  MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>()->initializeHandler(
 					   material_reps,
 					   cross_section_table_info,
 					   test_cross_sections_xml_directory );
@@ -76,7 +76,7 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 2 )->getId() == 1 );
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 	   MonteCarlo::CollisionHandler::getCellNeutronMaterial( 2 )->getNumberDensity(),
 	   1.0,
 	   1e-12 );
@@ -101,10 +101,10 @@ int main( int argc, char** argv )
 		 &test_geom_xml_file_name,
 		 "Test xml geometry file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -113,14 +113,14 @@ int main( int argc, char** argv )
   }
 
   // Initialize Root
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep =
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
   Geometry::RootInstanceFactory::initializeRoot( *geom_rep );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

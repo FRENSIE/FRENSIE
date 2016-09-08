@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( MeCMomentum, initialize_cgs_si )
 
   quantity<si::momentum> si_momentum_q( 1.0*mec_momentum );
 
-  TEST_FLOATING_EQUALITY( cgs_momentum_q.value(), 
+  TEST_FLOATING_EQUALITY( cgs_momentum_q.value(),
 			  2.7309244865637114e-17,
 			  1e-15 );
   TEST_FLOATING_EQUALITY( si_momentum_q.value(),

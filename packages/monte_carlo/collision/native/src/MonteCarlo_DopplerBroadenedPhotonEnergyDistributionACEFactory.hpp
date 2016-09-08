@@ -84,14 +84,14 @@ public:
 private:
 
   //! Create the Compton profile distribution
-  static void createComptonProfileDistArray(
+  static void createComptonProfileArray(
       const Data::XSSEPRDataExtractor& raw_photoatom_data,
       const bool use_full_profile,
-      DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
+      CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
       compton_profiles );
 
   //! Create the Compton profile distribution
-  static void createComptonProfileDist(
+  static void createComptonProfile(
 		 Teuchos::Array<double>& raw_half_momentum_grid,
                  Teuchos::Array<double>& raw_half_profile,
                  const bool use_full_profile,

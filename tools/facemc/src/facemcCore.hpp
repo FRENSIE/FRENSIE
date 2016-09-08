@@ -17,7 +17,7 @@
 extern std::shared_ptr<MonteCarlo::SimulationManager> facemc_manager;
 
 //! The core facemc function (problem setup and execution)
-int facemcCore( int argc, 
+int facemcCore( int argc,
                 char** argv,
                 Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm );
 

@@ -36,7 +36,7 @@ TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateComptonLineEnergy )
   TEST_FLOATING_EQUALITY( compton_line, 0.1, 1e-15 );
 
   compton_line = MonteCarlo::calculateComptonLineEnergy( 1.0, -1.0 );
-  
+
   TEST_FLOATING_EQUALITY( compton_line, 0.20350423413905203, 1e-15 );
 
   compton_line = MonteCarlo::calculateComptonLineEnergy( 1.0, 0.0 );
@@ -44,7 +44,7 @@ TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateComptonLineEnergy )
   TEST_FLOATING_EQUALITY( compton_line, 0.3381861540098899, 1e-15 );
 
   compton_line = MonteCarlo::calculateComptonLineEnergy( 1.0, 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( compton_line, 1.0, 1e-15 );
 }
 
@@ -52,7 +52,7 @@ TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateComptonLineEnergy )
 // Check that the electron momentum projection can be calculated
 TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateElectronMomentumProjection )
 {
-  double pz = 
+  double pz =
     MonteCarlo::calculateElectronMomentumProjection( 1.0, 0.5, -1.0 );
 
   TEST_FLOATING_EQUALITY( pz, 0.9713008908317715, 1e-15 );
@@ -82,7 +82,7 @@ TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateElectronMomentumProjection 
   TEST_FLOATING_EQUALITY( pz, -0.9763228686410937, 1e-15 );
 
   pz = MonteCarlo::calculateElectronMomentumProjection( 0.1, 0.001, 0.0 );
-  
+
   TEST_FLOATING_EQUALITY( pz, -0.9879936502161719, 1e-15 );
 
   pz = MonteCarlo::calculateElectronMomentumProjection( 0.1, 0.001, 1.0 );
@@ -92,20 +92,20 @@ TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateElectronMomentumProjection 
 
 //---------------------------------------------------------------------------//
 // Check that the max electron momentum projection can be calculated
-TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, 
+TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers,
 		   calculateMaxElectronMomentumProjection )
 {
-  double pz_max = 
+  double pz_max =
     MonteCarlo::calculateMaxElectronMomentumProjection(1.0, 0.03, -1.0);
 
   TEST_FLOATING_EQUALITY( pz_max, 1.9119216204672362, 1e-15 );
 
   pz_max = MonteCarlo::calculateMaxElectronMomentumProjection(1.0, 0.03, 0.0);
-  
+
   TEST_FLOATING_EQUALITY( pz_max, 1.3410091350301137, 1e-15 );
 
   pz_max = MonteCarlo::calculateMaxElectronMomentumProjection(1.0, 0.03, 1.0);
-    
+
   TEST_FLOATING_EQUALITY( pz_max, -1.0, 1e-15 );
 
   pz_max = MonteCarlo::calculateMaxElectronMomentumProjection(0.1, 0.03, -1.0);
@@ -117,7 +117,7 @@ TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers,
   TEST_FLOATING_EQUALITY( pz_max, -0.13354578604675912, 1e-15 );
 
   pz_max = MonteCarlo::calculateMaxElectronMomentumProjection(0.1, 0.03, 1.0);
-  
+
   TEST_FLOATING_EQUALITY( pz_max, -1.0, 1e-15 );
 }
 
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers,
 TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateDopplerBroadenedEnergy )
 {
   bool possible;
-  
+
   double energy = MonteCarlo::calculateDopplerBroadenedEnergy(
 						    1.0, 1.0, -1.0, possible );
 
@@ -144,7 +144,7 @@ TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateDopplerBroadenedEnergy )
 
   TEST_ASSERT( !possible );
   TEST_EQUALITY_CONST( energy, 0.0 );
-  
+
   energy = MonteCarlo::calculateDopplerBroadenedEnergy(
 						 -0.016, 0.1, -1.0, possible );
 

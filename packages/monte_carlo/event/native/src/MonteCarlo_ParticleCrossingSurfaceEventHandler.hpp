@@ -31,7 +31,7 @@ class ParticleCrossingSurfaceEventHandler
 {
 
 public:
-  
+
   //! Constructor
   ParticleCrossingSurfaceEventHandler();
 
@@ -55,11 +55,11 @@ public:
 
 protected:
 
-  /*! \brief Register an observer with the appropriate particle crossing 
+  /*! \brief Register an observer with the appropriate particle crossing
    * surface event dispatcher
    */
   template<typename Observer, typename EntityHandle>
-  void registerObserverWithTag( 
+  void registerObserverWithTag(
                               const std::shared_ptr<Observer>& observer,
                               const Teuchos::Array<EntityHandle>& entity_ids,
                               ParticleCrossingSurfaceEventObserver::EventTag );
@@ -69,22 +69,22 @@ private:
   // The particle crossing surface event dispatcher
   ParticleCrossingSurfaceEventDispatcher
   d_particle_crossing_surface_event_dispatcher;
-}; 
+};
 
-// Register an observer with the appropriate particle crossing 
+// Register an observer with the appropriate particle crossing
 // surface event dispatcher
 template<typename Observer, typename EntityHandle>
-inline void ParticleCrossingSurfaceEventHandler::registerObserverWithTag( 
+inline void ParticleCrossingSurfaceEventHandler::registerObserverWithTag(
                                const std::shared_ptr<Observer>& observer,
                                const Teuchos::Array<EntityHandle>& entity_ids,
                                ParticleCrossingSurfaceEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleCrossingSurfaceEventObserver::EventTag>::value));
-  
-  std::shared_ptr<ParticleCrossingSurfaceEventObserver> observer_base = 
+
+  std::shared_ptr<ParticleCrossingSurfaceEventObserver> observer_base =
     std::dynamic_pointer_cast<ParticleCrossingSurfaceEventObserver>( observer );
-  
+
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
   {
     d_particle_crossing_surface_event_dispatcher.attachObserver(

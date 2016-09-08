@@ -21,7 +21,7 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = false>
 class AbsorptionElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
-  
+
 public:
 
   //! Constructor
@@ -45,7 +45,7 @@ public:
   ElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
 

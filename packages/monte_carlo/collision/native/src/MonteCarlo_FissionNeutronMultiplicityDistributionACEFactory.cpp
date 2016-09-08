@@ -28,10 +28,10 @@ FissionNeutronMultiplicityDistributionACEFactory::FissionNeutronMultiplicityDist
 {
   // Make sure data is present
   testPrecondition( nu_block.size() > 0 );
-  
+
   // Make sure that all distributions are currently given
   int location_of_total_data = static_cast<int>( nu_block[0] );
-  
+
   TEST_FOR_EXCEPTION( location_of_total_data > 0,
 		      std::runtime_error,
 		      "Error: Only propmt or total nu-bar data is present in "
@@ -39,18 +39,18 @@ FissionNeutronMultiplicityDistributionACEFactory::FissionNeutronMultiplicityDist
 		      "supported!" );
 
   // Parse the prompt nu-bar distribution
-  Teuchos::ArrayView<const double> raw_prompt_distribution = 
+  Teuchos::ArrayView<const double> raw_prompt_distribution =
     nu_block( 1, abs(location_of_total_data) );
 
   d_prompt_dist_exists = true;
 
   createPartialDistribution( table_name,
-			     raw_prompt_distribution, 
+			     raw_prompt_distribution,
 			     d_prompt_multiplicity_distribution );
 
   // Parse the total nu-bar distribution
-  Teuchos::ArrayView<const double> raw_total_distribution = 
-    nu_block( 1 + abs(location_of_total_data), 
+  Teuchos::ArrayView<const double> raw_total_distribution =
+    nu_block( 1 + abs(location_of_total_data),
 	      nu_block.size() - 1 - abs(location_of_total_data) );
 
   d_total_dist_exists = true;
@@ -108,25 +108,25 @@ void FissionNeutronMultiplicityDistributionACEFactory::createPartialDistribution
 	  Teuchos::RCP<Utility::OneDDistribution>& partial_distribution ) const
 {
   unsigned form_flag = static_cast<unsigned>( distribution_array[0] );
-  
+
   switch( form_flag )
   {
   case 1: // Parse a polynomial function
     {
-      unsigned number_of_coeffs = 
+      unsigned number_of_coeffs =
 	static_cast<unsigned>( distribution_array[1] );
 
-      partial_distribution.reset( 
-			    new Utility::PolynomialDistribution( 
+      partial_distribution.reset(
+			    new Utility::PolynomialDistribution(
 				distribution_array( 2, number_of_coeffs ),
-				1e-11, 
+				1e-11,
 				20.0 ) );
 
       break;
     }
   case 2: // Parse a tabular distribution
     {
-      unsigned number_of_interp_regions = 
+      unsigned number_of_interp_regions =
 	static_cast<unsigned>( distribution_array[1] );
 
       TEST_FOR_EXCEPTION( number_of_interp_regions != 0,
@@ -135,15 +135,15 @@ void FissionNeutronMultiplicityDistributionACEFactory::createPartialDistribution
 			  "nu block of ace table " << table_name <<
 			  ", which is not currently supported!" );
 
-      unsigned number_of_energies = 
+      unsigned number_of_energies =
 	static_cast<unsigned>( distribution_array[2] );
 
       Teuchos::ArrayView<const double> energy_grid =
 	distribution_array( 3, number_of_energies );
 
-      Teuchos::ArrayView<const double> nu_values = 
+      Teuchos::ArrayView<const double> nu_values =
 	distribution_array( 3+number_of_energies, number_of_energies );
-      
+
       partial_distribution.reset(
 			     new Utility::TabularDistribution<Utility::LinLin>(
 							         energy_grid,
@@ -164,7 +164,7 @@ bool FissionNeutronMultiplicityDistributionACEFactory::doesPromptDistExist() con
 }
 
 // Return if a delayed distribution exists
-bool 
+bool
 FissionNeutronMultiplicityDistributionACEFactory::doesDelayedDistExist() const
 {
   return d_delayed_dist_exists;
@@ -177,21 +177,21 @@ bool FissionNeutronMultiplicityDistributionACEFactory::doesTotalDistExist() cons
 }
 
 // Return the prompt multiplicity distribution
-const Teuchos::RCP<Utility::OneDDistribution>& 
+const Teuchos::RCP<Utility::OneDDistribution>&
 FissionNeutronMultiplicityDistributionACEFactory::getPromptMultDist() const
 {
   return d_prompt_multiplicity_distribution;
 }
 
 // Return the delayed multiplicity distribution
-const Teuchos::RCP<Utility::OneDDistribution>& 
+const Teuchos::RCP<Utility::OneDDistribution>&
 FissionNeutronMultiplicityDistributionACEFactory::getDelayedMultDist() const
 {
   return d_delayed_multiplicity_distribution;
 }
 
 // Return the total multiplicity distribution
-const Teuchos::RCP<Utility::OneDDistribution>& 
+const Teuchos::RCP<Utility::OneDDistribution>&
 FissionNeutronMultiplicityDistributionACEFactory::getTotalMultDist() const
 {
   return d_total_multiplicity_distribution;

@@ -1,16 +1,30 @@
-ADD_EXECUTABLE(tstAssertion 
-  tstAssertion.cpp 
+ADD_EXECUTABLE(tstAssertion
+  tstAssertion.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAssertion utility_core)
 ADD_TEST(Assertion_test tstAssertion)
 SET_PROPERTY(TEST Assertion_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstContractException 
-  tstContractException.cpp 
+ADD_EXECUTABLE(tstContractException
+  tstContractException.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstContractException utility_core)
 ADD_TEST(ContractException_test tstContractException)
 SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstStaticOutputFormatter
+  tstStaticOutputFormatter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core)
+ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter)
+SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstDynamicOutputFormatter
+  tstDynamicOutputFormatter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core)
+ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter)
+SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstSerialCommHelpers
   tstSerialCommHelpers.cpp
@@ -30,28 +44,28 @@ IF(${FRENSIE_ENABLE_MPI})
 ENDIF()
 
 ADD_EXECUTABLE(tstSortAlgorithms
-  tstSortAlgorithms.cpp 
+  tstSortAlgorithms.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSortAlgorithms utility_core)
 ADD_TEST(SortAlgorithms_test tstSortAlgorithms)
 SET_PROPERTY(TEST SortAlgorithms_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstSearchAlgorithms
-  tstSearchAlgorithms.cpp 
+  tstSearchAlgorithms.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSearchAlgorithms utility_core)
 ADD_TEST(SearchAlgorithms_test tstSearchAlgorithms)
 SET_PROPERTY(TEST SearchAlgorithms_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstExponentiationAlgorithms
-  tstExponentiationAlgorithms.cpp 
+  tstExponentiationAlgorithms.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstExponentiationAlgorithms utility_core)
 ADD_TEST(ExponentiationAlgorithms_test tstExponentiationAlgorithms)
 SET_PROPERTY(TEST ExponentiationAlgorithms_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstInterpolationPolicy
-  tstInterpolationPolicy.cpp 
+  tstInterpolationPolicy.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstInterpolationPolicy utility_core)
 ADD_TEST(InterpolationPolicy_test tstInterpolationPolicy)
@@ -113,44 +127,44 @@ TARGET_LINK_LIBRARIES(tstLogLogLogTwoDInterpolationPolicy utility_core)
 ADD_TEST(LogLogLogTwoDInterpolationPolicy_test tstLogLogLogTwoDInterpolationPolicy)
 SET_PROPERTY(TEST LogLogLogTwoDInterpolationPolicy_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstSetOperationFunctor 
-  tstSetOperationFunctor.cpp 
+ADD_EXECUTABLE(tstSetOperationFunctor
+  tstSetOperationFunctor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSetOperationFunctor utility_core)
 ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
 SET_PROPERTY(TEST SetOperationFunctor_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstDirectionHelpers
-  tstDirectionHelpers.cpp 
+  tstDirectionHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstDirectionHelpers utility_core)
 ADD_TEST(DirectionHelpers_test tstDirectionHelpers)
 SET_PROPERTY(TEST DirectionHelpers_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstCylindricalCoordinateHelpers
-  tstCylindricalCoordinateHelpers.cpp 
+  tstCylindricalCoordinateHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCylindricalCoordinateHelpers utility_core)
 ADD_TEST(CylindricalCoordinateHelpers_test tstCylindricalCoordinateHelpers)
 SET_PROPERTY(TEST CylindricalCoordinateHelpers_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstSphericalCoordinateHelpers
-  tstSphericalCoordinateHelpers.cpp 
+  tstSphericalCoordinateHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSphericalCoordinateHelpers utility_core)
 ADD_TEST(SphericalCoordinateHelpers_test tstSphericalCoordinateHelpers)
 SET_PROPERTY(TEST SphericalCoordinateHelpers_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstDataProcessor
-  tstDataProcessor.cpp 
+  tstDataProcessor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstDataProcessor utility_core)
 ADD_TEST(DataProcessor_test tstDataProcessor)
 SET_PROPERTY(TEST DataProcessor_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstFortranStringHelpers
-  tstFortranStringHelpers.cpp 
-  string_conversion.F90 
+  tstFortranStringHelpers.cpp
+  string_conversion.F90
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstFortranStringHelpers utility_core)
 ADD_TEST(FortranStringHelpers_test tstFortranStringHelpers)
@@ -170,12 +184,38 @@ TARGET_LINK_LIBRARIES(tstKinematicHelpers utility_core)
 ADD_TEST(KinematicHelpers_test tstKinematicHelpers)
 SET_PROPERTY(TEST KinematicHelpers_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstLegendrePolynomial
+  tstLegendrePolynomial.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLegendrePolynomial utility_core)
+ADD_TEST(LegendrePolynomial_test tstLegendrePolynomial)
+SET_PROPERTY(TEST LegendrePolynomial_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstGaussLegendreQuadratureSet
+  tstGaussLegendreQuadratureSet.cpp )
+TARGET_LINK_LIBRARIES(tstGaussLegendreQuadratureSet utility_core)
+ADD_TEST(GaussLegendreQuadratureSet_test tstGaussLegendreQuadratureSet)
+SET_PROPERTY(TEST GaussLegendreQuadratureSet_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstSloanRadauQuadrature
+  tstSloanRadauQuadrature.cpp)
+TARGET_LINK_LIBRARIES(tstSloanRadauQuadrature utility_core)
+ADD_TEST(SloanRadauQuadrature_test tstSloanRadauQuadrature)
+SET_PROPERTY(TEST SloanRadauQuadrature_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstGridGenerator
   tstGridGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstGridGenerator utility_core)
 ADD_TEST(GridGenerator_test tstGridGenerator)
 SET_PROPERTY(TEST GridGenerator_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstTwoDGridGenerator
+  tstTwoDGridGenerator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTwoDGridGenerator utility_core)
+ADD_TEST(TwoDGridGenerator_test tstTwoDGridGenerator)
+SET_PROPERTY(TEST TwoDGridGenerator_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstTetrahedronHelpers
   tstTetrahedronHelpers.cpp

@@ -34,60 +34,60 @@ void validateCellName( const std::string& cell_name )
 }
 
 // Validate the cell definition
-/*! \details All surface names appearing in the cell definition must 
+/*! \details All surface names appearing in the cell definition must
  * correspond to defined surfaces (names must be in name set ). If a name is
- * found that does not correspond to a defined surface, a 
+ * found that does not correspond to a defined surface, a
  * std::invalid_argument exception is thrown.
- */ 
+ */
 void validateCellDefinition( const std::string& cell_definition,
 			     const std::string& cell_name,
 			     const std::set<std::string>& surface_names )
 {
   std::string error_message;
-  
+
   // copy and remove (, ) and - characters from the cell definition
   std::string simplified_cell_definition( cell_definition );
   std::string special_characters( "()-" );
 
-  unsigned operation_pos = 
+  unsigned operation_pos =
     simplified_cell_definition.find_first_of( special_characters );
 
   // Remove the special characters
   while( operation_pos < simplified_cell_definition.size() )
   {
     simplified_cell_definition[operation_pos] = ' ';
-    
+
     operation_pos = cell_definition.find_first_of( special_characters,
 						   operation_pos+1 );
   }
-  
+
   // Remove leading and trailing white space
   unsigned start_pos = simplified_cell_definition.find_first_not_of( " " );
   unsigned end_pos = simplified_cell_definition.find_last_not_of( " " );
-  
+
   if( start_pos > 0 )
     simplified_cell_definition.erase( 0, start_pos );
-  
+
   if( end_pos+1 < simplified_cell_definition.size() )
   {
-    simplified_cell_definition.erase( 
+    simplified_cell_definition.erase(
 				 end_pos+1,
 				 simplified_cell_definition.size() -end_pos-1);
   }
-  
+
   // Check that all surface names exists
   unsigned surface_name_start_pos = 0;
-  unsigned surface_name_end_pos = 
+  unsigned surface_name_end_pos =
     simplified_cell_definition.find_first_of( " " );
-  
+
   if( surface_name_end_pos > simplified_cell_definition.size() )
     surface_name_end_pos = simplified_cell_definition.size();
-  
+
   while( surface_name_end_pos <= simplified_cell_definition.size() )
   {
     unsigned surface_name_size = surface_name_end_pos - surface_name_start_pos;
-    
-    std::string surface_name = 
+
+    std::string surface_name =
       simplified_cell_definition.substr( surface_name_start_pos,
 					 surface_name_size );
     //std::cout << "\"" << surface_name << "\"" << std::endl;
@@ -109,7 +109,7 @@ void validateCellDefinition( const std::string& cell_definition,
 
     // Get the next surface name
     surface_name_start_pos = surface_name_end_pos+1;
-    surface_name_end_pos = 
+    surface_name_end_pos =
       simplified_cell_definition.find( " ", surface_name_start_pos );
 
     if( surface_name_start_pos < simplified_cell_definition.size() &&
@@ -149,7 +149,7 @@ void validateCellMaterial( const std::string& cell_material,
 }
 
 // Validate the cell density
-/*! \details The cell density must be positive and finite. If it is not, a 
+/*! \details The cell density must be positive and finite. If it is not, a
  * std::invalid_argument exception is thrown.
  */
 void validateCellDensity( const double cell_density,

@@ -100,7 +100,7 @@ ADD_EXECUTABLE(tstSurfaceInputValidatorHelpers
   tstSurfaceInputValidatorHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSurfaceInputValidatorHelpers geometry_core geometry_native)
-ADD_TEST(SurfaceInputValidatorHelpers_test tstSurfaceInputValidatorHelpers) 
+ADD_TEST(SurfaceInputValidatorHelpers_test tstSurfaceInputValidatorHelpers)
 SET_PROPERTY(TEST SurfaceInputValidatorHelpers_test PROPERTY LABELS geometry_native)
 
 ADD_EXECUTABLE(tstSurfaceInputValidator

@@ -25,8 +25,8 @@ public:
 
   //! Constructor
   BasicCoherentScatteringDistribution(
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    form_factor_function_squared );
+                                const std::shared_ptr<const FormFactorSquared>&
+                                form_factor_function_squared );
 
   //! Destructor
   ~BasicCoherentScatteringDistribution()

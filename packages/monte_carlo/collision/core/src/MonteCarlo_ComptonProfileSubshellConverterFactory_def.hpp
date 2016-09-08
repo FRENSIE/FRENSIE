@@ -19,17 +19,17 @@ namespace MonteCarlo{
 
 // Create the converter
 template<template<typename> class SmartPointer>
-void ComptonProfileSubshellConverterFactory::createConverter( 
+void ComptonProfileSubshellConverterFactory::createConverter(
 		      SmartPointer<ComptonProfileSubshellConverter>& converter,
 		      const unsigned atomic_number )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number > 0u );
   testPrecondition( atomic_number <= 100u );
-  
+
   switch( atomic_number )
   {
-  case 1u: 
+  case 1u:
     converter.reset( new StandardComptonProfileSubshellConverter<1u> );
     break;
   case 2u:
@@ -330,7 +330,7 @@ void ComptonProfileSubshellConverterFactory::createConverter(
     converter.reset( new StandardComptonProfileSubshellConverter<100u> );
     break;
   default:
-    THROW_EXCEPTION( std::logic_error, 
+    THROW_EXCEPTION( std::logic_error,
 		     "Error: Z " << atomic_number << " is invalid!" );
   }
 }

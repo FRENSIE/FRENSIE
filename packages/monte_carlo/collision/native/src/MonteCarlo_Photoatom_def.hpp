@@ -21,7 +21,7 @@ Photoatom::Photoatom(
 	  const unsigned atomic_number,
 	  const double atomic_weight,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>& 
+	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>&
 	  grid_searcher,
 	  const Photoatom::ReactionMap& standard_scattering_reactions,
 	  const Photoatom::ReactionMap& standard_absorption_reactions,

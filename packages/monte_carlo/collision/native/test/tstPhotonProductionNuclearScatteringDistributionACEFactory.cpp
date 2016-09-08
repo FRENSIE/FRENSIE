@@ -34,7 +34,7 @@ public:
                                                            atomic_weight_ratio,
 							   raw_nuclide_data )
   { /* ... */ }
-  
+
   ~TestPhotonProductionNuclearScatteringDistributionACEFactory()
   { /* ... */ }
 
@@ -66,7 +66,7 @@ Teuchos::RCP<TestPhotonProductionNuclearScatteringDistributionACEFactory> neutro
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( PhotonProductionNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonProductionNuclearScatteringDistributionACEFactory,
 		   getReactionOrdering_h1 )
 {
 
@@ -79,9 +79,9 @@ TEUCHOS_UNIT_TEST( PhotonProductionNuclearScatteringDistributionACEFactory,
    new Data::XSSNeutronDataExtractor( ace_file_handler_h1->getTableNXSArray(),
                                       ace_file_handler_h1->getTableJXSArray(),
                                       ace_file_handler_h1->getTableXSSArray()));
-   
+
 //  MonteCarlo::PhotonProductionNuclearScatteringDistributionACEFactory
-  neutron_distribution_factory_h1.reset( 
+  neutron_distribution_factory_h1.reset(
     new TestPhotonProductionNuclearScatteringDistributionACEFactory(
                              test_basic_h1_ace_table_name,
                              ace_file_handler_h1->getTableAtomicWeightRatio(),
@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST( PhotonProductionNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( PhtonProductionNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhtonProductionNuclearScatteringDistributionACEFactory,
 		   getReactionOrdering_o16 )
 {
 
@@ -104,9 +104,9 @@ TEUCHOS_UNIT_TEST( PhtonProductionNuclearScatteringDistributionACEFactory,
    new Data::XSSNeutronDataExtractor( ace_file_handler_o16->getTableNXSArray(),
                                       ace_file_handler_o16->getTableJXSArray(),
                                       ace_file_handler_o16->getTableXSSArray()));
-   
+
 //  MonteCarlo::PhotonProductionNuclearScatteringDistributionACEFactory
-  neutron_distribution_factory_o16.reset( 
+  neutron_distribution_factory_o16.reset(
     new TestPhotonProductionNuclearScatteringDistributionACEFactory(
 			     test_basic_o16_ace_table_name,
                              ace_file_handler_o16->getTableAtomicWeightRatio(),
@@ -116,7 +116,7 @@ TEUCHOS_UNIT_TEST( PhtonProductionNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( PhotonProductionNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonProductionNuclearScatteringDistributionACEFactory,
 		   getReactionEnergyDist_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionEnergyDist().size() ,==, 1 );

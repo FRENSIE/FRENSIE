@@ -39,7 +39,7 @@ class XSSNeutronDataExtractorH1TestCase(unittest.TestCase):
     def testConstructor(self):
         "*Test Data.ACE.XSSNeutronDataExtractor constructor"
         self.assertTrue(isinstance(self.xss_extractor, ACE.XSSNeutronDataExtractor))
-        
+
     def testHasFissionData(self):
         "*Test Data.ACE.XSSNeutronDataExtractor hasFissionData method"
         self.assertFalse(self.xss_extractor.hasFissionData())
@@ -149,7 +149,7 @@ class XSSNeutronDataExtractorH1TestCase(unittest.TestCase):
         self.assertEqual(len(sig_block), 1389)
         self.assertEqual(sig_block[0], 1)
         self.assertEqual(sig_block[len(sig_block)-1], 3.067696e-4 )
-        
+
     def testExtractLANDBlock(self):
         "*Test Data.ACE.XSSNeutronDataExtractor extractLANDBlock method"
         land_block = self.xss_extractor.extractLANDBlock()
@@ -247,7 +247,7 @@ class XSSNeutronDataExtractorH1TestCase(unittest.TestCase):
         "*Test Data.ACE.XSSNeutronDataExtractor extractDNEDBlock method"
         dned_block = self.xss_extractor.extractDNEDBlock()
         self.assertEqual(len(dned_block), 0)
-        
+
 #-----------------------------------------------------------------------------#
 # Test the XSSNeutronDataExtractor
 class XSSNeutronDataExtractorU238TestCase(unittest.TestCase):
@@ -349,14 +349,14 @@ class XSSNeutronDataExtractorU238TestCase(unittest.TestCase):
         self.assertEqual(len(tyr_block), 47)
         self.assertEqual(tyr_block[0], -2)
         self.assertEqual(tyr_block[len(tyr_block)-1], 0.0)
-        
+
     def testExtractLSIGBlock(self):
         "*Test Data.ACE.XSSNeutronDataExtractor extractLSIGBlock method"
         lsig_block = self.xss_extractor.extractLSIGBlock()
         self.assertEqual(len(lsig_block), 47)
         self.assertEqual(lsig_block[0], 1)
         self.assertEqual(lsig_block[len(lsig_block)-1], 324068)
-        
+
     def testExtractLSIGPBlock(self):
         "*Test Data.ACE.XSSNeutronDataExtractor extractLSIGPBlock method"
         lsigp_block = self.xss_extractor.extractLSIGPBlock()
@@ -370,7 +370,7 @@ class XSSNeutronDataExtractorU238TestCase(unittest.TestCase):
         self.assertEqual(len(sig_block), 481823)
         self.assertEqual(sig_block[0], 157648)
         self.assertEqual(sig_block[len(sig_block)-1], 3.216104e-1)
-        
+
     def testExtractLANDBlock(self):
         "*Test Data.ACE.XSSNeutronDataExtractor extractLANDBlock method"
         land_block = self.xss_extractor.extractLANDBlock()
@@ -487,7 +487,7 @@ class XSSNeutronDataExtractorU238TestCase(unittest.TestCase):
         self.assertEqual(len(dned_block), 9768)
         self.assertEqual(dned_block[0], 0)
         self.assertEqual(dned_block[len(dned_block)-1], 9.99999999000e-01)
-        
+
 #-----------------------------------------------------------------------------#
 # Custom main
 #-----------------------------------------------------------------------------#

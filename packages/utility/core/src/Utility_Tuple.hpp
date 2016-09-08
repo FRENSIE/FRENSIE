@@ -20,15 +20,15 @@ struct Pair
 {
   //! Default constructor
   Pair() : first(), second() { /* ... */ }
-  
+
   //! Constructor
-  Pair( T1 value1, T2 value2 ) : first(value1), second(value2) 
+  Pair( T1 value1, T2 value2 ) : first(value1), second(value2)
   { /* ... */ }
-  
+
   //! Reassignment operator
-  void operator()( T1 value1, T2 value2 ) 
+  void operator()( T1 value1, T2 value2 )
   { first = value1; second = value2; }
-  
+
   static const int size = 2;
   typedef T1 firstType;
   typedef T2 secondType;
@@ -45,13 +45,13 @@ struct Trip
 
   //! Constructor
   Trip( T1 value1, T2 value2, T3 value3 ) : first(value1), second(value2),
-					    third(value3) 
+					    third(value3)
   { /* ... */ }
 
   //! Reassignment operator
-  void operator()( T1 value1, T2 value2, T3 value3 ) 
+  void operator()( T1 value1, T2 value2, T3 value3 )
   { first = value1; second = value2; third = value3; }
-  
+
   static const int size = 3;
   typedef T1 firstType;
   typedef T2 secondType;
@@ -67,18 +67,18 @@ struct Quad
 {
   //! Default constructor
   Quad() : first(), second(), third(), fourth() { /* ... */ }
-  
+
   //! Constructor
   Quad( T1 value1, T2 value2, T3 value3, T4 value4 ) : first(value1),
 						       second(value2),
 						       third(value3),
-						       fourth(value4) 
+						       fourth(value4)
   { /* ... */ }
 
   //! Reassignment operator
-  void operator()( T1 value1, T2 value2, T3 value3, T4 value4 ) 
+  void operator()( T1 value1, T2 value2, T3 value3, T4 value4 )
   { first = value1; second = value2; third = value3; fourth = value4; }
-  
+
   static const int size = 4;
   typedef T1 firstType;
   typedef T2 secondType;
@@ -100,36 +100,36 @@ enum TupleMember{
 
 //! Non-member Pair inequality operator
 template<typename T1, typename T2>
-bool operator!=( const Pair<T1,T2> &left, const Pair<T1,T2> &right ) 
+bool operator!=( const Pair<T1,T2> &left, const Pair<T1,T2> &right )
 { return (left.first != right.first) || (left.second != right.second); }
 
-//! Non-member Pair equality operator 
+//! Non-member Pair equality operator
 template<typename T1, typename T2>
-bool operator==( const Pair<T1,T2> &left, const Pair<T1,T2> &right ) 
+bool operator==( const Pair<T1,T2> &left, const Pair<T1,T2> &right )
 { return (left.first == right.first) && (left.second == right.second); }
 
 //! Non-member Trip inequality operator
 template<typename T1, typename T2, typename T3>
-bool operator!=( const Trip<T1,T2,T3> &left, const Trip<T1,T2,T3> &right ) 
-{ return (left.first != right.first) || (left.second != right.second) || 
+bool operator!=( const Trip<T1,T2,T3> &left, const Trip<T1,T2,T3> &right )
+{ return (left.first != right.first) || (left.second != right.second) ||
     (left.third != right.third); }
 
-//! Non-member Trip equality operator 
+//! Non-member Trip equality operator
 template<typename T1, typename T2, typename T3>
-bool operator==( const Trip<T1,T2,T3> &left, const Trip<T1,T2,T3> &right ) 
-{ return (left.first == right.first) && (left.second == right.second) && 
+bool operator==( const Trip<T1,T2,T3> &left, const Trip<T1,T2,T3> &right )
+{ return (left.first == right.first) && (left.second == right.second) &&
     (left.third == right.third); }
 
 //! Non-member Quad inequality operator
 template<typename T1, typename T2, typename T3, typename T4>
 bool operator!=( const Quad<T1,T2,T3,T4> &left, const Quad<T1,T2,T3,T4> &right)
-{ return (left.first != right.first) || (left.second != right.second) || 
+{ return (left.first != right.first) || (left.second != right.second) ||
     (left.third != right.third) || (left.fourth != right.fourth); }
 
 //! Non-member Quad equality operator
 template<typename T1, typename T2, typename T3, typename T4>
 bool operator==( const Quad<T1,T2,T3,T4> &left, const Quad<T1,T2,T3,T4> &right)
-{ return (left.first == right.first) && (left.second == right.second) && 
+{ return (left.first == right.first) && (left.second == right.second) &&
     (left.third == right.third) && (left.fourth == right.fourth); }
 
 /*! \brief Stream operator for Pair
@@ -156,10 +156,10 @@ std::ostream& operator<<(std::ostream &out, const Utility::Trip<T1,T2,T3> &p)
  * \ingroup print_format
  */
 template<typename T1, typename T2, typename T3, typename T4>
-std::ostream& operator<<(std::ostream &out, 
+std::ostream& operator<<(std::ostream &out,
 			 const Utility::Quad<T1,T2,T3,T4> &p)
 {
-  out << "{ " << p.first << ", " << p.second << ", " << p.third 
+  out << "{ " << p.first << ", " << p.second << ", " << p.third
       << ", " << p.fourth << " }";
   return out;
 }

@@ -44,7 +44,7 @@ template<typename GeometryHandler,
 ParticleSimulationManager<GeometryHandler,
 			  SourceHandler,
 			  EstimatorHandler,
-			  CollisionHandler>::ParticleSimulationManager( 
+			  CollisionHandler>::ParticleSimulationManager(
 		       const unsigned long long number_of_histories,
 		       const unsigned long long start_history,
 		       const unsigned long long previously_completed_histories,
@@ -62,7 +62,7 @@ ParticleSimulationManager<GeometryHandler,
 
   // Assign the functions based on the mode
   ParticleModeType mode = SimulationGeneralProperties::getParticleMode();
-  
+
   switch( mode )
   {
   case NEUTRON_MODE:
@@ -78,7 +78,7 @@ ParticleSimulationManager<GeometryHandler,
     d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
 					    boost::cref( *this ),
 					    _1,
-					    _2 );		   
+					    _2 );
     break;
   }
   case NEUTRON_PHOTON_MODE:
@@ -148,28 +148,28 @@ void ParticleSimulationManager<GeometryHandler,
 {
   std::cout << "Starting simulation ... ";
   std::cout.flush();
-  
+
   // Set up the random number generator for the number of threads requested
   Utility::RandomNumberGenerator::createStreams();
 
   // Enable geometry thread support
   GMI::enableThreadSupport(
 	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   // Enable source thread support
   SMI::enableThreadSupport(
                  Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   // Enable estimator thread support
-  EMI::enableThreadSupport( 
+  EMI::enableThreadSupport(
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   // Set the start time
   this->setStartTime( Utility::GlobalOpenMPSession::getTime() );
 
   // Simulate the batch
   this->runSimulationBatch( d_start_history, d_history_number_wall );
-    
+
   // Set the end time
   this->setEndTime( Utility::GlobalOpenMPSession::getTime() );
 
@@ -184,17 +184,17 @@ template<typename GeometryHandler,
 void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
-			       CollisionHandler>::runSimulationBatch( 
-                            const unsigned long long batch_start_history, 
+			       CollisionHandler>::runSimulationBatch(
+                            const unsigned long long batch_start_history,
 			    const unsigned long long batch_end_history )
 {
   // Make sure the history range is valid
   testPrecondition( batch_start_history <= batch_end_history );
   testPrecondition( batch_start_history >= d_start_history );
   testPrecondition( batch_end_history <= d_history_number_wall );
-  
+
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
-  { 
+  {
     // Create a bank for each thread
     ParticleBank bank;
 
@@ -207,32 +207,32 @@ void ParticleSimulationManager<GeometryHandler,
       {
 	// Initialize the random number generator for this history
 	Utility::RandomNumberGenerator::initialize( history );
-	
+
 	// Sample a particle state from the source
 	SMI::sampleParticleState( bank, history );
-	
+
 	// Determine the starting cell of the particle
 	for( unsigned i = 0; i < bank.size(); ++i )
 	{
           Geometry::ModuleTraits::InternalCellHandle start_cell;
-	  
+
 	  try{
 	    start_cell = GMI::findCellContainingStartRay( bank.top().ray() );
 	  }
 	  CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
-	  
+
 	  bank.top().setCell( start_cell );
-	  
-	  EMI::updateObserversFromParticleEnteringCellEvent( 
+
+	  EMI::updateObserversFromParticleEnteringCellEvent(
                                             bank.top(), bank.top().getCell() );
 	}
-	
+
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
 	{
 	  switch( bank.top().getParticleType() )
 	  {
-	  case NEUTRON: 
+	  case NEUTRON:
 	    d_simulate_neutron( dynamic_cast<NeutronState&>( bank.top() ),
 				bank );
 	    break;
@@ -250,13 +250,13 @@ void ParticleSimulationManager<GeometryHandler,
 			     << bank.top().getParticleType() <<
 			     " is not currently supported!" );
 	  }
-  
+
 	bank.pop();
 	}
-	
+
 	// Commit all observer history contributions
 	EMI::commitObserverHistoryContributions();
-        
+
 	// Increment the number of histories completed
         #pragma omp atomic
 	++d_histories_completed;
@@ -274,7 +274,7 @@ template<typename ParticleStateType>
 void ParticleSimulationManager<GeometryHandler,
                                SourceHandler,
                                EstimatorHandler,
-                               CollisionHandler>::simulateParticle( 
+                               CollisionHandler>::simulateParticle(
                                                    ParticleStateType& particle,
 						   ParticleBank& bank ) const
 {
@@ -282,7 +282,7 @@ void ParticleSimulationManager<GeometryHandler,
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
   double subtrack_start_time;
   double ray_start_point[3];
-  
+
   // Cache the start point of the ray
   ray_start_point[0] = particle.getXPosition();
   ray_start_point[1] = particle.getYPosition();
@@ -302,12 +302,12 @@ void ParticleSimulationManager<GeometryHandler,
 
   // Set the ray
   GMI::setInternalRay( particle.ray(), particle.getCell() );
-  
+
   while( !particle.isLost() && !particle.isGone() )
   {
     // Sample the mfp traveled by the particle on this subtrack
     remaining_subtrack_op = CMI::sampleOpticalPathLength();
-    
+
     // Ray trace until the necessary number of optical paths have be traveled
     while( true )
     {
@@ -320,14 +320,14 @@ void ParticleSimulationManager<GeometryHandler,
       // Get the total cross section for the cell
       if( !CMI::isCellVoid( particle.getCell(), particle.getParticleType() ) )
       {
-      	cell_total_macro_cross_section = 
+      	cell_total_macro_cross_section =
       	  CMI::getMacroscopicTotalCrossSection( particle );
       }
       else
   	cell_total_macro_cross_section = 0.0;
 
       // Convert the distance to the surface to optical path
-      op_to_surface_hit = 
+      op_to_surface_hit =
   	distance_to_surface_hit*cell_total_macro_cross_section;
 
       // Get the start time of this subtrack
@@ -348,8 +348,8 @@ void ParticleSimulationManager<GeometryHandler,
         // Update the observers: particle leaving cell event
         EMI::updateObserversFromParticleLeavingCellEvent( particle,
                                                           particle.getCell() );
-                                                                  
-        
+
+
         // Advance the ray to the cell boundary
         // Note: this is done after so that the particle direction is not
         // altered before the estimators are updated
@@ -357,19 +357,19 @@ void ParticleSimulationManager<GeometryHandler,
                                                   surface_normal.getRawPtr() );
 
         // Update the observers: particle crossing surface event
-        EMI::updateObserversFromParticleCrossingSurfaceEvent( 
+        EMI::updateObserversFromParticleCrossingSurfaceEvent(
                                                   particle,
                                                   surface_hit,
                                                   surface_normal.getRawPtr() );
 
-        
+
 
         if( reflected )
         {
           particle.setDirection( GMI::getInternalRayDirection() );
 
           // Update the observers: particle crossing surface event
-          EMI::updateObserversFromParticleCrossingSurfaceEvent( 
+          EMI::updateObserversFromParticleCrossingSurfaceEvent(
                                                   particle,
                                                   surface_hit,
                                                   surface_normal.getRawPtr() );
@@ -397,15 +397,15 @@ void ParticleSimulationManager<GeometryHandler,
 
   	// Update the remaining subtrack mfp
   	remaining_subtrack_op -= op_to_surface_hit;
-      } 
-      
+      }
+
       // A collision occurs in this cell
       else
       {
   	// Advance the particle to the collision site
-  	double distance_to_collision = 
+  	double distance_to_collision =
           remaining_subtrack_op/cell_total_macro_cross_section;
-	
+
   	particle.advance( distance_to_collision );
 
         GMI::advanceInternalRayBySubstep( distance_to_collision );
@@ -421,7 +421,7 @@ void ParticleSimulationManager<GeometryHandler,
         EMI::updateObserversFromParticleCollidingInCellEvent(
                                           particle,
                                           1.0/cell_total_macro_cross_section );
-        
+
   	// Update the global observers: particle subtrack ending global event
   	EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
   						      particle,
@@ -445,7 +445,7 @@ void ParticleSimulationManager<GeometryHandler,
   	// This subtrack is finished
   	break;
       }
-    }	     
+    }
   }
 
   // Update the global observers: particle subtrack ending global event
@@ -489,7 +489,7 @@ template<typename GeometryHandler,
 void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
-			       CollisionHandler>::incrementHistoriesCompleted( 
+			       CollisionHandler>::incrementHistoriesCompleted(
 					   const unsigned long long histories )
 {
   d_histories_completed += histories;
@@ -503,7 +503,7 @@ template<typename GeometryHandler,
 void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
-			       CollisionHandler>::setHistoriesCompleted( 
+			       CollisionHandler>::setHistoriesCompleted(
 					   const unsigned long long histories )
 {
   d_histories_completed = histories;
@@ -521,7 +521,7 @@ void ParticleSimulationManager<GeometryHandler,
 {
   d_start_time = start_time;
 }
-  
+
 // Set the end time
 template<typename GeometryHandler,
 	 typename SourceHandler,
@@ -534,7 +534,7 @@ void ParticleSimulationManager<GeometryHandler,
 {
   // Make sure the end time is valid
   testPrecondition( end_time >= d_start_time );
-  
+
   d_end_time = end_time;
 }
 
@@ -547,7 +547,7 @@ template<typename ParticleStateType>
 void ParticleSimulationManager<GeometryHandler,
                                SourceHandler,
                                EstimatorHandler,
-                               CollisionHandler>::ignoreParticle( 
+                               CollisionHandler>::ignoreParticle(
                                                    ParticleStateType& particle,
 						   ParticleBank& bank ) const
 {
@@ -562,7 +562,7 @@ template<typename GeometryHandler,
 void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
-			       CollisionHandler>::printLostParticleInfo( 
+			       CollisionHandler>::printLostParticleInfo(
                                        const std::string& file,
                                        const int line,
                                        const std::string& error_message,
@@ -594,7 +594,7 @@ template<typename GeometryHandler,
 void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
-			       CollisionHandler>::printSimulationSummary( 
+			       CollisionHandler>::printSimulationSummary(
 						       std::ostream &os ) const
 {
   os << "Number of histories completed: " << d_histories_completed <<std::endl;
@@ -602,9 +602,9 @@ void ParticleSimulationManager<GeometryHandler,
   if( d_previous_run_time > 0.0 )
     os << "Previous Simulation Time (s): " << d_previous_run_time << std::endl;
   os << std::endl;
-  
+
   SMI::printSourceSummary( os );
-  
+
   EMI::printObserverSummaries( os,
                                d_histories_completed,
                                d_start_time,
@@ -627,11 +627,11 @@ void ParticleSimulationManager<GeometryHandler,
   os.flush();
 
   // Initialize the HDF5 file
-  std::shared_ptr<Utility::HDF5FileHandler> 
+  std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
 
   hdf5_file->openHDF5FileAndOverwrite( data_file_name );
-  
+
   EMI::exportObserverData( hdf5_file,
                            d_start_history+d_histories_completed,
                            d_histories_completed,
@@ -658,7 +658,7 @@ void ParticleSimulationManager<GeometryHandler,
   std::cerr << " Status (s), End (e), Kill (k)" << std::endl;
   std::string option;
   std::cin >> option;
-  
+
   if( option.compare( "s" ) == 0 )
   {
     printSimulationStateInfo();
@@ -684,7 +684,7 @@ void ParticleSimulationManager<GeometryHandler,
 			       CollisionHandler>::printSimulationStateInfo()
 {
   double time = Utility::GlobalOpenMPSession::getTime();
-  
+
   #pragma omp critical( ostream_update )
   {
     #pragma omp flush( d_histories_completed )

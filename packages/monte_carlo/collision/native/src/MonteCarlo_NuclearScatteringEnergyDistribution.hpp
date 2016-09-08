@@ -37,7 +37,7 @@ public:
   virtual double sampleEnergy( const double energy ) const = 0;
 
   //! Sample a scattering energy (and return the sampled bin index)
-  virtual double sampleEnergy( const double energy, 
+  virtual double sampleEnergy( const double energy,
 			       unsigned& incoming_bin_index,
 			       unsigned& outgoing_bin_index,
                                double& energy_prime ) const;
@@ -52,14 +52,14 @@ private:
 };
 
 // Sample a scattering energy (and return the sampled bin index)
-inline double NuclearScatteringEnergyDistribution::sampleEnergy( 
-					    const double energy, 
+inline double NuclearScatteringEnergyDistribution::sampleEnergy(
+					    const double energy,
 					    unsigned& incoming_bin_index,
 					    unsigned& outgoing_bin_index,
                                             double& energy_prime ) const
 {
   incoming_bin_index = std::numeric_limits<unsigned>::max();
-  
+
   outgoing_bin_index = std::numeric_limits<unsigned>::max();
 
   return this->sampleEnergy( energy );

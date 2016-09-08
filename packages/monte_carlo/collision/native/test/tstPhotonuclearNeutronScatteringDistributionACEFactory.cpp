@@ -35,7 +35,7 @@ public:
                                                            atomic_weight_ratio,
 							   raw_nuclide_data )
   { /* ... */ }
-  
+
   ~TestPhotonuclearNeutronScatteringDistributionACEFactory()
   { /* ... */ }
 
@@ -61,7 +61,7 @@ Teuchos::RCP<TestPhotonuclearNeutronScatteringDistributionACEFactory> photonucle
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 		   getReactionOrdering_h2 )
 {
   ace_file_handler_h2.reset(new Data::ACEFileHandler( test_basic_h2_ace_file_name,
@@ -72,8 +72,8 @@ TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
    new Data::XSSPhotonuclearDataExtractor( ace_file_handler_h2->getTableNXSArray(),
                                       ace_file_handler_h2->getTableJXSArray(),
                                       ace_file_handler_h2->getTableXSSArray()));
- 
-  photonuclear_neutron_distribution_factory_h2.reset( 
+
+  photonuclear_neutron_distribution_factory_h2.reset(
     new TestPhotonuclearNeutronScatteringDistributionACEFactory(
                              test_basic_h2_ace_table_name,
                              ace_file_handler_h2->getTableAtomicWeightRatio(),
@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
   TEST_EQUALITY( photonuclear_neutron_distribution_factory_h2->getReactionOrdering().find(50)->second , 0);
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 		   getReactionCMScattering_h2 )
 {
   // Only 1 reaction produces an outgoing neutron, reaction 50. This reaction data takes place in CoM frame (-1)
@@ -95,7 +95,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 		   getReactionWithIsotropicScatteringOnly_h2 )
 {
    // Only 1 reaction produces an outgoing neutron, reaction 50. This dist_index is = 1 -> no iso
@@ -103,7 +103,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 		   getReactionWithCoupledEnergyAngleDist_h2 )
 {
   // Only 1 reaction produces an outgoing neutron, reaction 50. This dist_index is = 1 -> no energy angle dependence
@@ -111,7 +111,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 		   getReactionAngularDist_h2 )
 {
   TEST_COMPARE( photonuclear_neutron_distribution_factory_h2->getReactionAngularDist().size() ,==, 1 );
@@ -126,7 +126,7 @@ TEST_COMPARE( photonuclear_neutron_distribution_factory_h2->getReactionAngularDi
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 		   getReactionAngularDistStartIndex_h2 )
 {
   TEST_COMPARE( photonuclear_neutron_distribution_factory_h2->getReactionAngularDistStartIndex().size() ,==, 1 );
@@ -134,7 +134,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 		   getReactionEnergyDist_h2 )
 {
 
@@ -146,7 +146,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearNeutronScatteringDistributionACEFactory,
 		   getReactionEnergyDistStartIndex_h2 )
 {
 

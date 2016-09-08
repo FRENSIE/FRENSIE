@@ -48,7 +48,7 @@ public:
 
   //! Check if the bank is empty
   bool isEmpty() const;
-  
+
   //! The size of the bank
   unsigned long long size() const;
 
@@ -56,7 +56,7 @@ public:
   ParticleState& top();
 
   //! Access the top element
-  const ParticleState& top() const; 
+  const ParticleState& top() const;
 
   //! Push a particle to the bank
   template<template<typename> class SmartPointer, typename State>
@@ -73,7 +73,7 @@ public:
   //! Insert a neutron into the bank after an interaction
   virtual void push( const NeutronState& neutron,
 		     const NuclearReactionType reaction );
-  
+
   //! Pop the top particle from bank
   void pop();
 
@@ -97,7 +97,7 @@ public:
 private:
 
   // Dereference a smart ptr
-  static const ParticleState& dereference( 
+  static const ParticleState& dereference(
                                const std::shared_ptr<ParticleState>& pointer );
 
   // Save the bank to an archive
@@ -110,12 +110,12 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // A list of particle states 
+  // A list of particle states
   std::list<std::shared_ptr<ParticleState> > d_particle_states;
-};  
+};
 
 // Dereference a smart pointer
-inline const ParticleState& ParticleBank::dereference( 
+inline const ParticleState& ParticleBank::dereference(
                              const std::shared_ptr<ParticleState>& pointer )
 {
   return *pointer;

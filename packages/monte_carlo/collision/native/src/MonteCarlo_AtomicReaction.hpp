@@ -30,10 +30,10 @@ public:
   //! Destructor
   virtual ~AtomicReaction()
   { /* ... */ }
-  
+
   //! Test if two Atomic reactions share the same energy grid
   bool isEnergyGridShared( const AtomicReaction& other_reaction ) const;
-  
+
   //! Test if the energy falls within the energy grid
   virtual bool isEnergyWithinEnergyGrid( const double energy ) const = 0;
 
@@ -42,7 +42,7 @@ public:
 
   //! Return the cross section at the given energy (efficient)
   virtual double getCrossSection( const double energy,
-				  const unsigned bin_index ) const = 0;
+                                  const unsigned bin_index ) const = 0;
 
   //! Return the threshold energy
   virtual double getThresholdEnergy() const = 0;
@@ -60,7 +60,7 @@ protected:
 };
 
 // Test if two Atomic reactions share the same energy grid
-inline bool AtomicReaction::isEnergyGridShared( 
+inline bool AtomicReaction::isEnergyGridShared(
 			      const AtomicReaction& other_reaction ) const
 {
   return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();

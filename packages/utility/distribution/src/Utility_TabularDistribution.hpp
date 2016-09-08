@@ -25,8 +25,8 @@ namespace Utility{
 /*! The interpolated distribution class declaration
  * \ingroup one_d_distributions
  */
-template<typename InterpolationPolicy, 
-	 typename IndependentUnit, 
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
 	 typename DependentUnit>
 class UnitAwareTabularDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 				     public ParameterListCompatibleObject<UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
@@ -57,7 +57,7 @@ private:
 
   // Typedef for QuantityTraits<DepQuantity>
   typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
-  
+
   // Typedef for QuantityTraits<DistNormQuantity>
   typedef QuantityTraits<DistNormQuantity> DNQT;
 
@@ -77,9 +77,9 @@ public:
 
   //! Default constructor
   UnitAwareTabularDistribution();
-  
+
   //! Basic constructor (potentially dangerous)
-  UnitAwareTabularDistribution( 
+  UnitAwareTabularDistribution(
 			const Teuchos::Array<double>& independent_values,
 			const Teuchos::Array<double>& dependent_values );
 
@@ -97,7 +97,7 @@ public:
   static UnitAwareTabularDistribution fromUnitlessDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,void,void>& unitless_distribution );
 
   //! Assignment operator
-  UnitAwareTabularDistribution& operator=( 
+  UnitAwareTabularDistribution& operator=(
 			   const UnitAwareTabularDistribution& dist_instance );
 
   //! Destructor
@@ -106,7 +106,7 @@ public:
 
   //! Evaluate the distribution
   DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
-  
+
   //! Evaluate the PDF
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
@@ -129,13 +129,13 @@ public:
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  IndepQuantity sampleWithRandomNumberInSubrange( 
+  IndepQuantity sampleWithRandomNumberInSubrange(
 				     const double random_number,
 				     const IndepQuantity max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
-  
+
   //! Return the lower bound of the distribution independent variable
   IndepQuantity getLowerBoundOfIndepVar() const;
 
@@ -168,7 +168,7 @@ private:
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  void initializeDistribution( 
+  void initializeDistribution(
 		  const Teuchos::Array<InputIndepQuantity>& independent_values,
 		  const Teuchos::Array<InputDepQuantity>& dependent_values );
 
@@ -184,7 +184,7 @@ private:
 
   // Convert the unitless values to the correct units
   template<typename Quantity>
-  static void convertUnitlessValues( 
+  static void convertUnitlessValues(
 		                 const Teuchos::Array<double>& unitless_values,
 				 Teuchos::Array<Quantity>& quantitites );
 
@@ -201,7 +201,7 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = TABULAR_DISTRIBUTION;
 
-  // The distribution (first = indep_var, second = cdf, third = pdf, 
+  // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to
   // prevent altering the grid with log interpolation
   typedef Teuchos::Array<Quad<IndepQuantity,UnnormCDFQuantity,DepQuantity,SlopeQuantity> > DistributionArray;
@@ -214,7 +214,7 @@ private:
 /*! The tabular distribution (unit-agnostic)
  * \ingroup one_d_distributions
  */
-template<typename InterpolationPolicy> using TabularDistribution = 
+template<typename InterpolationPolicy> using TabularDistribution =
   UnitAwareTabularDistribution<InterpolationPolicy,void,void>;
 
 } // end Utility namespace
@@ -234,17 +234,17 @@ public:
   {
     std::ostringstream iss;
     iss << "Tabular " << InterpolationPolicy::name() << " Distribution";
-    
+
     return iss.str();
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 	    const Utility::TabularDistribution<InterpolationPolicy>& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareTabularDistribution
  *
  * \details The name function will set the type name that must be used in
@@ -257,11 +257,11 @@ class TypeNameTraits<Utility::UnitAwareTabularDistribution<InterpolationPolicy,U
   static std::string name()
   {
     std::ostringstream iss;
-    iss << "Unit-Aware Tabular " << InterpolationPolicy::name() 
-	<< " Distribution (" 
+    iss << "Unit-Aware Tabular " << InterpolationPolicy::name()
+	<< " Distribution ("
 	<< Utility::UnitTraits<U>::symbol() << ","
 	<< Utility::UnitTraits<V>::symbol() << ")";
-    
+
     return iss.str();
   }
   static std::string concreteName( const Utility::UnitAwareTabularDistribution<InterpolationPolicy,U,V>& instance )

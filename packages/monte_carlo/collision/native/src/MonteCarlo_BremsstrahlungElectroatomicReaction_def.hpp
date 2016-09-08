@@ -21,7 +21,7 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>& 
+       const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                        incoming_energy_grid,
@@ -36,12 +36,12 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the bremsstrahlung scattering distribution data is valid
-  testPrecondition( !bremsstrahlung_distribution.is_null() );
+  testPrecondition( bremsstrahlung_distribution.use_count() > 0 );
 }
 
 // Constructor
@@ -51,7 +51,7 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>& 
+       const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                 incoming_energy_grid,
@@ -67,12 +67,12 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the bremsstrahlung scattering distribution data is valid
-  testPrecondition( !bremsstrahlung_distribution.is_null() );
+  testPrecondition( bremsstrahlung_distribution.use_count() > 0 );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -101,15 +101,72 @@ ElectroatomicReactionType BremsstrahlungElectroatomicReaction<InterpPolicy,proce
   return BREMSSTRAHLUNG_ELECTROATOMIC_REACTION;
 }
 
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+double BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy <= incoming_energy );
+
+  if ( !this->isEnergyWithinEnergyGrid( incoming_energy ) )
+    return 0.0;
+
+  double outgoing_photon_energy = incoming_energy - outgoing_energy;
+
+  // If the photon energy is less than the tables min photon energy return 0
+  if ( outgoing_photon_energy < 1e-7 )
+    return 0.0; 
+
+  double cross_section = this->getCrossSection( incoming_energy );
+
+  // Evaluate the PDF at a given incoming and outgoing energy
+  double pdf =
+    d_bremsstrahlung_distribution->evaluatePDF( incoming_energy,
+                                                outgoing_photon_energy );
+
+  return cross_section*pdf;
+}
+
+// Return the differential cross section (efficient)
+template<typename InterpPolicy, bool processed_cross_section>
+double BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+    const unsigned incoming_energy_bin,
+    const double incoming_energy,
+    const double outgoing_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy <= incoming_energy );
+
+  if ( !this->isEnergyWithinEnergyGrid( incoming_energy ) )
+    return 0.0;
+
+  double outgoing_photon_energy = incoming_energy - outgoing_energy;
+
+  double cross_section = this->getCrossSection( incoming_energy );
+
+  // Evaluate the PDF at a given incoming and outgoing energy
+  double pdf =
+    d_bremsstrahlung_distribution->evaluatePDF( incoming_energy_bin,
+                                                incoming_energy,
+                                                outgoing_photon_energy );
+
+  return cross_section*pdf;
+}
+
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     ElectronState& electron, 
+void BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
-  d_bremsstrahlung_distribution->scatterElectron( electron, 
-                                                  bank, 
+  d_bremsstrahlung_distribution->scatterElectron( electron,
+                                                  bank,
                                                   shell_of_interaction);
 
   electron.incrementCollisionNumber();

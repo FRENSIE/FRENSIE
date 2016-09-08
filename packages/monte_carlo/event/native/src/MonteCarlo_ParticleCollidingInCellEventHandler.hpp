@@ -34,13 +34,13 @@ public:
 
   //! Constructor
   ParticleCollidingInCellEventHandler();
-  
+
   //! Destructor
   virtual ~ParticleCollidingInCellEventHandler()
   { /* ... */ }
 
   //! Return the particle colliding in cell event dispatcher
-  ParticleCollidingInCellEventDispatcher& 
+  ParticleCollidingInCellEventDispatcher&
   getParticleCollidingInCellEventDispatcher();
 
   //! Return the particle colliding in cell event dispatcher
@@ -54,11 +54,11 @@ public:
 
 protected:
 
-  /*! \brief Register an observer with the appropriate particle colliding in 
+  /*! \brief Register an observer with the appropriate particle colliding in
    * cell event dispatcher.
    */
   template<typename Observer, typename EntityHandle>
-  void registerObserverWithTag( 
+  void registerObserverWithTag(
                               const std::shared_ptr<Observer>& observer,
                               const Teuchos::Array<EntityHandle>& entity_ids,
                               ParticleCollidingInCellEventObserver::EventTag );
@@ -70,20 +70,20 @@ private:
   d_particle_colliding_in_cell_event_dispatcher;
 };
 
-// Register an observer with the appropriate particle colliding in 
+// Register an observer with the appropriate particle colliding in
 // cell event dispatcher.
 template<typename Observer, typename EntityHandle>
-inline void ParticleCollidingInCellEventHandler::registerObserverWithTag( 
+inline void ParticleCollidingInCellEventHandler::registerObserverWithTag(
                                const std::shared_ptr<Observer>& observer,
                                const Teuchos::Array<EntityHandle>& entity_ids,
                                ParticleCollidingInCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the correct event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleCollidingInCellEventObserver::EventTag>::value));
-  
-  std::shared_ptr<ParticleCollidingInCellEventObserver> observer_base = 
+
+  std::shared_ptr<ParticleCollidingInCellEventObserver> observer_base =
     std::dynamic_pointer_cast<ParticleCollidingInCellEventObserver>( observer );
-  
+
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
   {
     d_particle_colliding_in_cell_event_dispatcher.attachObserver(

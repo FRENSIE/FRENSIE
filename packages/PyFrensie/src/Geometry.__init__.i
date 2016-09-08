@@ -84,7 +84,7 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 //---------------------------------------------------------------------------//
 // Include the PointLocation enum
 %include "Geometry_PointLocation.hpp"
- 
+
 //---------------------------------------------------------------------------//
 // Add support for the Ray class
 //---------------------------------------------------------------------------//
@@ -95,7 +95,7 @@ Geometry::Ray
 The Ray stores the state of a ray object (position and direction). It is
 primarily used for ray tracing. A brief usage tutorial for this class is
 shown below:
-   
+
    import PyFrensie.Geometry, numpy
 
    ray1 = PyFrensie.Geometry.Ray( 0, 0, 0, 0, 0, 1 )
@@ -105,7 +105,7 @@ shown below:
 
    ray1.getPosition()
    ray1.getDirection()
-   
+
    ray1.advanceHead( 1 )
    ray1.changeDirection( 0, 1, 0 )
    ray1.advanceHead( 1 )
@@ -142,14 +142,14 @@ A NumPy array will be returned.
 // Array object to a double*.
 %typemap(in) const double position[3] (Teuchos::Array<double> temp_position){
   PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp_position );
-
+  //std::cout << "pos: " << temp_position << std::endl;
   // Make sure the sequence has 3 elements
   if( temp_position.size() != 3 )
   {
-    PyErr_SetString( PyExc_TypeError, 
+    PyErr_SetString( PyExc_TypeError,
                      "The input position must have 3 elements." );
   }
-  
+
   $1 = temp_position.getRawPtr();
 }
 
@@ -161,10 +161,10 @@ A NumPy array will be returned.
   // Make sure the sequence has 3 elements
   if( temp_direction.size() != 3 )
   {
-    PyErr_SetString( PyExc_TypeError, 
+    PyErr_SetString( PyExc_TypeError,
                      "The input direction must have 3 elements." );
   }
-  
+
   $1 = temp_direction.getRawPtr();
 }
 
@@ -192,17 +192,17 @@ A NumPy array will be returned.
   PyObject* __str__() const
   {
     std::ostringstream oss;
-    
+
     $self->print( oss );
 
     return PyString_FromString( oss.str().c_str() );
   }
-  
+
   // String representation method
   PyObject* __repr__() const
   {
     std::ostringstream oss;
-    
+
     $self->print( oss );
 
     return PyString_FromString( oss.str().c_str() );

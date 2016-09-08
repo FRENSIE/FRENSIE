@@ -21,7 +21,7 @@
 namespace Utility{
 
 // Initialize static member data
-const bool ArrayString::s_initialized = 
+const bool ArrayString::s_initialized =
   ArrayString::initialize();
 
 // Replace all occurances of pi with the number
@@ -30,15 +30,15 @@ void ArrayString::locateAndReplacePi( std::string& array_string )
   // Loop through all element tokens of the array string
   std::string::size_type elem_start_pos = array_string.find( "{" );
   ++elem_start_pos;
-  
-  std::string::size_type elem_end_pos = array_string.find_first_of( ",}", 
+
+  std::string::size_type elem_end_pos = array_string.find_first_of( ",}",
 							   elem_start_pos );
 
   std::string::size_type orig_string_size = array_string.size();
-  
+
   while( elem_end_pos < array_string.size() )
   {
-    ArrayString::replacePiInSubstring( elem_start_pos, 
+    ArrayString::replacePiInSubstring( elem_start_pos,
 				       elem_end_pos - 1,
 				       array_string );
 
@@ -47,7 +47,7 @@ void ArrayString::locateAndReplacePi( std::string& array_string )
       elem_start_pos = array_string.find( "{" );
 
       elem_end_pos = array_string.find_first_of( ",}", elem_start_pos );
-      
+
       orig_string_size = array_string.size();
     }
     else
@@ -79,24 +79,24 @@ void ArrayString::replacePiInSubstring( const std::string::size_type start,
     if( front_string.find_first_of( "0123456789" ) < front_string.size() )
     {
       std::istringstream iss( front_string );
-      
+
       iss >> front_value;
     }
     else if( front_string.find( "-" ) < front_string.size() )
       front_value = -1.0;
 
     std::string::size_type div_pos = array_string.find_first_of( "/", start );
-    
+
     if( div_pos < true_end && div_pos > pi_pos )
     {
-      std::string end_string = 
+      std::string end_string =
 	array_string.substr( div_pos+1, true_end - div_pos );
-      
-      if( end_string.find_first_of( "0123456789" ) < 
+
+      if( end_string.find_first_of( "0123456789" ) <
 	  end_string.size() )
       {
 	std::istringstream iss( end_string );
-      
+
 	iss >> end_value;
       }
     }
@@ -107,12 +107,12 @@ void ArrayString::replacePiInSubstring( const std::string::size_type start,
 		       << array_string.substr( start, true_end )
 		       << ")! " );
     }
-      
+
     std::ostringstream oss;
     oss.precision( 18 );
-    
+
     oss << front_value*Utility::PhysicalConstants::pi/end_value;
-    
+
     array_string.replace( start, true_end - start + 1, oss.str() );
   }
 }
@@ -124,12 +124,12 @@ void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
   boost::trim( array_string );
 
   Teuchos::Array<std::string> array_elements;
-  
+
   boost::split( array_elements,
 		array_string,
-		boost::is_any_of( "," ) );		
-  
-  TEST_FOR_EXCEPTION( array_elements.front().find_first_of( "il" ) < 
+		boost::is_any_of( "," ) );
+
+  TEST_FOR_EXCEPTION( array_elements.front().find_first_of( "il" ) <
 		      array_elements.front().size(),
 		      std::runtime_error,
 		      "Error: the first array element cannot have an "
@@ -147,10 +147,10 @@ void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
     array_elements.front().erase( bracket_pos, 1 );
 
   bracket_pos = array_elements.back().find( "}" );
-  
+
   if( bracket_pos < array_elements.back().size() )
     array_elements.back().erase( bracket_pos, 1 );
-  
+
   for( unsigned i = 1; i < array_elements.size()-1; ++i )
   {
     ArrayString::replaceIntervalOperatorInSubstring( array_elements[i-1],
@@ -161,7 +161,7 @@ void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
   // Reconstruct the array string
   array_string = "{";
   array_string += array_elements.front();
-  
+
   for( unsigned i = 1; i < array_elements.size(); ++i )
   {
     array_string += ",";
@@ -172,7 +172,7 @@ void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
 }
 
 // replace occurances of interval operator within a substring
-void ArrayString::replaceIntervalOperatorInSubstring( 
+void ArrayString::replaceIntervalOperatorInSubstring(
 					    const std::string& left_element,
 					    std::string& middle_element,
 					    const std::string& right_element )
@@ -185,20 +185,20 @@ void ArrayString::replaceIntervalOperatorInSubstring(
   if( raw_left_element && raw_right_element &&
       op_pos < middle_element.size() )
   {
-    TEST_FOR_EXCEPTION( left_element.find_first_of( "il" ) < 
+    TEST_FOR_EXCEPTION( left_element.find_first_of( "il" ) <
 			left_element.size(),
 			std::runtime_error,
 			"Error: interval operators cannot occur in "
 			"consecutive array elements!" );
 
-    TEST_FOR_EXCEPTION( right_element.find_first_of( "il" ) < 
+    TEST_FOR_EXCEPTION( right_element.find_first_of( "il" ) <
 			right_element.size(),
 			std::runtime_error,
 			"Error: interval operators cannot occur in "
 			"consecutive array elements!" );
-    
+
     double left_value, right_value;
-    
+
     {
       std::istringstream iss( left_element );
 
@@ -237,19 +237,19 @@ void ArrayString::replaceIntervalOperatorInSubstring(
     if( middle_element[op_pos] == 'i' )
     {
       double step_size = (right_value-left_value)/intervals;
-    
+
       // Replace the interval operator with the new array elements
       middle_element.clear();
-      
+
       for( unsigned i = 1; i < intervals; ++i )
       {
 	std::ostringstream oss;
 	oss.precision( 18 );
-	
+
 	oss << left_value + step_size*i;
-	
+
 	middle_element += oss.str();
-	
+
 	if( i < intervals-1 )
 	  middle_element += ",";
       }
@@ -263,7 +263,7 @@ void ArrayString::replaceIntervalOperatorInSubstring(
 			  "using the log interval operator (l)!" );
 
       double step_size = log(right_value/left_value)/intervals;
-      
+
       // Replace the interval operator with the new array elements
       middle_element.clear();
 
@@ -298,7 +298,7 @@ ArrayString::ArrayString( const std::string& array_string )
 
   // Replace all occurances of pi with the number
   locateAndReplacePi( d_array_string );
-  
+
   // Replace all occurances of i with an appropriate subarray
   locateAndReplaceIntervalOperator( d_array_string );
 }
@@ -316,14 +316,14 @@ ArrayString::ArrayString( const ArrayString& other )
 // Assignment operator
 ArrayString& ArrayString::operator=( const ArrayString& other )
 {
-  // Make sure the 
+  // Make sure the
   testPrecondition( other.d_array_string.size() >= 2 );
 
   if( &other != this )
   {
     d_array_string = other.d_array_string;
   }
-  
+
   return *this;
 }
 
@@ -351,7 +351,7 @@ bool ArrayString::isMultidimentionalDataPresent() const
   unsigned first_array_bound_pos =
     d_array_string.find( "{" );
 
-  return d_array_string.find( "{", first_array_bound_pos+1 ) < 
+  return d_array_string.find( "{", first_array_bound_pos+1 ) <
     d_array_string.size();
 }
 

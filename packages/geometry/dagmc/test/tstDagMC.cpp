@@ -34,52 +34,52 @@ std::string test_dagmc_geom_file_name;
 // Check the default property names
 TEUCHOS_UNIT_TEST( DagMC, default_property_names )
 {
-  std::string default_property = 
+  std::string default_property =
     Geometry::DagMC::getTerminationCellPropertyName();
 
   TEST_EQUALITY_CONST( default_property, "termination.cell" );
 
-  default_property = 
+  default_property =
     Geometry::DagMC::getReflectingSurfacePropertyName();
 
   TEST_EQUALITY_CONST( default_property, "reflecting.surface" );
 
-  default_property = 
+  default_property =
     Geometry::DagMC::getMaterialPropertyName();
 
   TEST_EQUALITY_CONST( default_property, "material" );
 
-  default_property = 
+  default_property =
     Geometry::DagMC::getDensityPropertyName();
 
   TEST_EQUALITY_CONST( default_property, "density" );
 
-  default_property = 
+  default_property =
     Geometry::DagMC::getEstimatorPropertyName();
 
   TEST_EQUALITY_CONST( default_property, "estimator" );
 
-  std::string default_estimator_name = 
+  std::string default_estimator_name =
     Geometry::DagMC::getSurfaceCurrentName();
 
   TEST_EQUALITY_CONST( default_estimator_name, "surface.current" );
 
-  default_estimator_name = 
+  default_estimator_name =
     Geometry::DagMC::getSurfaceFluxName();
 
   TEST_EQUALITY_CONST( default_estimator_name, "surface.flux" );
 
-  default_estimator_name = 
+  default_estimator_name =
     Geometry::DagMC::getCellPulseHeightName();
 
   TEST_EQUALITY_CONST( default_estimator_name, "cell.pulse.height" );
 
-  default_estimator_name = 
+  default_estimator_name =
     Geometry::DagMC::getCellTrackLengthFluxName();
 
   TEST_EQUALITY_CONST( default_estimator_name, "cell.tl.flux" );
 
-  default_estimator_name = 
+  default_estimator_name =
     Geometry::DagMC::getCellCollisionFluxName();
 
   TEST_EQUALITY_CONST( default_estimator_name, "cell.c.flux" );
@@ -89,12 +89,12 @@ TEUCHOS_UNIT_TEST( DagMC, default_property_names )
 // Check that the termination cell property name can be set
 TEUCHOS_UNIT_TEST( DagMC, setTerminationCellPropertyName )
 {
-  std::string default_property = 
+  std::string default_property =
     Geometry::DagMC::getTerminationCellPropertyName();
 
   Geometry::DagMC::setTerminationCellPropertyName( "graveyard" );
 
-  std::string new_property = 
+  std::string new_property =
     Geometry::DagMC::getTerminationCellPropertyName();
 
   TEST_EQUALITY_CONST( new_property, "graveyard" );
@@ -106,12 +106,12 @@ TEUCHOS_UNIT_TEST( DagMC, setTerminationCellPropertyName )
 // Check that the reflecting surface property name can be set
 TEUCHOS_UNIT_TEST( DagMC, setReflectingSurfacePropertyName )
 {
-  std::string default_property = 
+  std::string default_property =
     Geometry::DagMC::getReflectingSurfacePropertyName();
 
   Geometry::DagMC::setReflectingSurfacePropertyName( "spec.reflect" );
 
-  std::string new_property = 
+  std::string new_property =
     Geometry::DagMC::getReflectingSurfacePropertyName();
 
   TEST_EQUALITY_CONST( new_property, "spec.reflect" );
@@ -123,12 +123,12 @@ TEUCHOS_UNIT_TEST( DagMC, setReflectingSurfacePropertyName )
 // Check that the material property name can be set
 TEUCHOS_UNIT_TEST( DagMC, setMaterialPropertyName )
 {
-  std::string default_property = 
+  std::string default_property =
     Geometry::DagMC::getMaterialPropertyName();
 
   Geometry::DagMC::setMaterialPropertyName( "mat" );
 
-  std::string new_property = 
+  std::string new_property =
     Geometry::DagMC::getMaterialPropertyName();
 
   TEST_EQUALITY_CONST( new_property, "mat" );
@@ -140,12 +140,12 @@ TEUCHOS_UNIT_TEST( DagMC, setMaterialPropertyName )
 // Check that the density property name can be set
 TEUCHOS_UNIT_TEST( DagMC, setDensityPropertyName )
 {
-  std::string default_property = 
+  std::string default_property =
     Geometry::DagMC::getDensityPropertyName();
 
   Geometry::DagMC::setDensityPropertyName( "rho" );
 
-  std::string new_property = 
+  std::string new_property =
     Geometry::DagMC::getDensityPropertyName();
 
   TEST_EQUALITY_CONST( new_property, "rho" );
@@ -157,12 +157,12 @@ TEUCHOS_UNIT_TEST( DagMC, setDensityPropertyName )
 // Check that the estimator property name can be set
 TEUCHOS_UNIT_TEST( DagMC, setEstimatorPropertyName )
 {
-  std::string default_property = 
+  std::string default_property =
     Geometry::DagMC::getEstimatorPropertyName();
 
   Geometry::DagMC::setEstimatorPropertyName( "tally" );
 
-  std::string new_property = 
+  std::string new_property =
     Geometry::DagMC::getEstimatorPropertyName();
 
   TEST_EQUALITY_CONST( new_property, "tally" );
@@ -174,12 +174,12 @@ TEUCHOS_UNIT_TEST( DagMC, setEstimatorPropertyName )
 // Check that the surface current name can be set
 TEUCHOS_UNIT_TEST( DagMC, setSurfaceCurrentName )
 {
-  std::string default_estimator_name = 
+  std::string default_estimator_name =
     Geometry::DagMC::getSurfaceCurrentName();
 
   Geometry::DagMC::setSurfaceCurrentName( "surf.cur" );
 
-  std::string estimator_name = 
+  std::string estimator_name =
     Geometry::DagMC::getSurfaceCurrentName();
 
   TEST_EQUALITY_CONST( estimator_name, "surf.cur" );
@@ -191,12 +191,12 @@ TEUCHOS_UNIT_TEST( DagMC, setSurfaceCurrentName )
 // Check that the surface flux name can be set
 TEUCHOS_UNIT_TEST( DagMC, setSurfaceFluxName )
 {
-  std::string default_estimator_name = 
+  std::string default_estimator_name =
     Geometry::DagMC::getSurfaceFluxName();
 
   Geometry::DagMC::setSurfaceFluxName( "surf.flux" );
 
-  std::string estimator_name = 
+  std::string estimator_name =
     Geometry::DagMC::getSurfaceFluxName();
 
   TEST_EQUALITY_CONST( estimator_name, "surf.flux" );
@@ -208,12 +208,12 @@ TEUCHOS_UNIT_TEST( DagMC, setSurfaceFluxName )
 // Check that the cell pulse height name can be set
 TEUCHOS_UNIT_TEST( DagMC, setCellPulseHeightName )
 {
-  std::string default_estimator_name = 
+  std::string default_estimator_name =
     Geometry::DagMC::getCellPulseHeightName();
 
   Geometry::DagMC::setCellPulseHeightName( "cell.ph" );
 
-  std::string estimator_name = 
+  std::string estimator_name =
     Geometry::DagMC::getCellPulseHeightName();
 
   TEST_EQUALITY_CONST( estimator_name, "cell.ph" );
@@ -225,12 +225,12 @@ TEUCHOS_UNIT_TEST( DagMC, setCellPulseHeightName )
 // Check that the cell track-length flux name can be set
 TEUCHOS_UNIT_TEST( DagMC, setCellTrackLengthFluxName )
 {
-  std::string default_estimator_name = 
+  std::string default_estimator_name =
     Geometry::DagMC::getCellTrackLengthFluxName();
 
   Geometry::DagMC::setCellTrackLengthFluxName( "cell.tl" );
 
-  std::string estimator_name = 
+  std::string estimator_name =
     Geometry::DagMC::getCellTrackLengthFluxName();
 
   TEST_EQUALITY_CONST( estimator_name, "cell.tl" );
@@ -242,12 +242,12 @@ TEUCHOS_UNIT_TEST( DagMC, setCellTrackLengthFluxName )
 // Check that the cell collision flux name can be set
 TEUCHOS_UNIT_TEST( DagMC, setCellCollisionFluxName )
 {
-  std::string default_estimator_name = 
+  std::string default_estimator_name =
     Geometry::DagMC::getCellCollisionFluxName();
 
   Geometry::DagMC::setCellCollisionFluxName( "cell.c" );
 
-  std::string estimator_name = 
+  std::string estimator_name =
     Geometry::DagMC::getCellCollisionFluxName();
 
   TEST_EQUALITY_CONST( estimator_name, "cell.c" );
@@ -311,7 +311,7 @@ TEUCHOS_UNIT_TEST( DagMC, initialize )
   Geometry::DagMC::setEstimatorPropertyName( "tally" );
 
   TEST_ASSERT( !Geometry::DagMC::isInitialized() );
-  
+
   TEST_NOTHROW( Geometry::DagMC::initialize( test_dagmc_geom_file_name,
                                              1e-3,
                                              false ) );
@@ -344,7 +344,7 @@ TEUCHOS_UNIT_TEST( DagMC, getCellEstimatorData )
 {
   std::map<unsigned,Utility::Trip<std::string,std::string,std::vector<Geometry::ModuleTraits::InternalCellHandle> > > cell_estimator_id_data_map;
 
-  TEST_NOTHROW( Geometry::DagMC::getCellEstimatorData( 
+  TEST_NOTHROW( Geometry::DagMC::getCellEstimatorData(
                                                 cell_estimator_id_data_map ) );
 
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.size(), 5 );
@@ -358,15 +358,15 @@ TEUCHOS_UNIT_TEST( DagMC, getCellEstimatorData )
                        "cell.tl.flux" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 0 )->second.second,
                        "n" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 0 )->second.third.size(),
                      55 );
-  
+
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 1 )->second.first,
                        "cell.tl.flux" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 1 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 1 )->second.third.size(),
                      55 );
 
@@ -374,7 +374,7 @@ TEUCHOS_UNIT_TEST( DagMC, getCellEstimatorData )
                        "cell.c.flux" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 2 )->second.second,
                        "n" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 2 )->second.third.size(),
                      36 );
 
@@ -382,15 +382,15 @@ TEUCHOS_UNIT_TEST( DagMC, getCellEstimatorData )
                        "cell.c.flux" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 3 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 3 )->second.third.size(),
                      36 );
-  
+
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 4 )->second.first,
                        "cell.pulse.height" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 4 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 4 )->second.third.size(),
                      2 );
 }
@@ -401,7 +401,7 @@ TEUCHOS_UNIT_TEST( DagMC, getSurfaceEstimatorData )
 {
   std::map<unsigned,Utility::Trip<std::string,std::string,std::vector<Geometry::ModuleTraits::InternalSurfaceHandle> > > surface_estimator_id_data_map;
 
-  TEST_NOTHROW( Geometry::DagMC::getSurfaceEstimatorData( 
+  TEST_NOTHROW( Geometry::DagMC::getSurfaceEstimatorData(
                                              surface_estimator_id_data_map ) );
 
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.size(), 4 );
@@ -414,7 +414,7 @@ TEUCHOS_UNIT_TEST( DagMC, getSurfaceEstimatorData )
                        "surface.flux" );
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.find( 5 )->second.second,
                        "n" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                   surface_estimator_id_data_map.find( 5 )->second.third.size(),
                   7 );
 
@@ -422,7 +422,7 @@ TEUCHOS_UNIT_TEST( DagMC, getSurfaceEstimatorData )
                        "surface.flux" );
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.find( 6 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                   surface_estimator_id_data_map.find( 6 )->second.third.size(),
                   7 );
 
@@ -430,7 +430,7 @@ TEUCHOS_UNIT_TEST( DagMC, getSurfaceEstimatorData )
                        "surface.current" );
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.find( 7 )->second.second,
                        "n" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                   surface_estimator_id_data_map.find( 7 )->second.third.size(),
                   7 );
 
@@ -438,7 +438,7 @@ TEUCHOS_UNIT_TEST( DagMC, getSurfaceEstimatorData )
                        "surface.current" );
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.find( 8 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                   surface_estimator_id_data_map.find( 8 )->second.third.size(),
                   7 );
 }
@@ -507,9 +507,9 @@ TEUCHOS_UNIT_TEST( DagMC, doesCellExist )
   TEST_ASSERT( Geometry::DagMC::doesCellExist( 168 ) );
   TEST_ASSERT( Geometry::DagMC::doesCellExist( 184 ) );
   TEST_ASSERT( Geometry::DagMC::doesCellExist( 188 ) );
-  
+
   // Implicit compliment cell
-  TEST_ASSERT( Geometry::DagMC::doesCellExist( 189 ) ); 
+  TEST_ASSERT( Geometry::DagMC::doesCellExist( 189 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -540,7 +540,7 @@ TEUCHOS_UNIT_TEST( DagMC, getCells )
 
   // 55 + implicit compliment cell
   TEST_EQUALITY_CONST( cells.size(), 56 );
-  
+
   TEST_ASSERT( cells.count( 1 ) );
   TEST_ASSERT( cells.count( 3 ) );
   TEST_ASSERT( cells.count( 5 ) );
@@ -795,7 +795,7 @@ TEUCHOS_UNIT_TEST( DagMC, getCellMaterialIds )
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 168 )->second, 7 );
 
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 1 )->second, 8 );
-  
+
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 26 )->second, 9 );
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 27 )->second, 9 );
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 28 )->second, 9 );
@@ -832,7 +832,7 @@ TEUCHOS_UNIT_TEST( DagMC, getCellMaterialIds )
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 79 )->second, 9 );
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 80 )->second, 9 );
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 81 )->second, 9 );
-  
+
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 5 )->second, 10 );
 }
 
@@ -871,7 +871,7 @@ TEUCHOS_UNIT_TEST( DagMC, getCellDensities )
   TEST_EQUALITY_CONST( cell_id_density_map.find( 168 )->second, -5.65 );
 
   TEST_EQUALITY_CONST( cell_id_density_map.find( 1 )->second, -1.8583 );
-  
+
   TEST_EQUALITY_CONST( cell_id_density_map.find( 26 )->second, -7.83 );
   TEST_EQUALITY_CONST( cell_id_density_map.find( 27 )->second, -7.83 );
   TEST_EQUALITY_CONST( cell_id_density_map.find( 28 )->second, -7.83 );
@@ -908,7 +908,7 @@ TEUCHOS_UNIT_TEST( DagMC, getCellDensities )
   TEST_EQUALITY_CONST( cell_id_density_map.find( 79 )->second, -7.83 );
   TEST_EQUALITY_CONST( cell_id_density_map.find( 80 )->second, -7.83 );
   TEST_EQUALITY_CONST( cell_id_density_map.find( 81 )->second, -7.83 );
-  
+
   TEST_EQUALITY_CONST( cell_id_density_map.find( 5 )->second, -13.31 );
 }
 
@@ -921,13 +921,13 @@ TEUCHOS_UNIT_TEST( DagMC, getSurfaceNormal )
 
   // Get the surface normal
   Teuchos::Tuple<double,3> normal;
-  
-  Geometry::DagMC::getSurfaceNormal( 242, 
-                                     ray.getPosition(), 
+
+  Geometry::DagMC::getSurfaceNormal( 242,
+                                     ray.getPosition(),
                                      normal.getRawPtr() );
 
   Teuchos::Tuple<double,3> ref_normal = Teuchos::tuple( 0.0, 0.0, 1.0 );
-  
+
   TEST_COMPARE_ARRAYS( normal, ref_normal );
 }
 
@@ -936,10 +936,10 @@ TEUCHOS_UNIT_TEST( DagMC, getSurfaceNormal )
 TEUCHOS_UNIT_TEST( DagMC, getPointLocation )
 {
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> ray( new Geometry::Ray( 
+  std::shared_ptr<Geometry::Ray> ray( new Geometry::Ray(
                                          -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
-  
-  Geometry::PointLocation location = 
+
+  Geometry::PointLocation location =
     Geometry::DagMC::getPointLocation( *ray, 53 );
 
   TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
@@ -970,13 +970,13 @@ TEUCHOS_UNIT_TEST( DagMC, getBoundaryCell )
 TEUCHOS_UNIT_TEST( DagMC, findCellContainingExternalRay )
 {
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
-  
+
   // Find the cell that contains the point
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::DagMC::findCellContainingExternalRay( *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 53 );
 
   // Initailize a new ray
@@ -984,7 +984,7 @@ TEUCHOS_UNIT_TEST( DagMC, findCellContainingExternalRay )
 
   // Find the cell that contains the point
   cell = Geometry::DagMC::findCellContainingExternalRay( *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 54 );
 
   // Initialize the new ray
@@ -992,7 +992,7 @@ TEUCHOS_UNIT_TEST( DagMC, findCellContainingExternalRay )
 
   // Find the cell that contains the point
   cell = Geometry::DagMC::findCellContainingExternalRay( *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 55 );
 }
 
@@ -1001,13 +1001,13 @@ TEUCHOS_UNIT_TEST( DagMC, findCellContainingExternalRay )
 TEUCHOS_UNIT_TEST( DagMC, findAndCacheCellContainingExternalRay )
 {
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
-  
+
   // Find the cell that contains the point
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::DagMC::findAndCacheCellContainingExternalRay( *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 53 );
 
   // Initailize a new ray
@@ -1015,7 +1015,7 @@ TEUCHOS_UNIT_TEST( DagMC, findAndCacheCellContainingExternalRay )
 
   // Find the cell that contains the point
   cell = Geometry::DagMC::findAndCacheCellContainingExternalRay( *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 53 );
 
   // Initailize a new ray
@@ -1023,7 +1023,7 @@ TEUCHOS_UNIT_TEST( DagMC, findAndCacheCellContainingExternalRay )
 
   // Find the cell that contains the point
   cell = Geometry::DagMC::findAndCacheCellContainingExternalRay( *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 54 );
 
   // Initialize the new ray
@@ -1031,7 +1031,7 @@ TEUCHOS_UNIT_TEST( DagMC, findAndCacheCellContainingExternalRay )
 
   // Find the cell that contains the point
   cell = Geometry::DagMC::findAndCacheCellContainingExternalRay( *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 55 );
 
   // Check the found cell cache
@@ -1056,10 +1056,10 @@ TEUCHOS_UNIT_TEST( DagMC, fireExternalRay_unknown_cell )
 
   // Fire an external ray through the geometry
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::DagMC::fireExternalRay( ray, surface_hit );
- 
+
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
   TEST_EQUALITY_CONST( surface_hit, 242 );
 }
@@ -1073,10 +1073,10 @@ TEUCHOS_UNIT_TEST( DagMC, fireExternalRay_known_cell )
 
   // Fire an external ray through the geometry
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::DagMC::fireExternalRay( ray, 53, surface_hit );
- 
+
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
   TEST_EQUALITY_CONST( surface_hit, 242 );
 }
@@ -1089,15 +1089,15 @@ TEUCHOS_UNIT_TEST( DagMC, external_ray_trace )
   Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::DagMC::findCellContainingExternalRay( ray );
 
   TEST_EQUALITY_CONST( cell, 53 );
 
   // Fire the ray
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::DagMC::fireExternalRay( ray, cell, surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
@@ -1112,7 +1112,7 @@ TEUCHOS_UNIT_TEST( DagMC, external_ray_trace )
   TEST_EQUALITY_CONST( cell, 54 );
 
   // Fire the ray
-  distance_to_surface_hit = 
+  distance_to_surface_hit =
     Geometry::DagMC::fireExternalRay( ray, cell, surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 2.54, 1e-6 );
@@ -1134,7 +1134,7 @@ TEUCHOS_UNIT_TEST( DagMC, setInternalRay_unknown_cell )
   TEST_ASSERT( !Geometry::DagMC::isInternalRaySet() );
 
   // Set the internal ray but do not cache its starting cell
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::DagMC::setInternalRay( ray->getPosition(),
@@ -1162,7 +1162,7 @@ TEUCHOS_UNIT_TEST( DagMC, setInternalRay_unknown_cell )
   TEST_EQUALITY_CONST( Geometry::DagMC::getInternalRayDirection()[2], 1.0 );
 
   std::set<Geometry::ModuleTraits::InternalCellHandle> cached_cells;
-  
+
   Geometry::DagMC::getFoundCellCache( cached_cells );
 
   TEST_EQUALITY_CONST( cached_cells.size(), 0 );
@@ -1208,7 +1208,7 @@ TEUCHOS_UNIT_TEST( DagMC, setInternalRay_unknown_cell )
 TEUCHOS_UNIT_TEST( DagMC, setInternalRay_known_cell )
 {
   // Set the internal ray but do not cache its starting cell
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::DagMC::setInternalRay( ray->getPosition(),
@@ -1237,7 +1237,7 @@ TEUCHOS_UNIT_TEST( DagMC, setInternalRay_known_cell )
   TEST_EQUALITY_CONST( Geometry::DagMC::getInternalRayDirection()[2], 1.0 );
 
   std::set<Geometry::ModuleTraits::InternalCellHandle> cached_cells;
-  
+
   Geometry::DagMC::getFoundCellCache( cached_cells );
 
   TEST_EQUALITY_CONST( cached_cells.size(), 0 );
@@ -1283,7 +1283,7 @@ TEUCHOS_UNIT_TEST( DagMC, setInternalRay_known_cell )
 // Check that the internal ray direction can be changed
 TEUCHOS_UNIT_TEST( DagMC, changeInternalRayDirection )
 {
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::DagMC::setInternalRay( ray->getPosition(),
@@ -1292,7 +1292,7 @@ TEUCHOS_UNIT_TEST( DagMC, changeInternalRayDirection )
                                    false );
 
   ray.reset( new Geometry::Ray( -40.0, -40.0, 59.0, 1.0, 0.0, 0.0 ) );
-  
+
   Geometry::DagMC::changeInternalRayDirection( ray->getDirection() );
 
   TEST_EQUALITY_CONST( Geometry::DagMC::getInternalRayDirection()[0], 1.0 );
@@ -1304,14 +1304,14 @@ TEUCHOS_UNIT_TEST( DagMC, changeInternalRayDirection )
 // Check that the cell containing the internal ray can be found
 TEUCHOS_UNIT_TEST( DagMC, findCellContainingInternalRay )
 {
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::DagMC::setInternalRay( ray->getPosition(),
                                    ray->getDirection(),
                                    false );
-  
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::DagMC::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 53 );
@@ -1337,10 +1337,10 @@ TEUCHOS_UNIT_TEST( DagMC, fireInternalRay )
 
   // Fire an external ray through the geometry
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::DagMC::fireInternalRay( surface_hit );
- 
+
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
   TEST_EQUALITY_CONST( surface_hit, 242 );
 }
@@ -1352,22 +1352,22 @@ TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayBySubstep )
   // Initialize the ray
   {
     Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
-    
+
     Geometry::DagMC::setInternalRay( ray, 53, false );
   }
 
   Geometry::DagMC::advanceInternalRayBySubstep( 0.959999084 );
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::DagMC::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 53 );
-  
+
   // Fire the ray
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::DagMC::fireInternalRay( surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.0, 1e-9 );
@@ -1381,12 +1381,12 @@ TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayToCellBoundary_basic )
   // Initialize the ray
   {
     Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
-    
+
     Geometry::DagMC::setInternalRay( ray, 53, false );
   }
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::DagMC::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 53 );
@@ -1406,20 +1406,20 @@ TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayToCellBoundary_advanced )
   // Initialize the ray
   {
     Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
-    
+
     Geometry::DagMC::setInternalRay( ray, 53, false );
   }
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::DagMC::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 53 );
 
   // Advance the ray to the boundary surface
   double surface_normal[3];
-  
-  bool reflection = 
+
+  bool reflection =
     Geometry::DagMC::advanceInternalRayToCellBoundary( surface_normal );
 
   TEST_ASSERT( !reflection );
@@ -1439,20 +1439,20 @@ TEUCHOS_UNIT_TEST( DagMC, internal_ray_trace )
   // Initialize the ray
   {
     Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
-    
+
     Geometry::DagMC::setInternalRay( ray, false );
   }
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::DagMC::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 53 );
 
   // Fire the ray
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::DagMC::fireInternalRay( surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
@@ -1504,20 +1504,20 @@ TEUCHOS_UNIT_TEST( DagMC, internal_ray_trace_with_reflection )
   // Initialize the ray
   {
     Geometry::Ray ray( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 );
-    
+
     Geometry::DagMC::setInternalRay( ray, false );
   }
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::DagMC::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 82 );
 
   // Fire the ray
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::DagMC::fireInternalRay( surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.474, 1e-6 );
@@ -1539,8 +1539,8 @@ TEUCHOS_UNIT_TEST( DagMC, internal_ray_trace_with_reflection )
 
   // Advance the ray to the boundary surface (reflecting)
   double surface_normal[3];
-  
-  reflection = 
+
+  reflection =
     Geometry::DagMC::advanceInternalRayToCellBoundary( surface_normal );
 
   TEST_ASSERT( reflection );
@@ -1568,11 +1568,11 @@ int main( int argc, char** argv )
   clp.setOption( "test_cad_file",
                  &test_dagmc_geom_file_name,
 		 "Test cad file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -1585,9 +1585,9 @@ int main( int argc, char** argv )
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
   out->setOutputToRootOnly( 0 );
-  
+
   mpiSession.barrier();
-  
+
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 

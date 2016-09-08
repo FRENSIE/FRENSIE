@@ -71,17 +71,17 @@ private:
 // Register an observer with the appropriate particle leaving cell event
 // dispatcher
 template<typename Observer, typename EntityHandle>
-inline void ParticleLeavingCellEventHandler::registerObserverWithTag( 
+inline void ParticleLeavingCellEventHandler::registerObserverWithTag(
                                 const std::shared_ptr<Observer>& observer,
                                 const Teuchos::Array<EntityHandle>& entity_ids,
                                 ParticleLeavingCellEventObserver::EventTag )
 {
   // Make sure the observer has the expected event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleLeavingCellEventObserver::EventTag>::value));
-  
-  std::shared_ptr<ParticleLeavingCellEventObserver> observer_base = 
+
+  std::shared_ptr<ParticleLeavingCellEventObserver> observer_base =
     std::dynamic_pointer_cast<ParticleLeavingCellEventObserver>( observer );
-  
+
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
   {
     d_particle_leaving_cell_event_dispatcher.attachObserver( entity_ids[i],

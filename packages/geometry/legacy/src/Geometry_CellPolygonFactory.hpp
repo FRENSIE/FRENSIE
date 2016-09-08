@@ -24,7 +24,7 @@ namespace Geometry{
 /*! \brief Enumeration to specify whether function must find a point
  *
  * This enumeration is used by the findNextPolygonCorner member function when
- * design-by-contract is enabled. 
+ * design-by-contract is enabled.
  */
 enum PointFindNecessity{
   POINT_MUST_BE_FOUND,
@@ -62,7 +62,7 @@ private:
   typedef Teuchos::OrdinalTraits<ordinalType> OT;
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<scalarType> ST;
- 
+
 public:
 
   //! Constructor
@@ -71,21 +71,21 @@ public:
   //! Destructor
   ~CellPolygonFactory()
   { /* ... */ }
-  
+
   //! Create a polygon from intersection points on a surface
   PolygonPtr create( std::list<Point> &unordered_polygon_corners ) const;
 
 protected:
 
   //! Find the first three points on the boundary of the polygon
-  typename std::list<Point>::const_iterator 
-  initializePolygonCorners( 
+  typename std::list<Point>::const_iterator
+  initializePolygonCorners(
 		       std::list<Point> &ordered_polygon_corners,
 		       std::list<Point> &unordered_polygon_corners,
 		       const ordinalType plane_of_polygon_id ) const;
 
   //! Determine if the ordering of a polygon initialization needs to reverse
-  bool cornerTripletNeedsReversing( 
+  bool cornerTripletNeedsReversing(
 			 const ordinalType plane_of_polygon_id,
 			 const ordinalType first_to_second_point_surface_id,
 			 const ordinalType second_to_third_point_surface_id,
@@ -94,30 +94,30 @@ protected:
 			 const Point &third_point ) const;
 
   //! Test if all of the points lie on the same plane
-  static bool allPointsOnSamePlane( 
+  static bool allPointsOnSamePlane(
 	       const std::list<Point> &unordered_polygon_corners );
 
   //! Find the id of the polygon plane
-  static ordinalType getPlaneOfPolygonId( 
+  static ordinalType getPlaneOfPolygonId(
 	       const std::list<Point> &unordered_polygon_corners );
 
-  //! Find the lexicographically largest point  
+  //! Find the lexicographically largest point
   static typename std::list<Point>::iterator
   getLexicographicallyLargestPoint(
 				 std::list<Point> &unordered_polygon_corners );
 
   //! Find the next point on the boundary of the polygon
   static typename std::list<Point>::iterator
-  getNextPolygonCorner( 
+  getNextPolygonCorner(
                const ordinalType desired_surface_id,
 	       const Point &current_corner,
 	       std::list<Point> &unordered_polygon_corners,
                PointFindNecessity point_find_necessity = POINT_MUST_BE_FOUND );
 
 private:
-  
+
   // The cell on which all polygons will lie
-  Teuchos::RCP<Cell> d_cell_ptr; 
+  Teuchos::RCP<Cell> d_cell_ptr;
 };
 
 } // end Geometry namespace

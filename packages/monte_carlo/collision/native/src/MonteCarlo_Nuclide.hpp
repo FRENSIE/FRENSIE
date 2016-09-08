@@ -21,7 +21,7 @@
 namespace MonteCarlo{
 
 /*! The nuclide class
- * \details This is the base class for all nuclides. No unresolved 
+ * \details This is the base class for all nuclides. No unresolved
  * resonance data is stored in this base class.
  */
 class Nuclide
@@ -40,15 +40,15 @@ public:
 
   //! Typedef for the const reaction map
   typedef boost::unordered_map<NuclearReactionType,
-			       Teuchos::RCP<const NuclearReaction> > 
+			       Teuchos::RCP<const NuclearReaction> >
   ConstReactionMap;
 
   //! Set the nuclear reaction types that will be considered as absorption
-  static void setAbsorptionReactionTypes( 
+  static void setAbsorptionReactionTypes(
 	const Teuchos::Array<NuclearReactionType>& absorption_reaction_types );
 
   //! Add nuclear reaction types that will be considered as absorption
-  static void addAbsorptionReactionTypes( 
+  static void addAbsorptionReactionTypes(
 	const Teuchos::Array<NuclearReactionType>& absorption_reaction_types );
 
   //! Create a unique id for the nuclide based on its name
@@ -63,7 +63,7 @@ public:
 	   const double temperature,
 	   const Teuchos::ArrayRCP<double>& energy_grid,
 	   const ReactionMap& standard_scattering_reactions,
-	   const ReactionMap& standard_absorption_reactions );  
+	   const ReactionMap& standard_absorption_reactions );
 
   //! Destructor
   ~Nuclide()
@@ -83,19 +83,19 @@ public:
 
   //! Return the nuclear isomer number of the nuclide
   unsigned getIsomerNumber() const;
-  
+
   //! Return the atomic weight ratio
   double getAtomicWeightRatio() const;
 
   //! Return the temperature of the nuclide (in MeV)
   double getTemperature() const;
-  
+
   //! Return the total cross section at the desired energy
   double getTotalCrossSection( const double energy ) const;
 
   //! Return the total absorption cross section at the desired energy
   double getAbsorptionCrossSection( const double energy ) const;
-  
+
   //! Return the survival probability at the desired energy
   double getSurvivalProbability( const double energy ) const;
 
@@ -112,7 +112,7 @@ public:
 private:
 
   // Set the default absorption reaction types
-  static boost::unordered_set<NuclearReactionType> 
+  static boost::unordered_set<NuclearReactionType>
   setDefaultAbsorptionReactionTypes();
 
   // Calculate the total absorption cross section
@@ -124,7 +124,7 @@ private:
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
-				 NeutronState& neutron, 
+				 NeutronState& neutron,
 				 ParticleBank& bank ) const;
 
   // Sample a scattering reaction
@@ -143,7 +143,7 @@ private:
 
   // The atomic number of the nuclide
   unsigned d_atomic_number;
-  
+
   // The atomic mass number
   unsigned d_atomic_mass_number;
 
@@ -152,7 +152,7 @@ private:
 
   // The weight of the nucleus in neutron masses
   double d_atomic_weight_ratio;
-  
+
   // The temperature of the nuclide (MeV)
   double d_temperature;
 

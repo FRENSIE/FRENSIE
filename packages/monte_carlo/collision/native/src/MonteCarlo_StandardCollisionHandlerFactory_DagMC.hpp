@@ -29,10 +29,10 @@
 
 namespace MonteCarlo{
 
-/*! The specialization of the CollimatorHandlerFactory class for the DagMC 
+/*! The specialization of the CollimatorHandlerFactory class for the DagMC
  * geometry handler.
  * \ingroup estimator_module
- */ 
+ */
 template<>
 class StandardCollisionHandlerFactory<Geometry::DagMC> : public CollisionHandlerFactory
 {

@@ -19,7 +19,7 @@ namespace MonteCarlo{
 //! The atomic relaxation model base class
 class AtomicRelaxationModel
 {
-  
+
 public:
 
   //! Constructor

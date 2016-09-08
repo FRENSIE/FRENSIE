@@ -67,13 +67,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 {
   Teuchos::RCP<MonteCarlo::Estimator> estimator_base;
   Teuchos::RCP<TestStandardEntityEstimator<EntityId> > estimator;
-  
+
   {
     // Set the entity ids
     Teuchos::Array<EntityId> entity_ids( 2 );
     entity_ids[0] = 0;
     entity_ids[1] = 1;
-    
+
     // Set the entity norm constants
     Teuchos::Array<double> entity_norm_consts( 2 );
     entity_norm_consts[0] = 1.0;
@@ -128,7 +128,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 
     estimator_base->setParticleTypes( particle_types );
   }
-  
+
   TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
 
   // bin 0
@@ -150,11 +150,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
-  // bin 2 
+  // bin 2
   particle.setEnergy( 1.0 );
 
   particle_wrapper.setAngleCosine( 0.0 );
-  
+
   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
@@ -183,10 +183,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   particle.setEnergy( 1.0 );
 
   particle_wrapper.setAngleCosine( 0.0 );
-  
+
   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-  
+
   // bin 7
   particle.setEnergy( 0.1 );
 
@@ -209,11 +209,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
-  // bin 10 
+  // bin 10
   particle.setEnergy( 1.0 );
 
   particle_wrapper.setAngleCosine( 0.0 );
-  
+
   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
@@ -240,26 +240,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 
   // bin 14
   particle.setEnergy( 1.0 );
-  
+
   particle_wrapper.setAngleCosine( 0.0 );
-  
+
   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-  
+
   // bin 15
   particle.setEnergy( 0.1 );
 
   estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
   estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
-  
+
   // Commit the contributions
   estimator_base->commitHistoryContribution();
 
   TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
 
-  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm =
     Teuchos::DefaultComm<unsigned long long>::getComm();
-  
+
   comm->barrier();
 
   // Reduce estimator data
@@ -275,79 +275,79 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
     // Initialize the HDF5 file
     std::shared_ptr<Utility::HDF5FileHandler>
       hdf5_file( new Utility::HDF5FileHandler );
-    hdf5_file->openHDF5FileAndOverwrite( 
+    hdf5_file->openHDF5FileAndOverwrite(
 				  "test_standard_entity_estimator_rank_0.h5" );
 
     estimator_base->exportData( hdf5_file, true );
 
     // Create an estimator hdf5 file handler
     MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-    
+
     // Retrieve the raw bin data for each entity
-    Teuchos::Array<Utility::Pair<double,double> > 
+    Teuchos::Array<Utility::Pair<double,double> >
       raw_bin_data( 16, Utility::Pair<double,double>( procs, procs ) ),
       raw_bin_data_copy;
 
-    hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+    hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
 						   0u, 0u, raw_bin_data_copy );
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
-    
-    hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+
+    hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
 						   0u, 1u, raw_bin_data_copy );
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
-    
+
     // Retrieve the raw total bin data
     Teuchos::Array<Utility::Pair<double,double> >
-      raw_total_bin_data( 16, 
+      raw_total_bin_data( 16,
 			  Utility::Pair<double,double>(2.0*procs, 4.0*procs) ),
       raw_total_bin_data_copy;
-    
+
     hdf5_file_handler.getRawEstimatorTotalBinData(0u, raw_total_bin_data_copy);
-  
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
 					  raw_total_bin_data_copy,
 					  1e-15 );
-    
+
     // Retrieve the raw estimator total data for each entity
-    Utility::Quad<double,double,double,double> 
-      raw_moments( 16.0*procs, 
-		   256.0*procs, 
-		   4096.0*procs, 
+    Utility::Quad<double,double,double,double>
+      raw_moments( 16.0*procs,
+		   256.0*procs,
+		   4096.0*procs,
 		   65536.0*procs );
-  
+
     Teuchos::Array<Utility::Quad<double,double,double,double> >
       raw_total_data( 1, raw_moments ),
       raw_total_data_copy;
-    
-    hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>( 
+
+    hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
 						 0u, 0u, raw_total_data_copy );
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
 					  raw_total_data_copy,
 					  1e-15 );
-			       
+
     hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
 						 0u, 1u, raw_total_data_copy );
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
 					  raw_total_data_copy,
 					  1e-15 );
 
     // Retrieve the raw total data
-    raw_total_data[0]( 32.0*procs, 
-		       1024.0*procs, 
-		       32768.0*procs, 
+    raw_total_data[0]( 32.0*procs,
+		       1024.0*procs,
+		       32768.0*procs,
 		       1048576.0*procs);
 
     hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-    
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
 					  raw_total_data_copy,
 					  1e-15 );
   }
@@ -366,63 +366,63 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 
     // Create an estimator hdf5 file handler
     MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-    
+
     // Retrieve the raw bin data for each entity
-    Teuchos::Array<Utility::Pair<double,double> > 
+    Teuchos::Array<Utility::Pair<double,double> >
       raw_bin_data( 16, Utility::Pair<double,double>( 0.0, 0.0 ) ),
       raw_bin_data_copy;
 
-    hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+    hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
 						   0u, 0u, raw_bin_data_copy );
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
-    
-    hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+
+    hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
 						   0u, 1u, raw_bin_data_copy );
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
-    
+
     // Retrieve the raw total bin data
     Teuchos::Array<Utility::Pair<double,double> >
       raw_total_bin_data( 16, Utility::Pair<double,double>( 0.0, 0.0 ) ),
       raw_total_bin_data_copy;
-    
+
     hdf5_file_handler.getRawEstimatorTotalBinData(0u, raw_total_bin_data_copy);
-  
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
 					  raw_total_bin_data_copy,
 					  1e-15 );
-    
+
     // Retrieve the raw estimator total data for each entity
-    Utility::Quad<double,double,double,double> 
+    Utility::Quad<double,double,double,double>
       raw_moments( 0.0, 0.0, 0.0, 0.0 );
-  
+
     Teuchos::Array<Utility::Quad<double,double,double,double> >
       raw_total_data( 1, raw_moments ),
       raw_total_data_copy;
-    
-    hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>( 
+
+    hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
 						 0u, 0u, raw_total_data_copy );
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
 					  raw_total_data_copy,
 					  1e-15 );
-			       
+
     hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>(
 						 0u, 1u, raw_total_data_copy );
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
 					  raw_total_data_copy,
 					  1e-15 );
 
     // Retrieve the raw total data
     hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-    
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
 					  raw_total_data_copy,
 					  1e-15 );
   }
@@ -438,11 +438,11 @@ UNIT_TEST_INSTANTIATION( StandardEntityEstimator, reduceData );
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -454,12 +454,12 @@ int main( int argc, char** argv )
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
-  
+
   mpiSession.barrier();
 
   // Run the unit tests
   Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
 
   mpiSession.barrier();

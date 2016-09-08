@@ -16,7 +16,7 @@ namespace Data{
 /*! \details A copy of the jxs array will be made so that it can be modified.
  * All indices in the jxs array correspond to a starting index of 1 (1 is
  * subtracted from all indices so that the correct array location is accessed).
- */ 
+ */
   XSSPhotonuclearDataExtractor::XSSPhotonuclearDataExtractor(
 				  const Teuchos::ArrayView<const int>& nxs,
 				  const Teuchos::ArrayView<const int>& jxs,
@@ -44,7 +44,7 @@ namespace Data{
   {
 
     unsigned particle_type = (unsigned)ixs_array[i*ixs_array_subsize];
-   
+
     d_secondary_particle_types.insert( particle_type );
     d_secondary_particle_order[ particle_type ] = i;
   }
@@ -81,8 +81,8 @@ bool XSSPhotonuclearDataExtractor::hasHeatingNumberData() const
     return d_jxs[4] != -1;
 }
 
-  //! Extract the ESZ block  
-Teuchos::ArrayView<const double> 
+  //! Extract the ESZ block
+Teuchos::ArrayView<const double>
 XSSPhotonuclearDataExtractor::extractESZBlock() const
 {
   return d_xss( d_jxs[0], d_nxs[2] );
@@ -94,7 +94,7 @@ XSSPhotonuclearDataExtractor::extractESZBlock() const
 {
   return d_xss( d_jxs[1], d_nxs[2] );
 }
- 
+
   //! Extract the NON block
 Teuchos::ArrayView<const double>
 XSSPhotonuclearDataExtractor::extractNONBlock() const
@@ -102,7 +102,7 @@ XSSPhotonuclearDataExtractor::extractNONBlock() const
 
   if( hasElasticScatteringData() )
   {
-    return d_xss( d_jxs[2] , d_nxs[2] ); 
+    return d_xss( d_jxs[2] , d_nxs[2] );
   }
   else
   {
@@ -120,8 +120,8 @@ XSSPhotonuclearDataExtractor::extractELSBlock() const
   }
   else
   {
-    return Teuchos::ArrayView<const double>();    
-  } 
+    return Teuchos::ArrayView<const double>();
+  }
 }
 
   //! Extract the THN block
@@ -134,8 +134,8 @@ XSSPhotonuclearDataExtractor::extractTHNBlock() const
   }
   else
   {
-    return Teuchos::ArrayView<const double>();    
-  } 
+    return Teuchos::ArrayView<const double>();
+  }
 }
 
   //! Extract the MTR block
@@ -180,7 +180,7 @@ XSSPhotonuclearDataExtractor::extractPXSBlock(const unsigned secondary_particle_
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -203,7 +203,7 @@ XSSPhotonuclearDataExtractor::extractPHNBlock(const unsigned secondary_particle_
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -226,7 +226,7 @@ XSSPhotonuclearDataExtractor::extractMTRPBlock(const unsigned secondary_particle
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -249,7 +249,7 @@ XSSPhotonuclearDataExtractor::extractTYRPBlock(const unsigned secondary_particle
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -272,7 +272,7 @@ XSSPhotonuclearDataExtractor::extractLSIGPBlock(const unsigned secondary_particl
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -295,7 +295,7 @@ XSSPhotonuclearDataExtractor::extractSIGPBlock(const unsigned secondary_particle
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -318,7 +318,7 @@ XSSPhotonuclearDataExtractor::extractLANDPBlock(const unsigned secondary_particl
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -341,7 +341,7 @@ XSSPhotonuclearDataExtractor::extractANDPBlock(const unsigned secondary_particle
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -364,7 +364,7 @@ XSSPhotonuclearDataExtractor::extractLDLWPBlock(const unsigned secondary_particl
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -387,7 +387,7 @@ XSSPhotonuclearDataExtractor::extractDLWPBlock(const unsigned secondary_particle
   if( hasSecondaryParticleType(secondary_particle_type) )
     {
       Teuchos::ArrayView<const double> ixs_block = extractIXSBlock();
-      
+
       unsigned order = d_secondary_particle_order.find
 	( secondary_particle_type )->second;
 
@@ -399,7 +399,7 @@ XSSPhotonuclearDataExtractor::extractDLWPBlock(const unsigned secondary_particle
 	{
 	  // locate sub-block within IXS block
 	  front = ixs_block[d_nxs[6]*order+11]-1;
-	  rear  = d_nxs[0];  
+	  rear  = d_nxs[0];
 	}
       else
 	{

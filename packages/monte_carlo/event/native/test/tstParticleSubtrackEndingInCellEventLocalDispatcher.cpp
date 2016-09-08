@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstParticleSubtrackEndingInCellEventLocalDispatcher.cpp
 //! \author Alex Robinson
 //! \brief  Particle subtrack ending in cell event local dispatcher unit tests
@@ -30,7 +30,7 @@ estimator_1;
 std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
-std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventLocalDispatcher> 
+std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventLocalDispatcher>
 dispatcher( new MonteCarlo::ParticleSubtrackEndingInCellEventLocalDispatcher( 0 ) );
 
 //---------------------------------------------------------------------------//
@@ -61,7 +61,7 @@ void initializeCellEstimator( const unsigned estimator_id,
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-  
+
   estimator->setParticleTypes( particle_types );
 }
 
@@ -76,7 +76,7 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher, getCellId )
 
 //---------------------------------------------------------------------------//
 // Check that the number of observers attached to the disp. can be returned
-TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 		   getNumberOfObservers )
 {
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
@@ -84,7 +84,7 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 
 //---------------------------------------------------------------------------//
 // Check that an observer can be attached to the dispatcher
-TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 		   attachObserver )
 {
   initializeCellEstimator( 0u, estimator_1 );
@@ -94,10 +94,10 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
     std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( estimator_1 );
   std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_2 =
     std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( estimator_2 );
-  
+
   dispatcher->attachObserver( estimator_1->getId(), observer_1 );
   dispatcher->attachObserver( estimator_2->getId(), observer_2 );
-  
+
   observer_1.reset();
   observer_2.reset();
 
@@ -108,7 +108,7 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 
 //---------------------------------------------------------------------------//
 // Check that a collision event can be dispatched
-TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 		   dispatchParticleSubtrackEndingInCellEvent )
 {
   MonteCarlo::PhotonState particle( 0ull );
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 
 //---------------------------------------------------------------------------//
 // Check that an observer can be detached from the dispatcher
-TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 		   detachObserver )
 {
   dispatcher->detachObserver( 0u );
@@ -139,14 +139,14 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 
   TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
   TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 
   // Remove nonexistent estimator
   dispatcher->detachObserver( 2u );
 
   TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
   TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//

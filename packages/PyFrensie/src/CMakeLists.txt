@@ -9,7 +9,7 @@ LIST(APPEND HEADERS ${CMAKE_CURRENT_BINARY_DIR}/${SWIG_RUNTIME})
 SET(HEADERS "")
 SET(SOURCES "")
 
-LIST(APPEND HEADERS 
+LIST(APPEND HEADERS
   PyFrensie_NumPyTypeTraitsDecl.hpp
   PyFrensie_NumPyTypeTraits.hpp
   PyFrensie_ArrayConversionHelpers.hpp
@@ -28,21 +28,21 @@ INCLUDE_DIRECTORIES(${PYTRILINOS_SRC_DIR_PATH})
 SET(PyFrensie_PACKAGES "")
 SET(PyFrensie_MODULES "")
 
-# Add the utility package
+# Add the Utility package
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Utility)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Prng)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
 SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist ${TEUCHOS_CORE} ${PYTRILINOS})
 
-# Add the data package
+# Add the Data package
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Data)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ACE)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
 SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_native ${TEUCHOS_CORE} ${PYTRILINOS})
 
-# Add the geometry package
+# Add the Geometry package
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.__init__)
 
@@ -70,12 +70,18 @@ SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}]")
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Geometry_Config.i.in
   ${CMAKE_CURRENT_BINARY_DIR}/Geometry_Config.i)
 
+# Add the MonteCarlo package
+SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} MonteCarlo)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.__init__)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Collision)
+SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} monte_carlo_collision_native ${TEUCHOS_CORE} ${PYTRILINOS})
+
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)
 
 # Loop over the PyFrensie modules and parse the corresponding swig .i files
 FOREACH(MODULE ${PyFrensie_MODULES})
-  
+
   # Set the module interface file properties
   SET_SOURCE_FILES_PROPERTIES(${MODULE}.i PROPERTIES CPLUSPLUS ON)
 
@@ -104,11 +110,11 @@ FOREACH(MODULE ${PyFrensie_MODULES})
     # Install the generated files
     INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
       DESTINATION ${PyFrensie_INSTALL_DIR}/Utility)
-    INSTALL(FILES 
+    INSTALL(FILES
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Utility/${MODULE_NAME}.py
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Utility/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Utility)
-    
+
   ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/Data")
     SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${DATA_PACKAGE_LINK_LIBRARIES})
 
@@ -121,11 +127,11 @@ FOREACH(MODULE ${PyFrensie_MODULES})
     # Install the generated files
     INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
       DESTINATION ${PyFrensie_INSTALL_DIR}/Data)
-    INSTALL(FILES 
+    INSTALL(FILES
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Data/${MODULE_NAME}.py
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Data/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Data)
-  
+
   ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/Geometry")
     SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${GEOMETRY_PACKAGE_LINK_LIBRARIES})
 
@@ -138,10 +144,28 @@ FOREACH(MODULE ${PyFrensie_MODULES})
     # Install the generated files
     INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
       DESTINATION ${PyFrensie_INSTALL_DIR}/Geometry)
-    INSTALL(FILES 
+    INSTALL(FILES
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Geometry/${MODULE_NAME}.py
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Geometry/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Geometry)
+
+  ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/MonteCarlo")
+    SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${MONTE_CARLO_PACKAGE_LINK_LIBRARIES})
+
+    # Byte compile the generator python files
+    ADD_CUSTOM_COMMAND(TARGET ${PyFrensie_TARGET_NAME} POST_BUILD
+      COMMAND ${PYTHON_EXECUTABLE} -c "import py_compile; py_compile.compile('PyFrensie/MonteCarlo/${MODULE_NAME}.py')"
+      COMMENT "Byte compiling MonteCarlo/${MODULE_NAME}.py"
+      VERBATIM)
+
+    # Install the generated files
+    INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
+      DESTINATION ${PyFrensie_INSTALL_DIR}/MonteCarlo)
+    INSTALL(FILES 
+      ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/MonteCarlo/${MODULE_NAME}.py
+      ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/MonteCarlo/${MODULE_NAME}.pyc
+      DESTINATION ${PyFrensie_INSTALL_DIR}/MonteCarlo)
+    
   ENDIF()
 
 ENDFOREACH(MODULE)

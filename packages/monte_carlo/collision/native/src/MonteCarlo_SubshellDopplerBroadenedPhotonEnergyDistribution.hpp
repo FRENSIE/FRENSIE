@@ -36,13 +36,13 @@ public:
 
   //! Return the subshell
   Data::SubshellType getSubshell() const;
-  
+
   //! Return the number of electrons in the subshell
   double getSubshellOccupancy() const;
 
   //! Return the subshell binding energy
   double getSubshellBindingEnergy() const;
-  
+
 private:
 
   // The interaction subshell
@@ -60,7 +60,7 @@ inline Data::SubshellType SubshellDopplerBroadenedPhotonEnergyDistribution::getS
 {
   return d_interaction_subshell;
 }
-  
+
 // Return the number of electrons in the subshell
 inline double SubshellDopplerBroadenedPhotonEnergyDistribution::getSubshellOccupancy() const
 {

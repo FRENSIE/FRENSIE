@@ -23,7 +23,7 @@ KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistributi
 { /* ... */ }
 
 // Constructor
-/*! Above the cutoff energy Koblinger's direct sampling method will be used. 
+/*! Above the cutoff energy Koblinger's direct sampling method will be used.
  * Koblinger's method can only be used when the particle energy is above
  * (1 + sqrt(3))*me.
  */
@@ -33,7 +33,7 @@ KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistributi
 { /* ... */ }
 
 // Evaluate the distribution
-double KleinNishinaPhotonScatteringDistribution::evaluate( 
+double KleinNishinaPhotonScatteringDistribution::evaluate(
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
@@ -42,30 +42,30 @@ double KleinNishinaPhotonScatteringDistribution::evaluate(
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
-  
+
   return this->evaluateKleinNishinaDist( incoming_energy,
 					 scattering_angle_cosine );
 }
 
 // Evaluate the integrated cross section (b)
-double 
+double
 KleinNishinaPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 						const double incoming_energy,
 						const double precision ) const
 {
   // Make sure the energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  
-  const double alpha = 
+
+  const double alpha =
     incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
-  
+
   const double arg = 1.0 + 2.0*alpha;
 
   const double term_1 = (1.0 + alpha)/(alpha*alpha)*
     ((1.0 + arg)/arg - log(arg)/alpha);
 
   const double term_2 = log(arg)/(2.0*alpha);
-  
+
   const double term_3 = -(arg + alpha)/(arg*arg);
 
   const double cross_section = 2.0*1e24*Utility::PhysicalConstants::pi*
@@ -80,14 +80,14 @@ KleinNishinaPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 }
 
 // Sample an outgoing energy and direction from the distribution
-void KleinNishinaPhotonScatteringDistribution::sample( 
+void KleinNishinaPhotonScatteringDistribution::sample(
 				     const double incoming_energy,
 				     double& outgoing_energy,
 				     double& scattering_angle_cosine ) const
 {
   // Make sure the energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  
+
   unsigned trial_dummy;
 
   this->sampleAndRecordTrialsKleinNishina( incoming_energy,
@@ -97,7 +97,7 @@ void KleinNishinaPhotonScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials( 
+void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
@@ -105,7 +105,7 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  
+
   this->sampleAndRecordTrialsKleinNishina( incoming_energy,
 					   outgoing_energy,
 					   scattering_angle_cosine,
@@ -113,7 +113,7 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
 }
 
 // Randomly scatter the photon and return the shell that was interacted with
-void KleinNishinaPhotonScatteringDistribution::scatterPhoton( 
+void KleinNishinaPhotonScatteringDistribution::scatterPhoton(
 				     PhotonState& photon,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -126,10 +126,20 @@ void KleinNishinaPhotonScatteringDistribution::scatterPhoton(
 
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
+  // Sample the azimuthal angle of the outgoing photon
+  const double azimuthal_angle = this->sampleAzimuthalAngle();
+
+  // Create the ejectected electron
+  this->createEjectedElectron( photon,
+			       scattering_angle_cosine,
+			       azimuthal_angle,
+			       bank );
+
+  // Set the new energy
   photon.setEnergy( outgoing_energy );
 
-  photon.rotateDirection( scattering_angle_cosine, 
-			  this->sampleAzimuthalAngle() );
+  // Set the new direction
+  photon.rotateDirection( scattering_angle_cosine, azimuthal_angle );
 }
 
 } // end MonteCarlo namespace

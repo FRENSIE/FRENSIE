@@ -29,14 +29,17 @@ public:
 		   const Utility::ArchivableObject::ArchiveType archive_type );
 
   // Add the setter member functions to the public interface
+  using ElectronPhotonRelaxationDataContainer::setNotes;
   using ElectronPhotonRelaxationDataContainer::setAtomicNumber;
   using ElectronPhotonRelaxationDataContainer::setMinPhotonEnergy;
   using ElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;
   using ElectronPhotonRelaxationDataContainer::setMinElectronEnergy;
   using ElectronPhotonRelaxationDataContainer::setMaxElectronEnergy;
-  using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using ElectronPhotonRelaxationDataContainer::setOccupationNumberEvaluationTolerance;
   using ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor;
+  using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
+  using ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles;
   using ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;
@@ -57,6 +60,8 @@ public:
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunction;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactorMomentumGrid;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactor;
+  using ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid;
+  using ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactor;
   using ElectronPhotonRelaxationDataContainer::setPhotonEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setAveragePhotonHeatingNumbers;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeIncoherentCrossSection;
@@ -69,6 +74,8 @@ public:
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeCoherentCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setPairProductionCrossSection;
   using ElectronPhotonRelaxationDataContainer::setPairProductionCrossSectionThresholdEnergyIndex;
+  using ElectronPhotonRelaxationDataContainer::setTripletProductionCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setTripletProductionCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setPhotoelectricCrossSection;
   using ElectronPhotonRelaxationDataContainer::setPhotoelectricCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSection;
@@ -84,6 +91,7 @@ public:
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF;
   using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant;
   using ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant;
+  using ElectronPhotonRelaxationDataContainer::clearMomentPreservingData;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid;

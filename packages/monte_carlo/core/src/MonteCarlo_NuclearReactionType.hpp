@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_NuclearReactionType.hpp
 //! \author Alex Robinson
 //! \brief  Nuclear reaction type enumeration and helper function declarations.
@@ -432,7 +432,7 @@ enum NuclearReactionType{
 };
 
 //! Convert an unsigned int to a NuclearReactionType
-NuclearReactionType convertUnsignedToNuclearReactionType( 
+NuclearReactionType convertUnsignedToNuclearReactionType(
 						     const unsigned reaction );
 
 } // end MonteCarlo namespace

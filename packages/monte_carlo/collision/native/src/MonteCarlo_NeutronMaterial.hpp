@@ -31,7 +31,7 @@ class NeutronMaterial
 public:
 
   //! Constructor
-  NeutronMaterial( 
+  NeutronMaterial(
 		const ModuleTraits::InternalMaterialHandle id,
 		const double density,
 		const std::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
@@ -45,7 +45,7 @@ public:
 
   //! Return the material id
   ModuleTraits::InternalMaterialHandle getId() const;
-  
+
   //! Return the material number density (atom/b-cm)
   double getNumberDensity() const;
 
@@ -59,7 +59,7 @@ public:
   double getSurvivalProbability( const double energy ) const;
 
   //! Return the macroscopic cross section (1/cm) for a specific reaction
-  double getMacroscopicReactionCrossSection( 
+  double getMacroscopicReactionCrossSection(
 				     const double energy,
 				     const NuclearReactionType reaction) const;
 
@@ -72,7 +72,7 @@ public:
 private:
 
   // Get the atomic weight ratio from a nuclide pointer
-  static double getNuclideAWR( 
+  static double getNuclideAWR(
 		    const Utility::Pair<double,Teuchos::RCP<Nuclide> >& pair );
 
   // Sample the nuclide that is collided with
@@ -84,7 +84,7 @@ private:
   // The number density of the material
   double d_number_density;
 
-  // The nuclides that make up the material 
+  // The nuclides that make up the material
   // (FIRST = nuclide_number_density, SECOND = nuclide pointer)
   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Nuclide> > > d_nuclides;
 };

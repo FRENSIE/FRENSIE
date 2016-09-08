@@ -25,11 +25,11 @@ namespace Utility{
 
 // Export the data in the container to the desired archive type
 /*! \details In order for this function to compile, the serialize member
- * function or the save and load member function must be defined in the 
+ * function or the save and load member function must be defined in the
  * derived class as described by the boost serialization library.
  */
 template<typename DerivedType>
-void StandardArchivableObject<DerivedType,false>::exportData( 
+void StandardArchivableObject<DerivedType,false>::exportData(
 		       const std::string& archive_name,
 		       const ArchivableObject::ArchiveType archive_type ) const
 {
@@ -41,20 +41,20 @@ void StandardArchivableObject<DerivedType,false>::exportData(
     {
       boost::archive::text_oarchive ar(ofs);
       ar << *dynamic_cast<const DerivedType*>(this);
-      
+
       break;
     }
     case Utility::ArchivableObject::BINARY_ARCHIVE:
     {
       boost::archive::binary_oarchive ar(ofs);
       ar << *dynamic_cast<const DerivedType*>(this);
-      
+
       break;
     }
     case Utility::ArchivableObject::XML_ARCHIVE:
     {
       boost::archive::xml_oarchive ar(ofs);
-      ar << boost::serialization::make_nvp( 
+      ar << boost::serialization::make_nvp(
 			typeid(*dynamic_cast<const DerivedType*>(this)).name(),
 			*dynamic_cast<const DerivedType*>(this) );
 
@@ -62,14 +62,14 @@ void StandardArchivableObject<DerivedType,false>::exportData(
     }
   }
 }
-  
+
 // Import data from the desired archive
 /*! \details In order for this function to compile, the serialize member
  * function or the save and load member function must be defined in the
  * derived class as described by the boost serialization library.
  */
 template<typename DerivedType>
-void StandardArchivableObject<DerivedType,false>::importData( 
+void StandardArchivableObject<DerivedType,false>::importData(
 			     const std::string& archive_name,
 			     const ArchivableObject::ArchiveType archive_type )
 {
@@ -81,7 +81,7 @@ void StandardArchivableObject<DerivedType,false>::importData(
     {
       boost::archive::text_iarchive ar(ifs);
       ar >> *dynamic_cast<DerivedType*>(this);
-      
+
       break;
     }
     case Utility::ArchivableObject::BINARY_ARCHIVE:
@@ -94,12 +94,12 @@ void StandardArchivableObject<DerivedType,false>::importData(
     case Utility::ArchivableObject::XML_ARCHIVE:
     {
       boost::archive::xml_iarchive ar(ifs);
-      ar >> boost::serialization::make_nvp( 
+      ar >> boost::serialization::make_nvp(
 		              typeid(*dynamic_cast<DerivedType*>(this)).name(),
 			      *dynamic_cast<DerivedType*>(this) );
 
       break;
-    }   
+    }
   }
 }
 

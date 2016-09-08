@@ -37,13 +37,13 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 }
 
-// Constructor 
+// Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionPhotoatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -65,8 +65,8 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the grid searcher is valid
@@ -96,13 +96,13 @@ PhotoatomicReactionType AbsorptionPhotoatomicReaction<InterpPolicy,processed_cro
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     PhotonState& photon, 
+void AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     PhotonState& photon,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
   photon.setAsGone();
-  
+
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 }
 

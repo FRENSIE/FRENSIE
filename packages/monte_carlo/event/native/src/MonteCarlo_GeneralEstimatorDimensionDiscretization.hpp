@@ -18,8 +18,8 @@
 namespace MonteCarlo{
 
 /*! The general estimator dimension discretization class
- * \details If the dimension is not compatible with the continuous or 
- * discrete treatment provided by the 
+ * \details If the dimension is not compatible with the continuous or
+ * discrete treatment provided by the
  * StandardBasicEstimatorDimensionDiscretization class then a specialization of
  * this class should be made.
  */
@@ -35,7 +35,7 @@ private:
 public:
 
   //! Constructor
-  GeneralEstimatorDimensionDiscretization( 
+  GeneralEstimatorDimensionDiscretization(
                               const Teuchos::Array<typename DT::dimensionType>&
 			      dimension_bin_boundaries );
 
@@ -47,14 +47,14 @@ public:
   std::string getDimensionName() const;
 
   //! Check if the value is contained in the dimension discretization
-  bool isValueInDiscretization( 
+  bool isValueInDiscretization(
            const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
 
   //! Check if the value is contained in the dimension discretization
   bool isValueInDiscretization( const Teuchos::any& any_value ) const;
 
   //! Calculate the index of the bin that the value falls in
-  unsigned calculateBinIndex( 
+  unsigned calculateBinIndex(
            const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
 
   //! Calculate the index of the bin that the value falls in

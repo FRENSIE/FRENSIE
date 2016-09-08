@@ -23,7 +23,7 @@
 
 namespace Geometry{
 
-// Get the boundary cell 
+// Get the boundary cell
 /*! \details DagMC geometry are set up so that every surface belongs to
  * exactly two cells. When a ray crosses a boundary surface finding the
  * next cell that will be entered is simply a matter of knowing the current
@@ -41,21 +41,21 @@ DagMC::getBoundaryCell(
   // Make sure the surface exists
   testPrecondition( DagMC::doesSurfaceExist( boundary_surface_id ) );
 
-  moab::EntityHandle current_cell_handle = 
+  moab::EntityHandle current_cell_handle =
     s_cell_handler->getCellHandle( cell_id );
 
-  moab::EntityHandle boundary_surface_handle = 
+  moab::EntityHandle boundary_surface_handle =
     s_surface_handler->getSurfaceHandle( boundary_surface_id );
 
   moab::EntityHandle boundary_cell_handle =
-    DagMC::getBoundaryCellHandle( current_cell_handle, 
+    DagMC::getBoundaryCellHandle( current_cell_handle,
                                   boundary_surface_handle );
-                      
+
   return s_cell_handler->getCellId( boundary_cell_handle );
 }
 
 // Get the surface normal at a point on the surface
-inline void DagMC::getSurfaceNormal( 
+inline void DagMC::getSurfaceNormal(
                           const ModuleTraits::InternalSurfaceHandle surface_id,
                           const double position[3],
                           double normal[3] )
@@ -65,35 +65,35 @@ inline void DagMC::getSurfaceNormal(
   // Make sure the surface exists
   testPrecondition( DagMC::doesSurfaceExist( surface_id ) );
 
-  moab::EntityHandle surface_handle = 
+  moab::EntityHandle surface_handle =
     s_surface_handler->getSurfaceHandle( surface_id );
 
   DagMC::getSurfaceHandleNormal( surface_handle, position, normal );
 }
 
 // Get the property values associated with a property name
-inline void DagMC::getPropertyValues( const std::string& property, 
+inline void DagMC::getPropertyValues( const std::string& property,
                                       std::vector<std::string>& values )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
 
   // Get all of the property values
-  moab::ErrorCode return_value = 
+  moab::ErrorCode return_value =
     s_dagmc->get_all_prop_values( property, values );
 
-  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      InvalidDagMCGeometry,
 		      moab::ErrorCodeStr[return_value] );
 }
 
 // Get the property values associated with a property name
-/*! \details The StringArray must be an array (e.g. std::vector, 
- * Teuchos::Array, etc.) of std::string types. This method is thread safe as 
+/*! \details The StringArray must be an array (e.g. std::vector,
+ * Teuchos::Array, etc.) of std::string types. This method is thread safe as
  * long as enableThreadSupport has been called.
  */
 template<typename StringArray>
-void DagMC::getPropertyValues( const std::string& property, 
+void DagMC::getPropertyValues( const std::string& property,
                                StringArray& values )
 {
   // Make sure DagMC has been initialized
@@ -110,7 +110,7 @@ void DagMC::getPropertyValues( const std::string& property,
 }
 
 // Get the material ids
-/*! \details The set type must be an integer types. This method is thread safe 
+/*! \details The set type must be an integer types. This method is thread safe
  * as long as enableThreadSupport has been called.
  */
 template<typename Set>
@@ -131,9 +131,9 @@ void DagMC::getMaterialIds( Set& material_ids )
                         raw_material_ids[i].size(),
                         InvalidDagMCGeometry,
                         "Error: An invalid material id ("
-                        << raw_material_ids[i] << 
+                        << raw_material_ids[i] <<
                         ") was found! " );
-    
+
     std::istringstream iss( raw_material_ids[i] );
 
     typename Set::value_type material_id;
@@ -145,7 +145,7 @@ void DagMC::getMaterialIds( Set& material_ids )
 }
 
 // Find the cell handle that contains the external ray
-inline moab::EntityHandle 
+inline moab::EntityHandle
 DagMC::findCellHandleContainingExternalRay( const Ray& ray,
                                             const bool boundary_check )
 {
@@ -172,12 +172,12 @@ inline ModuleTraits::InternalCellHandle DagMC::findCellContainingExternalRay(
 }
 
 // Find and cache the cell that contains the external ray
-inline ModuleTraits::InternalCellHandle 
+inline ModuleTraits::InternalCellHandle
 DagMC::findAndCacheCellContainingExternalRay( const Ray& ray )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  
+
   moab::EntityHandle cell_handle =
     DagMC::findAndCacheCellHandleContainingRay( ray.getPosition(),
                                                 ray.getDirection() );
@@ -187,14 +187,14 @@ DagMC::findAndCacheCellContainingExternalRay( const Ray& ray )
 }
 
 // Initialize (or reset) an internal DagMC ray
-inline void DagMC::setInternalRay( const Ray& ray, 
+inline void DagMC::setInternalRay( const Ray& ray,
                                    const bool cache_start_cell )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
 
-  DagMC::setInternalRay( ray.getPosition(), 
-                         ray.getDirection(), 
+  DagMC::setInternalRay( ray.getPosition(),
+                         ray.getDirection(),
                          cache_start_cell );
 }
 
@@ -211,9 +211,9 @@ inline void DagMC::setInternalRay(
   // Make sure the cell contains the ray
   testPrecondition( DagMC::findCellContainingExternalRay( ray, false ) ==
                     current_cell );
-  
-  DagMC::setInternalRay( ray.getPosition(), 
-                         ray.getDirection(), 
+
+  DagMC::setInternalRay( ray.getPosition(),
+                         ray.getDirection(),
                          current_cell,
                          cache_start_cell );
 }
@@ -234,7 +234,7 @@ inline void DagMC::changeInternalRayDirection( const double direction[3] )
 }
 
 // Get the problem cells
-/*! \details The set value type should be a ModuleTraits::InternalCellHandle. 
+/*! \details The set value type should be a ModuleTraits::InternalCellHandle.
  * This method is thread safe as long as enableThreadSupport has been called.
  */
 template<typename Set>
@@ -249,7 +249,7 @@ void DagMC::getCells( Set& cell_set,
 
   while( cell_handle_it != s_cell_handler->end() )
   {
-    ModuleTraits::InternalCellHandle cell_id = 
+    ModuleTraits::InternalCellHandle cell_id =
       s_cell_handler->getCellId( *cell_handle_it );
 
     // Check if it is a termination cell
@@ -274,8 +274,8 @@ void DagMC::getCells( Set& cell_set,
 
 // Get the property values associated with a property name and cell id
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
- * mapped type must be an array of strings (e.g. std::vector or 
- * Teuchos::Array). This method is thread safe as long as 
+ * mapped type must be an array of strings (e.g. std::vector or
+ * Teuchos::Array). This method is thread safe as long as
  * enableThreadSupport has been called.
  */
 template<typename Map>
@@ -284,7 +284,7 @@ void DagMC::getCellPropertyValues( const std::string& property,
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  
+
   std::vector<moab::EntityHandle> cells_with_property;
 
   // Get all of the cells with the desired property
@@ -298,15 +298,15 @@ void DagMC::getCellPropertyValues( const std::string& property,
   // Get the property value for each cell
   for( unsigned i = 0u; i < cells_with_property.size(); ++i )
   {
-    ModuleTraits::InternalCellHandle cell_id = 
+    ModuleTraits::InternalCellHandle cell_id =
       s_cell_handler->getCellId( cells_with_property[i] );
-    
-    moab::ErrorCode return_value = 
+
+    moab::ErrorCode return_value =
       s_dagmc->prop_values( cells_with_property[i],
                             property,
                             cell_id_prop_val_map[cell_id] );
 
-    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
+    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 			InvalidDagMCGeometry,
 			moab::ErrorCodeStr[return_value] );
   }
@@ -314,7 +314,7 @@ void DagMC::getCellPropertyValues( const std::string& property,
 
 // Get the cell ids with a property value
 /*! \details The key type must be a std::string. The mapped type must be
- * an array of ModuleTraits::InternalCellHandle types. This method is thread 
+ * an array of ModuleTraits::InternalCellHandle types. This method is thread
  * safe as long as enableThreadSupport has been called.
  */
 template<typename Map>
@@ -323,20 +323,20 @@ void DagMC::getCellIdsWithPropertyValue( const std::string& property,
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  
+
   // Get all of the values for the desired property
   std::vector<std::string> property_values;
 
   moab::ErrorCode return_value =
     s_dagmc->get_all_prop_values( property, property_values );
 
-  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       InvalidDagMCGeometry,
                       moab::ErrorCodeStr[return_value] );
 
   // Load the map
   std::vector<moab::EntityHandle> cells;
-  
+
   for( unsigned i = 0u; i < property_values.size(); ++i )
   {
     try{
@@ -346,18 +346,18 @@ void DagMC::getCellIdsWithPropertyValue( const std::string& property,
                              "Error: Unable to extract cells with property "
                              << property << " and value "
                              << property_values[i] << "!" );
-        
+
     if( cells.size() > 0 )
     {
-      std::vector<ModuleTraits::InternalCellHandle>& cell_ids = 
+      std::vector<ModuleTraits::InternalCellHandle>& cell_ids =
 	prop_val_cell_id_map[property_values[i]];
-      
+
       cell_ids.resize( cells.size() );
-      
+
       // Convert the entity handles to cell ids
       for( unsigned j = 0u; j < cells.size(); ++j )
 	cell_ids[j] = s_cell_handler->getCellId( cells[j] );
-      
+
       cells.clear();
     }
   }
@@ -365,7 +365,7 @@ void DagMC::getCellIdsWithPropertyValue( const std::string& property,
 
 // Get the cell material ids
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
- * mapped type must be an unsigned int. This method is thread safe as long as 
+ * mapped type must be an unsigned int. This method is thread safe as long as
  * enableThreadSupport has been called.
  */
 template<typename Map>
@@ -373,7 +373,7 @@ void DagMC::getCellMaterialIds( Map& cell_id_mat_id_map )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  
+
   // Load a map of the cell ids and material names
   std::unordered_map<ModuleTraits::InternalCellHandle,std::vector<std::string> >
     cell_id_mat_name_map;
@@ -386,7 +386,7 @@ void DagMC::getCellMaterialIds( Map& cell_id_mat_id_map )
                            "Error: Unable to parse the cell material ids!" );
 
   // Convert the material names to material ids
-  std::unordered_map<ModuleTraits::InternalCellHandle,std::vector<std::string> >::const_iterator 
+  std::unordered_map<ModuleTraits::InternalCellHandle,std::vector<std::string> >::const_iterator
     cell_it = cell_id_mat_name_map.begin();
 
   while( cell_it != cell_id_mat_name_map.end() )
@@ -395,22 +395,22 @@ void DagMC::getCellMaterialIds( Map& cell_id_mat_id_map )
                         InvalidDagMCGeometry,
                         "Error: Cell " << cell_it->first << " has multiple "
                         "materials assigned!" );
-    
-    TEST_FOR_EXCEPTION( 
+
+    TEST_FOR_EXCEPTION(
                     cell_it->second.front().find_first_not_of( "0123456789" ) <
                     cell_it->second.size(),
                     InvalidDagMCGeometry,
                     "Error: Cell " << cell_it->first << " has an invalid "
                     "material id (" << cell_it->second.front() << ")! " );
-    
+
     std::istringstream iss( cell_it->second.front() );
 
     typename Map::mapped_type material_id;
-    
+
     iss >> material_id;
-    
+
     cell_id_mat_id_map[cell_it->first] = material_id;
-    
+
     ++cell_it;
   }
 }
@@ -418,7 +418,7 @@ void DagMC::getCellMaterialIds( Map& cell_id_mat_id_map )
 // Get the cell densities
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
  * mapped type must be a double. Note that void and terminal cells will
- * not be added to the map. This method is thread safe as long as 
+ * not be added to the map. This method is thread safe as long as
  * enableThreadSupport has been called
  */
 template<typename Map>
@@ -426,7 +426,7 @@ void DagMC::getCellDensities( Map& cell_id_density_map )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  
+
   // Load a map of the cell ids and density names
   std::unordered_map<ModuleTraits::InternalCellHandle,std::vector<std::string> >
     cell_id_density_name_map;
@@ -439,7 +439,7 @@ void DagMC::getCellDensities( Map& cell_id_density_map )
                            "Error: Unable to parse the cell densities!" );
 
   // Convert the material names to material ids
-  std::unordered_map<ModuleTraits::InternalCellHandle,std::vector<std::string> >::const_iterator 
+  std::unordered_map<ModuleTraits::InternalCellHandle,std::vector<std::string> >::const_iterator
     cell_it = cell_id_density_name_map.begin();
 
   while( cell_it != cell_id_density_name_map.end() )
@@ -449,21 +449,21 @@ void DagMC::getCellDensities( Map& cell_id_density_map )
                         "Error: Cell " << cell_it->first << " has multiple "
                         "densities assigned!" );
 
-    TEST_FOR_EXCEPTION( 
+    TEST_FOR_EXCEPTION(
                   cell_it->second.front().find_first_not_of( "-.0123456789" ) <
                   cell_it->second.size(),
                   InvalidDagMCGeometry,
                   "Error: Cell " << cell_it->first << " has an invalid "
                   "density (" << cell_it->second.front() << ")! " );
-    
+
     std::istringstream iss( cell_it->second.front() );
 
     typename Map::mapped_type density;
-    
+
     iss >> density;
-    
+
     cell_id_density_map[cell_it->first] = density;
-    
+
     ++cell_it;
   }
 }
@@ -475,7 +475,7 @@ void DagMC::getCellDensities( Map& cell_id_density_map )
  * Utility::Trip<std::string,std::string,std::vector<ModuleTraits::InternalCellHandle> >).
  * The first string value will store the estimator type, the second
  * string will store the particle type and the array will store all of the
- * assigned cells. This method is thread safe as long as enableThreadSupport 
+ * assigned cells. This method is thread safe as long as enableThreadSupport
  * has been called.
  */
 template<typename Map>
@@ -485,9 +485,9 @@ void DagMC::getCellEstimatorData( Map& estimator_id_data_map )
   testPrecondition( DagMC::isInitialized() );
 
   // Load the estimator property cell id map
-  typedef std::unordered_map<std::string,std::vector<ModuleTraits::InternalCellHandle> > 
+  typedef std::unordered_map<std::string,std::vector<ModuleTraits::InternalCellHandle> >
     EstimatorPropCellIdMap;
-  
+
   EstimatorPropCellIdMap estimator_prop_cell_id_map;
 
   try{
@@ -497,7 +497,7 @@ void DagMC::getCellEstimatorData( Map& estimator_id_data_map )
   EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                            "Error: Unable to parse the cell estimator data!" );
 
-  EstimatorPropCellIdMap::const_iterator estimator_it = 
+  EstimatorPropCellIdMap::const_iterator estimator_it =
     estimator_prop_cell_id_map.begin();
 
   // Loop through all of the cell estimators and extract their information
@@ -506,7 +506,7 @@ void DagMC::getCellEstimatorData( Map& estimator_id_data_map )
     typename Map::key_type id;
     std::string estimator_type;
     std::string particle_type;
-    
+
     try{
       DagMC::extractEstimatorPropertyValues( estimator_it->first,
                                              id,
@@ -532,7 +532,7 @@ void DagMC::getCellEstimatorData( Map& estimator_id_data_map )
                         "Error: cell estimator " << id << " has estimator "
                         "type " << estimator_type << " specified in the .sat "
                         "file, which is an invalid type!" );
-                        
+
     // Make sure at least one cell has been assigned to the estimator
     TEST_FOR_EXCEPTION( estimator_it->second.size() == 0,
                         InvalidDagMCGeometry,
@@ -540,22 +540,22 @@ void DagMC::getCellEstimatorData( Map& estimator_id_data_map )
                         "assigned!" );
 
     // Add the estimator info to the map
-    typename Map::mapped_type& estimator_data_tuple = 
+    typename Map::mapped_type& estimator_data_tuple =
       estimator_id_data_map[id];
 
     estimator_data_tuple.first = estimator_type;
     estimator_data_tuple.second = particle_type;
-    
+
     estimator_data_tuple.third.assign( estimator_it->second.begin(),
                                        estimator_it->second.end() );
-    
+
     ++estimator_it;
   }
 }
 
 // Get the problem surfaces
-/*! \details The set value type should be a 
- * ModuleTraits::InternalSurfaceHandle. This method is thread safe as long as 
+/*! \details The set value type should be a
+ * ModuleTraits::InternalSurfaceHandle. This method is thread safe as long as
  * enableThreadSupport has been called.
  */
 template<typename Set>
@@ -563,12 +563,12 @@ void DagMC::getSurfaces( Set& surface_set )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  
+
   moab::Range::const_iterator surface_handle_it = s_surface_handler->begin();
 
   while( surface_handle_it != s_surface_handler->end() )
   {
-    ModuleTraits::InternalCellHandle surface_id = 
+    ModuleTraits::InternalCellHandle surface_id =
       s_surface_handler->getSurfaceId( *surface_handle_it );
 
     surface_set.insert( surface_id );
@@ -579,8 +579,8 @@ void DagMC::getSurfaces( Set& surface_set )
 
 // Get the property values associated with a property name and surface id
 /*! \details The key type must be a ModuleTraits::InternalSurfaceHandle. The
- * mapped type must be an array of strings (e.g. std::vector or 
- * Teuchos::Array). This method is thread safe as long as 
+ * mapped type must be an array of strings (e.g. std::vector or
+ * Teuchos::Array). This method is thread safe as long as
  * enableThreadSupport has been called.
  */
 template<typename Map>
@@ -589,7 +589,7 @@ void DagMC::getSurfacePropertyValues( const std::string& property,
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  
+
   std::vector<moab::EntityHandle> surfaces_with_property;
 
   // Get all of the surfaces with the desired property
@@ -599,19 +599,19 @@ void DagMC::getSurfacePropertyValues( const std::string& property,
   EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                            "Error: Unable to extract surfaces with property "
                            << property << "!" );
-  
+
   // Get the property value for each surface
   for( unsigned i = 0u; i < surfaces_with_property.size(); ++i )
   {
-    ModuleTraits::InternalSurfaceHandle surface_id = 
+    ModuleTraits::InternalSurfaceHandle surface_id =
       s_surface_handler->getSurfaceId( surfaces_with_property[i] );
-    
-    moab::EntityHandle return_value = 
+
+    moab::EntityHandle return_value =
       s_dagmc->prop_values( surfaces_with_property[i],
                             property,
                             surface_id_prop_val_map[surface_id] );
 
-    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
+    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 			InvalidDagMCGeometry,
 			moab::ErrorCodeStr[return_value] );
   }
@@ -619,7 +619,7 @@ void DagMC::getSurfacePropertyValues( const std::string& property,
 
 // Get the surface ids with a property value
 /*! \details The key type must be a std::string. The mapped type must be
- * an array of ModuleTraits::InternalSurfaceHandle types. This method is 
+ * an array of ModuleTraits::InternalSurfaceHandle types. This method is
  * thread safe as long as enableThreadSupport has been called.
  */
 template<typename Map>
@@ -628,20 +628,20 @@ void DagMC::getSurfaceIdsWithPropertyValue( const std::string& property,
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  
+
   // Get all of the values for the desired property
   std::vector<std::string> property_values;
 
   moab::ErrorCode return_value =
     s_dagmc->get_all_prop_values( property, property_values );
 
-  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       InvalidDagMCGeometry,
                       moab::ErrorCodeStr[return_value] );
 
   // Load the map
   std::vector<moab::EntityHandle> surfaces;
-  
+
   for( unsigned i = 0u; i < property_values.size(); ++i )
   {
     return_value = s_dagmc->entities_by_property( property,
@@ -652,18 +652,18 @@ void DagMC::getSurfaceIdsWithPropertyValue( const std::string& property,
     TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                         InvalidDagMCGeometry,
                         moab::ErrorCodeStr[return_value] );
-    
+
     if( surfaces.size() > 0 )
     {
-      std::vector<ModuleTraits::InternalSurfaceHandle>& surface_ids = 
+      std::vector<ModuleTraits::InternalSurfaceHandle>& surface_ids =
 	prop_val_surface_id_map[property_values[i]];
-      
+
       surface_ids.resize( surfaces.size() );
-      
+
       // Convert the entity handles to surface ids
       for( unsigned j = 0u; j < surfaces.size(); ++j )
 	surface_ids[j] = s_surface_handler->getSurfaceId( surfaces[j] );
-      
+
       surfaces.clear();
     }
   }
@@ -684,11 +684,11 @@ void DagMC::getSurfaceEstimatorData( Map& estimator_id_data_map )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  
+
   // Load the estimator property surface id map
-  typedef std::unordered_map<std::string,std::vector<ModuleTraits::InternalSurfaceHandle> > 
+  typedef std::unordered_map<std::string,std::vector<ModuleTraits::InternalSurfaceHandle> >
     EstimatorPropSurfaceIdMap;
-  
+
   EstimatorPropSurfaceIdMap estimator_prop_surface_id_map;
 
   try{
@@ -699,7 +699,7 @@ void DagMC::getSurfaceEstimatorData( Map& estimator_id_data_map )
                            "Error: Unable to parse the surface estimator "
                            "properties!" );
 
-  EstimatorPropSurfaceIdMap::const_iterator estimator_it = 
+  EstimatorPropSurfaceIdMap::const_iterator estimator_it =
     estimator_prop_surface_id_map.begin();
 
   // Loop through all of the surface estimators and extract their information
@@ -732,7 +732,7 @@ void DagMC::getSurfaceEstimatorData( Map& estimator_id_data_map )
                         "Error: surface estimator " << id << " has estimator "
                         "type " << estimator_type << " specified in the .sat "
                         "file, which is an invalid type!" );
-                        
+
     // Make sure at least one surface has been assigned to the estimator
     TEST_FOR_EXCEPTION( estimator_it->second.size() == 0,
                         InvalidDagMCGeometry,
@@ -740,12 +740,12 @@ void DagMC::getSurfaceEstimatorData( Map& estimator_id_data_map )
                         "assigned!" );
 
     // Add the estimator info to the map
-    typename Map::mapped_type& estimator_data_tuple = 
+    typename Map::mapped_type& estimator_data_tuple =
       estimator_id_data_map[id];
 
     estimator_data_tuple.first = estimator_type;
     estimator_data_tuple.second = particle_type;
-    
+
     estimator_data_tuple.third.assign( estimator_it->second.begin(),
                                        estimator_it->second.end() );
 
@@ -767,7 +767,7 @@ void DagMC::getFoundCellCache( Set& cached_cells )
   while( cached_cell_it != s_found_cell_cache.end() )
   {
     cached_cells.insert( s_cell_handler->getCellId( *cached_cell_it ) );
-    
+
     ++cached_cell_it;
   }
 }

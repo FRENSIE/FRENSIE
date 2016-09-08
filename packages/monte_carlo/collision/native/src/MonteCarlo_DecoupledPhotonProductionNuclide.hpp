@@ -39,7 +39,7 @@ public:
                    Teuchos::RCP<const DecoupledPhotonProductionReaction> > ConstPhotonProductionReactionMap;
 
   //! Constructor
-  DecoupledPhotonProductionNuclide( 
+  DecoupledPhotonProductionNuclide(
      const std::string& name,
 	   const unsigned atomic_number,
 	   const unsigned atomic_mass_number,
@@ -49,16 +49,16 @@ public:
 	   const Teuchos::ArrayRCP<double>& energy_grid,
 	   const ReactionMap& standard_scattering_reactions,
 	   const ReactionMap& standard_absorption_reactions,
-	   const PhotonProductionReactionMap& photon_production_reactions );  
+	   const PhotonProductionReactionMap& photon_production_reactions );
 
   //! Destructor
   ~DecoupledPhotonProductionNuclide()
   { /* ... */ }
-  
+
   //! Get the photon production reaction cross section
   double getPhotonProductionCrossSection( const double energy,
 				                                  const unsigned reaction );
-  
+
   //! Collide with a neutron
   void collideAnalogue( NeutronState& neutron, ParticleBank& bank ) const;
 
@@ -67,15 +67,15 @@ public:
 
   // Get total photon production cross section
   double getTotalPhotonProductionCrossSection( const double energy ) const;
-  
+
 private:
 
   // Sample a decoupled photon production reaction
   void samplePhotonProductionReaction( const double scaled_random_number,
-				 NeutronState& neutron, 
+				 NeutronState& neutron,
 				 ParticleBank& bank ) const;
 
-  // Store the reaction map of photon production reactions 
+  // Store the reaction map of photon production reactions
   ConstPhotonProductionReactionMap d_photon_production_reactions;
 };
 

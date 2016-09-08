@@ -19,7 +19,7 @@ namespace MonteCarlo{
 // Constructor
 /*! \details The DagMC geometry must be initialized before constructing this
  * factory. If DagMC is not enabled this constructor will do nothing.
- */ 
+ */
 StandardEstimatorFactory<Geometry::DagMC>::StandardEstimatorFactory(
        const std::shared_ptr<EventHandler>& event_handler,
        const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
@@ -41,7 +41,7 @@ StandardEstimatorFactory<Geometry::DagMC>::StandardEstimatorFactory(
   testPostcondition( d_geom_estimator_id_type_map.size() ==
 		     d_geom_estimator_id_ptype_map.size() );
   testPostcondition( d_geom_estimator_id_type_map.size() ==
-		     d_geom_estimator_id_cells_map.size() + 
+		     d_geom_estimator_id_cells_map.size() +
 		     d_geom_estimator_id_surfaces_map.size() );
 }
 
@@ -55,12 +55,12 @@ void StandardEstimatorFactory<Geometry::DagMC>::createAndRegisterCachedEstimator
   {
     // Get the estimator id
     unsigned estimator_id = estimator_id_type->first;
-    
+
     // Get the estimator type
     const std::string& estimator_type = estimator_id_type->second;
 
     // Get the estimator particle type
-    const std::string& particle_type_name = 
+    const std::string& particle_type_name =
       d_geom_estimator_id_ptype_map.find( estimator_id )->second;
 
     Teuchos::Array<ParticleType> particle_types;
@@ -79,17 +79,17 @@ void StandardEstimatorFactory<Geometry::DagMC>::createAndRegisterCachedEstimator
       // Create and register a cell estimator
       if( this->isCellEstimator( estimator_type ) )
       {
-        boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle> 
+        boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>
           unique_cells;
 
         this->getCachedCells( unique_cells, estimator_id );
 
-        Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> 
+        Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
           assigned_cells( unique_cells.begin(), unique_cells.end() );
 
         TEST_FOR_EXCEPTION( assigned_cells.size() == 0,
                             InvalidEstimatorRepresentation,
-                            "Error: cell estimator " << estimator_id << 
+                            "Error: cell estimator " << estimator_id <<
                             " has no cells assigned to it!" );
 
         this->createAndRegisterCellEstimator( estimator_type,
@@ -99,13 +99,13 @@ void StandardEstimatorFactory<Geometry::DagMC>::createAndRegisterCachedEstimator
                                               response_functions,
                                               assigned_cells );
       }
-              
+
       // Create and register a surface estimator
       else if( this->isSurfaceEstimator( estimator_type ) )
       {
         boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>
           unique_surfaces;
-        
+
         this->getCachedSurfaces( unique_surfaces, estimator_id );
 
         Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>
@@ -113,7 +113,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::createAndRegisterCachedEstimator
 
         TEST_FOR_EXCEPTION( assigned_surfaces.size() == 0,
                             InvalidEstimatorRepresentation,
-                            "Error: surface estimator " << estimator_id << 
+                            "Error: surface estimator " << estimator_id <<
                             " has no surfaces assigned to it!" );
 
         this->createAndRegisterSurfaceEstimator( estimator_type,
@@ -123,7 +123,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::createAndRegisterCachedEstimator
                                                  response_functions,
                                                  assigned_surfaces );
       }
-      
+
       // Invalid estimator type
       else
       {
@@ -146,7 +146,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::createAndRegisterCachedEstimator
   d_geom_estimator_id_cells_map.clear();
   d_geom_estimator_id_surfaces_map.clear();
 }
-                       
+
 // Load estimator id maps with cell estimator properties
 void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithCellEstimatorProps()
 {
@@ -161,21 +161,21 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithCellEstim
                               "Error: Unable to parse the cell estimator data "
                               "in DagMC!" );
 
-  EstimatorIdDataMap::const_iterator cell_estimator_id_data_it = 
+  EstimatorIdDataMap::const_iterator cell_estimator_id_data_it =
     cell_estimator_id_data_map.begin();
 
   // Loop through the cell estimators
   while( cell_estimator_id_data_it != cell_estimator_id_data_map.end() )
   {
     unsigned id = cell_estimator_id_data_it->first;
-    
+
     // Make sure the id is valid
-    TEST_FOR_EXCEPTION( id == 
+    TEST_FOR_EXCEPTION( id ==
                         ModuleTraits::invalid_internal_event_observer_handle,
                         InvalidEstimatorRepresentation,
                         "Error: estimator id " << id << " found in DagMC "
                         "is reserved!" );
-    
+
     // The observer id must be unique
     TEST_FOR_EXCEPTION( d_geom_estimator_id_type_map.find( id ) !=
 			d_geom_estimator_id_type_map.end(),
@@ -186,13 +186,13 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithCellEstim
     // Store the estimator type
     std::string estimator_type = cell_estimator_id_data_it->second.first;
 
-    d_geom_estimator_id_type_map[id] = 
+    d_geom_estimator_id_type_map[id] =
       this->convertDagMCEstimatorTypeNameToStandard( estimator_type );
 
     // Store the particle type
     std::string particle_type = cell_estimator_id_data_it->second.second;
 
-    TEST_FOR_EXCEPTION( estimator_type == 
+    TEST_FOR_EXCEPTION( estimator_type ==
                         EstimatorFactory::getCellPulseHeightEstimatorName() &&
 			particle_type == "n",
 			InvalidEstimatorRepresentation,
@@ -200,13 +200,13 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithCellEstim
 			"been assigned a particle type of neutron (only "
 			"photons or electrons can be assigned)" );
 
-    d_geom_estimator_id_ptype_map[id] = 
+    d_geom_estimator_id_ptype_map[id] =
       convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
 
     // Store the cells assigned to the estimator
-    const std::vector<Geometry::ModuleTraits::InternalCellHandle>& cells = 
+    const std::vector<Geometry::ModuleTraits::InternalCellHandle>& cells =
       cell_estimator_id_data_it->second.third;
-    
+
     TEST_FOR_EXCEPTION( cells.size() == 0,
 			InvalidEstimatorRepresentation,
 			"Error: estimator " << id << " has no cells "
@@ -232,44 +232,44 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithSurfaceEs
                               "Error: Unable to parse the surface estimator "
                               "data in DagMC!" );
 
-  EstimatorIdDataMap::const_iterator surface_estimator_id_data_it = 
+  EstimatorIdDataMap::const_iterator surface_estimator_id_data_it =
     surface_estimator_id_data_map.begin();
 
   // Loop through the surface estimators
   while( surface_estimator_id_data_it != surface_estimator_id_data_map.end() )
   {
     unsigned id = surface_estimator_id_data_it->first;
-      
+
     // Make sure the id is valid
-    TEST_FOR_EXCEPTION( id == 
+    TEST_FOR_EXCEPTION( id ==
                         ModuleTraits::invalid_internal_event_observer_handle,
                         InvalidEstimatorRepresentation,
                         "Error: estimator id " << id << " found in DagMC "
                         "is reserved!" );
-    
+
     // The estimator id must be unique
     TEST_FOR_EXCEPTION( d_geom_estimator_id_type_map.find( id ) !=
 			d_geom_estimator_id_type_map.end(),
 			InvalidEstimatorRepresentation,
 			"Error: estimator id " << id << " is used multiple "
 			"times in DagMC!" );
-    
-    // Store the estimator type 
+
+    // Store the estimator type
     std::string estimator_type = surface_estimator_id_data_it->second.first;
-    
-    d_geom_estimator_id_type_map[id] = 
+
+    d_geom_estimator_id_type_map[id] =
       this->convertDagMCEstimatorTypeNameToStandard( estimator_type );
 
     // Store the particle type requested
     std::string particle_type = surface_estimator_id_data_it->second.second;
 
-    d_geom_estimator_id_ptype_map[id] = 
+    d_geom_estimator_id_ptype_map[id] =
       convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
-    
+
     // Store the surfaces assigned to the estimator
-    const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>& 
+    const std::vector<Geometry::ModuleTraits::InternalSurfaceHandle>&
       surfaces = surface_estimator_id_data_it->second.third;
-    
+
     TEST_FOR_EXCEPTION( surfaces.size() == 0,
 			InvalidEstimatorRepresentation,
 			"Error: estimator " << id << " has no surfaces "
@@ -285,7 +285,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadEstimatorIdMapsWithSurfaceEs
 // Load the cell volume map
 void StandardEstimatorFactory<Geometry::DagMC>::loadCellVolumeMap()
 {
-  EstimatorIdCellsMap::const_iterator it = 
+  EstimatorIdCellsMap::const_iterator it =
     d_geom_estimator_id_cells_map.begin();
 
   while( it != d_geom_estimator_id_cells_map.end() )
@@ -294,7 +294,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadCellVolumeMap()
     {
       if( d_cell_volume_map.find( it->second[i] ) == d_cell_volume_map.end() )
       {
-	d_cell_volume_map[it->second[i]] = 
+	d_cell_volume_map[it->second[i]] =
 	  Geometry::DagMC::getCellVolume( it->second[i] );
       }
     }
@@ -306,7 +306,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadCellVolumeMap()
 // Load the surface area map
 void StandardEstimatorFactory<Geometry::DagMC>::loadSurfaceAreaMap()
 {
-  EstimatorIdSurfacesMap::const_iterator it = 
+  EstimatorIdSurfacesMap::const_iterator it =
     d_geom_estimator_id_surfaces_map.begin();
 
   while( it != d_geom_estimator_id_surfaces_map.end() )
@@ -315,11 +315,11 @@ void StandardEstimatorFactory<Geometry::DagMC>::loadSurfaceAreaMap()
     {
       if( d_surface_area_map.find( it->second[i] ) == d_surface_area_map.end() )
       {
-	d_surface_area_map[it->second[i]] = 
+	d_surface_area_map[it->second[i]] =
 	  Geometry::DagMC::getSurfaceArea( it->second[i] );
       }
     }
-    
+
     ++it;
   }
 }
@@ -330,8 +330,8 @@ std::string StandardEstimatorFactory<Geometry::DagMC>::convertDagMCEstimatorType
 {
   // Make sure the estimator type is valid
   testPrecondition( Geometry::DagMC::isEstimatorTypeValid( dagmc_estimator_type_name ) );
-  
-  if( dagmc_estimator_type_name == 
+
+  if( dagmc_estimator_type_name ==
       Geometry::DagMC::getSurfaceCurrentName() )
   {
     return EstimatorFactory::getSurfaceCurrentEstimatorName();
@@ -366,12 +366,12 @@ std::string StandardEstimatorFactory<Geometry::DagMC>::convertDagMCEstimatorType
 }
 
 // Verify that the estimator type is consistent with cached data
-/*! \details This method will check that, if there data was found for the 
+/*! \details This method will check that, if there data was found for the
  * estimator in the .sat file, the estimator type requested in the xml file
- * is the same as the estimator type requested in the .sat file. An 
- * exception will be thrown if there is an ambiguity. 
+ * is the same as the estimator type requested in the .sat file. An
+ * exception will be thrown if there is an ambiguity.
  */
-void StandardEstimatorFactory<Geometry::DagMC>::verifyEstimatorTypeConsistency( 
+void StandardEstimatorFactory<Geometry::DagMC>::verifyEstimatorTypeConsistency(
                                      const unsigned estimator_id,
                                      const std::string& estimator_type ) const
 {
@@ -379,12 +379,12 @@ void StandardEstimatorFactory<Geometry::DagMC>::verifyEstimatorTypeConsistency(
   if( d_geom_estimator_id_type_map.find( estimator_id ) !=
       d_geom_estimator_id_type_map.end() )
   {
-    TEST_FOR_EXCEPTION( 
+    TEST_FOR_EXCEPTION(
                   d_geom_estimator_id_type_map.find(estimator_id)->second !=
                   estimator_type,
                   InvalidEstimatorRepresentation,
                   "Error: estimator " << estimator_id << " has an "
-                  "ambiguous type. DagMC requested " 
+                  "ambiguous type. DagMC requested "
                   << d_geom_estimator_id_type_map.find(estimator_id)->second <<
                   " while the xml file requested "
                   << estimator_type << "!" );
@@ -396,31 +396,31 @@ void StandardEstimatorFactory<Geometry::DagMC>::verifyEstimatorTypeConsistency(
  * specified in either the .sat file or the xml file. An exception is thrown
  * if it appears in neither or if it appears in both and they do not match.
  */
-void StandardEstimatorFactory<Geometry::DagMC>::getEstimatorParticleType( 
+void StandardEstimatorFactory<Geometry::DagMC>::getEstimatorParticleType(
                            Teuchos::Array<ParticleType>& particle_types,
                            const unsigned estimator_id,
                            const Teuchos::ParameterList& estimator_rep ) const
 {
-  if( d_geom_estimator_id_ptype_map.find( estimator_id ) != 
+  if( d_geom_estimator_id_ptype_map.find( estimator_id ) !=
       d_geom_estimator_id_ptype_map.end() )
   {
     // Make sure the DagMC particle type and the param. list particle type ==
     if( estimator_rep.isParameter( "Particle Type" ) )
     {
-      TEST_FOR_EXCEPTION( 
+      TEST_FOR_EXCEPTION(
                   d_geom_estimator_id_ptype_map.find( estimator_id )->second !=
                   estimator_rep.get<std::string>( "Particle Type" ),
                   InvalidEstimatorRepresentation,
-                  "Error: estimator " << estimator_id << 
+                  "Error: estimator " << estimator_id <<
                   " specified in the xml file and DagMC have inconsitent "
                   "particle types ("
                   << estimator_rep.get<std::string>("Particle Type") <<
-                  " != " 
+                  " != "
                   << d_geom_estimator_id_ptype_map.find( estimator_id )->second
                   << ")!" );
     }
-    
-    const std::string& particle_type_name = 
+
+    const std::string& particle_type_name =
       d_geom_estimator_id_ptype_map.find( estimator_id )->second;
 
     this->convertParticleTypeNameToParticleTypes( particle_types,
@@ -451,20 +451,20 @@ void StandardEstimatorFactory<Geometry::DagMC>::verifyExistenceOfCells(
                         "Error: estimator " << estimator_id << " specified "
                         "cell " << *cell << " in the xml "
                         "file, which does not exists!" );
-    
+
     ++cell;
   }
 }
 
 // Get the cached cells (add to set)
-void StandardEstimatorFactory<Geometry::DagMC>::getCachedCells( 
+void StandardEstimatorFactory<Geometry::DagMC>::getCachedCells(
        boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>& cells,
        const unsigned estimator_id ) const
 {
-  if( d_geom_estimator_id_cells_map.find( estimator_id ) != 
+  if( d_geom_estimator_id_cells_map.find( estimator_id ) !=
       d_geom_estimator_id_cells_map.end() )
   {
-    cells.insert( 
+    cells.insert(
             d_geom_estimator_id_cells_map.find( estimator_id )->second.begin(),
             d_geom_estimator_id_cells_map.find( estimator_id )->second.end() );
   }
@@ -473,8 +473,8 @@ void StandardEstimatorFactory<Geometry::DagMC>::getCachedCells(
 // Get the cell volumes
 /*! \details Make sure the existence of the cells is confirmed before
  * calling this method.
- */ 
-void StandardEstimatorFactory<Geometry::DagMC>::getCellVolumes( 
+ */
+void StandardEstimatorFactory<Geometry::DagMC>::getCellVolumes(
      Teuchos::Array<double>& cell_volumes,
      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells )
 {
@@ -487,7 +487,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::getCellVolumes(
     // Check if the cell volume has already been cached
     if( d_cell_volume_map.find( cells[i] ) != d_cell_volume_map.end() )
       cell_volumes[i] = d_cell_volume_map.find( cells[i] )->second;
-    
+
     // Calculate and cache the cell volume if the cell is new
     else
     {
@@ -513,7 +513,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::verifyExistenceOfSurfaces(
                         "Error: estimator " << estimator_id << " specified "
                         "surface " << *surface << " in the xml "
                         "file, which does not exists!" );
-    
+
     ++surface;
   }
 }
@@ -524,10 +524,10 @@ void StandardEstimatorFactory<Geometry::DagMC>::getCachedSurfaces(
      surfaces,
      const unsigned estimator_id ) const
 {
-  if( d_geom_estimator_id_surfaces_map.find( estimator_id ) != 
+  if( d_geom_estimator_id_surfaces_map.find( estimator_id ) !=
       d_geom_estimator_id_surfaces_map.end() )
   {
-    surfaces.insert( 
+    surfaces.insert(
          d_geom_estimator_id_surfaces_map.find( estimator_id )->second.begin(),
          d_geom_estimator_id_surfaces_map.find( estimator_id )->second.end() );
   }
@@ -537,7 +537,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::getCachedSurfaces(
 /*! \details Make sure the existence of the surfaces is confirmed before
  * calling this method.
  */
-void StandardEstimatorFactory<Geometry::DagMC>::getSurfaceAreas( 
+void StandardEstimatorFactory<Geometry::DagMC>::getSurfaceAreas(
            Teuchos::Array<double>& surface_areas,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
            surfaces )
@@ -556,7 +556,7 @@ void StandardEstimatorFactory<Geometry::DagMC>::getSurfaceAreas(
     else
     {
       surface_areas[i] = Geometry::DagMC::getSurfaceArea( surfaces[i] );
-      
+
       d_surface_area_map[surfaces[i]] = surface_areas[i];
     }
   }
@@ -567,13 +567,13 @@ void StandardEstimatorFactory<Geometry::DagMC>::getSurfaceAreas(
  * successfully created by the factory. All of the cached info for this
  * estimator will be deleted.
  */
-void StandardEstimatorFactory<Geometry::DagMC>::updateEstimatorCacheInfo( 
+void StandardEstimatorFactory<Geometry::DagMC>::updateEstimatorCacheInfo(
                                                             const unsigned id )
 {
   if( d_geom_estimator_id_type_map.find( id ) !=
       d_geom_estimator_id_type_map.end() )
   {
-    d_geom_estimator_id_type_map.erase( 
+    d_geom_estimator_id_type_map.erase(
                                      d_geom_estimator_id_type_map.find( id ) );
   }
 

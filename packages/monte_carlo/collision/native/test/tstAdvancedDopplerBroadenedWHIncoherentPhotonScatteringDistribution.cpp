@@ -9,7 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
-  
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -53,19 +53,19 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
   double dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
 
-  dist_value = distribution->evaluate( 
+  dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
 
   dist_value = distribution->evaluate( 1.0, 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
-  
+
   dist_value = distribution->evaluate( 1.0, 0.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 5.369480917669441, 1e-15 );
@@ -83,25 +83,25 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
   double pdf_value = distribution->evaluatePDF(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-15 );
-  
-  pdf_value = distribution->evaluatePDF( 
+
+  pdf_value = distribution->evaluatePDF(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
-  
+
   TEST_FLOATING_EQUALITY( pdf_value, 0.329438478611696395, 1e-15 );
 
   pdf_value = distribution->evaluatePDF( 1.0, 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-15 );
-  
+
   pdf_value = distribution->evaluatePDF( 1.0, 0.0 );
-  
+
   TEST_FLOATING_EQUALITY( pdf_value, 0.312736983381781464, 1e-15 );
 
   pdf_value = distribution->evaluatePDF( 1.0, -1.0 );
-  
+
   TEST_FLOATING_EQUALITY( pdf_value, 0.25250564930902053, 1e-15 );
 }
 
@@ -110,24 +110,24 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 TEUCHOS_UNIT_TEST( DopplerBroadenedWHIncoherentPhotonScatteringDistribution,
 		   evaluateIntegratedCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     distribution->evaluateIntegratedCrossSection(0.001, 1e-4);
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
 			  incoherent_cs->evaluate( 0.001 ),
 			  2e-3 );
 
-  cross_section = 
+  cross_section =
     distribution->evaluateIntegratedCrossSection( 0.1, 1e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
 			  incoherent_cs->evaluate( 0.1 ),
 			  1e-3 );
 
-  cross_section = 
+  cross_section =
     distribution->evaluateIntegratedCrossSection(20.0, 1e-3);
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
 			  incoherent_cs->evaluate( 20.0 ),
 			  1e-3 );
 }
@@ -139,7 +139,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 {
   double outgoing_energy, scattering_angle_cosine;
   Data::SubshellType shell_of_interaction;
-  
+
   // Left branch of Kahn's method
   std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.27;
@@ -160,7 +160,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_FLOATING_EQUALITY(
-		       outgoing_energy, 
+		       outgoing_energy,
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
@@ -197,7 +197,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
   double outgoing_energy, scattering_angle_cosine;
   Data::SubshellType shell_of_interaction;
   unsigned trials = 0;
-  
+
   // Left branch of Kahn's method
   std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.27;
@@ -210,7 +210,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  distribution->sampleAndRecordTrials( 
+  distribution->sampleAndRecordTrials(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 outgoing_energy,
 			 scattering_angle_cosine,
@@ -220,7 +220,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_FLOATING_EQUALITY(
-		       outgoing_energy, 
+		       outgoing_energy,
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
@@ -237,7 +237,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
   fake_stream[5] = 1.0; // accept based on scattering function
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   trials = 0;
 
   distribution->sampleAndRecordTrials( 3.1,
@@ -260,11 +260,11 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 		   scatterPhoton )
 {
   MonteCarlo::ParticleBank bank;
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
@@ -275,7 +275,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
   fake_stream[3] = 0.005; // select first shell for collision
   fake_stream[4] = 0.5; // select pz = 0.0
   fake_stream[5] = 0.0; // azimuthal_angle = pi
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->scatterPhoton( photon,
@@ -286,14 +286,14 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
   			  19.50173181484825,
   			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
-  			  0.9996898054103247, 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+  			  0.9996898054103247,
   			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
-  			  0.024905681252821114, 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+  			  0.024905681252821114,
   			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
@@ -309,20 +309,20 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_ace_file",
 		 &test_ace_file_name,
 		 "Test ACE file name" );
   clp.setOption( "test_ace_table",
 		 &test_ace_table_name,
 		 "Test ACE table name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -331,16 +331,16 @@ int main( int argc, char** argv )
   }
 
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-  
+
   // Create the scattering function
   Teuchos::ArrayView<const double> jince_block =
     xss_data_extractor->extractJINCEBlock();
@@ -348,62 +348,62 @@ int main( int argc, char** argv )
   unsigned scatt_func_size = jince_block.size()/2;
 
   Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ) );
-  Teuchos::Array<double> scat_func_values( jince_block( scatt_func_size, 
+  Teuchos::Array<double> scat_func_values( jince_block( scatt_func_size,
 							scatt_func_size ) );
 
   for( unsigned i = 0; i < scatt_func_size; ++i )
     recoil_momentum[i] *= 1e8; // convert from inverse Anstrom to inverse cm
 
   Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-	  new Utility::TabularDistribution<Utility::LinLin>( 
+	  new Utility::TabularDistribution<Utility::LinLin>(
 							  recoil_momentum,
 			                                  scat_func_values ) );
 
   // Create the subshell order array
-  Teuchos::ArrayView<const double> subshell_endf_des = 
+  Teuchos::ArrayView<const double> subshell_endf_des =
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<Data::SubshellType> subshell_order( 
+  Teuchos::Array<Data::SubshellType> subshell_order(
 						    subshell_endf_des.size() );
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum( 
+    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum(
 					      (unsigned)subshell_endf_des[i] );
   }
 
   // Create the Compton profile subshell converter
   Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
-  
+
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
 			           xss_data_extractor->extractAtomicNumber() );
-    
+
   // Create the compton profile distributions
-  Teuchos::ArrayView<const double> lswd_block = 
+  Teuchos::ArrayView<const double> lswd_block =
     xss_data_extractor->extractLSWDBlock();
 
-  Teuchos::ArrayView<const double> swd_block = 
+  Teuchos::ArrayView<const double> swd_block =
     xss_data_extractor->extractSWDBlock();
 
   Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
     half_compton_profiles( lswd_block.size() ),
     full_compton_profiles( lswd_block.size() );
-  
+
   for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
   {
     unsigned shell_index = lswd_block[shell]; // ignore interp parameter
 
     unsigned num_mom_vals = swd_block[shell_index];
 
-    Teuchos::Array<double> half_momentum_grid( 
+    Teuchos::Array<double> half_momentum_grid(
 				  swd_block( shell_index + 1, num_mom_vals ) );
 
     Teuchos::Array<double> half_profile(
 		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
 
     Teuchos::Array<double> full_momentum_grid, full_profile;
-    
+
     MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
 						  half_momentum_grid.end(),
 						  half_profile.begin(),
@@ -417,50 +417,50 @@ int main( int argc, char** argv )
     MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(),
 						 full_profile.end() );
 
-    full_compton_profiles[shell].reset( 
+    full_compton_profiles[shell].reset(
 	 new Utility::TabularDistribution<Utility::LogLin>( full_momentum_grid,
 							    full_profile ) );
-		 
+
   }
 
   // Create the scattering distributions
   distribution.reset(
-   new MonteCarlo::AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribution( 
+   new MonteCarlo::AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribution(
 			  scattering_function,
 			  xss_data_extractor->extractSubshellBindingEnergies(),
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
 			  converter,
 			  full_compton_profiles ) );
-  
+
   // Extract the incoherent cross section
   {
     // Extract the incoherent cross section
-    Teuchos::ArrayView<const double> raw_energy_grid = 
+    Teuchos::ArrayView<const double> raw_energy_grid =
       xss_data_extractor->extractPhotonEnergyGrid();
-     
-    Teuchos::ArrayView<const double> raw_incoherent_cross_section = 
+
+    Teuchos::ArrayView<const double> raw_incoherent_cross_section =
       xss_data_extractor->extractIncoherentCrossSection();
-    
-    Teuchos::ArrayView<const double>::iterator start = 
+
+    Teuchos::ArrayView<const double>::iterator start =
       std::find_if( raw_incoherent_cross_section.begin(),
 		    raw_incoherent_cross_section.end(),
 		    notEqualZero );
 
     Teuchos::Array<double> incoherent_cross_section;
-    incoherent_cross_section.assign( start, 
+    incoherent_cross_section.assign( start,
 				     raw_incoherent_cross_section.end() );
-    
+
     unsigned start_index = std::distance( raw_incoherent_cross_section.begin(),
 					  start );
 
     start = raw_energy_grid.begin();
-    
+
     std::advance( start, start_index );
-    
+
     Teuchos::Array<double> energy_grid;
     energy_grid.assign( start, raw_energy_grid.end() );
-    
+
     // Extract the original energy and cross section values
     for( unsigned i = 0; i < energy_grid.size(); ++i )
     {
@@ -479,7 +479,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -492,7 +492,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

@@ -33,7 +33,7 @@ bool addDistToParameterList( const std::string& name,
   int newmem = 0;
 
   bool success = true;
-  
+
   // Check that the python object is a parameter list
   if( SWIG_CheckState( SWIG_Python_ConvertPtrAndOwn( python_parameter_list,
                                                      &argp,
@@ -43,17 +43,17 @@ bool addDistToParameterList( const std::string& name,
   {
     if( newmem & SWIG_CAST_NEW_MEMORY )
     {
-      Teuchos::RCP<Teuchos::ParameterList> parameter_list = 
+      Teuchos::RCP<Teuchos::ParameterList> parameter_list =
         *reinterpret_cast< Teuchos::RCP< Teuchos::ParameterList > * >(argp);
       delete reinterpret_cast< Teuchos::RCP< Teuchos::ParameterList > * >(argp);
-      
-      parameter_list->set( name, distribution );       
+
+      parameter_list->set( name, distribution );
     }
     else
     {
       Teuchos::RCP< Teuchos::ParameterList > * parameter_list =
         reinterpret_cast< Teuchos::RCP< Teuchos::ParameterList > * >(argp);
-      
+
       if( parameter_list )
         (*parameter_list)->set( name, distribution );
       else
@@ -80,7 +80,7 @@ void getDistFromParameterList( const std::string& name,
 
   Teuchos::RCP<Teuchos::ParameterList> parameter_list;
   bool success = true;
-    
+
   // Check that the python object is a parameter list
   if( SWIG_CheckState( SWIG_Python_ConvertPtrAndOwn( python_parameter_list,
                                                      &argp,
@@ -90,14 +90,14 @@ void getDistFromParameterList( const std::string& name,
   {
     if( newmem & SWIG_CAST_NEW_MEMORY )
     {
-      parameter_list = 
+      parameter_list =
         *reinterpret_cast< Teuchos::RCP< Teuchos::ParameterList > * >(argp);
       delete reinterpret_cast< Teuchos::RCP< Teuchos::ParameterList > * >(argp);    }
     else
     {
       Teuchos::RCP< Teuchos::ParameterList > * parameter_list_ptr =
         reinterpret_cast< Teuchos::RCP< Teuchos::ParameterList > * >(argp);
-      
+
       if( parameter_list_ptr )
         parameter_list = *parameter_list_ptr;
       else
@@ -111,7 +111,7 @@ void getDistFromParameterList( const std::string& name,
   if( success )
   {
     // If parameter does not exist, return None
-    if( !parameter_list->isParameter(name) ) 
+    if( !parameter_list->isParameter(name) )
       PyErr_Format(PyExc_ValueError, "The requested parameter (%s) does not exist in the parameter list.", name.c_str() );
     else
     {

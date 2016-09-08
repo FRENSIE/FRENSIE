@@ -46,7 +46,7 @@ std::shared_ptr<MonteCarlo::ParticleTrackerFactory> ptrac_factory;
 // Check that the factory can be constructed
 TEUCHOS_UNIT_TEST( ParticleTrackerFactory, constructor )
 {
-  TEST_NOTHROW( ptrac_factory = 
+  TEST_NOTHROW( ptrac_factory =
                 MonteCarlo::getParticleTrackerFactoryInstance(
                                                   event_handler ) );
 }
@@ -55,12 +55,12 @@ TEUCHOS_UNIT_TEST( ParticleTrackerFactory, constructor )
 // Check if estimators can be created and registered with the event handler
 TEUCHOS_UNIT_TEST( ParticleTrackerFactory, createAndRegisterParticleTracker )
 {
-  Teuchos::ParameterList::ConstIterator observer_rep_it = 
+  Teuchos::ParameterList::ConstIterator observer_rep_it =
     observer_reps->begin();
 
   while( observer_rep_it != observer_reps->end() )
   {
-    const Teuchos::ParameterList& observer_rep = 
+    const Teuchos::ParameterList& observer_rep =
       Teuchos::any_cast<Teuchos::ParameterList>(
                                             observer_rep_it->second.getAny() );
 
@@ -85,10 +85,10 @@ TEUCHOS_UNIT_TEST( ParticleTrackerFactory, createAndRegisterParticleTracker )
                                        0.0,
                                        1.0,
                                        false );
-                                       
+
     // PTRAC HDF5 File Handler can import/export the data map for a completed
     //   particle tracking routine. This could be implemented in this test if
-    //   needed, although it is already done in the 
+    //   needed, although it is already done in the
     //   ParticleTrackerHDF5FileHandler test
   }
 }
@@ -97,12 +97,12 @@ TEUCHOS_UNIT_TEST( ParticleTrackerFactory, createAndRegisterParticleTracker )
 // Get the particle tracker ID
 TEUCHOS_UNIT_TEST( ParticleTrackerFactory, getParticleTrackerID )
 {
-  Teuchos::ParameterList::ConstIterator observer_rep_it = 
+  Teuchos::ParameterList::ConstIterator observer_rep_it =
   observer_reps->begin();
 
   while( observer_rep_it != observer_reps->end() )
   {
-    const Teuchos::ParameterList& observer_rep = 
+    const Teuchos::ParameterList& observer_rep =
       Teuchos::any_cast<Teuchos::ParameterList>(
                                             observer_rep_it->second.getAny() );
 
@@ -118,17 +118,17 @@ TEUCHOS_UNIT_TEST( ParticleTrackerFactory, getParticleTrackerID )
 int main( int argc, char** argv )
 {
   std::string test_observer_xml_file_name;
- 
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_observer_xml_file",
 		 &test_observer_xml_file_name,
 		 "Test estimator xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -137,7 +137,7 @@ int main( int argc, char** argv )
   }
 
   // Load the observer parameter lists
-  observer_reps = 
+  observer_reps =
     Teuchos::getParametersFromXmlFile( test_observer_xml_file_name );
 
 
@@ -146,7 +146,7 @@ int main( int argc, char** argv )
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

@@ -47,7 +47,7 @@ void initializeNuclide( Teuchos::RCP<MonteCarlo::Nuclide>& nuclide,
 						   1u ) );
 
   Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-  
+
   xss_data_extractor.reset(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
@@ -56,13 +56,13 @@ void initializeNuclide( Teuchos::RCP<MonteCarlo::Nuclide>& nuclide,
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  MonteCarlo::NuclearReactionACEFactory reaction_factory( 
+  MonteCarlo::NuclearReactionACEFactory reaction_factory(
 				 ace_table_name,
 				 ace_file_handler->getTableAtomicWeightRatio(),
 				 ace_file_handler->getTableTemperature(),
 				 energy_grid,
 				 *xss_data_extractor );
-  
+
   MonteCarlo::Nuclide::ReactionMap standard_scattering_reactions;
   reaction_factory.createScatteringReactions( standard_scattering_reactions );
   reaction_factory.createFissionReactions( standard_scattering_reactions );
@@ -70,7 +70,7 @@ void initializeNuclide( Teuchos::RCP<MonteCarlo::Nuclide>& nuclide,
   MonteCarlo::Nuclide::ReactionMap standard_absorption_reactions;
   reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
 
-  nuclide.reset( new MonteCarlo::Nuclide( 
+  nuclide.reset( new MonteCarlo::Nuclide(
 				 ace_table_name,
 				 1u,
 				 1u,
@@ -81,7 +81,7 @@ void initializeNuclide( Teuchos::RCP<MonteCarlo::Nuclide>& nuclide,
 				 standard_scattering_reactions,
 				 standard_absorption_reactions ) );
 }
-  
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -117,7 +117,7 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getAtomicMassNumber )
 TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getIsomerNumber )
 {
   TEST_EQUALITY_CONST( h1_nuclide->getIsomerNumber(), 0u );
-} 
+}
 
 //---------------------------------------------------------------------------//
 // Check that the atomic weight ratio can be returned
@@ -154,7 +154,7 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getTotalCrossSection )
   TEST_FLOATING_EQUALITY( cross_section, 1.15069229e3, 1e-9 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.0625e-11 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 1.14210646e3 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.90e1 );
@@ -256,57 +256,57 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getSurvivalProbability )
 // Check that a reaction cross section can be returned
 TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getReactionCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__TOTAL_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 1.17724711e3 );
 
-  cross_section = 
+  cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__TOTAL_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 4.82773424e-1, 1e-9 );
-  
-  cross_section = 
+
+  cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__N_ELASTIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 1.160546e3 );
 
-  cross_section = 
+  cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__N_ELASTIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 4.827462e-1 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__GAMMA_REACTION );
-  
+
   TEST_EQUALITY_CONST( cross_section, 1.670111e1 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__GAMMA_REACTION );
-  
+
   TEST_EQUALITY_CONST( cross_section, 2.722354e-5 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__TOTAL_D_PRODUCTION );
-  
+
   TEST_EQUALITY_CONST( cross_section, 1.670111e1 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__TOTAL_D_PRODUCTION );
-  
+
   TEST_EQUALITY_CONST( cross_section, 2.722354e-5 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__DPA );
-  
+
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__DPA );
-  
+
   TEST_EQUALITY_CONST( cross_section, 3.067696e-4 );
 
-  cross_section = 
+  cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__FISSION_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
@@ -367,12 +367,12 @@ TEUCHOS_UNIT_TEST( Nuclide_oxygen, collideSurvivalBias)
   //   	      << std::endl;
   // }
 
-  // double sampling_prob = 
+  // double sampling_prob =
   //   o16_nuclide->getReactionCrossSection( 7.0, MonteCarlo::N__N_EXCITED_STATE_2_REACTION )/
   //   o16_nuclide->getTotalCrossSection( 7.0 );
 
   // std::cout << sampling_prob << std::endl;
-  
+
   // Teuchos::RCP<MonteCarlo::NeutronState> neutron( new MonteCarlo::NeutronState( 0ull ) );
   // neutron->setEnergy( 7.0 );
   // neutron->setDirection( 0.0, 0.0, 1.0 );
@@ -394,7 +394,7 @@ TEUCHOS_UNIT_TEST( Nuclide_oxygen, collideSurvivalBias)
   //   neutron->setEnergy( 7.0 );
   // }
 
-  // std::cout << number_of_samples/1e6 << std::endl;  
+  // std::cout << number_of_samples/1e6 << std::endl;
   // std::cout << ave_energy/number_of_samples << std::endl;
   // std::cout << o16_nuclide->getTotalCrossSection( 0.24 ) << std::endl;
   // std::cout << o16_nuclide->getTotalCrossSection( 0.450 ) << std::endl;
@@ -422,10 +422,10 @@ int main( int argc, char** argv )
 		 &test_o16_ace_table_name,
 		 "Test o16 ACE table name in o16 ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -435,7 +435,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Initialize nuclear reaction factories
   initializeNuclide( h1_nuclide,
 		     test_h1_ace_file_name,
@@ -457,7 +457,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

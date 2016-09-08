@@ -29,7 +29,7 @@
 namespace MonteCarlo{
 
 // Create the requested manager
-std::shared_ptr<SimulationManager> 
+std::shared_ptr<SimulationManager>
 ParticleSimulationManagerFactory::createManager(
 	   const Teuchos::ParameterList& simulation_info,
 	   const Teuchos::ParameterList& geom_def,
@@ -46,7 +46,7 @@ ParticleSimulationManagerFactory::createManager(
 
   // Create the output stream
   Teuchos::RCP<std::ostream> out;
-  
+
   if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
       Teuchos::GlobalMPISession::getNProc() > 1 )
   {
@@ -59,7 +59,7 @@ ParticleSimulationManagerFactory::createManager(
   }
   else
     out.reset( &std::cerr, false );
-  
+
   // Initialize the simulation properties
   SimulationPropertiesFactory::initializeSimulationProperties( simulation_info,
 							       out.get() );
@@ -69,12 +69,12 @@ ParticleSimulationManagerFactory::createManager(
                       std::runtime_error,
                       "Error: The geometry handler type must be specified in "
                       "the geometry xml file!" );
-  
+
   std::string geom_handler_name = geom_def.get<std::string>( "Handler" );
-    
+
   if( geom_handler_name == "DagMC" )
   {
-    return ParticleSimulationManagerFactory::createManagerWithDagMC( 
+    return ParticleSimulationManagerFactory::createManagerWithDagMC(
                                                   geom_def,
                                                   source_def,
                                                   response_def,
@@ -84,11 +84,11 @@ ParticleSimulationManagerFactory::createManager(
                                                   cross_sections_xml_directory,
                                                   comm,
                                                   out.get() );
-    
+
   }
   else if( geom_handler_name == "ROOT" )
   {
-    return ParticleSimulationManagerFactory::createManagerWithRoot( 
+    return ParticleSimulationManagerFactory::createManagerWithRoot(
                                                   geom_def,
                                                   source_def,
                                                   response_def,
@@ -108,8 +108,8 @@ ParticleSimulationManagerFactory::createManager(
 }
 
 // Initialize the modules using DagMC
-std::shared_ptr<SimulationManager> 
-ParticleSimulationManagerFactory::createManagerWithDagMC( 
+std::shared_ptr<SimulationManager>
+ParticleSimulationManagerFactory::createManagerWithDagMC(
             const Teuchos::ParameterList& geom_def,
             const Teuchos::ParameterList& source_def,
             const Teuchos::ParameterList& response_def,
@@ -120,8 +120,8 @@ ParticleSimulationManagerFactory::createManagerWithDagMC(
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             std::ostream* os_warn )
 {
-#ifdef HAVE_FRENSIE_DAGMC   
-  // Initialize DagMC 
+#ifdef HAVE_FRENSIE_DAGMC
+  // Initialize DagMC
   Geometry::DagMCInstanceFactory::initializeDagMC( geom_def, *os_warn );
 
   // Initialize the geometry handler
@@ -138,17 +138,17 @@ ParticleSimulationManagerFactory::createManagerWithDagMC(
                                                   os_warn );
   // Create the manager
   return ParticleSimulationManagerFactory::createManager<Geometry::DagMC,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
-  
+
 #else
   THROW_EXCEPTION( InvalidSimulationInfo,
                    "Error: a DagMC geometry handler was requested without "
                    "having DagMC enabled! The particle simulation manager "
                    "cannot be created." );
-#endif // end HAVE_FRENSIE_DAGMC   
+#endif // end HAVE_FRENSIE_DAGMC
 }
 
 // Initialize the modules with Root
-std::shared_ptr<SimulationManager> 
+std::shared_ptr<SimulationManager>
 ParticleSimulationManagerFactory::createManagerWithRoot(
             const Teuchos::ParameterList& geom_def,
             const Teuchos::ParameterList& source_def,
@@ -160,8 +160,8 @@ ParticleSimulationManagerFactory::createManagerWithRoot(
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             std::ostream* os_warn )
 {
-#ifdef HAVE_FRENSIE_ROOT 
-  // Initialize Root 
+#ifdef HAVE_FRENSIE_ROOT
+  // Initialize Root
   Geometry::RootInstanceFactory::initializeRoot( geom_def, *os_warn );
 
   // Initialize the geometry handler
@@ -178,7 +178,7 @@ ParticleSimulationManagerFactory::createManagerWithRoot(
                                                   os_warn );
   // Create the manager
   return ParticleSimulationManagerFactory::createManager<Geometry::Root,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
-  
+
 #else
   THROW_EXCEPTION( InvalidSimulationInfo,
                    "Error: a Root geometry handler was requested without "

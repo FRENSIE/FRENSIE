@@ -51,7 +51,7 @@
   typedef Utility::Quad<unsigned,double,unsigned,unsigned> quad_u_d_u_u; \
   typedef Utility::Quad<double,unsigned,double,double> quad_d_u_d_d; \
   typedef Utility::Quad<unsigned,unsigned,double,unsigned> quad_u_u_d_u; \
-  
+
 #define UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( type, name, array )	\
   TUPLE_TYPEDEFS()							\
   UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
@@ -99,7 +99,7 @@
 							     FOURTH,	\
 							     quad_d_d_d_d, \
 							     array )	\
-  
+
 #define UNIT_TEST_INSTANTIATION_ARRAY( type, name, array )		\
   UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type,		\
 						   name,		\
@@ -108,21 +108,21 @@
   UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type,		\
 						   name,		\
 						   unsigned,		\
-						   array ) 
+						   array )
 
 //---------------------------------------------------------------------------//
 // Helper functions.
 //---------------------------------------------------------------------------//
-template<Utility::TupleMember member, 
-	 typename T, 
+template<Utility::TupleMember member,
+	 typename T,
 	 template<typename> class Array>
 void fillArrayTupleMembersContinuousData( Array<T> &array )
 {
   typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
-  
+
   typename Array<T>::size_type size = Utility::getArraySize( array );
-  
+
   if( size > 0 )
   {
     for( unsigned int i = 0; i < size; ++i )
@@ -132,16 +132,16 @@ void fillArrayTupleMembersContinuousData( Array<T> &array )
   }
 }
 
-template<Utility::TupleMember member, 
-	 typename T, 
+template<Utility::TupleMember member,
+	 typename T,
 	 template<typename> class Array>
 void fillArrayTupleMembersDiscreteData( Array<T> &array )
 {
   typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
-  
+
   typename Array<T>::size_type size = Utility::getArraySize( array );
-      
+
   if( size > 0 )
   {
     for( unsigned int i = 0; i < size; ++i )
@@ -163,7 +163,7 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( Search,
 {
   Teuchos::Array<type> raw_data( 10 );
   fillArrayTupleMembersContinuousData<Utility::FIRST>( raw_data );
- 
+
   array<type> data;
   Utility::copyArrayView( data, raw_data() );
 
@@ -284,7 +284,7 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( Search,
 						   value );
   bin_value = *lower_bound;
   TEST_EQUALITY_CONST( bin_value, 6.0 );
-  
+
   // Value on eighth bin
   value = 7.0;
   lower_bound = Utility::Search::binaryLowerBound( start,
@@ -292,7 +292,7 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( Search,
 						   value );
   bin_value = *lower_bound;
   TEST_EQUALITY_CONST( bin_value, 7.0 );
-  
+
   // Value in eighth bin
   value = 7.5;
   lower_bound = Utility::Search::binaryLowerBound( start,
@@ -333,7 +333,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( Search, binaryLowerBound, ArrayView );
 //---------------------------------------------------------------------------//
 // Check that the binaryLowerBound function can search tuple elements
 // correctly.
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( 
+UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 					      Search,
 					      binaryLowerBound_tuple,
 					      member,
@@ -342,7 +342,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 {
   Teuchos::Array<type> raw_data( 10 );
   fillArrayTupleMembersContinuousData<member>( raw_data );
- 
+
   array<type> data;
   Utility::copyArrayView( data, raw_data() );
 
@@ -463,7 +463,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 							   value );
   bin_value = Utility::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 6.0 );
-  
+
   // Value on eighth bin
   value = 7.0;
   lower_bound = Utility::Search::binaryLowerBound<member>( start,
@@ -471,7 +471,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 							   value );
   bin_value = Utility::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 7.0 );
-  
+
   // Value in eighth bin
   value = 7.5;
   lower_bound = Utility::Search::binaryLowerBound<member>( start,
@@ -505,14 +505,14 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   TEST_EQUALITY_CONST( bin_value, 9.0 );
 }
 
-UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
-				     binaryLowerBound_tuple, 
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
+				     binaryLowerBound_tuple,
 				     Array );
-UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
-				     binaryLowerBound_tuple, 
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
+				     binaryLowerBound_tuple,
 				     ArrayRCP );
-UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
-				     binaryLowerBound_tuple, 
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
+				     binaryLowerBound_tuple,
 				     ArrayView );
 
 //---------------------------------------------------------------------------//
@@ -525,7 +525,7 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( Search,
 {
   Teuchos::Array<type> raw_data( 10 );
   fillArrayTupleMembersContinuousData<Utility::FIRST>( raw_data );
- 
+
   array<type> data;
   Utility::copyArrayView( data, raw_data() );
 
@@ -633,14 +633,14 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( Search,
 							    end,
 							    value );
   TEST_EQUALITY_CONST( lower_bin_index, 6 );
-  
+
   // Value on eighth bin
   value = 7.0;
   lower_bin_index = Utility::Search::binaryLowerBoundIndex( start,
 							    end,
 							    value );
   TEST_EQUALITY_CONST( lower_bin_index, 7 );
-  
+
   // Value in eighth bin
   value = 7.5;
   lower_bin_index = Utility::Search::binaryLowerBoundIndex( start,
@@ -680,7 +680,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( Search, binaryLowerBoundIndex, ArrayView );
 TEUCHOS_UNIT_TEST( Search, binaryUpperBound_unsigned )
 {
   Teuchos::Array<unsigned> data( 10 );
-  
+
   // Use continuous data so that values are all integers
   fillArrayTupleMembersContinuousData<Utility::FIRST>( data );
 
@@ -766,8 +766,8 @@ TEUCHOS_UNIT_TEST( Search, binaryUpperBound_unsigned )
 //---------------------------------------------------------------------------//
 // Check that the binaryUpperBound function can search tuple elements
 // correctly.
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( 
-					        Search,	
+UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
+					        Search,
 						binaryUpperBound_tuple,
 						member,
 						type,
@@ -778,7 +778,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 
   array<type> data;
   Utility::copyArrayView( data, raw_data() );
-  
+
   typename array<type>::iterator start, end, upper_bound;
   start = data.begin();
   end = data.end();
@@ -896,7 +896,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 							   value );
   bin_value = Utility::get<member>( *upper_bound );
   TEST_EQUALITY_CONST( bin_value, 0.7 );
-  
+
   // Value on eighth bin
   value = 0.7;
   upper_bound = Utility::Search::binaryUpperBound<member>( start,
@@ -904,7 +904,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 							   value );
   bin_value = Utility::get<member>( *upper_bound );
   TEST_EQUALITY_CONST( bin_value, 0.7 );
-  
+
   // Value in eighth bin
   value = 0.75;
   upper_bound = Utility::Search::binaryUpperBound<member>( start,
@@ -954,14 +954,14 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   TEST_EQUALITY_CONST( bin_value, 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
-				     binaryUpperBound_tuple, 
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
+				     binaryUpperBound_tuple,
 				     Array );
-UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
-				     binaryUpperBound_tuple, 
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
+				     binaryUpperBound_tuple,
 				     ArrayRCP );
-UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
-				     binaryUpperBound_tuple, 
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
+				     binaryUpperBound_tuple,
 				     ArrayView );
 
 //---------------------------------------------------------------------------//
@@ -970,14 +970,14 @@ UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
 TEUCHOS_UNIT_TEST( Search, binaryUpperBoundIndex_unsigned )
 {
   Teuchos::Array<unsigned> data( 10 );
-  
+
   // Use continuous data so that values are all integers
   fillArrayTupleMembersContinuousData<Utility::FIRST>( data );
 
   typename Teuchos::Array<unsigned>::iterator start, end;
   start = data.begin();
   end = data.end();
-  
+
   unsigned value, upper_bin_index;
 
   // Value on first bin

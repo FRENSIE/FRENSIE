@@ -14,7 +14,7 @@
 
 namespace MonteCarlo{
 
-// Basic Constructor 
+// Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationElectroatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -32,13 +32,13 @@ ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::El
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 }
 
-// Constructor 
+// Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationElectroatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -58,8 +58,8 @@ ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::El
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 }
@@ -92,16 +92,16 @@ ElectroatomicReactionType ElectroionizationElectroatomicReaction<InterpPolicy,pr
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     ElectronState& electron, 
+void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
   electron.incrementCollisionNumber();
-  
+
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
-  THROW_EXCEPTION( std::logic_error, 
+  THROW_EXCEPTION( std::logic_error,
         "Error! The total electroionization reaction scatter function has not been implemented");
 
 }

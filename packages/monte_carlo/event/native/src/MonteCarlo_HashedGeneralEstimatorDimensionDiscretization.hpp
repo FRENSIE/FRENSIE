@@ -24,9 +24,9 @@ class HashedGeneralEstimatorDimensionDiscretization : public GeneralEstimatorDim
 {
 
 public:
-  
+
   //! Constructor
-  HashedGeneralEstimatorDimensionDiscretization( 
+  HashedGeneralEstimatorDimensionDiscretization(
 			      const Teuchos::Array<typename DT::dimensionType>&
 			      dimension_bin_boundaries,
 			      const unsigned hash_grid_bins );

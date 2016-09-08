@@ -20,14 +20,14 @@ AdjointPhotonProbeState::AdjointPhotonProbeState()
 { /* ... */ }
 
 // Constructor
-AdjointPhotonProbeState::AdjointPhotonProbeState( 
+AdjointPhotonProbeState::AdjointPhotonProbeState(
 		       const ParticleState::historyNumberType history_number )
   : AdjointPhotonState( history_number, ADJOINT_PHOTON_PROBE ),
     d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointPhotonProbeState::AdjointPhotonProbeState( 
+AdjointPhotonProbeState::AdjointPhotonProbeState(
 			              const ParticleState& existing_base_state,
 				      const bool increment_generation_number,
 				      const bool reset_collision_number )
@@ -39,7 +39,7 @@ AdjointPhotonProbeState::AdjointPhotonProbeState(
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointPhotonProbeState::AdjointPhotonProbeState( 
+AdjointPhotonProbeState::AdjointPhotonProbeState(
 			    const AdjointPhotonProbeState& existing_base_state,
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
@@ -53,7 +53,7 @@ AdjointPhotonProbeState::AdjointPhotonProbeState(
 // Set the energy of the particle (MeV)
 /*! \details An active probe particle gets killed when its energy changes. A
  * probe particle should only be activated after its initial energy has been
- * set. 
+ * set.
  */
 void AdjointPhotonProbeState::setEnergy( const energyType energy )
 {
@@ -71,7 +71,7 @@ bool AdjointPhotonProbeState::isProbe() const
 
 // Activate the probe
 /*! \details Once a probe has been activated the next call to set energy
- * will cause is to be killed. 
+ * will cause is to be killed.
  */
 void AdjointPhotonProbeState::activate()
 {
@@ -94,14 +94,14 @@ AdjointPhotonProbeState* AdjointPhotonProbeState::clone() const
 void AdjointPhotonProbeState::print( std::ostream& os ) const
 {
   os << "Particle Type: ";
-  
+
   if( d_active )
     os << "Active ";
   else
     os << "Inactive ";
 
   os << "Adjoint Photon Probe" << std::endl;
-  
+
   this->printImplementation<AdjointPhotonProbeState>( os );
 }
 

@@ -17,7 +17,7 @@
 #include "FRENSIE_mpi_config.hpp"
 
 namespace Utility{
-  
+
 //! Nonblocking test for a message from source with no status
 template<typename Ordinal>
 bool iprobe( const Teuchos::Comm<Ordinal>& comm, const int source_rank );

@@ -104,7 +104,7 @@ private:
 
 // Sample an outgoing particle state given an incoming particle state
 template<typename ParticleType>
-inline void NuclearScatteringDistribution<ParticleType,ParticleType>::scatterParticle( 
+inline void NuclearScatteringDistribution<ParticleType,ParticleType>::scatterParticle(
 					       ParticleType& particle,
 					       const double temperature ) const
 {
@@ -113,7 +113,7 @@ inline void NuclearScatteringDistribution<ParticleType,ParticleType>::scatterPar
 
 // Sample an outgoing particle state given an incoming particle state
 template<typename IncomingParticleType, typename OutgoingParticleType>
-inline void NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>::scatterParticle( 
+inline void NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>::scatterParticle(
 			       const IncomingParticleType& incoming_particle,
 			       OutgoingParticleType& outgoing_particle ) const
 {
@@ -122,7 +122,7 @@ inline void NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleT
 
 // Sample an outgoing particle state given an incoming particle state
 template<typename ParticleType>
-inline void NuclearScatteringDistribution<ParticleType,ParticleType>::scatterParticle( 
+inline void NuclearScatteringDistribution<ParticleType,ParticleType>::scatterParticle(
  				                ParticleType& particle ) const
 {
   this->scatterParticle( particle, 0.0 );
@@ -130,7 +130,7 @@ inline void NuclearScatteringDistribution<ParticleType,ParticleType>::scatterPar
 
 // Return the atomic weight ratio
 template<typename IncomingParticleType, typename OutgoingParticleType>
-inline double 
+inline double
 NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>::getAtomicWeightRatio() const
 {
   return d_atomic_weight_ratio;
@@ -138,7 +138,7 @@ NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>::getAto
 
 // Return the atomic weight ratio
 template<typename ParticleType>
-inline double 
+inline double
 NuclearScatteringDistribution<ParticleType,ParticleType>::getAtomicWeightRatio() const
 {
   return d_atomic_weight_ratio;

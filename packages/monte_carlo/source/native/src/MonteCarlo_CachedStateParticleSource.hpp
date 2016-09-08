@@ -28,11 +28,11 @@ namespace MonteCarlo{
 //! The state source class
 class CachedStateParticleSource : public ParticleSource
 {
-  
+
 public:
 
   //! Constructor
-  CachedStateParticleSource( 
+  CachedStateParticleSource(
                    const std::string& state_source_bank_archive_name,
                    const std::string& bank_name_in_archive,
                    const Utility::ArchivableObject::ArchiveType archive_type );
@@ -69,7 +69,7 @@ public:
   //! Return the number of samples
   unsigned long long getNumberOfSamples() const;
 
-  //! Return the sampling efficiency from the source 
+  //! Return the sampling efficiency from the source
   double getSamplingEfficiency() const;
 
 private:
@@ -84,7 +84,7 @@ private:
   // The possible states
   boost::unordered_map<unsigned long long,Teuchos::Array<boost::shared_ptr<ParticleState> > >
   d_particle_states;
-  
+
   // The number of samples
   Teuchos::Array<unsigned long long> d_number_of_samples;
 };

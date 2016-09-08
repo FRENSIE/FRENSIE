@@ -22,7 +22,7 @@
 namespace MonteCarlo{
 
 /*! The detailed Waller-Hartree incoherent photon scattering distribution class
- * \details This class will sample an interaction subshell for atomic 
+ * \details This class will sample an interaction subshell for atomic
  * relaxation even though the Waller-Hartree model doesn't directly provide
  * that information. The subshell occupancies are used instead of the
  * more accurate subshell incoherent cross sections.

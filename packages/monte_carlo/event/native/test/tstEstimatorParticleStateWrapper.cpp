@@ -28,7 +28,7 @@
 TEUCHOS_UNIT_TEST( EstimatorParticleStateWrapper, getParticleState )
 {
   MonteCarlo::NeutronState neutron( 0ull );
-  
+
   std::shared_ptr<MonteCarlo::EstimatorParticleStateWrapper> particle_wrapper(
                     new MonteCarlo::EstimatorParticleStateWrapper( neutron ) );
 
@@ -43,7 +43,7 @@ TEUCHOS_UNIT_TEST( EstimatorParticleStateWrapper, setgetAngleCosine )
 
   MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( photon );
   particle_wrapper.setAngleCosine( 0.5 );
-  
+
   TEST_EQUALITY_CONST( particle_wrapper.getAngleCosine(), 0.5 );
 }
 

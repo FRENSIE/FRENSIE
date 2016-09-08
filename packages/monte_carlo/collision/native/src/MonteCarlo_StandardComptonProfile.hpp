@@ -25,7 +25,7 @@ template<typename StoredMomentumUnit,
 	 template<typename> class SmartPointer = std::shared_ptr>
 class StandardComptonProfile : public ComptonProfile
 {
-  
+
 private:
 
   //! The stored momentum quantity type
@@ -50,7 +50,13 @@ public:
   MomentumQuantity sample() const;
 
   //! Sample from the Compton profile in a subrange
-  MomentumQuantity sampleInSubrange( const MomentumQuantity momentum ) const;
+  MomentumQuantity sampleInSubrange(
+                                 const MomentumQuantity upper_momentum ) const;
+
+  //! Sample from the Compton profile in a subrange
+  MomentumQuantity sampleInSubrange(
+                                 const MomentumQuantity upper_momentum,
+                                 const MomentumQuantity lower_momentum ) const;
 
   //! Return the lower bound of the momentum
   MomentumQuantity getLowerBoundOfMomentum() const;

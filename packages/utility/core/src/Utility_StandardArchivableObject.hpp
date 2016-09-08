@@ -31,7 +31,7 @@ class StandardArchivableObject<DerivedType,false> : public virtual ArchivableObj
 {
 
 public:
-  
+
   //! Import data from the desired archive
   void importData( const std::string& archive_name,
 		   const ArchivableObject::ArchiveType archive_type );

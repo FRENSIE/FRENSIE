@@ -17,7 +17,7 @@ template<typename Array>
 inline void testPreconditionEnergyGrid(
     const Array& energy_grid )
 {
-  testPrecondition( energy_grid.back() > 1 );
+  testPrecondition( energy_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						                              energy_grid.end() ) );
   testPrecondition( energy_grid.front() > 0.0 );
@@ -25,7 +25,7 @@ inline void testPreconditionEnergyGrid(
 
 // Test preconditions for values in array greater than zero
 template<typename Array>
-inline void testPreconditionValuesGreaterThanZero( 
+inline void testPreconditionValuesGreaterThanZero(
     const Array& values )
 {
   testPrecondition( std::find_if( values.begin(),
@@ -36,7 +36,7 @@ inline void testPreconditionValuesGreaterThanZero(
 
 // Test preconditions for values in array greater than zero
 template<typename Array>
-inline void testPreconditionValuesGreaterThanOrEqualToZero( 
+inline void testPreconditionValuesGreaterThanOrEqualToZero(
     const Array& values )
 {
   testPrecondition( std::find_if( values.begin(),

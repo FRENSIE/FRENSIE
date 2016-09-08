@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
@@ -41,7 +44,7 @@ protected:
   //! Create the form factor squared distribution
   static void createFormFactorSquared(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const Utility::TabularOneDDistribution>& form_factor );
+	 std::shared_ptr<const FormFactorSquared>& form_factor );
 };
 
 } // end MonteCarlo namespace

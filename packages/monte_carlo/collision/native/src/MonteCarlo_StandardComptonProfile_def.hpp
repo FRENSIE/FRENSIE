@@ -10,6 +10,7 @@
 #define MONTE_CARLO_STANDARD_COMPTON_PROFILE_DEF_HPP
 
 // Std Lib Includes
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -30,10 +31,10 @@ StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer
 template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
-ComptonProfile::ProfileQuantity 
+ComptonProfile::ProfileQuantity
 StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::evaluate( const ComptonProfile::MomentumQuantity momentum ) const
 {
-  StoredProfileQuantity stored_profile = d_raw_compton_profile->evaluate( 
+  StoredProfileQuantity stored_profile = d_raw_compton_profile->evaluate(
 				          StoredMomentumQuantity( momentum ) );
 
   return ProfileQuantity( stored_profile );
@@ -43,7 +44,7 @@ StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer
 template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
-ComptonProfile::MomentumQuantity 
+ComptonProfile::MomentumQuantity
 StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::sample() const
 {
   StoredMomentumQuantity sampled_momentum = d_raw_compton_profile->sample();
@@ -56,10 +57,38 @@ template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
 ComptonProfile::MomentumQuantity 
-StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::sampleInSubrange( const ComptonProfile::MomentumQuantity momentum ) const
+StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::sampleInSubrange( const ComptonProfile::MomentumQuantity upper_momentum ) const
 {
   StoredMomentumQuantity sampled_momentum = 
-    d_raw_compton_profile->sampleInSubrange( StoredMomentumQuantity(momentum) );
+    d_raw_compton_profile->sampleInSubrange( StoredMomentumQuantity(upper_momentum) );
+
+  return MomentumQuantity( sampled_momentum );
+}
+
+// Sample from the Compton profile in a subrange
+template<typename StoredMomentumUnit,
+	 typename StoredInverseMomentumUnit,
+	 template<typename> class SmartPointer>
+ComptonProfile::MomentumQuantity 
+StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::sampleInSubrange(
+                  const ComptonProfile::MomentumQuantity upper_momentum,
+                  const ComptonProfile::MomentumQuantity lower_momentum ) const
+{
+  // Create a scaled random number to use for sampling the momentum
+  double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  const double lower_cdf_value =
+    d_raw_compton_profile->evaluateCDF( StoredMomentumQuantity(lower_momentum) );
+
+  const double upper_cdf_value =
+    d_raw_compton_profile->evaluateCDF( StoredMomentumQuantity(upper_momentum) );
+
+  random_number = lower_cdf_value +
+    (upper_cdf_value - lower_cdf_value)*random_number;
+  
+  StoredMomentumQuantity sampled_momentum = 
+    d_raw_compton_profile->sampleWithRandomNumber( random_number );
 
   return MomentumQuantity( sampled_momentum );
 }
@@ -68,7 +97,7 @@ StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer
 template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
-ComptonProfile::MomentumQuantity 
+ComptonProfile::MomentumQuantity
 StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::getLowerBoundOfMomentum() const
 {
   return MomentumQuantity( d_raw_compton_profile->getLowerBoundOfIndepVar() );
@@ -78,7 +107,7 @@ StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer
 template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
-ComptonProfile::MomentumQuantity 
+ComptonProfile::MomentumQuantity
 StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::getUpperBoundOfMomentum() const
 {
   return MomentumQuantity( d_raw_compton_profile->getUpperBoundOfIndepVar() );

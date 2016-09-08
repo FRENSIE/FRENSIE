@@ -1,7 +1,7 @@
 # Configure the test files
 ADD_SUBDIRECTORY(test_files)
 
-ADD_EXECUTABLE(tstDagMCRay 
+ADD_EXECUTABLE(tstDagMCRay
   tstDagMCRay.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstDagMCRay geometry_dagmc)
@@ -69,3 +69,4 @@ IF(${FRENSIE_ENABLE_OPENMP})
   SET_PROPERTY(TEST SharedParallelGeometryModuleInterface_DagMC_2_test PROPERTY LABELS geometry_dagmc dagmc openmp no_threads)
   SET_PROPERTY(TEST SharedParallelGeometryModuleInterface_DagMC_4_test PROPERTY LABELS geometry_dagmc dagmc openmp no_threads)
 ENDIF()
+

@@ -27,10 +27,10 @@ EnergyDependentNeutronMultiplicityReaction::EnergyDependentNeutronMultiplicityRe
 	      const unsigned threshold_energy_index,
 	      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	      const Teuchos::ArrayRCP<const double>& cross_section,
-	      const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
+	      const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
 	      scattering_distribution )
-  : NuclearReaction( reaction_type, 
-		     temperature, 
+  : NuclearReaction( reaction_type,
+		     temperature,
 		     q_value,
 		     threshold_energy_index,
 		     incoming_energy_grid,
@@ -47,31 +47,31 @@ EnergyDependentNeutronMultiplicityReaction::EnergyDependentNeutronMultiplicityRe
 }
 
 // Return the number of neutrons emitted from the rxn at the given energy
-unsigned 
+unsigned
 EnergyDependentNeutronMultiplicityReaction::getNumberOfEmittedNeutrons(
 						    const double energy ) const
 {
   double average_multiplicity = getAverageNumberOfEmittedNeutrons( energy );
-  
+
   return sampleNumberOfEmittedNeutrons( average_multiplicity );
 }
 
-// Return the average number of neutrons emitted from the rxn 
-double 
+// Return the average number of neutrons emitted from the rxn
+double
 EnergyDependentNeutronMultiplicityReaction::getAverageNumberOfEmittedNeutrons(
 						    const double energy ) const
 {
   double multiplicity;
-  
+
   if( energy >= d_multiplicity_energy_grid.front() &&
       energy < d_multiplicity_energy_grid.back() )
   {
-    unsigned energy_index = 
+    unsigned energy_index =
       Utility::Search::binaryLowerBoundIndex(
 					    d_multiplicity_energy_grid.begin(),
 					    d_multiplicity_energy_grid.end(),
 					    energy );
-    
+
     multiplicity = Utility::LinLin::interpolate(
 				    d_multiplicity_energy_grid[energy_index],
 				    d_multiplicity_energy_grid[energy_index+1],
@@ -91,14 +91,14 @@ EnergyDependentNeutronMultiplicityReaction::getAverageNumberOfEmittedNeutrons(
 }
 
 // Simulate the reaction
-void EnergyDependentNeutronMultiplicityReaction::react( 
+void EnergyDependentNeutronMultiplicityReaction::react(
 						     NeutronState& neutron,
 						     ParticleBank& bank ) const
 {
   neutron.incrementCollisionNumber();
-  
+
   // There may be zero outgoing neutrons
-  unsigned num_outgoing_neutrons = 
+  unsigned num_outgoing_neutrons =
     this->getNumberOfEmittedNeutrons( neutron.getEnergy() );
 
   // Create the additional neutrons (multiplicity - 1)
@@ -106,8 +106,8 @@ void EnergyDependentNeutronMultiplicityReaction::react(
   {
     Teuchos::RCP<NeutronState> new_neutron(
 				   new NeutronState( neutron, true, false ) );
-					   
-    d_scattering_distribution->scatterParticle( *new_neutron, 
+
+    d_scattering_distribution->scatterParticle( *new_neutron,
 						this->getTemperature() );
 
     // Add the new neutron to the bank

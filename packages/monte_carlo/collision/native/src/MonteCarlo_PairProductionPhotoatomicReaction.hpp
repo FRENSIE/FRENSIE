@@ -56,26 +56,32 @@ public:
   PhotoatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( PhotonState& photon, 
+  void react( PhotonState& photon,
 	      ParticleBank& bank,
 	      Data::SubshellType& shell_of_interaction ) const;
-    
-private:
 
-  // The basic pair production model
+protected:
+
+  //! The basic pair production model
   static void basicInteraction( PhotonState& photon,
 				ParticleBank& bank );
-  
-  // The detailed pair production model
+
+  //! The detailed pair production model
   static void detailedInteraction( PhotonState& photon,
 				   ParticleBank& bank );
 
-  // The number of photons emitted from pair production using simple model
+  //! The number of photons emitted from pair production using simple model
   static unsigned basicInteractionPhotonEmission();
 
-  // The number of photons emitted from pair production using detailed model
+  //! The number of photons emitted from pair production using detailed model
   static unsigned detailedInteractionPhotonEmission();
-  
+
+private:
+
+  // Initialize interaction models
+  void initializeInteractionModels(
+                           const bool use_detailed_electron_emission_physics );
+
   // The pair production model
   boost::function<void (PhotonState&,ParticleBank&)> d_interaction_model;
 

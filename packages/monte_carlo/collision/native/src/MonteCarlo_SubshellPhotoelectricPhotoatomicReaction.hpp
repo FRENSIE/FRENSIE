@@ -18,7 +18,7 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = true>
 class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>
 {
-  
+
  public:
 
   //! Basic constructor
@@ -42,11 +42,6 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
   ~SubshellPhotoelectricPhotoatomicReaction()
   { /* ... */ }
 
-  //! Simulate the reaction
-  void react( PhotonState& photon,
-	      ParticleBank& bank,
-	      Data::SubshellType& shell_of_interaction ) const;
-
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const;
 
@@ -56,10 +51,18 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
   //! Get the subshell binding energy (non-standard interface)
   double getSubshellBindingEnergy() const;
 
+  //! Return the number of electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+
+  //! Simulate the reaction
+  void react( PhotonState& photon,
+	      ParticleBank& bank,
+	      Data::SubshellType& shell_of_interaction ) const;
+
 private:
 
   // The interaction subshell
-  Data::SubshellType d_interaction_subshell;	
+  Data::SubshellType d_interaction_subshell;
 
   // The subshell binding energy
   double d_binding_energy;

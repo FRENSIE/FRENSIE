@@ -25,7 +25,7 @@ ENFORCE_OUT_OF_SOURCE_BUILD()
 ENABLE_CXX11_STANDARD_SUPPORT()
 
 # Load the patch files
-SET(TEUCHOS_TWO_D_ARRAY_PATCH 
+SET(TEUCHOS_TWO_D_ARRAY_PATCH
   ${CMAKE_SOURCE_DIR}/patches/Teuchos_TwoDArray_patch
   CACHE STRING "The Teuchos::TwoDArray patch file" FORCE)
 
@@ -53,6 +53,7 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 ## Command Line Options
 ##---------------------------------------------------------------------------##
 OPTION(FRENSIE_ENABLE_DBC "Enable Design-by-Contract checks in FRENSIE" ON)
+OPTION(FRENSIE_ENABLE_COLOR_OUTPUT "Enable color output from FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_PROFILING "Enable profiling with FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_COVERAGE "Enable coverage testing in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_OPENMP "Enable shared-memory parallelism in FRENSIE" ON)
@@ -77,13 +78,33 @@ ENDIF()
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
 
 ##---------------------------------------------------------------------------##
+## Enable Color Output Support
+##---------------------------------------------------------------------------##
+# Check if the required header files are present on the system
+# Note: Color output is only supported in tty terminals
+IF(FRENSIE_ENABLE_COLOR_OUTPUT)
+  INCLUDE(CheckIncludeFiles)
+  CHECK_INCLUDE_FILES("unistd.h" IS_TTY_FORMATTING_SUPPORTED)
+  
+  IF(IS_TTY_FORMATTING_SUPPORTED)
+    SET(TTY_FORMATTING_SUPPORTED "1")
+  ENDIF()
+ENDIF()
+
+SET(CMAKEDEFINE \#cmakedefine)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/tty_format_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_tty_format_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_tty_format_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_tty_format_config.hpp)
+
+##---------------------------------------------------------------------------##
 ## Configure Profiling Support
 ##---------------------------------------------------------------------------##
 IF(FRENSIE_ENABLE_PROFILING)
   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg")
   SET(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -pg")
   SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} -pg")
-  
+
   IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
     MESSAGE(WARNING "profiling can only be done in debug builds!")
   ENDIF()
@@ -159,7 +180,7 @@ ENABLE_MOAB_SUPPORT()
 ##---------------------------------------------------------------------------##
 ## Configure Trilinos Support
 ##---------------------------------------------------------------------------##
-# If the Trilinos package is in a non-standard location, set the 
+# If the Trilinos package is in a non-standard location, set the
 # TRILINOS_PREFIX variable. If the Trilinos source directory is not located
 # in the TRILINOS_PREFIX directory, the TRILINOS_SOURCE variable can also be
 # set.
@@ -173,6 +194,13 @@ ENABLE_TRILINOS_SUPPORT()
 # the ENABLE_BOOST_SUPPORT macro.
 ENABLE_BOOST_SUPPORT(serialization)
 
+# NOTE: Boost still uses the std::auto_ptr class, which is now depricated.
+#       The newer GNU C++ compilers will generate a large number of warning
+#       messages regarding this usage of the std::auto_ptr class. To avoid
+#       these warning messages that are not direcly related to FRENSIE we
+#       will simply turn them off
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+
 ##---------------------------------------------------------------------------##
 ## Configure Root Support
 ##---------------------------------------------------------------------------##
@@ -185,21 +213,21 @@ ENDIF()
 ##---------------------------------------------------------------------------##
 ## Configure Dashboard Client Support
 ##---------------------------------------------------------------------------##
-# The default build name is CMAKE_SYSTEM_NAME, which is often not very 
-# descriptive. Set the BUILDNAME_PREFIX if a more descriptive name is 
+# The default build name is CMAKE_SYSTEM_NAME, which is often not very
+# descriptive. Set the BUILDNAME_PREFIX if a more descriptive name is
 # desired. It can be useful to use the following command:
 # BUILDNAME_PREFIX="$(lsb_release -i -s)-$(lsb_release -r -s)"
 IF(FRENSIE_ENABLE_DASHBOARD_CLIENT)
   SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
-  
+
   # Set the BuildName used by the dashboard (see DartConfiguration.tcl)
   DETERMINE_COMPILER_ID(CXX ${CMAKE_CXX_COMPILER})
   STRING(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-  
+
   IF(NOT BUILDNAME_PREFIX)
     SET(BUILDNAME_PREFIX ${CMAKE_SYSTEM_NAME})
   ENDIF()
-  
+
   SET(BUILDNAME "${BUILDNAME_PREFIX}_${ID}-${VERSION}_${BUILD_TYPE}")
 
   UNSET(ID)
@@ -208,7 +236,7 @@ IF(FRENSIE_ENABLE_DASHBOARD_CLIENT)
 
   # Set the valgrind supressions file
   SET(MEMORYCHECK_SUPPRESSIONS_FILE ${CMAKE_SOURCE_DIR}/valgrind/frensie-deps.supp CACHE STRING "File that contains suppressions for the memory checker" FORCE)
-  
+
   # Initialize CTest
   INCLUDE(CTest)
 
@@ -227,11 +255,14 @@ ADD_UNINSTALL_TARGET()
 
 ##---------------------------------------------------------------------------##
 ## Set Up the Project Directory Hierarchy
+
 ADD_SUBDIRECTORY(scripts)
 
 ADD_SUBDIRECTORY(packages)
 
 ADD_SUBDIRECTORY(tools)
+
+SET(GLOBAL_TOOLS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
 
 ADD_SUBDIRECTORY(doc)
 
@@ -239,23 +270,23 @@ ADD_SUBDIRECTORY(doc)
 ## Add additional testing targets for convenience
 ##---------------------------------------------------------------------------##
 # run `make test-fast` to run all tests except for the facemc tests
-ADD_CUSTOM_TARGET(test-fast 
+ADD_CUSTOM_TARGET(test-fast
   COMMAND ctest -E Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
-ADD_CUSTOM_TARGET(test-fast4 
-  COMMAND ctest -E Facemc -LE no_threads -j4 --no-labels-summary
-  COMMAND ctest -E Facemc -L no_threads --no-labels-summary
+ADD_CUSTOM_TARGET(test-fast4
+  COMMAND ctest -E Facemc -LE no_threads -j4
+  COMMAND ctest -E Facemc -L no_threads
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 ADD_CUSTOM_TARGET(test-fast8
-  COMMAND ctest -E Facemc -LE no_threads -j8 --no-labels-summary
-  COMMAND ctest -E Facemc -L no_threads --no-labels-summary
+  COMMAND ctest -E Facemc -LE no_threads -j8
+  COMMAND ctest -E Facemc -L no_threads
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 ADD_CUSTOM_TARGET(test-fast12
-  COMMAND ctest -E Facemc -LE no_threads -j12 --no-labels-summary
-  COMMAND ctest -E Facemc -L no_threads --no-labels-summary
+  COMMAND ctest -E Facemc -LE no_threads -j12
+  COMMAND ctest -E Facemc -L no_threads
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # run `make test-facemc` to run only the facemc tests

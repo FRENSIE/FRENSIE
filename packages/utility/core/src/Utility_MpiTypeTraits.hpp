@@ -136,7 +136,7 @@ struct MpiTypeTraits<char>
   static inline MPI_Datatype getType( const char& )
   { return MPI_CHAR; }
 };
-  
+
 } // end Utility namespace
 
 #endif // end HAVE_FRENSIE_MPI

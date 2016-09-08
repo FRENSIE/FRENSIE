@@ -20,14 +20,14 @@ AdjointElectronProbeState::AdjointElectronProbeState()
 { /* ... */ }
 
 // Constructor
-AdjointElectronProbeState::AdjointElectronProbeState( 
+AdjointElectronProbeState::AdjointElectronProbeState(
 		       const ParticleState::historyNumberType history_number )
   : AdjointElectronState( history_number, ADJOINT_ELECTRON_PROBE ),
     d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointElectronProbeState::AdjointElectronProbeState( 
+AdjointElectronProbeState::AdjointElectronProbeState(
 			              const ParticleState& existing_base_state,
 				      const bool increment_generation_number,
 				      const bool reset_collision_number )
@@ -39,7 +39,7 @@ AdjointElectronProbeState::AdjointElectronProbeState(
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointElectronProbeState::AdjointElectronProbeState( 
+AdjointElectronProbeState::AdjointElectronProbeState(
 			    const AdjointElectronProbeState& existing_base_state,
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
@@ -54,7 +54,7 @@ AdjointElectronProbeState::AdjointElectronProbeState(
 // Set the energy of the particle (MeV)
 /*! \details An active probe particle gets killed when its energy changes. A
  * probe particle should only be activated after its initial energy has been
- * set. 
+ * set.
  */
 void AdjointElectronProbeState::setEnergy( const energyType energy )
 {
@@ -72,7 +72,7 @@ bool AdjointElectronProbeState::isProbe() const
 
 // Activate the probe
 /*! \details Once a probe has been activated the next call to set energy
- * will cause is to be killed. 
+ * will cause is to be killed.
  */
 void AdjointElectronProbeState::activate()
 {
@@ -96,14 +96,14 @@ AdjointElectronProbeState* AdjointElectronProbeState::clone() const
 void AdjointElectronProbeState::print( std::ostream& os ) const
 {
   os << "Particle Type: ";
-  
+
   if( d_active )
     os << "Active ";
   else
     os << "Inactive ";
 
   os << "Adjoint Electron Probe" << std::endl;
-  
+
   this->printImplementation<AdjointElectronProbeState>( os );
 }
 

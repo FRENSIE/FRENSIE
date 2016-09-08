@@ -30,7 +30,7 @@ class ParticleSimulationManagerFactory
 public:
 
   //! Create the requested manager
-  static std::shared_ptr<SimulationManager> createManager( 
+  static std::shared_ptr<SimulationManager> createManager(
 	  const Teuchos::ParameterList& simulation_info,
 	  const Teuchos::ParameterList& geom_def,
 	  const Teuchos::ParameterList& source_def,
@@ -47,7 +47,7 @@ private:
   ParticleSimulationManagerFactory();
 
   // create the handler using DagMC
-  static std::shared_ptr<SimulationManager> createManagerWithDagMC( 
+  static std::shared_ptr<SimulationManager> createManagerWithDagMC(
             const Teuchos::ParameterList& geom_def,
             const Teuchos::ParameterList& source_def,
             const Teuchos::ParameterList& response_def,
@@ -72,7 +72,7 @@ private:
 
   // Initialize the non-geometry modules
   template<typename GeometryHandler>
-  static void initializeNonGeometryModules( 
+  static void initializeNonGeometryModules(
                        const Teuchos::ParameterList& source_def,
                        const Teuchos::ParameterList& response_def,
                        const Teuchos::ParameterList& observer_def,

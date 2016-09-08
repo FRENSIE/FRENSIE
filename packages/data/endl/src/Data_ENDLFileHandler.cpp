@@ -17,7 +17,6 @@
 
 namespace Data{
 
-
 // Default Constructor
 ENDLFileHandler::ENDLFileHandler()
   : d_endl_file_id( 1 ),
@@ -27,7 +26,7 @@ ENDLFileHandler::ENDLFileHandler()
 { /* ... */ }
 
 // Constructor for reading all data in file
-ENDLFileHandler::ENDLFileHandler( 
+ENDLFileHandler::ENDLFileHandler(
     const std::string& file_name,
     const bool epics_file_type )
   : d_epics_file_type( epics_file_type ),
@@ -40,7 +39,7 @@ ENDLFileHandler::ENDLFileHandler(
 }
 
 // Constructor for reading data specific to a given atomic number
-ENDLFileHandler::ENDLFileHandler( 
+ENDLFileHandler::ENDLFileHandler(
     const std::string& file_name,
     const unsigned atomic_number,
     const bool epics_file_type )
@@ -66,15 +65,15 @@ void ENDLFileHandler::openENDLFile( const std::string& file_name )
 {
   // Make sure no other endl library is open and assigned the desired id
   testPrecondition( !fileIsOpenUsingFortran( d_endl_file_id ) );
-  
+
   // Check that the file exists
-  bool endl_file_exists = (bool)fileExistsUsingFortran( file_name.c_str(), 
+  bool endl_file_exists = (bool)fileExistsUsingFortran( file_name.c_str(),
 						       file_name.size() );
-  TEST_FOR_EXCEPTION( !endl_file_exists, 
-		      std::runtime_error, 
-		      "Fatal Error: ENDL file " + file_name + 
+  TEST_FOR_EXCEPTION( !endl_file_exists,
+		      std::runtime_error,
+		      "Fatal Error: ENDL file " + file_name +
 		      " does not exists." );
-  
+
   // Check that the file can be opened
   bool endl_file_is_readable = (bool)fileIsReadableUsingFortran( file_name.c_str(),
 							        file_name.size() );
@@ -82,7 +81,7 @@ void ENDLFileHandler::openENDLFile( const std::string& file_name )
 		      std::runtime_error,
 		      "Fatal Error: ENDL file " + file_name +
 		      " exists but is not readable." );
-  
+
   // Open the file
   openFileUsingFortran( file_name.c_str(), file_name.size(), d_endl_file_id );
 
@@ -118,7 +117,7 @@ bool ENDLFileHandler::endOfFile() const
 }
 
 // Read the first table header
-void ENDLFileHandler::readFirstTableHeader( 
+void ENDLFileHandler::readFirstTableHeader(
         int& atomic_number,
         int& outgoing_particle_type,
         double& atomic_mass,
@@ -127,9 +126,9 @@ void ENDLFileHandler::readFirstTableHeader(
   int zaids, incident_particle_type, table_date;
   int io_flag;
 
-  readENDLTableHeaderLine1( 
-        d_endl_file_id, 
-        &zaids, 
+  readENDLTableHeaderLine1(
+        d_endl_file_id,
+        &zaids,
         &incident_particle_type,
         &outgoing_particle_type,
         &atomic_mass,
@@ -142,8 +141,8 @@ void ENDLFileHandler::readFirstTableHeader(
 
   if( io_flag > 0 )
   {
-    d_valid_file = false;   
-  }  
+    d_valid_file = false;
+  }
   else if ( io_flag < 0 )
   {
     d_end_of_file = true;
@@ -156,7 +155,7 @@ void ENDLFileHandler::readFirstTableHeader(
 }
 
 // Read the second table header
-void ENDLFileHandler::readSecondTableHeader( 
+void ENDLFileHandler::readSecondTableHeader(
         int& reaction_type,
         int& electron_shell )
 {
@@ -164,9 +163,9 @@ void ENDLFileHandler::readSecondTableHeader(
   int io_flag;
   double subshell_designator;
 
-  readENDLTableHeaderLine2( 
-        d_endl_file_id, 
-        &reaction_descriptor, 
+  readENDLTableHeaderLine2(
+        d_endl_file_id,
+        &reaction_descriptor,
         &reaction_property,
         &reaction_modifiern,
         &subshell_designator,
@@ -177,8 +176,8 @@ void ENDLFileHandler::readSecondTableHeader(
 
   if( io_flag > 0 )
   {
-    d_valid_file = false;   
-  }  
+    d_valid_file = false;
+  }
   else if ( io_flag < 0 )
   {
     d_end_of_file = true;
@@ -205,8 +204,8 @@ void ENDLFileHandler::skipTable()
 
   if( io_flag > 0 )
   {
-    d_valid_file = false;   
-  }  
+    d_valid_file = false;
+  }
   else if ( io_flag < 0 )
   {
     d_end_of_file = true;
@@ -215,20 +214,20 @@ void ENDLFileHandler::skipTable()
   testPostcondition( validFile() );
 }
 
-// Process two column table in ENDL file 
-void ENDLFileHandler::processTwoColumnTable(     
+// Process two column table in ENDL file
+void ENDLFileHandler::processTwoColumnTable(
     std::vector<double>& indep_variable,
     std::vector<double>& dep_variable )
 {
   int io_flag, table_size;
-  
+
   // Read table size
-  readENDLTableSize( 
-        d_endl_file_id, 
+  readENDLTableSize(
+        d_endl_file_id,
         d_current_line,
         &table_size,
         &io_flag );
-  
+
   // Resize arrays to table size
   indep_variable.resize( table_size );
   dep_variable.resize( table_size );
@@ -236,9 +235,9 @@ void ENDLFileHandler::processTwoColumnTable(
   if ( d_epics_file_type )
   {
 		// Read table data
-		readEPICSTableTwoColumn( 
+		readEPICSTableTwoColumn(
 		      d_endl_file_id,
-		      table_size, 
+		      table_size,
 		      &indep_variable[0],
 		      &dep_variable[0],
 		      &io_flag );
@@ -246,9 +245,9 @@ void ENDLFileHandler::processTwoColumnTable(
   else
   {
 		// Read table data
-		readENDLTableTwoColumn( 
+		readENDLTableTwoColumn(
 		      d_endl_file_id,
-		      table_size, 
+		      table_size,
 		      &indep_variable[0],
 		      &dep_variable[0],
 		      &io_flag );
@@ -259,8 +258,8 @@ void ENDLFileHandler::processTwoColumnTable(
 
   if( io_flag > 0 )
   {
-    d_valid_file = false;   
-  }  
+    d_valid_file = false;
+  }
   else if ( io_flag < 0 )
   {
     d_end_of_file = true;
@@ -278,8 +277,8 @@ void ENDLFileHandler::processThreeColumnTable(
   int io_flag, table_size;
 
   // Read table size
-  readENDLTableSize( 
-        d_endl_file_id, 
+  readENDLTableSize(
+        d_endl_file_id,
         d_current_line,
         &table_size,
         &io_flag );
@@ -292,9 +291,9 @@ void ENDLFileHandler::processThreeColumnTable(
   if ( d_epics_file_type )
   {
 	// Read EPICS2014 table data
-    readEPICSTableThreeColumn( 
+    readEPICSTableThreeColumn(
         d_endl_file_id,
-        table_size, 
+        table_size,
         &column_one[0],
         &column_two[0],
         &column_three[0],
@@ -303,9 +302,9 @@ void ENDLFileHandler::processThreeColumnTable(
   else
   {
 	// Read regular table data
-    readENDLTableThreeColumn( 
+    readENDLTableThreeColumn(
         d_endl_file_id,
-        table_size, 
+        table_size,
         &column_one[0],
         &column_two[0],
         &column_three[0],
@@ -317,8 +316,8 @@ void ENDLFileHandler::processThreeColumnTable(
 
   if( io_flag > 0 )
   {
-    d_valid_file = false;   
-  }  
+    d_valid_file = false;
+  }
   else if ( io_flag < 0 )
   {
     d_end_of_file = true;
@@ -340,8 +339,8 @@ void ENDLFileHandler::processFourColumnTable(
   int io_flag, table_size;
 
   // Read table size
-  readENDLTableSize( 
-        d_endl_file_id, 
+  readENDLTableSize(
+        d_endl_file_id,
         d_current_line,
         &table_size,
         &io_flag );
@@ -355,9 +354,9 @@ void ENDLFileHandler::processFourColumnTable(
   if ( d_epics_file_type )
   {
 	// Read EPICS2014 table data
-    readEPICSTableFourColumn( 
+    readEPICSTableFourColumn(
         d_endl_file_id,
-        table_size, 
+        table_size,
         &column_one[0],
         &column_two[0],
         &column_three[0],
@@ -367,9 +366,9 @@ void ENDLFileHandler::processFourColumnTable(
   else
   {
 	// Read regular table data
-    readENDLTableFourColumn( 
+    readENDLTableFourColumn(
         d_endl_file_id,
-        table_size, 
+        table_size,
         &column_one[0],
         &column_two[0],
         &column_three[0],
@@ -382,14 +381,13 @@ void ENDLFileHandler::processFourColumnTable(
 
   if( io_flag > 0 )
   {
-    d_valid_file = false;   
-  }  
+    d_valid_file = false;
+  }
   else if ( io_flag < 0 )
   {
     d_end_of_file = true;
   }
 
-  testPostcondition( validFile() );
   testPostcondition( !column_one.empty() );
   testPostcondition( !column_two.empty() );
   testPostcondition( !column_three.empty() );

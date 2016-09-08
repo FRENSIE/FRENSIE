@@ -28,7 +28,7 @@ void ParticleGlobalEventDispatcher<Observer>::attachObserver(
 {
   // Make sure the observer has not been attached yet
   testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );
-  
+
   if( d_observer_map.find( id ) == d_observer_map.end() )
     d_observer_map[id] = observer;
 }
@@ -57,7 +57,7 @@ void ParticleGlobalEventDispatcher<Observer>::detachAllObservers()
 
 // Get the observer id map
 template<typename Observer>
-typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap& 
+typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap&
 ParticleGlobalEventDispatcher<Observer>::observer_id_map()
 {
   return d_observer_map;

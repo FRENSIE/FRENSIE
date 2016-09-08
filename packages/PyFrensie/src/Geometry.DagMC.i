@@ -9,7 +9,7 @@
 %define %geometry_dagmc_docstring
 "
 PyFrensie.Geometry.DagMC is the python interface to the FRENSIE geometry/dagmc
-subpackage. 
+subpackage.
 
 The purpose of DagMC is to allow a user to query CAD geometry data and to
 ray trace on a CAD geometry using python. This can be useful for debugging
@@ -29,7 +29,7 @@ geometries.
 #ifdef HAVE_MPI
 #include "Teuchos_DefaultMpiComm.hpp"
 #endif // end HAVE_MPI
-  
+
 // FRENSIE Includes
 #include "PyFrensie_ArrayConversionHelpers.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
@@ -105,7 +105,7 @@ geometries.
 %feature("docstring")
 Geometry::DagMC
 "
-The DagMC class can be used to interact with a CAD file that has been 
+The DagMC class can be used to interact with a CAD file that has been
 set up for use with FRENSIE. The query methods have been grouped into several
 groups based on the level of the information that is sought. Some of these
 query methods can be called before the geometry has been loaded:
@@ -140,7 +140,7 @@ Geometry Properties:
   *doesSurfaceExist
   *isTerminationCell
   *isVoidCell
-  *isReflectingSurface. 
+  *isReflectingSurface.
   *getCells
   *getSurfaces
 
@@ -153,7 +153,7 @@ Geometric Entity Properties:
 Estimator Properties:
   *getCellEstimatorData
   *getSurfaceEstimatorData
-  
+
 
 The initialize method is used to load the CAD file and parse its properties and
 geometric information. It is recommended that one use
@@ -166,7 +166,7 @@ tutorial for this class is shown below:
   import PyFrensie.Geometry.DagMC as DagMC
 
   geom = DagMC.DagMC
-  
+
   geom.initialize( 'my_cad_file.sat', 1e-3 )
 
   ray = PyFrensie.Geometry.Ray( 0, 0, 0, 0, 0, 1 )
@@ -246,14 +246,14 @@ assigned densities.
 %feature("docstring")
 Geometry::DagMC::fireExternalRay
 "The first value returned is the distance to the nearest surface in the
-direction of the ray. The second value returned is the surface id of the 
+direction of the ray. The second value returned is the surface id of the
 surface that will be hit by the ray.
 "
 
 %feature("autodoc",
 "fireInternalRay() -> double,unsigned long long
 
-The first value returned is the distance to the nearest surface in the 
+The first value returned is the distance to the nearest surface in the
 direction of the ray. The second value returned is the surface id of the
 surface that will be hit by the ray.
 ")
@@ -388,13 +388,13 @@ Geometry::DagMC::advanceInternalRayToCellBoundary;
 %feature("docstring")
 initializeDagMC
 "
-This is the recommended way to initialize a DagMC geometry. The 
+This is the recommended way to initialize a DagMC geometry. The
 PyTrilinos.Teuchos.ParameterList object should store all of the
 CAD file properties and the DagMC initialization options. A brief usage
 tutorial for this class is shown below:
 
   import PyFrensie.Geometry.DagMC, PyTrilinos.Teuchos, numpy
- 
+
   source = PyTrilinos.Teuchos.FileInputSource( 'my_geom_file.xml' )
   xml_obj = source.getObject()
   geom_init_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
@@ -404,7 +404,7 @@ tutorial for this class is shown below:
   geom = PyFrensie.Geometry.DagMC.DagMC
   geom.isInitialized()
 "
- 
+
 // Import the Teuchos_ParameterList interface
 %import <Teuchos.i>
 

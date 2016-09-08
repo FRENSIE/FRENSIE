@@ -26,7 +26,7 @@
 #define CELL_DEFINITION_1 "10 n -11 n -5 u 200 n 2 u 3 u 4 n -1000 u 50"
 #define COMPRESSED_CELL_DEFINITION_1 "10n-11n-5u200n2u3u4n-1000u50"
 #define RENAMED_CELL_DEFINITION_1 "0n1n2u3n4u5u6n7u8"
-#define REDUCED_CELL_DEFINITION_1 "0n1n2u3n4u5u6n7u8" 
+#define REDUCED_CELL_DEFINITION_1 "0n1n2u3n4u5u6n7u8"
 #define CELL_DEFINITION_2 "(4 u -3 u   -10) n (5 n 6 u -100 ) u -1 n -2"
 #define COMPRESSED_CELL_DEFINITION_2 "(4u-3u-10)n(5n6u-100)u-1n-2"
 #define RENAMED_CELL_DEFINITION_2 "(0u1u2)n(3n4u5)u6n7"
@@ -90,31 +90,31 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, removeWhiteSpace )
   TestBooleanCellFunctor cell_functor;
 
   std::string cell_definition = CELL_DEFINITION_1;
-  
+
   cell_functor.removeWhiteSpace( cell_definition );
 
-  TEST_ASSERT( cell_definition.compare( 0, 
+  TEST_ASSERT( cell_definition.compare( 0,
 					std::string::npos,
 					COMPRESSED_CELL_DEFINITION_1 ) == 0 );
 
   cell_definition = CELL_DEFINITION_2;
-  
+
   cell_functor.removeWhiteSpace( cell_definition );
 
-  TEST_ASSERT( cell_definition.compare( 0, 
+  TEST_ASSERT( cell_definition.compare( 0,
 					std::string::npos,
 					COMPRESSED_CELL_DEFINITION_2 ) == 0 );
 
   cell_definition = CELL_DEFINITION_3;
 
   cell_functor.removeWhiteSpace( cell_definition );
-  
+
   TEST_ASSERT( cell_definition.compare( 0,
 					std::string::npos,
 					COMPRESSED_CELL_DEFINITION_3 ) == 0 );
 
   cell_definition = CELL_DEFINITION_4;
-  
+
   cell_functor.removeWhiteSpace( cell_definition );
 
   std::cout << cell_definition << std::endl;
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, renameVariables )
   TestBooleanCellFunctor cell_functor;
 
   std::string cell_definition = CELL_DEFINITION_1;
-  
+
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
 
@@ -159,7 +159,7 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, renameVariables )
 					RENAMED_CELL_DEFINITION_3 ) == 0 );
 
   cell_definition = CELL_DEFINITION_4;
-  
+
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
 
@@ -169,7 +169,7 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, renameVariables )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the BooleanCellFunctor can determine the number of variables in 
+// Check that the BooleanCellFunctor can determine the number of variables in
 // the cell definition string
 TEUCHOS_UNIT_TEST( BooleanCellFunctor, getNumVariables )
 {
@@ -177,8 +177,8 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, getNumVariables )
 
   std::string cell_definition = CELL_DEFINITION_1;
   unsigned number_of_variables, ref_number_of_variables;
-  ref_number_of_variables = 9;  
-  
+  ref_number_of_variables = 9;
+
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
   number_of_variables = cell_functor.getNumVariables( cell_definition );
@@ -265,14 +265,14 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, constructChildFunctors )
 
   std::string cell_definition = CELL_DEFINITION_1;
   unsigned number_of_children;
-  Teuchos::Array<Utility::Pair<unsigned,unsigned> > 
+  Teuchos::Array<Utility::Pair<unsigned,unsigned> >
     variable_ranges, ref_variable_ranges;
 
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
   cell_functor.constructChildFunctors( cell_definition );
   number_of_children = cell_functor.getNumChildFunctors();
-  
+
   TEST_EQUALITY_CONST( number_of_children, 0 );
 
   cell_definition = CELL_DEFINITION_2;
@@ -330,19 +330,19 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, reduceDefinition )
   cell_functor.renameVariables( cell_definition );
   cell_functor.constructChildFunctors( cell_definition );
   cell_functor.reduceDefinition( cell_definition );
-  
-  TEST_ASSERT( cell_definition.compare( 0, 
+
+  TEST_ASSERT( cell_definition.compare( 0,
 					std::string::npos,
 					REDUCED_CELL_DEFINITION_1 ) == 0 );
-  
+
   cell_definition = CELL_DEFINITION_2;
 
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
   cell_functor.constructChildFunctors( cell_definition );
   cell_functor.reduceDefinition( cell_definition );
-  
-  TEST_ASSERT( cell_definition.compare( 0, 
+
+  TEST_ASSERT( cell_definition.compare( 0,
 					std::string::npos,
 					REDUCED_CELL_DEFINITION_2 ) == 0 );
 
@@ -353,12 +353,12 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, reduceDefinition )
   cell_functor.constructChildFunctors( cell_definition );
   cell_functor.reduceDefinition( cell_definition );
 
-  TEST_ASSERT( cell_definition.compare( 0, 
+  TEST_ASSERT( cell_definition.compare( 0,
 					std::string::npos,
-					REDUCED_CELL_DEFINITION_3 ) == 0 ); 
+					REDUCED_CELL_DEFINITION_3 ) == 0 );
 
   cell_definition = CELL_DEFINITION_4;
-  
+
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
   cell_functor.constructChildFunctors( cell_definition );
@@ -421,16 +421,16 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, assignSetOperationFunctors )
 
   TEST_EQUALITY_CONST( number_of_set_op_functors, 1 );
 }
-  
+
 //---------------------------------------------------------------------------//
 // Check that the BooleanCellFunctor evaluates the cell function correctly
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BooleanCellFunctor, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BooleanCellFunctor,
 				   operator,
 				   BooleanArray )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
-  Teuchos::RCP<Geometry::BooleanCellFunctor> 
+
+  Teuchos::RCP<Geometry::BooleanCellFunctor>
     cell_functor( new Geometry::BooleanCellFunctor( cell_definition ) );
 
   BooleanArray arguments( 9 );
@@ -471,9 +471,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BooleanCellFunctor,
   TEST_ASSERT( !(*cell_functor)( arguments ) );
 
   cell_definition = CELL_DEFINITION_2;
-  
+
   cell_functor.reset( new Geometry::BooleanCellFunctor( cell_definition ) );
-  
+
   arguments.resize( 8 );
   arguments[0] = true;
   arguments[1] = true;
@@ -509,7 +509,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BooleanCellFunctor,
   TEST_ASSERT( !(*cell_functor)( arguments ) );
 
   cell_definition = CELL_DEFINITION_3;
-  
+
   cell_functor.reset( new Geometry::BooleanCellFunctor( cell_definition ) );
 
   arguments.resize( 10 );
@@ -553,7 +553,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BooleanCellFunctor,
   TEST_ASSERT( !(*cell_functor)( arguments ) );
 
   cell_definition = CELL_DEFINITION_4;
-  
+
   cell_functor.reset( new Geometry::BooleanCellFunctor( cell_definition ) );
 
   arguments.resize( 12 );
@@ -600,11 +600,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BooleanCellFunctor,
   arguments[10] = true;
   arguments[11] = true;
 
-  TEST_ASSERT( !(*cell_functor)( arguments ) );  
+  TEST_ASSERT( !(*cell_functor)( arguments ) );
 }
 
 UNIT_TEST_INSTANTIATION( BooleanCellFunctor, operator );
-  
+
 
 //---------------------------------------------------------------------------//
 // end tstBooleanCellFunctor.cpp

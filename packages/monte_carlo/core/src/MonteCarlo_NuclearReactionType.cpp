@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_NuclearReactionType.cpp
 //! \author Alex Robinson
 //! \brief  Nuclear reaction type helper function definitions.

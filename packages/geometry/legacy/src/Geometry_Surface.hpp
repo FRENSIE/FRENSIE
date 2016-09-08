@@ -46,7 +46,7 @@ public:
   //@}
 
 private:
-  
+
   //! Typedef for scalar traits
   typedef Teuchos::ScalarTraits<ScalarType> ST;
   //! Typedef for ordinal traits
@@ -55,14 +55,14 @@ private:
   typedef typename Teuchos::Tuple<ScalarType,10>::Ordinal tupleIndex;
   //! Typedef for Teuchos::Tuple ordinal traits
   typedef Teuchos::OrdinalTraits<tupleIndex> Tuple_OT;
-  
+
 public:
 
   //! General Surface Constructor.
   // \details ax^2+by^2+cz^2+dxy+eyz+fxz+gx+hy+jz+k = 0
   Surface( OrdinalType id,
 	   ScalarType a,
-	   ScalarType b, 
+	   ScalarType b,
 	   ScalarType c,
 	   ScalarType d,
 	   ScalarType e,
@@ -113,8 +113,8 @@ public:
   { /* ... */ }
 
   //! Return if the point is on the surface.
-  bool isOn( const ScalarType x, 
-	     const ScalarType y, 
+  bool isOn( const ScalarType x,
+	     const ScalarType y,
 	     const ScalarType z ) const;
 
   //! Return if the point is on the surface.
@@ -130,22 +130,22 @@ public:
   OrdinalType getId() const;
 
   //! Return the sense of a point with respect to the surface.
-  SurfaceSense getSenseOfPoint( const ScalarType x, 
-				const ScalarType y, 
+  SurfaceSense getSenseOfPoint( const ScalarType x,
+				const ScalarType y,
 				const ScalarType z ) const;
 
   //! Return the sense of a point with respect to the surface.
   SurfaceSense getSenseOfPoint( const Vector<ScalarType> &point ) const;
 
   //! Return the unit normal from the surface at a point on the surface, pointing in the direction of the desired sense.
-  Vector<ScalarType> getUnitNormalAtPoint( 
-			  const ScalarType x, 
-			  const ScalarType y, 
+  Vector<ScalarType> getUnitNormalAtPoint(
+			  const ScalarType x,
+			  const ScalarType y,
 			  const ScalarType z,
 			  const SurfaceSense sense = POS_SURFACE_SENSE ) const;
 
   //! Return the unit normal from the surface at a point on the surface, pointing in the direction of the desired sense.
-  Vector<ScalarType> getUnitNormalAtPoint( 
+  Vector<ScalarType> getUnitNormalAtPoint(
 			  const Vector<ScalarType> &point,
 			  const SurfaceSense sense = POS_SURFACE_SENSE ) const;
 
@@ -160,7 +160,7 @@ public:
   //! Return the distance to the surface from the given point along the given direction
   ScalarType getDistance( const Vector<ScalarType> &point,
 			  const Vector<ScalarType> &direction ) const;
-  
+
   //! Return the quadratic form matrix of the surface
   Matrix<ScalarType> getQuadraticFormMatrix() const;
 
@@ -185,23 +185,23 @@ protected:
   void checkSymmetry();
 
   //! Evaluate the surface definition at a point.
-  ScalarType evaluateSurface( const ScalarType x, 
-			      const ScalarType y, 
+  ScalarType evaluateSurface( const ScalarType x,
+			      const ScalarType y,
 			      const ScalarType z ) const;
 
   //! Evaluate planar surface.
-  ScalarType evaluatePlanarSurface( const ScalarType x, 
-				    const ScalarType y, 
+  ScalarType evaluatePlanarSurface( const ScalarType x,
+				    const ScalarType y,
 				    const ScalarType z ) const;
 
   //! Evaluate symmetric 2nd order surface
-  ScalarType evaluateSymmetricSecondOrderSurface( const ScalarType x, 
-						  const ScalarType y, 
+  ScalarType evaluateSymmetricSecondOrderSurface( const ScalarType x,
+						  const ScalarType y,
 						  const ScalarType z ) const;
 
   //! Evaluate general 2nd order surface
-  ScalarType evaluateGeneralSecondOrderSurface( const ScalarType x, 
-						const ScalarType y, 
+  ScalarType evaluateGeneralSecondOrderSurface( const ScalarType x,
+						const ScalarType y,
 						const ScalarType z ) const;
 
   //! Calculate the alpha parameter of a given direction
@@ -247,7 +247,7 @@ private:
 
   // Boolean that indicates whether the surface is planar or not
   bool d_planar;
-  
+
 };
 
 } // end Geometry namespace

@@ -23,9 +23,9 @@
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
-#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
@@ -34,11 +34,11 @@
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "samplePhotonDistributionCore.hpp"
-		      
+
 //! Main function for the sample_isd (Incoherent Scattering Dist.) tool
 int main( int argc, char** argv )
 {
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   // Set up the command line options
@@ -50,7 +50,7 @@ int main( int argc, char** argv )
 
   // The number of samples
   int samples;
-  
+
   // The cross section alias for scattering distributions
   std::string cross_section_alias;
 
@@ -69,7 +69,7 @@ int main( int argc, char** argv )
   std::string incoherent_model_name = "Waller-Hartree Model";
 
   // The kahn rejection sampling cutoff energy
-  double kahn_cutoff_energy = 
+  double kahn_cutoff_energy =
     MonteCarlo::SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy();
 
   // The number of threads
@@ -118,7 +118,7 @@ int main( int argc, char** argv )
                             "Number of parallel threads" );
 
   sample_isd_clp.throwExceptions( false );
-  
+
   // Parse the command line
   Teuchos::CommandLineProcessor::EParseCommandLineReturn
     parse_return = sample_isd_clp.parse( argc, argv );
@@ -133,13 +133,13 @@ int main( int argc, char** argv )
   // Set up the global OpenMP session
   if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-  
+
   // Extract the energy (range)
   if( energy_range.find( "{" ) >= energy_range.size() &&
       energy_range.find( "}" ) >= energy_range.size() )
   {
     std::istringstream iss( energy_range );
-    
+
     energies.resize( 1 );
     iss >> energies[0];
   }
@@ -151,11 +151,11 @@ int main( int argc, char** argv )
   }
 
   // Extract the model type
-  incoherent_model = 
+  incoherent_model =
     MonteCarlo::convertStringToIncoherentModelTypeEnum( incoherent_model_name );
 
   // Check if the kahn cutoff energy is valid
-  if( kahn_cutoff_energy < 
+  if( kahn_cutoff_energy <
       MonteCarlo::SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() )
   {
     std::cerr << "Error: the Kahn rejection cutoff energy must not be less "
@@ -167,9 +167,9 @@ int main( int argc, char** argv )
   }
 
   // Create the incoherent scattering distribution
-  Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution> 
+  Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>
     scattering_dist;
-  
+
   if( cross_section_alias.size() > 0 )
   {
     boost::unordered_set<std::string> photoatom_aliases;
@@ -178,15 +178,15 @@ int main( int argc, char** argv )
     // Open the cross_sections.xml file
     std::string cross_sections_xml_file = cross_section_directory;
     cross_sections_xml_file += "/cross_sections.xml";
-    
-    Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
+
+    Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info =
       Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
-    
+
     std::string photoatom_file_path, photoatom_file_type, photoatom_table_name;
     int photoatom_file_start_line;
     double atomic_weight;
 
-    MonteCarlo::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
+    Data::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
 						  cross_section_directory,
 						  cross_section_alias,
 						  *cross_sections_table_info,
@@ -196,10 +196,10 @@ int main( int argc, char** argv )
 						  photoatom_file_start_line,
 						  atomic_weight );
 
-    if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::ace_file )
+    if( photoatom_file_type == Data::CrossSectionsXMLProperties::ace_file )
     {
       std::cerr << "Loading ACE photoatomic cross section table "
-		<< photoatom_table_name << " (" << cross_section_alias 
+		<< photoatom_table_name << " (" << cross_section_alias
 		<< ") ... ";
 
       if( subshell != 0 )
@@ -213,9 +213,9 @@ int main( int argc, char** argv )
 					     photoatom_table_name,
 					     photoatom_file_start_line,
 					     true );
-    
+
       // Create the XSS data extractor
-      Data::XSSEPRDataExtractor xss_data_extractor( 
+      Data::XSSEPRDataExtractor xss_data_extractor(
 					 ace_file_handler.getTableNXSArray(),
 					 ace_file_handler.getTableJXSArray(),
 					 ace_file_handler.getTableXSSArray() );
@@ -228,13 +228,13 @@ int main( int argc, char** argv )
 							  incoherent_model,
 							  kahn_cutoff_energy );
     }
-    else if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::native_file )
+    else if( photoatom_file_type == Data::CrossSectionsXMLProperties::native_file )
     {
       std::cerr << "Loading native photoatomic cross section table "
 		<< photoatom_table_name << " ... ";
 
       // Create the epr data container
-      Data::ElectronPhotonRelaxationDataContainer 
+      Data::ElectronPhotonRelaxationDataContainer
 	data_container( photoatom_file_path );
 
       std::cerr << "done." << std::endl;
@@ -249,7 +249,7 @@ int main( int argc, char** argv )
     else
     {
       THROW_EXCEPTION( std::logic_error,
-		       "Error: photoatomic file type " 
+		       "Error: photoatomic file type "
 		       << photoatom_file_type <<
 		       " is not supported!" );
     }
@@ -265,7 +265,7 @@ int main( int argc, char** argv )
   {
     sofile.reset( new std::ofstream( sample_output_file.c_str() ) );
     dofile.reset( new std::ofstream( dist_output_file.c_str() ) );
-    
+
     sofile->precision( 18 );
     dofile->precision( 18 );
   }
@@ -278,19 +278,19 @@ int main( int argc, char** argv )
 
   // Populate the evaluation cosines array
   Teuchos::Array<double> pdf_evaluation_cosines( 2001 );
-  
+
   #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   for( unsigned i = 0; i < 1000; ++i )
     pdf_evaluation_cosines[i] = -1.0 + 1.9*i/1e3;
-      
+
   #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   for( unsigned i = 0; i <= 1000; ++i )
     pdf_evaluation_cosines[i+1000] = 0.9 + 0.1*i/1e3;
 
   // Generate the samples
-  Teuchos::RCP<const MonteCarlo::PhotonScatteringDistribution> 
+  Teuchos::RCP<const MonteCarlo::PhotonScatteringDistribution>
     base_scattering_dist =
-    Teuchos::rcp_dynamic_cast<const MonteCarlo::PhotonScatteringDistribution>( 
+    Teuchos::rcp_dynamic_cast<const MonteCarlo::PhotonScatteringDistribution>(
 							     scattering_dist );
   return samplePhotonDistributionCore( base_scattering_dist,
                                        energies,
@@ -301,5 +301,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end sample_isd.cpp 
+// end sample_isd.cpp
 //---------------------------------------------------------------------------//

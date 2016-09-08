@@ -81,7 +81,7 @@ public:
   static UnitAwarePolynomialDistribution fromUnitlessDistribution( const UnitAwarePolynomialDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
-  UnitAwarePolynomialDistribution& operator=( 
+  UnitAwarePolynomialDistribution& operator=(
 			const UnitAwarePolynomialDistribution& dist_instance );
 
   //! Destructor
@@ -134,7 +134,7 @@ private:
 
   // Test if the distribution can be used for sampling (each term must be a
   // positive function
-  static bool isValidSamplingDistribution( 
+  static bool isValidSamplingDistribution(
 				  const Teuchos::Array<double>& coefficients,
 				  const IndepQuantity min_indep_limit,
 				  const IndepQuantity max_indep_limit );
@@ -144,12 +144,12 @@ private:
   friend class UnitAwarePolynomialDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = 
+  static const OneDDistributionType distribution_type =
     POLYNOMIAL_DISTRIBUTION;
 
   // The polynomial coefficients (ignore units since each will be different)
   Teuchos::Array<double> d_coefficients;
-  
+
   // The sampling cdf for the probability mixing technique
   Teuchos::Array<double> d_term_sampling_cdf;
 
@@ -185,7 +185,7 @@ public:
 
     return iss.str();
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 			      const Utility::PolynomialDistribution& instance )
   {
     return name();

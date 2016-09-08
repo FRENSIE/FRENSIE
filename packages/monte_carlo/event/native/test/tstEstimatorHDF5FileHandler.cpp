@@ -38,7 +38,7 @@
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unsigned );		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unsigned_l );	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unsigned_ll );	\
-    
+
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
@@ -52,14 +52,14 @@ const std::string hdf5_file_name( "test_estimators.h5" );
 TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, constructor_ownership )
 {
   std::shared_ptr<MonteCarlo::EstimatorHDF5FileHandler> file_handler;
-  TEST_NOTHROW( file_handler.reset( 
+  TEST_NOTHROW( file_handler.reset(
 		new MonteCarlo::EstimatorHDF5FileHandler( hdf5_file_name ) ) );
 
   // Make sure setter methods work
   TEST_NOTHROW( file_handler->setSurfaceEstimator( 0u ) );
-  
+
   file_handler.reset();
-  
+
   TEST_NOTHROW( file_handler.reset( new MonteCarlo::EstimatorHDF5FileHandler(
 	hdf5_file_name,
 	MonteCarlo::EstimatorHDF5FileHandler::APPEND_ESTIMATOR_HDF5_FILE ) ) );
@@ -92,7 +92,7 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, constructor_ownership )
 // Check that the handler can be constructed
 TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, constructor_sharing )
 {
-  std::shared_ptr<Utility::HDF5FileHandler> shared_handler( 
+  std::shared_ptr<Utility::HDF5FileHandler> shared_handler(
 						new Utility::HDF5FileHandler );
   shared_handler->openHDF5FileAndOverwrite( hdf5_file_name );
 
@@ -100,11 +100,11 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, constructor_sharing )
 		  new MonteCarlo::EstimatorHDF5FileHandler( shared_handler ) );
 
   estimator_file_handler->setSurfaceEstimator( 0u );
-  
+
   estimator_file_handler.reset();
 
   TEST_ASSERT( shared_handler->hasOpenFile() );
-  
+
   shared_handler->closeHDF5File();
 }
 
@@ -148,7 +148,7 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, setMeshEstimator )
 }
 
 //---------------------------------------------------------------------------//
-// Check if an estimator can be tested for existence 
+// Check if an estimator can be tested for existence
 TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, doesEstimatorExist )
 {
   MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
@@ -169,16 +169,16 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, set_getEstimatorMultiplier )
 
   // Write new multiplier
   file_handler.setEstimatorMultiplier( 0u, 1.0 );
-  
+
   double multiplier;
-  
+
   file_handler.getEstimatorMultiplier( 0u, multiplier );
 
   TEST_EQUALITY_CONST( multiplier, 1.0 );
 
   // Overwrite the multiplier
   file_handler.setEstimatorMultiplier( 0u, 2.0 );
-  
+
   file_handler.getEstimatorMultiplier( 0u, multiplier );
 
   TEST_EQUALITY_CONST( multiplier, 2.0 );
@@ -186,23 +186,23 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, set_getEstimatorMultiplier )
 
 //---------------------------------------------------------------------------//
 // Check if the estimator total norm constant can be set
-TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, 
+TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
 		   set_getEstimatorTotalNormConstant )
 {
   MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
 
   // Write new multiplier
   file_handler.setEstimatorTotalNormConstant( 0u, 10.0 );
-  
+
   double total_norm_constant;
-  
+
   file_handler.getEstimatorTotalNormConstant( 0u, total_norm_constant );
 
   TEST_EQUALITY_CONST( total_norm_constant, 10.0 );
 
   // Overwrite the multiplier
   file_handler.setEstimatorTotalNormConstant( 0u, 20.0 );
-  
+
   file_handler.getEstimatorTotalNormConstant( 0u, total_norm_constant );
 
   TEST_EQUALITY_CONST( total_norm_constant, 20.0 );
@@ -210,7 +210,7 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
 
 //---------------------------------------------------------------------------//
 // Check if the estimator response function ordering can be set
-TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, 
+TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
 		   set_getEstimatorResponseFunctionOrdering )
 {
   MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
@@ -222,7 +222,7 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
   ordering[2] = 5u;
 
   file_handler.setEstimatorResponseFunctionOrdering( 1u, ordering );
-  
+
   Teuchos::Array<unsigned> ordering_copy;
 
   file_handler.getEstimatorResponseFunctionOrdering( 1u, ordering_copy );
@@ -258,9 +258,9 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
   file_handler.setEstimatorDimensionOrdering( 2u, ordering );
 
   Teuchos::Array<MonteCarlo::PhaseSpaceDimension> ordering_copy;
-  
+
   file_handler.getEstimatorDimensionOrdering( 2u, ordering_copy );
-  
+
   TEST_COMPARE_ARRAYS( ordering, ordering_copy );
 
   // Overwrite the ordering
@@ -289,7 +289,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
     bin_boundaries( 2 );
   bin_boundaries[0] = 0;
   bin_boundaries[1] = 1;
-  
+
   file_handler.setEstimatorBinBoundaries<dimension>( 0u, bin_boundaries );
 
   Teuchos::Array<typename MonteCarlo::PhaseSpaceDimensionTraits<dimension>::dimensionType>
@@ -300,16 +300,16 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   TEST_COMPARE_ARRAYS( bin_boundaries, bin_boundaries_copy );
 }
 
-DIMENSION_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler, 
+DIMENSION_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler,
 				   set_getEstimatorBinBoundaries );
- 
+
 //---------------------------------------------------------------------------//
 // Check that the estimator entities can be set
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
 				   set_getEstimatorEntities_array,
 				   EntityIdType )
 {
-  Teuchos::RCP<MonteCarlo::EstimatorHDF5FileHandler> 
+  Teuchos::RCP<MonteCarlo::EstimatorHDF5FileHandler>
     file_handler( new MonteCarlo::EstimatorHDF5FileHandler( hdf5_file_name ) );
 
   // Write the new entity data
@@ -329,10 +329,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
 
   // Overwrite the entity data (make sure large arrays can be written)
   file_handler.reset();
-  file_handler.reset( new MonteCarlo::EstimatorHDF5FileHandler( 
+  file_handler.reset( new MonteCarlo::EstimatorHDF5FileHandler(
        hdf5_file_name,
        MonteCarlo::EstimatorHDF5FileHandler::OVERWRITE_ESTIMATOR_HDF5_FILE ) );
-  
+
   entity_data.resize( 500000 );
 
   for( unsigned i = 0; i < entity_data.size(); ++i )
@@ -345,7 +345,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   UTILITY_TEST_COMPARE_ARRAYS( entity_data, entity_data_copy );
 }
 
-ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler, 
+ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler,
 				   set_getEstimatorEntities_array );
 
 //---------------------------------------------------------------------------//
@@ -394,7 +394,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   TEST_EQUALITY_CONST( entity_data_copy.find( 20 )->second, 1.0 );
 }
 
-ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler, 
+ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler,
 				   set_getEstimatorEntities_map );
 
 //---------------------------------------------------------------------------//
@@ -422,12 +422,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   TEST_EQUALITY_CONST( norm_constant, 2.0 );
 }
 
-ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler, 
+ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler,
 				   set_getEntityNormConstant );
 
 //---------------------------------------------------------------------------//
 // Check that an entity can be tested for existence
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
 				   isEntityAssignedToEstimator,
 				   EntityIdType )
 {
@@ -443,7 +443,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   TEST_ASSERT(!file_handler.isEntityAssignedToEstimator<EntityIdType>( 0u, 3));
 }
 
-ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler, 
+ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler,
 				   isEntityAssignedToEstimator );
 
 //---------------------------------------------------------------------------//
@@ -459,9 +459,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   raw_bin_data[0]( 1.0, 1.0 );
   raw_bin_data[1]( 0.0, 0.0 );
   raw_bin_data[2]( 0.5, 1.5 );
-  
+
   file_handler.setRawEstimatorEntityBinData<EntityIdType>(0u, 0, raw_bin_data);
-  
+
   Teuchos::Array<Utility::Pair<double,double> > raw_bin_data_copy;
 
   file_handler.getRawEstimatorEntityBinData<EntityIdType>( 0u,
@@ -476,7 +476,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   raw_bin_data[2]( 3.0, 9.2 );
 
   file_handler.setRawEstimatorEntityBinData<EntityIdType>(0u, 0, raw_bin_data);
-  
+
   file_handler.getRawEstimatorEntityBinData<EntityIdType>( 0u,
 							   0,
 							   raw_bin_data_copy );
@@ -500,15 +500,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   processed_bin_data[0]( 1.0, 1.0 );
   processed_bin_data[1]( 0.0, 0.0 );
   processed_bin_data[2]( 0.5, 1.5 );
-  
-  file_handler.setProcessedEstimatorEntityBinData<EntityIdType>( 
-							   0u, 
-							   0, 
+
+  file_handler.setProcessedEstimatorEntityBinData<EntityIdType>(
+							   0u,
+							   0,
 							   processed_bin_data);
-  
+
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data_copy;
 
-  file_handler.getProcessedEstimatorEntityBinData<EntityIdType>( 
+  file_handler.getProcessedEstimatorEntityBinData<EntityIdType>(
 						     0u,
 						     0,
 						     processed_bin_data_copy );
@@ -520,12 +520,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   processed_bin_data[1]( 1.0, 5.5 );
   processed_bin_data[2]( 3.0, 9.2 );
 
-  file_handler.setProcessedEstimatorEntityBinData<EntityIdType>( 
-							  0u, 
-							  0, 
+  file_handler.setProcessedEstimatorEntityBinData<EntityIdType>(
+							  0u,
+							  0,
 							  processed_bin_data );
-  
-  file_handler.getProcessedEstimatorEntityBinData<EntityIdType>( 
+
+  file_handler.getProcessedEstimatorEntityBinData<EntityIdType>(
 						     0u,
 						     0,
 						     processed_bin_data_copy );
@@ -545,20 +545,20 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
 
   // Write the new entity total data
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 3 );
   raw_total_data[0]( 1.0, 1.0, 1.0, 1.0 );
   raw_total_data[1]( 0.0, 0.0, 0.0, 0.0 );
   raw_total_data[2]( 0.5, 1.5, 2.5, 4.5 );
-  
-  file_handler.setRawEstimatorEntityTotalData<EntityIdType>( 0u, 
-							     0, 
+
+  file_handler.setRawEstimatorEntityTotalData<EntityIdType>( 0u,
+							     0,
 							     raw_total_data );
-  
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data_copy;
 
-  file_handler.getRawEstimatorEntityTotalData<EntityIdType>( 
+  file_handler.getRawEstimatorEntityTotalData<EntityIdType>(
 							 0u,
 							 0,
 							 raw_total_data_copy );
@@ -570,11 +570,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   raw_total_data[1]( 1.0, 5.5, 2.4, 3.9 );
   raw_total_data[2]( 3.0, 9.2, 8.7, 6.3 );
 
-  file_handler.setRawEstimatorEntityTotalData<EntityIdType>( 0u, 
-							     0, 
+  file_handler.setRawEstimatorEntityTotalData<EntityIdType>( 0u,
+							     0,
 							     raw_total_data );
-  
-  file_handler.getRawEstimatorEntityTotalData<EntityIdType>( 
+
+  file_handler.getRawEstimatorEntityTotalData<EntityIdType>(
 							 0u,
 							 0,
 							 raw_total_data_copy );
@@ -594,26 +594,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
 
   // Write the new entity total data
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data( 3 );
   processed_total_data[0]( 1.0, 1.0, 1.0, 1.0 );
   processed_total_data[1]( 0.0, 0.0, 0.0, 0.0 );
   processed_total_data[2]( 0.5, 1.5, 2.5, 4.5 );
-  
-  file_handler.setProcessedEstimatorEntityTotalData<EntityIdType>( 
-							0u, 
-							0, 
+
+  file_handler.setProcessedEstimatorEntityTotalData<EntityIdType>(
+							0u,
+							0,
 							processed_total_data );
-  
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data_copy;
 
-  file_handler.getProcessedEstimatorEntityTotalData<EntityIdType>( 
+  file_handler.getProcessedEstimatorEntityTotalData<EntityIdType>(
 						   0u,
 						   0,
 						   processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 
   // Overwrite the processed total data
@@ -621,17 +621,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   processed_total_data[1]( 1.0, 5.5, 2.4, 3.9 );
   processed_total_data[2]( 3.0, 9.2, 8.7, 6.3 );
 
-  file_handler.setProcessedEstimatorEntityTotalData<EntityIdType>( 
-							0u, 
-							0, 
+  file_handler.setProcessedEstimatorEntityTotalData<EntityIdType>(
+							0u,
+							0,
 							processed_total_data );
-  
-  file_handler.getProcessedEstimatorEntityTotalData<EntityIdType>( 
+
+  file_handler.getProcessedEstimatorEntityTotalData<EntityIdType>(
 						   0u,
 						   0,
 						   processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 }
 
@@ -657,53 +657,53 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   processed_bin_data[1]( 0.0, 0.0 );
   processed_bin_data[2]( 0.5, 1.5 );
 
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 3 );
   raw_total_data[0]( 1.0, 1.0, 1.0, 1.0 );
   raw_total_data[1]( 0.0, 0.0, 0.0, 0.0 );
   raw_total_data[2]( 0.5, 1.5, 2.5, 4.5 );
 
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data( 3 );
   processed_total_data[0]( 1.0, 1.0, 1.0, 1.0 );
   processed_total_data[1]( 0.0, 0.0, 0.0, 0.0 );
   processed_total_data[2]( 0.5, 1.5, 2.5, 4.5 );
-  
+
   // Set the estimator data
   file_handler.setRawEstimatorEntityBinData<EntityIdType>(0u, 0, raw_bin_data);
-  file_handler.setProcessedEstimatorEntityBinData<EntityIdType>( 
-							   0u, 
-							   0, 
+  file_handler.setProcessedEstimatorEntityBinData<EntityIdType>(
+							   0u,
+							   0,
 							   processed_bin_data);
-  file_handler.setRawEstimatorEntityTotalData<EntityIdType>( 0u, 
-							     0, 
+  file_handler.setRawEstimatorEntityTotalData<EntityIdType>( 0u,
+							     0,
 							     raw_total_data );
-  file_handler.setProcessedEstimatorEntityTotalData<EntityIdType>( 
-							0u, 
-							0, 
+  file_handler.setProcessedEstimatorEntityTotalData<EntityIdType>(
+							0u,
+							0,
 							processed_total_data );
-  
+
   // Get the estimator data back
-  Teuchos::Array<Utility::Pair<double,double> > raw_bin_data_copy; 
+  Teuchos::Array<Utility::Pair<double,double> > raw_bin_data_copy;
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data_copy;
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data_copy;
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data_copy;
 
   file_handler.getRawEstimatorEntityBinData<EntityIdType>( 0u,
 							   0,
 							   raw_bin_data_copy );
 
-  file_handler.getProcessedEstimatorEntityBinData<EntityIdType>( 
+  file_handler.getProcessedEstimatorEntityBinData<EntityIdType>(
 						     0u,
 						     0,
 						     processed_bin_data_copy );
-  file_handler.getRawEstimatorEntityTotalData<EntityIdType>( 
+  file_handler.getRawEstimatorEntityTotalData<EntityIdType>(
 							 0u,
 							 0,
 							 raw_total_data_copy );
-  file_handler.getProcessedEstimatorEntityTotalData<EntityIdType>( 
+  file_handler.getProcessedEstimatorEntityTotalData<EntityIdType>(
 						   0u,
 						   0,
 						   processed_total_data_copy );
@@ -712,7 +712,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   UTILITY_TEST_COMPARE_ARRAYS( raw_bin_data, raw_bin_data_copy );
   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 }
 
@@ -732,11 +732,11 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, set_getRawEstimatorTotalBinData )
   raw_total_bin_data[2]( 3.0, 2.5 );
 
   file_handler.setRawEstimatorTotalBinData( 0u, raw_total_bin_data );
-  
+
   Teuchos::Array<Utility::Pair<double,double> > raw_total_bin_data_copy;
 
   file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
 
   // Overwrite the total bin data
@@ -745,14 +745,14 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, set_getRawEstimatorTotalBinData )
   raw_total_bin_data[2]( 9.0, 7.2 );
 
   file_handler.setRawEstimatorTotalBinData( 0u, raw_total_bin_data );
-  
+
   file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
 }
 
 //---------------------------------------------------------------------------// // Check that processed estimator total bin data can be set
-TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, 
+TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
 		   set_getProcessedEstimatorTotalBinData )
 {
   MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
@@ -763,16 +763,16 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
   processed_total_bin_data[1]( 1.0, 0.5 );
   processed_total_bin_data[2]( 3.0, 2.5 );
 
-  file_handler.setProcessedEstimatorTotalBinData( 0u, 
+  file_handler.setProcessedEstimatorTotalBinData( 0u,
 						  processed_total_bin_data );
-  
+
   Teuchos::Array<Utility::Pair<double,double> > processed_total_bin_data_copy;
 
-  file_handler.getProcessedEstimatorTotalBinData( 
-					       0u, 
+  file_handler.getProcessedEstimatorTotalBinData(
+					       0u,
 					       processed_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
 			       processed_total_bin_data_copy );
 
   // Overwrite the total bin data
@@ -780,14 +780,14 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
   processed_total_bin_data[1]( 0.1, 0.2 );
   processed_total_bin_data[2]( 9.0, 7.2 );
 
-  file_handler.setProcessedEstimatorTotalBinData( 0u, 
+  file_handler.setProcessedEstimatorTotalBinData( 0u,
 						  processed_total_bin_data );
-  
-  file_handler.getProcessedEstimatorTotalBinData( 
-					       0u, 
+
+  file_handler.getProcessedEstimatorTotalBinData(
+					       0u,
 					       processed_total_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
 			       processed_total_bin_data_copy );
 }
 
@@ -797,19 +797,19 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, set_getRawEstimatorTotalData )
   MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
 
   // Write the new total  data
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 3 );
   raw_total_data[0]( 0.0, 0.0, 0.0, 0.0 );
   raw_total_data[1]( 1.0, 0.5, 2.0, 1.7 );
   raw_total_data[2]( 3.0, 2.5, 3.0, 4.0 );
 
   file_handler.setRawEstimatorTotalData( 0u, raw_total_data );
-  
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data_copy;
 
   file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
 
   // Overwrite the total  data
@@ -818,33 +818,33 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, set_getRawEstimatorTotalData )
   raw_total_data[2]( 9.0, 7.2, 3.5, 2.6 );
 
   file_handler.setRawEstimatorTotalData( 0u, raw_total_data );
-  
+
   file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
 }
 
 //---------------------------------------------------------------------------// // Check that processed estimator total data can be set
-TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, 
+TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
 		   set_getProcessedEstimatorTotalData )
 {
   MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
 
   // Write the new total  data
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data( 3 );
   processed_total_data[0]( 0.0, 0.0, 0.0, 0.0 );
   processed_total_data[1]( 1.0, 0.5, 2.0, 1.7 );
   processed_total_data[2]( 3.0, 2.5, 3.0, 4.0 );
 
   file_handler.setProcessedEstimatorTotalData( 0u, processed_total_data );
-  
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data_copy;
 
   file_handler.getProcessedEstimatorTotalData( 0u, processed_total_data_copy );
-  
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 
   // Overwrite the total  data
@@ -853,10 +853,10 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler,
   processed_total_data[2]( 9.0, 7.2, 3.5, 2.6 );
 
   file_handler.setProcessedEstimatorTotalData( 0u, processed_total_data );
-  
+
   file_handler.getProcessedEstimatorTotalData( 0u, processed_total_data_copy );
 
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 }
 
@@ -876,13 +876,13 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, set_get_all_total_data )
   processed_total_bin_data[1]( 1.0, 0.5 );
   processed_total_bin_data[2]( 3.0, 2.5 );
 
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 3 );
   raw_total_data[0]( 0.0, 0.0, 0.0, 0.0 );
   raw_total_data[1]( 1.0, 0.5, 2.0, 1.7 );
   raw_total_data[2]( 3.0, 2.5, 3.0, 4.0 );
 
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data( 3 );
   processed_total_data[0]( 0.0, 0.0, 0.0, 0.0 );
   processed_total_data[1]( 1.0, 0.5, 2.0, 1.7 );
@@ -890,32 +890,32 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, set_get_all_total_data )
 
   // Set the total data
   file_handler.setRawEstimatorTotalBinData( 0u, raw_total_bin_data );
-  file_handler.setProcessedEstimatorTotalBinData( 0u, 
+  file_handler.setProcessedEstimatorTotalBinData( 0u,
 						  processed_total_bin_data );
   file_handler.setRawEstimatorTotalData( 0u, raw_total_data );
   file_handler.setProcessedEstimatorTotalData( 0u, processed_total_data );
-  
+
   // Get the total data back
   Teuchos::Array<Utility::Pair<double,double> > raw_total_bin_data_copy;
   Teuchos::Array<Utility::Pair<double,double> > processed_total_bin_data_copy;
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data_copy;
-  Teuchos::Array<Utility::Quad<double,double,double,double> > 
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data_copy;
 
   file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-  file_handler.getProcessedEstimatorTotalBinData( 
-					       0u, 
+  file_handler.getProcessedEstimatorTotalBinData(
+					       0u,
 					       processed_total_bin_data_copy );
   file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
   file_handler.getProcessedEstimatorTotalData( 0u, processed_total_data_copy );
-  
+
   // Compare the retrieved total data
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data, 
-			       processed_total_bin_data_copy );  
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
+			       processed_total_bin_data_copy );
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_data, raw_total_data_copy );
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data, 
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_data,
 			       processed_total_data_copy );
 }
 

@@ -23,7 +23,7 @@ ELSE()
     IF(NumPy_FIND_REQUIRED)
       MESSAGE(FATAL_ERROR "Numpy could not be found! NumPy import failure:\n${_NUMPY_ERROR_VALUE}")
     ENDIF()
-    
+
     SET(NUMPY_FOUND FALSE)
     RETURN()
   ENDIF()
@@ -48,7 +48,7 @@ ELSE()
 
   # Get the version
   STRING(REGEX REPLACE "\\." ";" _NUMPY_VERSION_LIST ${NUMPY_VERSION})
-  
+
   # Check that the version is acceptable
   IF(NumPy_FIND_VERSION)
     IF(${NUMPY_VERSION} VERSION_LESS ${NumPy_FIND_VERSION})

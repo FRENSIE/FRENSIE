@@ -23,7 +23,7 @@ std::shared_ptr<Utility::OneDDistribution> energy_distribution(
 			   new Utility::UniformDistribution( 0.0, 1e6, 1.0 ) );
 
 std::shared_ptr<MonteCarlo::EnergySpaceResponseFunction> response_function(
-	  new MonteCarlo::EnergySpaceResponseFunction( 0, 
+	  new MonteCarlo::EnergySpaceResponseFunction( 0,
 						       "uniform_energy",
 						       energy_distribution ) );
 

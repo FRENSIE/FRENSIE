@@ -24,7 +24,7 @@
 
 #define UNIT_TEST_INSTANTIATION( type, name ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, int, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, int, double ) 
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, int, double )
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -71,21 +71,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellBoundingBox,
   // Create a unit sphere
   Teuchos::RCP<Cell> unit_sphere;
   createTestingCell( unit_sphere );
-  
+
   // Create a bounding box for the unit sphere
-  Geometry::CellBoundingBox<Cell> 
+  Geometry::CellBoundingBox<Cell>
     unit_sphere_bounding_box( unit_sphere, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0 );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::initialize();
-  
+
   // Calculate the cell volume
   unit_sphere_bounding_box.calculateCellVolume();
 
   // Reference cell volume
   ScalarType ref_unit_sphere_vol = 4.0/3.0*Utility::PhysicalConstants::pi;
 
-  TEST_FLOATING_EQUALITY( unit_sphere->getVolume(), 
+  TEST_FLOATING_EQUALITY( unit_sphere->getVolume(),
 			  ref_unit_sphere_vol,
 			  static_cast<ScalarType>( 1e-3 ) );
 }

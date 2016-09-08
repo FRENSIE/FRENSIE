@@ -23,20 +23,20 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 		   sampleEnergy_lower_bound )
 {
-   MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution;
 
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[0].second = 1.0;
-   
+
    energy_distribution[1].first = 2.0;
    energy_distribution[1].second = 2.0;
-   
+
    double restriction_energy = 1.5;
 
    // Create the fake stream
@@ -47,27 +47,27 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
-   TEST_COMPARE(distribution.sampleEnergy(0.5) ,==, 
-     Utility::EvaporationDistribution::sample( 0.5, 
+   TEST_COMPARE(distribution.sampleEnergy(0.5) ,==,
+     Utility::EvaporationDistribution::sample( 0.5,
                                                energy_distribution[0].second,
                                                restriction_energy ));
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 		   sampleEnergy_upper_bound )
 {
-   MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution;
 
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[0].second = 1.0;
-   
+
    energy_distribution[1].first = 2.0;
    energy_distribution[1].second = 2.0;
-   
+
    double restriction_energy = 1.5;
 
    // Create the fake stream
@@ -78,27 +78,27 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
-   TEST_COMPARE(distribution.sampleEnergy(3.0) ,==, 
-     Utility::EvaporationDistribution::sample( 3.0, 
+   TEST_COMPARE(distribution.sampleEnergy(3.0) ,==,
+     Utility::EvaporationDistribution::sample( 3.0,
                                                energy_distribution[1].second,
                                                restriction_energy ));
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 		   sampleEnergy )
 {
-   MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution;
 
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[0].second = 1.0;
-   
+
    energy_distribution[1].first = 2.0;
    energy_distribution[1].second = 2.0;
-   
+
    double restriction_energy = 1.5;
 
    // Create the fake stream
@@ -109,8 +109,8 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
-   TEST_COMPARE(distribution.sampleEnergy(1.5) ,==, 
-     Utility::EvaporationDistribution::sample( 1.5, 
+   TEST_COMPARE(distribution.sampleEnergy(1.5) ,==,
+     Utility::EvaporationDistribution::sample( 1.5,
                                                1.5,
                                                restriction_energy ));
 }

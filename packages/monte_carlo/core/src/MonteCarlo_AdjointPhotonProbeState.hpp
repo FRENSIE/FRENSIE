@@ -33,7 +33,7 @@ public:
   AdjointPhotonProbeState();
 
   //! Constructor
-  AdjointPhotonProbeState( 
+  AdjointPhotonProbeState(
 		       const ParticleState::historyNumberType history_number );
 
   //! Copy constructor (with possible creation of new generation)
@@ -88,7 +88,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::AdjointPhotonProbeState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonProbeState, 
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonProbeState,
 			 "AdjointPhotonProbeState" );
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTON_PROBE_STATE_HPP

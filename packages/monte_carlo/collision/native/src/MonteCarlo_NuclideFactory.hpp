@@ -42,7 +42,7 @@ public:
   { /* ... */ }
 
   //! Create the map of nuclides
-  void createNuclideMap( 
+  void createNuclideMap(
                       std::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
 		      nuclide_map ) const;
 

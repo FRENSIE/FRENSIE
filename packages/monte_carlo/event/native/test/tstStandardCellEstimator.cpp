@@ -23,13 +23,13 @@
 class TestStandardCellEstimator : public MonteCarlo::StandardCellEstimator
 {
 public:
-  TestStandardCellEstimator( 
+  TestStandardCellEstimator(
 	       const unsigned long long id,
 	       const double multiplier,
                const Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>&
 	       entity_ids,
 	       const Teuchos::Array<double>& entity_norm_constants )
-    : MonteCarlo::StandardCellEstimator( id, 
+    : MonteCarlo::StandardCellEstimator( id,
 				     multiplier,
 				     entity_ids,
 				     entity_norm_constants )
@@ -48,7 +48,7 @@ public:
 // Check that estimator bins can be set
 TEUCHOS_UNIT_TEST( StandardCellEstimator, setBinBoundaries )
 {
-  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType> 
+  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>
     cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
@@ -70,7 +70,7 @@ TEUCHOS_UNIT_TEST( StandardCellEstimator, setBinBoundaries )
 
   estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
-  
+
   TEST_EQUALITY_CONST(estimator->getNumberOfBins(MonteCarlo::ENERGY_DIMENSION),
 		      2 );
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 2 );
@@ -86,7 +86,7 @@ TEUCHOS_UNIT_TEST( StandardCellEstimator, setBinBoundaries )
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(MonteCarlo::TIME_DIMENSION),
 		       2 );
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 4 );
-  
+
   Teuchos::Array<unsigned> collision_number_bins( 2 );
   collision_number_bins[0] = 0u;
   collision_number_bins[1] = 10u;
@@ -116,7 +116,7 @@ TEUCHOS_UNIT_TEST( StandardCellEstimator, setBinBoundaries )
 // Check that particle types can be assigned
 TEUCHOS_UNIT_TEST( StandardCellEstimator, setParticleType )
 {
-  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType> 
+  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>
     cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
@@ -124,7 +124,7 @@ TEUCHOS_UNIT_TEST( StandardCellEstimator, setParticleType )
   Teuchos::Array<double> cell_norm_consts( 2 );
   cell_norm_consts[0] = 1.0;
   cell_norm_consts[1] = 2.0;
-  
+
   Teuchos::RCP<MonteCarlo::Estimator> estimator(
 	  new TestStandardCellEstimator( 0ull,
 					 2.0,
@@ -136,9 +136,9 @@ TEUCHOS_UNIT_TEST( StandardCellEstimator, setParticleType )
   particle_types[1] = MonteCarlo::NEUTRON;
   particle_types[2] = MonteCarlo::ADJOINT_PHOTON;
   particle_types[3] = MonteCarlo::ADJOINT_NEUTRON;
-  
+
   estimator->setParticleTypes( particle_types );
-  
+
   TEST_ASSERT( estimator->isParticleTypeAssigned( MonteCarlo::PHOTON ) );
   TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_PHOTON ) );
@@ -159,7 +159,7 @@ TEUCHOS_UNIT_TEST( StandardCellEstimator, setParticleType )
 // Check that the estimator data can be exported
 TEUCHOS_UNIT_TEST( StandardCellEstimator, exportData )
 {
-  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType> 
+  Teuchos::Array<MonteCarlo::StandardCellEstimator::cellIdType>
     cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
@@ -167,7 +167,7 @@ TEUCHOS_UNIT_TEST( StandardCellEstimator, exportData )
   Teuchos::Array<double> cell_norm_consts( 2 );
   cell_norm_consts[0] = 1.0;
   cell_norm_consts[1] = 2.0;
-  
+
   Teuchos::RCP<MonteCarlo::Estimator> estimator(
 	  new TestStandardCellEstimator( 0ull,
 					 2.0,
@@ -180,7 +180,7 @@ TEUCHOS_UNIT_TEST( StandardCellEstimator, exportData )
   estimator->setParticleTypes( particle_types );
 
   // Initialize the hdf5 file
-  std::shared_ptr<Utility::HDF5FileHandler> 
+  std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
   hdf5_file->openHDF5FileAndOverwrite( "test_standard_cell_estimator.h5" );
 

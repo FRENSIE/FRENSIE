@@ -27,17 +27,17 @@ using boost::units::quantity;
 // Check that the inverse momentum units can be converted
 TEUCHOS_UNIT_TEST( InverseMomentumConversion, convert )
 {
-  quantity<InverseAtomicMomentum> 
+  quantity<InverseAtomicMomentum>
     inverse_atomic_momentum_q( 1.0*inverse_mec_momentum );
 
   quantity<InverseMeCMomentum>
     inverse_mec_momentum_q( 1.0*inverse_atomic_momentum );
 
-  TEST_FLOATING_EQUALITY( 
-			inverse_atomic_momentum_q.value(), 
+  TEST_FLOATING_EQUALITY(
+			inverse_atomic_momentum_q.value(),
 			Utility::RawPhysicalConstants::fine_structure_constant,
 			1e-15 );
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 		inverse_mec_momentum_q.value(),
 		Utility::RawPhysicalConstants::inverse_fine_structure_constant,
 		1e-15 );

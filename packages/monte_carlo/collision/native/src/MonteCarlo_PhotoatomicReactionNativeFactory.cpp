@@ -18,6 +18,7 @@
 #include "MonteCarlo_SubshellIncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_CoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_PairProductionPhotoatomicReaction.hpp"
+#include "MonteCarlo_TripletProductionPhotoatomicReaction.hpp"
 #include "MonteCarlo_PhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
@@ -43,7 +44,7 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  std::string model_name = 
+  std::string model_name =
     convertIncoherentModelTypeToString( incoherent_model );
 
   // Use Waller-Hartree data
@@ -53,22 +54,22 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
 
     // Extract the cross section
     Teuchos::ArrayRCP<double> incoherent_cross_section;
-    incoherent_cross_section.assign( 
+    incoherent_cross_section.assign(
 	   raw_photoatom_data.getWallerHartreeIncoherentCrossSection().begin(),
 	   raw_photoatom_data.getWallerHartreeIncoherentCrossSection().end() );
 
-    unsigned threshold_index = 
+    unsigned threshold_index =
       raw_photoatom_data.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex();
 
     // Create the scattering distribution
     Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
 
-    IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
+    IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
 						 raw_photoatom_data,
 						 distribution,
 						 incoherent_model,
 						 kahn_sampling_cutoff_energy );
-    
+
     // Create the incoherent reaction
     incoherent_reactions[0].reset(
 		      new IncoherentPhotoatomicReaction<Utility::LinLin,false>(
@@ -84,8 +85,8 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
     incoherent_reactions.clear();
 
     Teuchos::RCP<PhotoatomicReaction> subshell_incoherent_reaction;
-    
-    std::set<unsigned>::const_iterator subshell_it = 
+
+    std::set<unsigned>::const_iterator subshell_it =
       raw_photoatom_data.getSubshells().begin();
 
     while( subshell_it != raw_photoatom_data.getSubshells().end() )
@@ -96,21 +97,21 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
 	   raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).begin(),
 	   raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).end() );
 
-      unsigned subshell_threshold_index = 
+      unsigned subshell_threshold_index =
 	raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(*subshell_it);
 
       // Create the subshell incoherent distribution
-      Teuchos::RCP<const IncoherentPhotonScatteringDistribution> 
+      Teuchos::RCP<const IncoherentPhotonScatteringDistribution>
 	base_distribution;
 
-      IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
+      IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
 						   raw_photoatom_data,
 						   base_distribution,
 						   incoherent_model,
 						   kahn_sampling_cutoff_energy,
 						   *subshell_it );
-      
-      Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution> 
+
+      Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution>
       distribution = Teuchos::rcp_dynamic_cast<const SubshellIncoherentPhotonScatteringDistribution>( base_distribution );
 
       subshell_incoherent_reaction.reset(
@@ -122,7 +123,7 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
 		   distribution ) );
 
       incoherent_reactions.push_back( subshell_incoherent_reaction );
-      
+
       ++subshell_it;
     }
   }
@@ -146,7 +147,7 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
 	     raw_photoatom_data.getWallerHartreeCoherentCrossSection().begin(),
 	     raw_photoatom_data.getWallerHartreeCoherentCrossSection().end() );
 
-  unsigned threshold_index = 
+  unsigned threshold_index =
     raw_photoatom_data.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex();
 
   // Create the coherent scattering distribution
@@ -154,8 +155,8 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
 
   CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistribution(
 					                    raw_photoatom_data,
-							    distribution ); 
-  
+							    distribution );
+
   // Create the coherent reaction
   coherent_reaction.reset(
 		        new CoherentPhotoatomicReaction<Utility::LinLin,false>(
@@ -185,7 +186,7 @@ void PhotoatomicReactionNativeFactory::createPairProductionReaction(
 	     raw_photoatom_data.getPairProductionCrossSection().begin(),
 	     raw_photoatom_data.getPairProductionCrossSection().end() );
 
-  unsigned threshold_index = 
+  unsigned threshold_index =
     raw_photoatom_data.getPairProductionCrossSectionThresholdEnergyIndex();
 
   pair_production_reaction.reset(
@@ -195,6 +196,37 @@ void PhotoatomicReactionNativeFactory::createPairProductionReaction(
 					 threshold_index,
 					 grid_searcher,
 					 use_detailed_pair_production_data ) );
+}
+
+// Create the triplet production photoatomic reaction
+void PhotoatomicReactionNativeFactory::createTripletProductionReaction(
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& triplet_production_reaction,
+       const bool use_detailed_triplet_production_data )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
+		    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+						      energy_grid.end() ) );
+
+  Teuchos::ArrayRCP<double> triplet_production_cross_section;
+  triplet_production_cross_section.assign(
+	     raw_photoatom_data.getTripletProductionCrossSection().begin(),
+	     raw_photoatom_data.getTripletProductionCrossSection().end() );
+
+  unsigned threshold_index =
+    raw_photoatom_data.getTripletProductionCrossSectionThresholdEnergyIndex();
+
+  triplet_production_reaction.reset(
+               new TripletProductionPhotoatomicReaction<Utility::LinLin,false>(
+				      energy_grid,
+                                      triplet_production_cross_section,
+                                      threshold_index,
+                                      grid_searcher,
+				      use_detailed_triplet_production_data ) );
 }
 
 // Create the total photoelectric photoatomic reaction
@@ -215,18 +247,18 @@ void PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
 	     raw_photoatom_data.getPhotoelectricCrossSection().begin(),
 	     raw_photoatom_data.getPhotoelectricCrossSection().end() );
 
-  unsigned threshold_index = 
+  unsigned threshold_index =
     raw_photoatom_data.getPhotoelectricCrossSectionThresholdEnergyIndex();
 
   // Create the total photoelectric reaction
-  photoelectric_reaction.reset( 
+  photoelectric_reaction.reset(
 		   new PhotoelectricPhotoatomicReaction<Utility::LinLin,false>(
 						   energy_grid,
 						   photoelectric_cross_section,
 						   threshold_index,
 						   grid_searcher ) );
 }
-					       
+
 // Create the subshell photoelectric photoatomic reactions
 void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
@@ -245,7 +277,7 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 
   Teuchos::RCP<PhotoatomicReaction> subshell_photoelectric_reaction;
 
-  std::set<unsigned>::const_iterator subshell_it = 
+  std::set<unsigned>::const_iterator subshell_it =
     raw_photoatom_data.getSubshells().begin();
 
   while( subshell_it != raw_photoatom_data.getSubshells().end() )
@@ -256,7 +288,7 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
       raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).begin(),
       raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).end() );
 
-    unsigned subshell_threshold_index = 
+    unsigned subshell_threshold_index =
       raw_photoatom_data.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( *subshell_it );
 
     subshell_photoelectric_reaction.reset(
@@ -268,7 +300,7 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 	      Data::convertENDFDesignatorToSubshellEnum( *subshell_it ),
 	       raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) ) );
 
-    subshell_photoelectric_reactions.push_back( 
+    subshell_photoelectric_reactions.push_back(
 					     subshell_photoelectric_reaction );
 
     ++subshell_it;

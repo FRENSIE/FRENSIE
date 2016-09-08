@@ -43,7 +43,7 @@ double tol = 1e-12;
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
-void processTwoColumnTestingArray( std::vector<double>& two_col_indep, 
+void processTwoColumnTestingArray( std::vector<double>& two_col_indep,
                                    std::vector<double>& two_col_dep )
 {
 two_col_indep.resize(12);
@@ -75,8 +75,8 @@ two_col_dep[10] = 2.0;
 two_col_dep[11] = 4.0;
 }
 
-void processThreeColumnTestingArray( 
-        std::vector<double>& energy_bin, 
+void processThreeColumnTestingArray(
+        std::vector<double>& energy_bin,
         std::vector<double>& indep_true,
         std::vector<double>& dep_true )
 {
@@ -117,8 +117,8 @@ void processThreeColumnTestingArray(
   dep_true[7] = 1.37794e-1;
 }
 
-void processThreeColumnTestingVector( 
-        std::vector<double>& energy_bin, 
+void processThreeColumnTestingVector(
+        std::vector<double>& energy_bin,
         std::vector<double>& indep_true,
         std::vector<double>& dep_true )
 {
@@ -159,8 +159,8 @@ void processThreeColumnTestingVector(
   dep_true[7] = 1.084120000E+01;
 }
 
-void processFourColumnTestingArray( 
-        std::vector<double>& column_one, 
+void processFourColumnTestingArray(
+        std::vector<double>& column_one,
         std::vector<double>& column_two,
         std::vector<double>& column_three,
         std::vector<double>& column_four )
@@ -197,7 +197,7 @@ void processFourColumnTestingArray(
 
 }
 
-void mapTwoColumnTestingArray( 
+void mapTwoColumnTestingArray(
     std::vector<unsigned>& subshells,
     std::map<unsigned,unsigned>& subshell_data )
 {
@@ -213,8 +213,8 @@ void mapTwoColumnTestingArray(
   }
 }
 
-void mapThreeColumnTestingArray( 
-        std::vector<unsigned>& bin, 
+void mapThreeColumnTestingArray(
+        std::vector<unsigned>& bin,
         std::map<unsigned,double>& indep_true,
         std::map<unsigned,double>& dep_true )
 {
@@ -231,8 +231,8 @@ void mapThreeColumnTestingArray(
   }
 }
 
-void mapThreeColumnTestingArray( 
-        std::vector<double>& energy_bin, 
+void mapThreeColumnTestingArray(
+        std::vector<double>& energy_bin,
         std::map<double,std::vector<double> >& indep_true,
         std::map<double,std::vector<double> >& dep_true )
 {
@@ -251,7 +251,7 @@ void mapThreeColumnTestingArray(
   energy_bin.push_back( bin[0] );
   indep_true.emplace( energy_bin.back(), indep_point );
   dep_true.emplace( energy_bin.back(), dep_point );
-  indep_point.clear(); 
+  indep_point.clear();
   dep_point.clear();
 
   for( int i = 2; i < bin.size(); i++ )
@@ -265,9 +265,9 @@ void mapThreeColumnTestingArray(
   dep_true.emplace( energy_bin.back(), dep_point );
 }
 /*
-void mapFourColumnTestingArray( 
+void mapFourColumnTestingArray(
         std::vector<unsigned>& bin,
-        std::map<unsigned,std::vector<unsigned> >& secondary_bin, 
+        std::map<unsigned,std::vector<unsigned> >& secondary_bin,
         std::map<unsigned,std::map<unsigned,double> >& indep_true,
         std::map<unsigned,std::map<unsigned,double> >& dep_true )
 {
@@ -294,7 +294,7 @@ void mapFourColumnTestingArray(
     dep_true.emplace( bin.back(), dep );
 
     sec_bin.clear();
-    indep.clear(); 
+    indep.clear();
     dep.clear();
 
   for( int i = 3; i < bin.size(); i++ )
@@ -308,7 +308,7 @@ void mapFourColumnTestingArray(
     dep_true.emplace( bin.back(), dep );
 
     sec_bin.clear();
-    indep.clear(); 
+    indep.clear();
     dep.clear();
   }
 }
@@ -322,7 +322,7 @@ public:
   TestENDLFileHandler()
     : ENDLFileHandler()
   { /* ... */ }
-  
+
   TestENDLFileHandler( const std::string &file_name )
     : ENDLFileHandler( file_name )
   { /* ... */ }
@@ -330,7 +330,7 @@ public:
   virtual ~TestENDLFileHandler()
   { /* ... */ }
 
-};  
+};
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -350,7 +350,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, constructor )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, openENDLFile )
 {
   Data::ENDLFileHandler endl_file_handler;
-  
+
   // If DBC is turned on, the constructor will throw an exception and exit
   // if this file does not exist. No Testing Macro is needed.
   endl_file_handler.openENDLFile( first_header_test_file );
@@ -363,7 +363,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, openENDLFile )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, readFirstTableHeader )
 {
   Data::ENDLFileHandler endl_file_handler( first_header_test_file, epics_file_type );
-  
+
   // Values to read from the header
   int atomic_number, atomic_number_true = 99;
   int outgoing_particle_designator,
@@ -376,7 +376,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, readFirstTableHeader )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  
+
   // Test that the values read from the header match their expected values
   TEST_ASSERT( endl_file_handler.validFile() );
 
@@ -406,7 +406,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, readSecondTableHeader )
   // Read the test header file containing an typical second header
   endl_file_handler.readSecondTableHeader( reaction_type,
 					     electron_shell );
-  
+
   // Test that the values read from the header match their expected values
   TEST_EQUALITY( reaction_type, reaction_type_true );
 
@@ -422,7 +422,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, readSecondTableHeader )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, read_full_header_test )
 {
   Data::ENDLFileHandler endl_file_handler( full_header_test_file, epics_file_type );
-  
+
   // Values to read from the header
   int atomic_number, atomic_number_true = 70;
   int outgoing_particle_designator,
@@ -441,7 +441,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, read_full_header_test )
   // Read the second header of the test header file
   endl_file_handler.readSecondTableHeader( reaction_type,
 					     electron_shell );
-  
+
   // Test that the values read from the header match their expected values
   TEST_EQUALITY( atomic_number, atomic_number_true );
 
@@ -465,7 +465,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, read_full_header_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, skipTable )
 {
   Data::ENDLFileHandler endl_file_handler( two_column_table_test_file, epics_file_type );
-  
+
   int atomic_number;
   int outgoing_particle_designator;
   double atomic_mass;
@@ -490,7 +490,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skipTable )
 					    atomic_mass,
 					    interpolation_flag );
   TEST_ASSERT( endl_file_handler.endOfFile() );
-  
+
   // Close the test table file
   endl_file_handler.closeENDLFile();
 }
@@ -500,7 +500,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skipTable )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, processTwoColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( two_column_table_test_file, epics_file_type );
-  
+
   int atomic_number;
   int outgoing_particle_designator;
   double atomic_mass;
@@ -512,7 +512,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processTwoColumnTable )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type,
 					     electron_shell );
 
@@ -542,7 +542,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processTwoColumnTable )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, processThreeColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( three_column_table_test_file, epics_file_type );
-  
+
   int atomic_number;
   int outgoing_particle_designator;
   double atomic_mass;
@@ -565,7 +565,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processThreeColumnTable )
                         column_one,
                         column_two,
                         column_three );
- 
+
   processThreeColumnTestingArray(
     column_one_true,
     column_two_true,
@@ -592,7 +592,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processThreeColumnTable )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, processFourColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( four_column_table_test_file, epics_file_type );
-  
+
   int atomic_number;
   int outgoing_particle_designator;
   double atomic_mass;
@@ -616,7 +616,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processFourColumnTable )
                         column_two,
                         column_three,
                         column_four );
- 
+
   processFourColumnTestingArray(
     column_one_true,
     column_two_true,
@@ -645,7 +645,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, processFourColumnTable )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, mapTwoColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( two_column_table_test_file, epics_file_type );
-  
+
   int atomic_number;
   int outgoing_particle_designator;
   double atomic_mass;
@@ -657,7 +657,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapTwoColumnTable )
 					    outgoing_particle_designator,
 					    atomic_mass,
 					    interpolation_flag );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type,
 					     electron_shell );
 
@@ -694,7 +694,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapTwoColumnTable )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( three_column_table_test_file, epics_file_type );
-  
+
   int atomic_number;
   int outgoing_particle_designator;
   double atomic_mass;
@@ -714,7 +714,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable )
   std::map<unsigned,double> indep, dep, indep_true, dep_true;
 
   endl_file_handler.mapThreeColumnTable( bin, indep, dep );
- 
+
   mapThreeColumnTestingArray( bin_true, indep_true, dep_true );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( bin, bin_true, tol );
@@ -746,7 +746,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable_vector )
   Data::ENDLFileHandler endl_file_handler(
     three_column_table_test_file_vector,
     epics_file_type );
-  
+
   int atomic_number;
   int outgoing_particle_designator;
   double atomic_mass;
@@ -766,7 +766,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable_vector )
   std::map<double,std::vector<double> > indep, dep, indep_true, dep_true;
 
   endl_file_handler.mapThreeColumnTable( bin, indep, dep );
- 
+
   mapThreeColumnTestingArray( bin_true, indep_true, dep_true );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( bin, bin_true, tol );
@@ -796,7 +796,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapThreeColumnTable_vector )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
 {
   Data::ENDLFileHandler endl_file_handler( four_column_table_test_file, epics_file_type );
-  
+
   int atomic_number;
   int outgoing_particle_designator;
   double atomic_mass;
@@ -817,7 +817,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
   std::map<unsigned,std::map<unsigned,double> > indep, dep, indep_true, dep_true;
 
   endl_file_handler.mapFourColumnTable( bin, secondary_bin, indep, dep );
- 
+
   mapFourColumnTestingArray( bin_true, secondary_bin_true, indep_true, dep_true );
 
 
@@ -860,7 +860,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, skip_skip_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_two_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
@@ -878,7 +878,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skip_skip_test )
 
   // Skip the first table
   endl_file_handler.skipTable();
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_2,
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
@@ -894,7 +894,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skip_skip_test )
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
   TEST_EQUALITY( electron_shell_1, electron_shell_2 );
-  
+
   // Skip the second table
   endl_file_handler.skipTable();
 
@@ -916,7 +916,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, skip_skip_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_two_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
@@ -934,7 +934,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
 
   // Skip the first table
   endl_file_handler.skipTable();
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_2,
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
@@ -942,7 +942,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
 
   endl_file_handler.readSecondTableHeader( reaction_type_2,
 					     electron_shell_2 );
-  
+
   // Check that the header info from both tables matches
   TEST_EQUALITY( atomic_number_1, atomic_number_2 );
   TEST_EQUALITY( outgoing_particle_designator_1,
@@ -951,9 +951,9 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
   TEST_EQUALITY( electron_shell_1, electron_shell_2 );
-  
+
   std::vector<double> column_1, column_2;
-  
+
   // process the second table
   endl_file_handler.processTwoColumnTable( column_1, column_2 );
 
@@ -975,7 +975,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_skip_process_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_skip_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_two_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
@@ -992,10 +992,10 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_skip_test )
 					     electron_shell_1 );
 
   std::vector<double> column_1, column_2;
-  
+
   // process the second table
   endl_file_handler.processTwoColumnTable( column_1, column_2 );
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_2,
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
@@ -1006,7 +1006,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_skip_test )
 
   // Skip the second table
   endl_file_handler.skipTable();
-  
+
   // Check that the header info from both tables matches
   TEST_EQUALITY( atomic_number_1, atomic_number_2 );
   TEST_EQUALITY( outgoing_particle_designator_1,
@@ -1034,7 +1034,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_skip_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_two_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
@@ -1042,7 +1042,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
   int reaction_type_1, reaction_type_2;
   int electron_shell_1, electron_shell_2;
   std::vector<double> column_11, column_12, column_21, column_22;
-  
+
 
   endl_file_handler.readFirstTableHeader( atomic_number_1,
 					    outgoing_particle_designator_1,
@@ -1054,7 +1054,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
 
   // process the second table
   endl_file_handler.processTwoColumnTable( column_11, column_12 );
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_2,
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
@@ -1065,7 +1065,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
 
   // process the second table
   endl_file_handler.processTwoColumnTable( column_21, column_22 );
-  
+
   // Check that the header info from both tables matches
   TEST_EQUALITY( atomic_number_1, atomic_number_2 );
   TEST_EQUALITY( outgoing_particle_designator_1,
@@ -1095,36 +1095,36 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, two_column_table_process_process_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_skip_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_three_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
   int interpolation_flag_1, interpolation_flag_2;
   int reaction_type_1, reaction_type_2;
   int electron_shell_1, electron_shell_2;
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_1,
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_1,
 					     electron_shell_1 );
-  
+
   // Skip the first table
   endl_file_handler.skipTable();
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_2,
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
 					    interpolation_flag_2 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_2,
 					     electron_shell_2 );
-  
+
   std::vector<double> column_1;
   std::map<double,std::vector<double> > column_2, column_3;
-  
+
   // process the second table
   endl_file_handler.mapThreeColumnTable( column_1, column_2, column_3 );
 
@@ -1136,7 +1136,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_skip_process_test )
   TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1156,25 +1156,25 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_skip_process_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_skip_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_three_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
   int interpolation_flag_1, interpolation_flag_2;
   int reaction_type_1, reaction_type_2;
   int electron_shell_1, electron_shell_2;
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_1,
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_1,
 					     electron_shell_1 );
-  
+
   std::vector<double> column_1;
   std::map<double,std::vector<double> > column_2, column_3;
-  
+
   // process the second table
   endl_file_handler.mapThreeColumnTable( column_1, column_2, column_3 );
 
@@ -1182,13 +1182,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_skip_test )
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
 					    interpolation_flag_2 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_2,
 					     electron_shell_2 );
-  
+
   // Skip the second table
   endl_file_handler.skipTable();
-  
+
   // Check that the header info from both tables matches
   TEST_EQUALITY( atomic_number_1, atomic_number_2 );
   TEST_EQUALITY( outgoing_particle_designator_1,
@@ -1196,7 +1196,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_skip_test )
   TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1216,25 +1216,25 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_skip_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_three_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
   int interpolation_flag_1, interpolation_flag_2;
   int reaction_type_1, reaction_type_2;
   int electron_shell_1, electron_shell_2;
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_1,
 				       outgoing_particle_designator_1,
 				       atomic_mass_1,
 				       interpolation_flag_1 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_1,
 					electron_shell_1 );
-  
+
   std::vector<double> column_11;
   std::map<double,std::vector<double> > column_12, column_13;
-  
+
   // process the second table
   endl_file_handler.mapThreeColumnTable( column_11, column_12, column_13 );
 
@@ -1242,16 +1242,16 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_process_test )
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
 					    interpolation_flag_2 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_2,
 					     electron_shell_2 );
-  
+
   std::vector<double> column_21;
   std::map<double,std::vector<double> > column_22, column_23;
-  
+
   // process the second table
   endl_file_handler.mapThreeColumnTable( column_21, column_22, column_23 );
-  
+
   // Check that the header info from both tables matches
   TEST_EQUALITY( atomic_number_1, atomic_number_2 );
   TEST_EQUALITY( outgoing_particle_designator_1,
@@ -1259,9 +1259,9 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_process_test )
   TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
   UTILITY_TEST_COMPARE_ARRAYS( column_21, column_11 );
-  
+
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
   endl_file_handler.readFirstTableHeader( atomic_number_1,
@@ -1280,35 +1280,35 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, three_column_table_process_process_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_skip_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_four_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
   int interpolation_flag_1, interpolation_flag_2;
   int reaction_type_1, reaction_type_2;
   int electron_shell_1, electron_shell_2;
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_1,
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_1,
 					     electron_shell_1 );
-  
+
   // Skip the first table
   endl_file_handler.skipTable();
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_2,
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
 					    interpolation_flag_2 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_2,
 					     electron_shell_2 );
-  
+
   std::vector<double> column_1, column_2, column_3, column_4;
-  
+
   // process the second table
   endl_file_handler.processFourColumnTable( column_1, column_2, column_3, column_4 );
 
@@ -1320,7 +1320,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_skip_process_test )
   TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1340,24 +1340,24 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_skip_process_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_skip_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_four_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
   int interpolation_flag_1, interpolation_flag_2;
   int reaction_type_1, reaction_type_2;
   int electron_shell_1, electron_shell_2;
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_1,
 					    outgoing_particle_designator_1,
 					    atomic_mass_1,
 					    interpolation_flag_1 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_1,
 					     electron_shell_1 );
-  
+
   std::vector<double> column_1, column_2, column_3, column_4;
-  
+
   // process the second table
   endl_file_handler.processFourColumnTable( column_1, column_2, column_3, column_4 );
 
@@ -1365,13 +1365,13 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_skip_test )
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
 					    interpolation_flag_2 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_2,
 					     electron_shell_2 );
-  
+
   // Skip the second table
   endl_file_handler.skipTable();
-  
+
   // Check that the header info from both tables matches
   TEST_EQUALITY( atomic_number_1, atomic_number_2 );
   TEST_EQUALITY( outgoing_particle_designator_1,
@@ -1379,7 +1379,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_skip_test )
   TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1399,24 +1399,24 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_skip_test )
 TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_process_test )
 {
   Data::ENDLFileHandler endl_file_handler( two_four_column_tables_test_file, epics_file_type );
-  
+
   int atomic_number_1, atomic_number_2;
   int outgoing_particle_designator_1, outgoing_particle_designator_2;
   double atomic_mass_1, atomic_mass_2;
   int interpolation_flag_1, interpolation_flag_2;
   int reaction_type_1, reaction_type_2;
   int electron_shell_1, electron_shell_2;
-  
+
   endl_file_handler.readFirstTableHeader( atomic_number_1,
 				       outgoing_particle_designator_1,
 				       atomic_mass_1,
 				       interpolation_flag_1 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_1,
 					electron_shell_1 );
-  
+
   std::vector<double> column_11, column_12, column_13, column_14;
-  
+
   // process the second table
   endl_file_handler.processFourColumnTable( column_11, column_12, column_13, column_14 );
 
@@ -1424,15 +1424,15 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_process_test )
 					    outgoing_particle_designator_2,
 					    atomic_mass_2,
 					    interpolation_flag_2 );
-  
+
   endl_file_handler.readSecondTableHeader( reaction_type_2,
 					     electron_shell_2 );
-  
+
   std::vector<double> column_21, column_22, column_23, column_24;
-  
+
   // process the second table
   endl_file_handler.processFourColumnTable( column_21, column_22, column_23, column_24 );
-  
+
   // Check that the header info from both tables matches
   TEST_EQUALITY( atomic_number_1, atomic_number_2 );
   TEST_EQUALITY( outgoing_particle_designator_1,
@@ -1440,9 +1440,9 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_process_test )
   TEST_EQUALITY( atomic_mass_1, atomic_mass_2 );
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
-  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
   UTILITY_TEST_COMPARE_ARRAYS( column_21, column_11 );
-  
+
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
   endl_file_handler.readFirstTableHeader( atomic_number_1,
@@ -1461,7 +1461,7 @@ TEUCHOS_UNIT_TEST( ENDLFileHandler, four_column_table_process_process_test )
 int main( int argc, char* argv[] )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "first_header_test_file",
 		 &first_header_test_file,
 		 "First header test file name" );
@@ -1496,7 +1496,7 @@ int main( int argc, char* argv[] )
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
-  
+
 //---------------------------------------------------------------------------//
 // end tstEPICSFileHandler.cpp
 //---------------------------------------------------------------------------//

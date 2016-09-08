@@ -47,17 +47,17 @@ public:
   typedef PhotoatomCore::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as absorption
-  static const boost::unordered_set<PhotoatomicReactionType>& 
+  static const boost::unordered_set<PhotoatomicReactionType>&
   getAbsorptionReactionTypes();
-					
-  //! Constructor 
+
+  //! Constructor
   template<typename InterpPolicy>
-  Photoatom( 
+  Photoatom(
 	  const std::string& name,
 	  const unsigned atomic_number,
 	  const double atomic_weight,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>& 
+	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>&
 	  grid_searcher,
 	  const ReactionMap& standard_scattering_reactions,
 	  const ReactionMap& standard_absorption_reactions,
@@ -90,7 +90,7 @@ public:
   //! Return the nuclear isomer number
   virtual unsigned getIsomerNumber() const;
 
-  //! Return the atomic weight 
+  //! Return the atomic weight
   double getAtomicWeight() const;
 
   //! Return the temperature of the atom
@@ -99,7 +99,7 @@ public:
   //! Return the total cross section at the desired energy
   double getTotalCrossSection( const double energy ) const;
 
-  //! Return the total cross section from atomic interactions 
+  //! Return the total cross section from atomic interactions
   double getAtomicTotalCrossSection( const double energy ) const;
 
   //! Return the total cross section from nuclear interactions
@@ -124,21 +124,21 @@ public:
   double getNuclearSurvivalProbability( const double energy ) const;
 
   //! Return the cross section for a specific photoatomic reaction
-  double getReactionCrossSection( 
+  double getReactionCrossSection(
 			        const double energy,
 			        const PhotoatomicReactionType reaction ) const;
-  
+
   //! Return the cross section for a specific photonuclear reaction
   virtual double getReactionCrossSection(
 			       const double energy,
 			       const PhotonuclearReactionType reaction ) const;
 
   //! Collide with a photon
-  virtual void collideAnalogue( PhotonState& photon, 
+  virtual void collideAnalogue( PhotonState& photon,
 				ParticleBank& bank ) const;
 
   //! Collide with a photon and survival bias
-  virtual void collideSurvivalBias( PhotonState& photon, 
+  virtual void collideSurvivalBias( PhotonState& photon,
 				    ParticleBank& bank ) const;
 
   //! Return the core
@@ -147,12 +147,12 @@ public:
 private:
 
   // Return the total cross section from atomic interactions with a bin index
-  double getAtomicScatteringCrossSection( 
+  double getAtomicScatteringCrossSection(
 				        const double energy,
 					const unsigned energy_grid_bin ) const;
 
   // Return the absorption cross section from atomic interactions w/ bin index
-  double getAtomicAbsorptionCrossSection( 
+  double getAtomicAbsorptionCrossSection(
 				        const double energy,
 					const unsigned energy_grid_bin ) const;
 
@@ -203,7 +203,7 @@ inline unsigned Photoatom::getIsomerNumber() const
 /*! \details This information is irrelevant for photoatomic reactions. However,
  * it my be important for photonuclear reactions where Doppler broadening of
  * cross sections may be necessary.
- */ 
+ */
 inline double Photoatom::getTemperature() const
 {
   return 0.0;
@@ -214,7 +214,7 @@ inline double Photoatom::getTotalCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
-  
+
   return this->getAtomicTotalCrossSection( energy ) +
     this->getNuclearTotalCrossSection( energy );
 }
@@ -222,7 +222,7 @@ inline double Photoatom::getTotalCrossSection( const double energy ) const
 // Return the total cross section from nuclear interactions
 /*! \details By default, photonuclear reactions are not considered.
  */
-inline double Photoatom::getNuclearTotalCrossSection( 
+inline double Photoatom::getNuclearTotalCrossSection(
 						    const double energy ) const
 {
   return 0.0;
@@ -242,11 +242,11 @@ inline double Photoatom::getAbsorptionCrossSection( const double energy ) const
 // Return the total absorption cross section from nuclear interactions
 /*! \details By default, photonuclear reactions are not considered.
  */
-inline double 
+inline double
 Photoatom::getNuclearAbsorptionCrossSection( const double energy ) const
 {
   return 0.0;
-} 
+}
 
 // Return the crosss ection for a specific photonuclear reaction
 /*! \details By default, photonuclear reactions are not considered.
@@ -265,13 +265,13 @@ inline const PhotoatomCore& Photoatom::getCore() const
 }
 
 // Return the total cross section from atomic interactions with a bin index
-inline double Photoatom::getAtomicScatteringCrossSection( 
+inline double Photoatom::getAtomicScatteringCrossSection(
 					 const double energy,
 				         const unsigned energy_grid_bin ) const
 {
   double cross_section = 0.0;
 
-  ConstReactionMap::const_iterator photoatomic_reaction = 
+  ConstReactionMap::const_iterator photoatomic_reaction =
     d_core.getScatteringReactions().begin();
 
   while( photoatomic_reaction != d_core.getScatteringReactions().end() )
@@ -281,18 +281,18 @@ inline double Photoatom::getAtomicScatteringCrossSection(
 
     ++photoatomic_reaction;
   }
-  
+
   return cross_section;
 }
 
 // Return the absorption cross section from atomic interactions w/ bin index
-inline double Photoatom::getAtomicAbsorptionCrossSection( 
+inline double Photoatom::getAtomicAbsorptionCrossSection(
 					 const double energy,
 					 const unsigned energy_grid_bin ) const
 {
   double cross_section = 0.0;
 
-  ConstReactionMap::const_iterator photoatomic_reaction = 
+  ConstReactionMap::const_iterator photoatomic_reaction =
     d_core.getAbsorptionReactions().begin();
 
   while( photoatomic_reaction != d_core.getAbsorptionReactions().end() )
@@ -302,7 +302,7 @@ inline double Photoatom::getAtomicAbsorptionCrossSection(
 
     ++photoatomic_reaction;
   }
-  
+
   return cross_section;
 }
 

@@ -35,15 +35,15 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
   Teuchos::Array<double> subshell_binding_energies, subshell_occupancies;
   Teuchos::Array<Data::SubshellType> subshell_order;
 
-  std::set<unsigned>::const_iterator subshell_it = 
+  std::set<unsigned>::const_iterator subshell_it =
     raw_photoatom_data.getSubshells().begin();
 
   while( subshell_it != raw_photoatom_data.getSubshells().end() )
   {
-    subshell_order.push_back( 
+    subshell_order.push_back(
 			Data::convertENDFDesignatorToSubshellEnum( *subshell_it ) );
 
-    subshell_binding_energies.push_back( 
+    subshell_binding_energies.push_back(
 		 raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) );
 
     subshell_occupancies.push_back(
@@ -57,7 +57,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
 				   new VoidComptonProfileSubshellConverter() );
 
   // Create the compton profile distributions
-  DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
+  CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
     compton_profiles( subshell_order.size() );
 
   Teuchos::Array<Data::SubshellType> subshell_order_copy = subshell_order;
@@ -69,16 +69,16 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
     new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
       raw_photoatom_data.getComptonProfileMomentumGrid(subshell_order_copy[i]),
       raw_photoatom_data.getComptonProfile( subshell_order_copy[i] ) ) );
-    
+
     compton_profiles[i].reset(
-                      new StandardComptonProfile<Utility::Units::MeCMomentum>( 
+                      new StandardComptonProfile<Utility::Units::MeCMomentum>(
                                                        raw_compton_profile ) );
-      
+
   }
 
-  doppler_broadened_dist.reset( 
+  doppler_broadened_dist.reset(
      new CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy>(
-						subshell_binding_energies, 
+						subshell_binding_energies,
 						subshell_occupancies,
 						subshell_order,
 						converter,
@@ -93,14 +93,14 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
 {
   std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
-  DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution( 
+  DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution(
 							    raw_photoatom_data,
 							    dist );
 
-  doppler_broadened_dist = 
+  doppler_broadened_dist =
     std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
-  
+
 // Create a subshell Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
@@ -110,10 +110,10 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistri
 {
   // Convert the endf subshell to a subshell type
   Data::SubshellType subshell =Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
-  
+
   TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
-		      "Error: the requested endf subshell " << 
+		      "Error: the requested endf subshell " <<
 		      endf_subshell << " is invalid! " );
 
   // Create the Compton profile
@@ -143,12 +143,12 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistri
 {
   std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
-  DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution( 
+  DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution(
 							    raw_photoatom_data,
 							    endf_subshell,
 							    dist );
 
-  doppler_broadened_dist = 
+  doppler_broadened_dist =
     std::dynamic_pointer_cast<const SubshellDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
 

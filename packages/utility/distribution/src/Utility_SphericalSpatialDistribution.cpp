@@ -37,7 +37,7 @@ SphericalSpatialDistribution::SphericalSpatialDistribution(
   testPrecondition( theta_distribution.get() );
   testPrecondition( mu_distribution.get() );
   // Make sure that the theta distribution is valid
-  testPrecondition( theta_distribution->getUpperBoundOfIndepVar() 
+  testPrecondition( theta_distribution->getUpperBoundOfIndepVar()
 		    <= 2*PhysicalConstants::pi );
   testPrecondition( theta_distribution->getLowerBoundOfIndepVar()
 		    >= 0.0 );
@@ -65,30 +65,30 @@ SphericalSpatialDistribution::SphericalSpatialDistribution(
 // Evaluate the spatial distribution
 /*! \details The spherical volume element is r^2*dr*dtheta*dmu. Therefore, when
  * evaluating the radial distribution, the value returned must be divided by
- * the radius squared to account for the volume element. When specifying a 
+ * the radius squared to account for the volume element. When specifying a
  * radial distribution, the r^2 term of the volume element is assumed to be
  * incorporated into the distribution (this means that a power_2 distribution
- * is actually a uniform distribution, a uniform distribution is actually a 
+ * is actually a uniform distribution, a uniform distribution is actually a
  * 1/r^2 disribution, etc.). This implicit handling of the volume element does
  * not effect sampling, only evaluation.
  */
-double SphericalSpatialDistribution::evaluate( 
+double SphericalSpatialDistribution::evaluate(
 				        const double cartesian_point[3] ) const
 {
   double spherical_point[3];
 
-  SphericalSpatialDistribution::convertCartesianCoordsToSpherical( 
+  SphericalSpatialDistribution::convertCartesianCoordsToSpherical(
 							     cartesian_point,
 							     spherical_point );
-  
+
   if( spherical_point[0] == 0.0 )
     spherical_point[0] = sqrt(std::numeric_limits<double>::min());
-  
+
   double distribution_value = d_r_distribution->evaluate( spherical_point[0] )/
     (spherical_point[0]*spherical_point[0]);
   distribution_value *= d_theta_distribution->evaluate( spherical_point[1] );
   distribution_value *= d_mu_distribution->evaluate( spherical_point[2] );
-  
+
   // If one distribution evaluates to inf and another to zero (value = nan),
   // return zero
   if( distribution_value != distribution_value )
@@ -96,17 +96,17 @@ double SphericalSpatialDistribution::evaluate(
 
   // Make sure that the distribution value is valid
   testPostcondition( distribution_value == distribution_value );
-  
+
   return distribution_value;
 }
 
 // Evaluate the spatial distribution PDF
-double SphericalSpatialDistribution::evaluatePDF( 
+double SphericalSpatialDistribution::evaluatePDF(
 					const double cartesian_point[3] ) const
 {
   double spherical_point[3];
 
-  SphericalSpatialDistribution::convertCartesianCoordsToSpherical( 
+  SphericalSpatialDistribution::convertCartesianCoordsToSpherical(
 							     cartesian_point,
 							     spherical_point );
 
@@ -117,7 +117,7 @@ double SphericalSpatialDistribution::evaluatePDF(
   // Make sure that the pdf value is valid
   testPostcondition( !ST::isnaninf( pdf_value ) );
 
-  return pdf_value;    
+  return pdf_value;
 }
 
 // Return a random sample from the distribution
@@ -129,7 +129,7 @@ void SphericalSpatialDistribution::sample( double sampled_point[3] ) const
   const double spherical_point[3] = {d_r_distribution->sample(),
 				     d_theta_distribution->sample(),
 				     d_mu_distribution->sample()};
-  
+
   // Convert the spherical coordinate to cartesian
   convertSphericalCoordsToCartesian( spherical_point, sampled_point, d_axis );
 
@@ -140,7 +140,7 @@ void SphericalSpatialDistribution::sample( double sampled_point[3] ) const
 }
 
 // Return the distribution type
-SpatialDistributionType 
+SpatialDistributionType
 SphericalSpatialDistribution::getDistributionType() const
 {
   return SPHERICAL_SPATIAL_DISTRIBUTION;
@@ -153,17 +153,17 @@ bool SphericalSpatialDistribution::isUniform() const
 }
 
 // Check if the distribution has the same bounds
-bool SphericalSpatialDistribution::hasSameBounds( 
+bool SphericalSpatialDistribution::hasSameBounds(
 				const SpatialDistribution& distribution ) const
 {
   if( this->getDistributionType() == distribution.getDistributionType() )
   {
-    const SphericalSpatialDistribution& true_dist = 
+    const SphericalSpatialDistribution& true_dist =
       dynamic_cast<const SphericalSpatialDistribution&>( distribution );
 
     if( d_axis == true_dist.d_axis )
     {
-      return 
+      return
 	Policy::relError( d_center_x_position,
 			  true_dist.d_center_x_position ) < 1e-9 &&
 	Policy::relError( d_center_y_position,
@@ -197,13 +197,13 @@ bool SphericalSpatialDistribution::hasSameBounds(
 }
 
 // Convert a cartesian coordinate to a spherical coordinate
-void SphericalSpatialDistribution::convertCartesianCoordsToSpherical( 
+void SphericalSpatialDistribution::convertCartesianCoordsToSpherical(
 					      const double cartesian_point[3],
 					      double spherical_point[3] ) const
 {
-  const double origin[3] = 
+  const double origin[3] =
     {d_center_x_position, d_center_y_position, d_center_z_position};
-  
+
   Utility::convertCartesianCoordsToSpherical( cartesian_point,
 					      origin,
 					      spherical_point,

@@ -50,7 +50,7 @@ public:
 TEUCHOS_UNIT_TEST( NuclearScatteringDistribution, getAtomicWeightRatio )
 {
   TestScatteringDistribution scattering_distribution( 2.0 );
-  
+
   TEST_EQUALITY_CONST( scattering_distribution.getAtomicWeightRatio(), 2.0 );
 }
 
@@ -77,7 +77,7 @@ TEUCHOS_UNIT_TEST( NuclearScatteringDistribution, sampleAzimuthalAngle )
 
   azimuthal_angle = scattering_distribution.sampleAzimuthalAngle();
 
-  TEST_FLOATING_EQUALITY( azimuthal_angle, 
+  TEST_FLOATING_EQUALITY( azimuthal_angle,
 			  2*Utility::PhysicalConstants::pi,
 			  1e-15 );
 }

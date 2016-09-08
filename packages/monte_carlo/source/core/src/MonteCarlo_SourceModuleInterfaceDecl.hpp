@@ -25,11 +25,11 @@
  * \ingroup physics_simulation_modules
  *
  * The handling of a source used to generate particles has been abstracted.
- * Currently, there is only one particle generation package that has been 
+ * Currently, there is only one particle generation package that has been
  * created and it is found within the MonteCarlo package. The particle generation
  * package as well as any other packages that may exist can be used in this
  * software without having to change other code modules. The other code modules
- * only interact with the generic source module interface that has been 
+ * only interact with the generic source module interface that has been
  * created.
  */
 
@@ -47,9 +47,9 @@ struct UndefinedSourceHandler
  * \ingroup source_module
  *
  * This struct specifies the interface to the source module. This class must
- * be specialized for a particular source handling package. Attempting to use 
+ * be specialized for a particular source handling package. Attempting to use
  * this class without a specialization will result in a compile time error.
- * The compile time error message is defined by the 
+ * The compile time error message is defined by the
  * MonteCarlo::UndefinedSourceHandler struct.
  */
 template<typename SourceHandler>
@@ -59,7 +59,7 @@ class SourceModuleInterface
 public:
 
   //! Set the source handler instance
-  static inline void setHandlerInstance( 
+  static inline void setHandlerInstance(
 			const std::shared_ptr<SourceHandler>& source_instance )
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
 
@@ -78,7 +78,7 @@ public:
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
 
   //! Export the source data
-  static inline void exportSourceData( 
+  static inline void exportSourceData(
                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
 
@@ -106,7 +106,7 @@ public:
 
 //! Set the source handler instance
 template<typename SourceHandler>
-inline void setSourceHandlerInstance( 
+inline void setSourceHandlerInstance(
 			const std::shared_ptr<SourceHandler>& source_instance )
 {
   SourceModuleInterface<SourceHandler>::setHandlerInstance( source_instance );

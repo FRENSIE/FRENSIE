@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_CompoundStandardParticleSource.hpp
 //! \author Alex Robinson
 //! \brief  Compound standard particle source class declaration.
@@ -25,23 +25,23 @@ namespace MonteCarlo{
 /*! The compound source class
  * \details This class stores an array of the other source classes and can
  * be used to represent more complicated sources (i.e. sources that reside in
- * multiple locations). Each source will have an associated value that is used 
+ * multiple locations). Each source will have an associated value that is used
  * to sample the source that will be used for sampling a particle state.
  */
 class CompoundStandardParticleSource : public ParticleSource
 {
 
 public:
-  
+
   //! Constructor
-  CompoundStandardParticleSource( 
+  CompoundStandardParticleSource(
     const Teuchos::Array<std::shared_ptr<StandardParticleSource> >& sources,
     const Teuchos::Array<double>& source_sampling_weights );
 
   //! Destructor
   ~CompoundStandardParticleSource()
   { /* ... */ }
-  
+
   //! Enable thread support
   void enableThreadSupport( const unsigned threads );
 
@@ -56,7 +56,7 @@ public:
   //! Export the source data
   void exportData(
             const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const;
-  
+
   //! Print a summary of the source data
   void printSummary( std::ostream& os ) const;
 
@@ -69,14 +69,14 @@ public:
 
   //! Return the number of samples
   unsigned long long getNumberOfSamples() const;
-  
+
   //! Return the sampling efficiency from the source
   double getSamplingEfficiency() const;
 
 private:
 
   // The sources (first = source, second = source weight CDF)
-  Teuchos::Array<Utility::Pair<std::shared_ptr<StandardParticleSource>,double> > 
+  Teuchos::Array<Utility::Pair<std::shared_ptr<StandardParticleSource>,double> >
   d_sources;
 };
 

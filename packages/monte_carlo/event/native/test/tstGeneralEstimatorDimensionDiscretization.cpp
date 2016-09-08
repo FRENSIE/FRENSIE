@@ -48,12 +48,12 @@ void initialize( Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization>&
 
   if( add_discrete_lines )
     discretization.resize( 9 );
-  
+
   discretization[0] = 0.0;
   discretization[1] = 1e-5;
   discretization[2] = 1e-4;
   discretization[3] = 1e-3;
-  
+
   if( add_discrete_lines )
   {
     discretization[4] = 1e-3;
@@ -63,14 +63,14 @@ void initialize( Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization>&
     discretization[8] = 1.0;
   }
 
-  dimension_discretization.reset( 
+  dimension_discretization.reset(
                 new MonteCarlo::GeneralEstimatorDimensionDiscretization<dimension>(
 							    discretization ) );
 }
 
 // Initialize an estimator dimension discretization point
 template<>
-void initialize<MonteCarlo::COLLISION_NUMBER_DIMENSION>( 
+void initialize<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
 			Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization>&
 			dimension_discretization,
 			const bool )
@@ -141,13 +141,13 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     value_2 = 0;
     value_3 = 1e-3;
     value_4 = 1e-2;
-    TEST_ASSERT( !discretized_dimension->isValueInDiscretization( 
+    TEST_ASSERT( !discretized_dimension->isValueInDiscretization(
 						   Teuchos::any( value_1 ) ) );
-    TEST_ASSERT( discretized_dimension->isValueInDiscretization( 
+    TEST_ASSERT( discretized_dimension->isValueInDiscretization(
 						   Teuchos::any( value_2 ) ) );
-    TEST_ASSERT( discretized_dimension->isValueInDiscretization( 
+    TEST_ASSERT( discretized_dimension->isValueInDiscretization(
 						   Teuchos::any( value_3 ) ) );
-    TEST_ASSERT( !discretized_dimension->isValueInDiscretization( 
+    TEST_ASSERT( !discretized_dimension->isValueInDiscretization(
 						   Teuchos::any( value_4 ) ) );
   }
   else
@@ -156,13 +156,13 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     value_2 = 1;
     value_3 = 2;
     value_3 = -1; // max value
-    TEST_ASSERT( discretized_dimension->isValueInDiscretization( 
+    TEST_ASSERT( discretized_dimension->isValueInDiscretization(
 						   Teuchos::any( value_1 ) ) );
-    TEST_ASSERT( discretized_dimension->isValueInDiscretization( 
+    TEST_ASSERT( discretized_dimension->isValueInDiscretization(
 						   Teuchos::any( value_2 ) ) );
-    TEST_ASSERT( discretized_dimension->isValueInDiscretization( 
+    TEST_ASSERT( discretized_dimension->isValueInDiscretization(
 						   Teuchos::any( value_3 ) ) );
-    TEST_ASSERT( discretized_dimension->isValueInDiscretization( 
+    TEST_ASSERT( discretized_dimension->isValueInDiscretization(
 						   Teuchos::any( value_4 ) ) );
   }
  }
@@ -205,40 +205,40 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     value_15 = 1.000000000001e-1;
     value_16 = 5e-1;
     value_17 = 1.0;
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_1 ) ), 0u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_2 ) ), 0u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_3 ) ), 0u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_4 ) ), 1u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_5 ) ), 1u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_6 ) ), 2u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_7 ) ), 2u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_8 ) ), 3u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_9 ) ), 4u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					      Teuchos::any( value_10 ) ), 4u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					      Teuchos::any( value_11 ) ), 4u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					      Teuchos::any( value_12 ) ), 5u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					      Teuchos::any( value_13 ) ), 5u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					      Teuchos::any( value_14 ) ), 6u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					      Teuchos::any( value_15 ) ), 7u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					      Teuchos::any( value_16 ) ), 7u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					      Teuchos::any( value_17 ) ), 7u );
   }
   else
@@ -247,14 +247,14 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     value_2 = 1;
     value_3 = 2;
     value_4 = -1; // max value
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_1 ) ), 0u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_2 ) ), 1u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_3 ) ), 2u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					       Teuchos::any( value_4 ) ), 2u );
   }
 
@@ -288,145 +288,145 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     particle.setEnergy( 1e-15 );
     particle.setTime( 0.0 );
     particle_wrapper.setAngleCosine( 0.0 );
-    
+
     value_17 = 1.0;
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 0u );
 
     particle.setEnergy( 5e-6 );
     particle.setTime( 5e-6 );
     particle_wrapper.setAngleCosine( 5e-6 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 0u );
 
     particle.setEnergy( 1e-5 );
     particle.setTime( 1e-5 );
     particle_wrapper.setAngleCosine( 1e-5 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 0u );
 
     particle.setEnergy( 5e-5 );
     particle.setTime( 5e-5 );
     particle_wrapper.setAngleCosine( 5e-5 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 1u );
 
     particle.setEnergy( 1e-4 );
     particle.setTime( 1e-4 );
     particle_wrapper.setAngleCosine( 1e-4 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 1u );
 
     particle.setEnergy( 5e-4 );
     particle.setTime( 5e-4 );
     particle_wrapper.setAngleCosine( 5e-4 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 2u );
 
     particle.setEnergy( 9.9999999999999e-4 );
     particle.setTime( 9.9999999999999e-4 );
     particle_wrapper.setAngleCosine( 9.9999999999999e-4 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 2u );
 
     particle.setEnergy( 1e-3 );
     particle.setTime( 1e-3 );
     particle_wrapper.setAngleCosine( 1e-3 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 3u );
 
     particle.setEnergy( 1.0000000000001e-3 );
     particle.setTime( 1.0000000000001e-3 );
     particle_wrapper.setAngleCosine( 1.0000000000001e-3 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 4u );
 
     particle.setEnergy( 5e-3 );
     particle.setTime( 5e-3 );
     particle_wrapper.setAngleCosine( 5e-3 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 4u );
 
     particle.setEnergy( 1e-2 );
     particle.setTime( 1e-2 );
     particle_wrapper.setAngleCosine( 1e-2 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 4u );
 
     particle.setEnergy( 5e-2 );
     particle.setTime( 5e-2 );
     particle_wrapper.setAngleCosine( 5e-2 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 5u );
 
     particle.setEnergy( 9.999999999999e-2 );
     particle.setTime( 9.999999999999e-2 );
     particle_wrapper.setAngleCosine( 9.999999999999e-2 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 5u );
-    
+
     particle.setEnergy( 1e-1 );
     particle.setTime( 1e-1 );
     particle_wrapper.setAngleCosine( 1e-1 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 6u );
 
     particle.setEnergy( 1.000000000001e-1 );
     particle.setTime( 1.000000000001e-1 );
     particle_wrapper.setAngleCosine( 1.000000000001e-1 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 7u );
-    
+
     particle.setEnergy( 5e-1 );
     particle.setTime( 5e-1 );
     particle_wrapper.setAngleCosine( 5e-1 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 7u );
 
     particle.setEnergy( 1.0 );
     particle.setTime( 1.0 );
     particle_wrapper.setAngleCosine( 1.0 );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 7u );
   }
   else
   {
     MonteCarlo::NeutronState particle( 0ull );
     MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					              particle_wrapper ), 0u );
 
     particle.incrementCollisionNumber();
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					              particle_wrapper ), 1u );
 
     particle.incrementCollisionNumber();
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					              particle_wrapper ), 2u );
 
     particle.incrementCollisionNumber();
-    
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
 					              particle_wrapper ), 2u );
   }
 
@@ -446,11 +446,11 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
   typedef MonteCarlo::PhaseSpaceDimensionTraits<dimension> EPSDT;
 
   Teuchos::Array<typename EPSDT::dimensionType> discretization;
-  
+
   if( dimension != MonteCarlo::COLLISION_NUMBER_DIMENSION )
   {
     discretization.resize( 9 );
-    
+
     discretization[0] = 0.0;
     discretization[1] = 1e-5;
     discretization[2] = 1e-4;
@@ -464,31 +464,31 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
   else
   {
     discretization.resize( 4 );
-    
+
     discretization[0] = 0u;
     discretization[1] = 1u;
     discretization[2] = 2u;
     discretization[3] = std::numeric_limits<unsigned>::max();
   }
 
-  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> 
-    discretized_dimension( 
+  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization>
+    discretized_dimension(
             new MonteCarlo::GeneralEstimatorDimensionDiscretization<dimension>(
 							    discretization ) );
 
   // Set up the EstimatorHDF5FileHandler
   std::ostringstream oss;
   oss << dimension << ".h5";
-  
+
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( oss.str() );
-  
+
   discretized_dimension->exportData( 0u, hdf5_file_handler );
   discretized_dimension->exportData( 10u, hdf5_file_handler );
-  
+
   // Make sure the data was written to the correct estimators
   Teuchos::Array<typename EPSDT::dimensionType> discretization_copy;
 
-  hdf5_file_handler.getEstimatorBinBoundaries<dimension>( 0u, 
+  hdf5_file_handler.getEstimatorBinBoundaries<dimension>( 0u,
 							  discretization_copy);
 
   TEST_COMPARE_ARRAYS( discretization, discretization_copy );
@@ -498,7 +498,7 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
 
   TEST_COMPARE_ARRAYS( discretization, discretization_copy );
 
-  TEST_THROW( hdf5_file_handler.getEstimatorBinBoundaries<dimension>( 
+  TEST_THROW( hdf5_file_handler.getEstimatorBinBoundaries<dimension>(
 							 1u,
 							 discretization_copy ),
 	      std::runtime_error );

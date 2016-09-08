@@ -3,7 +3,7 @@
 //! \file   Utility_TetrahedronHelpers.hpp
 //! \author Alex Robinson, Eli Moll
 //! \brief  Tetrahedron helper functions
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef UTILITY_TETRAHEDRON_HELPERS_HPP
@@ -48,7 +48,7 @@ void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 
 //! Calculate tetrahedron barycentric transform matrix
 template<>
-void calculateBarycentricTransformMatrix<moab::Matrix3>( 
+void calculateBarycentricTransformMatrix<moab::Matrix3>(
 					       const double vertex_a[3],
 					       const double vertex_b[3],
 					       const double vertex_c[3],
@@ -69,19 +69,19 @@ void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 					  const moab::CartVect& reference_vertex,
 					  double transform_arrays[9] );
 
-//! Return if a point is in a tet 
+//! Return if a point is in a tet
 template<typename TestPoint, typename ReferencePoint, typename Matrix>
 bool isPointInTet( const TestPoint& point,
                    const ReferencePoint& reference_vertex,
                    const Matrix& matrix,
 		   const double tol = 1e-6 );
-                   
+
 //! Return if a point is in a tet
 template<typename TestPoint, typename ReferencePoint>
 bool isPointInTet( const TestPoint& point,
                    const ReferencePoint& reference_vertex,
 		   const double barycentric_array[9] );
-               
+
 // Calculate the volume of a tetrahedron
 inline double calculateTetrahedronVolume( const moab::CartVect& vertex_a,
 					  const moab::CartVect& vertex_b,
@@ -99,7 +99,7 @@ template<typename Matrix>
 inline void calculateBarycentricTransformMatrix(
 					  const moab::CartVect& vertex_a,
 					  const moab::CartVect& vertex_b,
-					  const moab::CartVect& vertex_c, 
+					  const moab::CartVect& vertex_c,
 					  const moab::CartVect& reference_vertex,
 					  Matrix& matrix )
 {
@@ -120,7 +120,7 @@ inline void calculateBarycentricTransformMatrix( const double vertex_a[3],
   // Create temporary matrix
   Teuchos::SerialDenseMatrix<int,double> tmp_matrix( 3, 3 );
 
-  calculateBarycentricTransformMatrix( vertex_a, 
+  calculateBarycentricTransformMatrix( vertex_a,
 				       vertex_b,
 				       vertex_c,
 				       reference_vertex,
@@ -153,10 +153,10 @@ inline void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 				              transform_arrays );
 }
 
-// Return if a point is in a tet     
-template<typename TestPoint, typename ReferencePoint>                         
+// Return if a point is in a tet
+template<typename TestPoint, typename ReferencePoint>
 inline bool isPointInTet( const TestPoint& point,
-                          const ReferencePoint& reference_vertex,    
+                          const ReferencePoint& reference_vertex,
 			  double barycentric_array[9] )
 {
   // Create temporary matrix
@@ -170,7 +170,7 @@ inline bool isPointInTet( const TestPoint& point,
   tmp_matrix( 2, 0 ) = barycentric_array[6];
   tmp_matrix( 2, 1 ) = barycentric_array[7];
   tmp_matrix( 2, 2 ) = barycentric_array[8];
-  
+
   return isPointInTet( point, reference_vertex, tmp_matrix );
 }
 

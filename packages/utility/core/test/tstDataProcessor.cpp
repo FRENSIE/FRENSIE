@@ -59,7 +59,7 @@
   typedef Utility::Quad<unsigned,double,unsigned,double> quad_u_d_u_d;	\
   typedef Utility::Quad<unsigned,unsigned,unsigned,double> quad_u_u_u_d; \
   typedef Utility::Quad<unsigned,unsigned,unsigned,unsigned> quad_u_u_u_u; \
-  
+
 #define UNIT_TEST_INSTANTIATION_POLICY( type, name )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type,				\
 					name,				\
@@ -299,7 +299,7 @@
 							    FOURTH,	\
 							    quad_d_d_u_u, \
 							    array )	\
-  
+
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
@@ -312,7 +312,7 @@ public:
 
   virtual ~TestDataProcessor()
   { /* ... */ }
-  
+
   void processDataFiles()
   { /* ... */ }
 
@@ -375,7 +375,7 @@ void fillArrayOneTupleMemberData( Array<T> &array )
 {
   typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
-  
+
   typename Array<T>::size_type size = Utility::getArraySize( array );
 
   if( size > 0 )
@@ -395,7 +395,7 @@ void fillArrayTwoTupleMemberData( Array<T> &array )
 {
   typedef typename Utility::TupleMemberTraits<T,indepMember>::tupleMemberType indepTupleMemberType;
   typedef typename Utility::TupleMemberTraits<T,depMember>::tupleMemberType depTupleMemberType;
-  
+
   typename Array<T>::size_type size = Utility::getArraySize( array );
 
   if( size > 0 )
@@ -414,7 +414,7 @@ void fillArrayTwoTupleMemberData( Array<T> &array )
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the DataProcessingPolicies correctly process data
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
 				   DataProcessingPolicy,
 				   Policy )
 {
@@ -435,7 +435,7 @@ UNIT_TEST_INSTANTIATION_POLICY( DataProcessor, DataProcessingPolicy );
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can processes an array of UTILITY Tuple structs
 // in the desired format
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( DataProcessor, 
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( DataProcessor,
 				   processContinuousData,
 				   Policy,
 				   Tuple )
@@ -473,18 +473,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   TestDataProcessor data_processor;
 
   Teuchos::Array<Tuple> ref_data( 10 ), clipped_data( 10 );
-  
+
   // Load the reference array
   fillArrayOneTupleMemberData<Utility::FIRST>( ref_data );
 
   // Load the clipped array
   clipped_data = ref_data;
-  
+
   // Set the lower bound to the min value in the array and clip the array
   double lower_bound = Utility::get<Utility::FIRST>( ref_data.front() );
   data_processor.removeElementsLessThanValue<Utility::FIRST>( clipped_data,
 							     lower_bound );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
 
   // Set the lower bound to a value less than the min value in the array and
@@ -499,7 +499,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   // Set the lower bound to a value greater than the min value but between
   // two bin boundaries and clip the array
   clipped_data = ref_data;
-  lower_bound = (Utility::get<Utility::FIRST>( ref_data[2] ) + 
+  lower_bound = (Utility::get<Utility::FIRST>( ref_data[2] ) +
 		 Utility::get<Utility::FIRST>( ref_data[1] ) )/2.0;
   data_processor.removeElementsLessThanValue<Utility::FIRST>( clipped_data,
 							     lower_bound );
@@ -512,7 +512,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   lower_bound = Utility::get<Utility::FIRST>( ref_data[2] );
   data_processor.removeElementsLessThanValue<Utility::FIRST>( clipped_data,
 							     lower_bound );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 2, ref_data.size()-2 ) );
 }
 
@@ -528,18 +528,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   TestDataProcessor data_processor;
 
   Teuchos::Array<Tuple> ref_data( 10 ), clipped_data( 10 );
-  
+
   // Load the reference array
   fillArrayOneTupleMemberData<Utility::FIRST>( ref_data );
 
   // Load the clipped array
   clipped_data = ref_data;
-  
+
   // Set the upper bound to the max value in the array and clip the array
   double upper_bound = Utility::get<Utility::FIRST>( ref_data.back() );
   data_processor.removeElementsGreaterThanValue<Utility::FIRST>( clipped_data,
 								upper_bound );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
 
   // Set the upper bound to a value greater than the max value in the array and
@@ -554,7 +554,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   // Set the upper bound to a value less than the max value but between
   // two bin boundaries and clip the array
   clipped_data = ref_data;
-  upper_bound = (Utility::get<Utility::FIRST>( ref_data[ref_data.size()-2] ) + 
+  upper_bound = (Utility::get<Utility::FIRST>( ref_data[ref_data.size()-2] ) +
 		 Utility::get<Utility::FIRST>( ref_data[ref_data.size()-3]))/2.0;
   data_processor.removeElementsGreaterThanValue<Utility::FIRST>( clipped_data,
 								upper_bound );
@@ -573,12 +573,12 @@ UNIT_TEST_INSTANTIATION_TUPLE( DataProcessor, removeElementsGreaterThanValue );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can coarsen constant regions in an array
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
 				   coarsenConstantRegions,
 				   Tuple )
 {
   TestDataProcessor data_processor;
-  
+
   // Load the array to be processed
   Tuple data_point;
   data_point.first = INDEP_VAR;
@@ -618,7 +618,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   // Load the reference array
   Teuchos::Array<Tuple> ref_data( 10 );
   fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( ref_data );
-  
+
   double slope = 0.0;
   for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
@@ -664,9 +664,9 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   Teuchos::Array<Tuple> ref_data( 10 );
   fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( ref_data );
   double cdf_value;
-  
+
   for( unsigned int i = 0; i < ref_data.size(); ++i )
-  {    
+  {
     if( i != 0 )
     {
       cdf_value += 0.5*(ref_data[i].first - ref_data[i-1].first)*
@@ -674,18 +674,18 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
     }
     else
       cdf_value = 0.0;
-      
+
     Utility::set<member>( ref_data[i], cdf_value );
   }
-  
+
   double norm_value = Utility::get<member>( ref_data.back() );
   for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
     ref_data[i].second /= norm_value;
-    Utility::set<member>( ref_data[i], 
+    Utility::set<member>( ref_data[i],
 			 Utility::get<member>( ref_data[i] )/norm_value );
   }
-  
+
   // Processes the array
   data_processor.calculateContinuousCDF<Utility::FIRST,
 					Utility::SECOND,
@@ -718,9 +718,9 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   Teuchos::Array<Tuple> ref_data( 10 );
   fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( ref_data );
   double pdf_value;
-  
+
   for( unsigned int i = 0; i < ref_data.size(); ++i )
-  {    
+  {
     if( i != 0 )
     {
       pdf_value = (ref_data[i].second - ref_data[i-1].second)/
@@ -731,10 +731,10 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
       pdf_value = (ref_data[i+1].second - ref_data[i].second)/
 	(ref_data[i+1].first - ref_data[i].second);
     }
-      
+
     Utility::set<member>( ref_data[i], pdf_value );
   }
-  
+
   // Processes the array
   data_processor.calculateContinuousPDF<Utility::FIRST,
 					member,
@@ -759,27 +759,27 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( DataProcessor,
   // Load the array to be processed
   Teuchos::Array<Tuple> processed_data( 10 );
   fillArrayOneTupleMemberData<member>( processed_data );
-  
+
   // Load the reference array
   Teuchos::Array<Tuple> ref_data( 10 );
   fillArrayOneTupleMemberData<member>( ref_data );
-  
+
   for( unsigned int i = 1; i < ref_data.size(); ++i )
   {
     Utility::set<member>( ref_data[i], Utility::get<member>( ref_data[i-1] ) +
 			 Utility::get<member>( ref_data[i] ) );
   }
-  
+
   for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
     Utility::set<member>( ref_data[i], Utility::get<member>( ref_data[i] )/
 			 Utility::get<member>( ref_data.back() ) );
   }
-  
+
   // Processes the array
   data_processor.calculateDiscreteCDF<member,
   				      member>( processed_data );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
 }
 
@@ -803,27 +803,27 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_DECL( DataProcessor,
   fillArrayOneTupleMemberData<Member1>( raw_original_data );
   array<Tuple1>  original_data;
   Utility::copyArrayView( original_data, raw_original_data() );
- 
+
   Teuchos::Array<Tuple2> raw_processed_data( raw_original_data.size() );
   array<Tuple2> processed_data;
   Utility::copyArrayView( processed_data, raw_processed_data() );
-  
+
   // Load the reference array
   Teuchos::Array<Tuple2> ref_data( 10 );
   fillArrayOneTupleMemberData<Member2>( ref_data );
-  
+
   // Process the array
   data_processor.copyTupleMemberData<Member1,Member2>( original_data,
 						       processed_data );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( processed_data, ref_data );
 }
-    
+
 UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( DataProcessor, copyTupleMemberData, Array );
 UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( DataProcessor, copyTupleMemberData, ArrayView );
 
 //---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member with data in 
+// Check that the DataProcessor can swap data in one member with data in
 // another member (for all tuples in an array)
 UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
 						       swapTupleMemberData,
@@ -843,10 +843,10 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   // Load the reference array
   Teuchos::Array<Tuple> ref_data( 10 );
   fillArrayOneTupleMemberData<Member2>( ref_data );
-  
+
   // Process the array
   data_processor.swapTupleMemberData<Member1,Member2>( processed_data );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( processed_data, ref_data );
 }
 

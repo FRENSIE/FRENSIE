@@ -60,17 +60,17 @@ public:
 	   typename InputIndepQuantityA = IndepQuantity,
 	   typename InputIndepQuantityB = IndepQuantity,
 	   typename InputIndepQuantityC = IndepQuantity>
-  UnitAwareNormalDistribution(const InputIndepQuantityA mean = 
+  UnitAwareNormalDistribution(const InputIndepQuantityA mean =
                               QuantityTraits<InputIndepQuantityA>::zero(),
-                              const InputIndepQuantityB standard_deviation = 
+                              const InputIndepQuantityB standard_deviation =
                               QuantityTraits<InputIndepQuantityB>::one(),
-                              const InputDepQuantity constant_multiplier = 
+                              const InputDepQuantity constant_multiplier =
                               QuantityTraits<InputDepQuantity>::one(),
                               const InputIndepQuantityC min_independent_value =
                               -QuantityTraits<InputIndepQuantityC>::inf(),
 			      const InputIndepQuantityC max_independent_value =
                               QuantityTraits<InputIndepQuantityC>::inf() );
-			      
+
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -95,27 +95,27 @@ public:
   //! Return a random sample from the distribution
   static IndepQuantity sample( const IndepQuantity mean,
 			       const IndepQuantity standard_deviation,
-			       const IndepQuantity min_independent_value = 
+			       const IndepQuantity min_independent_value =
 			       -QuantityTraits<IndepQuantity>::inf(),
-			       const IndepQuantity max_independent_value = 
+			       const IndepQuantity max_independent_value =
 			       QuantityTraits<IndepQuantity>::inf() );
 
   //! Return a random sample from the distribution and record the trials
-  static IndepQuantity sampleAndRecordTrials( 
+  static IndepQuantity sampleAndRecordTrials(
 			       unsigned& trials,
 			       const IndepQuantity mean,
 			       const IndepQuantity standard_deviation,
-			       const IndepQuantity min_independent_value = 
+			       const IndepQuantity min_independent_value =
 			       -QuantityTraits<IndepQuantity>::inf(),
-			       const IndepQuantity max_independent_value = 
+			       const IndepQuantity max_independent_value =
 			       QuantityTraits<IndepQuantity>::inf() );
-  
+
   //! Return a random sample from the distribution
   IndepQuantity sample() const;
-  
+
   //! Return a random sample from the distribution and record the trials
   IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
-  
+
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
 
@@ -138,7 +138,7 @@ public:
   bool isEqual( const UnitAwareNormalDistribution& other ) const;
 
 protected:
-  
+
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareNormalDistribution( const UnitAwareNormalDistribution<void,void>& unitless_dist_instance, int );
 
@@ -192,14 +192,14 @@ public:
   {
     return "Normal Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 				const Utility::NormalDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareNormalDistribution
  *
  * \details The name function will set the type name that must be used in
@@ -215,7 +215,7 @@ public:
       Utility::UnitTraits<U>::symbol() + "," +
       Utility::UnitTraits<V>::symbol() + ")";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 		    const Utility::UnitAwareNormalDistribution<U,V>& instance )
   {
     return name();

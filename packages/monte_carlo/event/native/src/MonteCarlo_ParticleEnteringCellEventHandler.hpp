@@ -38,7 +38,7 @@ public:
   //! Destructor
   virtual ~ParticleEnteringCellEventHandler()
   { /* ... */ }
-  
+
   //! Return the particle entering cell event dispatcher
   ParticleEnteringCellEventDispatcher&
   getParticleEnteringCellEventDispatcher();
@@ -54,7 +54,7 @@ public:
 
 protected:
 
-  /*! \brief Register an observer with the appropriate particle entering cell 
+  /*! \brief Register an observer with the appropriate particle entering cell
    * event dispatcher.
    */
   template<typename Observer, typename EntityHandle>
@@ -72,17 +72,17 @@ private:
 // Register an observer with the appropriate particle entering cell event
 // dispatcher
 template<typename Observer, typename EntityHandle>
-inline void ParticleEnteringCellEventHandler::registerObserverWithTag( 
+inline void ParticleEnteringCellEventHandler::registerObserverWithTag(
                                 const std::shared_ptr<Observer>& observer,
                                 const Teuchos::Array<EntityHandle>& entity_ids,
                                 ParticleEnteringCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleEnteringCellEventObserver::EventTag>::value));
-  
-  std::shared_ptr<ParticleEnteringCellEventObserver> observer_base = 
+
+  std::shared_ptr<ParticleEnteringCellEventObserver> observer_base =
     std::dynamic_pointer_cast<ParticleEnteringCellEventObserver>( observer );
-  
+
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
   {
     d_particle_entering_cell_event_dispatcher.attachObserver(entity_ids[i],

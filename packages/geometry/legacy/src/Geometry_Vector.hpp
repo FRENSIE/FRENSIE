@@ -41,7 +41,7 @@ public:
   //@}
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<ScalarType> ST;
 
@@ -53,12 +53,12 @@ public:
   Vector();
 
   //! General constructor
-  Vector( const ScalarType x, 
-	  const ScalarType y, 
+  Vector( const ScalarType x,
+	  const ScalarType y,
 	  const ScalarType z );
 
-  //! Tuple constructor 
-  explicit Vector( 
+  //! Tuple constructor
+  explicit Vector(
 		const Utility::Trip<ScalarType,ScalarType,ScalarType> &tuple );
 
   //! Copy constructor
@@ -95,7 +95,7 @@ public:
   //! Views
   //! Return a const view of the data array
   Teuchos::ArrayView<const ScalarType> view() const;
-  
+
   //! Return a const view of the data array
   Teuchos::ArrayView<const ScalarType> operator()() const;
   //@}
@@ -141,7 +141,7 @@ public:
   //! Comparison methods
   //! Equality of two vectors.
   bool operator==( const Vector<ScalarType> &operand ) const;
-  
+
   //! Inequality of two vectors.
   bool operator!=( const Vector<ScalarType> &operand ) const;
   //@}

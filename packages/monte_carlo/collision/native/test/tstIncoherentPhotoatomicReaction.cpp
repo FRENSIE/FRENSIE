@@ -33,7 +33,7 @@
 #include "Utility_AtomicMomentumUnit.hpp"
 #include "Utility_InverseAtomicMomentumUnit.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
-  
+
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
@@ -68,31 +68,53 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, getThresholdEnergy_ace )
 {
   TEST_EQUALITY_CONST( ace_basic_incoherent_reaction->getThresholdEnergy(),
 		       exp( -1.381551055796E+01 ) );
-  
+
   TEST_EQUALITY_CONST( ace_detailed_incoherent_reaction->getThresholdEnergy(),
-		       exp( -1.381551055796E+01 ) ); 
+		       exp( -1.381551055796E+01 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, 
+TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction,
 		   getNumberOfEmittedPhotons_ace )
 {
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 	      ace_basic_incoherent_reaction->getNumberOfEmittedPhotons( 1e-3 ),
 	      1u );
 
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 	      ace_basic_incoherent_reaction->getNumberOfEmittedPhotons( 20.0 ),
 	      1u );
-  
-  TEST_EQUALITY_CONST( 
+
+  TEST_EQUALITY_CONST(
 	   ace_detailed_incoherent_reaction->getNumberOfEmittedPhotons( 1e-3 ),
 	   1u );
-  
-  TEST_EQUALITY_CONST( 
+
+  TEST_EQUALITY_CONST(
 	   ace_detailed_incoherent_reaction->getNumberOfEmittedPhotons( 20.0 ),
 	   1u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of electrons emitted from the rxn can be returned
+TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction,
+		   getNumberOfEmittedElectrons_ace )
+{
+  TEST_EQUALITY_CONST(
+	    ace_basic_incoherent_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+            1u );
+
+  TEST_EQUALITY_CONST(
+	    ace_basic_incoherent_reaction->getNumberOfEmittedElectrons( 20.0 ),
+            1u );
+
+  TEST_EQUALITY_CONST(
+	 ace_detailed_incoherent_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+         1u );
+
+  TEST_EQUALITY_CONST(
+	 ace_detailed_incoherent_reaction->getNumberOfEmittedElectrons( 20.0 ),
+         1u );
 }
 
 //---------------------------------------------------------------------------//
@@ -100,25 +122,25 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction,
 TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, getCrossSection_ace )
 {
   // Basic reaction
-  double cross_section = 
+  double cross_section =
     ace_basic_incoherent_reaction->getCrossSection(exp( -1.381551055796E+01 ));
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     ace_basic_incoherent_reaction->getCrossSection(exp( -1.364234411496E+01 ));
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
 
-  cross_section = 
+  cross_section =
     ace_basic_incoherent_reaction->getCrossSection(exp( 1.151292546497E+01 ));
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
   // Detailed reaction
-  cross_section = 
+  cross_section =
     ace_detailed_incoherent_reaction->getCrossSection(exp( -1.381551055796E+01 ));
-  
+
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
   cross_section = ace_detailed_incoherent_reaction->getCrossSection(
@@ -144,13 +166,13 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_basic )
 
   Data::SubshellType shell_of_interaction;
 
-  ace_basic_incoherent_reaction->react( photon, 
-					bank, 
+  ace_basic_incoherent_reaction->react( photon,
+					bank,
 					shell_of_interaction );
 
-  double min_energy = 
+  double min_energy =
     20.0/(1.0+2.0*20.0/Utility::PhysicalConstants::electron_rest_mass_energy );
-  
+
   TEST_ASSERT( photon.getEnergy() >= min_energy );
   TEST_ASSERT( photon.getEnergy() <= 20.0 );
   TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
@@ -171,10 +193,10 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_detailed )
 
   Data::SubshellType shell_of_interaction;
 
-  ace_detailed_incoherent_reaction->react( photon, 
-					   bank, 
+  ace_detailed_incoherent_reaction->react( photon,
+					   bank,
 					   shell_of_interaction );
-  
+
   TEST_ASSERT( photon.getEnergy() <= 20.0 );
   TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
   TEST_EQUALITY_CONST( bank.size(), 1 );
@@ -188,7 +210,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_detailed )
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
@@ -198,36 +220,36 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-  
+
   // Extract the energy grid and cross section
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractPhotonEnergyGrid() );
-  
-  Teuchos::ArrayView<const double> raw_incoherent_cross_section = 
+
+  Teuchos::ArrayView<const double> raw_incoherent_cross_section =
     xss_data_extractor->extractIncoherentCrossSection();
-  
-  Teuchos::ArrayView<const double>::iterator start = 
+
+  Teuchos::ArrayView<const double>::iterator start =
     std::find_if( raw_incoherent_cross_section.begin(),
                   raw_incoherent_cross_section.end(),
                   notEqualZero );
@@ -235,7 +257,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayRCP<double> incoherent_cross_section;
   incoherent_cross_section.assign( start, raw_incoherent_cross_section.end() );
 
-  unsigned incoherent_threshold_index = 
+  unsigned incoherent_threshold_index =
     energy_grid.size() - incoherent_cross_section.size();
 
   // Create the scattering function
@@ -247,7 +269,7 @@ int main( int argc, char** argv )
   Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ) );
 
   std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function(
-     new Utility::UnitAwareTabularDistribution<Utility::LogLog,Utility::Units::InverseAngstrom,void>( 
+     new Utility::UnitAwareTabularDistribution<Utility::LogLog,Utility::Units::InverseAngstrom,void>(
 			   recoil_momentum,
 			   jince_block( scatt_func_size, scatt_func_size ) ) );
 
@@ -255,42 +277,42 @@ int main( int argc, char** argv )
       new MonteCarlo::StandardScatteringFunction<Utility::Units::InverseAngstrom>( raw_scattering_function ) );
 
   // Create the subshell order array
-  Teuchos::ArrayView<const double> subshell_endf_des = 
+  Teuchos::ArrayView<const double> subshell_endf_des =
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<Data::SubshellType> subshell_order( 
+  Teuchos::Array<Data::SubshellType> subshell_order(
 						    subshell_endf_des.size() );
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum( 
+    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum(
 					      (unsigned)subshell_endf_des[i] );
   }
 
   // Create the Compton profile subshell converter
   std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
-  
+
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
 			           xss_data_extractor->extractAtomicNumber() );
-    
+
   // Create the compton profile distributions
-  Teuchos::ArrayView<const double> lswd_block = 
+  Teuchos::ArrayView<const double> lswd_block =
     xss_data_extractor->extractLSWDBlock();
 
-  Teuchos::ArrayView<const double> swd_block = 
+  Teuchos::ArrayView<const double> swd_block =
     xss_data_extractor->extractSWDBlock();
 
-  MonteCarlo::DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
+  MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
     compton_profiles( lswd_block.size() );
-  
+
   for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
   {
     unsigned shell_index = lswd_block[shell]; // ignore interp parameter
 
     unsigned num_mom_vals = swd_block[shell_index];
 
-    Teuchos::Array<double> half_momentum_grid( 
+    Teuchos::Array<double> half_momentum_grid(
 				  swd_block( shell_index + 1, num_mom_vals ) );
 
     Teuchos::Array<double> half_profile(
@@ -301,8 +323,8 @@ int main( int argc, char** argv )
                                                        half_momentum_grid,
                                                        half_profile ) );
 
-    compton_profiles[shell].reset( 
-       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+    compton_profiles[shell].reset(
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>(
                                                        raw_compton_profile ) );
   }
 
@@ -349,7 +371,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -362,7 +384,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1); 
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

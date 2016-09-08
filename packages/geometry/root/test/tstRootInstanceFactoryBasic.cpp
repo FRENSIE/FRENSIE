@@ -35,11 +35,11 @@ std::string test_geom_xml_file_name;
 // Check that Root can be properly initialized
 TEUCHOS_UNIT_TEST( RootInstanceFactory, initializeRoot )
 {
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep =
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
-  
+
   TEST_NOTHROW( Geometry::RootInstanceFactory::initializeRoot( *geom_rep ) );
-  
+
   // Test that all nodes can be read in and numbered
   TEST_ASSERT( Geometry::Root::doesCellExist( 1 ) );
   TEST_ASSERT( Geometry::Root::doesCellExist( 2 ) );
@@ -73,11 +73,11 @@ TEUCHOS_UNIT_TEST( RootInstanceFactory, initializeRoot )
 int main( int argc, char* argv[] )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_xml_file",
   		 &test_geom_xml_file_name,
   		 "Test xml geometry file name" );
-  
+
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }

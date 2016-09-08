@@ -36,25 +36,25 @@ class StandardParticleSource : public ParticleSource
 {
 
 private:
-  
+
   // Typedef for scalar traits
   typedef Teuchos::ScalarTraits<double> ST;
 
 
 public:
-  
+
   //! Constructor
-  StandardParticleSource( 
+  StandardParticleSource(
      const ModuleTraits::InternalSourceHandle id,
      const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
-     const std::shared_ptr<Utility::DirectionalDistribution>& 
+     const std::shared_ptr<Utility::DirectionalDistribution>&
      directional_distribution,
-     const std::shared_ptr<Utility::OneDDistribution>& 
+     const std::shared_ptr<Utility::OneDDistribution>&
      energy_distribution,
-     const std::shared_ptr<Utility::OneDDistribution>& 
+     const std::shared_ptr<Utility::OneDDistribution>&
      time_distribution,
      const ParticleType particle_type );
-  
+
   //! Destructor
   ~StandardParticleSource()
   { /* ... */ }
@@ -71,14 +71,14 @@ public:
             const int root_process );
 
   //! Export the source data
-  void exportData( 
+  void exportData(
             const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const;
 
   //! Print a summary of the source data
   void printSummary( std::ostream& os ) const;
 
   //! Set the spatial importance distribution
-  void setSpatialImportanceDistribution( 
+  void setSpatialImportanceDistribution(
    const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution );
 
   //! Set the directional importance distribution
@@ -102,7 +102,7 @@ public:
   //! Sample a particle state from the source
   void sampleParticleState( ParticleBank& bank,
 			    const unsigned long long history );
-  
+
   //! Return the number of sampling trials
   unsigned long long getNumberOfTrials() const;
 
@@ -125,7 +125,7 @@ private:
 
   // Sample the particle energy
   void sampleParticleEnergy( ParticleState& particle );
-  
+
   // Sample the particle time
   void sampleParticleTime( ParticleState& particle );
 
@@ -135,18 +135,18 @@ private:
   // Reduce the local trials counters
   unsigned long long reduceLocalTrialsCounters() const;
 
-  // The spatial distribution of the source 
+  // The spatial distribution of the source
   std::shared_ptr<Utility::SpatialDistribution> d_spatial_distribution;
-  
+
   // The true spatial distribution of the source
-  std::shared_ptr<Utility::SpatialDistribution> 
+  std::shared_ptr<Utility::SpatialDistribution>
   d_spatial_importance_distribution;
 
   // The directional distribution
   std::shared_ptr<Utility::DirectionalDistribution> d_directional_distribution;
 
   // The true directional distribution of the source
-  std::shared_ptr<Utility::DirectionalDistribution> 
+  std::shared_ptr<Utility::DirectionalDistribution>
   d_directional_importance_distribution;
 
   // The energy distribution
@@ -168,7 +168,7 @@ private:
   ParticleType d_particle_type;
 
   // The cell rejection functions
-  typedef boost::function<Geometry::PointLocation (const Geometry::Ray&)> CellRejectionFunction; 
+  typedef boost::function<Geometry::PointLocation (const Geometry::Ray&)> CellRejectionFunction;
   Teuchos::Array<CellRejectionFunction> d_cell_rejection_functions;
 
   // The number of trials
@@ -180,23 +180,23 @@ private:
 
 // Set a rejection cell
 /*! \details A rejection cell is used to determine if a sampled particle
- * position should be kept or rejected. If the sampled point is inside of 
- * one of the rejection cells, it is kept. This function can be used to 
+ * position should be kept or rejected. If the sampled point is inside of
+ * one of the rejection cells, it is kept. This function can be used to
  * set multiple rejection cells. Only the master thread should call this
  * method.
  */
 template<typename PointLocationFunction>
-inline void StandardParticleSource::setRejectionCell( 
+inline void StandardParticleSource::setRejectionCell(
                         const Geometry::ModuleTraits::InternalCellHandle& cell,
                         PointLocationFunction location_function )
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure the cell is valid
-  testPrecondition( cell != 
+  testPrecondition( cell !=
                     Geometry::ModuleTraits::invalid_internal_cell_handle );
-  
-  CellRejectionFunction new_cell_rejection_function = 
+
+  CellRejectionFunction new_cell_rejection_function =
     boost::bind<Geometry::PointLocation>( location_function, _1, cell );
 
   d_cell_rejection_functions.push_back( new_cell_rejection_function );

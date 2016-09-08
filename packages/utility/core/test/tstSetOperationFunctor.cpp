@@ -24,11 +24,11 @@
 // Check that IntersectionFunctor returns the correct value
 TEUCHOS_UNIT_TEST( IntersectionFunctor, operator )
 {
-  Teuchos::RCP<Utility::SetOperationFunctor> 
+  Teuchos::RCP<Utility::SetOperationFunctor>
     functor( new Utility::IntersectionFunctor );
 
   bool functor_value = (*functor)( true, true );
-  
+
   TEST_ASSERT( functor_value );
 
   functor_value = (*functor)( true, false );
@@ -36,7 +36,7 @@ TEUCHOS_UNIT_TEST( IntersectionFunctor, operator )
   TEST_ASSERT( !functor_value );
 
   functor_value = (*functor)( false, true );
-  
+
   TEST_ASSERT( !functor_value );
 
   functor_value = (*functor)( false, false );
@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST( UnionFunctor, operator )
   functor_value = (*functor)( false, true );
 
   TEST_ASSERT( functor_value );
-  
+
   functor_value = (*functor)( false, false );
 
   TEST_ASSERT( !functor_value );
@@ -73,8 +73,8 @@ TEUCHOS_UNIT_TEST( UnionFunctor, operator )
 TEUCHOS_UNIT_TEST( SetOperationFunctor, array )
 {
   Teuchos::Array<Teuchos::RCP<Utility::SetOperationFunctor> > functor_array;
-  
-  Teuchos::RCP<Utility::SetOperationFunctor> 
+
+  Teuchos::RCP<Utility::SetOperationFunctor>
     functor( new Utility::IntersectionFunctor );
   functor_array.push_back( functor );
   functor.reset( new Utility::UnionFunctor );

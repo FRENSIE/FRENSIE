@@ -110,7 +110,7 @@ ADD_TEST(PointSpatialDistribution_test tstPointSpatialDistribution)
 SET_PROPERTY(TEST PointSpatialDistribution_test PROPERTY LABELS utility_dist)
 
 ADD_EXECUTABLE(tstSpatialDistribution
-  tstSpatialDistribution.cpp 
+  tstSpatialDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSpatialDistribution utility_dist)
 ADD_TEST(SpatialDistribution_test tstSpatialDistribution)
@@ -128,7 +128,7 @@ TARGET_LINK_LIBRARIES(tstSphericalDirectionalDistribution utility_dist)
 ADD_TEST(SphericalDirectionalDistribution_test tstSphericalDirectionalDistribution)
 SET_PROPERTY(TEST SphericalDirectionalDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstMonoDirectionalDistribution 
+ADD_EXECUTABLE(tstMonoDirectionalDistribution
   tstMonoDirectionalDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstMonoDirectionalDistribution utility_dist)
 ADD_TEST(MonoDirectionalDistribution_test tstMonoDirectionalDistribution)

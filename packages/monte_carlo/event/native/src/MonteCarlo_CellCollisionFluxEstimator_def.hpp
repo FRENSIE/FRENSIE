@@ -26,7 +26,7 @@ CellCollisionFluxEstimator<
 	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
 	     const Teuchos::Array<double>& cell_volumes )
   : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes ),
-    ParticleCollidingInCellEventObserver()			 
+    ParticleCollidingInCellEventObserver()
 { /* ... */ }
 
 // Add estimator contribution from a portion of the current history
@@ -41,7 +41,7 @@ void CellCollisionFluxEstimator<
   testPrecondition( isEntityAssigned( cell_of_collision ) );
   // Make sure the inverse total macroscopic cross section is valid
   testPrecondition( !ST::isnaninf( inverse_total_cross_section ) );
-  
+
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
     double contribution = inverse_total_cross_section*

@@ -21,6 +21,7 @@ namespace Units{
 typedef UnitTraits<MeCMomentum>::InverseUnit InverseMeCMomentum;
 
 BOOST_UNITS_STATIC_CONSTANT( inverse_mec_momentum, InverseMeCMomentum );
+BOOST_UNITS_STATIC_CONSTANT( inverse_mec, InverseMeCMomentum );
 
 } // end Units namespace
 

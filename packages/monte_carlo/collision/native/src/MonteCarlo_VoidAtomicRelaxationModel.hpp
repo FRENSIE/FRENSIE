@@ -21,7 +21,7 @@ class VoidAtomicRelaxationModel : public AtomicRelaxationModel
 {
 
 public:
-  
+
   //! Constructor
   VoidAtomicRelaxationModel()
   { /* ... */ }
@@ -37,7 +37,7 @@ public:
 };
 
 // Relax atom
-inline void VoidAtomicRelaxationModel::relaxAtom( 
+inline void VoidAtomicRelaxationModel::relaxAtom(
 					      const Data::SubshellType vacancy_shell,
 					      const ParticleState& particle,
 					      ParticleBank& bank ) const

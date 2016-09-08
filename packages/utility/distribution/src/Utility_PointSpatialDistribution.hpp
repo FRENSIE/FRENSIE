@@ -16,13 +16,13 @@
 #include "Utility_SpatialDistribution.hpp"
 
 namespace Utility{
-  
+
 //! Point spatial distribution
 class PointSpatialDistribution : public SpatialDistribution
 {
 
 private:
-  
+
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
@@ -48,7 +48,7 @@ public:
 
   //! Return the distribution type
   SpatialDistributionType getDistributionType() const;
-  
+
   //! Check if the distribution is uniform
   bool isUniform() const;
 

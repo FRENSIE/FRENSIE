@@ -84,7 +84,7 @@ int main( int argc, char** argv )
 
   std::string test_u238_ace_file_name;
   std::string test_u238_ace_table_name;
-  
+
   clp.setOption( "test_u238_ace_file",
 		 &test_u238_ace_file_name,
 		 "Test U238 ACE file name" );
@@ -92,10 +92,10 @@ int main( int argc, char** argv )
 		 &test_u238_ace_table_name,
 		 "Test U238 ACE table name in basic ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -110,7 +110,7 @@ int main( int argc, char** argv )
 					      1u ) );
 
   Teuchos::RCP<Data::XSSNeutronDataExtractor>
-  xss_data_extractor( 
+  xss_data_extractor(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -140,7 +140,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1); 
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

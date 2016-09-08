@@ -18,9 +18,9 @@ namespace MonteCarlo{
 //! The complete fission neutron multiplicity distribution class
 class CompleteFissionNeutronMultiplicityDistribution : public FissionNeutronMultiplicityDistribution
 {
-  
+
 public:
-  
+
   //! Constructor
   CompleteFissionNeutronMultiplicityDistribution(
 				 const Teuchos::RCP<Utility::OneDDistribution>&
@@ -52,12 +52,12 @@ private:
   Teuchos::RCP<Utility::OneDDistribution> d_delayed_multiplicity_distribution;
 
   // The total multiplicity distribution (total nu-bar)
-  Teuchos::RCP<Utility::OneDDistribution> d_total_multiplicity_distribution;  
+  Teuchos::RCP<Utility::OneDDistribution> d_total_multiplicity_distribution;
 };
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP 
+#endif // end MONTE_CARLO_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CompleteFissionNeutronMultiplicityDistribution.hpp

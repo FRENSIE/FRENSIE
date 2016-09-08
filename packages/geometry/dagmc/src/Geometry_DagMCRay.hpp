@@ -25,7 +25,7 @@ class DagMCRay
 {
 
 public:
-  
+
   //! Constructor
   DagMCRay();
 
@@ -43,7 +43,7 @@ public:
   //! Destructor
   ~DagMCRay()
   { /* ... */ }
-  
+
   //! Check if the ray is ready (basic ray data, current cell handle set)
   bool isReady() const;
 
@@ -51,7 +51,7 @@ public:
   void set( const Ray& ray, const moab::EntityHandle cell_handle );
 
   //! Set the ray (minimum data required)
-  void set( const double position[3], 
+  void set( const double position[3],
             const double direction[3],
             const moab::EntityHandle cell_handle );
 
@@ -85,7 +85,7 @@ public:
   //! Get the distance to the intersection surface
   double getDistanceToIntersectionSurface() const;
 
-  //! Get the boundary surface 
+  //! Get the boundary surface
   moab::EntityHandle getIntersectionSurface() const;
 
   //! Get the ray history
@@ -95,7 +95,7 @@ public:
   moab::DagMC::RayHistory& getHistory();
 
   //! Advance the ray to the intersection surface
-  void advanceToIntersectionSurface( 
+  void advanceToIntersectionSurface(
                                    const moab::EntityHandle next_cell_handle );
 
   //! Advance the ray a substep
@@ -105,16 +105,16 @@ private:
 
   // The basic ray
   boost::scoped_ptr<Ray> d_basic_ray;
-  
+
   // The current cell handle
   moab::EntityHandle d_cell_handle;
-  
+
   // The ray history
   moab::DagMC::RayHistory d_history;
-  
+
   // The distance to the next surface (-1 for not known)
   double d_intersection_distance;
-  
+
   // The boundary surface that will be intersected (0 for not known)
   moab::EntityHandle d_intersection_surface_handle;
 };

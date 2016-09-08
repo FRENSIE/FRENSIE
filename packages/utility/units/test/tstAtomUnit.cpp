@@ -42,8 +42,8 @@ TEUCHOS_UNIT_TEST( AtomUnit, initialize_from_si )
 {
   quantity<Atom> amount( 1.0*si::mole );
 
-  TEST_FLOATING_EQUALITY( amount.value(), 
-			  Utility::PhysicalConstants::avogadro_constant, 
+  TEST_FLOATING_EQUALITY( amount.value(),
+			  Utility::PhysicalConstants::avogadro_constant,
 			  1e-15 );
 }
 
@@ -53,8 +53,8 @@ TEUCHOS_UNIT_TEST( AtomUnit, initialize_si )
 {
   quantity<si::amount> amount( 1.0*atom );
 
-  TEST_FLOATING_EQUALITY( amount.value(), 
-			  1.0/Utility::PhysicalConstants::avogadro_constant, 
+  TEST_FLOATING_EQUALITY( amount.value(),
+			  1.0/Utility::PhysicalConstants::avogadro_constant,
 			  1e-15 );
 }
 
