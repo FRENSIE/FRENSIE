@@ -15,6 +15,7 @@
 #include <Teuchos_Utils.hpp>
 
 // FRENSIE Includes
+#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_FortranFileHelperWrappers.hpp"
 
 //---------------------------------------------------------------------------//
@@ -136,22 +137,20 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, rewindFileUsingFortran )
 
   closeFileUsingFortran( file_id );
 }
+
 //---------------------------------------------------------------------------//
-// Custom Main Function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS()
 {
-   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-   clp.setOption( "test_file",
-                  &test_file_name,
-                  "Test file for checking FORTRAN file helpers." );
-
-   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+  clp().setOption( "test_file",
+                   &test_file_name,
+                   "Test file for checking FORTRAN file helpers." );
 }
 
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstFortranFileHelpers.cpp

@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "Utility_TestingHelpers.hpp"
+#include "Utility_TeuchosUnitTestInitializer.hpp"
 
 /*! \defgroup unit_test_harness_extensions Teuchos Unit Test Harness Extensions
  * \ingroup testing
@@ -25,6 +26,57 @@
  * Teuchos Unit Test Harness. This additional functionality allows some
  * objects commonly used by Utility to be tested more easily.
  */
+
+/*! \brief A macro for starting the custom Teuchos unit test setup.
+ * \details This macro must come before the 
+ * UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS macro and the 
+ * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION macro calls.
+ */
+#define UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN() \
+  class CustomTeuchosUnitTestInitializer : public Utility::TeuchosUnitTestInitializer \
+  {                                                                     \
+  public:                                                               \
+    CustomTeuchosUnitTestInitializer()                                  \
+    { Utility::TeuchosUnitTestInitializer::setInitializer( this ); }  \
+    ~CustomTeuchosUnitTestInitializer()                               \
+    { /* ... */ }                                                     \
+  protected:                                                          \
+    void __dummy__()
+
+/*! \brief A macro for finishing the custom Teuchos unit test setup.
+ * \details This macro must come after the 
+ * UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS macro and the 
+ * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION macro calls.
+ */
+#define UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END()                    \
+  };                                                                    \
+  CustomTeuchosUnitTestInitializer* initializer_instance =              \
+    new CustomTeuchosUnitTestInitializer
+
+/*! \brief A macro for setting custom Teuchos command line options for
+ * the unit tests. 
+ * \details Variables that need to be access outside of this macro call
+ * should be declared outside of the function block. If the only other place
+ * where the variable is needed is in the function block of the
+ * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION macro, declare the
+ * variable(s) inside of the 
+ * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN and
+ * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END macros to ensure that they
+ * stay out of the global scope. To access the command line 
+ * processor simply call "clp()".
+ * \ingroup unit_test_harness_extensions
+ */
+#define UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS() \
+  void setCommandLineProcessorOptions() \
+
+/*! \brief A macro for initializing custom unit test data. This macro can
+ * be called before or after the
+ * UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS. To promote clarity it is
+ * recommended that it be called after.
+ * \ingroup unit_test_harness_extensions
+ */
+#define UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION() \
+  void initialize() const \
 
 /*! \brief A macro for the Teuchos Unit Test Harness for creating a
  * templated unit test on one type and one template template parameter.

@@ -19,6 +19,7 @@
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
 // FRENSIE Includes
+#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_GaussLegendreQuadratureSet.hpp"
 
 //---------------------------------------------------------------------------//
@@ -147,24 +148,14 @@ TEUCHOS_UNIT_TEST( GaussLegendreQuadratureSet,
   TEST_FLOATING_EQUALITY( coefs[power][9].convert_to<double>(),
                           128.0/12155.0, 1e-15);
 }
+
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
   legendre_moments_8[0] = 2.597000000000000E+05L;//2.597000000000000E+05;
   legendre_moments_8[1] = 2.596999988559773E+05L;//2.597000000000000E+05;
   legendre_moments_8[2] = 2.596999967237519E+05L;//2.597000000000000E+05;
@@ -174,21 +165,10 @@ int main( int argc, char** argv )
   legendre_moments_8[6] = 2.596999791386693E+05L;//2.597000000000000E+05;
   legendre_moments_8[7] = 2.596999726004124E+05L;//2.597000000000000E+05;
   legendre_moments_8[8] = 2.596999652394188E+05L;//2.597000000000000E+05;
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+
 //---------------------------------------------------------------------------//
 // end tstGaussLegendreQuadratureSet.cpp
 //---------------------------------------------------------------------------//

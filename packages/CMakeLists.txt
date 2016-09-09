@@ -13,10 +13,13 @@ SET(GLOBAL_DAGMC_TEST_DATA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_files/dag
 SET(GLOBAL_ROOT_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/root)
 SET(GLOBAL_ROOT_TEST_DATA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_files/root)
 
+# Set the path to the FRENSIE test main file
+SET(FRENSIE_STD_UNIT_TEST_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/test_files/main/FRENSIE_StandardUnitTestMain.cpp)
+
 # Set up the packages directory hierarchy
 ADD_SUBDIRECTORY(utility)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/utility/core/src
-utility/units/src utility/core/src utility/prng/src utility/hdf5/src utility/interpolation/src utility/distribution/src utility/integrator/src utility/grid/src)
+utility/core/src utility/prng/src utility/hdf5/src utility/interpolation/src utility/distribution/src utility/integrator/src utility/grid/src)
 
 ADD_SUBDIRECTORY(geometry)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/geometry geometry/core/src geometry/dagmc/src geometry/root/src geometry/interface)
