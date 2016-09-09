@@ -5,7 +5,7 @@
 //! \brief  The particle history observer class definition
 //!
 //---------------------------------------------------------------------------//
-#include <iostream>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "Utility_ContractException.hpp"

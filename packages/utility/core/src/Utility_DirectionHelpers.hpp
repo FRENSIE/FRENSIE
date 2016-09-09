@@ -8,7 +8,7 @@
 
 #ifndef UTILITY_DIRECTION_HELPERS_HPP
 #define UTILITY_DIRECTION_HELPERS_HPP
-#include <iostream>
+
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 

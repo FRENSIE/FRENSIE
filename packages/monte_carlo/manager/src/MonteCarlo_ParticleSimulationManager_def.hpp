@@ -8,10 +8,13 @@
 
 #ifndef FRENSIE_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 #define FRENSIE_PARTICLE_SIMULATION_MANAGER_DEF_HPP
+
+// std includes
 #include <iostream>
+
 // Boost Includes
 #include <boost/bind.hpp>
-#include <iostream>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
