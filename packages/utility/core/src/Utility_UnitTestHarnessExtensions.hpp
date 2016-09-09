@@ -29,7 +29,7 @@
 
 /*! \brief A macro for starting the custom Teuchos unit test setup.
  * \details This macro must come before the 
- * UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS macro and the 
+ * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS macro and the 
  * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION macro calls.
  */
 #define UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN() \
@@ -45,7 +45,7 @@
 
 /*! \brief A macro for finishing the custom Teuchos unit test setup.
  * \details This macro must come after the 
- * UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS macro and the 
+ * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS macro and the 
  * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION macro calls.
  */
 #define UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END()                    \
@@ -66,13 +66,13 @@
  * processor simply call "clp()".
  * \ingroup unit_test_harness_extensions
  */
-#define UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS() \
+#define UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS() \
   void setCommandLineProcessorOptions() \
 
 /*! \brief A macro for initializing custom unit test data. This macro can
  * be called before or after the
- * UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS. To promote clarity it is
- * recommended that it be called after.
+ * UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS. To promote clarity 
+ * it is recommended that it be called after.
  * \ingroup unit_test_harness_extensions
  */
 #define UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION() \

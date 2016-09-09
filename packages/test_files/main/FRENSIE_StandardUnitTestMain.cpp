@@ -26,8 +26,80 @@
 
 // FRENSIE Includes
 #include "Utility_DynamicOutputFormatter.hpp"
+#include "Utility_StaticOutputFormatter.hpp"
 #include "Utility_TeuchosUnitTestInitializer.hpp"
 
+// Report local failure details
+void reportLocalFailureDetails( const bool local_success,
+                                std::ostringstream& oss )
+{
+  for( size_t i = 0; i < Teuchos::GlobalMPISession::getNProc(); ++i )
+  {
+    if( Teuchos::GlobalMPISession::getRank() == i )
+    {
+      if( !local_success )
+      {
+        oss << "\nProcess " << i << " Result: TEST FAILED";
+
+        // Format the test output     
+        Utility::DynamicOutputFormatter formatter( oss.str() );
+        formatter.formatTeuchosUnitTestKeywords();
+        
+        std::cout << formatter << "\n";
+
+        // Clear the stream
+        oss.str( "" );
+        oss.clear();
+      }
+      else
+      {
+        // Clear the stream (except root)
+        if( i != 0 )
+        {
+          oss.str( "" );
+          oss.clear();
+        }
+      }
+    }
+
+    Teuchos::GlobalMPISession::barrier();
+  }
+}
+
+// Summarize local test results
+void summarizeLocalResults( const bool local_success,
+                            std::ostringstream& oss )
+{
+  for( size_t i = 0; i < Teuchos::GlobalMPISession::getNProc(); ++i )
+  {
+    if( Teuchos::GlobalMPISession::getRank() == i )
+    {
+      if( i == 0 )
+      {
+        std::cout << "\n"
+                  << Utility::Underlined( "Local Results Summary" )
+                  << "\n";
+      }
+      
+      if( !local_success )
+        oss << "Process " << i << " Result: TEST FAILED (see details above)";
+      else
+        oss << "Process " << i << " Result: TEST PASSED";
+      
+      Utility::DynamicOutputFormatter formatter( oss.str() );
+      formatter.formatTeuchosUnitTestKeywords();
+      
+      std::cout << formatter << "\n";
+
+      oss.str( "" );
+      oss.clear();
+    }
+
+    Teuchos::GlobalMPISession::barrier();
+  }
+}
+
+// The standard unit test main
 int main( int argc, char** argv )
 {
   // Initialize the global MPI session
@@ -51,8 +123,7 @@ int main( int argc, char** argv )
   }
   catch( const std::exception& exception )
   {
-    *out << exception.what() << std::endl;
-    *out << "End Result: TEST FAILED" << std::endl;
+    *out << exception.what() << "\n";
 
     success = false;
   }
@@ -60,27 +131,54 @@ int main( int argc, char** argv )
   // Make sure every node initialized successfully
   success = (mpi_session.sum(success ? 0 : 1 ) == 0 ? true : false);
 
+  // Record if the unit tests passed on this node
+  bool local_unit_test_success = success;
+
   // Run the unit tests if the initialization was globally successful
   if( success )
   {
-    Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
+    // The unit test repository can reduce the test results for you. We will
+    // not do this since we want to keep track of local success/failure so
+    // that we can format the local output upon failure
+    Teuchos::UnitTestRepository::setGloballyReduceTestResult( false );
     
-    success = Teuchos::UnitTestRepository::runUnitTests(*out);
+    local_unit_test_success = Teuchos::UnitTestRepository::runUnitTests(*out);
+
+    success =
+      (mpi_session.sum(local_unit_test_success ? 0 : 1) == 0 ? true : false);
   }
 
-  // Report the test results
-  out->setOutputToRootOnly( 0 );
-    
-  if( success )
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
+  // Report local failure details
+  if( mpi_session.getNProc() > 1 )
+    reportLocalFailureDetails( local_unit_test_success, oss );
 
-  Teuchos::UnitTestRepository::getCLP().printFinalTimerSummary(out.ptr());
-  
-  // Format the test output
+  // Report global results if on the root process
   if( mpi_session.getRank() == 0 )
   {
+    Utility::DynamicOutputFormatter formatter( oss.str() );
+    formatter.formatTeuchosUnitTestKeywords();
+
+    std::cout << formatter;
+
+    // Clear the stream
+    oss.str( "" );
+    oss.clear();
+  }
+
+  // Summarize the local results
+  if( mpi_session.getNProc() > 1 )
+    summarizeLocalResults( local_unit_test_success, oss );
+
+  // Summarize the global results
+  if( mpi_session.getRank() == 0 )
+  {
+    if( success )
+      *out << "\nEnd Result: TEST PASSED" << std::endl;
+    else
+      *out << "\nEnd Result: TEST FAILED" << std::endl;
+    
+    Teuchos::UnitTestRepository::getCLP().printFinalTimerSummary(out.ptr());
+
     Utility::DynamicOutputFormatter formatter( oss.str() );
     formatter.formatTeuchosUnitTestKeywords();
 

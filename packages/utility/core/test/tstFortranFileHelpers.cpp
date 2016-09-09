@@ -143,7 +143,7 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, rewindFileUsingFortran )
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS()
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   clp().setOption( "test_file",
                    &test_file_name,

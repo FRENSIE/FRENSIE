@@ -256,7 +256,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_array_xml_file;
 
-UTILITY_CUSTOM_TEUCHOS_COMMAND_LINE_OPTIONS()
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   clp().setOption( "test_array_xml_file",
                    &test_array_xml_file,

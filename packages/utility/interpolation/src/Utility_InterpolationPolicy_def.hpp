@@ -330,9 +330,6 @@ inline T LogLog::recoverProcessedDepVar( const T processed_dep_var )
 template<typename T>
 inline bool LogLog::isIndepVarInValidRange( const T indep_var )
 {
-  // Make sure the indep var is not inf or nan
-  testPrecondition( !QuantityTraits<T>::isnaninf( indep_var ) );
-
   return indep_var > QuantityTraits<T>::zero();
 }
 
@@ -342,7 +339,7 @@ inline bool LogLog::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-
+  
   return dep_var > QuantityTraits<T>::zero();
 }
 
@@ -460,9 +457,6 @@ inline T LogLin::recoverProcessedDepVar( const T processed_dep_var )
 template<typename T>
 inline bool LogLin::isIndepVarInValidRange( const T indep_var )
 {
-  // Make sure the indep var is not inf or nan
-  testPrecondition( !QuantityTraits<T>::isnaninf( indep_var ) );
-
   return true;
 }
 
@@ -472,7 +466,7 @@ inline bool LogLin::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-
+  
   return dep_var > QuantityTraits<T>::zero();
 }
 
@@ -577,9 +571,6 @@ inline T LinLog::recoverProcessedDepVar( const T processed_dep_var )
 template<typename T>
 inline bool LinLog::isIndepVarInValidRange( const T indep_var )
 {
-  // Make sure the indep var is not inf or nan
-  testPrecondition( !QuantityTraits<T>::isnaninf( indep_var ) );
-
   return indep_var > QuantityTraits<T>::zero();
 }
 
@@ -589,7 +580,7 @@ inline bool LinLog::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-
+  
   return true;
 }
 
@@ -694,9 +685,6 @@ inline T LinLin::recoverProcessedDepVar( const T processed_dep_var )
 template<typename T>
 inline bool LinLin::isIndepVarInValidRange( const T indep_var )
 {
-  // Make sure the indep var is not inf or nan
-  testPrecondition( !QuantityTraits<T>::isnaninf( indep_var ) );
-
   return true;
 }
 
