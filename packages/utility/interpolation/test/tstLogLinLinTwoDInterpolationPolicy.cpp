@@ -345,28 +345,6 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolate_no_tuple_grids )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid length can be calculated
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LogLinLin,
-						  calculateGridLength,
-						  member,
-						  tuple )
-{
-  Teuchos::Array<tuple> tuple_grid( 4 );
-  Utility::set<member>( tuple_grid[0], -1.0 );
-  Utility::set<member>( tuple_grid[1], 0.0 );
-  Utility::set<member>( tuple_grid[2], 1.0 );
-  Utility::set<member>( tuple_grid[3], 2.0 );
-
-  double grid_length =
-    Utility::LogLinLin::calculateGridLength<member>( tuple_grid.begin(),
-						     tuple_grid.end() );
-
-  TEST_EQUALITY_CONST( grid_length, 3.0 );
-}
-
-UNIT_TEST_INSTANTIATION_1_TUPLE( LogLinLin, calculateGridLength );
-
-//---------------------------------------------------------------------------//
 // Check that the intermediate grid length can be calculated
 TEUCHOS_UNIT_TEST( LogLinLin, calculateIntermediateGridLength )
 {
@@ -1286,29 +1264,6 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessed_no_tuple_grids )
 
   TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
 }
-
-//---------------------------------------------------------------------------//
-// Check that the grid length can be calculated
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LogLinLin,
-						  calculateGridLengthProcessed,
-						  member,
-						  tuple )
-{
-  Teuchos::Array<tuple> tuple_grid( 4 );
-  Utility::set<member>( tuple_grid[0], -1.0 );
-  Utility::set<member>( tuple_grid[1], 0.0 );
-  Utility::set<member>( tuple_grid[2], 1.0 );
-  Utility::set<member>( tuple_grid[3], 2.0 );
-
-  double grid_length =
-    Utility::LogLinLin::calculateGridLengthProcessed<member>(
-						            tuple_grid.begin(),
-							    tuple_grid.end() );
-
-  TEST_EQUALITY_CONST( grid_length, 3.0 );
-}
-
-UNIT_TEST_INSTANTIATION_1_TUPLE( LogLinLin, calculateGridLengthProcessed );
 
 //---------------------------------------------------------------------------//
 // Check that the intermediate grid length can be calculated

@@ -347,45 +347,6 @@ TEUCHOS_UNIT_TEST( LinLinLog, interpolate_no_tuple_grids )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid length can be calculated
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LinLinLog,
-						  calculateGridLength,
-						  member,
-						  tuple )
-{
-  Teuchos::Array<tuple> tuple_grid( 4 );
-  Utility::set<member>( tuple_grid[0], -1.0 );
-  Utility::set<member>( tuple_grid[1], 0.0 );
-  Utility::set<member>( tuple_grid[2], 1.0 );
-  Utility::set<member>( tuple_grid[3], 2.0 );
-
-  double grid_length =
-    Utility::LinLinLog::calculateGridLength<member>( tuple_grid.begin(),
-						     tuple_grid.end() );
-
-  TEST_EQUALITY_CONST( grid_length, 3.0 );
-}
-
-UNIT_TEST_INSTANTIATION_1_TUPLE( LinLinLog, calculateGridLength );
-
-//---------------------------------------------------------------------------//
-// Check that the grid length can be calculated
-TEUCHOS_UNIT_TEST( LinLinLog, calculateGridLength_no_tuple )
-{
-  Teuchos::Array<double> grid( 4 );
-  grid[0] = -1.0;
-  grid[1] = 0.0;
-  grid[2] = 1.0;
-  grid[3] = 2.0;
-
-  double grid_length =
-    Utility::LinLinLog::calculateGridLength<Utility::FIRST>( grid.begin(),
-							     grid.end() );
-
-  TEST_EQUALITY_CONST( grid_length, 3.0 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the intermediate grid length can be calculated
 TEUCHOS_UNIT_TEST( LinLinLog, calculateIntermediateGridLength )
 {
@@ -1301,47 +1262,6 @@ TEUCHOS_UNIT_TEST( LinLinLog, interpolateProcessed_no_tuple_grids )
 						z_1_grid.end() );
 
   TEST_FLOATING_EQUALITY( z, 8.3333333333333, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the grid length can be calculated
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LinLinLog,
-						  calculateGridLengthProcessed,
-						  member,
-						  tuple )
-{
-  Teuchos::Array<tuple> tuple_grid( 4 );
-  Utility::set<member>( tuple_grid[0], -1.0 );
-  Utility::set<member>( tuple_grid[1], 0.0 );
-  Utility::set<member>( tuple_grid[2], 1.0 );
-  Utility::set<member>( tuple_grid[3], 2.0 );
-
-  double grid_length =
-    Utility::LinLinLog::calculateGridLengthProcessed<member>(
-							    tuple_grid.begin(),
-							    tuple_grid.end() );
-
-  TEST_EQUALITY_CONST( grid_length, 3.0 );
-}
-
-UNIT_TEST_INSTANTIATION_1_TUPLE( LinLinLog, calculateGridLengthProcessed );
-
-//---------------------------------------------------------------------------//
-// Check that the grid length can be calculated
-TEUCHOS_UNIT_TEST( LinLinLog, calculateGridLengthProcessed_no_tuple )
-{
-  Teuchos::Array<double> grid( 4 );
-  grid[0] = -1.0;
-  grid[1] = 0.0;
-  grid[2] = 1.0;
-  grid[3] = 2.0;
-
-  double grid_length =
-    Utility::LinLinLog::calculateGridLengthProcessed<Utility::FIRST>(
-								  grid.begin(),
-								  grid.end() );
-
-  TEST_EQUALITY_CONST( grid_length, 3.0 );
 }
 
 //---------------------------------------------------------------------------//

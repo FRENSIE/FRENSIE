@@ -142,6 +142,42 @@ public:
   template<typename T>
   static bool isFirstIndepVarInValidRange( const T first_indep_var );
 
+  //! Calculate the length of an intermediate grid
+  template<typename IndepType, typename LengthType>
+  static LengthType calculateIntermediateGridLength(
+                                              const IndepType indep_var_x_0,
+                                              const IndepType indep_var_x_1,
+                                              const IndepType indep_var_x,
+                                              const LengthType grid_0_length,
+                                              const LengthType grid_1_length );
+
+  //! Calculate the length of a processed intermediate grid
+  template<typename T>
+  static T calculateIntermediateGridLengthProcessed(
+					    const T processed_indep_var_x_0,
+					    const T processed_indep_var_x_1,
+					    const T processed_indep_var_x,
+					    const T grid_0_length,
+					    const T grid_1_length );
+
+  //! Calculate the min value of an intermediate grid
+  template<typename IndepType, typename LimitType>
+  static LimitType calculateIntermediateGridLimit(
+                                              const IndepType indep_var_x_0,
+                                              const IndepType indep_var_x_1,
+                                              const IndepType indep_var_x,
+                                              const LimitType grid_0_y_limit,
+                                              const LimitType grid_1_y_limit );
+
+  //! Calculate the processed min value of a processed intermediate grid
+  template<typename T>
+  static T calculateIntermediateProcessedGridLimit(
+					    const T processed_indep_var_x_0,
+					    const T processed_indep_var_x_1,
+					    const T processed_indep_var_x,
+					    const T processed_grid_0_y_limit,
+					    const T processed_grid_1_y_limit );
+
   //! Conduct the interpolation between two grids
   template<typename FirstIndepType,
            typename SecondIndepType,
@@ -268,37 +304,6 @@ public:
 				ZIterator start_dep_var_1,
 				ZIterator end_dep_var_1 );
 
-  //! Calculate the length of a grid
-  template<typename T>
-  static typename QuantityTraits<T>::RawType calculateGridLength(
-                                                     const T grid_front_value,
-                                                     const T grid_back_value );
-  
-  //! Calculate the length of a grid
-  template<TupleMember YIndepMember,
-	   typename YIterator>
-  static typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType calculateGridLength(
-						  YIterator start_indep_y_grid,
-						  YIterator end_indep_y_grid );
-
-  //! Calculate the length of an intermediate grid
-  template<typename IndepType, typename LengthType>
-  static LengthType calculateIntermediateGridLength(
-                                              const IndepType indep_var_x_0,
-                                              const IndepType indep_var_x_1,
-                                              const IndepType indep_var_x,
-                                              const LengthType grid_0_length,
-                                              const LengthType grid_1_length );
-
-  //! Calculate the min value of an intermediate grid
-  template<typename IndepType, typename LimitType>
-  static LimitType calculateIntermediateGridLimit(
-                                              const IndepType indep_var_x_0,
-                                              const IndepType indep_var_x_1,
-                                              const IndepType indep_var_x,
-                                              const LimitType grid_0_y_limit,
-                                              const LimitType grid_1_y_limit );
-
   //! Conduct the interpolation between two processed grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
@@ -399,35 +404,7 @@ public:
 				      ZIterator start_processed_dep_grid_1,
 				      ZIterator end_processed_dep_grid_1 );
 
-  //! Calculate the length of a grid
-  template<TupleMember YIndepMember,
-	   typename YIterator>
-  static typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType calculateGridLengthProcessed(
-					YIterator start_processed_indep_y_grid,
-					YIterator end_processed_indep_y_grid );
-
-  //! Calculate the length of an intermediate grid
-  template<typename T>
-  static T calculateIntermediateGridLengthProcessed(
-					    const T processed_indep_var_x_0,
-					    const T processed_indep_var_x_1,
-					    const T processed_indep_var_x,
-					    const T grid_0_length,
-					    const T grid_1_length );
-
-  //! Calculate the min value of an intermediate grid
-  template<typename T>
-  static T calculateIntermediateProcessedGridLimit(
-					    const T processed_indep_var_x_0,
-					    const T processed_indep_var_x_1,
-					    const T processed_indep_var_x,
-					    const T processed_grid_0_y_limit,
-					    const T processed_grid_1_y_limit );
-
 private:
-
-  // Tolerance for certain tests
-  static const double s_tol;
 
   // Calculate the "fuzzy" lower bound (lower bound with roundoff tolerance)
   template<typename T>

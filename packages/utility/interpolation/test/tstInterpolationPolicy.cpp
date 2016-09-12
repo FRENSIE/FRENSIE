@@ -87,6 +87,31 @@ TEUCHOS_UNIT_TEST( LinLin, recoverProcessedDepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit base grid length can be calculated
+TEUCHOS_UNIT_TEST( LinLin, calculateUnitBaseGridLength )
+{
+  double grid_length =
+    Utility::LinLin::calculateUnitBaseGridLength( -4.0, -1.0 );
+  
+  TEST_EQUALITY_CONST( grid_length, 3.0 );
+
+  grid_length =
+    Utility::LinLin::calculateUnitBaseGridLength( -1.0, 0.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 1.0 );
+
+  grid_length =
+    Utility::LinLin::calculateUnitBaseGridLength( 0.0, 1.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 1.0 );
+
+  grid_length =
+    Utility::LinLin::calculateUnitBaseGridLength( 1.0, 4.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 3.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the unit base independent variable can be calculated
 TEUCHOS_UNIT_TEST( LinLin, calculateUnitBaseIndepVar )
 {
@@ -131,6 +156,31 @@ TEUCHOS_UNIT_TEST( LinLin, calculateIndepVar )
   y = Utility::LinLin::calculateIndepVar( eta, y_min, L );
 
   TEST_FLOATING_EQUALITY( y, 1.0, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit base grid length can be calculated
+TEUCHOS_UNIT_TEST( LinLin, calculateUnitBaseGridLengthProcessed )
+{
+  double grid_length =
+    Utility::LinLin::calculateUnitBaseGridLengthProcessed( -4.0, -1.0 );
+  
+  TEST_EQUALITY_CONST( grid_length, 3.0 );
+
+  grid_length =
+    Utility::LinLin::calculateUnitBaseGridLengthProcessed( -1.0, 0.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 1.0 );
+
+  grid_length =
+    Utility::LinLin::calculateUnitBaseGridLengthProcessed( 0.0, 1.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 1.0 );
+
+  grid_length =
+    Utility::LinLin::calculateUnitBaseGridLengthProcessed( 1.0, 4.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 3.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -389,6 +439,31 @@ TEUCHOS_UNIT_TEST( LogLin, recoverProcessedDepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit base grid length can be calculated
+TEUCHOS_UNIT_TEST( LogLin, calculateUnitBaseGridLength )
+{
+  double grid_length =
+    Utility::LogLin::calculateUnitBaseGridLength( -4.0, -1.0 );
+  
+  TEST_EQUALITY_CONST( grid_length, 3.0 );
+
+  grid_length =
+    Utility::LogLin::calculateUnitBaseGridLength( -1.0, 0.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 1.0 );
+
+  grid_length =
+    Utility::LogLin::calculateUnitBaseGridLength( 0.0, 1.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 1.0 );
+
+  grid_length =
+    Utility::LogLin::calculateUnitBaseGridLength( 1.0, 4.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 3.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the unit base independent can be calculated
 TEUCHOS_UNIT_TEST( LogLin, calculateUnitBaseIndepVar )
 {
@@ -433,6 +508,31 @@ TEUCHOS_UNIT_TEST( LogLin, calculateIndepVar )
   y = Utility::LogLin::calculateIndepVar( eta, y_min, L );
 
   TEST_FLOATING_EQUALITY( y, 1.0, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit base grid length can be calculated
+TEUCHOS_UNIT_TEST( LogLin, calculateUnitBaseGridLengthProcessed )
+{
+  double grid_length =
+    Utility::LogLin::calculateUnitBaseGridLengthProcessed( -4.0, -1.0 );
+  
+  TEST_EQUALITY_CONST( grid_length, 3.0 );
+
+  grid_length =
+    Utility::LogLin::calculateUnitBaseGridLengthProcessed( -1.0, 0.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 1.0 );
+
+  grid_length =
+    Utility::LogLin::calculateUnitBaseGridLengthProcessed( 0.0, 1.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 1.0 );
+
+  grid_length =
+    Utility::LogLin::calculateUnitBaseGridLengthProcessed( 1.0, 4.0 );
+
+  TEST_EQUALITY_CONST( grid_length, 3.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -691,6 +791,16 @@ TEUCHOS_UNIT_TEST( LinLog, recoverProcessedDepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit base grid length can be calculated
+TEUCHOS_UNIT_TEST( LinLog, calculateUnitBaseGridLength )
+{
+  double grid_length =
+    Utility::LinLog::calculateUnitBaseGridLength( 1e-3, 1.0 );
+
+  TEST_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );     
+}
+
+//---------------------------------------------------------------------------//
 // Check that the unit base independent can be calculated
 TEUCHOS_UNIT_TEST( LinLog, calculateUnitBaseIndepVar )
 {
@@ -735,6 +845,16 @@ TEUCHOS_UNIT_TEST( LinLog, calculateIndepVar )
   y = Utility::LinLog::calculateIndepVar( eta, y_min, L );
 
   TEST_FLOATING_EQUALITY( y, 0.020085536923187, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit base grid length can be calculated
+TEUCHOS_UNIT_TEST( LinLog, calculateUnitBaseGridLengthProcessed )
+{
+  double grid_length = Utility::LinLog::calculateUnitBaseGridLengthProcessed(
+                                                         log(1e-3), log(1.0) );
+
+  TEST_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );     
 }
 
 //---------------------------------------------------------------------------//
@@ -1010,6 +1130,16 @@ TEUCHOS_UNIT_TEST( LogLog, recoverProcessedDepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit base grid length can be calculated
+TEUCHOS_UNIT_TEST( LogLog, calculateUnitBaseGridLength )
+{
+  double grid_length =
+    Utility::LogLog::calculateUnitBaseGridLength( 1e-3, 1.0 );
+
+  TEST_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );     
+}
+
+//---------------------------------------------------------------------------//
 // Check that the unit base independent can be calculated
 TEUCHOS_UNIT_TEST( LogLog, calculateUnitBaseIndepVar )
 {
@@ -1054,6 +1184,16 @@ TEUCHOS_UNIT_TEST( LogLog, calculateIndepVar )
   y = Utility::LogLog::calculateIndepVar( eta, y_min, L );
 
   TEST_FLOATING_EQUALITY( y, 0.020085536923187, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit base grid length can be calculated
+TEUCHOS_UNIT_TEST( LogLog, calculateUnitBaseGridLengthProcessed )
+{
+  double grid_length = Utility::LogLog::calculateUnitBaseGridLengthProcessed(
+                                                         log(1e-3), log(1.0) );
+
+  TEST_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );     
 }
 
 //---------------------------------------------------------------------------//

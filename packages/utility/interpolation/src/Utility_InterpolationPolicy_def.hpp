@@ -78,6 +78,56 @@ T InterpolationHelper<ParentInterpolationType>::interpolateAndProcess(
     processed_slope*(processed_indep_var - processed_indep_var_0);
 }
 
+// Calculate the unit base grid length (L)
+/*! \details For LinLog and LogLog interpolation types the grid length
+ * that is calculated is not a traditional length. It is the distance between
+ * the processed upper independent value and the processed lower
+ * independent value. This is why any units associated with the independent
+ * grid limits are stripped away.
+ */
+template<typename ParentInterpolationType>
+template<typename IndepType>
+inline typename QuantityTraits<IndepType>::RawType
+InterpolationHelper<ParentInterpolationType>::calculateUnitBaseGridLength(
+                                       const IndepType grid_lower_indep_value,
+                                       const IndepType grid_upper_indep_value )
+{
+  // Make sure the grid is valid
+  testPrecondition( grid_lower_indep_value <= grid_upper_indep_value );
+  testPrecondition( ParentInterpolationType::isIndepVarInValidRange(
+                                                    grid_lower_indep_value ) );
+
+  return ThisType::calculateUnitBaseGridLengthProcessed(
+          ParentInterpolationType::processIndepVar( grid_lower_indep_value ),
+          ParentInterpolationType::processIndepVar( grid_upper_indep_value ) );
+}
+
+// Calculate the unit base grid length from a processed grid (L)
+/*! \details For LinLog and LogLog interpolation types the grid length
+ * that is calculated is not a traditional length. It is the distance between
+ * the processed upper independent value and the processed lower
+ * independent value. This is why any units associated with the independent
+ * grid limits are stripped away.
+ */
+template<typename ParentInterpolationType>
+template<typename T>
+inline T InterpolationHelper<ParentInterpolationType>::calculateUnitBaseGridLengthProcessed(
+                                     const T processed_grid_lower_indep_value,
+                                     const T processed_grid_upper_indep_value )
+{
+  // Make sure the grid is valid
+  testPrecondition( processed_grid_lower_indep_value <=
+                    processed_grid_upper_indep_value );
+
+  const T processed_grid_length =
+    processed_grid_upper_indep_value - processed_grid_lower_indep_value;
+
+  // Make sure the grid length is valid
+  testPrecondition( processed_grid_length >= 0.0 );
+
+  return processed_grid_length;
+}
+
 // Calculate the unit base independent variable (eta)
 /*! \details The independent grid length is calculated using the 
  * processed independent grid limits. It has been found that a tolerance of 

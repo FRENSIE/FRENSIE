@@ -55,6 +55,18 @@ public:
 				  const T processed_dep_var_0,
 				  const T processed_slope );
 
+  //! Calculate the unit base grid length (L)
+  template<typename IndepType>
+  static typename QuantityTraits<IndepType>::RawType
+  calculateUnitBaseGridLength( const IndepType grid_lower_indep_value,
+                               const IndepType grid_upper_indep_value );
+
+  //! Calculate the unit base grid length from a processed grid (L)
+  template<typename T>
+  static T calculateUnitBaseGridLengthProcessed(
+                                    const T processed_grid_lower_indep_value,
+                                    const T processed_grid_upper_indep_value );
+
   //! Calculate the unit base independent variable (eta)
   template<typename IndepType>
   static typename QuantityTraits<IndepType>::RawType
