@@ -15,7 +15,6 @@
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_ComparePolicy.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -420,6 +419,9 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
                                       indep_var_y_0_min,
                                       indep_var_y_1_min );
 
+    const SecondIndepType y_x_min_with_tol =
+      ThisType::calculateFuzzyLowerBound( y_x_min );
+
     // Calculate the intermediate y max
     const SecondIndepType y_x_max =
       calculateIntermediateGridLimit( indep_var_x_0,
@@ -428,14 +430,27 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
                                       indep_var_y_0_max,
                                       indep_var_y_1_max );
 
+    const SecondIndepType y_x_max_with_tol =
+      ThisType::calculateFuzzyUpperBound( y_x_max );
+    std::cout.precision( 18 );
+    std::cout << indep_var_y << " (" << y_x_min_with_tol << ","
+              << y_x_max_with_tol << ")" << std::endl;
     // Check if the secondary indep value is in the intermediate grid
-    if( (indep_var_y >= y_x_min*(1 - s_tol)) &&
-        (indep_var_y <= y_x_max*(1 + s_tol)) )
+    if( indep_var_y >= y_x_min_with_tol && indep_var_y <= y_x_max_with_tol )
     {
       // Calculate the unit base independent variable
-      const typename QuantityTraits<SecondIndepType>::RawType eta =
-        ZYInterpPolicy::calculateUnitBaseIndepVar( indep_var_y, y_x_min, Lx );
-      
+      typename QuantityTraits<SecondIndepType>::RawType eta;
+
+      if( indep_var_y > y_x_min && indep_var_y < y_x_max )
+      {
+        eta = ZYInterpPolicy::calculateUnitBaseIndepVar(
+                                                    indep_var_y, y_x_min, Lx );
+      }
+      else if( indep_var_y <= y_x_min && indep_var_y >= y_x_min_with_tol )
+        eta = 0.0;
+      else // indep_var_y >= y_x_max && indep_var_y <= y_x_max_with_tol
+        eta = 1.0;
+            
       // Calculate the y value on the first grid
       const SecondIndepType indep_var_y_0 = ZYInterpPolicy::calculateIndepVar(
                                        eta, indep_var_y_0_min, L0 );
@@ -488,7 +503,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
       return QuantityTraits<typename ZYLowerFunctor::result_type>::initializeQuantity(
                     ThisType::recoverProcessedDepVar( processed_dep_var_yx ) );
     }
-    else // indep_var_y < intermediate_y
+    else // indep_var_y < y_x_min || indep_var_y > y_x_max
       return QuantityTraits<typename ZYLowerFunctor::result_type>::zero();
   }
   else // indep_var_x_0 == indep_var_x_1
@@ -544,8 +559,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 				indep_var_x,
 				get<YIndepMember>( *start_indep_y_grid_0 ),
 			        get<YIndepMember>( *start_indep_y_grid_1 ) ) );
-  testPrecondition( indep_var_y >= test_y_min ||
-		    Policy::relError( indep_var_y, test_y_min ) <= s_tol );
+  testPrecondition( indep_var_y >=
+                    ThisType::calculateFuzzyLowerBound( test_y_min ) )
   remember( YIterator test_end_indep_y_grid_0 = end_indep_y_grid_0 );
   remember( --test_end_indep_y_grid_0 );
   remember( YIterator test_end_indep_y_grid_1 = end_indep_y_grid_1 );
@@ -556,8 +571,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 			     indep_var_x,
 			     get<YIndepMember>( *test_end_indep_y_grid_0 ),
 			     get<YIndepMember>( *test_end_indep_y_grid_1 ) ) );
-  testPrecondition( indep_var_y <= test_y_max ||
-		    Policy::relError( indep_var_y, test_y_max ) <= s_tol );
+  testPrecondition( indep_var_y <=
+                    ThisType::calculateFuzzyUpperBound( test_y_max ) );
   // Make sure the dependent variables are valid
   testPrecondition( start_dep_grid_0 != end_dep_grid_0 );
   testPrecondition( start_dep_grid_1 != end_dep_grid_1 );
@@ -790,6 +805,26 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIntermediat
 					 grid_1_y_limit );
 }
 
+// Calculate the "fuzzy" lower bound (lower bound with roundoff tolerance)
+template<typename ZYInterpPolicy, typename ZXInterpPolicy>
+template<typename T>
+inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateFuzzyLowerBound( const T lower_bound )
+{
+  // Note: it does not matter which interpolation policy we use for this call
+  // since they both use the same method. The default tolerance will be used.
+  return ZYInterpPolicy::calculateFuzzyLowerBound( lower_bound );
+}
+
+// Calculate the "fuzzy" upper bound (upper bound with roundoff tolerance)
+template<typename ZYInterpPolicy, typename ZXInterpPolicy>
+template<typename T>
+inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateFuzzyUpperBound( const T upper_bound )
+{
+  // Note: it does not matter which interpolation policy we use for this call
+  // since they both use the same method. The default tolerance will be used.
+  return ZYInterpPolicy::calculateFuzzyUpperBound( upper_bound );
+}
+
 // Interpolate on the specified y grid
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
 template<TupleMember YIndepMember,
@@ -821,8 +856,8 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
 				get<YIndepMember>( *start_indep_y_grid ) ) );
   remember( YIterator true_end_indep_y_grid_test = end_indep_y_grid );
   remember( --true_end_indep_y_grid_test );
-  testPrecondition( indep_var_y <= get<YIndepMember>(*true_end_indep_y_grid_test) ||
-		    Policy::relError( indep_var_y, get<YIndepMember>(*true_end_indep_y_grid_test) ) <= s_tol );
+  testPrecondition( indep_var_y <= ThisType::calculateFuzzyUpperBound(
+                            get<YIndepMember>(*true_end_indep_y_grid_test) ) );
   // Make sure the dependent variables are valid
   testPrecondition( start_dep_grid != end_dep_grid );
   testPrecondition( std::distance( start_indep_y_grid, end_indep_y_grid )==
@@ -865,8 +900,8 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
 
     dep_var = get<DepMember>( *true_end_dep_grid );
   }
-  else if( indep_var_y > get<YIndepMember>( *true_end_indep_y_grid ) &&
-	   Policy::relError( indep_var_y, get<YIndepMember>( *true_end_indep_y_grid ) ) <= s_tol )
+  else if( indep_var_y > ThisType::calculateFuzzyUpperBound(
+                                get<YIndepMember>( *true_end_indep_y_grid ) ) )
   {
     ZIterator true_end_dep_grid = end_dep_grid;
     --true_end_dep_grid;
@@ -1122,9 +1157,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 		      processed_indep_var_x,
 		      get<YIndepMember>( *start_processed_indep_y_grid_0 ),
 		      get<YIndepMember>( *start_processed_indep_y_grid_1 ) ) );
-  testPrecondition( processed_indep_var_y >= test_processed_y_min ||
-		    Policy::relError( processed_indep_var_y,
-				      test_processed_y_min ) <= s_tol );
+  testPrecondition( processed_indep_var_y >=
+                    ThisType::calculateFuzzyLowerBound(test_processed_y_min) );
   remember( YIterator true_end_processed_indep_y_grid_0 =
 	    end_processed_indep_y_grid_0 );
   remember( --true_end_processed_indep_y_grid_0 );
@@ -1137,9 +1171,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 		   processed_indep_var_x,
 		   get<YIndepMember>( *true_end_processed_indep_y_grid_0 ),
 		   get<YIndepMember>( *true_end_processed_indep_y_grid_1 ) ) );
-  testPrecondition( processed_indep_var_y <= test_processed_y_max ||
-		    Policy::relError( processed_indep_var_y,
-				      test_processed_y_max ) <= s_tol );
+  testPrecondition( processed_indep_var_y <=
+                    ThisType::calculateFuzzyUpperBound(test_processed_y_max) );
   // Make sure the dependent variables are valid
   testPrecondition( start_processed_dep_grid_0 !=
 		    end_processed_dep_grid_0 );
@@ -1438,8 +1471,9 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   remember( YIterator true_end_processed_indep_y_grid_test =
 	    end_processed_indep_y_grid );
   remember( --true_end_processed_indep_y_grid_test );
-  testPrecondition( processed_indep_var_y <= get<YIndepMember>(*true_end_processed_indep_y_grid_test) ||
-		    Policy::relError( processed_indep_var_y, get<YIndepMember>(*true_end_processed_indep_y_grid_test) ) <= s_tol )
+  testPrecondition( processed_indep_var_y <=
+              ThisType::calculateFuzzyUpperBound(
+                 get<YIndepMember>(*true_end_processed_indep_y_grid_test)  ) );
   // Make sure the dependent variables are valid
   testPrecondition( start_processed_dep_grid != end_processed_dep_grid );
   testPrecondition( std::distance( start_processed_indep_y_grid,
@@ -1490,10 +1524,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 
     processed_dep_var = get<DepMember>( *true_end_processed_dep_grid );
   }
-  else if( processed_indep_var_y > get<YIndepMember>( *true_end_processed_indep_y_grid ) &&
-	   Policy::relError(
-	     processed_indep_var_y,
-	     get<YIndepMember>( *true_end_processed_indep_y_grid ) ) <= s_tol )
+  else if( processed_indep_var_y > ThisType::calculateFuzzyUpperBound(
+                      get<YIndepMember>( *true_end_processed_indep_y_grid ) ) )
   {
     ZIterator true_end_processed_dep_grid = end_processed_dep_grid;
     --true_end_processed_dep_grid;

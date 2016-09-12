@@ -19,15 +19,10 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "Utility_ComparePolicy.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
-// Initialize the static member data
-template<typename ParentInterpolationType>
-const double InterpolationHelper<ParentInterpolationType>::s_tol = 1e-3;
-  
 // Interpolate between two processed points
 template<typename ParentInterpolationType>
 template<typename T>
@@ -85,7 +80,8 @@ T InterpolationHelper<ParentInterpolationType>::interpolateAndProcess(
 
 // Calculate the unit base independent variable (eta)
 /*! \details The independent grid length is calculated using the 
- * processed independent grid limits.
+ * processed independent grid limits. It has been found that a tolerance of 
+ * 1e-3 works best for most applications. 
  */
 template<typename ParentInterpolationType>
 template<typename IndepType>
@@ -93,7 +89,8 @@ inline typename QuantityTraits<IndepType>::RawType
 InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar(
           const IndepType indep_var,
           const IndepType indep_var_min,
-          const typename QuantityTraits<IndepType>::RawType indep_grid_length )
+          const typename QuantityTraits<IndepType>::RawType indep_grid_length,
+          const double tol )
 {
   // Make sure the intermediate grid min indep var is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
@@ -104,56 +101,57 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar(
   // Make sure the independent variable is valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var ) );
   testPrecondition( ParentInterpolationType::isIndepVarInValidRange( indep_var ) );
-  testPrecondition( indep_var >= indep_var_min ||
-		    Policy::relError( getRawQuantity(indep_var),
-                                      getRawQuantity(indep_var_min) )<= s_tol);
+  testPrecondition( indep_var >=
+                    ThisType::calculateFuzzyLowerBound( indep_var_min, tol ) );
   remember( typename QuantityTraits<IndepType>::RawType test_difference = 
-	    ParentInterpolationType::processIndepVar(indep_var) -
-	    ParentInterpolationType::processIndepVar(indep_var_min) );
-  testPrecondition( test_difference <= indep_grid_length ||
-		    Policy::relError( test_difference, indep_grid_length )
-                    <= s_tol );
+            ParentInterpolationType::processIndepVar(indep_var) -
+            ParentInterpolationType::processIndepVar(indep_var_min) );
+  testPrecondition( test_difference <= ThisType::calculateFuzzyUpperBound(
+                                                    indep_grid_length, tol ) );
 
   return calculateUnitBaseIndepVarProcessed(
                        ParentInterpolationType::processIndepVar(indep_var),
                        ParentInterpolationType::processIndepVar(indep_var_min),
-                       indep_grid_length );
+                       indep_grid_length,
+                       tol );
 }
 
 // Calculate the unit base independent variable (eta)
+/*! \details It has been found that a tolerance of 1e-3 works best for most 
+ * applications. 
+ */
 template<typename ParentInterpolationType>
 template<typename T>
 inline T InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVarProcessed(
                                                const T processed_indep_var,
                                                const T processed_indep_var_min,
-                                               const T indep_grid_length )
+                                               const T indep_grid_length,
+                                               const double tol )
 {
   // Make sure the intermediate grid min indep var is valid
   testPrecondition( !QuantityTraits<T>::isnaninf( processed_indep_var_min ) );
   // Make sure the independent y variable is valid
   testPrecondition( !QuantityTraits<T>::isnaninf(processed_indep_var) );
-  testPrecondition( processed_indep_var >= processed_indep_var_min ||
-		    Policy::relError(processed_indep_var,
-				     processed_indep_var_min) <= s_tol );
+  testPrecondition( processed_indep_var >= ThisType::calculateFuzzyLowerBound(
+                                              processed_indep_var_min, tol ) );
   remember( T test_difference = processed_indep_var - processed_indep_var_min);
-  testPrecondition( test_difference <= indep_grid_length ||
-		    Policy::relError( test_difference, indep_grid_length ) <=
-                    s_tol );
+  testPrecondition( test_difference <= ThisType::calculateFuzzyUpperBound(
+                                                    indep_grid_length, tol ) );
   // Make sure the intermediate grid length is valid
   testPrecondition( !QuantityTraits<T>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length > 0.0 );
   
   T eta = (processed_indep_var - processed_indep_var_min)/indep_grid_length;
 
-  // Check for rounding errors
+  // Check for rounding errors and correct
   if( eta > 1.0 )
   {
-    if( eta - 1.0 < s_tol )
+    if( eta - 1.0 < tol )
       eta = 1.0;
   }
   else if( eta < 0.0 )
   {
-    if( eta > -s_tol )
+    if( eta > -tol )
       eta = 0.0;
   }
   
@@ -165,13 +163,17 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar
 }
 
 // Calculate the independent variable (from eta)
+/*! \details It has been found that a tolerance of 1e-3 works best for most 
+ * applications. 
+ */
 template<typename ParentInterpolationType>
 template<typename IndepType>
 inline IndepType
 InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
           const typename QuantityTraits<IndepType>::RawType eta,
           const IndepType indep_var_min,
-          const typename QuantityTraits<IndepType>::RawType indep_grid_length )
+          const typename QuantityTraits<IndepType>::RawType indep_grid_length,
+          const double tol )
 {
   // Make sure the eta value is valid
   testPrecondition( eta >= 0.0 );
@@ -190,8 +192,7 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
 
   // Check for rounding errors
   if( grid_indep_var < indep_var_min &&
-      Policy::relError( getRawQuantity(grid_indep_var),
-                        getRawQuantity(indep_var_min) ) <= s_tol)
+      grid_indep_var >= ThisType::calculateFuzzyLowerBound(indep_var_min, tol))
     grid_indep_var = indep_var_min;
 
   // Make sure the calculated independent variable is valid
@@ -201,6 +202,9 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
 }
 
 // Calculate the processed independent variable (from eta)
+/*! \details A tolerance is not required with this method because no variable 
+ * processing is done.
+ */
 template<typename ParentInterpolationType>
 template<typename T>
 inline T InterpolationHelper<ParentInterpolationType>::calculateProcessedIndepVar(
@@ -218,6 +222,38 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateProcessedIndepVa
   testPrecondition( indep_grid_length >= 0.0 );
   
   return processed_indep_var_min + indep_grid_length*eta;
+}
+
+// Calculate the "fuzzy" lower bound (lower bound with roundoff tolerance)
+/*! \details It has been found that a tolerance of 1e-3 works best for most
+ * applications. 
+ */
+template<typename ParentInterpolationType>
+template<typename T>
+inline T InterpolationHelper<ParentInterpolationType>::calculateFuzzyLowerBound(
+                                                             const T value,
+                                                             const double tol )
+{
+  if( value < QuantityTraits<T>::zero() )
+    return value*(1+tol);
+  else
+    return value*(1-tol);
+}
+
+// Calculate the "fuzzy" upper bound (upper bound with roundoff tolerance)
+/*! \details It has been found that a tolerance of 1e-3 works best for most
+ * applications
+ */
+template<typename ParentInterpolationType>
+template<typename T>
+inline T InterpolationHelper<ParentInterpolationType>::calculateFuzzyUpperBound(
+                                                             const T value,
+                                                             const double tol )
+{
+  if( value > QuantityTraits<T>::zero() )
+    return value*(1+tol);
+  else
+    return value*(1-tol);
 }
 
 // Get the interpolation type

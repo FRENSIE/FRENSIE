@@ -429,6 +429,14 @@ private:
   // Tolerance for certain tests
   static const double s_tol;
 
+  // Calculate the "fuzzy" lower bound (lower bound with roundoff tolerance)
+  template<typename T>
+  static T calculateFuzzyLowerBound( const T lower_bound );
+
+  // Calculate the "fuzzy" upper bound (upper bound with roundoff tolerance)
+  template<typename T>
+  static T calculateFuzzyUpperBound( const T upper_bound );
+
   // Interpolate on the specified y grid
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,

@@ -31,8 +31,16 @@ struct LinDepVarProcessingTag{};
  * \ingroup policies
  */
 template<typename ParentInterpolationType>
-struct InterpolationHelper
+class InterpolationHelper
 {
+  
+private:
+
+  // Typedef for this type
+  typedef InterpolationHelper<ParentInterpolationType> ThisType;
+
+public:
+  
   //! Interpolate between two processed points
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
@@ -53,20 +61,23 @@ struct InterpolationHelper
   calculateUnitBaseIndepVar(
          const IndepType indep_var,
          const IndepType indep_var_min,
-         const typename QuantityTraits<IndepType>::RawType indep_grid_length );
+         const typename QuantityTraits<IndepType>::RawType indep_grid_length,
+         const double tol = 1e-3 );
 
   //! Calculate the unit base independent variable (eta)
   template<typename T>
   static T calculateUnitBaseIndepVarProcessed( const T processed_indep_var,
                                                const T processed_indep_var_min,
-                                               const T indep_grid_length );
+                                               const T indep_grid_length,
+                                               const double tol = 1e-3 );
 
   //! Calculate the independent variable (from eta)
   template<typename IndepType>
   static IndepType calculateIndepVar(
          const typename QuantityTraits<IndepType>::RawType eta,
          const IndepType indep_var_min,
-         const typename QuantityTraits<IndepType>::RawType indep_grid_length );
+         const typename QuantityTraits<IndepType>::RawType indep_grid_length,
+         const double tol = 1e-3 );
 
   //! Calculate the processed independent variable (from eta)
   template<typename T>
@@ -74,10 +85,13 @@ struct InterpolationHelper
                                        const T processed_indep_var_min,
                                        const T indep_grid_length );
 
-private:
+  //! Calculate the "fuzzy" lower bound (lower bound with roundoff tolerance)
+  template<typename T>
+  static T calculateFuzzyLowerBound( const T value, const double tol = 1e-3 );
 
-  // The tolerance used to eliminate some rounding issues
-  static const double s_tol;
+  //! Calculate the "fuzzy" upper bound (upper bound with roundoff tolerance)
+  template<typename T>
+  static T calculateFuzzyUpperBound( const T value, const double tol = 1e-3 );
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-log 
