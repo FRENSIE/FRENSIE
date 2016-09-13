@@ -152,6 +152,10 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
 }
 
 // Sample the bin boundary that will be used for stochastic sampling
+/*! \details This method will throw an exception if the primary independent
+ * value is outside of the primary grid limits and the primary grid has not
+ * been extended.
+ */
 template<typename TwoDInterpPolicy, typename Distribution>
 auto
 UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleBinBoundary(
@@ -186,7 +190,16 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distributi
       return lower_bin_boundary;
   }
   else
-    return lower_bin_boundary;
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return lower_bin_boundary;
+    else
+    {
+      THROW_EXCEPTION( std::logic_error,
+                       "Error: Sampling beyond the primary grid boundaries "
+                       "cannot be done unless the grid has been extended!" );
+    }
+  }
 }
 
 // Return the upper bound of the conditional distribution
