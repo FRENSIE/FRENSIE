@@ -23,6 +23,7 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_SortAlgorithms.hpp"
 
 namespace MonteCarlo{
 
@@ -476,9 +477,30 @@ void NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaInelasticDis
       // Grab the outgoing energy point and associated pdf point
       energy_grid.push_back( itxe_block_array[location] );
       energy_pdf.push_back( itxe_block_array[location + 1] );
-      
-      // Grab the outgoing equiprobable cosines
+
+      // Found situation in lwtr.20t -> line 131677 where there are nonphysical
+      //  cosines (i.e. cosines > 1 and out of order...). How is this possible?
+      //  Reaching out to J. Conlin to attempt to find more information...
       Teuchos::Array<double> cosines = itxe_block_array( location + 3, 20 );
+      
+      if( itxe_block_array[location + 1] <= 1e-12 )
+      {
+        // Construct a false outgoing bin for incredibly unlikely result...
+        for( int c = 0; c < 20; ++c )
+        {
+          cosines[c] = c*(2.0/19.0) - 1;
+        }
+      }
+      
+      if( cosines[19] > 1.0 )
+      {
+        cosines[19] = 1.0;
+      }
+      
+      if( !Utility::Sort::isSortedAscending( cosines.begin(), cosines.end() ) )
+      {
+        std::sort( cosines.begin(), cosines.end() );
+      }
 
       location += 23;
 

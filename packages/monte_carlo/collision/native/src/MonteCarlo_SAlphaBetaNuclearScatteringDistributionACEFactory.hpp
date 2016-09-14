@@ -46,10 +46,7 @@ public:
 			    const Teuchos::ArrayView<const double> and_block,
 			    const Teuchos::ArrayView<const double> ldlw_block,
 			    const Teuchos::ArrayView<const double> dlw_block,
-			    const Teuchos::ArrayView<const double> itie_block,
-			    const Teuchos::ArrayView<const double> itxe_block,
-			    const Teuchos::ArrayView<const double> itce_block,
-			    const Teuchos::ArrayView<const double> itca_block );
+					const Data::XSSSabDataExtractor& sab_nuclide_data  );
 
   //! Constructor (no TYR block)
   SAlphaBetaNuclearScatteringDistributionACEFactory(
@@ -60,10 +57,7 @@ public:
 			    const Teuchos::ArrayView<const double> and_block,
 			    const Teuchos::ArrayView<const double> ldlw_block,
 			    const Teuchos::ArrayView<const double> dlw_block,
-			    const Teuchos::ArrayView<const double> itie_block,
-			    const Teuchos::ArrayView<const double> itxe_block,
-			    const Teuchos::ArrayView<const double> itce_block,
-			    const Teuchos::ArrayView<const double> itca_block );
+					const Data::XSSSabDataExtractor& sab_nuclide_data  );
 
   //! Destructor
   virtual ~SAlphaBetaNuclearScatteringDistributionACEFactory()
@@ -145,7 +139,7 @@ protected:
 	Teuchos::ArrayView<const double> d_itca_block;
 
   // S(alpha,beta) data extractor
-  const Data::XSSSabDataExtractor d_sab_nuclide_data;
+  Data::XSSSabDataExtractor d_sab_nuclide_data;
 		   
 };
 

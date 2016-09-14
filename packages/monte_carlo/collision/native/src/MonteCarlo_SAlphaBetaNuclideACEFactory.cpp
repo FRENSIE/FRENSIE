@@ -36,14 +36,14 @@ void SAlphaBetaNuclideACEFactory::createNuclide(
   // Extract the common energy grid used for this nuclide
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_nuclide_data.extractEnergyGrid() );
-
+  
   // Create the nuclear reaction factory
   SAlphaBetaNuclearReactionACEFactory reaction_factory( nuclide_alias,
 					      atomic_weight_ratio,
 					      temperature,
 					      energy_grid.getConst(),
 					      raw_nuclide_data,
-					      sab_nuclide_data );
+					      sab_nuclide_data );	  
 					  
   // Create the standard scattering reactions
   Nuclide::ReactionMap standard_scattering_reactions;

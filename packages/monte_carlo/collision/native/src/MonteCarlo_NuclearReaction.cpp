@@ -38,6 +38,12 @@ NuclearReaction::NuclearReaction(
   // Make sure the threshold energy index is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the incoming energy grid is valid
+  if( !Utility::Sort::isSortedAscending( incoming_energy_grid.begin(), incoming_energy_grid.end() ) )
+  {
+    std::cout << "Reaction Type: " << reaction_type << std::endl;
+    std::cout << "Energy Grid: " << incoming_energy_grid[0] << "," << incoming_energy_grid[115] << "," << incoming_energy_grid[116] << std::endl;
+  }
+  
   testPrecondition( Utility::Sort::isSortedAscending( 
 					        incoming_energy_grid.begin(),
 						incoming_energy_grid.end() ) );

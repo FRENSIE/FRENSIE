@@ -45,11 +45,16 @@ SAlphaBetaNuclearReactionACEFactory::SAlphaBetaNuclearReactionACEFactory(
 	setSAlphaBetaUpperEnergyLimitMap( sab_nuclide_data,
 	                                  upper_energy_limits );
 
+  std::cout << " " << std::endl;
+  std::cout << "Pre-initialization of S(alpha,beta) reactions..." << std::endl;
+
 	// Initialize the S(alpha,beta) reactions
 	initializeSAlphaBetaReactions( temperature,
 	                               sab_nuclide_data.extractInelasticEnergyGrid(),
 	                               reaction_cross_section,
 	                               scattering_dist_factory );
+	                               
+	std::cout << "Post-initialization of S(alpha,beta) reactions..." << std::endl;
 }
 
 // Create the S(alpha,beta) reactions
@@ -121,13 +126,16 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
   Teuchos::Array<double> sab_energy_grid_array( sab_energy_grid );
   boost::unordered_map<NuclearReactionType,Teuchos::Array<double> >
       reaction_cross_section_arrays;
+
  
   // Append the S(alpha,beta) data with the threshold data point from the
   //   standard reaction and update the standard reaction data
   while( reaction_xs != reaction_xs_end )
   {
     reaction_type = reaction_xs->first;
-    
+  
+    reaction_cross_section_arrays[reaction_type] = reaction_cross_section[reaction_type];
+      
     if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION ||
         reaction_type == MonteCarlo::SALPHABETA_N__N_ELASTIC_REACTION )
     {
@@ -152,17 +160,14 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
     
       if( d_scattering_reactions.find(parent_reaction_type) != d_scattering_reactions.end() )
       {
-        std::cout << "Found..." << std::endl;
         d_scattering_reactions[parent_reaction_type]->updateThresholdEnergyIndex( index );
-        double energy = d_energy_grid[index];
-        double energy_xs = 
+        energy = d_energy_grid[index];
+        energy_xs = 
           d_scattering_reactions[parent_reaction_type]->getCrossSection( energy );
+      
+        sab_energy_grid_array.push_back( energy );
+        reaction_cross_section_arrays[reaction_type].push_back( energy_xs );
       }
-
-      sab_energy_grid_array.push_back( energy );
-      reaction_cross_section_arrays[reaction_type] =
-        reaction_cross_section[reaction_type];
-      reaction_cross_section_arrays[reaction_type].push_back( energy_xs );
 
     }
     else

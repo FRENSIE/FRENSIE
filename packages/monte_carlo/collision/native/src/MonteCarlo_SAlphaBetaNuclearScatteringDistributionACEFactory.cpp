@@ -75,10 +75,7 @@ SAlphaBetaNuclearScatteringDistributionACEFactory::SAlphaBetaNuclearScatteringDi
 			    const Teuchos::ArrayView<const double> and_block,
 			    const Teuchos::ArrayView<const double> ldlw_block,
 			    const Teuchos::ArrayView<const double> dlw_block,
-			    const Teuchos::ArrayView<const double> itie_block,
-			    const Teuchos::ArrayView<const double> itxe_block,
- 	        const Teuchos::ArrayView<const double> itce_block,
-	 	      const Teuchos::ArrayView<const double> itca_block ) 
+			    const Data::XSSSabDataExtractor& sab_nuclide_data ) 
 	: NuclearScatteringDistributionACEFactory<MonteCarlo::NeutronState,MonteCarlo::NeutronState>( 
                                         table_name,
                                         atomic_weight_ratio,
@@ -89,7 +86,8 @@ SAlphaBetaNuclearScatteringDistributionACEFactory::SAlphaBetaNuclearScatteringDi
                                         ldlw_block,
                                         dlw_block ),
     d_table_name( table_name ),
-    d_atomic_weight_ratio( atomic_weight_ratio )
+    d_atomic_weight_ratio( atomic_weight_ratio ),
+    d_sab_nuclide_data( sab_nuclide_data )
 {
   initialize( mtr_block,
 		    tyr_block,
@@ -97,10 +95,10 @@ SAlphaBetaNuclearScatteringDistributionACEFactory::SAlphaBetaNuclearScatteringDi
 		    and_block,
 		    ldlw_block,
 		    dlw_block,
-		    itie_block,
-		    itxe_block,
-		    itce_block,
-		    itca_block );
+        sab_nuclide_data.extractITIEBlock(),
+        sab_nuclide_data.extractITXEBlock(),
+        sab_nuclide_data.extractITCEBlock(),
+        sab_nuclide_data.extractITCABlock());
 }
 
 // Constructor (no TYR block)
@@ -118,10 +116,7 @@ SAlphaBetaNuclearScatteringDistributionACEFactory::SAlphaBetaNuclearScatteringDi
 			    const Teuchos::ArrayView<const double> and_block,
 			    const Teuchos::ArrayView<const double> ldlw_block,
 			    const Teuchos::ArrayView<const double> dlw_block,
-			    const Teuchos::ArrayView<const double> itie_block,
-			    const Teuchos::ArrayView<const double> itxe_block,
- 	        const Teuchos::ArrayView<const double> itce_block,
-	 	      const Teuchos::ArrayView<const double> itca_block )
+			    const Data::XSSSabDataExtractor& sab_nuclide_data )
 	: NuclearScatteringDistributionACEFactory<MonteCarlo::NeutronState,MonteCarlo::NeutronState>( 
                                         table_name,
                                         atomic_weight_ratio,
@@ -131,17 +126,18 @@ SAlphaBetaNuclearScatteringDistributionACEFactory::SAlphaBetaNuclearScatteringDi
                                         ldlw_block,
                                         dlw_block ),
     d_table_name( table_name ),
-    d_atomic_weight_ratio( atomic_weight_ratio )
+    d_atomic_weight_ratio( atomic_weight_ratio ),
+    d_sab_nuclide_data( sab_nuclide_data )
 {
   initialize( mtr_block,
 		    land_block,
 		    and_block,
 		    ldlw_block,
 		    dlw_block,
-		    itie_block,
-		    itxe_block,
-		    itce_block,
-		    itca_block );
+        sab_nuclide_data.extractITIEBlock(),
+        sab_nuclide_data.extractITXEBlock(),
+        sab_nuclide_data.extractITCEBlock(),
+        sab_nuclide_data.extractITCABlock());
 }
 
 // Initialize the factory
@@ -245,44 +241,21 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::initializeSAlphaBetaData
 // Set the inelastic S(alpha,beta) energies
 void SAlphaBetaNuclearScatteringDistributionACEFactory::setInelasticSAlphaBetaEnergies()
 {
-  if( true )
-  {
-    d_inelastic_energies = d_sab_nuclide_data.extractInelasticEnergyGrid();
-  }
-  else
-  {
-    d_inelastic_energies = d_itie_block( 1, (int)d_itie_block[0] );
-  }
+  d_inelastic_energies = d_sab_nuclide_data.extractInelasticEnergyGrid();
 }
 
 // Set the inelastic S(alpha,beta) distribution locators
 void SAlphaBetaNuclearScatteringDistributionACEFactory::setInelasticSAlphaBetaDistributionLocators()
 {
-  if( true )
-  {
-    d_inelastic_distribution_locators = 
-      d_sab_nuclide_data.extractInelasticDistributionLocations();
-  }
-  else
-  {
-    d_inelastic_distribution_locators = d_itie_block( 1+2*(int)d_itie_block[0], 
-                                                        (int)d_itie_block[0] );
-  }
+  d_inelastic_distribution_locators = 
+    d_sab_nuclide_data.extractInelasticDistributionLocations();
 }
 
 // Set the inelastic S(alpha,beta) outgoing energies
 void SAlphaBetaNuclearScatteringDistributionACEFactory::setInelasticSAlphaBetaOutgoingEnergies()
 {
-  if( true )
-  {
-    d_inelastic_outgoing_energies = 
-      d_sab_nuclide_data.extractNumberOfOutgoingEnergies();
-  }
-  else
-  {
-    d_inelastic_outgoing_energies = d_itie_block( 1+3*(int)d_itie_block[0], 
-                                                    (int)d_itie_block[0] );
-  }
+  d_inelastic_outgoing_energies = 
+    d_sab_nuclide_data.extractNumberOfOutgoingEnergies();
 }
   
 // Create S(alpha,beta) distributions
@@ -293,10 +266,6 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::createSAlphaBetaScatteri
   // Create the inelastic scattering distribution
   if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION )
   {
-    std::cout << "Inelastic energies: " << d_inelastic_energies << std::endl;
-    std::cout << "Outgoing energies: " << d_inelastic_outgoing_energies << std::endl;
-  
-  
     NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaInelasticDistribution(
               d_atomic_weight_ratio,
      	        d_inelastic_energies,
