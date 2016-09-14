@@ -374,13 +374,15 @@ void Nuclide::calculateTotalReaction(
   end_reaction_type_pointer = d_scattering_reactions.end();
 
   Teuchos::ArrayRCP<double> cross_section( energy_grid.size() );
+  
+  bool printed = false;
 
   // Calculate the total cross section
   for( unsigned i = 0; i < energy_grid.size(); ++i )
   {
     cross_section[i] = 
       d_total_absorption_reaction->getCrossSection( energy_grid[i] );
-      
+    
     reaction_type_pointer = d_scattering_reactions.begin();
 
     while( reaction_type_pointer != end_reaction_type_pointer )
@@ -409,7 +411,7 @@ void Nuclide::sampleScatteringReaction( const double scaled_random_number,
 					ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
-    
+  
   ConstReactionMap::const_iterator nuclear_reaction, nuclear_reaction_end;
     
   nuclear_reaction = d_scattering_reactions.begin();
@@ -419,18 +421,30 @@ void Nuclide::sampleScatteringReaction( const double scaled_random_number,
   {
     partial_cross_section += 
       nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
-
+      
     if( scaled_random_number < partial_cross_section )
       break;
       
     ++nuclear_reaction;
   }
   
-  // Make sure a reaction was found
-  testPostcondition( nuclear_reaction != nuclear_reaction_end );
-  
-  // Undergo reaction selected
-  nuclear_reaction->second->react( neutron, bank );
+  // We found an issue with the interpolation accuracy for the S(a,b) since it
+  //  is on a coarse energy grid...
+  if( nuclear_reaction == nuclear_reaction_end )
+  {
+    double total_xs = partial_cross_section + d_total_absorption_reaction->getCrossSection( neutron.getEnergy() );
+    double updated_random_number = scaled_random_number*(total_xs/d_total_reaction->getCrossSection( neutron.getEnergy() ));
+    
+    this->sampleScatteringReaction( updated_random_number, neutron, bank );
+  }
+  else
+  {
+    // Make sure a reaction was found
+    testPostcondition( nuclear_reaction != nuclear_reaction_end );
+
+    // Undergo reaction selected
+    nuclear_reaction->second->react( neutron, bank );
+  }
 }
 
 // Sample an absorption reaction

@@ -45,16 +45,11 @@ SAlphaBetaNuclearReactionACEFactory::SAlphaBetaNuclearReactionACEFactory(
 	setSAlphaBetaUpperEnergyLimitMap( sab_nuclide_data,
 	                                  upper_energy_limits );
 
-  std::cout << " " << std::endl;
-  std::cout << "Pre-initialization of S(alpha,beta) reactions..." << std::endl;
-
 	// Initialize the S(alpha,beta) reactions
 	initializeSAlphaBetaReactions( temperature,
 	                               sab_nuclide_data.extractInelasticEnergyGrid(),
 	                               reaction_cross_section,
 	                               scattering_dist_factory );
-	                               
-	std::cout << "Post-initialization of S(alpha,beta) reactions..." << std::endl;
 }
 
 // Create the S(alpha,beta) reactions
@@ -194,8 +189,6 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
       reaction_type,
       scattering_distribution );
       
-    std::cout << "made it through distribution construction..." << std::endl;
-      
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( sab_energy_grid_array );
     
@@ -206,7 +199,7 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
       reaction_type,
       temperature,
       0.0,
-      0u,
+      1u,
       0u,
       energy_grid,
       cross_section,
@@ -214,9 +207,6 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
     
     ++reaction_xs;
   }
-
-  std::cout << "Any S(a,b) reactions found? " << d_s_alpha_beta_reactions.empty() << std::endl;
-
 }
 
 } // end MonteCarlo namespace

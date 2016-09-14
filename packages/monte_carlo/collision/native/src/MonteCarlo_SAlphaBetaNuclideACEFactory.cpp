@@ -60,8 +60,6 @@ void SAlphaBetaNuclideACEFactory::createNuclide(
   Nuclide::ReactionMap sab_reactions;
   reaction_factory.createSAlphaBetaReactions( sab_reactions );
   
-  std::cout << "Created S(a,b) Reactions? " << sab_reactions.empty() << std::endl;
-  
   // Add the S(alpha,beta) reactions to the scattering reactions
   Nuclide::ReactionMap::const_iterator sab_reaction, sab_reaction_end;
   sab_reaction = sab_reactions.begin();
