@@ -245,16 +245,20 @@ public:
            typename ZYLowerFunctor,
            typename ZYUpperFunctor>
   static typename ZYLowerFunctor::result_type interpolateUnitBase(
-         const FirstIndepType indep_var_x_0,
-         const FirstIndepType indep_var_x_1,
-         const FirstIndepType indep_var_x,
-         const SecondIndepType indep_var_y,
-         const SecondIndepType indep_var_y_0_min,
-         const SecondIndepType indep_var_y_0_max,
-         const SecondIndepType indep_var_y_1_min,
-         const SecondIndepType indep_var_y_1_max,
-         const ZYLowerFunctor& evaluate_z_with_y_0_functor,
-         const ZYUpperFunctor& evaluate_z_with_y_1_functor );
+    const FirstIndepType indep_var_x_0,
+    const FirstIndepType indep_var_x_1,
+    const FirstIndepType indep_var_x,
+    const SecondIndepType indep_var_y,
+    const SecondIndepType indep_var_y_0_min,
+    const SecondIndepType indep_var_y_0_max,
+    const SecondIndepType indep_var_y_1_min,
+    const SecondIndepType indep_var_y_1_max,
+    const ZYLowerFunctor& evaluate_z_with_y_0_functor,
+    const ZYUpperFunctor& evaluate_z_with_y_1_functor,
+    const typename ZYLowerFunctor::result_type below_lower_limit_return_value =
+    QuantityTraits<typename ZYLowerFunctor::result_type>::zero(),
+    const typename ZYLowerFunctor::result_type above_upper_limit_return_value =
+    QuantityTraits<typename ZYLowerFunctor::result_type>::zero() );
 
   //! Conduct unit base interpolation between two grids
   template<TupleMember YIndepMember,

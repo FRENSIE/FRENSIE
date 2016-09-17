@@ -128,6 +128,12 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+protected:
+
+  //! Default constructor
+  UnitAwareFullyTabularTwoDDistribution()
+  { /* ... */ }
 };
 
 // Return a random sample from the secondary conditional PDF

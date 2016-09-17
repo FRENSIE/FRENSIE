@@ -89,12 +89,14 @@ void DynamicOutputFormatter::boldWhiteKeyword( const std::string& keyword )
 }
 
 // Format the standard error message keywords in the output
-/*! \details The standard error keyword "\\s*[E|e]rror:". Any matches will 
- * be formatted in bold-red.
+/*! \details The standard error keyword "(\\s*|\\s\\S+)[E|e]rror:". Note
+ * that the "\\s\\S+" section allows matches such as "std::logic_error:" or
+ * "FatalError:" in addition to the standard "Error:" or "error:". Any matches
+ * will be formatted in bold-red.
  */
 void DynamicOutputFormatter::formatStandardErrorKeywords()
 {
-  this->boldRedKeyword( "\\s*[E|e]rror:" );
+  this->boldRedKeyword( "(\\s*|\\s\\S+)[E|e]rror:" );
 }
 
 // Format the standard warning message keywords in the output

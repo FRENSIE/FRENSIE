@@ -347,7 +347,12 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
 /*! \details If indep_var_y is outside of the bounds of the intermediate grid
  * a value of 0.0 will be returned from this method. If 
  * indep_var_x_0 == indep_var_x_1, the evaluate_z_with_y_0_functor will be
- * called with indep_var_y.
+ * called with indep_var_y. The parameter below_lower_limit_return_value can
+ * be used to set what this method returns if the secondary independent value
+ * is below the intermediate secondary independent grid limit. The parameter
+ * above_upper_limit_return_value can be used to set what this method returns
+ * if the secondary independent value is above the intermediate secondary
+ * independent grid limit.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
 template<typename FirstIndepType,
@@ -356,16 +361,18 @@ template<typename FirstIndepType,
          typename ZYUpperFunctor>
 inline typename ZYLowerFunctor::result_type
 TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
-         const FirstIndepType indep_var_x_0,
-         const FirstIndepType indep_var_x_1,
-         const FirstIndepType indep_var_x,
-         const SecondIndepType indep_var_y,
-         const SecondIndepType indep_var_y_0_min,
-         const SecondIndepType indep_var_y_0_max,
-         const SecondIndepType indep_var_y_1_min,
-         const SecondIndepType indep_var_y_1_max,
-         const ZYLowerFunctor& evaluate_z_with_y_0_functor,
-         const ZYUpperFunctor& evaluate_z_with_y_1_functor )
+    const FirstIndepType indep_var_x_0,
+    const FirstIndepType indep_var_x_1,
+    const FirstIndepType indep_var_x,
+    const SecondIndepType indep_var_y,
+    const SecondIndepType indep_var_y_0_min,
+    const SecondIndepType indep_var_y_0_max,
+    const SecondIndepType indep_var_y_1_min,
+    const SecondIndepType indep_var_y_1_max,
+    const ZYLowerFunctor& evaluate_z_with_y_0_functor,
+    const ZYUpperFunctor& evaluate_z_with_y_1_functor,
+    const typename ZYLowerFunctor::result_type below_lower_limit_return_value,
+    const typename ZYLowerFunctor::result_type above_upper_limit_return_value )
 {
   // The interpolation type on the Z variable must be consistent
   testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
@@ -499,10 +506,22 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
                     ThisType::recoverProcessedDepVar( processed_dep_var_yx ) );
     }
     else // indep_var_y < y_x_min || indep_var_y > y_x_max
-      return QuantityTraits<typename ZYLowerFunctor::result_type>::zero();
+    {
+      if( indep_var_y < y_x_min_with_tol )
+        return below_lower_limit_return_value;
+      else // indep_var_y > y_x_max_with_tol
+        return above_upper_limit_return_value;
+    }
   }
   else // indep_var_x_0 == indep_var_x_1
-    return evaluate_z_with_y_0_functor( indep_var_y );
+  {
+    if( indep_var_y < ThisType::calculateFuzzyLowerBound( indep_var_y_0_min ) )
+      return below_lower_limit_return_value;
+    else if( indep_var_y > ThisType::calculateFuzzyLowerBound( indep_var_y_0_min ) )
+      return above_upper_limit_return_value;
+    else
+      return evaluate_z_with_y_0_functor( indep_var_y );
+  }
 }
 
 // Conduct unit base interpolation

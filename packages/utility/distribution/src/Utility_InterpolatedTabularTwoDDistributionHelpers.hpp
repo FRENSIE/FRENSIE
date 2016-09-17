@@ -62,9 +62,7 @@ public:
 
   //! Constructor
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
-                                         const DistributionType& distribution )
-    : ParentType( distribution )
-  { /* ... */ }
+                                        const DistributionType& distribution );
   
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -72,9 +70,7 @@ public:
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
-                secondary_distributions )
-    : ParentType( primary_indep_grid, secondary_distributions )
-  { /* ... */ }
+                secondary_distributions );
 
   //! Destructor
   virtual ~UnitAwareInterpolatedTabularTwoDDistributionImplBase()
@@ -112,12 +108,40 @@ public:
 
 protected:
 
+  //! Default constructor
+  UnitAwareInterpolatedTabularTwoDDistributionImplBase()
+  { /* ... */ }
+
   //! Evaluate the distribution using the desired evaluation method
-  template<typename ReturnType, typename EvaluationMethod>
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
+           typename EvaluationMethod>
   ReturnType evaluateImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         const SecondaryIndepQuantity secondary_indep_var_value,
-                        EvaluationMethod evaluate ) const;
+                        EvaluationMethod evaluate,
+                        const ReturnType below_lower_bound_return =
+                        QuantityTraits<ReturnType>::zero(),
+                        const ReturnType above_upper_bound_return =
+                        QuantityTraits<ReturnType>::zero() ) const;
+
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleImpl(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SampleFunctor sample_functor ) const;
+
+private:
+
+  // Check that the secondary dists are compatible with the requested interp
+  bool areSecondaryDistsCompatibleWithInterpType(
+                                  const DistributionType& distribution ) const;
+
+  // Check that the secondary dists are compatible with the requested interp
+  template<template<typename T, typename... Args> class Array>
+  bool areSecondaryDistsCompatibleWithInterpType(
+                 const Array<std::shared_ptr<const BaseOneDDistributionType> >&
+                 secondary_distributions ) const;
 
   //! Sample the bin boundary that will be used for stochastic sampling
   typename DistributionType::const_iterator
@@ -126,6 +150,47 @@ protected:
     const typename DistributionType::const_iterator lower_bin_boundary,
     const typename DistributionType::const_iterator upper_bin_boundary ) const;
 };
+
+namespace {
+
+//! Helper class used to construct a cdf interpolation policy
+template<typename YProcessingTag, typename XProcessingTag>
+struct CDFInterpolationHelper
+{ /* ... */ };
+
+//! Helper class used to construct a LinLinLin cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LinIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLinLin CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLinLog cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LinIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLinLog CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogLin cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LogIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogLin CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogLog cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogLog CDFInterpPolicy;
+};
+  
+} // end local namespace
 
 //! The interpolated tabular two-d dist. impl. class (fully tabular)
 template<typename TwoDInterpPolicy,
@@ -158,6 +223,9 @@ private:
 
   // Typedef for QuantityTraits<DepQuantity>
   typedef typename ParentType::DQT DQT;
+
+  // The CDF interpolation policy
+  typedef typename CDFInterpolationHelper<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy CDFInterpPolicy;
   
 public:
 

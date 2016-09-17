@@ -111,6 +111,10 @@ public:
 
 protected:
 
+  //! Default constructor
+  UnitAwareTabularTwoDDistribution()
+  { /* ... */ }
+
   //! Set the distribution
   void setDistribution( const DistributionType distribution );
 

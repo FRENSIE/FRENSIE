@@ -27,7 +27,7 @@ class UnitAwareInterpolatedFullyTabularTwoDDistribution : public UnitAwareInterp
 private:
 
   // The parent distribution type
-  typedef UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true> ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true> ParentType;
   
 public:
   
