@@ -10,9 +10,50 @@
 #define UTILITY_INTERPOLATED_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_InterpolatedTabularTwoDDistributionHelpers.hpp"
+#include "Utility_InterpolatedTabularTwoDDistributionImplBase.hpp"
 
 namespace Utility{
+
+namespace {
+
+//! Helper class used to construct a cdf interpolation policy
+template<typename YProcessingTag, typename XProcessingTag>
+struct CDFInterpolationHelper
+{ /* ... */ };
+
+//! Helper class used to construct a LinLinLin cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LinIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLinLin CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLinLog cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LinIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLinLog CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogLin cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LogIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogLin CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogLog cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogLog CDFInterpPolicy;
+};
+  
+} // end local namespace
 
 /*! The unit-aware inteprolated fully tabular two-dimensional distribution
  * \ingroup two_d_distribution
@@ -21,13 +62,34 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareInterpolatedFullyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true>
+class UnitAwareInterpolatedFullyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
 
 private:
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true> ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
+
+  // The base one-dimensional distribution type (UnitAwareTabularOneDDist)
+  typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
+
+  // Typedef for QuantityTraits<double>
+  typedef typename ParentType::QT QT;
+
+  // Typedef for QuantityTraits<PrimaryIndepQuantity>
+  typedef typename ParentType::PIQT PIQT;
+
+  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  typedef typename ParentType::SIQT SIQT;
+
+  // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
+  typedef typename ParentType::ISIQT ISIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef typename ParentType::DQT DQT;
+
+  // The CDF interpolation policy
+  typedef typename CDFInterpolationHelper<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy CDFInterpPolicy;
   
 public:
   
@@ -70,13 +132,65 @@ public:
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
        const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
        const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
-       const ArrayC<SubarrayC<DepQuantity> >& dependent_values )
-    : ParentType( primary_indep_grid, secondary_indep_grids, dependent_values )
-  { /* ... */ }
+       const ArrayC<SubarrayC<DepQuantity> >& dependent_values );
 
   //! Destructor
   ~UnitAwareInterpolatedFullyTabularTwoDDistribution()
   { /* ... */ }
+
+  //! Evaluate the secondary conditional CDF
+  double evaluateSecondaryConditionalCDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF 
+  SecondaryIndepQuantity sampleSecondaryConditionalExact(
+                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF and the index
+  SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const;
+
+  //! Return a random sample from the secondary conditional PDF and the index
+  SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SecondaryIndepQuantity& raw_sample,
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const;
+
+  //! Return a random sample from the secondary conditional PDF at the CDF val
+  SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const;
+
+  //! Return a random sample from the secondary conditional PDF at the CDF val
+  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumber(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity sampleSecondaryConditionalExactInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 };
 
 /*! \brief The interpolated fully tabular two-dimensional distribution 
@@ -88,6 +202,13 @@ template<typename TwoDInterpPolicy> using InterpolatedFullyTabularTwoDDistributi
   
 } // end Utility namespace
 
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_InterpolatedFullyTabularTwoDDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_INTERPOLATED_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 

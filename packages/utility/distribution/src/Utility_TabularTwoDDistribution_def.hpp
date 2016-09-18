@@ -202,6 +202,17 @@ inline void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryInd
   }
 }
 
+// Calculate the index of the desired bin
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseOneDDistribution>
+size_t UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::calculateBinIndex(
+                typename DistributionType::const_iterator& bin_boundary ) const
+{
+  return std::distance( d_distribution.begin(), bin_boundary );
+}
+
 // Check that all secondary distributions are continuous
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,

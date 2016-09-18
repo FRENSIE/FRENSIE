@@ -93,9 +93,17 @@ public:
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
-  virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndex(
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& sampled_bin_index ) const = 0;
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const = 0;
+
+  //! Return a random sample from the secondary conditional PDF and the index
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SecondaryIndepQuantity& raw_sample,
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
@@ -149,6 +157,31 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
   -> SecondaryIndepQuantity
 {
   return this->sampleSecondaryConditional( primary_indep_var_value );
+}
+
+// Return a random sample from the secondary conditional PDF and the index
+/*! \details When the secondary conditional sampling method is stochastic it
+ * is common to sample from one of the distributions on the bin boundaries
+ * and then to scale the sample so that it preserves intermediate grid limits.
+ * Certain methods require the unscaled (or raw) sample, which can be 
+ * acquired with this method.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SecondaryIndepQuantity& raw_sample,
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const
+  -> SecondaryIndepQuantity
+{
+  raw_sample = this->sampleSecondaryConditionalAndRecordBinIndices(
+                                                       primary_indep_var_value,
+                                                       primary_bin_index,
+                                                       secondary_bin_index );
+
+  return raw_sample;
 }
 
 // Return a random sample from the secondary conditional PDF at the CDF val

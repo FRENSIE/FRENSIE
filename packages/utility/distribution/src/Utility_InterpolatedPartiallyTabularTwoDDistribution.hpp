@@ -10,7 +10,7 @@
 #define UTILITY_INTERPOLATED_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_InterpolatedTabularTwoDDistributionHelpers.hpp"
+#include "Utility_InterpolatedTabularTwoDDistributionImplBase.hpp"
 
 namespace Utility{
 
@@ -21,13 +21,13 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareInterpolatedPartiallyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false>
+class UnitAwareInterpolatedPartiallyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
 
 private:
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false> ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
   
 public:
   

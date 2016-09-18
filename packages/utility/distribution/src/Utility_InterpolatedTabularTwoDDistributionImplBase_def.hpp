@@ -1,16 +1,15 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_InterpolatedTabularTwoDDistributionHelpers_def.hpp
+//! \file   Utility_InterpolatedTabularTwoDDistributionImplBase_def.hpp
 //! \author Alex Robinson
 //! \brief  The interpolated tabular two-dimensional dist. helper class defs.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_HELPERS_DEF_HPP
-#define UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_HELPERS_DEF_HPP
+#ifndef UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_IMPL_BASE_DEF_HPP
+#define UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_IMPL_BASE_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -216,9 +215,12 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
 // Sample from the distribution using the desired sampling functor
 template<typename TwoDInterpPolicy, typename Distribution>
 template<typename SampleFunctor>
-auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleImpl(
+inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleDetailedImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            SampleFunctor sample_functor ) const
+                            SampleFunctor sample_functor,
+                            SecondaryIndepQuantity& raw_sample,
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const
   -> SecondaryIndepQuantity
 {
   // Find the bin boundaries
@@ -233,7 +235,51 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
                              lower_bin_boundary,
                              upper_bin_boundary );
 
-  return sample_functor( *sampled_bin_boundary->second );
+  // Calculate the index of the primary bin boundary that will be used to
+  // create the secondary conditional sample
+  primary_bin_index = this->calculateBinIndex( sampled_bin_boundary );
+
+  // Create the raw sample
+  raw_sample = sample_functor( *sampled_bin_boundary->second );
+
+  // Calculate the intermediate grid limits
+  SecondaryIndepQuantity y_x_min = this->getLowerBoundOfConditionalIndepVar(
+                                                     primary_indep_var_value );
+
+  SecondaryIndepQuantity y_x_max = this->getUpperBoundOfConditionalIndepVar(
+                                                     primary_indep_var_value );
+
+  // Calculate the unit base variable on the bin boundary corresponding to the
+  // raw sample
+  typename QuantityTraits<SecondaryIndepQuantity>::RawType eta =
+    (raw_sample - sampled_bin_boundary->second->getLowerBoundOfIndepVar())/
+    (sampled_bin_boundary->second->getUpperBoundOfIndepVar()-
+     sampled_bin_boundary->second->getLowerBoundOfIndepVar());
+  
+  // Scale the sample so that it preserves the intermediate limits.
+  // Note: This is a stochastic procedure. The intermediate distribution that
+  //       has been sampled is not the true distribution. The expected value
+  //       of a sample will be a sample from the true distribution though.
+  return y_x_min + eta*(y_x_max-y_x_min);
+}
+
+// Sample from the distribution using the desired sampling functor
+template<typename TwoDInterpPolicy, typename Distribution>
+template<typename SampleFunctor>
+inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleImpl(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SampleFunctor sample_functor ) const
+  -> SecondaryIndepQuantity
+{
+  // Dummy variables
+  SecondaryIndepQuantity dummy_raw_sample;
+  unsigned dummy_primary_bin_index, dummy_secondary_bin_index;
+
+  return this->sampleDetailedImpl( primary_indep_var_value,
+                                   sample_functor,
+                                   dummy_raw_sample,
+                                   dummy_primary_bin_index,
+                                   dummy_secondary_bin_index );
 }
 
 // Sample the bin boundary that will be used for stochastic sampling
@@ -359,255 +405,10 @@ bool UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
   return true;
 }
 
-// Constructor
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-template<template<typename T, typename... Args> class ArrayA,
-         template<typename T, typename... Args> class ArrayB,
-         template<typename T, typename... Args> class SubarrayB,
-         template<typename T, typename... Args> class ArrayC,
-         template<typename T, typename... Args> class SubarrayC>
-UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::UnitAwareInterpolatedTabularTwoDDistributionImpl(
-       const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-       const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
-       const ArrayC<SubarrayC<DepQuantity> >& dependent_values )
-{
-  // Make sure the grids are valid
-  testPrecondition( Sort::isSortedAscending( primary_indep_grid.begin(),
-                                             primary_indep_grid.end() ) );
-  testPrecondition( primary_indep_grid.size() > 1 );
-  testPrecondition( primary_indep_grid.size() == secondary_indep_grids.size());
-  testPrecondition( primary_indep_grid.size() == dependent_values.size() );
-
-  // Construct the 2D distribution
-  DistributionType distribution( primary_indep_grid.size() );
-  
-  for( size_t i = 0; i < primary_indep_grid.size(); ++i )
-  {
-    distribution[i].first = primary_indep_grid[i];
-    distribution[i].second.reset(
-          new UnitAwareTabularDistribution<typename TwoDInterpPolicy::SecondaryBasePolicy,SecondaryIndependentUnit,DependentUnit>(
-                                                      secondary_indep_grids[i],
-                                                      dependent_values[i] ) );
-  }
-
-  // Set the 2D distribution
-  this->setDistribution( distribution );
-}
-
-// Evaluate the secondary conditional CDF
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-double UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::evaluateSecondaryConditionalCDF(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-{
-  return this->template evaluateImpl<CDFInterpPolicy,double>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF,
-                                      0.0,
-                                      1.0 );
-}
-
-// Return a random sample from the secondary conditional PDF
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-auto UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalExact(
-                     const PrimaryIndepQuantity primary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Use this random number to do create the correlated sample
-  const double random_number =
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-  return this->sampleSecondaryConditionalExactWithRandomNumber(
-                                      primary_indep_var_value, random_number );
-}
-
-// Return a random sample from the secondary conditional PDF and the index
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-auto UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalAndRecordBinIndex(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& sampled_bin_index ) const
-  -> SecondaryIndepQuantity
-{
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                            &BaseOneDDistributionType::sampleAndRecordBinIndex,
-                            std::placeholders::_1,
-                            std::ref( sampled_bin_index ) );
-
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random sample from the secondary conditional PDF at the CDF val
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-auto UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const
-  -> SecondaryIndepQuantity
-{
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseOneDDistributionType::sampleWithRandomNumber,
-                             std::placeholders::_1,
-                             random_number );
-
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random sample from the secondary conditional PDF at the CDF val
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-auto UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalExactWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const
-  -> SecondaryIndepQuantity
-{
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  if( lower_bin_boundary != upper_bin_boundary )
-  {
-    return TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
-         lower_bin_boundary->first,
-         upper_bin_boundary->first,
-         primary_indep_var_value,
-         lower_bin_boundary->second->sampleWithRandomNumber( random_number ),
-         upper_bin_boundary->second->sampleWithRandomNumber( random_number ) );
-  }
-  else
-    return lower_bin_boundary->second->sampleWithRandomNumber( random_number );
-}
-
-// Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-auto UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalInSubrange(
-             const PrimaryIndepQuantity primary_indep_var_value,
-             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                                   &BaseOneDDistributionType::sampleInSubrange,
-                                   std::placeholders::_1,
-                                   max_secondary_indep_var_value );
-    
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-auto UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalExactInSubrange(
-             const PrimaryIndepQuantity primary_indep_var_value,
-             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Use this random number to do create the correlated sample
-  const double random_number =
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-  return this->sampleSecondaryConditionalExactWithRandomNumberInSubrange(
-                                               primary_indep_var_value,
-                                               random_number,
-                                               max_secondary_indep_var_value );
-}
-
-// Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-auto UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalWithRandomNumberInSubrange(
-             const PrimaryIndepQuantity primary_indep_var_value,
-             const double random_number,
-             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                   &BaseOneDDistributionType::sampleWithRandomNumberInSubrange,
-                   std::placeholders::_1,
-                   random_number,
-                   max_secondary_indep_var_value );
-
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         bool FullyTabular>
-auto UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
-             const PrimaryIndepQuantity primary_indep_var_value,
-             const double random_number,
-             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  if( lower_bin_boundary != upper_bin_boundary )
-  {
-    return TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
-         lower_bin_boundary->first,
-         upper_bin_boundary->first,
-         primary_indep_var_value,
-         lower_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value ),
-         upper_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value ) );
-  }
-  else
-    return lower_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value );
-}
-
 } // end Utility namespace
 
-#endif // end UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_HELPERS_DEF_HPP
+#endif // end UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_IMPL_BASE_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_InterpolatedTabularTwoDDistributionHelpers_def.hpp
+// end Utility_InterpolatedTabularTwoDDistributionImplBase_def.hpp
 //---------------------------------------------------------------------------//

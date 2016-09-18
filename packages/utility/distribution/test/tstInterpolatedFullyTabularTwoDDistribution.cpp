@@ -1006,254 +1006,242 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndex )
 {
-  unsigned index = 0u;
+  // unsigned index = 0u;
   
-  // Before the first bin - no extension
-  TEST_THROW( distribution->sampleSecondaryConditionalAndRecordBinIndex( -1.0, index ),
-              std::logic_error );
-  TEST_EQUALITY_CONST( index, 0u );
+  // // Before the first bin - no extension
+  // TEST_THROW( tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( -1.0, index ),
+  //             std::logic_error );
+  // TEST_EQUALITY_CONST( index, 0u );
 
-  // Before the first bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
+  // // Before the first bin - with extension
+  // tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
+  // std::vector<double> fake_stream( 3 );
+  // fake_stream[0] = 0.0;
+  // fake_stream[1] = 0.5;
+  // fake_stream[2] = 1.0-1e-15;
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   
-  double sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( -1.0, index );
+  // double sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( -1.0, index );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( index, 1u );
+  // TEST_EQUALITY_CONST( sample, 0.0 );
+  // TEST_EQUALITY_CONST( index, 1u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( -1.0, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( -1.0, index );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( index, 2u );
+  // TEST_EQUALITY_CONST( sample, 5.0 );
+  // TEST_EQUALITY_CONST( index, 2u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( -1.0, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( -1.0, index );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-  TEST_EQUALITY_CONST( index, 3u );
+  // TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+  // TEST_EQUALITY_CONST( index, 3u );
 
-  tab_distribution->limitToPrimaryIndepLimits();
+  // tab_distribution->limitToPrimaryIndepLimits();
 
-  // On the second bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // // On the second bin
+  // fake_stream.resize( 6 );
+  // fake_stream[0] = 0.0;
+  // fake_stream[1] = 0.0;
+  // fake_stream[2] = 0.0;
+  // fake_stream[3] = 0.5;
+  // fake_stream[4] = 0.0;
+  // fake_stream[5] = 1.0-1e-15;
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  trials = 0u;
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.0, index );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.0, index );
+  // TEST_EQUALITY_CONST( sample, 0.0 );
+  // TEST_EQUALITY_CONST( index, 1u );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( index, 1u );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.0, index );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.0, index );
+  // TEST_EQUALITY_CONST( sample, 5.0 );
+  // TEST_EQUALITY_CONST( index, 2u );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( index, 2u );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.0, index );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.0, index );
+  // TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  // TEST_EQUALITY_CONST( index, 3u );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-  TEST_EQUALITY_CONST( index, 3u );
+  // // In the second bin
+  // fake_stream.resize( 12 );
+  // fake_stream[0] = 0.5; // use lower bin boundary
+  // fake_stream[1] = 0.0; 
+  // fake_stream[2] = 0.5; // use lower bin boundary
+  // fake_stream[3] = 0.5;
+  // fake_stream[4] = 0.5; // use lower bin boundary
+  // fake_stream[5] = 1.0-1e-15;
+  // fake_stream[6] = 0.49; // use upper bin boundary
+  // fake_stream[7] = 0.0;
+  // fake_stream[8] = 0.49; // use upper bin boundary
+  // fake_stream[9] = 0.4230769230769231;
+  // fake_stream[10] = 0.49; // use upper bin boundary
+  // fake_stream[11] = 1.0-1e-15;
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  // In the second bin
-  fake_stream.resize( 12 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.0; 
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.5; // use lower bin boundary
-  fake_stream[5] = 1.0-1e-15;
-  fake_stream[6] = 0.49; // use upper bin boundary
-  fake_stream[7] = 0.0;
-  fake_stream[8] = 0.49; // use upper bin boundary
-  fake_stream[9] = 0.4230769230769231;
-  fake_stream[10] = 0.49; // use upper bin boundary
-  fake_stream[11] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // // Samples from lower boundary of second bin
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
 
-  trials = 0u;
+  // TEST_EQUALITY_CONST( sample, 0.0 );
+  // TEST_EQUALITY_CONST( index, 1u );
 
-  // Samples from lower boundary of second bin
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( index, 1u );
+  // TEST_EQUALITY_CONST( sample, 5.0 );
+  // TEST_EQUALITY_CONST( index, 2u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( index, 2u );
+  // TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  // TEST_EQUALITY_CONST( index, 3u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
+  // // Samples from the upper boundary of the second bin
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-  TEST_EQUALITY_CONST( index, 3u );
+  // TEST_EQUALITY_CONST( sample, 2.5 );
+  // TEST_EQUALITY_CONST( index, 4u );
 
-  // Samples from the upper boundary of the second bin
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
 
-  TEST_EQUALITY_CONST( sample, 2.5 );
-  TEST_EQUALITY_CONST( index, 4u );
+  // TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
+  // TEST_EQUALITY_CONST( index, 5u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
 
-  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
-  TEST_EQUALITY_CONST( index, 5u );
+  // TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
+  // TEST_EQUALITY_CONST( index, 6u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 0.5, index );
+  // // On the third bin
+  // fake_stream.resize( 6 );
+  // fake_stream[0] = 0.0;
+  // fake_stream[1] = 0.0;
+  // fake_stream[2] = 0.0;
+  // fake_stream[3] = 0.4230769230769231;
+  // fake_stream[4] = 0.0;
+  // fake_stream[5] = 1.0-1e-15;
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
-  TEST_EQUALITY_CONST( index, 6u );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.0, index );
 
-  // On the third bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 0.4230769230769231;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // TEST_EQUALITY_CONST( sample, 2.5 );
+  // TEST_EQUALITY_CONST( index, 1u );
 
-  trials = 0u;
-  
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.0, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.0, index );
 
-  TEST_EQUALITY_CONST( sample, 2.5 );
-  TEST_EQUALITY_CONST( index, 1u );
+  // TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
+  // TEST_EQUALITY_CONST( index, 2u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.0, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.0, index );
 
-  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
-  TEST_EQUALITY_CONST( index, 2u );
+  // TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
+  // TEST_EQUALITY_CONST( index, 3u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.0, index );
+  // // In the third bin
+  // fake_stream.resize( 12 );
+  // fake_stream[0] = 0.5; // use lower bin boundary
+  // fake_stream[1] = 0.0; 
+  // fake_stream[2] = 0.5; // use lower bin boundary
+  // fake_stream[3] = 0.4230769230769231;
+  // fake_stream[4] = 0.5; // use lower bin boundary
+  // fake_stream[5] = 1.0-1e-15;
+  // fake_stream[6] = 0.49; // use upper bin boundary
+  // fake_stream[7] = 0.0;
+  // fake_stream[8] = 0.49; // use upper bin boundary
+  // fake_stream[9] = 0.5;
+  // fake_stream[10] = 0.49; // use upper bin boundary
+  // fake_stream[11] = 1.0-1e-15;
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
-  TEST_EQUALITY_CONST( index, 3u );
+  // // Samples from lower boundary of third bin
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
 
-  // In the third bin
-  fake_stream.resize( 12 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.0; 
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 0.4230769230769231;
-  fake_stream[4] = 0.5; // use lower bin boundary
-  fake_stream[5] = 1.0-1e-15;
-  fake_stream[6] = 0.49; // use upper bin boundary
-  fake_stream[7] = 0.0;
-  fake_stream[8] = 0.49; // use upper bin boundary
-  fake_stream[9] = 0.5;
-  fake_stream[10] = 0.49; // use upper bin boundary
-  fake_stream[11] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // TEST_EQUALITY_CONST( sample, 2.5 );
+  // TEST_EQUALITY_CONST( index, 1u );
 
-  trials = 0u;
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
 
-  // Samples from lower boundary of third bin
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
+  // TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
+  // TEST_EQUALITY_CONST( index, 2u );
 
-  TEST_EQUALITY_CONST( sample, 2.5 );
-  TEST_EQUALITY_CONST( index, 1u );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
+  // TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
+  // TEST_EQUALITY_CONST( index, 3u );
 
-  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
-  TEST_EQUALITY_CONST( index, 2u );
+  // // Samples from upper boundary of third bin
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
+  // TEST_EQUALITY_CONST( sample, 0.0 );
+  // TEST_EQUALITY_CONST( index, 4u );
 
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
-  TEST_EQUALITY_CONST( index, 3u );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
 
-  // Samples from upper boundary of third bin
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
+  // TEST_EQUALITY_CONST( sample, 5.0 );
+  // TEST_EQUALITY_CONST( index, 5u );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( index, 4u );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
+  // TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  // TEST_EQUALITY_CONST( index, 6u );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( index, 5u );
+  // // On the upper bin boundary
+  // fake_stream.resize( 6 );
+  // fake_stream[0] = 0.0;
+  // fake_stream[1] = 0.0;
+  // fake_stream[2] = 0.0;
+  // fake_stream[3] = 0.5;
+  // fake_stream[4] = 0.0;
+  // fake_stream[5] = 1.0-1e-15;
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 1.5, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 2.0, index );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-  TEST_EQUALITY_CONST( index, 6u );
+  // TEST_EQUALITY_CONST( sample, 0.0 );
+  // TEST_EQUALITY_CONST( index, 1u );
 
-  // On the upper bin boundary
-  fake_stream.resize( 6 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 2.0, index );
 
-  trials = 0u;
+  // TEST_EQUALITY_CONST( sample, 5.0 );
+  // TEST_EQUALITY_CONST( index, 2u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 2.0, index );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 2.0, index );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( index, 1u );
+  // TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  // TEST_EQUALITY_CONST( index, 3u );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 2.0, index );
+  // // After the third bin - no extension
+  // TEST_THROW( tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 3.0, index ),
+  //             std::logic_error );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( index, 2u );
+  // // After the third bin - with extension
+  // tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 2.0, index );
+  // fake_stream.resize( 3 );
+  // fake_stream[0] = 0.0;
+  // fake_stream[1] = 0.5;
+  // fake_stream[2] = 1.0-1e-15;
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-  TEST_EQUALITY_CONST( index, 3u );
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 3.0, index );
 
-  // After the third bin - no extension
-  TEST_THROW( distribution->sampleSecondaryConditionalAndRecordBinIndex( 3.0, index ),
-              std::logic_error );
+  // TEST_EQUALITY_CONST( sample, 0.0 );
+  // TEST_EQUALITY_CONST( index, 1u );
 
-  // After the third bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 3.0, index );
 
-  fake_stream.resize( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // TEST_EQUALITY_CONST( sample, 5.0 );
+  // TEST_EQUALITY_CONST( index, 2u );
 
-  trials = 0u;
+  // sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndex( 3.0, index );
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 3.0, index );
+  // TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  // TEST_EQUALITY_CONST( index, 3u );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( index, 1u );
+  // tab_distribution->limitToPrimaryIndepLimits();
 
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 3.0, index );
-
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( index, 2u );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordBinIndex( 3.0, index );
-
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-  TEST_EQUALITY_CONST( index, 3u );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
+  // Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
