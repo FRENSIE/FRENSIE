@@ -219,8 +219,7 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const
+                            unsigned& primary_bin_index ) const
   -> SecondaryIndepQuantity
 {
   // Find the bin boundaries
@@ -249,18 +248,33 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
   SecondaryIndepQuantity y_x_max = this->getUpperBoundOfConditionalIndepVar(
                                                      primary_indep_var_value );
 
+  typename QuantityTraits<SecondaryIndepQuantity>::RawType
+    intermediate_grid_length =
+    TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
+                                                            y_x_min, y_x_max );
+  
   // Calculate the unit base variable on the bin boundary corresponding to the
   // raw sample
-  typename QuantityTraits<SecondaryIndepQuantity>::RawType eta =
-    (raw_sample - sampled_bin_boundary->second->getLowerBoundOfIndepVar())/
-    (sampled_bin_boundary->second->getUpperBoundOfIndepVar()-
-     sampled_bin_boundary->second->getLowerBoundOfIndepVar());
+  typename QuantityTraits<SecondaryIndepQuantity>::RawType eta;
+
+  {
+    typename QuantityTraits<SecondaryIndepQuantity>::RawType grid_length =
+      TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
+                      sampled_bin_boundary->second->getLowerBoundOfIndepVar(),
+                      sampled_bin_boundary->second->getUpperBoundOfIndepVar());
+    
+    eta = TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
+                       raw_sample,
+                       sampled_bin_boundary->second->getLowerBoundOfIndepVar(),
+                       grid_length );
+  }
   
   // Scale the sample so that it preserves the intermediate limits.
   // Note: This is a stochastic procedure. The intermediate distribution that
   //       has been sampled is not the true distribution. The expected value
   //       of a sample will be a sample from the true distribution though.
-  return y_x_min + eta*(y_x_max-y_x_min);
+  return TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
+                                      eta, y_x_min, intermediate_grid_length );
 }
 
 // Sample from the distribution using the desired sampling functor
@@ -273,13 +287,12 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
 {
   // Dummy variables
   SecondaryIndepQuantity dummy_raw_sample;
-  unsigned dummy_primary_bin_index, dummy_secondary_bin_index;
+  unsigned dummy_primary_bin_index;
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sample_functor,
                                    dummy_raw_sample,
-                                   dummy_primary_bin_index,
-                                   dummy_secondary_bin_index );
+                                   dummy_primary_bin_index );
 }
 
 // Sample the bin boundary that will be used for stochastic sampling

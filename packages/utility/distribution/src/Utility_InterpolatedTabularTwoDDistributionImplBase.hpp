@@ -137,14 +137,20 @@ protected:
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const;
+                            unsigned& primary_bin_index ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
   SecondaryIndepQuantity sampleImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const;
+
+  //! Sample the bin boundary that will be used for stochastic sampling
+  typename DistributionType::const_iterator
+  sampleBinBoundary(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const typename DistributionType::const_iterator lower_bin_boundary,
+    const typename DistributionType::const_iterator upper_bin_boundary ) const;
 
 private:
 
@@ -157,13 +163,6 @@ private:
   bool areSecondaryDistsCompatibleWithInterpType(
                  const Array<std::shared_ptr<const BaseOneDDistributionType> >&
                  secondary_distributions ) const;
-
-  //! Sample the bin boundary that will be used for stochastic sampling
-  typename DistributionType::const_iterator
-  sampleBinBoundary(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const typename DistributionType::const_iterator lower_bin_boundary,
-    const typename DistributionType::const_iterator upper_bin_boundary ) const;
 };
   
 } // end Utility namespace
