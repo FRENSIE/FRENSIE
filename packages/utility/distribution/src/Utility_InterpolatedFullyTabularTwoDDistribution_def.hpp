@@ -91,6 +91,9 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
 }
 
 // Return a random sample from the secondary conditional PDF and the index
+/*! \details The primary_bin_index stores the index of the bin boundary that
+ * was used to generate the sample.
+ */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
@@ -119,6 +122,10 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
 }
 
 // Return a random sample from the secondary conditional PDF and the index
+/*! \details The primary_bin_index stores the index of the bin boundary that
+ * was used to generate the raw_sample. The raw_sample is the original sample
+ * that was made before the scaling operation was done.
+ */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
