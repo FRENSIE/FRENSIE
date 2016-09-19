@@ -73,23 +73,6 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,Primar
                                       1.0 );
 }
 
-// Return a random sample from the secondary conditional PDF
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExact(
-                     const PrimaryIndepQuantity primary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Use this random number to do create the correlated sample
-  const double random_number =
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-  return this->sampleSecondaryConditionalExactWithRandomNumber(
-                                      primary_indep_var_value, random_number );
-}
-
 // Return a random sample from the secondary conditional PDF and the index
 /*! \details The primary_bin_index stores the index of the bin boundary that
  * was used to generate the sample.
@@ -173,36 +156,6 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
 }
 
-// Return a random sample from the secondary conditional PDF at the CDF val
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const
-  -> SecondaryIndepQuantity
-{
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  if( lower_bin_boundary != upper_bin_boundary )
-  {
-    return TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
-         lower_bin_boundary->first,
-         upper_bin_boundary->first,
-         primary_indep_var_value,
-         lower_bin_boundary->second->sampleWithRandomNumber( random_number ),
-         upper_bin_boundary->second->sampleWithRandomNumber( random_number ) );
-  }
-  else
-    return lower_bin_boundary->second->sampleWithRandomNumber( random_number );
-}
-
 // Return a random sample from the secondary conditional PDF in the subrange
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -223,26 +176,6 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   return this->sampleSecondaryConditionalWithRandomNumberInSubrange(
-                                               primary_indep_var_value,
-                                               random_number,
-                                               max_secondary_indep_var_value );
-}
-
-// Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactInSubrange(
-             const PrimaryIndepQuantity primary_indep_var_value,
-             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Use this random number to do create the correlated sample
-  const double random_number =
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-  return this->sampleSecondaryConditionalExactWithRandomNumberInSubrange(
                                                primary_indep_var_value,
                                                random_number,
                                                max_secondary_indep_var_value );
@@ -337,7 +270,98 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   }
 }
 
+// Return a random sample from the secondary conditional PDF
+/*! \details A sample is made using a correlated sampling technique.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExact(
+                     const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Use this random number to do create the correlated sample
+  const double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  return this->sampleSecondaryConditionalExactWithRandomNumber(
+                                      primary_indep_var_value, random_number );
+}
+
+// Return a random sample from the secondary conditional PDF at the CDF val
+/*! \details A sample is made using a correlated sampling technique.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const
+  -> SecondaryIndepQuantity
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    return TwoDInterpPolicy::calculateIntermediateGridLimit(
+         lower_bin_boundary->first,
+         upper_bin_boundary->first,
+         primary_indep_var_value,
+         lower_bin_boundary->second->sampleWithRandomNumber( random_number ),
+         upper_bin_boundary->second->sampleWithRandomNumber( random_number ) );
+  }
+  else
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return lower_bin_boundary->second->sampleWithRandomNumber(random_number);
+    else
+    {
+      THROW_EXCEPTION( std::logic_error,
+                       "Error: Sampling beyond the primary grid boundaries "
+                       "cannot be done unless the grid has been extended ("
+                       << primary_indep_var_value << " not in ["
+                       << this->getLowerBoundOfPrimaryIndepVar() << ","
+                       << this->getUpperBoundOfPrimaryIndepVar() << "])!" );
+    }
+  }
+}
+
 // Return a random sample from the secondary conditional PDF in the subrange
+/*! \details A sample is made using a correlated sampling technique.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactInSubrange(
+             const PrimaryIndepQuantity primary_indep_var_value,
+             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Use this random number to do create the correlated sample
+  const double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  return this->sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+                                               primary_indep_var_value,
+                                               random_number,
+                                               max_secondary_indep_var_value );
+}
+
+// Return a random sample from the secondary conditional PDF in the subrange
+/*! \details A sample is made using a correlated sampling technique.
+ */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
@@ -348,24 +372,94 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the secondary limit is valid
+  testPrecondition( max_secondary_indep_var_value >
+                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
 
-  if( lower_bin_boundary != upper_bin_boundary )
+  SecondaryIndepQuantity intermediate_grid_upper_bound =
+    this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value );
+
+  // Generate a sample in the subrange
+  if( max_secondary_indep_var_value < intermediate_grid_upper_bound )
   {
-    return TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
+    // Find the bin boundaries
+    typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  
+    this->findBinBoundaries( primary_indep_var_value,
+                             lower_bin_boundary,
+                             upper_bin_boundary );
+
+    if( lower_bin_boundary != upper_bin_boundary )
+    {
+      // Calculate the limits on the bin boundaries
+      typename QuantityTraits<SecondaryIndepQuantity>::RawType L0 =
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
+                       lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                       lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+      typename QuantityTraits<SecondaryIndepQuantity>::RawType L1 =
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
+                       upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                       upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+      SecondaryIndepQuantity intermediate_grid_lower_bound =
+        this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
+
+      typename QuantityTraits<SecondaryIndepQuantity>::RawType
+        intermediate_grid_length =
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
+                                               intermediate_grid_lower_bound,
+                                               intermediate_grid_upper_bound );
+
+      typename QuantityTraits<SecondaryIndepQuantity>::RawType eta =
+      TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
+                                                 max_secondary_indep_var_value,
+                                                 intermediate_grid_lower_bound,
+                                                 intermediate_grid_length );
+
+      SecondaryIndepQuantity max_secondary_indep_var_value_0 =
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
+                         eta,
+                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                         L0 );
+
+      SecondaryIndepQuantity max_secondary_indep_var_value_1 =
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
+                         eta,
+                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                         L1 );
+      
+      return TwoDInterpPolicy::calculateIntermediateGridLimit(
          lower_bin_boundary->first,
          upper_bin_boundary->first,
          primary_indep_var_value,
-         lower_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value ),
-         upper_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value ) );
+         lower_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value_0 ),
+         upper_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value_1 ) );
+    }
+    else
+    {
+      if( this->arePrimaryLimitsExtended() )
+        return lower_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value );
+      else
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Error: Sampling beyond the primary grid boundaries "
+                         "cannot be done unless the grid has been extended ("
+                         << primary_indep_var_value << " not in ["
+                         << this->getLowerBoundOfPrimaryIndepVar() << ","
+                         << this->getUpperBoundOfPrimaryIndepVar() << "])!" );
+      }
+    }
   }
+  // Generate a sample in the full range
   else
-    return lower_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value );
+  {
+    return this->sampleSecondaryConditionalExactWithRandomNumber(
+                                      primary_indep_var_value, random_number );
+  }
 }
   
 } // end Utility namespace

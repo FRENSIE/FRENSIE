@@ -143,10 +143,6 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Return a random sample from the secondary conditional PDF 
-  SecondaryIndepQuantity sampleSecondaryConditionalExact(
-                    const PrimaryIndepQuantity primary_indep_var_value ) const;
-
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
@@ -165,18 +161,8 @@ public:
                             const PrimaryIndepQuantity primary_indep_var_value,
                             const double random_number ) const;
 
-  //! Return a random sample from the secondary conditional PDF at the CDF val
-  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const;
-
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
-
-  //! Return a random sample from the secondary conditional PDF in the subrange
-  SecondaryIndepQuantity sampleSecondaryConditionalExactInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
@@ -184,6 +170,20 @@ public:
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF 
+  SecondaryIndepQuantity sampleSecondaryConditionalExact(
+                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF at the CDF val
+  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumber(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity sampleSecondaryConditionalExactInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange

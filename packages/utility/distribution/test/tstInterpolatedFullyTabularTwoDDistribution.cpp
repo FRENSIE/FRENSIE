@@ -2162,6 +2162,548 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that a secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
+                   sampleSecondaryConditionalExact )
+{
+  // Before the first bin - no extension
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalExact( -1.0 ),
+              std::logic_error );
+
+  // Before the first bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double sample = tab_distribution->sampleSecondaryConditionalExact( -1.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( -1.0 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( -1.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  // In the second bin
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.4230769230769231;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 0.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 0.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
+
+  // On the third bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
+
+  TEST_EQUALITY_CONST( sample, 2.5 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // In the third bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
+
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
+
+  // On the upper bin boundary
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  // After the third bin - no extension
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalExact( 3.0 ),
+              std::logic_error );
+
+  // After the third bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
+                   sampleSecondaryConditionalExactWithRandomNumber )
+{
+  // Before the first bin - no extension
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0, 0.0 ),
+              std::logic_error );
+
+  // Before the first bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  double sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0, 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  // In the second bin
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.5, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.5, 0.4230769230769231 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.5, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
+
+  // On the third bin
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 2.5 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 0.4230769230769231 );
+
+  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // In the third bin
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 0.4230769230769231 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
+
+  // On the upper bin boundary
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  // After the third bin - no extension
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.0 ),
+              std::logic_error );
+
+  // After the third bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
+                   sampleSecondaryConditionalExactInSubrange )
+{
+  // Before the first bin - no extension
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 7.5 ),
+              std::logic_error );
+
+  // Before the first bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // Subrange
+  double sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // Full Range
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 11.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 11.0 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 11.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // In the second bin
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.49748743718592964;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.5, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.5, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.572864321608041, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.5, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // On the third bin
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.4230769230769231;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 2.5 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // In the third bin
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.49748743718592964;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.572864321608041, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // On the upper bin boundary
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // After the third bin - no extension
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 7.5 ),
+              std::logic_error );
+
+  // After the third bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a secondary conditional PDF an be sampled
+TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
+                   sampleSecondaryConditionalExactWithRandomNumberInSubrange )
+{
+  // Before the first bin - no extension
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.0, 7.5 ),
+              std::logic_error );
+
+  // Before the first bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  std::vector<double> fake_stream( 3 );
+
+  // Subrange
+  double sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.5, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 1.0-1e-15, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // Full Range
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.0, 11.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.5, 11.0 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 1.0-1e-15, 11.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.5, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // In the second bin
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.5, 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.5, 0.49748743718592964, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.572864321608041, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.5, 1.0-1e-15, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // On the third bin
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 2.5 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 0.4230769230769231, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // In the third bin
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 0.49748743718592964, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.572864321608041, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // On the upper bin boundary
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 0.5, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // After the third bin - no extension
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.0, 7.5 ),
+              std::logic_error );
+
+  // After the third bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.5, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
