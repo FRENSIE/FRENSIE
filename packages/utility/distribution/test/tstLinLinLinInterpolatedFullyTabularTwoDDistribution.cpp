@@ -1,8 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstInterpolatedFullyTabularTwoDDistribution.cpp
+//! \file   tstLinLinLinInterpolatedFullyTabularTwoDDistribution.cpp
 //! \author Alex Robinson
 //! \brief  The interpolated fully tabular two-dimensional dist. unit tests
+//!         (LinLinLin interpolation)
 //!
 //---------------------------------------------------------------------------//
 
@@ -5308,5 +5309,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstInterpolatedFullyTabularTwoDDistribution.cpp
+// end tstLinLinLinInterpolatedFullyTabularTwoDDistribution.cpp
 //---------------------------------------------------------------------------//

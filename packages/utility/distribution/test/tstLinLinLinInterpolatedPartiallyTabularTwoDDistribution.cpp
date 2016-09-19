@@ -1,8 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstInterpolatedPartiallyTabularTwoDDistribution.cpp
+//! \file   tstLinLinLinInterpolatedPartiallyTabularTwoDDistribution.cpp
 //! \author Alex Robinson
 //! \brief  The interpolated partially tabular two-dimensional dist. unit tests
+//!         (LinLinLin interpolation)
 //!
 //---------------------------------------------------------------------------//
 
@@ -1733,5 +1734,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstInterpolatedPartiallyTabularTwoDDistribution.cpp
+// end tstLinLinLinInterpolatedPartiallyTabularTwoDDistribution.cpp
 //---------------------------------------------------------------------------//
