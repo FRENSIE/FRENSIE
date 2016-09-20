@@ -22,6 +22,8 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distributi
                                          const DistributionType& distribution )
     : ParentType( distribution )
 {
+  // Make sure the distributions are continuous
+  testPrecondition( this->areSecondaryDistributionsContinuous() );
   // Make sure the distributions are compatible with the requested interp
   testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( distribution ) );
 }
@@ -36,6 +38,8 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distributi
                 secondary_distributions )
   : ParentType( primary_indep_grid, secondary_distributions )
 {
+  // Make sure the distributions are continuous
+  testPrecondition( this->areSecondaryDistributionsContinuous() );
   // Make sure the distributions are compatible with the requested interp
   testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( secondary_distributions ) );
 }

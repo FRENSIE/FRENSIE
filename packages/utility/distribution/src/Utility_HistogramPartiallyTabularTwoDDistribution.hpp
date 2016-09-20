@@ -10,7 +10,7 @@
 #define UTILITY_HISTOGRAM_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_HistogramTabularTwoDDistributionHelpers.hpp"
+#include "Utility_HistogramTabularTwoDDistributionImplBase.hpp"
 
 namespace Utility{
 
@@ -20,12 +20,12 @@ namespace Utility{
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareHistogramPartiallyTabularTwoDDistribution : public UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false>
+class UnitAwareHistogramPartiallyTabularTwoDDistribution : public UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
 private:
 
   // The parent distribution type
-  typedef UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false> ParentType;
+  typedef UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
   
 public:
   

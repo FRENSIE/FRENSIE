@@ -30,7 +30,6 @@ UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit
   // Make sure the distribution is valid
   testPrecondition( Sort::isSortedAscending<FIRST>( distribution.begin(),
                                                     distribution.end() ) );
-  testPrecondition( this->areSecondaryDistributionsContinuous() );
 }
 
 // Constructor
@@ -59,9 +58,6 @@ UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit
     d_distribution[i].first = primary_indep_grid[i];
     d_distribution[i].second = secondary_distributions[i];
   }
-
-  // Make sure the constructed distribution is valid
-  testPostcondition( this->areSecondaryDistributionsContinuous() );
 }
 
 // Extend the distribution beyond the primary independent variable limits

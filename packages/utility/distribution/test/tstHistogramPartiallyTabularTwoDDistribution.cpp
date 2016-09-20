@@ -38,484 +38,13 @@ namespace cgs = boost::units::cgs;
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::shared_ptr<Utility::UnitAwareTwoDDistribution<MegaElectronVolt,cgs::length,Barn> > 
+std::shared_ptr<Utility::UnitAwarePartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn> > 
   unit_aware_distribution;
 
-std::shared_ptr<Utility::TwoDDistribution> distribution;
+std::shared_ptr<Utility::PartiallyTabularTwoDDistribution> distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
-//---------------------------------------------------------------------------//
-// Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution, evaluate )
-{
-  // Before the first bin
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 1.0 ), 0.0 );
-
-  // On the second bin (first bin boundary = second bin boundary)
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 1.0 ), exp( -1.0 ) );
-
-  // In the second bin
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 1.0 ), exp( -1.0 ) );
-
-  // On the third bin
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 1.0 ), 1.0 );
-
-  // In the third bin
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 1.0 ), 1.0 );
-
-  // After the third bin
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 1.0 ), 0.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
-                   evaluate )
-{
-  // Before the first bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 1.0*cgs::centimeter ), 0.0*barn );
-
-  // On the second bin (first bin boundary = second bin boundary)
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 1.0*cgs::centimeter ), exp( -1.0 )*barns );
-
-  // In the second bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 0.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 1.0*cgs::centimeter ), exp( -1.0 )*barns );
-
-  // On the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 1.0*cgs::centimeter ), 1.0*barn );
-
-  // In the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 0.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 1.0*barn );
-
-  // After the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 1.0*cgs::centimeter ), 0.0*barn );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
-                   evaluateSecondaryConditionalPDF )
-{
-  // Before the first bin
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 1.0 ), 0.0 );
-
-  // On the second bin (first bin boundary = second bin boundary)
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, 1.0 ), exp( -1.0 ) );
-
-  // In the second bin
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 1.0 ), exp( -1.0 ) );
-
-  // On the third bin
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 0.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 1.0 ), 0.1 );
-
-  // In the third bin
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 0.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 1.0 ), 0.1 );
-
-  // After the third bin
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 1.0 ), 0.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
-                   evaluateSecondaryConditionalPDF )
-{
-  // Before the first bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-
-  // On the second bin (first bin boundary = second bin boundary)
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 1.0*cgs::centimeter ), exp( -1.0 )/cgs::centimeter );
-
-  // In the second bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.0*cgs::centimeter ), exp( -1.0 )/cgs::centimeter );
-
-  // On the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 1.0*cgs::centimeter ), 0.1/cgs::centimeter );
-
-  // In the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::centimeter ), 0.1/cgs::centimeter );
-
-  // After the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
-                   sampleSecondaryConditional )
-{
-  // Before the first bin
-  double sample = distribution->sampleSecondaryConditional( -1.0 );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  // On the second bin (first bin boundary = second bin boundary)
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleSecondaryConditional( 0.0 );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  sample = distribution->sampleSecondaryConditional( 0.0 );
-
-  TEST_FLOATING_EQUALITY( sample, 0.6931471805599453, 1e-9 );
-
-  // In the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleSecondaryConditional( 0.5 );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  sample = distribution->sampleSecondaryConditional( 0.5 );
-
-  TEST_FLOATING_EQUALITY( sample, 0.6931471805599453, 1e-9 );
-
-  // On the third bin
-  fake_stream.push_back( 1.0 - 1e-15 );
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleSecondaryConditional( 1.0 );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  sample = distribution->sampleSecondaryConditional( 1.0 );
-  
-  TEST_EQUALITY_CONST( sample, 5.0 );
-
-  sample = distribution->sampleSecondaryConditional( 1.0 );
-
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
-  
-  // In the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleSecondaryConditional( 1.5 );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  sample = distribution->sampleSecondaryConditional( 1.5 );
-  
-  TEST_EQUALITY_CONST( sample, 5.0 );
-
-  sample = distribution->sampleSecondaryConditional( 1.5 );
-
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
-
-  // After the third bin
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  sample = distribution->sampleSecondaryConditional( 2.0 );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
-                   sampleSecondaryConditional )
-{
-  // Before the first bin
-  quantity<cgs::length> sample = unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  // On the second bin (first bin boundary = second bin boundary)
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
-
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931471805599453*cgs::centimeter, 1e-9 );
-
-  // In the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931471805599453*cgs::centimeter, 1e-9 );
-
-  // On the third bin
-  fake_stream.push_back( 1.0 - 1e-15 );
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
-  
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
-
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
-  
-  // In the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-  
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
-
-  // After the third bin
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
-                   sampleSecondaryConditionalAndRecordTrials )
-{
-  unsigned trials = 0u;
-  
-  // Before the first bin
-  double sample = distribution->sampleSecondaryConditionalAndRecordTrials( -1.0 , trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 1u );
-
-  // On the second bin (first bin boundary = second bin boundary)
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.0, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 2u );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.0, trials );
-
-  TEST_FLOATING_EQUALITY( sample, 0.6931471805599453, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 3u );
-
-  // In the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 4u );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
-
-  TEST_FLOATING_EQUALITY( sample, 0.6931471805599453, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 5u );
-
-  // On the third bin
-  fake_stream.push_back( 1.0 - 1e-15 );
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.0, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 6u );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.0, trials );
-  
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( trials, 7u );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.0, trials );
-
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 8u );
-  
-  // In the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 9u );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
-  
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( trials, 10u );
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
-
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 11u );
-
-  // After the third bin
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 2.0, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 12u );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
-                   sampleSecondaryConditionalAndRecordTrials )
-{
-  unsigned trials = 0u;
-  
-  // Before the first bin
-  quantity<cgs::length> sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 1u );
-
-  // On the second bin (first bin boundary = second bin boundary)
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.0*MeV, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 2u );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.0*MeV, trials );
-
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931471805599453*cgs::centimeter, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 3u );
-
-  // In the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 4u );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
-
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931471805599453*cgs::centimeter, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 5u );
-
-  // On the third bin
-  fake_stream.push_back( 1.0 - 1e-15 );
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.0*MeV, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 6u );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.0*MeV, trials );
-  
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 7u );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.0*MeV, trials );
-
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 8u );
-  
-  // In the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 9u );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
-  
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 10u );
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
-
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 11u );
-
-  // After the third bin
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 2.0*MeV, trials );
-
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 12u );
-}
-
 //---------------------------------------------------------------------------//
 // Chech that the upper bound of the distribution primary independent variable
 // can be returned
@@ -558,9 +87,17 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
                    getUpperBoundOfConditionalIndepVar )
 {
-  // Before the first bin
+  // Before the first bin - no extension
   TEST_EQUALITY_CONST(
                  distribution->getUpperBoundOfConditionalIndepVar(-1.0), 0.0 );
+
+  // Before the first bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar(-1.0),
+                       0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
 
   // On the second bin (first bin boundary = second bin boundary)
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar(0.0),
@@ -578,9 +115,22 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
   TEST_EQUALITY_CONST(
                  distribution->getUpperBoundOfConditionalIndepVar(1.5), 10.0 );
 
-  // After the third bin
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
   TEST_EQUALITY_CONST(
-                  distribution->getUpperBoundOfConditionalIndepVar(2.0), 0.0 );
+                 distribution->getUpperBoundOfConditionalIndepVar(2.0), 10.0 );
+  
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST(
+                  distribution->getUpperBoundOfConditionalIndepVar(3.0), 0.0 );
+
+  // After the third bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST(
+                  distribution->getUpperBoundOfConditionalIndepVar(3.0), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
@@ -589,10 +139,19 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
                    getUpperBoundOfConditionalIndepVar )
 {
-  // Before the first bin
+  // Before the first bin - no extension
   TEST_EQUALITY_CONST(
          unit_aware_distribution->getUpperBoundOfConditionalIndepVar(-1.0*MeV),
          0.0*cgs::centimeter );
+
+  // Before the first bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST(
+         unit_aware_distribution->getUpperBoundOfConditionalIndepVar(-1.0*MeV),
+         0.0*cgs::centimeter );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin (first bin boundary = second bin boundary)
   TEST_EQUALITY_CONST(
@@ -614,10 +173,25 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
          unit_aware_distribution->getUpperBoundOfConditionalIndepVar(1.5*MeV),
          10.0*cgs::centimeter );
 
-  // After the third bin
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
   TEST_EQUALITY_CONST(
          unit_aware_distribution->getUpperBoundOfConditionalIndepVar(2.0*MeV),
+         10.0*cgs::centimeter );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST(
+         unit_aware_distribution->getUpperBoundOfConditionalIndepVar(3.0*MeV),
          0.0*cgs::centimeter );
+
+  // After the third bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST(
+         unit_aware_distribution->getUpperBoundOfConditionalIndepVar(3.0*MeV),
+         0.0*cgs::centimeter );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
@@ -626,9 +200,17 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
                    getLowerBoundOfConditionalIndepVar )
 {
-  // Before the first bin
+  // Before the first bin - no extension
   TEST_EQUALITY_CONST(
                  distribution->getLowerBoundOfConditionalIndepVar(-1.0), 0.0 );
+
+  // Before the first bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST(
+                 distribution->getLowerBoundOfConditionalIndepVar(-1.0), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
 
   // On the second bin (first bin boundary = second bin boundary)
   TEST_EQUALITY_CONST(
@@ -647,9 +229,22 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
   TEST_EQUALITY_CONST(
                   distribution->getLowerBoundOfConditionalIndepVar(1.5), 0.0 );
 
-  // After the third bin
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
   TEST_EQUALITY_CONST(
                   distribution->getLowerBoundOfConditionalIndepVar(2.0), 0.0 );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST(
+                  distribution->getLowerBoundOfConditionalIndepVar(3.0), 0.0 );
+
+  // After the third bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST(
+                  distribution->getLowerBoundOfConditionalIndepVar(3.0), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
@@ -658,10 +253,19 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
                    getLowerBoundOfConditionalIndepVar )
 {
-  // Before the first bin
+  // Before the first bin - no extension
   TEST_EQUALITY_CONST(
          unit_aware_distribution->getLowerBoundOfConditionalIndepVar(-1.0*MeV),
          0.0*cgs::centimeter );
+
+  // Before the first bin - with extensino
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST(
+         unit_aware_distribution->getLowerBoundOfConditionalIndepVar(-1.0*MeV),
+         0.0*cgs::centimeter );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();                      
 
   // On the second bin (first bin boundary = second bin boundary)
   TEST_EQUALITY_CONST(
@@ -684,10 +288,25 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
          unit_aware_distribution->getLowerBoundOfConditionalIndepVar(1.5*MeV),
          0.0*cgs::centimeter );
 
-  // After the third bin
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
   TEST_EQUALITY_CONST(
          unit_aware_distribution->getLowerBoundOfConditionalIndepVar(2.0*MeV),
          0.0*cgs::centimeter );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST(
+         unit_aware_distribution->getLowerBoundOfConditionalIndepVar(3.0*MeV),
+         0.0*cgs::centimeter );
+
+  // After the third bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST(
+         unit_aware_distribution->getLowerBoundOfConditionalIndepVar(2.0*MeV),
+         0.0*cgs::centimeter );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
@@ -876,23 +495,715 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution, evaluate )
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  // Before the first bin - no extension
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 1.0 ), 0.0 );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
+  // Before the first bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 1.0 ), 0.0 );
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
+  distribution->limitToPrimaryIndepLimits();
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
+  // On the second bin (first bin boundary = second bin boundary)
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 1.0 ), exp( -1.0 ) );
 
+  // In the second bin
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 1.0 ), exp( -1.0 ) );
+
+  // On the third bin
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 1.0 ), 1.0 );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 1.0 ), 1.0 );
+
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 1.0 ), 1.0 );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 1.0 ), 0.0 );
+
+  // After the third bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 1.0 ), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
+                   evaluate )
+{
+  // Before the first bin - no extension
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  
+  // Before the first bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin (first bin boundary = second bin boundary)
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 1.0*cgs::centimeter ), exp( -1.0 )*barns );
+
+  // In the second bin
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 1.0*cgs::centimeter ), exp( -1.0 )*barns );
+
+  // On the third bin
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 1.0*cgs::centimeter ), 1.0*barn );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 1.0*barn );
+
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 1.0*cgs::centimeter ), 1.0*barn );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+
+  // After the third bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the secondary conditional PDF can be evaluated
+TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
+                   evaluateSecondaryConditionalPDF )
+{
+  // Before the first bin - no extension
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 1.0 ), 0.0 );
+
+  // Before the first bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 1.0 ), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin (first bin boundary = second bin boundary)
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, 1.0 ), exp( -1.0 ) );
+
+  // In the second bin
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 1.0 ), exp( -1.0 ) );
+
+  // On the third bin
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 1.0 ), 0.1 );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 1.0 ), 0.1 );
+
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 1.0 ), 0.1 );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 1.0 ), 0.0 );
+
+  // After the third bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 1.0 ), 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware secondary conditional PDF can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
+                   evaluateSecondaryConditionalPDF )
+{
+  // Before the first bin - no extension
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  
+  // Before the first bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin (first bin boundary = second bin boundary)
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 1.0*cgs::centimeter ), exp( -1.0 )/cgs::centimeter );
+
+  // In the second bin
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.0*cgs::centimeter ), exp( -1.0 )/cgs::centimeter );
+
+  // On the third bin
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 1.0*cgs::centimeter ), 0.1/cgs::centimeter );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::centimeter ), 0.1/cgs::centimeter );
+
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 1.0*cgs::centimeter ), 0.1/cgs::centimeter );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+
+  // After the third bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
+                   sampleSecondaryConditional )
+{
+  // Before the first bin - no extension
+  TEST_THROW( distribution->sampleSecondaryConditional( -1.0 ),
+              std::logic_error );
+  
+  // Before the first bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  double sample = distribution->sampleSecondaryConditional( -1.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin (first bin boundary = second bin boundary)
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditional( 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = distribution->sampleSecondaryConditional( 0.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 0.6931471805599453, 1e-9 );
+
+  // In the second bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditional( 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = distribution->sampleSecondaryConditional( 0.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 0.6931471805599453, 1e-9 );
+
+  // On the third bin
+  fake_stream.push_back( 1.0 - 1e-15 );
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditional( 1.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = distribution->sampleSecondaryConditional( 1.0 );
+  
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = distribution->sampleSecondaryConditional( 1.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+  
+  // In the third bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditional( 1.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = distribution->sampleSecondaryConditional( 1.5 );
+  
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = distribution->sampleSecondaryConditional( 1.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditional( 2.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = distribution->sampleSecondaryConditional( 2.0 );
+  
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = distribution->sampleSecondaryConditional( 2.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+
+  // After the third bin - no extension
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_THROW( distribution->sampleSecondaryConditional( 3.0 ),
+              std::logic_error );
+
+  // After the third bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  sample = distribution->sampleSecondaryConditional( 3.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
+                   sampleSecondaryConditional )
+{
+  // Before the first bin - no extension
+  TEST_THROW( unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV ),
+              std::logic_error );
+
+  // Before the first bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+  
+  quantity<cgs::length> sample = unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin (first bin boundary = second bin boundary)
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931471805599453*cgs::centimeter, 1e-9 );
+
+  // In the second bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931471805599453*cgs::centimeter, 1e-9 );
+
+  // On the third bin
+  fake_stream.push_back( 1.0 - 1e-15 );
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
+  
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+  
+  // In the third bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
+  
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
+  
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+
+  sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+
+  // After the third bin - no extension
+  Utility::RandomNumberGenerator::unsetFakeStream();
+  
+  TEST_THROW( unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV ),
+              std::logic_error );
+
+  // After the third bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+  
+  sample = unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
+                   sampleSecondaryConditionalAndRecordTrials )
+{
+  unsigned trials = 0u;
+
+  // Before the first bin - no extension
+  TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials ),
+              std::logic_error );
+  TEST_EQUALITY_CONST( trials, 0u );
+  
+  // Before the first bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+  
+  double sample = distribution->sampleSecondaryConditionalAndRecordTrials( -1.0 , trials );
+
+  distribution->limitToPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( trials, 1u );
+
+  // On the second bin (first bin boundary = second bin boundary)
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.0, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( trials, 2u );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.0, trials );
+
+  TEST_FLOATING_EQUALITY( sample, 0.6931471805599453, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 3u );
+
+  // In the second bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( trials, 4u );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
+
+  TEST_FLOATING_EQUALITY( sample, 0.6931471805599453, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 5u );
+
+  // On the third bin
+  fake_stream.push_back( 1.0 - 1e-15 );
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.0, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( trials, 6u );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.0, trials );
+  
+  TEST_EQUALITY_CONST( sample, 5.0 );
+  TEST_EQUALITY_CONST( trials, 7u );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.0, trials );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 8u );
+  
+  // In the third bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( trials, 9u );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
+  
+  TEST_EQUALITY_CONST( sample, 5.0 );
+  TEST_EQUALITY_CONST( trials, 10u );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 11u );
+
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 2.0, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( trials, 12u );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 2.0, trials );
+  
+  TEST_EQUALITY_CONST( sample, 5.0 );
+  TEST_EQUALITY_CONST( trials, 13u );
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 2.0, trials );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 14u );
+
+  // After the third bin - no extension
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials ),
+              std::logic_error );
+    
+  // After the third bin - with extension
+  distribution->extendBeyondPrimaryIndepLimits();
+
+  sample = distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( trials, 15u );
+
+  distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
+                   sampleSecondaryConditionalAndRecordTrials )
+{
+  unsigned trials = 0u;
+
+  // Before the first bin - no extension
+  TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials ),
+              std::logic_error );
+  TEST_EQUALITY_CONST( trials, 0u );
+  
+  // Before the first bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+  
+  quantity<cgs::length> sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 1u );
+
+  // On the second bin (first bin boundary = second bin boundary)
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.0*MeV, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 2u );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.0*MeV, trials );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931471805599453*cgs::centimeter, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 3u );
+
+  // In the second bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 4u );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931471805599453*cgs::centimeter, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 5u );
+
+  // On the third bin
+  fake_stream.push_back( 1.0 - 1e-15 );
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.0*MeV, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 6u );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.0*MeV, trials );
+  
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 7u );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.0*MeV, trials );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 8u );
+  
+  // In the third bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 9u );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
+  
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 10u );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 11u );
+
+  // On the upper bin boundary - this should be treated as part of the third
+  // bin (special case)
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 2.0*MeV, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 12u );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 2.0*MeV, trials );
+  
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 13u );
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 2.0*MeV, trials );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+  TEST_EQUALITY_CONST( trials, 14u );
+
+  // After the third bin - no extension
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials ),
+              std::logic_error );
+  
+  // After the third bin - with extension
+  unit_aware_distribution->extendBeyondPrimaryIndepLimits();
+
+  sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( trials, 15u );
+
+  unit_aware_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create the two-dimensional distribution
   {
     Utility::HistogramPartiallyTabularTwoDDistribution::DistributionType
@@ -946,21 +1257,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstHistogramPartiallyTabularTwoDDistribution.cpp

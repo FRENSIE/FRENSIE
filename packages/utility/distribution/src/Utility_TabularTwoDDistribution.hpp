@@ -128,10 +128,10 @@ protected:
   size_t calculateBinIndex(
                typename DistributionType::const_iterator& bin_boundary ) const;
 
-private:
-
   // Check that all secondary distributions are continuous
   bool areSecondaryDistributionsContinuous() const;
+
+private:
 
   // The distribution
   DistributionType d_distribution;
