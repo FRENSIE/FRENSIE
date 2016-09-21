@@ -233,7 +233,7 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  this->sampleSecondaryConditionalWithRandomNumberInSubrange(
+  return this->sampleSecondaryConditionalWithRandomNumberInSubrange(
                                                primary_indep_var_value,
                                                random_number,
                                                max_secondary_indep_var_value );

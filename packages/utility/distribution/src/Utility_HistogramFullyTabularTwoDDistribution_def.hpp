@@ -35,7 +35,7 @@ double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,Sec
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndex(
+auto UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 unsigned& primary_bin_index,
                 unsigned& secondary_bin_index ) const -> SecondaryIndepQuantity
@@ -65,7 +65,7 @@ auto UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,Secon
   testPrecondition( random_number <= 1.0 );
 
   // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistribution&)>
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
                              &BaseOneDDistributionType::sampleWithRandomNumber,
                              std::placeholders::_1,
@@ -89,7 +89,7 @@ auto UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,Secon
                     this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
 
   // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistribution&)>
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
                                    &BaseOneDDistributionType::sampleInSubrange,
                                    std::placeholders::_1,
@@ -118,7 +118,7 @@ auto UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,Secon
   testPrecondition( random_number <= 1.0 );
 
   // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistribution&)>
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
                    &BaseOneDDistributionType::sampleWithRandomNumberInSubrange,
                    std::placeholders::_1,
