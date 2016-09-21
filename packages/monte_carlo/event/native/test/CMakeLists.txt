@@ -173,7 +173,7 @@ Add_EXECUTABLE(tstCellCollisionFluxEstimator
   tstCellCollisionFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellCollisionFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellCollisionFluxEstimator_test tstCellCollisionFluxEstimator)
-SET_PROPERTY(TEST CellCollisionFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
+SET_PROPERTY(TEST CellCollisionFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native no_threads)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelCellCollisionFluxEstimator_2_test
@@ -188,7 +188,7 @@ Add_EXECUTABLE(tstCellTrackLengthFluxEstimator
   tstCellTrackLengthFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellTrackLengthFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)
-SET_PROPERTY(TEST CellTrackLengthFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
+SET_PROPERTY(TEST CellTrackLengthFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native no_threads)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_2_test
