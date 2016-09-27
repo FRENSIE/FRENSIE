@@ -114,7 +114,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator,
   DataGen::AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( 20.0, 0.2, 0.0 );
   grid_generator.throwExceptionOnDirtyConvergence();
-
+  
   Teuchos::Array<double> max_energy_grid, cross_section;
 
   // Bind the distribution to a cross section evaluator
@@ -181,6 +181,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator,
   DataGen::AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( 20.0, 0.2, 0.0, 0.01, 1e-20 );
   grid_generator.throwExceptionOnDirtyConvergence();
+  grid_generator.setDistanceTolerance( 1e-20 );
 
   Teuchos::Array<double> energy_grid( 2 );
   energy_grid[0] = 0.001;
@@ -217,6 +218,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator,
   DataGen::AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( 20.0, 0.2, 1e-8, 0.05, 1e-20 );
   grid_generator.throwExceptionOnDirtyConvergence();
+  grid_generator.setDistanceTolerance( 1e-20 );
 
   Teuchos::Array<double> energy_grid( 3 );
   energy_grid[0] = 0.001;
@@ -253,6 +255,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator,
   DataGen::AdjointIncoherentGridGenerator<Utility::LinLinLin>
     grid_generator( 20.0, 0.2, 1e-8, 0.05, 1e-20 );
   grid_generator.throwExceptionOnDirtyConvergence();
+  grid_generator.setConvergenceTolerance( 1e-2 );
 
   Teuchos::Array<double> energy_grid( 2 );
   energy_grid[0] = 0.001;
@@ -263,7 +266,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator,
   // Bind the distribution to a cross section evaluator
   std::function<double(double,double)> cs_evaluator =
     grid_generator.createCrossSectionEvaluator(
-                                             pb_incoherent_adjoint_cs, 0.001 );
+                                             pb_incoherent_adjoint_cs, 0.01 );
 
   // Generate the 2D grid
   grid_generator.generateAndEvaluateInPlace( energy_grid,
@@ -272,7 +275,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator,
                                              cs_evaluator );
 
   // Check the energy grid
-  TEST_EQUALITY_CONST( energy_grid.size(), 169 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 1009 );
   TEST_EQUALITY_CONST( energy_grid.front(), 0.001 );
   TEST_ASSERT(
            std::binary_search( energy_grid.begin(),

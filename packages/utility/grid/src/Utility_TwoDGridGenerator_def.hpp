@@ -615,7 +615,7 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConvergedAtSecondaryPoint(
   
   double abs_diff = Teuchos::ScalarTraits<double>::magnitude(
                                 exact_function_value - interp_function_value );
-
+  
   // Not converged
   if( relative_error > d_convergence_tol &&
       abs_diff > d_absolute_diff_tol )
@@ -647,6 +647,15 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConvergedAtSecondaryPoint(
   }
   // else - clean convergence
 
+  // Log the check details
+  this->logSecondaryGridCheck( primary_value_0,
+                               primary_value_1,
+                               intermediate_primary_value,
+                               secondary_value,
+                               interp_function_value,
+                               exact_function_value,
+                               converged );
+
   return converged;
 }
 
@@ -674,7 +683,7 @@ double TwoDGridGenerator<TwoDInterpPolicy>::calculateSecondaryMidpoint(
 
 // Log added primary grid point
 template<typename TwoDInterpPolicy>
-void TwoDGridGenerator<TwoDInterpPolicy>::logAddedPrimaryGridPoint(
+inline void TwoDGridGenerator<TwoDInterpPolicy>::logAddedPrimaryGridPoint(
                                      const double primary_grid_point,
                                      const double primary_grid_point_id ) const
 {
@@ -683,6 +692,31 @@ void TwoDGridGenerator<TwoDInterpPolicy>::logAddedPrimaryGridPoint(
     d_os_log->precision( 18 );
     (*d_os_log) << "Added " << primary_grid_point << " ("
                 << primary_grid_point_id << ")" << std::endl;
+  }
+}
+
+// Log secondary grid check
+template<typename TwoDInterpPolicy>
+inline void TwoDGridGenerator<TwoDInterpPolicy>::logSecondaryGridCheck(
+                                            const double primary_grid_point_0,
+                                            const double primary_grid_point_1,
+                                            const double primary_point,
+                                            const double secondary_point,
+                                            const double interp_function_value,
+                                            const double exact_function_value,
+                                            const bool converged ) const
+{
+  if( d_verbose_mode_on )
+  {
+    d_os_log->precision( 18 );
+    (*d_os_log) << "   Secondary convergence ("
+                << (converged ? "passed" : "FAILED" ) << "): "
+                << "f(x=" << primary_point << ",y=" << secondary_point << ")= "
+                << exact_function_value << " "
+                << (converged ? "~=" : "!=") << " "
+                << "Interp(x in [" << primary_grid_point_0 << ","
+                << primary_grid_point_1 << "],y)= " << interp_function_value
+                << std::endl;
   }
 }
   

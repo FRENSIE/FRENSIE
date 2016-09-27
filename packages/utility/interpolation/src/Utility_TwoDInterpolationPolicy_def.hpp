@@ -452,7 +452,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
         eta = 0.0;
       else // indep_var_y >= y_x_max && indep_var_y <= y_x_max_with_tol
         eta = 1.0;
-            
+      
       // Calculate the y value on the first grid
       const SecondIndepType indep_var_y_0 = ZYInterpPolicy::calculateIndepVar(
                                        eta, indep_var_y_0_min, L0 );
@@ -1327,8 +1327,8 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
 
     dep_var = get<DepMember>( *true_end_dep_grid );
   }
-  else if( indep_var_y > ThisType::calculateFuzzyUpperBound(
-                                get<YIndepMember>( *true_end_indep_y_grid ) ) )
+  // indep_var_y > end && indep_var_y <= fuzzy_end
+  else if( indep_var_y > get<YIndepMember>( *true_end_indep_y_grid ) )
   {
     ZIterator true_end_dep_grid = end_dep_grid;
     --true_end_dep_grid;

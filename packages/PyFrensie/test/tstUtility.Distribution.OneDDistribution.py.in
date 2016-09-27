@@ -424,12 +424,14 @@ class EvaporationDistributionTestCase(unittest.TestCase):
     def testEvaluate(self):
         "*Test Utility.Distribution.EvaporationDistribution evaluate method"
         self.assertTrue(self.dist.evaluate( 0.0 ) == 0.0)
-        self.assertTrue(self.dist.evaluate( 1.0 ) != 0.0)
+        self.assertTrue(self.dist.evaluate( 0.9 ) != 0.0)
+        self.assertTrue(self.dist.evaluate( 1.0 ) == 0.0)
 
     def testEvaluatePDF(self):
         "*Test Utility.Distribution.EvaporationDistribution evaluatePDF method"
         self.assertTrue(self.dist.evaluatePDF( 0.0 ) == 0.0)
-        self.assertTrue(self.dist.evaluatePDF( 1.0 ) != 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 0.9 ) != 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1.0 ) == 0.0)
 
     def testSample(self):
         "*Test Utility.Distribution.EvaporationDistribution sample method"
@@ -731,12 +733,14 @@ class MaxwellFissionDistributionTestCase(unittest.TestCase):
     def testEvaluate(self):
         "*Test Utility.Distribution.MaxwellFissionDistribution evaluate method"
         self.assertTrue(self.dist.evaluate( 0.0 ) == 0.0)
-        self.assertTrue(self.dist.evaluate( 1.0 ) != 0.0)
+        self.assertTrue(self.dist.evaluate( 0.9 ) != 0.0)
+        self.assertTrue(self.dist.evaluate( 1.0 ) == 0.0)
 
     def testEvaluatePDF(self):
         "*Test Utility.Distribution.MaxwellFissionDistribution evaluatePDF method"
         self.assertTrue(self.dist.evaluatePDF( 0.0 ) == 0.0)
-        self.assertTrue(self.dist.evaluatePDF( 1.0 ) != 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 0.9 ) != 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1.0 ) == 0.0)
 
     def testSample(self):
         "*Test Utility.Distribution.MaxwellFissionDistribution sample method"
@@ -1732,12 +1736,14 @@ class WattDistributionTestCase(unittest.TestCase):
     def testEvaluate(self):
         "*Test Utility.Distribution.WattDistribution evaluate method"
         self.assertTrue(self.dist.evaluate(0.0) == 0.0)
-        self.assertTrue(self.dist.evaluate(1.0) != 0.0)
+        self.assertTrue(self.dist.evaluate(0.9) != 0.0)
+        self.assertTrue(self.dist.evaluate(1.0) == 0.0)
 
     def testEvaluatePDF(self):
         "*Test Utility.Distribution.WattDistribution evaluatePDF method"
         self.assertTrue(self.dist.evaluatePDF(0.0) == 0.0)
-        self.assertTrue(self.dist.evaluatePDF(1.0) != 0.0)
+        self.assertTrue(self.dist.evaluatePDF(0.9) != 0.0)
+        self.assertTrue(self.dist.evaluatePDF(1.0) == 0.0)
 
     def testSample(self):
         "*Test Utility.Distribution.WattDistribution sample method"

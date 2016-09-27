@@ -176,6 +176,15 @@ private:
   void logAddedPrimaryGridPoint( const double primary_grid_point,
                                  const double primary_grid_point_id ) const;
 
+  // Log secondary grid check
+  void logSecondaryGridCheck( const double primary_grid_point_0,
+                              const double primary_grid_point_1,
+                              const double primary_point,
+                              const double secondary_point,
+                              const double interp_function_value,
+                              const double exact_function_value,
+                              const bool converged ) const;
+
   // The convergence tolerance
   double d_convergence_tol;
 
