@@ -330,33 +330,24 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentGridGenerator,
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_h_file_name, test_native_pb_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_h_file_name, test_native_pb_file_name;
+  clp().setOption( "test_native_h_file",
+                   &test_native_h_file_name,
+                   "Test Native H file name" );
+  clp().setOption( "test_native_pb_file",
+                   &test_native_pb_file_name,
+                   "Test Native Pb file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_h_file",
-		 &test_native_h_file_name,
-		 "Test Native H file name" );
-  clp.setOption( "test_native_pb_file",
-                 &test_native_pb_file_name,
-                 "Test Native Pb file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
-  {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create the Klein-Nishina distribution
   klein_nishina_adjoint_cs.reset(
      new MonteCarlo::KleinNishinaAdjointPhotonScatteringDistribution( 20.0 ) );
@@ -436,21 +427,9 @@ int main( int argc, char** argv )
                                 data_container.getSubshellBindingEnergy( 1 ),
                                 occupation_number ) );
   }
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);   
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAdjointIncoherentGridGenerator.cpp
