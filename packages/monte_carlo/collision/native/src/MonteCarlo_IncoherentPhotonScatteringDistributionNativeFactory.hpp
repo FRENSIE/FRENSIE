@@ -23,7 +23,6 @@
 #include "MonteCarlo_ScatteringFunction.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -62,7 +61,7 @@ protected:
     incoherent_distribution,
     const double kahn_sampling_cutoff_energy );
 
-  //! Create a subshell incohrent distribution
+  //! Create a subshell incoherent distribution
   static void createSubshellDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const unsigned endf_subshell,

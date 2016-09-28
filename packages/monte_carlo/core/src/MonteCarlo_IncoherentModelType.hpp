@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_IncoherentModelType.hpp
 //! \author Alex Robinson
-//! \brief  Photon Doppler broadening model type and helper function decl.
+//! \brief  Incoherent model types and helper functions decl.
 //!
 //---------------------------------------------------------------------------//
 
