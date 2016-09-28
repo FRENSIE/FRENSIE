@@ -20,7 +20,7 @@ enum IncoherentAdjointModelType
   KN_INCOHERENT_ADJOINT_MODEL = 0,
   WH_INCOHERENT_ADJOINT_MODEL,
   IMPULSE_INCOHERENT_ADJOINT_MODEL,
-  FULL_PROFILE_DB_IMPULSE_INCOHERENT_ADJOINT_MODEL
+  DB_IMPULSE_INCOHERENT_ADJOINT_MODEL
 };
 
 //! Convert incoherent adjoint model name to an IncoherentAdjointModelType enum

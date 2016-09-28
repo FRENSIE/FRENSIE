@@ -60,7 +60,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
                                             incoherent_adjoint_distribution );
                                             
     }
-    case FULL_PROFILE_DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
+    case DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
     {
       ThisType::createDopplerBroadenedSubshellDistribution(
                                              raw_adjoint_photoatom_data,

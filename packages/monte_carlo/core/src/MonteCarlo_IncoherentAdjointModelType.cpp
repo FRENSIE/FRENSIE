@@ -24,8 +24,8 @@ IncoherentAdjointModelType convertStringToIncoherentAdjointModelTypeEnum(
   else if( incoherent_adjoint_model_name == "Impulse Adjoint Model" )
     return IMPULSE_INCOHERENT_ADJOINT_MODEL;
   else if( incoherent_adjoint_model_name ==
-           "FP Doppler Broadened Impulse Adjoint Model" )
-    return FULL_PROFILE_DB_IMPULSE_INCOHERENT_ADJOINT_MODEL;
+           "Doppler Broadened Impulse Adjoint Model" )
+    return DB_IMPULSE_INCOHERENT_ADJOINT_MODEL;
   else
   {
     THROW_EXCEPTION( std::logic_error,
@@ -47,7 +47,7 @@ IncoherentAdjointModelType convertUnsignedToIncoherentAdjointModelTypeEnum(
   case 2:
     return IMPULSE_INCOHERENT_ADJOINT_MODEL;
   case 3:
-    return FULL_PROFILE_DB_IMPULSE_INCOHERENT_ADJOINT_MODEL;
+    return DB_IMPULSE_INCOHERENT_ADJOINT_MODEL;
   default:
     THROW_EXCEPTION( std::logic_error,
                      "Error: unsigned integer "
@@ -69,8 +69,8 @@ std::string convertIncoherentAdjointModelTypeToString(
     return "Waller-Hartree Adjoint Model" ;
   case IMPULSE_INCOHERENT_ADJOINT_MODEL:
     return "Impulse Adjoint Model";
-  case FULL_PROFILE_DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
-    return "FP Doppler Broadened Impulse Adjoint Model";
+  case DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
+    return "Doppler Broadened Impulse Adjoint Model";
   default:
     THROW_EXCEPTION( std::logic_error,
                      "Error: unkown incoherent adjoint model "

@@ -62,6 +62,13 @@ TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)
 ADD_TEST(ParticleBank_test tstParticleBank)
 SET_PROPERTY(TEST ParticleBank_test PROPERTY LABELS monte_carlo_core)
 
+ADD_EXECUTABLE(tstIncoherentAdjointModelTypeHelpers
+  tstIncoherentAdjointModelTypeHelpers.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstIncoherentAdjointModelTypeHelpers monte_carlo_core)
+ADD_TEST(IncoherentAdjointModelTypeHelpers_test tstIncoherentAdjointModelTypeHelpers)
+SET_PROPERTY(TEST IncoherentAdjointModelTypeHelpers_test PROPERTY LABELS monte_carlo_core)
+
 ADD_EXECUTABLE(tstSimulationGeneralProperties
   tstSimulationGeneralProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

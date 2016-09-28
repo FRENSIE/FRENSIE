@@ -30,7 +30,7 @@ double SimulationAdjointPhotonProperties::s_max_adjoint_photon_energy =
 unsigned SimulationAdjointPhotonProperties::s_num_adjoint_photon_hash_grid_bins = 500;
 
 // The incoherent adjoint model
-IncoherentAdjointModelType SimulationAdjointPhotonProperties::s_incoherent_adjoint_model_type = FULL_PROFILE_DB_IMPULSE_INCOHERENT_ADJOINT_MODEL;
+IncoherentAdjointModelType SimulationAdjointPhotonProperties::s_incoherent_adjoint_model_type = DB_IMPULSE_INCOHERENT_ADJOINT_MODEL;
 
 // Set the minimum adjoint photon energy (MeV)
 void SimulationAdjointPhotonProperties::setMinAdjointPhotonEnergy( const double energy )
