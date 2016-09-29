@@ -51,6 +51,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
                                              raw_adjoint_photoatom_data,
                                              max_energy,
                                              incoherent_adjoint_distribution );
+      break;
     }
     case IMPULSE_INCOHERENT_ADJOINT_MODEL:
     {
@@ -58,6 +59,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
                                             endf_subshell,
                                             max_energy,
                                             incoherent_adjoint_distribution );
+      break;
                                             
     }
     case DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
@@ -67,6 +69,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
                                              endf_subshell,
                                              max_energy,
                                              incoherent_adjoint_distribution );
+      break;
     }
     default:
     {
@@ -78,25 +81,59 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
   }
 }
 
-// Create an incoherent adjoint distribution
-void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          incoherent_adjoint_distribution,
-          const IncoherentAdjointModelType incoherent_adjoint_model,
-          const double max_energy,
-          const Teuchos::ArrayRCP<const double>& critical_line_energies,
-          const unsigned endf_subshell )
+// Create a subshell distribution
+void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
+        const Data::AdjointElectronPhotonRelaxationDataContainer&
+        raw_adjoint_photoatom_data,
+        std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>&
+        incoherent_adjoint_distribution,
+        const IncoherentAdjointModelType incoherent_adjoint_model,
+        const double max_energy,
+        const unsigned endf_subshell )
 {
-  ThisType::createDistribution( raw_adjoint_photoatom_data,
-                                incoherent_adjoint_distribution,
-                                incoherent_adjoint_model,
-                                max_energy,
-                                endf_subshell );
+  // Make sure the max energy is valid
+  testPrecondition( max_energy <= SimulationAdjointPhotonProperties::getAbsoluteMaxAdjointPhotonEnergy() );
+  testPrecondition( max_energy > SimulationAdjointPhotonProperties::getAbsoluteMinAdjointPhotonEnergy() );
 
-  incoherent_adjoint_distribution->setCriticalLineEnergies(
-                                                      critical_line_energies );
+  switch( incoherent_adjoint_model )
+  {
+    case IMPULSE_INCOHERENT_ADJOINT_MODEL:
+    {
+      ThisType::createSubshellDistribution( raw_adjoint_photoatom_data,
+                                            endf_subshell,
+                                            max_energy,
+                                            incoherent_adjoint_distribution );
+      break;
+                                            
+    }
+    case DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
+    {
+      ThisType::createDopplerBroadenedSubshellDistribution(
+                                             raw_adjoint_photoatom_data,
+                                             endf_subshell,
+                                             max_energy,
+                                             incoherent_adjoint_distribution );
+      break;
+    }
+    default:
+    {
+      if( incoherent_adjoint_model == KN_INCOHERENT_ADJOINT_MODEL ||
+          incoherent_adjoint_model == WH_INCOHERENT_ADJOINT_MODEL )
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Error: The KN and WH incoherent adjoint models "
+                         "are not impulse (subshell) models. The subshell "
+                         "distribution cannot be created." );
+      }
+      else
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Error: incoherent adjoint model "
+                         << incoherent_adjoint_model <<
+                         " cannot be constructed with native data!" );
+      }
+    }
+  }
 }
 
 // Create a Waller-Hartree incoherent adjoint distribution
@@ -122,92 +159,6 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createWallerHar
                           new WHIncoherentAdjointPhotonScatteringDistribution(
                                                        max_energy,
                                                        scattering_function ) );
-}
-
-// Create a subshell incoherent adjoint distribution
-void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          const unsigned endf_subshell,
-          const double max_energy,
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          incoherent_adjoint_distribution )
-{
-  // Make sure the max energy is valid
-  testPrecondition( max_energy <= SimulationAdjointPhotonProperties::getAbsoluteMaxAdjointPhotonEnergy() );
-  testPrecondition( max_energy > SimulationAdjointPhotonProperties::getAbsoluteMinAdjointPhotonEnergy() );
-
-  // Convert the endf subshell to a subshell type
-  Data::SubshellType subshell =
-    Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
-
-  TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
-                      std::logic_error,
-                      "Error: the requested endf subshell " << endf_subshell <<
-                      " is invalid!" );
-
-  // Create the occupation number
-  std::shared_ptr<const OccupationNumber> occupation_number;
-
-  ThisType::createOccupationNumber( raw_adjoint_photoatom_data,
-                                    endf_subshell,
-                                    occupation_number );
-
-  // Create the distribution
-  incoherent_adjoint_distribution.reset(
-     new SubshellIncoherentAdjointPhotonScatteringDistribution(
-          max_energy,
-          subshell,
-          raw_adjoint_photoatom_data.getSubshellOccupancy( endf_subshell ),
-          raw_adjoint_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
-          occupation_number ) );                 
-}
-
-// Create a Doppler broadened subshell incoherent adjoint distribution
-void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellDistribution(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          const unsigned endf_subshell,
-          const double max_energy,
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          incoherent_adjoint_distribution )
-{
-  // Make sure the max energy is valid
-  testPrecondition( max_energy <= SimulationAdjointPhotonProperties::getAbsoluteMaxAdjointPhotonEnergy() );
-  testPrecondition( max_energy > SimulationAdjointPhotonProperties::getAbsoluteMinAdjointPhotonEnergy() );
-
-  // Convert the endf subshell to a subshell type
-  Data::SubshellType subshell =
-    Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
-
-  TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
-                      std::logic_error,
-                      "Error: the requested endf subshell " << endf_subshell <<
-                      " is invalid!" );
-
-  // Create the occupation number
-  std::shared_ptr<const OccupationNumber> occupation_number;
-
-  ThisType::createOccupationNumber( raw_adjoint_photoatom_data,
-                                    endf_subshell,
-                                    occupation_number );
-
-  // Create the Compton profile
-  std::shared_ptr<const ComptonProfile> compton_profile;
-
-  ThisType::createComptonProfile( raw_adjoint_photoatom_data,
-                                  endf_subshell,
-                                  compton_profile );
-
-  // Create the distribution
-  incoherent_adjoint_distribution.reset(
-     new DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution(
-          max_energy,
-          subshell,
-          raw_adjoint_photoatom_data.getSubshellOccupancy( endf_subshell ),
-          raw_adjoint_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
-          occupation_number,
-          compton_profile ) );                 
 }
 
 // Create the scattering function

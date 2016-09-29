@@ -17,8 +17,9 @@
 #include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistributionFactory.hpp"
+#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
 #include "MonteCarlo_ScatteringFunction.hpp"
 #include "MonteCarlo_OccupationNumber.hpp"
@@ -42,24 +43,23 @@ public:
 
   //! Create an incoherent adjoint distribution
   static void createDistribution(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          incoherent_adjoint_distribution,
-          const IncoherentAdjointModelType incoherent_adjoint_model,
-          const double max_energy,
-          const unsigned endf_subshell = 0u );
+                const Data::AdjointElectronPhotonRelaxationDataContainer&
+                raw_adjoint_photoatom_data,
+                std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
+                incoherent_adjoint_distribution,
+                const IncoherentAdjointModelType incoherent_adjoint_model,
+                const double max_energy,
+                const unsigned endf_subshell = 0u );
 
-  //! Create an incoherent adjoint distribution
-  static void createDistribution(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          incoherent_adjoint_distribution,
-          const IncoherentAdjointModelType incoherent_adjoint_model,
-          const double max_energy,
-          const Teuchos::ArrayRCP<const double>& critical_line_energies,
-          const unsigned endf_subshell = 0 );
+  //! Create a subshell distribution
+  static void createSubshellDistribution(
+        const Data::AdjointElectronPhotonRelaxationDataContainer&
+        raw_adjoint_photoatom_data,
+        std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>&
+        incoherent_adjoint_distribution,
+        const IncoherentAdjointModelType incoherent_adjoint_model,
+        const double max_energy,
+        const unsigned endf_subshell );
 
 private:
 
@@ -72,22 +72,24 @@ private:
           incoherent_adjoint_distribution );
 
   //! Create a subshell incoherent adjoint distribution
+  template<typename BaseDistributionType>
   static void createSubshellDistribution(
           const Data::AdjointElectronPhotonRelaxationDataContainer&
           raw_adjoint_photoatom_data,
           const unsigned endf_subshell,
           const double max_energy,
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
+          std::shared_ptr<BaseDistributionType>&
           incoherent_adjoint_distribution );
 
   //! Create a Doppler broadened subshell incoherent adjoint distribution
+  template<typename BaseDistributionType>
   static void createDopplerBroadenedSubshellDistribution(
-          const Data::AdjointElectronPhotonRelaxationDataContainer&
-          raw_adjoint_photoatom_data,
-          const unsigned endf_subshell,
-          const double max_energy,
-          std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          incoherent_adjoint_distribution );
+                      const Data::AdjointElectronPhotonRelaxationDataContainer&
+                      raw_adjoint_photoatom_data,
+                      const unsigned endf_subshell,
+                      const double max_energy,
+                      std::shared_ptr<BaseDistributionType>&
+                      incoherent_adjoint_distribution );
 
 private:
 
@@ -113,6 +115,14 @@ private:
 };
   
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistributionNativeFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
