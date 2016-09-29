@@ -59,6 +59,7 @@ inline double vectorMagnitude( const double x_component,
 {
   // Make sure that the coordinates are valid
   remember( typedef Teuchos::ScalarTraits<double> ST );
+
   testPrecondition( !ST::isnaninf( x_component ) );
   testPrecondition( !ST::isnaninf( y_component ) );
   testPrecondition( !ST::isnaninf( z_component ) );

@@ -199,6 +199,19 @@ IF(${FRENSIE_ENABLE_OPENMP})
   SET_PROPERTY(TEST SharedParallelCellTrackLengthFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
+ADD_EXECUTABLE(tstHexMeshTrackLengthFluxEstimator
+  tstHexMeshTrackLengthFluxEstimator.cpp)
+TARGET_LINK_LIBRARIES(tstHexMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
+ADD_TEST(HexMeshTrackLengthFluxEstimator_test tstHexMeshTrackLengthFluxEstimator)
+SET_PROPERTY(TEST HexMeshTrackLengthFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelHexMeshTrackLengthFluxEstimator_2_test tstHexMeshTrackLengthFluxEstimator --threads=2)
+  ADD_TEST(SharedParallelHexMeshTrackLengthFluxEstimator_4_test tstHexMeshTrackLengthFluxEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelHexMeshTrackLengthFluxEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelHexMeshTrackLengthFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+ENDIF()
+
 Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
   tstTetMeshTrackLengthFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstTetMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})

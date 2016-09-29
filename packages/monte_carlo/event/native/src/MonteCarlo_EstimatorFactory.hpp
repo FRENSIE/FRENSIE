@@ -203,6 +203,10 @@ private:
   static bool isTetMeshTrackLengthFluxEstimator(
                                            const std::string& estimator_name );
 
+  //! Check if an estimator type is a hex mesh track length flux estimator
+  static bool isHexMeshTrackLengthFluxEstimator(
+                                           const std::string& estimator_name );
+
   //! Check if an object type is an estimator
   static bool isEstimator( const std::string& object_name );
 
@@ -297,6 +301,16 @@ private:
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL ) const;
 
+  //! Create and register a hex mesh track length flux estimator
+  void createAndRegisterHexMeshTrackLengthFluxEstimator(
+      const Teuchos::ParameterList& estimator_rep,
+      const unsigned id,
+      const double multiplier,
+      const Teuchos::Array<ParticleType> particle_types,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
+      const bool energy_multiplication = false,
+      const Teuchos::ParameterList* bins = NULL ) const;
+
   //! Assign bins to an estimator
   void assignBinsToEstimator( const Teuchos::ParameterList& bins,
                               std::shared_ptr<Estimator>& estimator ) const;
@@ -318,6 +332,9 @@ private:
 
   // The tet mesh track-length flux estimator name
   static const std::string s_tet_mesh_track_length_flux_name;
+
+  // The hex mesh track-length flux estimator name
+  static const std::string s_hex_mesh_track_length_flux_name;
 
   // The event handler
   std::shared_ptr<EventHandler> d_event_handler;

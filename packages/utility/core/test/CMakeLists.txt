@@ -315,3 +315,10 @@ ADD_EXECUTABLE(tstIncrementPolicy
 TARGET_LINK_LIBRARIES(tstIncrementPolicy utility_core)
 ADD_TEST(IncrementPolicy_test tstIncrementPolicy)
 SET_PROPERTY(TEST IncrementPolicy_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstStructuredHexMesh
+  tstStructuredHexMesh.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStructuredHexMesh utility_core)
+ADD_TEST(StructuredHexMesh_test tstStructuredHexMesh)
+SET_PROPERTY(TEST StructureHexMesh_test PROPERTY LABELS utility_core)
