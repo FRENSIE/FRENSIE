@@ -28,7 +28,7 @@ SWIG, Numpy and H5Py packages will also be required. Building FRENSIE without
 these optional packages will result in faster build times which can be useful
 for certain development tasks.
 
-FRENSIE also requires a GNU compiler (4.7.3 or greater), CMake (3.0.1 or
+FRENSIE also requires a GNU compiler (4.9.0 or greater), CMake (3.0.1 or
 greater) and git (1.9.1 or greater) to build correctly. If you plan on building
 the FRENSIE documentation, Doxygen (1.8.6 or greater) is also required. Several
 of the above software libraries will be built from source. Others can be
@@ -343,6 +343,8 @@ the frensie.sh script:
  * `-D FRENSIE_ENABLE_PYTHON:BOOL=ON` enables the FRENSIE python interfaces.
  * `-D FRENSIE_ENABLE_ROOT:BOOL=ON` enables the ROOT geometry interfaces.
  * `-D FRENSIE_ENABLE_DAGMC:BOOL=ON` enables the DagMC geometry interfaces.
+ * `-D FRENSIE_ENABLE_COLOR_OUTPUT:BOOL=OFF` disables color output in TTY shells.
+ * `-D FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST:BOOL=OFF` disables explicit template instantiation. Build times will be shorter when this is enabled.
  * `-D FRENSIE_ENABLE_DASHBOARD_CLIENT:BOOL=ON` allows the system to act as a dashboard client (by running make Experimental, make Continuous and make Nightly).
  * `-D FRENSIE_ENABLE_MANUAL:BOOL=OFF` prevents the user from building the FRENSIE manual using Doxygen (useful if Doxygen is not available).
 
