@@ -484,6 +484,13 @@ ADD_EXECUTABLE(tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistr
 TARGET_LINK_LIBRARIES(tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution_test tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 
+ADD_EXECUTABLE(tstIncoherentAdjointPhotonScatteringDistributionNativeFactory
+  tstIncoherentAdjointPhotonScatteringDistributionNativeFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstIncoherentAdjointPhotonScatteringDistributionNativeFactory monte_carlo_collision_native)
+ADD_TEST(IncoherentAdjointPhotonScatteringDistributionNativeFactory_test tstIncoherentAdjointPhotonScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon native)
+
 ##---------------------------------------------------------------------------##
 ##      electron class tests                                                  
 ##---------------------------------------------------------------------------##
