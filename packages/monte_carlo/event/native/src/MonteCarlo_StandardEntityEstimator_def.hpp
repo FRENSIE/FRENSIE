@@ -480,6 +480,7 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
   // Make sure the thread id is valid
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
 		    d_update_tracker.size() );
+
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure the particle type can contribute

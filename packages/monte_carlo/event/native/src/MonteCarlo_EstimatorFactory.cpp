@@ -14,6 +14,7 @@
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
+#include "MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -40,6 +41,9 @@ const std::string EstimatorFactory::s_cell_collision_flux_name =
 
 const std::string EstimatorFactory::s_tet_mesh_track_length_flux_name = 
   "Tet Mesh Track-Length Flux";
+
+const std::string EstimatorFactory::s_hex_mesh_track_length_flux_name =
+  "Hex Mesh Track-Length Flux";
 
 // Constructor
 EstimatorFactory::EstimatorFactory(
@@ -124,7 +128,7 @@ void EstimatorFactory::createAndRegisterEstimator(
   }
   EXCEPTION_CATCH_RETHROW_AS( std::exception,
                               InvalidEstimatorRepresentation,
-                              "Error: could not get the particle type for"
+                              "Error: could not get the particle type for "
                               "estimator " << estimator_id << "!" );
 
   // Get the estimator multiplier - optional
@@ -225,6 +229,18 @@ void EstimatorFactory::createAndRegisterEstimator(
                                                             estimator_bins );
     }
 
+    // Create and register a hex mesh track length flux estimator
+    else if( this->isHexMeshTrackLengthFluxEstimator( estimator_type ) )
+    {
+      this->createAndRegisterHexMeshTrackLengthFluxEstimator(
+                                                            estimator_rep,
+                                                            estimator_id,
+                                                            multiplier,
+                                                            particle_types,
+                                                            response_functions,
+                                                            energy_mult,
+                                                            estimator_bins );
+    }
     // Invalid estimator type
     else
     {
@@ -302,10 +318,18 @@ bool EstimatorFactory::isTetMeshTrackLengthFluxEstimator(
   return estimator_name == s_tet_mesh_track_length_flux_name;
 }
 
+// Check if an estimator type is a hex mesh track length flux estimator
+bool EstimatorFactory::isHexMeshTrackLengthFluxEstimator( 
+                                           const std::string& estimator_name )
+{
+  return estimator_name == s_hex_mesh_track_length_flux_name;
+} 
+
 // Check if an estimator type is a mesh estimator
 bool EstimatorFactory::isMeshEstimator( const std::string& estimator_name )
 {
-  return isTetMeshTrackLengthFluxEstimator( estimator_name );
+  return isTetMeshTrackLengthFluxEstimator( estimator_name ) ||
+    isHexMeshTrackLengthFluxEstimator( estimator_name );
 }
 
 // Check if an object type is an estimator
@@ -1144,6 +1168,149 @@ void EstimatorFactory::createAndRegisterTetMeshTrackLengthFluxEstimator(
   {
     std::shared_ptr<TetMeshTrackLengthFluxEstimator<WeightMultiplier> >
       derived_estimator = std::dynamic_pointer_cast<TetMeshTrackLengthFluxEstimator<WeightMultiplier> >( estimator );
+
+    d_event_handler->addGlobalEventObserver( derived_estimator );
+  }
+}
+
+// Create and register a hex mesh track length flux estimator
+void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
+      const Teuchos::ParameterList& estimator_rep,
+      const unsigned id,
+      const double multiplier,
+      const Teuchos::Array<ParticleType> particle_types,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
+      const bool energy_multiplication,
+      const Teuchos::ParameterList* bins ) const
+{
+  // Make sure the parameter list is valid
+  testPrecondition( this->getEstimatorId( estimator_rep ) == id );
+  remember( std::string test_estimator_type );
+  remember( this->getEstimatorType( test_estimator_type, id, estimator_rep ) );
+  testPrecondition( test_estimator_type == s_hex_mesh_track_length_flux_name );
+  // Make sure the id is valid
+  testPrecondition( id !=
+                    ModuleTraits::invalid_internal_event_observer_handle );
+  // Make sure the multiplier is valid
+  testPrecondition( multiplier > 0.0 );
+  // Make sure there is at least one particle type assigned
+  testPrecondition( particle_types.size() > 0 );
+
+  std::shared_ptr<Estimator> estimator;
+
+  // Get the output mesh file name
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Output Mesh File Name" ),
+                      InvalidEstimatorRepresentation,
+                      "Error: mesh estimator " << id <<
+                      " does not have an output file name specified! " );
+
+  std::string output_mesh_file_name = estimator_rep.get<std::string>(
+                                                     "Output Mesh File Name" );
+
+  // Get the X grid points
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "X Planes" ),
+                      InvalidEstimatorRepresentation,
+                      "Error: mesh estimator " << id <<
+                      " does not have the x planes specified! " );
+
+  Utility::ArrayString array_string = 
+    estimator_rep.get<Utility::ArrayString>( "X Planes" );
+
+  Teuchos::Array<double> x_planes;
+
+  try{
+      x_planes = array_string.getConcreteArray<double>();
+  }
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+                              InvalidEstimatorRepresentation,
+                              "Error: the x planes requested for"
+                              " estimator " << id << 
+                              " are not valid!" );
+
+  // Get the Y planes
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Y Planes" ),
+                      InvalidEstimatorRepresentation,
+                      "Error: mesh estimator " << id <<
+                      " does not have the y planes specified! " );
+
+    array_string = 
+    estimator_rep.get<Utility::ArrayString>( "Y Planes" );
+
+  Teuchos::Array<double> y_planes;
+
+  try{
+      y_planes = array_string.getConcreteArray<double>();
+  }
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+                              InvalidEstimatorRepresentation,
+                              "Error: the y planes requested for"
+                              " estimator " << id << 
+                              " are not valid!" );
+
+  // Get the Z planes
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Z Planes" ),
+                      InvalidEstimatorRepresentation,
+                      "Error: mesh estimator " << id <<
+                      " does not have the Z planes specified! " );
+
+  array_string = 
+    estimator_rep.get<Utility::ArrayString>( "Z Planes" );
+
+  Teuchos::Array<double> z_planes;
+
+  try{
+      z_planes = array_string.getConcreteArray<double>();
+  }
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+                              InvalidEstimatorRepresentation,
+                              "Error: the Z planes requested for"
+                              " estimator " << id << 
+                              " are not valid!" );
+
+  if( energy_multiplication )
+  {
+    estimator.reset( new HexMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier>(
+                                                     id,
+                                                     multiplier,
+                                                     x_planes,
+                                                     y_planes,
+                                                     z_planes,
+                                                     output_mesh_file_name ) );
+  }
+  else
+  {
+    estimator.reset( new HexMeshTrackLengthFluxEstimator<WeightMultiplier>(
+                                                     id,
+                                                     multiplier,
+                                                     x_planes,
+                                                     y_planes,
+                                                     z_planes,
+                                                     output_mesh_file_name ) );
+  }
+
+  // Set the particle type
+  estimator->setParticleTypes( particle_types );
+
+  // Set the response functions
+  if( response_funcs.size() > 0 )
+    estimator->setResponseFunctions( response_funcs );
+
+  // Assign estimator bins
+  if( bins )
+    this->assignBinsToEstimator( *bins, estimator );
+
+  // Add this estimator to the handler
+  if( energy_multiplication )
+  {
+    std::shared_ptr<HexMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> >
+      derived_estimator = std::dynamic_pointer_cast<HexMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> >( estimator );
+
+    d_event_handler->addGlobalEventObserver( derived_estimator );
+  }
+  else
+  {
+    std::shared_ptr<HexMeshTrackLengthFluxEstimator<WeightMultiplier> >
+      derived_estimator = std::dynamic_pointer_cast<HexMeshTrackLengthFluxEstimator<WeightMultiplier> >( estimator );
 
     d_event_handler->addGlobalEventObserver( derived_estimator );
   }

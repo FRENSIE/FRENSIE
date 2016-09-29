@@ -176,7 +176,7 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testcommitParticleTrackData )
     particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( particle,
                                                                   start_point,
                                                                   end_point );
-    }
+  }
   
   // Expected data
   std::vector< double > input_x_position;                                                            

@@ -1217,6 +1217,7 @@
  *           <Parameter name="Type" type="string" value="Cell Collision Flux"/>
  *           <Parameter name="Type" type="string" value="Cell Pulse Height"/>
  *           <Parameter name="Type" type="string" value="Tet Mesh Track-Length Flux"/>
+ *           <Parameter name="Type" type="string" value="Hex Mesh Track-Length Flux"/>
  *           \endcode</li>
  *      </ul></li>
  *  <li>The third parameter element is the particle type parameter. This 
@@ -1239,6 +1240,17 @@
  *          <li>\code
  *              <Parameter name="Mesh File Name" type="string" value="mesh_name.vtk"/>
  *              <Parameter name="Mesh File Name" type="string" value="mesh_name.h5m"/>
+ *              \endcode</li>
+ *         </ul>
+ *      <b>Hex Mesh Track-Length Flux Estimator:</b> For the hex mesh,
+ *         the fourth parameter element is the optional name for the 
+ *         output file of the hex mesh (defaults to "hexmesh.vtk" if 
+ *         nothing is specified). This mesh can output either a .h5m file or a 
+ *         .vtk file.
+ *         <ul>
+ *          <li>\code
+ *              <Parameter name="Output Mesh File Name" type="string" value="output_mesh_file_name.vtk"/>
+ *              <Parameter name="Output Mesh File Name" type="string" value="output_mesh_file_name.h5m"/>
  *              \endcode</li>
  *         </ul>
  *
@@ -1265,6 +1277,17 @@
  *         <li>\code
  *             <Parameter name="Output Mesh File Name" type="string" value="output_mesh_name.vtk"/>
  *             <Parameter name="Output Mesh File Name" type="string" value="output_mesh_name.h5m"/>
+ *             \endcode</li>
+ *        </ul></li>
+ *      <b>Hex Mesh Track-Length Flux Estimator:</b> The fifth, sixth, and seventh
+ *        parameter are the planes in the x, y, and z dimensions respectively 
+ *        which define the boundaries of the mesh elements. \ref interval_operators 
+ *        "Interval operators" can be used when specifying plane locations.
+ *        <ul>
+ *         <li>\code
+ *             <Parameter name="X Planes" type="Array" value="{-10, 30i, 10}"/>
+ *             <Parameter name="Y Planes" type="Array" value="{-10, 30i, 10}"/>
+ *             <Parameter name="Z Planes" type="Array" value="{-10, 30i, 10}"/>
  *             \endcode</li>
  *        </ul></li>
  * </ol>
@@ -1404,6 +1427,20 @@
  *  <ParameterList name="Bins">
  *   <Parameter name="Energy Bins" type="Array" value="{1e-3,2l,1.0,8i,10.0,20.0}"/>
  *  </ParameterList>
+ *
+ *  <ParameterList name="Hex Mesh Track Length Flux Estimator">
+ *   <Parameter name="Id" type="unsigned int" value="1"/>
+ *   <Parameter name="Type" type="string" value="Hex Mesh Track-Length Flux"/>
+ *   <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *   <Parameter name="Multiplier" type="double" value="1.0"/>
+ *   <Parameter name="Output Mesh File Name" type="string" value="hexmesh_test.h5m"/>
+ *   <Parameter name="X Planes" type="Array" value="{-10, 30i, 10}"/>
+ *   <Parameter name="Y Planes" type="Array" value="{-10, 30i, 10}"/>
+ *   <Parameter name="Z Planes" type="Array" value="{-10, 30i, 10}"/>
+ *   <ParameterList name="Bins">
+ *     <Parameter name="Energy Bins" type="Array" value="{1e-6, 5l, 3}"/>
+ *   </ParameterList>
+ * </ParameterList>
  *
  * </ParameterList>
  * \endcode
