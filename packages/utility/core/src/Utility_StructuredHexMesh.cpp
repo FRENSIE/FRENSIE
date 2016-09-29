@@ -18,7 +18,7 @@
 
 namespace Utility{
 
-// initialize static member data
+// Initialize static member data
 const double StructuredHexMesh::s_tol = 1e-12;
 
 // Constructor
@@ -27,12 +27,12 @@ StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_planes,
                                       const Teuchos::Array<double>& z_planes)
 {
 
-  //Test for at least 2 planes
+  // Test for at least 2 planes
   testPrecondition(x_planes.size()>=2);
   testPrecondition(y_planes.size()>=2);
   testPrecondition(z_planes.size()>=2);
   
-  //make sure that the planes are in increasing sequential order
+  // Make sure that the planes are in increasing sequential order
   testPrecondition( Sort::isSortedAscending( x_planes.begin(),
                                              x_planes.end() ) );
   testPrecondition( Sort::isSortedAscending( y_planes.begin(),
@@ -40,12 +40,12 @@ StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_planes,
   testPrecondition( Sort::isSortedAscending( z_planes.begin(),
                                              z_planes.end() ) );
 
-  //assign the given planes to member data
+  // Assign the given planes to member data
   d_x_planes.assign(x_planes.begin(),x_planes.end());
   d_y_planes.assign(y_planes.begin(),y_planes.end());
   d_z_planes.assign(z_planes.begin(),z_planes.end());
   
-  //form the list of hex element indices
+  // Form the list of hex element indices
   for( unsigned k = 0; k < d_z_planes.size()-1; ++k )
   {
     for( unsigned j = 0; j < d_y_planes.size()-1; ++j )
@@ -105,9 +105,11 @@ StructuredHexMesh::HexIndex StructuredHexMesh::whichHexIsPointIn( const double p
                                                     d_x_planes.end(),
                                                     point[X_DIMENSION] );
 
-  /*take care of when the point is exactly on the last x plane. The search
-    will return the last x plane if this is true which does not correspond to
-    any of the hex elements. Instead, move it back one */
+  /* 
+     Take care of when the point is exactly on the last x plane. The search
+     will return the last x plane if this is true which does not correspond to
+     any of the hex elements. Instead, move it back one 
+  */
   if( x_index == d_x_planes.size() - 1)
   {
     x_index = d_x_planes.size() - 2;
@@ -136,12 +138,12 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
                                             const double start_point[3],
                                             const double end_point[3] )const
 {
-  // make sure end point isn't the same as start point - use after bugs with end point of dying particle is fixed
+  // Make sure end point isn't the same as start point - use after bugs with end point of dying particle is fixed
   testPrecondition( start_point[0] != end_point[0] ||
                     start_point[1] != end_point[1] ||
                     start_point[2] != end_point[2] );
 
-  //calculate track length and direction unit vector
+  // Calculate track length and direction unit vector
   double direction[3] {end_point[X_DIMENSION] - start_point[X_DIMENSION],
                        end_point[Y_DIMENSION] - start_point[Y_DIMENSION],
                        end_point[Z_DIMENSION] - start_point[Z_DIMENSION]};
@@ -152,18 +154,20 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
                                                   
   Utility::normalizeDirection( direction );
   
-  //initialize contribution array
+  // Initialize contribution array
   Teuchos::Array<std::pair<HexIndex,double>> contribution_array;
 
   double current_point[3] { start_point[X_DIMENSION], 
                             start_point[Y_DIMENSION], 
                             start_point[Z_DIMENSION] };
 
-  //test if point starts in mesh. If not, figure out if it interacts with mesh
+  // Test if point starts in mesh. If not, figure out if it interacts with mesh
   if( !this->isPointInMesh(current_point) )
   {
-    // First member of pair is whether the mesh was intersected,
-    // second member of pair is the distance to the intersection
+    /* 
+      First member of pair is whether the mesh was intersected,
+      second member of pair is the distance to the intersection
+    */
     std::tuple<bool, Dimension, double> ray_intersection_tuple = 
       this->doesRayIntersectMesh( current_point,
                                   direction,
@@ -229,7 +233,7 @@ unsigned StructuredHexMesh::getNumberOfZPlanes() const
 // Get the location of a specific plane on the x axis.
 double StructuredHexMesh::getXPlaneLocation( PlaneIndex i ) const
 {
-  //make sure plane index is valid
+  //Make sure plane index is valid
   testPrecondition( i < d_x_planes.size() && i >= 0);
   
   return d_x_planes[i];
@@ -238,7 +242,7 @@ double StructuredHexMesh::getXPlaneLocation( PlaneIndex i ) const
 // Get the location of a specific plane on the y axis.
 double StructuredHexMesh::getYPlaneLocation( PlaneIndex i ) const
 {
-  //make sure plane index is valid
+  // Make sure plane index is valid
   testPrecondition( i < d_y_planes.size() && i >= 0);
   
   return d_y_planes[i];
@@ -247,7 +251,7 @@ double StructuredHexMesh::getYPlaneLocation( PlaneIndex i ) const
 // Get the location of a specific plane on the z axis.
 double StructuredHexMesh::getZPlaneLocation( PlaneIndex i)const 
 {
-  //make sure plane index is valid
+  // Make sure plane index is valid
   testPrecondition( i < d_z_planes.size() && i >= 0);
   
   return d_z_planes[i];
@@ -268,7 +272,7 @@ void StructuredHexMesh::getHexPlaneIndices(const HexIndex h, unsigned hex_parame
     - hex_parameter_indices[2] * x_size * y_size;
 }
 
-//begin private functions
+// Begin private functions
 
 // Returns a pair where the first member is true if the ray intersects with the mesh and the second is the distance to the intersection point
 std::tuple<bool, StructuredHexMesh::Dimension, double> 
@@ -278,7 +282,7 @@ std::tuple<bool, StructuredHexMesh::Dimension, double>
 {
   // This method should only be used when the point starts outside of mesh
   testPrecondition( !(this->isPointInMesh(point)) );
-  //make sure direction vector is a unit vector
+  // Make sure direction vector is a unit vector
   testPrecondition( Utility::vectorMagnitude( direction[X_DIMENSION],
                                               direction[Y_DIMENSION],
                                               direction[Z_DIMENSION] ) <= 1 + s_tol &&
@@ -680,7 +684,7 @@ bool StructuredHexMesh::isPointOnMeshSurface( const double point[3],
   return pointOnMesh;
 }
 
-// function for checking each individual plane to see if it is within bounds
+// Function for checking each individual plane to see if it is within bounds
 bool StructuredHexMesh::checkWithinBoundingPlane( const double position_component,
                                                   const Teuchos::Array<double>& plane_set )const
 {
@@ -694,7 +698,7 @@ bool StructuredHexMesh::checkWithinBoundingPlane( const double position_componen
   }
 }
 
-// pushes point along direction to new intersection point
+// Pushes point along direction to new intersection point
 void StructuredHexMesh::pushPoint( double point[3],
                                    const double direction[3],
                                    const double push_distance ) const
@@ -760,7 +764,7 @@ unsigned long StructuredHexMesh::findIndex( const unsigned indices[3] ) const
                     indices[Z_DIMENSION] );
 }
 
-} // end Utility namespace
+} // End Utility namespace
 
 //---------------------------------------------------------------------------//
 // end Utility_StructuredHexMesh.cpp

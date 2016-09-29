@@ -68,7 +68,8 @@ template<typename ContributionMultiplierPolicy>
 void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setResponseFunctions(
                 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions)
 {
-for( unsigned i = 0; i < response_functions.size(); ++i )
+
+  for( unsigned i = 0; i < response_functions.size(); ++i )
   {
     if( !response_functions[i]->isSpatiallyUniform() )
     {
@@ -89,7 +90,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                 const double end_point[3])
 {
 
-  //make sure end point isn't the same as start point
+  // Make sure end point isn't the same as start point
   testPrecondition( !( start_point[0] == end_point[0] &&
                          start_point[1] == end_point[1] &&
                          start_point[2] == end_point[2] ) );
@@ -136,13 +137,13 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
   // Export data for visualization
   if( process_data )
   {
-    //preset this value to be used with all the functions that MOAB uses
+    // Preset this value to be used with all the functions that MOAB uses
     moab::ErrorCode rval;
 
-    //create pointer that points to a new instance of the moab_interface
+    // Create pointer that points to a new instance of the moab_interface
     std::unique_ptr<moab::Interface> moab_interface (new moab::Core);
   
-    //create new structured mesh interface
+    // Create new structured mesh interface
     std::unique_ptr<moab::ScdInterface> scdiface;
     {
 
@@ -155,22 +156,32 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                         Utility::MOABException,
                         moab::ErrorCodeStr[rval] );
       
-      //Tell the smart pointer to won the new raw pointer
+      // Tell the smart pointer to won the new raw pointer
       scdiface.reset( raw_scdiface);
 
     }
 
-    //transform planes of mesh into moab useable interleaved coordinates;
+    // Transform planes of mesh into moab useable interleaved coordinates;
     std::vector<double>::size_type x_coordinates_size = d_hex_mesh->getNumberOfXPlanes();
     std::vector<double>::size_type y_coordinates_size = d_hex_mesh->getNumberOfYPlanes();
     std::vector<double>::size_type z_coordinates_size = d_hex_mesh->getNumberOfZPlanes();
 
 
-    //make an array called coordinates that MOAB can use to construct a structured hex mesh
+    // Make an array called coordinates that MOAB can use to construct a structured hex mesh
     unsigned long size_of_coordinates = x_coordinates_size * y_coordinates_size * z_coordinates_size;
     // This array can get very large, so allocate on the heap instead of the stack.
     double* coordinates = new double[size_of_coordinates*3];
-    //construct array for moab
+    // Construct array for moab.
+    /* 
+       An array of interleaved (XYZXYZ) coordinate vectors formed from the plane 
+       intersection points must be constructed in order for MOAB to correctly 
+       construct the mesh. Note the order of the indices being looped over; the
+       indices must be in exactly this order in order for moab to correctly
+       construct the mesh. Otherwise, it will connect the points with the edges
+       of the mesh in an incorrect order making a lopsided mesh. Note that MOAB
+       also requires every single point of the mesh to be constructed, which means
+       that plane locations must be repeated in the sequence.
+    */
     unsigned l = 0;
     for( unsigned k = 0; k < z_coordinates_size; ++k)
     {
@@ -186,13 +197,13 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
       }
     }
  
-    //set up the actual box
+    // Set up the actual box
     std::unique_ptr<moab::ScdBox> box;
     {
       // Allow moab to create a new heap allocated object
       moab::ScdBox* raw_scdbox;
 
-      //create the box filled with the coordinates
+      // Create the box filled with the coordinates
       rval = scdiface->construct_box( moab::HomCoord( 0, 0, 0),
                                       moab::HomCoord( x_coordinates_size - 1,
                                                       y_coordinates_size - 1,
@@ -205,7 +216,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                           Utility::MOABException,
                           moab::ErrorCodeStr[rval] );
 
-      //Tell the smart pointer to own the new raw pointer
+      // Tell the smart pointer to own the new raw pointer
       box.reset( raw_scdbox);
     }
     scdiface.release();
@@ -223,7 +234,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
     unsigned hex_parameter_indices[3];
     for( hex = start_hex; hex != end_hex; ++hex)
     {
-      // convert from hex index to moab entity handle
+      // Convert from hex index to moab entity handle
       d_hex_mesh->getHexPlaneIndices( *hex, hex_parameter_indices);
       moab::EntityHandle moab_hex = box->get_element( hex_parameter_indices[0],
                                                       hex_parameter_indices[1],
@@ -541,7 +552,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
 
 }
 
-}// end MonteCarlo namespace
+}// End MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_HexMeshTrackLengthFluxEstimator_def.hpp
