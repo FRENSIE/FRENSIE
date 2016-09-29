@@ -321,4 +321,4 @@ ADD_EXECUTABLE(tstStructuredHexMesh
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStructuredHexMesh utility_core)
 ADD_TEST(StructuredHexMesh_test tstStructuredHexMesh)
-SET_PROPERTY(TEST StructureHexMesh_test PROPERTY LABELS utility_core)
+SET_PROPERTY(TEST StructuredHexMesh_test PROPERTY LABELS utility_core)
