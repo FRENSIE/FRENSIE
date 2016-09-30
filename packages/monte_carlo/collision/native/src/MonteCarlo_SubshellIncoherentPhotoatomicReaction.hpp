@@ -13,15 +13,21 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardPhotoatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The subshell incoherent photoatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = true>
-class SubshellIncoherentPhotoatomicReaction : public StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>
+class SubshellIncoherentPhotoatomicReaction : public StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
+
+private:
+
+  // Typedef for the base class type
+  typedef StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
 public:
 

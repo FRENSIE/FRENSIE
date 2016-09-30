@@ -12,9 +12,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "Data_SubshellType.hpp"
 #include "MonteCarlo_AtomicReaction.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
+#include "Data_SubshellType.hpp"
 
 namespace MonteCarlo{
 
