@@ -14,8 +14,12 @@
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareUniformDistribution<void,void> );
 
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
@@ -430,6 +434,13 @@ template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::calculatePDFValue()
 {
   d_pdf_value = 1.0/(d_max_independent_value - d_min_independent_value);
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return false;
 }
 
 } // end Utility namespace

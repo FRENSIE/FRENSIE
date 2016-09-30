@@ -16,9 +16,13 @@
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDeltaDistribution<void,void> );
 
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
@@ -349,6 +353,13 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::isEqual(
 {
   return d_location == other.d_location &&
     d_multiplier == other.d_multiplier;
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return false;
 }
 
 } // end Utility namespace

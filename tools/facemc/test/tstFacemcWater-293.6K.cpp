@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "tstFacemcWater-293.6K.hpp"
 #include "facemcCore.hpp"
-#include "FRENSIE_mpi_config.hpp"
+#include "FRENSIE_config.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ArrayString.hpp"

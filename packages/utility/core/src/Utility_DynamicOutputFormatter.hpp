@@ -67,8 +67,20 @@ public:
   //! Format the standard warning message keywords in the output
   void formatStandardWarningKeywords();
 
+  //! Format the standard note keywords in the output
+  void formatStandardNoteKeywords();
+
   //! Format the standard filename keywords in the output
   void formatStandardFilenameKeywords();
+
+  //! Format the standard pass keywords in the output
+  void formatStandardPassKeywords();
+
+  //! Format the standard fail keywords in the output
+  void formatStandardFailKeywords();
+
+  //! Format the Teuchos unit test keywords in the output
+  void formatTeuchosUnitTestKeywords();
 };
 
 // Format a keyword in the output

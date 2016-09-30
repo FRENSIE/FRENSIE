@@ -696,6 +696,57 @@ std::cout << std::setprecision(20)<<"d_moliere_screening_constant =\t"<<d_molier
 std::cout << std::setprecision(20)<<"d_screened_rutherford_normalization_constant =\t"<<d_screened_rutherford_normalization_constant<<std::endl;*/
 }
 
+// Test if the dependent variable can be zero within the indep bounds
+template<typename InterpolationPolicy>
+inline bool ElasticElectronDistribution<InterpolationPolicy>::canDepVarBeZeroInIndepBounds() const
+{
+  bool possible_zero = false;
+
+  for( size_t i = 0; i < d_distribution.size(); ++i )
+  {
+    if( d_distribution[i].third == 0.0 )
+    {
+      possible_zero = true;
+
+      break;
+    }
+  }
+
+  return possible_zero;
+}
+
+// Test if the independent variable is compatible with Lin processing
+template<typename InterpolationPolicy>
+inline bool ElasticElectronDistribution<InterpolationPolicy>::isIndepVarCompatibleWithProcessingType(
+                                         const LinIndepVarProcessingTag ) const
+{
+  return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LinIndepVarProcessingTag>::value;
+}
+  
+// Test if the independent variable is compatible with Log processing
+template<typename InterpolationPolicy>
+inline bool ElasticElectronDistribution<InterpolationPolicy>::isIndepVarCompatibleWithProcessingType(
+                                         const LogIndepVarProcessingTag ) const
+{
+  return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LogIndepVarProcessingTag>::value;
+}
+
+// Test if the dependent variable is compatible with Lin processing
+template<typename InterpolationPolicy>
+inline bool ElasticElectronDistribution<InterpolationPolicy>::isDepVarCompatibleWithProcessingType(
+                                           const LinDepVarProcessingTag ) const
+{
+  return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LinDepVarProcessingTag>::value;
+}
+
+// Test if the dependent variable is compatible with Log processing
+template<typename InterpolationPolicy>
+bool ElasticElectronDistribution<InterpolationPolicy>::isDepVarCompatibleWithProcessingType(
+                                           const LogDepVarProcessingTag ) const
+{
+  return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LogDepVarProcessingTag>::value;
+}
+
 } // end Utility namespace
 
 #endif // end Utility_ElasticElectronDistribution_def.hpp

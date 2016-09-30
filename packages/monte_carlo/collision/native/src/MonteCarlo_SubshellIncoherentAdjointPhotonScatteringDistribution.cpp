@@ -113,7 +113,7 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateIntegrated
 
   // Evaluate the integrated cross section
   std::function<double (double x)> diff_cs_wrapper =
-    std::bind<double>( &ThisType::evaluate,
+    std::bind<double>( (double (ThisType::*)(double,double,double)const)(&ThisType::evaluate),
                        std::cref( *this ),
                        incoming_energy,
                        max_energy,

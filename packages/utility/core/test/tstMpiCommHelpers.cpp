@@ -501,49 +501,5 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( CommHelpers,
 UNIT_TEST_2_INSTANTIATION( CommHelpers, getMessageSize );
 
 //---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  // Initialize the global MPI session
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
-
-  mpiSession.barrier();
-
-  // Run the unit tests
-  Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  mpiSession.barrier();
-
-  out->setOutputToRootOnly( 0 );
-
-  if( success )
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
-}
-
-//---------------------------------------------------------------------------//
 // end tstMpiCommHelpers.cpp
 //---------------------------------------------------------------------------//

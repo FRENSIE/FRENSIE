@@ -43,7 +43,7 @@ TEUCHOS_UNIT_TEST( EventHandlerFactoryRoot, initializeHandlerUsingRoot )
                                                     *observer_reps,
                                                     response_function_id_map );
 
-  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 4 );
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 9 );
 }
 
 //---------------------------------------------------------------------------//

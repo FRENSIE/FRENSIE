@@ -36,6 +36,9 @@
 // Import the PyFrensie Teuchos Array conversion helpers
 %import "PyFrensie_ArrayConversionHelpers.hpp"
 
+// Import the explicit template instantiation helpers
+%import "Utility_ExplicitTemplateInstantiationMacros.hpp"
+
 // Include the 1D distribution helpers
 %include "Utility_OneDDistributionHelpers.i"
 

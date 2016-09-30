@@ -374,6 +374,79 @@ TEUCHOS_UNIT_TEST( UnitAwarePolynomialDistribution, isContinuous )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the distribution is compatible with the interpolation type
+TEUCHOS_UNIT_TEST( PolynomialDistribution, isCompatibleWithInterpType )
+{
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Teuchos::Array<double> coeffs( 4 );
+  coeffs[0] = 1.0;
+  coeffs[1] = 2.0;
+  coeffs[2] = 3.0;
+  coeffs[3] = 0.0;
+
+  std::shared_ptr<Utility::PolynomialDistribution>
+    test_dist( new Utility::PolynomialDistribution( coeffs, 1.0, 2.0 ) );
+
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is only compatible with lin-lin interp
+  coeffs[0] = 0.0;
+
+  test_dist.reset( new Utility::PolynomialDistribution( coeffs, 0.0, 1.0 ) );
+
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !test_dist->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !test_dist->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !test_dist->isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is compatiblw with the interp type
+TEUCHOS_UNIT_TEST( UnitAwarePolynomialDistribution,
+                   isCompatibleWithInterpType )
+{
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Teuchos::Array<double> coeffs( 4 );
+  coeffs[0] = 1.0;
+  coeffs[1] = 2.0;
+  coeffs[2] = 3.0;
+  coeffs[3] = 0.0;
+
+  std::shared_ptr<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> >
+    test_dist( new Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( coeffs, 1.0*MeV, 2.0*MeV ) );
+
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is only compatible with lin-lin interp
+  coeffs[0] = 0.0;
+
+  test_dist.reset( new Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( coeffs, 0.0*MeV, 1.0*MeV ) );
+
+  TEST_ASSERT( test_dist->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !test_dist->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !test_dist->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !test_dist->isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be written to and read from an xml file
 TEUCHOS_UNIT_TEST( PolynomialDistribution, toParameterList )
 {
@@ -647,37 +720,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePolynomialDistribution,
 				      si_length );
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_dists_xml_file;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_dists_xml_file;
+  clp().setOption( "test_dists_xml_file",
+                   &test_dists_xml_file,
+                   "Test distributions xml file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_dists_xml_file",
-		 &test_dists_xml_file,
-		 "Test distributions xml file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::PolynomialDistribution );
   typedef Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> UnitAwarePolynomialDistribution;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwarePolynomialDistribution );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
 
   // Initialize the polynomial distribution
   Teuchos::Array<double> coeffs( 4 );
@@ -693,20 +755,11 @@ int main( int argc, char** argv )
      new Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>(
 						  coeffs, 0.0*eV, 1e6*eV ) );
 
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstPolynomialDistribution.cpp

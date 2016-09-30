@@ -11,16 +11,20 @@
 #define UTILITY_WATT_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_MaxwellFissionDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
-#include "Utility_MaxwellFissionDistribution.hpp"
 
 namespace Utility{
 
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareWattDistribution<void,void> );
+  
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
@@ -171,7 +175,9 @@ typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::DepQuantity
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::evaluate(
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < IQT::zero() )
+  if( indep_var_value < this->getLowerBoundOfIndepVar() )
+    return DQT::zero();
+  else if( indep_var_value > this->getUpperBoundOfIndepVar() )
     return DQT::zero();
   else
   {
@@ -538,6 +544,13 @@ bool UnitAwareWattDistribution<IndependentUnit,DependentUnit>::isEqual(
   d_b_parameter == other.d_b_parameter &&
   d_restriction_energy == other.d_restriction_energy &&
   d_multiplier == other.d_multiplier;
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareWattDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return true;
 }
 
 } // end Utility namespace

@@ -17,9 +17,13 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwarePolynomialDistribution<void,void> );
 
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
@@ -509,6 +513,23 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isValidSamp
     valid = false;
 
   return valid;
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  if( d_coefficients[0] == 0 )
+  {
+    if( d_indep_limits_to_series_powers_p1.front().first == 0.0 )
+      return true;
+    else if( d_indep_limits_to_series_powers_p1.front().second == 0.0 )
+      return true;
+    else
+      return false;
+  }
+  else
+    return false;
 }
 
 } // end Utility namespace

@@ -19,9 +19,13 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDiscreteDistribution<void,void> );
 
 // Default Constructor
 template<typename IndependentUnit,typename DependentUnit>
@@ -651,6 +655,13 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::convertUnitle
   // Copy the values
   for( unsigned i = 0u; i < unitless_values.size(); ++i )
     setQuantity( quantities[i], unitless_values[i] );
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit,typename DependentUnit>
+bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return true;
 }
 
 } // end Utility namespace

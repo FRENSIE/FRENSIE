@@ -143,22 +143,24 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createPointDistribution )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_xml_file",
+                   &test_xml_file_name,
+                   "Test spatial distribution xml file name" );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_xml_file",
-		 &test_xml_file_name,
-		 "Test spatial distribution xml file name" );
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstOneDDistributionFactory.cpp

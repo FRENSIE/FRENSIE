@@ -674,6 +674,76 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the standard note keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardNoteKeywords )
+{
+  // Check that the "Note:" keyword can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Note: this is a test!" );
+
+    formatter.formatStandardNoteKeywords();
+    
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49mNote:\E[0m this is a test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Note: this is a test!" );
+#endif
+  }
+
+  // Check that the "note:" keyword can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " note: this is a test!" );
+
+    formatter.formatStandardNoteKeywords();
+    
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m note:\E[0m this is a test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "note: this is a test!" );
+#endif
+  }
+
+  // Check that the "Note" keyword will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a Note test!" );
+
+    formatter.formatStandardNoteKeywords();
+    
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a Note test!" );
+  }
+
+  // Check that the "note" keyword will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a note test!" );
+
+    formatter.formatStandardNoteKeywords();
+    
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a note test!" );
+  }
+
+  // Check that multiple occurances can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Note: This is a note test!" );
+
+    formatter.formatStandardNoteKeywords();
+    
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49mNote:\E[0m This is a note test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Note: This is a note test!" );
+#endif
+  }
+}
+
+//---------------------------------------------------------------------------//
 // Check that the standard filename keywords can be formatted
 TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardFilenameKeywords )
 {
@@ -781,6 +851,291 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardFilenameKeywords )
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "These are test files: include/test.hpp, home/src/test.cpp:1111" );
+#endif
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the standard pass keywords can be formatted 
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardPassKeywords )
+{
+  // Check that Pass can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test: [Pass]" );
+
+    formatter.formatStandardPassKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [\E[0;32;49mPass\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [Pass]" );
+#endif
+  }
+
+  // Check that pass can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test: [pass]" );
+
+    formatter.formatStandardPassKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [\E[0;32;49mpass\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [pass]" );
+#endif
+  }
+
+  // Check that Passed can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test: [Passed]" );
+
+    formatter.formatStandardPassKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [\E[0;32;49mPassed\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [Passed]" );
+#endif
+  }
+
+  // Check that passed can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test: [passed]" );
+
+    formatter.formatStandardPassKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [\E[0;32;49mpassed\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [passed]" );
+#endif
+  }
+
+  // Check that multiple occurances can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a passed test: [Pass]" );
+
+    formatter.formatStandardPassKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a \E[0;32;49mpassed\E[0m test: [\E[0;32;49mPass\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a passed test: [Pass]" );
+#endif
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the standard fail keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardFailKeywords )
+{
+  // Check that Fail can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test: [Fail]" );
+
+    formatter.formatStandardFailKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [\E[0;31;49mFail\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [Fail]" );
+#endif
+  }
+
+  // Check that fail can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test: [fail]" );
+
+    formatter.formatStandardFailKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [\E[0;31;49mfail\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [fail]" );
+#endif
+  }
+
+  // Check that Failed can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test: [Failed]" );
+
+    formatter.formatStandardFailKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [\E[0;31;49mFailed\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [Failed]" );
+#endif
+  }
+
+  // Check that failed can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a test: [failed]" );
+
+    formatter.formatStandardFailKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [\E[0;31;49mfailed\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a test: [failed]" );
+#endif
+  }
+
+  // Check that multiple occurances can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is a failed test: [Fail]" );
+
+    formatter.formatStandardFailKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a \E[0;31;49mfailed\E[0m test: [\E[0;31;49mFail\E[0m]" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is a failed test: [Fail]" );
+#endif
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Teuchos unit test keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatTeuchosUnitTestKeywords )
+{
+  // Check that Passed is formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "ExampleTest_UnitTest ... [Passed] (0.001 sec)" );
+
+    formatter.formatTeuchosUnitTestKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "ExampleTest_UnitTest ... [\E[0;32;49mPassed\E[0m] (0.001 sec)" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "ExampleTest_UnitTest ... [Passed] (0.001 sec)" );
+#endif
+  }
+
+  // Check that TEST PASSED is formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "End Result: TEST PASSED" );
+
+    formatter.formatTeuchosUnitTestKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "End Result: \E[0;32;49mTEST PASSED\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "End Result: TEST PASSED" );
+#endif
+  }
+
+  // Check that FAILED is formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "ExampleTest_UnitTest ... [FAILED] (0.001 sec)" );
+
+    formatter.formatTeuchosUnitTestKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "ExampleTest_UnitTest ... [\E[0;31;49mFAILED\E[0m] (0.001 sec)" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "ExampleTest_UnitTest ... [FAILED] (0.001 sec)" );
+#endif
+  }
+
+  // Check that TEST FAILED is formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "End Result: TEST FAILED" );
+
+    formatter.formatTeuchosUnitTestKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "End Result: \E[0;31;49mTEST FAILED\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "End Result: TEST FAILED" );
+#endif
+  }
+
+  // Check that passed and failed are formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Summary: total = N, run = N, passed = X, failed = N-X" );
+
+    formatter.formatTeuchosUnitTestKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Summary: total = N, run = N, \E[0;32;49mpassed\E[0m = X, \E[0;31;49mfailed\E[0m = N-X" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Summary: total = N, run = N, passed = X, failed = N-X" );
+#endif
+  }
+
+  // Check that Error: is formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Error: details..." );
+
+    formatter.formatTeuchosUnitTestKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;31;49mError:\E[0m details..." );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Error: details..." );
+#endif
+  }
+
+  // Check that Note: is formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Note: details..." );
+
+    formatter.formatTeuchosUnitTestKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49mNote:\E[0m details..." );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Note: details..." );
+#endif
+  }
+
+  // Check that Warning: is formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Warning: details..." );
+
+    formatter.formatTeuchosUnitTestKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;35;49mWarning:\E[0m details..." );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Warning: details..." );
 #endif
   }
 }
