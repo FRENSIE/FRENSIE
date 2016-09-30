@@ -118,6 +118,8 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                reaction_pointer );
   }
 
+  // Create the subshell electroionization reactions
+  {
   std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
   ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
@@ -130,6 +132,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   {
     scattering_reactions[reaction_pointers[i]->getReactionType()] =
         reaction_pointers[i];
+  }
   }
 
   // Create the electroatom core
