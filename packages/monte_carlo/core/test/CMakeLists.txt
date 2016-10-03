@@ -69,6 +69,13 @@ TARGET_LINK_LIBRARIES(tstIncoherentAdjointModelTypeHelpers monte_carlo_core)
 ADD_TEST(IncoherentAdjointModelTypeHelpers_test tstIncoherentAdjointModelTypeHelpers)
 SET_PROPERTY(TEST IncoherentAdjointModelTypeHelpers_test PROPERTY LABELS monte_carlo_core)
 
+ADD_EXECUTABLE(tstAdjointPhotoatomicReactionTypeHelpers
+  tstAdjointPhotoatomicReactionTypeHelpers.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotoatomicReactionTypeHelpers monte_carlo_core)
+ADD_TEST(AdjointPhotoatomicReactionTypeHelpers_test tstAdjointPhotoatomicReactionTypeHelpers)
+SET_PROPERTY(TEST AdjointPhotoatomicReactionTypeHelpers_test PROPERTY LABELS monte_carlo_core)
+
 ADD_EXECUTABLE(tstSimulationGeneralProperties
   tstSimulationGeneralProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

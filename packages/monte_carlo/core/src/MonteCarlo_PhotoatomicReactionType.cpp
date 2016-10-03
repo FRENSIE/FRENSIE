@@ -303,7 +303,7 @@ convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
   default:
     THROW_EXCEPTION( std::logic_error,
 		     "Error: the invalid shell does not have a corresponding "
-		     "photoelectric photoatomic reaction!" );
+		     "subshell incoherent photoatomic reaction!" );
   }
 }
 
