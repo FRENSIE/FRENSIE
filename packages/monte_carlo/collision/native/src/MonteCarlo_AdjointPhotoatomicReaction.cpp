@@ -12,34 +12,9 @@
 
 namespace MonteCarlo{
 
-// Default constructor
-AdjointPhotoatomicReaction::AdjointPhotoatomicReaction()
-  : d_max_energy( 0.0 )
-{ /* ... */ }
-
 // Constructor
-AdjointPhotoatomicReaction::AdjointPhotoatomicReaction(
-                                                      const double max_energy )
-  : d_max_energy( max_energy )
-{
-  // Make sure the max energy is valid
-  testPrecondition( max_energy > 0.0 );
-}
-
-// Set the max energy
-void AdjointPhotoatomicReaction::setMaxEnergy( const double max_energy )
-{
-  // Make sure the max energy is valid
-  testPrecondition( max_energy > 0.0 );
-  
-  d_max_energy = max_energy;
-}
-
-// Return the max energy
-double AdjointPhotoatomicReaction::getMaxEnergy() const
-{
-  return d_max_energy;
-}
+AdjointPhotoatomicReaction::AdjointPhotoatomicReaction()
+{ /* ... */ }
 
 // Simulate the reaction and track the number of sampling trials
 void AdjointPhotoatomicReaction::react(

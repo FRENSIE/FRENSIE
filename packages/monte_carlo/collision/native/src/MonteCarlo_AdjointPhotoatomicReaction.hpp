@@ -25,7 +25,7 @@ class AdjointPhotoatomicReaction : public AtomicReaction
 public:
 
   //! Constructor
-  AdjointPhotoatomicReaction( const double max_energy );
+  AdjointPhotoatomicReaction();
 
   //! Destructor
   virtual ~AdjointPhotoatomicReaction()
@@ -35,7 +35,7 @@ public:
   virtual AdjointPhotoatomicReactionType getReactionType() const = 0;
 
   //! Return the max energy
-  double getMaxEnergy() const;
+  virtual double getMaxEnergy() const = 0;
 
   //! Simulation the reaction
   virtual void react( AdjointPhotonState& adjoint_photon,
@@ -47,19 +47,6 @@ public:
                       ParticleBank& bank,
                       Data::SubshellType& shell_of_interaction,
                       unsigned& trials ) const;
-
-protected:
-
-  //! Default constructor
-  AdjointPhotoatomicReaction();
-
-  //! Set the max energy
-  void setMaxEnergy( const double max_energy );
-
-private:
-  
-  // The max energy
-  double d_max_energy;
 };
   
 } // end MonteCarlo namespace

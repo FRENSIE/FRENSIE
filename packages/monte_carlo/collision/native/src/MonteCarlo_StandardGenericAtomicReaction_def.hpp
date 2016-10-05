@@ -212,6 +212,15 @@ double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_c
     return 0.0;
 }
 
+// Return the max energy
+template<typename AtomicReactionBase,
+         typename InterpPolicy,
+         bool processed_cross_section>
+double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::getMaxEnergy() const
+{
+  return StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( d_incoming_energy_grid[d_incoming_energy_grid.size()-1] );
+}
+
 // Return the threshold energy
 template<typename AtomicReactionBase,
          typename InterpPolicy,

@@ -473,23 +473,33 @@ ADD_EXECUTABLE(tstWHIncoherentAdjointPhotonScatteringDistribution
   tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstWHIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
 
 ADD_EXECUTABLE(tstSubshellIncoherentAdjointPhotonScatteringDistribution
   tstSubshellIncoherentAdjointPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstSubshellIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(SubshellIncoherentAdjointPhotonScatteringDistribution_test tstSubshellIncoherentAdjointPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
 
 ADD_EXECUTABLE(tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution
   tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution_test tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
 
 ADD_EXECUTABLE(tstIncoherentAdjointPhotonScatteringDistributionNativeFactory
   tstIncoherentAdjointPhotonScatteringDistributionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstIncoherentAdjointPhotonScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(IncoherentAdjointPhotonScatteringDistributionNativeFactory_test tstIncoherentAdjointPhotonScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon native)
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+
+ADD_EXECUTABLE(tstCoherentAdjointPhotoatomicReaction
+  tstCoherentAdjointPhotoatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCoherentAdjointPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(CoherentAdjointPhotoatomicReaction_test tstCoherentAdjointPhotoatomicReaction --test_native_file=="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
+SET_PROPERTY(TEST CoherentAdjointPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
 
 ##---------------------------------------------------------------------------##
 ##      electron class tests                                                  

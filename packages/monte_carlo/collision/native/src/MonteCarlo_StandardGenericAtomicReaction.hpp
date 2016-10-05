@@ -66,6 +66,9 @@ public:
   double getCrossSection( const double energy,
 			  const unsigned bin_index ) const;
 
+  //! Return the max energy
+  double getMaxEnergy() const;
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
 
