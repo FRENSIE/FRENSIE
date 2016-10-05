@@ -498,7 +498,7 @@ ADD_EXECUTABLE(tstCoherentAdjointPhotoatomicReaction
   tstCoherentAdjointPhotoatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCoherentAdjointPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(CoherentAdjointPhotoatomicReaction_test tstCoherentAdjointPhotoatomicReaction --test_native_file=="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
+ADD_TEST(CoherentAdjointPhotoatomicReaction_test tstCoherentAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
 SET_PROPERTY(TEST CoherentAdjointPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
 
 ##---------------------------------------------------------------------------##
