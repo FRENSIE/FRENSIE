@@ -27,18 +27,26 @@ CoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::Cohere
               threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
-  // Make sure the form factor is valid
+  // Make sure the scattering distribution is valid
+  testPrecondition( scattering_distribution.get() );
+}
+
+// Constructor
+template<typename InterpPolicy, bool processed_cross_section>
+CoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentAdjointPhotoatomicReaction(
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const CoherentScatteringDistribution>&
+    scattering_distribution )
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
+    d_scattering_distribution( scattering_distribution )
+{
+  // Make sure the scattering distribution is valid
   testPrecondition( scattering_distribution.get() );
 }
 

@@ -20,8 +20,6 @@
 #include "MonteCarlo_CoherentScatteringDistributionNativeFactory.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_TabularDistribution.hpp"
-#include "Utility_InverseSquareAngstromUnit.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -182,7 +180,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   incoming_energy_grid.assign(
                            data_container.getAdjointPhotonEnergyGrid().begin(),
                            data_container.getAdjointPhotonEnergyGrid().end() );
-  std::cout << incoming_energy_grid.size() << std::endl;
+  
   Teuchos::ArrayRCP<double> coherent_cross_section;
   coherent_cross_section.assign(
           data_container.getAdjointWallerHartreeCoherentCrossSection().begin(),

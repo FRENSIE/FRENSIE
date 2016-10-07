@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <limits>
+#include <functional>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -27,7 +28,12 @@ namespace MonteCarlo{
 IncoherentAdjointPhotonScatteringDistribution::IncoherentAdjointPhotonScatteringDistribution(
 						      const double max_energy )
   : d_max_energy( max_energy ),
-    d_critical_line_energies( 1, 0.0 )
+    d_critical_line_energies( 1, 0.0 ),
+    d_integrated_cs_evaluator( std::bind<double>( &IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSectionImpl,
+                                                  this,
+                                                  std::placeholders::_1,
+                                                  std::placeholders::_2,
+                                                  std::placeholders::_3 ) )
 {
   // Make sure the max energy is valid
   testPrecondition( max_energy > 0.0 );
@@ -120,6 +126,37 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
   return this->evaluatePDF( incoming_energy,
 			    d_max_energy,
 			    scattering_angle_cosine );
+}
+
+// Set an external integrated cross section evaluator
+/*! \details This is an advanced feature! This method can be used to set
+ * an external evaluator (tabulated cross section evaluator) that is faster
+ * than the default evaluator implementation (numerical integration).
+ */
+void IncoherentAdjointPhotonScatteringDistribution::setExternalIntegratedCrossSectionEvaluator(
+                                    std::function<double(double,double,double)>
+                                    integrated_cs_evaluator )
+{
+  d_integrated_cs_evaluator = integrated_cs_evaluator;
+}
+
+// Unset the integrated cross section evaluator
+void IncoherentAdjointPhotonScatteringDistribution::unsetExternalIntegratedCrossSectionEvaluator()
+{
+  d_integrated_cs_evaluator = std::bind<double>( &IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSectionImpl,
+                                                 this,
+                                                 std::placeholders::_1,
+                                                 std::placeholders::_2,
+                                                 std::placeholders::_3 );
+}
+
+// Evaluate the integrated cross section (b)
+double IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection(
+						 const double incoming_energy,
+						 const double max_energy,
+						 const double precision ) const
+{
+  return d_integrated_cs_evaluator( incoming_energy, max_energy, precision );  
 }
 
 // Evaluate the integrated cross section (b)

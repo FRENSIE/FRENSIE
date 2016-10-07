@@ -57,14 +57,6 @@ public:
   //! Evaluate the distribution (pull in hidden base class overloads)
   using IncoherentAdjointPhotonScatteringDistribution::evaluate;
 
-  //! Evaluate the integrated cross section (b)
-  double evaluateIntegratedCrossSection( const double incoming_energy,
-                                         const double max_energy,
-                                         const double precision ) const;
-
-  //! Evaluate the integrated cross section (pull in hidden base class overloads)
-  using IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection;
-
   //! Sample an outgoing energy and direction from the distribution
   virtual void sample( const double incoming_energy,
                        double& outgoing_energy,
@@ -83,6 +75,11 @@ public:
                               Data::SubshellType& shell_of_interaction ) const;
 
 protected:
+
+  //! Evaluate the integrated cross section (b)
+  double evaluateIntegratedCrossSectionImpl( const double incoming_energy,
+                                             const double max_energy,
+                                             const double precision ) const;
 
   //! Check if an energy is above the scattering window
   bool isEnergyAboveScatteringWindow( const double energy_of_interest,
