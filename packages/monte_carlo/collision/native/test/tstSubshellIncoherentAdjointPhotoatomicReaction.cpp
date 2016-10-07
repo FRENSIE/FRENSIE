@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstIncoherentAdjointPhotoatomicReaction.cpp
+//! \file   tstSubshellIncoherentAdjointPhotoatomicReaction.cpp
 //! \author Alex Robinson
-//! \brief  The incoherent adjoint photoatomic reaction unit tests
+//! \brief  The subshell incoherent adjoint photoatomic reaction unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,7 +16,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_IncoherentAdjointPhotoatomicReaction.hpp"
+#include "MonteCarlo_SubshellIncoherentAdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistributionNativeFactory.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
@@ -27,120 +27,143 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::AdjointPhotoatomicReaction> adjoint_incoherent_reaction;
+std::shared_ptr<MonteCarlo::AdjointPhotoatomicReaction> incoherent_adjoint_reaction;
+
+std::shared_ptr<MonteCarlo::SubshellIncoherentAdjointPhotoatomicReaction<Utility::LinLin,false> > subshell_incoherent_adjoint_reaction;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getReactionType )
+// Check that the subshell can be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction, getSubshell )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getReactionType(),
-                       MonteCarlo::TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION );
+  TEST_EQUALITY_CONST( subshell_incoherent_adjoint_reaction->getSubshell(),
+                       Data::K_SUBSHELL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell binding energy can be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
+                   getSubshellBindingEnergy )
+{
+  TEST_EQUALITY_CONST( subshell_incoherent_adjoint_reaction->getSubshellBindingEnergy(),
+                       1.8285e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction type can be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
+                   getReactionType )
+{
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getReactionType(),
+                       MonteCarlo::K_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getThresholdEnergy )
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
+                   getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getThresholdEnergy(),
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getThresholdEnergy(),
                        1e-3 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the max energy can be returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getMaxEnergy )
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
+                   getMaxEnergy )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getMaxEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getMaxEnergy(), 20.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check if an energy falls within the energy grid
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
                    isEnergyWithinEnergyGrid )
 {
-  TEST_ASSERT( !adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 9e-4 ) );
-  TEST_ASSERT( adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 1e-3 ) );
-  TEST_ASSERT( adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 1.0 ) );
-  TEST_ASSERT( adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 20.0 ) );
-  TEST_ASSERT( !adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 20.1 ) );
+  TEST_ASSERT( !incoherent_adjoint_reaction->isEnergyWithinEnergyGrid( 9e-4 ) );
+  TEST_ASSERT( incoherent_adjoint_reaction->isEnergyWithinEnergyGrid( 1e-3 ) );
+  TEST_ASSERT( incoherent_adjoint_reaction->isEnergyWithinEnergyGrid( 1.0 ) );
+  TEST_ASSERT( incoherent_adjoint_reaction->isEnergyWithinEnergyGrid( 20.0 ) );
+  TEST_ASSERT( !incoherent_adjoint_reaction->isEnergyWithinEnergyGrid( 20.1 ) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the number of adjoint photons emitted from the reaction can be
-// returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
+// Check that the number of adjoint photons emitted from the reaction can
+// be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
                    getNumberOfEmittedPhotons )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 9e-4 ),
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getNumberOfEmittedPhotons( 9e-4 ),
                        0u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 1e-3 ),
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getNumberOfEmittedPhotons( 1e-3 ),
                        1u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 20.0 ),
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getNumberOfEmittedPhotons( 20.0 ),
                        1u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 20.1 ),
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getNumberOfEmittedPhotons( 20.1 ),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the number of adjoint electrons emitted from the reaction can be
-// returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
+// Check that the number of adjoint electrons emitted from the reaction can
+// be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
                    getNumberOfEmittedElectrons )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 9e-4 ),
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getNumberOfEmittedElectrons( 9e-4 ),
                        0u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getNumberOfEmittedElectrons( 1e-3 ),
                        0u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 20.0 ),
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getNumberOfEmittedElectrons( 20.0 ),
                        0u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 20.1 ),
+  TEST_EQUALITY_CONST( incoherent_adjoint_reaction->getNumberOfEmittedElectrons( 20.1 ),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getCrossSection )
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
+                   getCrossSection )
 {
   double cross_section = 
-    adjoint_incoherent_reaction->getCrossSection( 1e-3 );
+    incoherent_adjoint_reaction->getCrossSection( 1e-3 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.620920802623559753, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.36049064970995307e-05, 1e-12 );
 
   cross_section =
-    adjoint_incoherent_reaction->getCrossSection( 1.0 );
+    incoherent_adjoint_reaction->getCrossSection( 1.0 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 5.50415974966055277, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.720525445117274344, 1e-12 );
 
   cross_section =
-    adjoint_incoherent_reaction->getCrossSection( 20.0 );
+    incoherent_adjoint_reaction->getCrossSection( 20.0 );
   
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cross section can be returned (efficiently)
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
+// Check that the cross section can be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
                    getCrossSection_efficient )
 {
   double cross_section = 
-    adjoint_incoherent_reaction->getCrossSection( 1e-3, 0u );
+    incoherent_adjoint_reaction->getCrossSection( 1e-3, 0u );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.620920802623559753, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.36049064970995307e-05, 1e-12 );
 
   cross_section =
-    adjoint_incoherent_reaction->getCrossSection( 20.0, 1166 );
+    incoherent_adjoint_reaction->getCrossSection( 20.0, 1166u );
   
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the incoherent adjoint reaction can be simulated
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, react )
+// Check that the subshell incoherent adjoint reaction can be simulated
+TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction, react )
 {
   MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
   adjoint_photon.setEnergy(
-		  Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
+                  Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
@@ -148,29 +171,28 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, react )
   Data::SubshellType shell_of_interaction;
 
   // Set the fake stream
-  std::vector<double> fake_stream( 9 );
+  std::vector<double> fake_stream( 8 );
   fake_stream[0] = 0.15; // branch 1
   fake_stream[1] = 0.4721647344828152; // select x = 0.9
-  fake_stream[2] = 0.49; // accept
-  fake_stream[3] = 0.91; // reject based on scattering function
-  fake_stream[4] = 0.15; // branch 1
-  fake_stream[5] = 0.4721647344828152; // select x = 0.9
-  fake_stream[6] = 0.49; // accept
-  fake_stream[7] = 0.909; // accept based on scattering function
-  fake_stream[8] = 0.0;
+  fake_stream[2] = 0.55; // reject
+  fake_stream[3] = 0.15; // branch 1
+  fake_stream[4] = 0.22986680137273696; // select x = 0.95
+  fake_stream[5] = 0.245; // accept x
+  fake_stream[6] = 0.31; // accept mu
+  fake_stream[7] = 0.0; // azimuthal angle = 0.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  adjoint_incoherent_reaction->react( adjoint_photon,
-				      bank,
-				      shell_of_interaction );
+  incoherent_adjoint_reaction->react( adjoint_photon, 
+                                      bank, 
+                                      shell_of_interaction );
 
   TEST_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
-			  0.05677765668111111,
+			  0.053789358961052636, 
 			  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.5, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -178,9 +200,9 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, react )
   adjoint_photon.setEnergy( 0.3 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
 
-  adjoint_incoherent_reaction->react( adjoint_photon,
-				      bank,
-				      shell_of_interaction );
+  incoherent_adjoint_reaction->react( adjoint_photon,
+                                      bank,
+                                      shell_of_interaction );
 
   TEST_EQUALITY_CONST( bank.size(), 2 );
   TEST_EQUALITY_CONST( bank.top().getEnergy(),
@@ -188,16 +210,16 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, react )
   // Due to the coarseness of the 2d test grid the weight will not be
   // exactly what it should theoretically be
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
-			  0.401104057813784276,
+			  0.471349591314760286,
 			  5e-3 );
-
+  
   bank.pop();
 
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
   // Due to the coarseness of the 2d test grid the weight will not be
   // exactly what it should theoretically be
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
-			  0.203384875392762621,
+			  0.237508288495414555,
 			  5e-3 );
 }
 
@@ -230,8 +252,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Evaluate the cross section at the energy of interest
   Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>
     two_d_cross_section( data_container.getAdjointPhotonEnergyGrid(),
-                         data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid(),
-                         data_container.getAdjointWallerHartreeIncoherentCrossSection() );
+                         data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( Data::K_SUBSHELL ),
+                         data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( Data::K_SUBSHELL ) );
 
   Teuchos::ArrayRCP<double> cross_section( incoming_energy_grid.size() );
 
@@ -239,21 +261,24 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
     cross_section[i] =
       two_d_cross_section.evaluate( incoming_energy_grid[i], 20.0 );
+    std::cout.precision( 18 );
+    std::cout << incoming_energy_grid[i] << " " << cross_section[i] << std::endl;
   }
   
   // Create the scattering distribution
-  std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
+  std::shared_ptr<MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>
     scattering_distribution;
 
-  MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribution(
-                                       data_container,
-                                       scattering_distribution,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       20.0 );
+  MonteCarlo::IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
+                                  data_container,
+                                  scattering_distribution,
+                                  MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
+                                  20.0,
+                                  Data::K_SUBSHELL );
 
   // Create the reaction
-  std::shared_ptr<MonteCarlo::IncoherentAdjointPhotoatomicReaction<Utility::LinLin,false> > complete_reaction(
-   new MonteCarlo::IncoherentAdjointPhotoatomicReaction<Utility::LinLin,false>(
+  subshell_incoherent_adjoint_reaction.reset(
+   new MonteCarlo::SubshellIncoherentAdjointPhotoatomicReaction<Utility::LinLin,false>(
                                                    incoming_energy_grid,
                                                    cross_section,
                                                    0u,
@@ -267,9 +292,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Utility::PhysicalConstants::electron_rest_mass_energy;
   critical_line_energies[2] = 1.0;
 
-  complete_reaction->setCriticalLineEnergies(critical_line_energies);
+  subshell_incoherent_adjoint_reaction->setCriticalLineEnergies(critical_line_energies);
   
-  adjoint_incoherent_reaction = complete_reaction;
+  incoherent_adjoint_reaction = subshell_incoherent_adjoint_reaction;
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
@@ -278,5 +303,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstIncoherentAdjointPhotoatomicReaction.cpp
+// end tstSubshellIncoherentAdjointPhotoatomicReaction.cpp
 //---------------------------------------------------------------------------//

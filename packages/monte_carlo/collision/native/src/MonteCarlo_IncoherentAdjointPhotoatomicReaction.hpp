@@ -55,7 +55,7 @@ public:
     scattering_distribution );
 
   //! Destructor
-  ~IncoherentAdjointPhotoatomicReaction()
+  virtual ~IncoherentAdjointPhotoatomicReaction()
   { /* ... */ }
 
   //! Set the critical line energies

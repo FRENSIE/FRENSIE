@@ -124,8 +124,6 @@ void IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>:
                                                    shell_of_interaction );
 
   adjoint_photon.incrementCollisionNumber();
-
-  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 }
   
 } // end MonteCarlo namespace
