@@ -528,6 +528,13 @@ TARGET_LINK_LIBRARIES(tstSubshellIncoherentAdjointPhotoatomicReaction monte_carl
 ADD_TEST(SubshellIncoherentAdjointPhotoatomicReaction_test tstSubshellIncoherentAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
 SET_PROPERTY(TEST SubshellIncoherentAdjointPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
 
+ADD_EXECUTABLE(tstLineEnergyAdjointPhotoatomicReaction
+  tstLineEnergyAdjointPhotoatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLineEnergyAdjointPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(LineEnergyAdjointPhotoatomicReaction_test tstLineEnergyAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
+SET_PROPERTY(TEST LineEnergyAdjointPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+
 ##---------------------------------------------------------------------------##
 ##      electron class tests                                                  
 ##---------------------------------------------------------------------------##
