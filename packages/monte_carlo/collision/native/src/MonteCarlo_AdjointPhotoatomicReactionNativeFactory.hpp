@@ -1,130 +1,113 @@
-// Return the adjoint photon energy grid for a max energy
-std::vector<double>
-AdjointElectronPhotonRelaxationDataContainer::getAdjointPhotonEnergyGrid(
-                                                const double max_energy ) const
-{
-  // Make sure the max energy is valid
-  testPrecondition( max_energy > d_min_photon_energy );
-  testPrecondition( max_energy <= d_max_photon_energy );
+//---------------------------------------------------------------------------//
+//!
+//! \file   MonteCarlo_AdjointPhotoatomicReactionNativeFactory.hpp
+//! \author Alex Robinson
+//! \brief  The adjoint photoatomic reaction native data factory declaration
+//!
+//---------------------------------------------------------------------------//
 
-  std::vector<double> condensed_energy_grid;
+#ifndef MONTE_CARLO_PHOTOATOMIC_REACTION_NATIVE_FACTORY_HPP
+#define MONTE_CARLO_PHOTOATOMIC_REACTION_NATIVE_FACTORY_HPP
+
+// Std Lib Includes
+#include <memory>
+#include <vector>
+
+// Trilinos Includes
+#include <Teuchos_ArrayRCP.hpp>
+#include <Teuchos_RCP.hpp>
+
+// FRENSIE Includes
+#include "MonteCarlo_AdjointPhotoatomicReaction.hpp"
+#include "MonteCarlo_PhotoatomicReaction.hpp"
+#include "MonteCarlo_IncoherentAdjointModelType.hpp"
+#include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_HashBaseGridSearcher.hpp"
+
+namespace MonteCarlo{
+
+//! The adjoint photoatomic reaction factory class that uses native data
+class AdjointPhotoatomicReactionNativeFactory
+{
+
+private:
+
+  // Typedef for this type
+  typedef AdjointPhotoatomicReactionNativeFactory ThisType;
   
-  if( max_energy > d_adjoint_photon_energy_grid.front() &&
-      max_energy < d_adjoint_photon_energy_grid.back() )
-  {
-    std::vector<double>::const_iterator lower_bound_index_it = 
-      Utility::Search::binaryLowerBoundIndex(
-                                          d_adjoint_photon_energy_grid.begin(),
-                                          d_adjoint_photon_energy_grid.end(),
-                                          max_energy );
+public:
 
-    std::vector<double>::const_iterator upper_bound_index_it =
-      lower_bound_index_it;
-    ++upper_bound_index_it;
+  //! Create the union energy grid with the desired max energy
+  static void createUnionEnergyGrid(
+                      const Data::AdjointElectronPhotonRelaxationDataContainer&
+                      raw_adjoint_photoatom_data,
+                      Teuchos::ArrayRCP<double>& energy_grid,
+                      const double max_energy );
 
-    condensed_energy_grid.assign( d_adjoint_photon_energy_grid.begin(),
-                                  upper_bound_index_it );
+  //! Create the incoherent adjoint photoatomic reaction(s)
+  static void createIncoherentReactions(
+       const Data::AdjointElectronPhotonRelaxationDataContainer&
+       raw_adjoint_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::Array<std::shared_ptr<AdjointPhotoatomicReaction> >&
+       incoherent_adjoint_reactions,
+       const IncoherentAdjointModelType incoherent_adjoint_model,
+       const std::vector<double>& critical_line_energies );
 
-    condensed_energy_grid.push_back( max_energy );
-  }
-  else if( max_energy == d_adjoint_photon_energy_grid.back() )
-    condensed_energy_grid = d_adjoint_photon_energy_grid;
+  //! Create the coherent adjoint photoatomic reaction
+  static void createCoherentReaction(
+      const Data::AdjointElectronPhotonRelaxationDataContainer&
+      raw_adjoint_photoatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<AdjointPhotoatomicReaction>& coherent_adjoint_reaction );
 
-  return condensed_energy_grid;
-}
+  //! Create the pair production adjoint photoatomic reaction
+  static void createPairProductionReaction(
+      const Data::AdjointElectronPhotonRelaxationDataContainer&
+      raw_adjoint_photoatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<AdjointPhotoatomicReaction>&
+      pair_production_adjoint_reaction );
 
-// Return the adjoint Waller-Hartree (WH) incoh. photon cs for the max erg
-std::vector<double>
-AdjointElectronPhotonRelaxationDataContainer::getAdjointWallerHartreeIncoherentCrossSection(
-                                                const double max_energy ) const
-{
-  // Make sure the max energy is valid
-  testPrecondition( max_energy > d_min_photon_energy );
-  testPrecondition( max_energy <= d_max_photon_energy );
+  //! Create the triplet production adjoint photoatomic reaction
+  static void createTripletProductionReaction(
+      const Data::AdjointElectronPhotonRelaxationDataContainer&
+      raw_adjoint_photoatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<AdjointPhotoatomicReaction>&
+      triplet_production_adjoint_reaction );
 
-  std::vector<double> condensed_cross_section;
+  //! Create the forward total reaction (only used to get the cross section)
+  static void createTotalForwardReaction(
+      const Data::AdjointElectronPhotonRelaxationDataContainer&
+      raw_adjoint_photoatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<PhotoatomicReaction>& total_forward_reaction );
 
-  for( unsigned i = 0; i < d_adjoint_photon_energy_grid.size(); ++i )
-  {
-    const std::vector<double>& max_energy_grid =
-      d_adjoint_waller_hartree_incoherent_max_energy_grid[i];
+private:
 
-    const std::vector<double>& cross_section =
-      d_adjoint_waller_hartree_incoherent_max_energy_grid[i];
+  // Reduce a 2D cross section to a 1D cross section
+  static void reduceTwoDCrossSection(
+              const Utility::FullyTabularTwoDDistribution& two_d_cross_section,
+              const Teuchos::ArrayRCP<const double> energy_grid,
+              Teuchos::ArrayRCP<double> cross_section );
 
-    if( max_energy_grid.front() <= max_energy )
-    {
-      unsigned index =
-        Utility::Search::binaryLowerBoundIndex( max_energy_grid.begin(),
-                                                max_energy_grid.end(),
-                                                max_energy );
+  // Slice the cross section based on the max energy
+  static void sliceCrossSection( const std::vector<double>& full_energy_grid,
+                                 const std::vector<double>& full_cross_section,
+                                 const double max_energy,
+                                 Teuchos::ArrayRCP<double>& cross_section );
+};
+  
+} // end MonteCarlo namespace
 
-      condensed_cross_section.push_back(
-                      Utility::LinLin::interpolate( max_energy_grid[index],
-                                                    max_energy_grid[index+1],
-                                                    max_energy,
-                                                    cross_section[index],
-                                                    cross_section[index+1] ) );
-    }
-    else
-      condensed_cross_section.push_back( 0.0 );
-  }
+#endif // end MONTE_CARLO_PHOTOATOMIC_REACTION_NATIVE_FACTORY_HPP
 
-  // Check that the last cross section value (corresponding to max energy)
-  // is zero
-  if( condensed_cross_section.back() != 0.0 )
-    condensed_cross_section.back() == 0.0;
-
-  return condensed_cross_section;
-}
-
-// Return the subshell adjoint IA incoh. photon cs for the max energy
-std::vector<double> AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxSubshellIncoherentCrossSection(
-                                                const unsigned subshell,
-                                                const double max_energy ) const
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) !=
-                    d_subshells.end() );
-  // Make sure the max energy is valid
-  testPrecondition( max_energy > d_min_photon_energy );
-  testPrecondition( max_energy <= d_max_photon_energy );
-
-  std::vector<double> condensed_cross_section;
-
-  // Get the subshell cross section
-  const std::vector<std::vector<double> >& subshell_max_energy_grids =
-    d_adjoint_impulse_approx_subshell_incoherent_max_energy_grid.find( subshell )->second;
-
-  const std::vector<std::vector<double> >& subshell_cross_sections =
-    d_adjoint_impulse_approx_subshell_incoherent_cross_section.find( subshell )->second;
-
-  // Get the binding energy for this cross section
-  const double binding_energy = this->getSubshellBindingEnergy( subshell );
-
-  if( max_energy_grid.front() <= max_energy )
-  {
-    unsigned index =
-      Utility::Search::binaryLowerBoundIndex( max_energy_grid.begin(),
-                                              max_energy_grid.end(),
-                                              max_energy );
-    
-    condensed_cross_section.push_back(
-                      Utility::LinLin::interpolate( max_energy_grid[index],
-                                                    max_energy_grid[index+1],
-                                                    max_energy,
-                                                    cross_section[index],
-                                                    cross_section[index+1] ) );
-  }
-  else
-  {
-    condensed_cross_section.push_back( 0.0 );
-  }
-
-  // Check that the last cross section value (corresponding to max energy)
-  // is zero
-  if( condensed_cross_section.back() != 0.0 )
-    condensed_cross_section.back() == 0.0;
-
-  return condensed_cross_section;
-}
+//---------------------------------------------------------------------------//
+// end MonteCarlo_AdjointPhotoatomicReactionNativeFactory.hpp
+//---------------------------------------------------------------------------//
