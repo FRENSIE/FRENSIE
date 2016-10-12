@@ -60,11 +60,11 @@ public:
   bool isEnergyWithinEnergyGrid( const double energy ) const;
 
   //! Return the cross section at the given energy
-  double getCrossSection( const double energy ) const;
+  virtual double getCrossSection( const double energy ) const;
 
   //! Return the cross section at the given energy (efficient)
-  double getCrossSection( const double energy,
-			  const unsigned bin_index ) const;
+  virtual double getCrossSection( const double energy,
+                                  const unsigned bin_index ) const;
 
   //! Return the max energy
   double getMaxEnergy() const;

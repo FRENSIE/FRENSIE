@@ -19,10 +19,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatomicReaction.hpp"
+#include "MonteCarlo_LineEnergyAdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_HashBaseGridSearcher.hpp"
+#include "Utility_FullyTabularTwoDDistribution.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
 
@@ -50,10 +52,10 @@ public:
        raw_adjoint_photoatom_data,
        const Teuchos::ArrayRCP<const double>& energy_grid,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::Array<std::shared_ptr<AdjointPhotoatomicReaction> >&
+       std::vector<std::shared_ptr<AdjointPhotoatomicReaction> >&
        incoherent_adjoint_reactions,
        const IncoherentAdjointModelType incoherent_adjoint_model,
-       const std::vector<double>& critical_line_energies );
+       const Teuchos::ArrayRCP<const double>& critical_line_energies );
 
   //! Create the coherent adjoint photoatomic reaction
   static void createCoherentReaction(
@@ -69,7 +71,7 @@ public:
       raw_adjoint_photoatom_data,
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<AdjointPhotoatomicReaction>&
+      std::shared_ptr<LineEnergyAdjointPhotoatomicReaction>&
       pair_production_adjoint_reaction );
 
   //! Create the triplet production adjoint photoatomic reaction
@@ -78,7 +80,7 @@ public:
       raw_adjoint_photoatom_data,
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<AdjointPhotoatomicReaction>&
+      std::shared_ptr<LineEnergyAdjointPhotoatomicReaction>&
       triplet_production_adjoint_reaction );
 
   //! Create the forward total reaction (only used to get the cross section)
@@ -94,8 +96,8 @@ private:
   // Reduce a 2D cross section to a 1D cross section
   static void reduceTwoDCrossSection(
               const Utility::FullyTabularTwoDDistribution& two_d_cross_section,
-              const Teuchos::ArrayRCP<const double> energy_grid,
-              Teuchos::ArrayRCP<double> cross_section );
+              const Teuchos::ArrayRCP<const double>& energy_grid,
+              Teuchos::ArrayRCP<double>& cross_section );
 
   // Slice the cross section based on the max energy
   static void sliceCrossSection( const std::vector<double>& full_energy_grid,

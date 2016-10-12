@@ -50,6 +50,13 @@ public:
   //! Destructor
   ~SubshellIncoherentAdjointPhotoatomicReaction()
   { /* ... */ }
+
+  //! Return the cross section at the given energy
+  double getCrossSection( const double energy ) const;
+
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection( const double energy,
+                          const unsigned bin_index ) const;
   
   //! Return the reaction type
   virtual AdjointPhotoatomicReactionType getReactionType() const;

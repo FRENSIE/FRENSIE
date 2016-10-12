@@ -135,6 +135,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
   
   TEST_FLOATING_EQUALITY( cross_section, 0.720525445117274344, 1e-12 );
 
+  // The cross section must go to zero at E_max - E_b
+  cross_section =
+    incoherent_adjoint_reaction->getCrossSection( 20.0 - 1.8285e-3 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
   cross_section =
     incoherent_adjoint_reaction->getCrossSection( 20.0 );
   
@@ -150,6 +156,11 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
     incoherent_adjoint_reaction->getCrossSection( 1e-3, 0u );
   
   TEST_FLOATING_EQUALITY( cross_section, 3.36049064970995307e-05, 1e-12 );
+
+  cross_section =
+    incoherent_adjoint_reaction->getCrossSection( 20.0 - 1.8285e-3, 1166u );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section =
     incoherent_adjoint_reaction->getCrossSection( 20.0, 1166u );
