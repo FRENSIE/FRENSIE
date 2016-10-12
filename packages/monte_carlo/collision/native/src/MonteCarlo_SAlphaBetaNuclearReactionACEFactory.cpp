@@ -47,7 +47,7 @@ SAlphaBetaNuclearReactionACEFactory::SAlphaBetaNuclearReactionACEFactory(
 
 	// Initialize the S(alpha,beta) reactions
 	initializeSAlphaBetaReactions( temperature,
-	                               sab_nuclide_data.extractInelasticEnergyGrid(),
+	                               sab_nuclide_data,
 	                               reaction_cross_section,
 	                               scattering_dist_factory );
 }
@@ -100,7 +100,7 @@ void SAlphaBetaNuclearReactionACEFactory::setSAlphaBetaUpperEnergyLimitMap(
 // Initialize the S(alpha,beta) reactions
 void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(  
     const double temperature,
-    Teuchos::ArrayView<const double> sab_energy_grid,
+    const Data::XSSSabDataExtractor& sab_nuclide_data,
     boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
       reaction_cross_section,
     const SAlphaBetaNuclearScatteringDistributionACEFactory& 
@@ -118,9 +118,10 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
   Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
     scattering_distribution;
     
-  Teuchos::Array<double> sab_energy_grid_array( sab_energy_grid );
   boost::unordered_map<NuclearReactionType,Teuchos::Array<double> >
       reaction_cross_section_arrays;
+      
+  
 
  
   // Append the S(alpha,beta) data with the threshold data point from the
@@ -130,6 +131,9 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
     reaction_type = reaction_xs->first;
   
     reaction_cross_section_arrays[reaction_type] = reaction_cross_section[reaction_type];
+    
+    Teuchos::Array<double> sab_energy_grid_array;
+    Teuchos::ArrayRCP<double> energy_grid;
       
     if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION ||
         reaction_type == MonteCarlo::SALPHABETA_N__N_ELASTIC_REACTION )
@@ -138,9 +142,12 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
       double energy;
       double energy_xs;
       
+      Teuchos::ArrayView<const double> sab_energy_grid;
+      Teuchos::Array<double> sab_energy_grid_array;
+      
       NuclearReactionType parent_reaction_type;
       
-      // It appears that EVERY reaction for S(alpha,beta) actually takes the
+      // It appears that every reaction for S(alpha,beta) actually takes the
       //  place of the elastic neutron/neutron scattering reaction. This does
       //  not correspond to their naming structure of elastic and inelastic.
       //  That is to say, all S(alpha,beta) reactions have the standard
@@ -149,15 +156,19 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
       if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION )
       {
         parent_reaction_type = MonteCarlo::N__N_ELASTIC_REACTION;
+        sab_energy_grid = sab_nuclide_data.extractInelasticEnergyGrid();
       }
       else
       {
         parent_reaction_type = MonteCarlo::N__N_ELASTIC_REACTION;
+        sab_energy_grid = sab_nuclide_data.extractElasticEnergyGrid();
       }
       
       index = Utility::Search::binaryUpperBoundIndex( d_energy_grid.begin(),
                                                       d_energy_grid.end(),
                                                       sab_energy_grid.back() );
+                                                                                                  
+      Teuchos::Array<double> internal_grid( sab_energy_grid );
     
       if( d_scattering_reactions.find(parent_reaction_type) != d_scattering_reactions.end() )
       {
@@ -166,10 +177,12 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
         energy_xs = 
           d_scattering_reactions[parent_reaction_type]->getCrossSection( energy );
       
-        sab_energy_grid_array.push_back( energy );
+        internal_grid.push_back( energy );
         reaction_cross_section_arrays[reaction_type].push_back( energy_xs );
       }
-
+      
+      sab_energy_grid_array = internal_grid;
+      energy_grid.deepCopy( sab_energy_grid_array );
     }
     else
     {
@@ -177,15 +190,7 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
         reaction_type << " is not an acceptable S(a,b) reaction type." );
     }
     
-    ++reaction_xs;
-    
-  }
-  
-  // Reset the reaction counter
-  reaction_xs = reaction_cross_section.begin();
- 
-  while( reaction_xs != reaction_xs_end )
-  {
+    // Construct the reactions
     reaction_type = reaction_xs->first;
     
     Teuchos::RCP<NuclearReaction>& reaction =
@@ -194,9 +199,6 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
     scattering_dist_factory.createSAlphaBetaScatteringDistributions(
       reaction_type,
       scattering_distribution );
-      
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.deepCopy( sab_energy_grid_array );
     
     Teuchos::ArrayRCP<double> cross_section;
     cross_section.deepCopy( reaction_cross_section_arrays[reaction_type] );

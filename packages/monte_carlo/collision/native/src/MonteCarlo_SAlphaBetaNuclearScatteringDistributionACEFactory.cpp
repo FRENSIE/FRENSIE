@@ -23,6 +23,7 @@
 #include "MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_IndependentEnergyAngleNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_SAlphaBetaNuclearScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -228,12 +229,19 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::initializeSAlphaBetaData
     // Assign the itce_block to the member data
     d_itce_block = itce_block;
     
+    setElasticSAlphaBetaEnergies();
+    
     // Check if the elastic angular distributions are explicit
     if( !itca_block.is_null() )
     {
       // Assign the itce_block to the member data
       d_itca_block = itca_block;
-   
+      
+      setElasticSAlphaBetaCosines( true );
+    }
+    else
+    {
+      setElasticSAlphaBetaCosines( false );
     }
   }
 }
@@ -257,6 +265,18 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::setInelasticSAlphaBetaOu
   d_inelastic_outgoing_energies = 
     d_sab_nuclide_data.extractNumberOfOutgoingEnergies();
 }
+
+// Set the inelastic S(alpha,beta) energies
+void SAlphaBetaNuclearScatteringDistributionACEFactory::setElasticSAlphaBetaEnergies()
+{
+  d_elastic_energies = d_sab_nuclide_data.extractElasticEnergyGrid();
+}
+
+void SAlphaBetaNuclearScatteringDistributionACEFactory::setElasticSAlphaBetaCosines(
+  bool is_implicit_elastic )
+{
+  d_is_implicit_elastic = is_implicit_elastic;
+}
   
 // Create S(alpha,beta) distributions
 void SAlphaBetaNuclearScatteringDistributionACEFactory::createSAlphaBetaScatteringDistributions(
@@ -279,8 +299,25 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::createSAlphaBetaScatteri
   }
   else if( reaction_type == MonteCarlo::SALPHABETA_N__N_ELASTIC_REACTION )
   {
-    THROW_EXCEPTION( std::runtime_error, "Error: Elastic S(alpha,beta) "
-     "is not yet supported..." );
+    Teuchos::RCP<NuclearScatteringAngularDistribution> angular_distribution;
+    
+    if( d_is_implicit_elastic )
+    {
+      NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaDistribution(
+        d_elastic_energies,
+        d_itca_block,
+        angular_distribution );
+    }
+    else
+    {
+    NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaIsotropicDistribution(
+      d_elastic_energies,
+      angular_distribution );
+    }
+      
+    distribution.reset( new ElasticNeutronNuclearScatteringDistribution( 
+      d_atomic_weight_ratio,
+      angular_distribution ) );
   }
   else
   {

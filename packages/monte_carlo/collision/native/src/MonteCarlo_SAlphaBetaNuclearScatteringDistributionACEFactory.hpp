@@ -116,6 +116,12 @@ protected:
 	
 	// Set the inelastic S(alpha,beta) outgoing energies
 	void setInelasticSAlphaBetaOutgoingEnergies();
+	
+	// Set the elastic S(alpha,beta) energies
+	void setElasticSAlphaBetaEnergies();
+	
+	// Set the elastic S(alpha,beta) cosine flag
+	void setElasticSAlphaBetaCosines( bool is_implicit_elastic );
 			
 	// Inelastic S(alpha,beta) energies
 	Teuchos::ArrayView<const double> d_inelastic_energies;
@@ -125,6 +131,12 @@ protected:
 	
 	// Inelastic S(alpha,beta) outgoing energies
 	Teuchos::ArrayView<const double> d_inelastic_outgoing_energies;
+	
+	// Elastic S(alpha,beta) energies
+	Teuchos::ArrayView<const double> d_elastic_energies;
+	
+	// Elastic S(alpha,beta) angles
+	Teuchos::ArrayView<const double> d_elastic_cosines;
 	
 	// Inelastic S(alpha,beta) incoming block
 	Teuchos::ArrayView<const double> d_itie_block;
@@ -137,6 +149,9 @@ protected:
 	
 	// Elastic S(alpha,beta) angular block
 	Teuchos::ArrayView<const double> d_itca_block;
+	
+	// Implicity Elastic check
+	bool d_is_implicit_elastic;
 
   // S(alpha,beta) data extractor
   Data::XSSSabDataExtractor d_sab_nuclide_data;

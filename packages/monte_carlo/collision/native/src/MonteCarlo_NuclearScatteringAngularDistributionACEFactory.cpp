@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -141,6 +142,82 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
     {
       angular_distribution[i].second = isotropic_angle_cosine_dist;
     }
+  }
+
+  // Create the angular distribution
+  distribution.reset( 
+	   new NuclearScatteringAngularDistribution( angular_distribution ) );
+}
+
+// Create the angular distribution
+void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaDistribution(
+	    const Teuchos::ArrayView<const double>& energy_grid,
+	    const Teuchos::ArrayView<const double>& itca_block,
+	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution )
+{
+  // Get the number of incoming energies
+  int num_tabulated_energies = energy_grid.size();
+
+  // Initialize the angular distribution array
+  NuclearScatteringAngularDistribution::AngularDistribution
+    angular_distribution( num_tabulated_energies );
+
+  // Construct equiprobable distribution
+  Teuchos::Array<double> equiprobable_pdf;
+  for( int eq = 0; eq < 20; ++eq )
+  {
+    equiprobable_pdf.push_back( 1.0 );
+  }
+  
+  // Keep track of where we are in the data
+  int location = 0;
+
+  for( unsigned i = 0u; i < num_tabulated_energies; ++i )
+  {
+    angular_distribution[i].first = energy_grid[i];
+
+    // Twenty equiprobable cosine distribution
+    Teuchos::ArrayView<const double> cosines = 
+	      itca_block( location, 20 );
+	      
+    location += 20;
+	      
+    angular_distribution[i].second.reset( 
+	    new Utility::DiscreteDistribution( cosines, equiprobable_pdf ) );
+  }
+
+  // Create the angular distribution
+  distribution.reset( 
+	   new NuclearScatteringAngularDistribution( angular_distribution ) );
+}
+
+// Create the angular distribution
+void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaIsotropicDistribution(
+	    const Teuchos::ArrayView<const double>& energy_grid,
+	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution )
+{
+  // Get the number of incoming energies
+  int num_tabulated_energies = energy_grid.size();
+
+  // Initialize the angular distribution array
+  NuclearScatteringAngularDistribution::AngularDistribution
+    angular_distribution( num_tabulated_energies );
+
+  // Construct equiprobable distribution
+  Teuchos::Array<double> equiprobable_pdf;
+  for( int eq = 0; eq < num_tabulated_energies; ++eq )
+  {
+    equiprobable_pdf.push_back( 1.0 );
+  }
+  
+  // Keep track of where we are in the data
+  int distribution_index = 0;
+
+  for( unsigned i = 0u; i < energy_grid.size(); ++i )
+  {
+    angular_distribution[i].first = energy_grid[i];
+
+    angular_distribution[i].second = isotropic_angle_cosine_dist;
   }
 
   // Create the angular distribution

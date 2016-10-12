@@ -210,11 +210,11 @@ double Nuclide::getTemperature() const
 // Return the total cross section at the desired energy
 double Nuclide::getTotalCrossSection( const double energy ) const
 {
-  if( true )
+  // Currently we are going to try recalculating at every reqest for accuracy
+  //  Eventually this will be tested for the performance impact
+  if( false )
   {
     double cross_section = d_total_reaction->getCrossSection( energy );
-  
-    std::cout << "Cross section at : " << energy << "MeV... " << cross_section << std::endl;
   
     return cross_section;
   }
@@ -235,11 +235,9 @@ double Nuclide::getTotalCrossSection( const double energy ) const
     while( reaction_type_pointer != end_reaction_type_pointer )
     {
       cross_section += reaction_type_pointer->second->getCrossSection( energy );
-      
+     
       ++reaction_type_pointer;
     }
-    
-    std::cout << "Cross section at : " << energy << "MeV... " << cross_section << std::endl;
     
     return cross_section;
   }

@@ -68,7 +68,7 @@ private:
   // Initialize the scattering reactions
   void initializeSAlphaBetaReactions( 
     const double temperature,
-    Teuchos::ArrayView<const double> sab_energy_grid,
+    const Data::XSSSabDataExtractor& sab_nuclide_data,
     boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
       reaction_cross_section,
     const SAlphaBetaNuclearScatteringDistributionACEFactory& 

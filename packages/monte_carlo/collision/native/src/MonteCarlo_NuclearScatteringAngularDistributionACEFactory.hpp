@@ -41,6 +41,17 @@ public:
   //! Return the isotropic_angle_cosine_dist
   static Teuchos::RCP<Utility::TabularOneDDistribution> getIsotropicDistribution();
 
+  //! Create the angular distribution
+  static void createSAlphaBetaDistribution( 
+	    const Teuchos::ArrayView<const double>& energy_grid,
+	    const Teuchos::ArrayView<const double>& itca_block,
+	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
+  
+  //! Create an isotropic angular distribution
+  static void createSAlphaBetaIsotropicDistribution(
+    const Teuchos::ArrayView<const double>& energy_grid,
+	   Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
+
 private:
 
   //! Constructor
