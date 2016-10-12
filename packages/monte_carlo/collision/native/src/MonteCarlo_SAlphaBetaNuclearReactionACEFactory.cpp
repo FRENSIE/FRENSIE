@@ -140,9 +140,15 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
       
       NuclearReactionType parent_reaction_type;
       
+      // It appears that EVERY reaction for S(alpha,beta) actually takes the
+      //  place of the elastic neutron/neutron scattering reaction. This does
+      //  not correspond to their naming structure of elastic and inelastic.
+      //  That is to say, all S(alpha,beta) reactions have the standard
+      //  (n,n) elastic reaction as their parent...
+      
       if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION )
       {
-        parent_reaction_type = MonteCarlo::N__N_INELASTIC_REACTION;
+        parent_reaction_type = MonteCarlo::N__N_ELASTIC_REACTION;
       }
       else
       {

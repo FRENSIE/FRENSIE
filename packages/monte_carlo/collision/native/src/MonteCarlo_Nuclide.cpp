@@ -210,7 +210,39 @@ double Nuclide::getTemperature() const
 // Return the total cross section at the desired energy
 double Nuclide::getTotalCrossSection( const double energy ) const
 {
-  return d_total_reaction->getCrossSection( energy );
+  if( true )
+  {
+    double cross_section = d_total_reaction->getCrossSection( energy );
+  
+    std::cout << "Cross section at : " << energy << "MeV... " << cross_section << std::endl;
+  
+    return cross_section;
+  }
+  else
+  {
+    ConstReactionMap::const_iterator reaction_type_pointer, 
+      end_reaction_type_pointer;
+
+    end_reaction_type_pointer = d_scattering_reactions.end();
+
+    double cross_section;
+
+    // Calculate the total cross section
+    cross_section = d_total_absorption_reaction->getCrossSection( energy );
+    
+    reaction_type_pointer = d_scattering_reactions.begin();
+    
+    while( reaction_type_pointer != end_reaction_type_pointer )
+    {
+      cross_section += reaction_type_pointer->second->getCrossSection( energy );
+      
+      ++reaction_type_pointer;
+    }
+    
+    std::cout << "Cross section at : " << energy << "MeV... " << cross_section << std::endl;
+    
+    return cross_section;
+  }
 }
 
 // Return the total absorption cross section at the desired energy
@@ -228,7 +260,7 @@ double Nuclide::getSurvivalProbability( const double energy ) const
   
   double survival_prob = 1.0 - 
     d_total_absorption_reaction->getCrossSection( energy )/
-    d_total_reaction->getCrossSection( energy );
+    this->getTotalCrossSection( energy );
 
   // Make sure the survival probability is valid
   testPostcondition( survival_prob >= 0.0 );
@@ -245,7 +277,7 @@ double Nuclide::getReactionCrossSection(
   switch( reaction )
   {
   case N__TOTAL_REACTION:
-    return d_total_reaction->getCrossSection( energy );
+    return this->getTotalCrossSection( energy );
   case N__TOTAL_ABSORPTION_REACTION:
     return d_total_absorption_reaction->getCrossSection( energy );
   default:
@@ -274,7 +306,7 @@ void Nuclide::collideAnalogue( NeutronState& neutron,
 			       ParticleBank& bank ) const
 {
   double total_cross_section = 
-    d_total_reaction->getCrossSection( neutron.getEnergy() );
+    this->getTotalCrossSection( neutron.getEnergy() );
 
   double scaled_random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
@@ -307,7 +339,7 @@ void Nuclide::collideSurvivalBias( NeutronState& neutron,
     Utility::RandomNumberGenerator::getRandomNumber<double>();
   
   double total_cross_section = 
-    d_total_reaction->getCrossSection( neutron.getEnergy() );
+    this->getTotalCrossSection( neutron.getEnergy() );
 
   double scattering_cross_section = total_cross_section - 
     d_total_absorption_reaction->getCrossSection( neutron.getEnergy() );
@@ -433,7 +465,7 @@ void Nuclide::sampleScatteringReaction( const double scaled_random_number,
   if( nuclear_reaction == nuclear_reaction_end )
   {
     double total_xs = partial_cross_section + d_total_absorption_reaction->getCrossSection( neutron.getEnergy() );
-    double updated_random_number = scaled_random_number*(total_xs/d_total_reaction->getCrossSection( neutron.getEnergy() ));
+    double updated_random_number = scaled_random_number*(total_xs/this->getTotalCrossSection( neutron.getEnergy() ));
     
     this->sampleScatteringReaction( updated_random_number, neutron, bank );
   }
