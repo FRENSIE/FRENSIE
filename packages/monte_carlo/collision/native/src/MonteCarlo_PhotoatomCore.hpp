@@ -32,7 +32,7 @@ namespace MonteCarlo{
  * get method or export method) is safe since it only allows access to
  * the underlying member data in a way that prohibits modification of that
  * data. This class was created to address the issue that arrises when dealing
- * with photonuclear data - photonuclide's that share the same atomic number
+ * with photonuclear data - photonuclides that share the same atomic number
  * need the same photoatomic data. This class allows each photonuclide to
  * share the photoatomic data without copying that data (even if each
  * photonuclide has its own copy of the photoatom core object).

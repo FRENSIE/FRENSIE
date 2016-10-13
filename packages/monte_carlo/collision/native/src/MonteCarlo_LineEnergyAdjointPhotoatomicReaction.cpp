@@ -112,7 +112,10 @@ AdjointPhotoatomicReactionType LineEnergyAdjointPhotoatomicReaction::getReaction
 // Simulate the reaction
 /*! \details Only probe particles should ever enter this react method as they
  * are the only particle types that will ever have exactly the line energy
- * where this reaction is defined.
+ * where this reaction is defined. Note that the probe particle will be killed
+ * by this reaction. It is not clear yet how the particle generation number and
+ * collision number should be treated with these types of reactions 
+ * (currently both are incremented in the generated adjoint photon).
  */
 void LineEnergyAdjointPhotoatomicReaction::react(
                                AdjointPhotonState& adjoint_photon,
@@ -141,8 +144,7 @@ void LineEnergyAdjointPhotoatomicReaction::react(
     
     // Add the clone to the bank
     bank.push( adjoint_photon_clone );
-    
-    // Kill the probe
+
     adjoint_photon.setAsGone();
   }
 }
