@@ -89,6 +89,7 @@ public:
       raw_adjoint_photoatom_data,
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const IncoherentAdjointModelType incoherent_adjoint_model,
       std::shared_ptr<PhotoatomicReaction>& total_forward_reaction );
 
 private:

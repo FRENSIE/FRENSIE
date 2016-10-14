@@ -283,10 +283,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<MonteCarlo::PhotoatomicReaction> total_forward_reaction;
 
   MonteCarlo::AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
-                                                      data_container,
-                                                      energy_grid,
-                                                      grid_searcher,
-                                                      total_forward_reaction );
+                                       data_container,
+                                       energy_grid,
+                                       grid_searcher,
+                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
+                                       total_forward_reaction );
 
   // Create the scattering reactions
   MonteCarlo::AdjointPhotoatomCore::ReactionMap scattering_reactions;

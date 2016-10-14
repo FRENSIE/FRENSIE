@@ -391,7 +391,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the total forward reaction can be constructed
 TEUCHOS_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
-                   createTotalForwardReaction )
+                   createTotalForwardReaction_wh )
 {
   // Create the union energy grid
   Teuchos::ArrayRCP<double> energy_grid;
@@ -410,10 +410,11 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
   std::shared_ptr<MonteCarlo::PhotoatomicReaction> reaction;
 
   MonteCarlo::AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
-                                                               *data_container,
-                                                               energy_grid,
-                                                               grid_searcher,
-                                                               reaction );
+                                       *data_container,
+                                       energy_grid,
+                                       grid_searcher,
+                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
+                                       reaction );
 
   // Check that the reaction properties are correct
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -432,6 +433,53 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
   cross_section = reaction->getCrossSection( 20.0 );
   
   TEST_FLOATING_EQUALITY( cross_section, 1.08806003440055754, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the total forward reaction can be constructed
+TEUCHOS_UNIT_TEST( AdjointPhotoatomicReactionNativeFactory,
+                   createTotalForwardReaction_ia )
+{
+  // Create the union energy grid
+  Teuchos::ArrayRCP<double> energy_grid;
+
+  MonteCarlo::AdjointPhotoatomicReactionNativeFactory::createUnionEnergyGrid(
+                                                               *data_container,
+                                                               energy_grid,
+                                                               20.0 );
+  // Create the hash based grid searcher
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
+   new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
+                                                                   energy_grid,
+                                                                   100 ) );
+
+  // Create the total forward reaction
+  std::shared_ptr<MonteCarlo::PhotoatomicReaction> reaction;
+
+  MonteCarlo::AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
+                                  *data_container,
+                                  energy_grid,
+                                  grid_searcher,
+                                  MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
+                                  reaction );
+
+  // Check that the reaction properties are correct
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::TOTAL_PHOTOATOMIC_REACTION );
+  TEST_FLOATING_EQUALITY( reaction->getThresholdEnergy(), 1e-3, 1e-15 );
+
+  // Check that the stored cross section is correct
+  double cross_section = reaction->getCrossSection( 0.001 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 73136.2211675755971, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1.0 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 2.96459463242611498, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 20.0 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 1.08824634875521409, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

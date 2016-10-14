@@ -308,15 +308,33 @@ void AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
       raw_adjoint_photoatom_data,
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const IncoherentAdjointModelType incoherent_adjoint_model,
       std::shared_ptr<PhotoatomicReaction>& total_forward_reaction )
 {
   // Extract the total forward cross section
   Teuchos::ArrayRCP<double> cross_section;
+  
+  std::string model_name =
+    convertIncoherentAdjointModelTypeToString( incoherent_adjoint_model );
 
-  ThisType::sliceCrossSection( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
-                               raw_adjoint_photoatom_data.getWallerHartreeTotalCrossSection(),
-                               energy_grid[energy_grid.size()-1],
-                               cross_section );
+  // Use Waller-Hartree data
+  if( model_name.find( "Impulse" ) >= model_name.size() )
+  {
+    ThisType::sliceCrossSection(
+                raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
+                raw_adjoint_photoatom_data.getWallerHartreeTotalCrossSection(),
+                energy_grid[energy_grid.size()-1],
+                cross_section );
+  }
+  // Use impulse approx data
+  else
+  {
+    ThisType::sliceCrossSection(
+                raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
+                raw_adjoint_photoatom_data.getImpulseApproxTotalCrossSection(),
+                energy_grid[energy_grid.size()-1],
+                cross_section );
+  }
 
   // Create the coherent adjoint reaction
   total_forward_reaction.reset(
