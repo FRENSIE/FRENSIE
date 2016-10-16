@@ -127,14 +127,14 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomCore, getLineEnergyReactions )
     *(me_line_energy_reactions.find( MonteCarlo::PAIR_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION )->second );
 
   TEST_FLOATING_EQUALITY( pp_reaction.getCrossSection( Utility::PhysicalConstants::electron_rest_mass_energy ),
-                          7.36968106381629173,
+                          14.739362127632583,
                           1e-12 );
 
   const MonteCarlo::AdjointPhotoatomicReaction& tp_reaction =
     *(me_line_energy_reactions.find( MonteCarlo::TRIPLET_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION )->second );
   
   TEST_FLOATING_EQUALITY( tp_reaction.getCrossSection( Utility::PhysicalConstants::electron_rest_mass_energy ),
-                          0.311089687386319702,
+                          0.6221793747726394,
                           1e-12 );
 }
 
