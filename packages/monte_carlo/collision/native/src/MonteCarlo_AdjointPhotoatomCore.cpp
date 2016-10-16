@@ -115,7 +115,7 @@ AdjointPhotoatomCore& AdjointPhotoatomCore::operator=(
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
   // Make sure the grid searcher is valid
-  testPrecondition( !d_grid_searcher.is_null() );
+  testPrecondition( !instance.d_grid_searcher.is_null() );
 
   // Avoid self-assignment
   if( this != &instance )

@@ -17,6 +17,9 @@
 namespace MonteCarlo{
 
 // Create the pair production distribution
+/*! \details The cross section will be multiplied by two to account for the
+ * two annihilation photons that are created in the forward reaction.
+ */
 void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProductionDistribution(
           const Data::AdjointElectronPhotonRelaxationDataContainer&
           raw_adjoint_photoatom_data,
@@ -47,6 +50,10 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProdu
        max_energy,
        cross_section_value );
 
+  // Multiply the cross section by 2 to account for the two annihiliation
+  // photons
+  cross_section_value *= 2.0;
+
   // Construct the scattering distribution
   pair_production_distribution.reset(
             new LineEnergyAdjointPhotonScatteringDistribution(
@@ -56,6 +63,9 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProdu
 }
 
 // Create the triplet production distribution
+/*! \details The cross section will be multiplied by two to account for the
+ * two annihilation photons that are created in the forward reaction.
+ */
 void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletProductionDistribution(
           const Data::AdjointElectronPhotonRelaxationDataContainer&
           raw_adjoint_photoatom_data,
@@ -85,6 +95,10 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletPr
        raw_adjoint_photoatom_data.getAdjointTripletProductionEnergyDistributionNormConstant(),
        max_energy,
        cross_section_value );
+
+  // Multiply the cross section by 2 to account for the two annihiliation
+  // photons
+  cross_section_value *= 2.0;
 
   // Construct the scattering distribution
   triplet_production_distribution.reset(

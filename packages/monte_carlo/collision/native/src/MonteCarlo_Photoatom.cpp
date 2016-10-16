@@ -313,7 +313,16 @@ void Photoatom::collideSurvivalBias( PhotonState& photon,
 		     bank );
     }
     else
+    {
+      this->sampleAbsorptionReaction(
+                     Utility::RandomNumberGenerator::getRandomNumber<double>()*
+		     absorption_cross_section,
+		     energy_grid_bin,
+		     photon,
+		     bank );
+                                     
       photon.setAsGone();
+    }
   }
 }
 

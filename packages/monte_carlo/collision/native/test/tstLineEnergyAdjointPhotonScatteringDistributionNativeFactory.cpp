@@ -55,7 +55,7 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributioNativeFactory,
   TEST_EQUALITY_CONST( distribution->getMinOutgoingEnergy(),
                        2*Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_EQUALITY_CONST( distribution->getMaxOutgoingEnergy(), 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section_value, 7.36968106381629173, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section_value, 14.739362127632583, 1e-15 );
 
   // Create a distribution with max energy = 1.03 MeV
   MonteCarlo::LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProductionDistribution(
@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributioNativeFactory,
   TEST_EQUALITY_CONST( distribution->getMinOutgoingEnergy(),
                        2*Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_EQUALITY_CONST( distribution->getMaxOutgoingEnergy(), 1.03 );
-  TEST_FLOATING_EQUALITY( cross_section_value, 2.40772590771023368e-10, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section_value, 4.815451815420467e-10, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( distribution->getMinOutgoingEnergy(),
                        4*Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_EQUALITY_CONST( distribution->getMaxOutgoingEnergy(), 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section_value, 0.311089687386319702, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section_value, 0.6221793747726394, 1e-15 );
 
   // Create a distribution with max energy = 2.05 MeV
   MonteCarlo::LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletProductionDistribution(
@@ -114,7 +114,7 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( distribution->getMinOutgoingEnergy(),
                        4*Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_EQUALITY_CONST( distribution->getMaxOutgoingEnergy(), 2.05 );
-  TEST_FLOATING_EQUALITY( cross_section_value, 6.06194175009501813e-11, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section_value, 1.2123883500190036e-10, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//

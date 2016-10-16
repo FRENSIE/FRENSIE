@@ -73,6 +73,18 @@ const std::string& AdjointPhotoatom::getAtomName() const
   return d_name;
 }
 
+// Return the atomic number
+unsigned AdjointPhotoatom::getAtomicNumber() const
+{
+  return d_atomic_number;
+}
+
+// Return the atomic weight
+double AdjointPhotoatom::getAtomicWeight() const
+{
+  return d_atomic_weight;
+}
+
 // Check if the energy corresponds to a line energy reaction
 bool AdjointPhotoatom::doesEnergyHaveLineEnergyReaction(
                                                     const double energy ) const
@@ -243,7 +255,7 @@ double AdjointPhotoatom::getNuclearAdjointWeightFactor(
  * In general, you should check if there are line energy reactions
  * associated with the energy of interest before calling this method. If
  * no line energy reactions are associated with the energy of interest the
- * weight factor will simply be zero.
+ * weight factor will simply be zero. 
  */
 double AdjointPhotoatom::getAdjointLineEnergyWeightFactor(
                                                     const double energy ) const
@@ -255,7 +267,7 @@ double AdjointPhotoatom::getAdjointLineEnergyWeightFactor(
   double weight_factor;
 
   double total_forward_cross_section =
-    this->getNuclearTotalForwardCrossSection( energy );
+    this->getTotalForwardCrossSection( energy );
 
   if( total_forward_cross_section > 0.0 )
   {
@@ -476,16 +488,28 @@ void AdjointPhotoatom::collideSurvivalBias( AdjointPhotonState& adjoint_photon,
 		     bank );
 
     adjoint_photon_copy.multiplyWeight( 1.0 - survival_prob );
-    
-    this->sampleAbsorptionReaction(
+
+    if( absorption_cross_section > 0.0 )
+    {
+      this->sampleAbsorptionReaction(
 		     Utility::RandomNumberGenerator::getRandomNumber<double>()*
 		     absorption_cross_section,
 		     energy_grid_bin,
 		     adjoint_photon_copy,
 		     bank );
+    }
   }
   else
+  {
+    this->sampleAbsorptionReaction(
+                     Utility::RandomNumberGenerator::getRandomNumber<double>()*
+		     absorption_cross_section,
+		     energy_grid_bin,
+		     adjoint_photon,
+		     bank );
+    
     adjoint_photon.setAsGone();
+  }
 }
 
 // Collide with an adjoint photon at a line energy
@@ -557,7 +581,7 @@ void AdjointPhotoatom::sampleScatteringReaction(
   double partial_cross_section = 0.0;
 
   ConstReactionMap::const_iterator adjoint_photoatomic_reaction =
-    d_core.getScatteringReactions().end();
+    d_core.getScatteringReactions().begin();
 
   while( adjoint_photoatomic_reaction != d_core.getScatteringReactions().end() )
   {
@@ -565,10 +589,10 @@ void AdjointPhotoatom::sampleScatteringReaction(
       adjoint_photoatomic_reaction->second->getCrossSection(
                                                     adjoint_photon.getEnergy(),
                                                     energy_grid_bin );
-
+    
     if( scaled_random_number < partial_cross_section )
       break;
-
+    
     ++adjoint_photoatomic_reaction;
   }
 
@@ -576,14 +600,13 @@ void AdjointPhotoatom::sampleScatteringReaction(
   testPostcondition( adjoint_photoatomic_reaction !=
                      d_core.getScatteringReactions().end() );
 
-
   // Undergo the selected reaction
   Data::SubshellType subshell_vacancy;
 
   adjoint_photoatomic_reaction->second->react( adjoint_photon,
                                                bank,
                                                subshell_vacancy );
-
+  
   // Note: The subshell is currently unused with adjoint reactions
 }
 

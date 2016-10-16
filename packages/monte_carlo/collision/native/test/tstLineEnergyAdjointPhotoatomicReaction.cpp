@@ -65,7 +65,7 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotoatomicReaction, getCrossSection )
 {
   TEST_EQUALITY_CONST( reaction->getCrossSection( 0.5 ), 0.0 );
   TEST_FLOATING_EQUALITY( reaction->getCrossSection( Utility::PhysicalConstants::electron_rest_mass_energy ),
-                          7.36968106381629173,
+                          14.739362127632583,
                           1e-15 );
   TEST_EQUALITY_CONST( reaction->getCrossSection( 0.52 ), 0.0 );
 }
@@ -77,7 +77,7 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotoatomicReaction,
 {
   TEST_EQUALITY_CONST( reaction->getCrossSection( 0.5, 0 ), 0.0 );
   TEST_FLOATING_EQUALITY( reaction->getCrossSection( Utility::PhysicalConstants::electron_rest_mass_energy, 0 ),
-                          7.36968106381629173,
+                          14.739362127632583,
                           1e-15 );
   TEST_EQUALITY_CONST( reaction->getCrossSection( 0.52, 0 ), 0.0 );
 }
