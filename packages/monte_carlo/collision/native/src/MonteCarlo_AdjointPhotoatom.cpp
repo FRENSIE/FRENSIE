@@ -313,7 +313,7 @@ double AdjointPhotoatom::getSurvivalProbability( const double energy ) const
   if( total_cross_section > 0.0 )
   {
     survival_prob = 1.0 -
-      this->getAbsorptionCrossSection( energy );
+      this->getAbsorptionCrossSection( energy )/total_cross_section;
   }
   else
     survival_prob = 1.0;
@@ -341,7 +341,8 @@ double AdjointPhotoatom::getAtomicSurvivalProbability(
 
   if( total_cross_section > 0.0 )
   {
-    survival_prob = 1.0 - this->getAtomicAbsorptionCrossSection( energy );
+    survival_prob = 1.0 -
+      this->getAtomicAbsorptionCrossSection( energy )/total_cross_section;
   }
   else
     survival_prob = 1.0;
@@ -369,7 +370,8 @@ double AdjointPhotoatom::getNuclearSurvivalProbability(
 
   if( total_cross_section > 0.0 )
   {
-    survival_prob = 1.0 - this->getNuclearAbsorptionCrossSection( energy );
+    survival_prob = 1.0 -
+      this->getNuclearAbsorptionCrossSection( energy )/total_cross_section;
   }
   else
     survival_prob = 1.0;
@@ -518,7 +520,7 @@ void AdjointPhotoatom::collideAtLineEnergy( AdjointPhotonState& adjoint_photon,
 {
   // Make sure the particle is a probe
   testPrecondition( adjoint_photon.isProbe() );
-  // Make sure there are line energy reactions at the particles energy
+  // Make sure there are line energy reactions at the particle's energy
   testPrecondition( d_core.getLineEnergyReactions().find( adjoint_photon.getEnergy() ) !=
                     d_core.getLineEnergyReactions().end() );
 

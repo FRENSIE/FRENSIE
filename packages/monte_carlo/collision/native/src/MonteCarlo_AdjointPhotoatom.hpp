@@ -224,7 +224,7 @@ inline unsigned AdjointPhotoatom::getAtomicMassNumber() const
 }
 
 // Return the nuclear isomer number
-unsigned AdjointPhotoatom::getIsomerNumber() const
+inline unsigned AdjointPhotoatom::getIsomerNumber() const
 {
   return 0u;
 }
@@ -234,7 +234,7 @@ unsigned AdjointPhotoatom::getIsomerNumber() const
  * it my be important for photonuclear reactions where Doppler broadening of
  * cross sections may be necessary.
  */
-double AdjointPhotoatom::getTemperature() const
+inline double AdjointPhotoatom::getTemperature() const
 {
   return 0.0;
 }
