@@ -202,7 +202,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
 			  const bool use_atomic_relaxation_data )
 {
   *d_os_message << "Loading native photoatomic cross section table "
-	    << photoatom_alias << " ... ";
+                << photoatom_alias << " ... " << std::flush;
 
   // Check if the table has already been loaded
   if( d_photoatomic_table_name_map.find( native_file_path ) ==
