@@ -12,6 +12,7 @@
 #include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -30,9 +31,15 @@ AdjointPhotoatomFactory::AdjointPhotoatomFactory(
               std::ostream* os_message )
   : d_os_message( os_message )
 {
+  // Make sure the user critical line energies are valid
+  testPrecondition( (user_critical_line_energies.size() > 0 ?
+                     Utility::Sort::isSortedAscending(
+                                         user_critical_line_energies.begin(),
+                                         user_critical_line_energies.end() ):
+                     true) );
   // Make sure the max energy is valid
   testPrecondition( max_energy > 0.0 );
-  testPrecondition( max_energy >= user_critical_line_energies.back() );
+  testPrecondition( (user_critical_line_energies.size() > 0 ? max_energy >= user_critical_line_energies.back(): true) );
   // Make sure the hash grid bins are valid
   testPrecondition( hash_grid_bins > 0u );
   // Make sure the message output stream is valid

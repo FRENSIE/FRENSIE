@@ -563,6 +563,13 @@ TARGET_LINK_LIBRARIES(tstAdjointPhotoatomNativeFactory monte_carlo_collision_nat
 ADD_TEST(AdjointPhotoatomNativeFactory_test tstAdjointPhotoatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
 SET_PROPERTY(TEST AdjointPhotoatomNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
 
+ADD_EXECUTABLE(tstAdjointPhotoatomFactory
+  tstAdjointPhotoatomFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotoatomFactory monte_carlo_collision_native)
+ADD_TEST(AdjointPhotoatomFactory_test tstAdjointPhotoatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST AdjointPhotoatomFactory_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+
 ##---------------------------------------------------------------------------##
 ##      electron class tests                                                  
 ##---------------------------------------------------------------------------##

@@ -180,6 +180,9 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomCore, copy_constructor )
 {
   MonteCarlo::AdjointPhotoatomCore core_copy( *adjoint_photoatom_core );
 
+  TEST_EQUALITY_CONST( adjoint_photoatom_core->getCriticalLineEnergies(),
+                       core_copy.getCriticalLineEnergies() );
+
   const MonteCarlo::PhotoatomicReaction& total_forward_reaction =
     core_copy.getTotalForwardReaction();
 
