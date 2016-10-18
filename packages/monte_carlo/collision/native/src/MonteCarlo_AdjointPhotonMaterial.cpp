@@ -247,7 +247,7 @@ double AdjointPhotonMaterial::getAdjointLineEnergyWeightFactor(
     weight_factor = 1.0;
 
   // Make sure the weight factor is valid
-  testPrecondition( weight_factor > 0.0 );
+  testPostcondition( weight_factor >= 0.0 );
 
   return weight_factor;
 }
