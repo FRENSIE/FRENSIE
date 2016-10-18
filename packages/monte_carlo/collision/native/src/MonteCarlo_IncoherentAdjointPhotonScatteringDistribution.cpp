@@ -55,6 +55,13 @@ void IncoherentAdjointPhotonScatteringDistribution::setCriticalLineEnergies(
   d_critical_line_energies = critical_line_energies;
 }
 
+// Get the critical line energies
+const Teuchos::ArrayRCP<const double>&
+IncoherentAdjointPhotonScatteringDistribution::getCriticalLineEnergies() const
+{
+  return d_critical_line_energies;
+}
+
 // Set the max energy
 void IncoherentAdjointPhotonScatteringDistribution::setMaxEnergy(
 						      const double max_energy )

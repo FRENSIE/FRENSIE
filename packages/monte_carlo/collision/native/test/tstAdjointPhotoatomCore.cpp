@@ -139,6 +139,19 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomCore, getLineEnergyReactions )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the critical line energies can be returned
+TEUCHOS_UNIT_TEST( AdjointPhotoatomCore, getCriticalLineEnergies )
+{
+  const Teuchos::ArrayRCP<const double>& line_energies =
+    adjoint_photoatom_core->getCriticalLineEnergies();
+
+  TEST_EQUALITY_CONST( line_energies.size(), 2 );
+  TEST_EQUALITY_CONST( line_energies[0],
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  TEST_EQUALITY_CONST( line_energies[1], 20.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the grid searcher can be returned
 TEUCHOS_UNIT_TEST( AdjointPhotoatomCore, getGridSearcher )
 {
@@ -292,12 +305,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the scattering reactions
   MonteCarlo::AdjointPhotoatomCore::ReactionMap scattering_reactions;
 
+  Teuchos::ArrayRCP<double> critical_line_energies( 2 );
+  critical_line_energies[0] =
+    Utility::PhysicalConstants::electron_rest_mass_energy;
+  critical_line_energies[1] = 20.0;
+
   {
-    Teuchos::ArrayRCP<double> critical_line_energies( 2 );
-    critical_line_energies[0] =
-      Utility::PhysicalConstants::electron_rest_mass_energy;
-    critical_line_energies[1] = 20.0;
-    
     std::vector<std::shared_ptr<MonteCarlo::AdjointPhotoatomicReaction> >
       incoherent_reactions;
 
@@ -357,6 +370,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   adjoint_photoatom_core.reset(
            new MonteCarlo::AdjointPhotoatomCore(
                                grid_searcher,
+                               critical_line_energies,
                                total_forward_reaction,
                                scattering_reactions,
                                MonteCarlo::AdjointPhotoatomCore::ReactionMap(),

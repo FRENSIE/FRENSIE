@@ -62,6 +62,9 @@ public:
   void setCriticalLineEnergies(
                const Teuchos::ArrayRCP<const double>& critical_line_energies );
 
+  //! Get the critical line energies
+  const Teuchos::ArrayRCP<const double>& getCriticalLineEnergies() const;
+
   //! Return the number of adjoint photons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 

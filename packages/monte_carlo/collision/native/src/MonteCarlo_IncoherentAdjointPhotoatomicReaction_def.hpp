@@ -89,6 +89,14 @@ void IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>:
   d_scattering_distribution->setCriticalLineEnergies( critical_line_energies );
 }
 
+// Get the critical line energies
+template<typename InterpPolicy, bool processed_cross_section>
+const Teuchos::ArrayRCP<const double>&
+IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::getCriticalLineEnergies() const
+{
+  return d_scattering_distribution->getCriticalLineEnergies();
+}
+
 // Return the number of adjoint photons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const

@@ -17,6 +17,7 @@
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatomCore.hpp"
@@ -53,6 +54,8 @@ public:
                     const double atomic_weight,
                     const Teuchos::RCP<const Utility::HashBasedGridSearcher>&
                     grid_searcher,
+                    const Teuchos::ArrayRCP<const double>&
+                    critical_line_energies,
                     const std::shared_ptr<const PhotoatomicReaction>&
                     total_forward_reaction,
                     const ReactionMap& scattering_reactions,

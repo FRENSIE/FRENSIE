@@ -29,6 +29,8 @@
 std::shared_ptr<MonteCarlo::AdjointPhotoatom> adjoint_photoatom;
 
 //---------------------------------------------------------------------------//
+// Tests.
+//---------------------------------------------------------------------------//
 // Check that the atom name can be returned
 TEUCHOS_UNIT_TEST( AdjointPhotoatom, getAtomName )
 {
@@ -88,6 +90,8 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatom, getCore )
 
   TEST_EQUALITY_CONST( core.getScatteringReactions().size(), 2 );
   TEST_EQUALITY_CONST( core.getLineEnergyReactions().size(), 1 );
+
+  TEST_EQUALITY_CONST( core.getCriticalLineEnergies().size(), 2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -686,12 +690,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the scattering reactions
   MonteCarlo::AdjointPhotoatom::ReactionMap scattering_reactions;
 
+  Teuchos::ArrayRCP<double> critical_line_energies( 2 );
+  critical_line_energies[0] =
+    Utility::PhysicalConstants::electron_rest_mass_energy;
+  critical_line_energies[1] = 20.0;
+  
   {
-    Teuchos::ArrayRCP<double> critical_line_energies( 2 );
-    critical_line_energies[0] =
-      Utility::PhysicalConstants::electron_rest_mass_energy;
-    critical_line_energies[1] = 20.0;
-    
     std::vector<std::shared_ptr<MonteCarlo::AdjointPhotoatomicReaction> >
       incoherent_reactions;
 
@@ -754,6 +758,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                    data_container.getAtomicNumber(),
                                    data_container.getAtomicNumber(),
                                    grid_searcher,
+                                   critical_line_energies,
                                    total_forward_reaction,
                                    scattering_reactions,
                                    MonteCarlo::AdjointPhotoatom::ReactionMap(),

@@ -14,6 +14,7 @@
 #include "MonteCarlo_AdjointPhotoatomNativeFactory.hpp"
 #include "MonteCarlo_AdjointPhotoatomicReactionNativeFactory.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
+#include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -28,9 +29,15 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
                     const IncoherentAdjointModelType incoherent_adjoint_model,
                     const Teuchos::Array<double>& user_critical_line_energies )
 {
+  // Make sure the user critical line energies are valid
+  testPrecondition( (user_critical_line_energies.size() > 0 ?
+                     Utility::Sort::isSortedAscending(
+                                         user_critical_line_energies.begin(),
+                                         user_critical_line_energies.end() ):
+                     true) );
   // Make sure the max energy is valid
   testPrecondition( max_energy > 0.0 );
-  testPrecondition( max_energy >= user_critical_line_energies.back() );
+  testPrecondition( (user_critical_line_energies.size() > 0 ? max_energy >= user_critical_line_energies.back(): true) );
   // Make sure the hash grid bins are valid
   testPrecondition( hash_grid_bins > 0u );
 
@@ -137,10 +144,11 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
     me_line_energy_reactions[TRIPLET_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION] =
       reaction_pointer;
   }
-
+  
   // Create the adjoint photoatom core
   adjoint_photoatom_core.reset( new AdjointPhotoatomCore(
                                            grid_searcher,
+                                           critical_line_energies,
                                            total_forward_reaction,
                                            scattering_reactions,
                                            AdjointPhotoatomCore::ReactionMap(),
@@ -161,9 +169,15 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatom(
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
+  // Make sure the user critical line energies are valid
+  testPrecondition( (user_critical_line_energies.size() > 0 ?
+                     Utility::Sort::isSortedAscending(
+                                         user_critical_line_energies.begin(),
+                                         user_critical_line_energies.end() ):
+                     true) );
   // Make sure the max energy is valid
   testPrecondition( max_energy > 0.0 );
-  testPrecondition( max_energy >= user_critical_line_energies.back() );
+  testPrecondition( (user_critical_line_energies.size() > 0 ? max_energy >= user_critical_line_energies.back(): true) );
   // Make sure the hash grid bins are valid
   testPrecondition( hash_grid_bins > 0u );
 
@@ -212,7 +226,7 @@ Teuchos::ArrayRCP<const double> AdjointPhotoatomNativeFactory::addCriticalLineEn
                  critical_line_energies.end(),
                  Utility::PhysicalConstants::electron_rest_mass_energy );
 
-    if( required_line_energy != critical_line_energies.end() )
+    if( required_line_energy == critical_line_energies.end() )
     {
       critical_line_energies.push_back( Utility::PhysicalConstants::electron_rest_mass_energy );
     }
@@ -223,7 +237,7 @@ Teuchos::ArrayRCP<const double> AdjointPhotoatomNativeFactory::addCriticalLineEn
   Teuchos::ArrayRCP<double> critical_line_energies_copy;
   critical_line_energies_copy.assign( critical_line_energies.begin(),
                                       critical_line_energies.end() );
-
+  
   return critical_line_energies_copy;
 }
   

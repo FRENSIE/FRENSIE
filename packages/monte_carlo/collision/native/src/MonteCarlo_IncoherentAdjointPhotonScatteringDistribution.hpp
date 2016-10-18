@@ -45,6 +45,9 @@ public:
   void setCriticalLineEnergies(
 	       const Teuchos::ArrayRCP<const double>& critical_line_energies );
 
+  //! Get the critical line energies
+  const Teuchos::ArrayRCP<const double>& getCriticalLineEnergies() const;
+                               
   //! Set the max energy
   void setMaxEnergy( const double max_energy );
 

@@ -68,6 +68,7 @@ public:
   //! Constructor
   AdjointPhotoatomCore(
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const Teuchos::ArrayRCP<const double>& critical_line_energies,
       const std::shared_ptr<const PhotoatomicReaction>& total_forward_reaction,
       const ReactionMap& scattering_reactions,
       const ReactionMap& absorption_reactions,
@@ -95,6 +96,9 @@ public:
   //! Return the line energy reactions
   const ConstLineEnergyReactionMap& getLineEnergyReactions() const;
 
+  //! Return the critical line energies
+  const Teuchos::ArrayRCP<const double>& getCriticalLineEnergies() const;
+
   //! Return the hash-based grid searcher
   const Utility::HashBasedGridSearcher& getGridSearcher() const;
 
@@ -102,6 +106,12 @@ public:
   bool hasSharedEnergyGrid() const;
 
 private:
+
+  // Check if the line energy reactions are valid
+  template<typename Map>
+  bool areLineEnergyReactionsValid(
+         const Map& line_energy_reactions,
+         const Teuchos::ArrayRCP<const double>& critical_line_energies ) const;
 
   // The total forward reactions
   std::shared_ptr<const PhotoatomicReaction> d_total_forward_reaction;
@@ -114,6 +124,9 @@ private:
 
   // The line energy reactions
   ConstLineEnergyReactionMap d_line_energy_reactions;
+
+  // The critical line energies
+  Teuchos::ArrayRCP<const double> d_critical_line_energies;
 
   // The hash-based grid searcher
   Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
@@ -143,10 +156,42 @@ inline auto AdjointPhotoatomCore::getLineEnergyReactions() const -> const ConstL
   return d_line_energy_reactions;
 }
 
+// Return the critical line energies
+inline const Teuchos::ArrayRCP<const double>&
+AdjointPhotoatomCore::getCriticalLineEnergies() const
+{
+  return d_critical_line_energies;
+}
+
 // Return the hash-based grid searcher
 inline const Utility::HashBasedGridSearcher& AdjointPhotoatomCore::getGridSearcher() const
 {
   return *d_grid_searcher;
+}
+
+// Check if the line energy reactions are valid
+template<typename Map>
+bool AdjointPhotoatomCore::areLineEnergyReactionsValid(
+          const Map& line_energy_reactions,
+          const Teuchos::ArrayRCP<const double>& critical_line_energies ) const
+{
+  typename Map::const_iterator line_energies =
+    line_energy_reactions.begin();
+
+  // To be valid a line energy reaction must have an associated critical line
+  // energy. Without the critical line energy the line energy reaction will
+  // never occur.
+  while( line_energies != line_energy_reactions.end() )
+  {
+    if( !std::binary_search( critical_line_energies.begin(),
+                             critical_line_energies.end(),
+                             line_energies->first ) )
+      return false;
+
+    ++line_energies;
+  }
+
+  return true;
 }
   
 } // end MonteCarlo namespace

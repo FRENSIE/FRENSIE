@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <algorithm>
+
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatomCore.hpp"
 #include "Utility_ContractException.hpp"
@@ -18,12 +21,21 @@ AdjointPhotoatomCore::AdjointPhotoatomCore()
     d_scattering_reactions(),
     d_absorption_reactions(),
     d_line_energy_reactions(),
+    d_critical_line_energies(),
     d_grid_searcher()
 { /* ... */ }
 
 // Constructor
+/*! \details Care must be taken when setting the critical line energies,
+ * scattering reactions and line energy reactions. The critical line energies
+ * must correspond to the critical line energies that are being used by the
+ * incoherent scattering reactions. In addition, every line energy reaction
+ * must have a corresponding critical line energy. Without a critical line 
+ * energy the line energy reaction will never occur.
+ */
 AdjointPhotoatomCore::AdjointPhotoatomCore(
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const Teuchos::ArrayRCP<const double>& critical_line_energies,
       const std::shared_ptr<const PhotoatomicReaction>& total_forward_reaction,
       const ReactionMap& scattering_reactions,
       const ReactionMap& absorption_reactions,
@@ -32,6 +44,7 @@ AdjointPhotoatomCore::AdjointPhotoatomCore(
     d_scattering_reactions(),
     d_absorption_reactions(),
     d_line_energy_reactions(),
+    d_critical_line_energies( critical_line_energies ),
     d_grid_searcher( grid_searcher )
 {
   // Make sure the total forward reaction is valid
@@ -39,6 +52,10 @@ AdjointPhotoatomCore::AdjointPhotoatomCore(
   // Make sure the scattering reaction map is valid
   testPrecondition( scattering_reactions.size() +
                     absorption_reactions.size() > 0 );
+  // Make sure the line energy reaction map is valid
+  testPrecondition( this->areLineEnergyReactionsValid(
+                                                    line_energy_reactions,
+                                                    critical_line_energies ) );
   // Make sure the grid searcher is valid
   testPrecondition( !d_grid_searcher.is_null() );
 
@@ -94,6 +111,7 @@ AdjointPhotoatomCore::AdjointPhotoatomCore(
     d_scattering_reactions( instance.d_scattering_reactions ),
     d_absorption_reactions( instance.d_absorption_reactions ),
     d_line_energy_reactions( instance.d_line_energy_reactions ),
+    d_critical_line_energies( instance.d_critical_line_energies ),
     d_grid_searcher( instance.d_grid_searcher )
 {
   // Make sure the total forward reaction is valid
@@ -101,8 +119,12 @@ AdjointPhotoatomCore::AdjointPhotoatomCore(
   // Make sure the scattering reaction map is valid
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
+  // Make sure the line energy reaction map is valid
+  testPrecondition( this->areLineEnergyReactionsValid(
+                                         instance.d_line_energy_reactions,
+                                         instance.d_critical_line_energies ) );
   // Make sure the grid searcher is valid
-  testPrecondition( !d_grid_searcher.is_null() );
+  testPrecondition( !instance.d_grid_searcher.is_null() );
 }
 
 // Assignment operator
@@ -114,6 +136,10 @@ AdjointPhotoatomCore& AdjointPhotoatomCore::operator=(
   // Make sure the scattering reaction map is valid
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
+  // Make sure the line energy reaction map is valid
+  testPrecondition( this->areLineEnergyReactionsValid(
+                                         instance.d_line_energy_reactions,
+                                         instance.d_critical_line_energies ) );
   // Make sure the grid searcher is valid
   testPrecondition( !instance.d_grid_searcher.is_null() );
 
@@ -124,6 +150,7 @@ AdjointPhotoatomCore& AdjointPhotoatomCore::operator=(
     d_scattering_reactions = instance.d_scattering_reactions;
     d_absorption_reactions = instance.d_absorption_reactions;
     d_line_energy_reactions = instance.d_line_energy_reactions;
+    d_critical_line_energies = instance.d_critical_line_energies;
     d_grid_searcher = instance.d_grid_searcher;
   }
 

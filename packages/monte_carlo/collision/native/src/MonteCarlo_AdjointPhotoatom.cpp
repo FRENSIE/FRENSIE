@@ -19,6 +19,8 @@ AdjointPhotoatom::AdjointPhotoatom(
                       const double atomic_weight,
                       const Teuchos::RCP<const Utility::HashBasedGridSearcher>&
                       grid_searcher,
+                      const Teuchos::ArrayRCP<const double>&
+                      critical_line_energies,
                       const std::shared_ptr<const PhotoatomicReaction>&
                       total_forward_reaction,
                       const ReactionMap& scattering_reactions,
@@ -39,6 +41,7 @@ AdjointPhotoatom::AdjointPhotoatom(
 
   // Populate the core
   d_core = AdjointPhotoatomCore( grid_searcher,
+                                 critical_line_energies,
                                  total_forward_reaction,
                                  scattering_reactions,
                                  absorption_reactions,
