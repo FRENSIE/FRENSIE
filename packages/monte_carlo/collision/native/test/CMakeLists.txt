@@ -222,6 +222,28 @@ ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_direc
 SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS monte_carlo_collision_native neutron)
 
 ##----------------------------------------------------------------------------##
+##      atomic relaxation class tests                                         ##
+##----------------------------------------------------------------------------##
+
+ADD_EXECUTABLE(tstDetailedSubshellRelaxationModel
+  tstDetailedSubshellRelaxationModel.cpp)
+TARGET_LINK_LIBRARIES(tstDetailedSubshellRelaxationModel monte_carlo_collision_native)
+ADD_TEST(DetailedSubshellRelaxationModel_test tstDetailedSubshellRelaxationModel --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+SET_PROPERTY(TEST DetailedSubshellRelaxationModel_test PROPERTY LABELS monte_carlo_collision_native relaxation)
+
+ADD_EXECUTABLE(tstDetailedAtomicRelaxationModel
+  tstDetailedAtomicRelaxationModel.cpp)
+TARGET_LINK_LIBRARIES(tstDetailedAtomicRelaxationModel monte_carlo_collision_native)
+ADD_TEST(DetailedAtomicRelaxationModel_test tstDetailedAtomicRelaxationModel --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+SET_PROPERTY(TEST DetailedAtomicRelaxationModel_test PROPERTY LABELS monte_carlo_collision_native relaxation)
+
+ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
+  tstAtomicRelaxationModelFactory.cpp)
+TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
+ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+SET_PROPERTY(TEST AtomicRelaxationModelFactory_test PROPERTY LABELS monte_carlo_collision_native relaxation)
+
+##----------------------------------------------------------------------------##
 ##      photon class tests                                                    ##
 ##----------------------------------------------------------------------------##
 
@@ -829,28 +851,6 @@ ADD_EXECUTABLE(tstElectronMaterial tstElectronMaterial.cpp)
 TARGET_LINK_LIBRARIES(tstElectronMaterial monte_carlo_collision_native)
 ADD_TEST(ElectronMaterial_test tstElectronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST ElectronMaterial_test PROPERTY LABELS monte_carlo_collision_native electron)
-
-##----------------------------------------------------------------------------##
-##      atomic relaxation class tests                                         ##
-##----------------------------------------------------------------------------##
-
-ADD_EXECUTABLE(tstDetailedSubshellRelaxationModel
-  tstDetailedSubshellRelaxationModel.cpp)
-TARGET_LINK_LIBRARIES(tstDetailedSubshellRelaxationModel monte_carlo_collision_native)
-ADD_TEST(DetailedSubshellRelaxationModel_test tstDetailedSubshellRelaxationModel --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST DetailedSubshellRelaxationModel_test PROPERTY LABELS monte_carlo_collision_native relaxation)
-
-ADD_EXECUTABLE(tstDetailedAtomicRelaxationModel
-  tstDetailedAtomicRelaxationModel.cpp)
-TARGET_LINK_LIBRARIES(tstDetailedAtomicRelaxationModel monte_carlo_collision_native)
-ADD_TEST(DetailedAtomicRelaxationModel_test tstDetailedAtomicRelaxationModel --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST DetailedAtomicRelaxationModel_test PROPERTY LABELS monte_carlo_collision_native relaxation)
-
-ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
-  tstAtomicRelaxationModelFactory.cpp)
-TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
-ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST AtomicRelaxationModelFactory_test PROPERTY LABELS monte_carlo_collision_native relaxation)
 
 ##----------------------------------------------------------------------------##
 ##      collision handler class tests                                         ##
