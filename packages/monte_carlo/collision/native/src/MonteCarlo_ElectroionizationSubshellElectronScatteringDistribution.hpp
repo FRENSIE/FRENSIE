@@ -33,7 +33,7 @@ public:
   typedef MonteCarlo::TwoDDistribution ElectroionizationSubshellDistribution;
 
   //! Typedef for interpolation policy
-  typedef Utility::LinLog InterpolationPolicy;
+  typedef Utility::LinLin InterpolationPolicy;
 
   //! Constructor
   ElectroionizationSubshellElectronScatteringDistribution(

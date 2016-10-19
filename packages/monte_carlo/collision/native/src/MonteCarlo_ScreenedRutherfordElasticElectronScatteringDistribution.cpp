@@ -9,9 +9,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"

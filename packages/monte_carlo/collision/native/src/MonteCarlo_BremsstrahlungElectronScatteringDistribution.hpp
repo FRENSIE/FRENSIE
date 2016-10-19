@@ -36,7 +36,7 @@ public:
   typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
 
   //! Typedef for interpolation policy
-  typedef Utility::LinLog InterpolationPolicy;
+  typedef Utility::LinLin InterpolationPolicy;
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
