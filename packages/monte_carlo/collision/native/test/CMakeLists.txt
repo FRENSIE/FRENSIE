@@ -486,6 +486,17 @@ TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
 ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST PhotonMaterial_test PROPERTY LABELS monte_carlo_collision_native photon)
 
+ADD_EXECUTABLE(tstPhotonCollisionHandler
+  tstPhotonCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhotonCollisionHandler monte_carlo_collision_native)
+ADD_TEST(PhotonCollisionHandler_test tstPhotonCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
+SET_PROPERTY(TEST PhotonCollisionHandler_test PROPERTY LABELS monte_carlo_collision_native photon)
+
+##----------------------------------------------------------------------------##
+##      adjoint photon class tests                                            ##
+##----------------------------------------------------------------------------##
+
 ADD_EXECUTABLE(tstIncoherentAdjointPhotonScatteringDistribution
   tstIncoherentAdjointPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)

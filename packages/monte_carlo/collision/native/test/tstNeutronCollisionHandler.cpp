@@ -214,6 +214,115 @@ TEUCHOS_UNIT_TEST( NeutronCollisionHandler,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the macroscopic reaction cross section in a cell can be
+// retrieved
+TEUCHOS_UNIT_TEST( NeutronCollisionHandler,
+                   getMacroscopicReactionCrossSection )
+{
+  // Neutron reactions
+  MonteCarlo::NeutronState neutron( 0ull );
+  neutron.setEnergy( 1.0e-11 );
+  neutron.setCell( 1 );
+
+  double cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+						   neutron,
+						   MonteCarlo::N__TOTAL_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 703.45055504218, 1e-13 );
+
+  neutron.setEnergy( 2.0e1 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+						   neutron,
+						   MonteCarlo::N__TOTAL_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.28847574157342, 1e-9 );
+
+  neutron.setEnergy( 1.0e-11 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+					       neutron,
+					       MonteCarlo::N__N_ELASTIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 693.47099764974, 1e-13 );
+
+  neutron.setEnergy( 2.0e1 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+					       neutron,
+					       MonteCarlo::N__N_ELASTIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.28845947418338, 1e-13 );
+
+  neutron.setEnergy( 1.0e-11 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+					       neutron,
+					       MonteCarlo::N__GAMMA_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
+
+  neutron.setEnergy( 2.0e1 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+					       neutron,
+					       MonteCarlo::N__GAMMA_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
+
+  neutron.setEnergy( 1.0e-11 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+					       neutron,
+					       MonteCarlo::N__TOTAL_D_PRODUCTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
+
+  neutron.setEnergy( 2.0e1 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+					       neutron,
+					       MonteCarlo::N__TOTAL_D_PRODUCTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
+
+  neutron.setEnergy( 1.0e-11 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+					       neutron,
+					       MonteCarlo::N__DPA );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
+
+  neutron.setEnergy( 2.0e1 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+					       neutron,
+					       MonteCarlo::N__DPA );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.833066682067e-4, 1e-13 );
+
+  neutron.setEnergy( 1.0e-11 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+					       neutron,
+					       MonteCarlo::N__FISSION_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a neutron can collide with the material in a cell
 TEUCHOS_UNIT_TEST( NeutronCollisionHandler, collideWithCellMaterial_analogue )
 {
