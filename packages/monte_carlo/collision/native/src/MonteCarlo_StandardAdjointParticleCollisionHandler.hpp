@@ -43,8 +43,8 @@ public:
 
   //! Collide with the material in a cell
   void collideWithCellMaterial(
-               const typename DerivedHandlerTypeTraits::ParticleType& particle,
-               ParticleBank& bank ) const;
+                     typename DerivedHandlerTypeTraits::ParticleType& particle,
+                     ParticleBank& bank ) const;
 };
   
 } // end MonteCarlo namespace

@@ -33,24 +33,35 @@ double StandardAdjointParticleCollisionHandler<DerivedHandlerTypeTraits>::getMac
 }
 
 // Collide with the material in a cell
+/*! \details Before the collision occurs, the particle's weight will be 
+ * multiplied by the adjoint weight factor. If the particle's energy 
+ * corresponds to a line energy reaction with the material, one of the line
+ * energy reactions defined at the energy will be sampled instead of the
+ * normal (continuous) reactions.
+ */ 
 template<typename DerivedHandlerTypeTraits>
 void StandardAdjointParticleCollisionHandler<DerivedHandlerTypeTraits>::collideWithCellMaterial(
-               const typename DerivedHandlerTypeTraits::ParticleType& particle,
-               ParticleBank& bank ) const
+                     typename DerivedHandlerTypeTraits::ParticleType& particle,
+                     ParticleBank& bank ) const
 {
   // Make sure the cell is not void
   testPrecondition( !this->isCellVoid( particle.getCell() ) );
 
   bool collision_complete = false;
 
+  // Get the cell material
+  const typename DerivedHandlerTypeTraits::MaterialType& material =
+      *this->getMaterial( particle.getCell() );
+
   // Check if a line energy reaction should occur
   if( particle.isProbe() )
   {
-    const typename DerivedHandlerTypeTraits::MaterialType& material =
-      *this->getMaterial( particle.getCell() );
-
-    if( material->doesEnergyHaveLineEnergyReaction( particle.getEnergy() ) )
+    if( material.doesEnergyHaveLineEnergyReaction( particle.getEnergy() ) )
     {
+      // Multiply by the adjoint weight factor for this line energy
+      particle.multiplyWeight(
+             material.getAdjointLineEnergyWeightFactor(particle.getEnergy()) );
+      
       material.collideAtLineEnergy( particle, bank );
 
       collision_complete = true;
@@ -58,7 +69,13 @@ void StandardAdjointParticleCollisionHandler<DerivedHandlerTypeTraits>::collideW
   }
 
   if( !collision_complete )
+  {
+    // Mutliply the particle weight by the adjoint weight factor
+    particle.multiplyWeight(
+                       material.getAdjointWeightFactor(particle.getEnergy()) );
+    
     BaseType::collideWithCellMaterial( particle, bank );
+  }
 }
   
 } // end MonteCarlo namespace
