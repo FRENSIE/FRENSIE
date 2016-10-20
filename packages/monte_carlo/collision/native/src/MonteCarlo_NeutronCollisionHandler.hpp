@@ -46,7 +46,7 @@ public:
   NeutronCollisionHandler( const bool analogue_collisions = true );
 
   //! Destructor
-  ~NeutronCollisionHandler()
+  virtual ~NeutronCollisionHandler()
   { /* ... */ }
 
   //! Get the macroscopic cross section for a specific reaction

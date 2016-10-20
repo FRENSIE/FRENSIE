@@ -13,171 +13,64 @@
 #include <boost/unordered_map.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronMaterial.hpp"
-#include "MonteCarlo_PhotonMaterial.hpp"
-#include "MonteCarlo_AdjointPhotonMaterial.hpp"
-#include "MonteCarlo_ElectronMaterial.hpp"
-#include "MonteCarlo_NeutronState.hpp"
-#include "MonteCarlo_PhotonState.hpp"
-#include "MonteCarlo_AdjointPhotonState.hpp"
-#include "MonteCarlo_ElectronState.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "MonteCarlo_NeutronCollisionHandler.hpp"
+#include "MonteCarlo_PhotonCollisionHandler.hpp"
+#include "MonteCarlo_AdjointPhotonCollisionHandler.hpp"
+#include "MonteCarlo_ElectronCollisionHandler.hpp"
 
 namespace MonteCarlo{
 
-//! The collision handler class
-class CollisionHandler
+/*! The collision handler class
+ * \details The collision handler class has been designed as a mix-in class
+ * so that it is easier to add new events. In addition, the individual
+ * collision handlers are better abstracted and easier to maintain when there
+ * is a handler for each one.
+ */
+class CollisionHandler : public NeutronCollisionHandler,
+                         public PhotonCollisionHandler,
+                         public AdjointPhotonCollisionHandler,
+                         public ElectronCollisionHandler
 {
-
-private:
-
-  // Typedef for cell id neutron material map
-  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-			       Teuchos::RCP<NeutronMaterial> >
-  CellIdNeutronMaterialMap;
-
-  // Typedef for cell id photon material map
-  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-			       Teuchos::RCP<PhotonMaterial> >
-  CellIdPhotonMaterialMap;
-
-  // Typedef for cell id adjoint photon material map
-  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                               Teuchos::RCP<AdjointPhotonMaterial> >
-  CellIdAdjointPhotonMaterialMap;
-
-  // Typedef for cell id electron material map
-  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-			       Teuchos::RCP<ElectronMaterial> >
-  CellIdElectronMaterialMap;
 
 public:
 
-  //! Add a material to the collision handler
-  static void addMaterial(
-	      const Teuchos::RCP<NeutronMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material );
+  //! Constructor
+  CollisionHandler( const bool analogue_collisions = true );
+
+  //! Destructor
+  ~CollisionHandler()
+  { /* ... */ }
 
   //! Add a material to the collision handler
-  static void addMaterial(
-	      const Teuchos::RCP<PhotonMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material );
-
-  //! Add a material to the collision handler
-  static void addMaterial(
-              const Teuchos::RCP<AdjointPhotonMaterial>& material,
-              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-              cells_containing_material );
-
-  //! Add a material to the collision handler
-  static void addMaterial(
+  void addMaterial(
 	      const Teuchos::RCP<NeutronMaterial>& neutron_material,
 	      const Teuchos::RCP<PhotonMaterial>& photon_material,
 	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
 	      cells_containing_material );
 
-  //! Add a material to the collision handler
-  static void addMaterial(
-	      const Teuchos::RCP<ElectronMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material );
+  using NeutronCollisionHandler::addMaterial;
+  using PhotonCollisionHandler::addMaterial;
+  using AdjointPhotonCollisionHandler::addMaterial;
+  using ElectronCollisionHandler::addMaterial;
 
   //! Check if a cell is void
-  static bool isCellVoid(const Geometry::ModuleTraits::InternalCellHandle cell,
-			 const ParticleType particle_type );
+  bool isCellVoid( const Geometry::ModuleTraits::InternalCellHandle cell,
+                   const MonteCarlo::ParticleType particle_type );
 
-  //! Get the neutron material contained in a cell
-  static const Teuchos::RCP<NeutronMaterial>&
-  getCellNeutronMaterial(
-		       const Geometry::ModuleTraits::InternalCellHandle cell );
+  using NeutronCollisionHandler::getMacroscopicTotalCrossSection;
+  using PhotonCollisionHandler::getMacroscopicTotalCrossSection;
+  using AdjointPhotonCollisionHandler::getMacroscopicTotalCrossSection;
+  using ElectronCollisionHandler::getMacroscopicTotalCrossSection;
 
-  //! Get the photon material contained in a cell
-  static const Teuchos::RCP<PhotonMaterial>&
-  getCellPhotonMaterial(
-		       const Geometry::ModuleTraits::InternalCellHandle cell );
+  using NeutronCollisionHandler::getMacroscopicTotalForwardCrossSection;
+  using PhotonCollisionHandler::getMacroscopicTotalForwardCrossSection;
+  using AdjointPhotonCollisionHandler::getMacroscopicTotalForwardCrossSection;
+  using ElectronCollisionHandler::getMacroscopicTotalForwardCrossSection;
 
-  //! Get the adjoint photon material contained in a cell
-  static const Teuchos::RCP<AdjointPhotonMaterial>&
-  getCellAdjointPhotonMaterial(
-                       const Geometry::ModuleTraits::InternalCellHandle cell );
-
-  //! Get the electron material contained in a cell
-  static const Teuchos::RCP<ElectronMaterial>&
-  getCellElectronMaterial(
-		       const Geometry::ModuleTraits::InternalCellHandle cell );
-
-  //! Get the total macroscopic cross section of a material
-  static double getMacroscopicTotalCrossSection( const NeutronState& particle);
-
-  //! Get the total macroscopic cross section of a material
-  static double getMacroscopicTotalCrossSection( const PhotonState& particle );
-
-  //! Get the total macroscopic cross section of a material
-  static double getMacroscopicTotalCrossSection( const AdjointPhotonState& particle );
-
-  //! Get the total macroscopic cross section of a material
-  static double getMacroscopicTotalCrossSection( const ElectronState& particle );
-
-  //! Get the macroscopic cross section for a specific reaction
-  static double getMacroscopicReactionCrossSection(
-					  const NeutronState& particle,
-					  const NuclearReactionType reaction );
-
-  //! Get the macroscopic cross section for a specific reaction
-  static double getMacroscopicReactionCrossSection(
-				      const PhotonState& particle,
-				      const PhotoatomicReactionType reaction );
-
-  //! Get the macroscopic cross section for a specific reaction
-  static double getMacroscopicReactionCrossSection(
-				     const PhotonState& particle,
-				     const PhotonuclearReactionType reaction );
-
-  //! Get the macroscopic cross section for a specific reaction
-  static double getMacroscopicReactionCrossSection(
-                               const AdjointPhotonState& particle,
-                               const AdjointPhotoatomicReactionType reaction );
-
-  //! Get the macroscopic cross section for a specific reaction
-  static double getMacroscopicReactionCrossSection(
-				      const ElectronState& particle,
-				      const ElectroatomicReactionType reaction );
-
-  //! Collide with the material in a cell
-  static void collideWithCellMaterial( PhotonState& particle,
-				       ParticleBank& bank,
-				       const bool analogue );
-
-  //! Collide with the material in a cell
-  static void collideWithCellMaterial( AdjointPhotonState& particle,
-                                       ParticleBank& bank,
-                                       const bool analogue );
-
-  //! Collide with the material in a cell
-  static void collideWithCellMaterial( NeutronState& particle,
-				       ParticleBank& bank,
-				       const bool analogue );
-
-  //! Collide with the material in a cell
-  static void collideWithCellMaterial( ElectronState& particle,
-				       ParticleBank& bank,
-				       const bool analogue );
-
-private:
-
-  // The cell id neutron material map
-  static CellIdNeutronMaterialMap master_neutron_map;
-
-  // The cell id photon material map
-  static CellIdPhotonMaterialMap master_photon_map;
-
-  // The cell id adjoint photon material map
-  static CellIdAdjointPhotonMaterialMap master_adjoint_photon_map;
-
-  // The cell id electron material map
-  static CellIdElectronMaterialMap master_electron_map;
+  using NeutronCollisionHandler::collideWithCellMaterial;
+  using PhotonCollisionHandler::collideWithCellMaterial;
+  using AdjointPhotonCollisionHandler::collideWithCellMaterial;
+  using ElectronCollisionHandler::collideWithCellMaterial;
 };
 
 } // end MonteCarlo namespace

@@ -60,10 +60,13 @@ void ParticleSimulationManagerFactory::initializeNonGeometryModules(
     std::shared_ptr<CollisionHandlerFactory> collision_handler_factory =
       getCollisionHandlerFactoryInstance<GeometryHandler>( os_warn );
 
-    collision_handler_factory->initializeHandler(
+    std::shared_ptr<CollisionHandler> collision_handler =
+      collision_handler_factory->initializeHandler(
                                                 material_def,
                                                 cross_sections_table_info,
                                                 cross_sections_xml_directory );
+
+    setCollisionHandlerInstance( collision_handler );
   }
 
   // Initialize the event handler and interface

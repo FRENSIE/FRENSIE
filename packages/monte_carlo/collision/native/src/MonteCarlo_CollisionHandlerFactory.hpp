@@ -14,6 +14,7 @@
 #include <ostream>
 #include <unordered_map>
 #include <unordered_set>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -41,7 +42,7 @@ public:
   { /* ... */ }
 
   //! Initialize the collision handler
-  void initializeHandler(
+  std::shared_ptr<CollisionHandler> initializeHandler(
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
 		     const std::string& cross_sections_xml_directory );
@@ -109,6 +110,7 @@ private:
 
   //! Create the neutron materials
   void createNeutronMaterials(
+                       std::shared_ptr<CollisionHandler>& collision_handler,
                        const Teuchos::ParameterList& cross_sections_table_info,
                        const std::string& cross_sections_xml_directory,
                        const MatIdFractionMap& material_id_fraction_map,
@@ -121,58 +123,62 @@ private:
 
   //! Create the photon materials
   void createPhotonMaterials(
-   const Teuchos::ParameterList& cross_sections_table_info,
-   const std::string& cross_sections_xml_directory,
-   const MatIdFractionMap& material_id_fraction_map,
-   const MatIdComponentMap& material_id_component_map,
-   const AliasSet& nuclide_aliases,
-   const CellIdMatIdMap& cell_id_mat_id_map,
-   const CellIdDensityMap& cell_id_density_map,
-   const Teuchos::RCP<AtomicRelaxationModelFactory>&
-    atomic_relaxation_model_factory,
-   const unsigned hash_grid_bins,
-   const IncoherentModelType incoherent_model,
-   const double kahn_sampling_cutoff_energy,
-   const bool use_detailed_pair_production_data,
-   const bool use_atomic_relaxation_data,
-   const bool use_photonuclear_data );
+                       std::shared_ptr<CollisionHandler>& collision_handler,
+                       const Teuchos::ParameterList& cross_sections_table_info,
+                       const std::string& cross_sections_xml_directory,
+                       const MatIdFractionMap& material_id_fraction_map,
+                       const MatIdComponentMap& material_id_component_map,
+                       const AliasSet& nuclide_aliases,
+                       const CellIdMatIdMap& cell_id_mat_id_map,
+                       const CellIdDensityMap& cell_id_density_map,
+                       const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                       atomic_relaxation_model_factory,
+                       const unsigned hash_grid_bins,
+                       const IncoherentModelType incoherent_model,
+                       const double kahn_sampling_cutoff_energy,
+                       const bool use_detailed_pair_production_data,
+                       const bool use_atomic_relaxation_data,
+                       const bool use_photonuclear_data );
 
   //! Create the electron materials
   void createElectronMaterials(
-   const Teuchos::ParameterList& cross_sections_table_info,
-   const std::string& cross_sections_xml_directory,
-   const MatIdFractionMap& material_id_fraction_map,
-   const MatIdComponentMap& material_id_component_map,
-   const AliasSet& nuclide_aliases,
-   const CellIdMatIdMap& cell_id_mat_id_map,
-   const CellIdDensityMap& cell_id_density_map,
-   const Teuchos::RCP<AtomicRelaxationModelFactory>&
-    atomic_relaxation_model_factory,
-   const unsigned hash_grid_bins,
-   const BremsstrahlungAngularDistributionType photon_distribution_function,
-   const bool use_atomic_relaxation_data,
-   const double cutoff_angle_cosine );
+      std::shared_ptr<CollisionHandler>& collision_handler,
+      const Teuchos::ParameterList& cross_sections_table_info,
+      const std::string& cross_sections_xml_directory,
+      const MatIdFractionMap& material_id_fraction_map,
+      const MatIdComponentMap& material_id_component_map,
+      const AliasSet& nuclide_aliases,
+      const CellIdMatIdMap& cell_id_mat_id_map,
+      const CellIdDensityMap& cell_id_density_map,
+      const Teuchos::RCP<AtomicRelaxationModelFactory>&
+      atomic_relaxation_model_factory,
+      const unsigned hash_grid_bins,
+      const BremsstrahlungAngularDistributionType photon_distribution_function,
+      const bool use_atomic_relaxation_data,
+      const double cutoff_angle_cosine );
 
 
   //! Create the material name data maps
   template<typename ScatteringCenterType, typename MaterialType>
   static void createMaterialNameDataMaps(
-   const MatIdFractionMap& material_id_fraction_map,
-   const MatIdComponentMap& material_id_component_map,
-   const std::unordered_map<std::string,Teuchos::RCP<ScatteringCenterType> >&
-   scattering_center_map,
-   const CellIdMatIdMap& cell_id_mat_id_map,
-   const CellIdDensityMap& cell_id_density_map,
-   std::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
-   material_name_pointer_map,
-   MatNameCellIdsMap& material_name_cell_ids_map );
+     const MatIdFractionMap& material_id_fraction_map,
+     const MatIdComponentMap& material_id_component_map,
+     const std::unordered_map<std::string,Teuchos::RCP<ScatteringCenterType> >&
+     scattering_center_map,
+     const CellIdMatIdMap& cell_id_mat_id_map,
+     const CellIdDensityMap& cell_id_density_map,
+     std::unordered_map<std::string,Teuchos::RCP<const MaterialType> >&
+     material_name_pointer_map,
+     MatNameCellIdsMap& material_name_cell_ids_map );
 
   //! Register materials with the collision handler
   template<typename MaterialType>
   static void registerMaterials(
-             const std::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
-             material_name_pointer_map,
-             const MatNameCellIdsMap& material_name_cell_ids_map );
+       std::shared_ptr<CollisionHandler>& collision_handler,
+       const std::unordered_map<std::string,Teuchos::RCP<const MaterialType> >&
+       material_name_pointer_map,
+       const MatNameCellIdsMap& material_name_cell_ids_map );
+             
 
   // Copy constructor
   CollisionHandlerFactory( const CollisionHandlerFactory& copy );

@@ -12,6 +12,9 @@
 namespace MonteCarlo{
 
 // Initialize static member data
+std::shared_ptr<CollisionHandler>
+CollisionModuleInterface<CollisionHandler>::s_collision_handler;
+  
 const CollisionModuleInterface<CollisionHandler>::ExternalMaterialHandle
 CollisionModuleInterface<CollisionHandler>::invalid_external_material_handle =
   ModuleTraits::invalid_internal_material_handle;
