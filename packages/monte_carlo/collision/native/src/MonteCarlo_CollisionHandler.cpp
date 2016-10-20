@@ -23,6 +23,9 @@ CollisionHandler::master_neutron_map;
 CollisionHandler::CellIdPhotonMaterialMap
 CollisionHandler::master_photon_map;
 
+CollisionHandler::CellIdAdjointPhotonMaterialMap
+CollisionHandler::master_adjoint_photon_map;
+
 CollisionHandler::CellIdElectronMaterialMap
 CollisionHandler::master_electron_map;
 
@@ -68,10 +71,35 @@ void CollisionHandler::addMaterial(
       CollisionHandler::master_photon_map.find(cells_containing_material[i]) !=
       CollisionHandler::master_photon_map.end(),
       std::logic_error,
-      "Error:: cell " << cells_containing_material[i] << " already has a "
+      "Error: cell " << cells_containing_material[i] << " already has a "
       "material assigned!" );
 
     CollisionHandler::master_photon_map[cells_containing_material[i]] =
+      material;
+  }
+}
+
+// Add a material to the collision handler
+void CollisionHandler::addMaterial(
+              const Teuchos::RCP<AdjointPhotonMaterial>& material,
+              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              cells_containing_material )
+{
+  // Make sure the material pointer is valid
+  testPrecondition( !material.is_null() );
+  // Make sure the cells are valid
+  testPrecondition( cells_containing_material.size() > 0 );
+
+  for( unsigned i = 0u; i < cells_containing_material.size(); ++i )
+  {
+    TEST_FOR_EXCEPTION( 
+      CollisionHandler::master_adjoint_photon_map.find(cells_containing_material[i]) !=
+      CollisionHandler::master_adjoint_photon_map.end(),
+      std::logic_error,
+      "Error: cell " << cells_containing_material[i] << " already has a "
+      "material assigned!" );
+
+    CollisionHandler::master_adjoint_photon_map[cells_containing_material[i]] =
       material;
   }
 }
@@ -138,6 +166,12 @@ bool CollisionHandler::isCellVoid(
       return true;
     else
       return false;
+  case ADJOINT_PHOTON:
+    if( CollisionHandler::master_adjoint_photon_map.find( cell ) ==
+        CollisionHandler::master_adjoint_photon_map.end() )
+      return true;
+    else
+      return false;
   case ELECTRON:
     if( CollisionHandler::master_electron_map.find( cell ) ==
 	CollisionHandler::master_electron_map.end() )
@@ -171,6 +205,17 @@ CollisionHandler::getCellPhotonMaterial(
   testPrecondition( !CollisionHandler::isCellVoid( cell, PHOTON ) );
 
   return CollisionHandler::master_photon_map.find( cell )->second;
+}
+
+// Get the adjoint photon material contained in a cell
+const Teuchos::RCP<AdjointPhotonMaterial>&
+CollisionHandler::getCellAdjointPhotonMaterial(
+                        const Geometry::ModuleTraits::InternalCellHandle cell )
+{
+  // Make sure the cell is not void
+  testPrecondition( !CollisionHandler::isCellVoid( cell, ADJOINT_PHOTON ) );
+
+  return CollisionHandler::master_adjoint_photon_map.find( cell )->second;
 }
 
 // Get the electron material contained in a cell
@@ -210,6 +255,24 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
       CollisionHandler::master_photon_map.find( particle.getCell() )->second;
 
   return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
+}
+
+// Get the total macroscopic cross section of a material
+/*! \details The total forward macroscopic cross section will be returned
+ * from this method since this method is primarily used to determine the 
+ * mfp to the next collision site.
+ */
+double CollisionHandler::getMacroscopicTotalCrossSection(
+                                           const AdjointPhotonState& particle )
+{
+  // Make sure the cell is not void
+  testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
+						   ADJOINT_PHOTON ) );
+
+  Teuchos::RCP<AdjointPhotonMaterial>& material =
+    CollisionHandler::master_adjoint_photon_map.find( particle.getCell() )->second;
+
+  return material->getMacroscopicTotalForwardCrossSection( particle.getEnergy() );
 }
 
 // Get the total macroscopic cross section of a material
@@ -328,6 +391,40 @@ void CollisionHandler::collideWithCellMaterial( PhotonState& particle,
     material->collideAnalogue( particle, bank );
   else
     material->collideSurvivalBias( particle, bank );
+}
+
+// Collide with the material in a cell
+void CollisionHandler::collideWithCellMaterial( AdjointPhotonState& particle,
+						ParticleBank& bank,
+						const bool analogue )
+{
+  // Make sure the cell is not void
+  testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
+						   ADJOINT_PHOTON ) );
+
+  const Teuchos::RCP<AdjointPhotonMaterial>& material =
+    CollisionHandler::master_adjoint_photon_map.find( particle.getCell() )->second;
+
+  bool reaction_complete = false;
+  
+  // Check if a line energy reaction should occur
+  if( particle.isProbe() )
+  {
+    if( material->doesEnergyHaveLineEnergyReaction( particle.getEnergy() ) )
+    {
+      material->collideAtLineEnergy( particle, bank );
+
+      reaction_complete = true;
+    }
+  }
+
+  if( !reaction_complete )
+  {
+    if( analogue )
+      material->collideAnalogue( particle, bank );
+    else
+      material->collideSurvivalBias( particle, bank );
+  }
 }
 
 // Collide with the material in a cell

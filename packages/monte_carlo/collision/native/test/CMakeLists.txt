@@ -221,6 +221,13 @@ TARGET_LINK_LIBRARIES(tstNeutronMaterial monte_carlo_collision_native)
 ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
 SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS monte_carlo_collision_native neutron)
 
+ADD_EXECUTABLE(tstNeutronCollisionHandler
+  tstNeutronCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNeutronCollisionHandler monte_carlo_collision_native)
+ADD_TEST(NeutronCollisionHandler_test tstNeutronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST NeutronCollisionHandler_test PROPERTY LABELS monte_carlo_collision_native neutron)
+
 ##----------------------------------------------------------------------------##
 ##      atomic relaxation class tests                                         ##
 ##----------------------------------------------------------------------------##
@@ -448,7 +455,7 @@ SET_PROPERTY(TEST PhotoatomCore_test PROPERTY LABELS monte_carlo_collision_nativ
 ADD_EXECUTABLE(tstPhotoatom tstPhotoatom.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoatom monte_carlo_collision_native)
 ADD_TEST(Photoatom_test tstPhotoatom --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST Photoatom_test PROPERTY LABELS monte_carlo_collision_native photon)
 
 ADD_EXECUTABLE(tstPhotoatomicReactionACEFactory
   tstPhotoatomicReactionACEFactory.cpp)
@@ -864,7 +871,8 @@ SET_PROPERTY(TEST ElectronMaterial_test PROPERTY LABELS monte_carlo_collision_na
 ##----------------------------------------------------------------------------##
 
 ADD_EXECUTABLE(tstCollisionHandler
-  tstCollisionHandler.cpp)
+  tstCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)
 ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
 SET_PROPERTY(TEST CollisionHandler_test PROPERTY LABELS monte_carlo_collision_native)

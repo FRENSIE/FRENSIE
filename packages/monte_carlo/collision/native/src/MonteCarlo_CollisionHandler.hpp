@@ -15,9 +15,11 @@
 // FRENSIE Includes
 #include "MonteCarlo_NeutronMaterial.hpp"
 #include "MonteCarlo_PhotonMaterial.hpp"
+#include "MonteCarlo_AdjointPhotonMaterial.hpp"
 #include "MonteCarlo_ElectronMaterial.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_AdjointPhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
@@ -39,6 +41,11 @@ private:
 			       Teuchos::RCP<PhotonMaterial> >
   CellIdPhotonMaterialMap;
 
+  // Typedef for cell id adjoint photon material map
+  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                               Teuchos::RCP<AdjointPhotonMaterial> >
+  CellIdAdjointPhotonMaterialMap;
+
   // Typedef for cell id electron material map
   typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
 			       Teuchos::RCP<ElectronMaterial> >
@@ -57,6 +64,12 @@ public:
 	      const Teuchos::RCP<PhotonMaterial>& material,
 	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
 	      cells_containing_material );
+
+  //! Add a material to the collision handler
+  static void addMaterial(
+              const Teuchos::RCP<AdjointPhotonMaterial>& material,
+              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              cells_containing_material );
 
   //! Add a material to the collision handler
   static void addMaterial(
@@ -85,6 +98,11 @@ public:
   getCellPhotonMaterial(
 		       const Geometry::ModuleTraits::InternalCellHandle cell );
 
+  //! Get the adjoint photon material contained in a cell
+  static const Teuchos::RCP<AdjointPhotonMaterial>&
+  getCellAdjointPhotonMaterial(
+                       const Geometry::ModuleTraits::InternalCellHandle cell );
+
   //! Get the electron material contained in a cell
   static const Teuchos::RCP<ElectronMaterial>&
   getCellElectronMaterial(
@@ -95,6 +113,9 @@ public:
 
   //! Get the total macroscopic cross section of a material
   static double getMacroscopicTotalCrossSection( const PhotonState& particle );
+
+  //! Get the total macroscopic cross section of a material
+  static double getMacroscopicTotalCrossSection( const AdjointPhotonState& particle );
 
   //! Get the total macroscopic cross section of a material
   static double getMacroscopicTotalCrossSection( const ElectronState& particle );
@@ -116,6 +137,11 @@ public:
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
+                               const AdjointPhotonState& particle,
+                               const AdjointPhotoatomicReactionType reaction );
+
+  //! Get the macroscopic cross section for a specific reaction
+  static double getMacroscopicReactionCrossSection(
 				      const ElectronState& particle,
 				      const ElectroatomicReactionType reaction );
 
@@ -123,6 +149,11 @@ public:
   static void collideWithCellMaterial( PhotonState& particle,
 				       ParticleBank& bank,
 				       const bool analogue );
+
+  //! Collide with the material in a cell
+  static void collideWithCellMaterial( AdjointPhotonState& particle,
+                                       ParticleBank& bank,
+                                       const bool analogue );
 
   //! Collide with the material in a cell
   static void collideWithCellMaterial( NeutronState& particle,
@@ -139,8 +170,13 @@ private:
   // The cell id neutron material map
   static CellIdNeutronMaterialMap master_neutron_map;
 
+  // The cell id photon material map
   static CellIdPhotonMaterialMap master_photon_map;
 
+  // The cell id adjoint photon material map
+  static CellIdAdjointPhotonMaterialMap master_adjoint_photon_map;
+
+  // The cell id electron material map
   static CellIdElectronMaterialMap master_electron_map;
 };
 
