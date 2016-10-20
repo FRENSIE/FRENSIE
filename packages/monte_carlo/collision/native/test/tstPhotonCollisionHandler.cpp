@@ -340,7 +340,7 @@ TEUCHOS_UNIT_TEST( PhotonCollisionHandler,
   MonteCarlo::ParticleBank bank;
 
   collision_handler->collideWithCellMaterial( photon, bank );
-  out.precision( 18 );
+  
   TEST_FLOATING_EQUALITY( photon.getWeight(), 0.99623491442141221, 1e-12 );
 }
 

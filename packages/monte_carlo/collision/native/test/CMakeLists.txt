@@ -877,6 +877,13 @@ TARGET_LINK_LIBRARIES(tstElectronMaterial monte_carlo_collision_native)
 ADD_TEST(ElectronMaterial_test tstElectronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST ElectronMaterial_test PROPERTY LABELS monte_carlo_collision_native electron)
 
+ADD_EXECUTABLE(tstElectronCollisionHandler
+  tstElectronCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElectronCollisionHandler monte_carlo_collision_native)
+ADD_TEST(ElectronCollisionHandler_test tstElectronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
+SET_PROPERTY(TEST ElectronCollisionHandler_test PROPERTY LABELS monte_carlo_collision_native electron)
+
 ##----------------------------------------------------------------------------##
 ##      collision handler class tests                                         ##
 ##----------------------------------------------------------------------------##
