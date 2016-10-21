@@ -34,12 +34,12 @@ CollisionHandlerFactory::CollisionHandlerFactory( std::ostream* os_warn )
   testPrecondition( os_warn != NULL );
 }
 
-// Initialize the collision handler
+// Create the collision handler
 /*! \details Make sure the simulation properties have been set
  * (in MonteCarlo::SimulationGeneralProperties etc) before running this factory
  * method. The properties can influence how this factory method behaves.
  */
-std::shared_ptr<CollisionHandler> CollisionHandlerFactory::initializeHandler(
+std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
 		     const std::string& cross_sections_xml_directory )
@@ -218,7 +218,7 @@ void CollisionHandlerFactory::validateMaterialRep(
 		      "Error: a materials id must be unique (material id "
 		      << material_rep.get<unsigned>( "Id" ) <<
 		      " appears more than once)!" );
-
+  
   material_ids.insert( material_rep.get<unsigned>( "Id" ) );
 
   // Make sure the isotopes that make up the material are specified

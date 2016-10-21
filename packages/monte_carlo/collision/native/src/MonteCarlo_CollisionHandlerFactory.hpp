@@ -41,8 +41,8 @@ public:
   virtual ~CollisionHandlerFactory()
   { /* ... */ }
 
-  //! Initialize the collision handler
-  std::shared_ptr<CollisionHandler> initializeHandler(
+  //! Create the collision handler
+  std::shared_ptr<CollisionHandler> createHandler(
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
 		     const std::string& cross_sections_xml_directory );
