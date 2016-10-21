@@ -24,10 +24,10 @@ CollisionHandler::CollisionHandler( const bool analogue_collisions )
     ElectronCollisionHandler( analogue_collisions )
 { /* ... */ }
 
-// Add a material to the collision handler
+// Add a material to the collision handler (neutron-photon mode)
 void CollisionHandler::addMaterial(
-	      const Teuchos::RCP<NeutronMaterial>& neutron_material,
-	      const Teuchos::RCP<PhotonMaterial>& photon_material,
+	      const Teuchos::RCP<const NeutronMaterial>& neutron_material,
+	      const Teuchos::RCP<const PhotonMaterial>& photon_material,
 	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
 	      cells_containing_material )
 {
@@ -42,6 +42,51 @@ void CollisionHandler::addMaterial(
 
   PhotonCollisionHandler::addMaterial(
                                   photon_material, cells_containing_material );
+}
+
+// Add a material to the collision handler (photon-electron mode)
+void CollisionHandler::addMaterial(
+              const Teuchos::RCP<const PhotonMaterial>& photon_material,
+              const Teuchos::RCP<const ElectronMaterial>& electron_material,
+              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              cells_containing_material )
+{
+  // Make sure the material pointers are valid
+  testPrecondition( !photon_material.is_null() );
+  testPrecondition( !electron_material.is_null() );
+  // Make sure the cells are valid
+  testPrecondition( cells_containing_material.size() > 0 );
+
+  PhotonCollisionHandler::addMaterial(
+                                  photon_material, cells_containing_material );
+
+  ElectronCollisionHandler::addMaterial(
+                                electron_material, cells_containing_material );
+}
+
+// Add a material to the collision handler (neutron-photon-electron mode)
+void CollisionHandler::addMaterial(
+              const Teuchos::RCP<const NeutronMaterial>& neutron_material,
+              const Teuchos::RCP<const PhotonMaterial>& photon_material,
+              const Teuchos::RCP<const ElectronMaterial>& electron_material,
+              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              cells_containing_material )
+{
+  // Make sure the material pointers are valid
+  testPrecondition( !neutron_material.is_null() );
+  testPrecondition( !photon_material.is_null() );
+  testPrecondition( !electron_material.is_null() );
+  // Make sure the cells are valid
+  testPrecondition( cells_containing_material.size() > 0 );
+
+  NeutronCollisionHandler::addMaterial(
+                                 neutron_material, cells_containing_material );
+
+  PhotonCollisionHandler::addMaterial(
+                                  photon_material, cells_containing_material );
+
+  ElectronCollisionHandler::addMaterial(
+                                electron_material, cells_containing_material );
 }
 
 // Check if a cell is void

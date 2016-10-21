@@ -895,12 +895,12 @@ SET_PROPERTY(TEST ElectronCollisionHandler_test PROPERTY LABELS monte_carlo_coll
 ##      collision handler class tests                                         ##
 ##----------------------------------------------------------------------------##
 
-# ADD_EXECUTABLE(tstCollisionHandler
-#   tstCollisionHandler.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)
-# ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-# SET_PROPERTY(TEST CollisionHandler_test PROPERTY LABELS monte_carlo_collision_native)
+ADD_EXECUTABLE(tstCollisionHandler
+  tstCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)
+ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST CollisionHandler_test PROPERTY LABELS monte_carlo_collision_native)
 
 # IF(FRENSIE_ENABLE_DAGMC)
 #   ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode_DagMC

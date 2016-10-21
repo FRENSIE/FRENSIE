@@ -41,35 +41,78 @@ public:
   ~CollisionHandler()
   { /* ... */ }
 
-  //! Add a material to the collision handler
+  //! Add a material to the collision handler (neutron-photon mode)
   void addMaterial(
-	      const Teuchos::RCP<NeutronMaterial>& neutron_material,
-	      const Teuchos::RCP<PhotonMaterial>& photon_material,
+	      const Teuchos::RCP<const NeutronMaterial>& neutron_material,
+	      const Teuchos::RCP<const PhotonMaterial>& photon_material,
 	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
 	      cells_containing_material );
 
+  //! Add a material to the collision handler (photon-electron mode)
+  void addMaterial(
+              const Teuchos::RCP<const PhotonMaterial>& photon_material,
+              const Teuchos::RCP<const ElectronMaterial>& electron_material,
+              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              cells_containing_material );
+
+  //! Add a material to the collision handler (neutron-photon-electron mode)
+  void addMaterial(
+              const Teuchos::RCP<const NeutronMaterial>& neutron_material,
+              const Teuchos::RCP<const PhotonMaterial>& photon_material,
+              const Teuchos::RCP<const ElectronMaterial>& electron_material,
+              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              cells_containing_material );
+
+  //! Add a material to the collision handler (neutron mode)
   using NeutronCollisionHandler::addMaterial;
+
+  //! Add a material to the collision handler (photon mode)
   using PhotonCollisionHandler::addMaterial;
+
+  //! Add a material to the collision handler (adjoint photon mode)
   using AdjointPhotonCollisionHandler::addMaterial;
+
+  //! Add a material to the collision handler (electron mode)
   using ElectronCollisionHandler::addMaterial;
 
-  //! Check if a cell is void
+  //! Check if a cell is void (as experienced by the given particle type)
   bool isCellVoid( const Geometry::ModuleTraits::InternalCellHandle cell,
                    const MonteCarlo::ParticleType particle_type );
 
+  //! Get the total macroscopic cross section of a material for neutrons
   using NeutronCollisionHandler::getMacroscopicTotalCrossSection;
+
+  //! Get the total macroscopic cross section of a material for photons
   using PhotonCollisionHandler::getMacroscopicTotalCrossSection;
+
+  //! Get the total macroscopic cross section of a material for adjoint photons
   using AdjointPhotonCollisionHandler::getMacroscopicTotalCrossSection;
+
+  //! Get the total macroscopic cross section of a material for electrons
   using ElectronCollisionHandler::getMacroscopicTotalCrossSection;
 
+  //! Get the total forward macroscopic cs of a material for neutrons
   using NeutronCollisionHandler::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cs of a material for photons
   using PhotonCollisionHandler::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cs of a material for adjoint photons
   using AdjointPhotonCollisionHandler::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cs of a material for adjoint electrons
   using ElectronCollisionHandler::getMacroscopicTotalForwardCrossSection;
 
+  //! Have a neutron collide with the material in a cell
   using NeutronCollisionHandler::collideWithCellMaterial;
+
+  //! Have a photon collide with the material in a cell
   using PhotonCollisionHandler::collideWithCellMaterial;
+
+  //! Have an adjoint photon collide with the material in a cell
   using AdjointPhotonCollisionHandler::collideWithCellMaterial;
+
+  //! Have an electron collide with the material in a cell
   using ElectronCollisionHandler::collideWithCellMaterial;
 };
 

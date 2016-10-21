@@ -20,6 +20,10 @@
     <Parameter docString="" id="16" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="ACE"/>
     <Parameter docString="" id="17" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="1"/>
     <Parameter docString="" id="18" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value="1000.12p"/>
+    <Parameter docString="" name="adjoint_photoatomic_file_path" type="string" value="native/test_aepr_14_native.xml"/>
+    <Parameter docString="" name="adjoint_photoatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" name="adjoint_photoatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" name="adjoint_photoatomic_table_name" type="string" value=""/>
     <Parameter docString="" id="19" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="ace/test_h_epr_ace_file.txt"/>
     <Parameter docString="" id="20" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="ACE"/>
     <Parameter docString="" id="21" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="1"/>
