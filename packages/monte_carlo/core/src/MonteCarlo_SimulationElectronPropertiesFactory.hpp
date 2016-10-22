@@ -16,6 +16,9 @@
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
 
+// FRENSIE Includes
+#include "MonteCarlo_SimulationElectronProperties.hpp"
+
 namespace MonteCarlo{
 
 //! The simulation electron properties factory
@@ -25,9 +28,10 @@ class SimulationElectronPropertiesFactory
 public:
 
   //! Initialize the simulation electron properties
-  static void initializeSimulationElectronProperties(
-				      const Teuchos::ParameterList& properties,
-				      std::ostream* os_warn = &std::cerr );
+  static void initializeProperties(
+			     const Teuchos::ParameterList& properties,
+                             SimulationElectronProperties& electron_properties,
+                             std::ostream* os_warn = &std::cerr );
 };
 
 } // end MonteCarlo namespace

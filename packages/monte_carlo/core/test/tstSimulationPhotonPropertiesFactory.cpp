@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "MonteCarlo_SimulationPhotonPropertiesFactory.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -29,74 +30,50 @@ Teuchos::ParameterList properties;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the properties can be parsed and set
-TEUCHOS_UNIT_TEST( SimulationPhotonPropertiesFactory,
-		   initializeSimulationPhotonProperties )
+TEUCHOS_UNIT_TEST( SimulationPhotonPropertiesFactory, initializeProperties )
 {
   Teuchos::ParameterList photon_properties =
-      properties.get<Teuchos::ParameterList>( "Photon Properties" );
+    properties.get<Teuchos::ParameterList>( "Photon Properties" );
 
-  MonteCarlo::SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties(
-						photon_properties );
+  MonteCarlo::SimulationPhotonProperties properties;
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getMinPhotonEnergy(),
-		       1e-2 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy(),
-		       10.0 );
-  TEST_EQUALITY_CONST(
-	       MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
-	       2.5 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
-		       500 );
-  TEST_EQUALITY_CONST(
-	       MonteCarlo::SimulationPhotonProperties::getIncoherentModelType(),
-	       MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
-  TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isAtomicRelaxationModeOn() );
-  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isDetailedPairProductionModeOn() );
-  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
+  MonteCarlo::SimulationPhotonPropertiesFactory::initializeProperties(
+                                                             photon_properties,
+                                                             properties );
+
+  TEST_EQUALITY_CONST( properties.getMinPhotonEnergy(), 1e-2 );
+  TEST_EQUALITY_CONST( properties.getMaxPhotonEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( properties.getKahnSamplingCutoffEnergy(), 2.5 );
+  TEST_EQUALITY_CONST( properties.getNumberOfPhotonHashGridBins(), 500 );
+  TEST_EQUALITY_CONST( properties.getIncoherentModelType(),
+                       MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+  TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
+  TEST_ASSERT( properties.isDetailedPairProductionModeOn() );
+  TEST_ASSERT( properties.isPhotonuclearInteractionModeOn() );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_properties_xml_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_properties_xml_file_name;
+  clp().setOption( "test_properties_xml_file",
+                   &test_properties_xml_file_name,
+                   "Test properties.xml file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_properties_xml_file",
-		 &test_properties_xml_file_name,
-		 "Test properties.xml file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Read in the xml file storing the simulation properties
   Teuchos::updateParametersFromXmlFile( test_properties_xml_file_name,
-				       Teuchos::inoutArg( properties ) );
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
+                                        Teuchos::inoutArg( properties ) );
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstSimulationPhotonPropertiesFactory.cpp

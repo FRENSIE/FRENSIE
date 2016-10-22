@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_SimulationGeneralPropertiesFactory.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -29,70 +30,49 @@ Teuchos::ParameterList properties;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the properties can be parsed and set
-TEUCHOS_UNIT_TEST( SimulationGeneralPropertiesFactory,
-		   initializeSimulationGeneralProperties )
+TEUCHOS_UNIT_TEST( SimulationGeneralPropertiesFactory, initializeProperties )
 {
-
   Teuchos::ParameterList general_properties =
-      properties.get<Teuchos::ParameterList>( "General Properties" );
+    properties.get<Teuchos::ParameterList>( "General Properties" );
+  
+  MonteCarlo::SimulationGeneralProperties properties;
 
-  MonteCarlo::SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
-						general_properties );
+  MonteCarlo::SimulationGeneralPropertiesFactory::initializeProperties(
+                                                            general_properties,
+                                                            properties );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
+  TEST_EQUALITY_CONST( properties.getParticleMode(),
 		       MonteCarlo::NEUTRON_PHOTON_MODE );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getNumberOfHistories(),
-		      10 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
+  TEST_EQUALITY_CONST( properties.getNumberOfHistories(), 10 );
+  TEST_EQUALITY_CONST( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
 		       0.1 );
-  TEST_ASSERT( !MonteCarlo::SimulationGeneralProperties::displayWarnings() );
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getNumberOfBatchesPerProcessor(),
-	  25 );
+  TEST_ASSERT( !properties.displayWarnings() );
+  TEST_ASSERT( properties.isImplicitCaptureModeOn() );
+  TEST_EQUALITY_CONST( properties.getNumberOfBatchesPerProcessor(), 25 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_properties_xml_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_properties_xml_file_name;
+  clp().setOption( "test_properties_xml_file",
+                   &test_properties_xml_file_name,
+                   "Test properties.xml file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_properties_xml_file",
-		 &test_properties_xml_file_name,
-		 "Test properties.xml file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Read in the xml file storing the simulation properties
   Teuchos::updateParametersFromXmlFile( test_properties_xml_file_name,
-				       Teuchos::inoutArg( properties ) );
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
+                                        Teuchos::inoutArg( properties ) );
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstSimulationGeneralPropertiesFactory.cpp

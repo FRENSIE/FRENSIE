@@ -26,6 +26,13 @@
     <Parameter name="Photonuclear Interaction" type="bool" value="true"/>
   </ParameterList>
 
+  <ParameterList name="Adjoint Photon Properties">
+    <Parameter name="Min Adjoint Photon Energy" type="double" value="1e-2"/>
+    <Parameter name="Max Adjoint Photon Energy" type="double" value="10.0"/>
+    <Parameter name="Adjoint Photon Hash Grid Bins" type="unsigned int" value="500"/>
+    <Parameter name="Incoherent Adjoint Photon Scattering Model" type="string" value="Klein-Nishina Adjoint Model"/>
+  </ParameterList>
+
   <ParameterList name="Electron Properties">
     <Parameter name="Min Electron Energy" type="double" value="1e-2"/>
     <Parameter name="Max Electron Energy" type="double" value="10.0"/>

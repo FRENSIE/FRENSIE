@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstSimulationElectronPropertiesFactory.cpp
-//! \author Alex Robinson, Luke Kersting
-//! \brief  Simulation electron properties factory unit tests
+//! \file   tstSimulationAdjointPhotonPropertiesFactory.cpp
+//! \author Alex Robinson
+//! \brief  Simulation adjoint photon properties factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,8 +16,8 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SimulationElectronProperties.hpp"
-#include "MonteCarlo_SimulationElectronPropertiesFactory.hpp"
+#include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
+#include "MonteCarlo_SimulationAdjointPhotonPropertiesFactory.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -30,24 +30,24 @@ Teuchos::ParameterList properties;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the properties can be parsed and set
-TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory, initializeProperties )
+TEUCHOS_UNIT_TEST( SimulationAdjointPhotonPropertiesFactory,
+                   initializeProperties )
 {
-  Teuchos::ParameterList electron_properties =
-      properties.get<Teuchos::ParameterList>( "Electron Properties" );
+  Teuchos::ParameterList adjoint_photon_properties =
+    properties.get<Teuchos::ParameterList>( "Adjoint Photon Properties" );
 
-  MonteCarlo::SimulationElectronProperties properties;
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
 
-  MonteCarlo::SimulationElectronPropertiesFactory::initializeProperties(
-                                                           electron_properties,
-                                                           properties );
+  MonteCarlo::SimulationAdjointPhotonPropertiesFactory::initializeProperties(
+                                                     adjoint_photon_properties,
+                                                     properties );
 
-  TEST_EQUALITY_CONST( properties.getMinElectronEnergy(), 1e-2 );
-  TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 10.0 );
-  TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
-  TEST_EQUALITY_CONST(
-                     properties.getBremsstrahlungAngularDistributionFunction(),
-                     MonteCarlo::DIPOLE_DISTRIBUTION );
-  TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 0.9 );
+  TEST_EQUALITY_CONST( properties.getMinAdjointPhotonEnergy(), 1e-2 );
+  TEST_EQUALITY_CONST( properties.getMaxAdjointPhotonEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( properties.getNumberOfAdjointPhotonHashGridBins(),
+                       500 );
+  TEST_EQUALITY_CONST( properties.getIncoherentAdjointModelType(),
+                       MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
 }
 
 //---------------------------------------------------------------------------//
@@ -74,5 +74,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstSimulationElectronPropertiesFactory.cpp
+// end tstSimulationAdjointPhotonPropertiesFactory.cpp
 //---------------------------------------------------------------------------//

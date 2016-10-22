@@ -14,7 +14,7 @@
 
 namespace MonteCarlo{
 
-/*! The simulation properties class
+/*! The general simulation properties class
  * \todo Modify XML parser to handle all options in this class. Use this class
  * in all parts of code that require runtime configuration.
  */
@@ -23,114 +23,77 @@ class SimulationGeneralProperties
 
 public:
 
+  //! Constructor
+  SimulationGeneralProperties();
+
+  //! Destructor
+  virtual ~SimulationGeneralProperties()
+  { /* ... */ }
+
   //! Set the particle mode
-  static void setParticleMode( const ParticleModeType particle_mode );
+  void setParticleMode( const ParticleModeType particle_mode );
 
   //! Return the particle mode type
-  static ParticleModeType getParticleMode();
+  ParticleModeType getParticleMode() const;
 
   //! Set the number of histories to run
-  static void setNumberOfHistories( const unsigned long long histories );
+  void setNumberOfHistories( const unsigned long long histories );
 
   //! Return the number of histories to run
-  static unsigned long long getNumberOfHistories();
+  unsigned long long getNumberOfHistories() const;
 
   //! Set the angle cosine cutoff value for surface flux estimators
-  static void setSurfaceFluxEstimatorAngleCosineCutoff( const double cutoff );
+  void setSurfaceFluxEstimatorAngleCosineCutoff( const double cutoff );
 
   //! Return the angle cosine cutoff value for surface flux estimators
-  static double getSurfaceFluxEstimatorAngleCosineCutoff();
+  double getSurfaceFluxEstimatorAngleCosineCutoff() const;
 
-  //! Return the min particle energy
-  template<typename ParticleType>
-  static double getMinParticleEnergy();
-
-  //! Return the max particle energy
-  template<typename ParticleType>
-  static double getMaxParticleEnergy();
-
-  //! Turn off warnings
-  static void setWarningsOff();
+  //! Turn on warnings (on by default)
+  void setWarningsOn();
+  
+  //! Turn off warnings (on by default)
+  void setWarningsOff();
 
   //! Return if warnings should be printed
-  static bool displayWarnings();
+  bool displayWarnings() const;
 
   //! Set implicit capture mode to on (off by default)
-  static void setImplicitCaptureModeOn();
+  void setImplicitCaptureModeOn();
+
+  //! Set analogue capture mode to on (on by default)
+  void setAnalogueCaptureModeOn();
 
   //! Return if implicit capture mode has been set
-  static bool isImplicitCaptureModeOn();
+  bool isImplicitCaptureModeOn() const;
 
   //! Set the number of batches for an MPI configuration
-  static void setNumberOfBatchesPerProcessor( const unsigned batches_per_processor );
+  void setNumberOfBatchesPerProcessor( const unsigned batches_per_processor );
 
   //! Return the number of batches for an MPI configuration
-  static unsigned getNumberOfBatchesPerProcessor();
+  unsigned getNumberOfBatchesPerProcessor() const;
 
 private:
 
   // The particle mode
-  static ParticleModeType particle_mode;
+  ParticleModeType d_particle_mode;
 
   // The number of histories to run
-  static unsigned long long number_of_histories;
+  unsigned long long d_number_of_histories;
 
   // The angle cosine cutoff value for surface flux estimators
-  static double surface_flux_estimator_angle_cosine_cutoff;
+  double d_surface_flux_estimator_angle_cosine_cutoff;
 
   // The warning message flag
-  static bool display_warnings;
+  bool d_display_warnings;
 
   // The capture mode (true = implicit, false = analogue - default)
-  static bool implicit_capture_mode_on;
+  bool d_implicit_capture_mode_on;
 
   // The number of batches to run for MPI configuration
-  static unsigned number_of_batches_per_processor;
+  unsigned d_number_of_batches_per_processor;
 };
 
-// Return the particle mode type
-inline ParticleModeType SimulationGeneralProperties::getParticleMode()
-{
-  return SimulationGeneralProperties::particle_mode;
-}
-
-//! Return the number of histories to run
-inline unsigned long long SimulationGeneralProperties::getNumberOfHistories()
-{
-  return SimulationGeneralProperties::number_of_histories;
-}
-
-// Return the angle cosine cutoff value for surface flux estimators
-inline double SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff()
-{
-  return SimulationGeneralProperties::surface_flux_estimator_angle_cosine_cutoff;
-}
-
-//! Return if warnings should be printed
-inline bool SimulationGeneralProperties::displayWarnings()
-{
-  return SimulationGeneralProperties::display_warnings;
-}
-
-// Return if implicit capture mode has been set
-inline bool SimulationGeneralProperties::isImplicitCaptureModeOn()
-{
-  return SimulationGeneralProperties::implicit_capture_mode_on;
-}
-
-// Return the number of batches for an MPI configuration
-inline unsigned SimulationGeneralProperties::getNumberOfBatchesPerProcessor()
-{
-  return SimulationGeneralProperties::number_of_batches_per_processor;
-}
-
 } // end MonteCarlo namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_SimulationGeneralProperties_def.hpp"
 
 //---------------------------------------------------------------------------//
 

@@ -23,81 +23,55 @@ class SimulationNeutronProperties
 
 public:
 
+  //! Constructor
+  SimulationNeutronProperties();
+
+  //! Destructor
+  virtual ~SimulationNeutronProperties()
+  { /* ... */ }
+
   //! Set the free gas thermal treatment temperature threshold
-  static void setFreeGasThreshold( const double threshold );
+  void setFreeGasThreshold( const double threshold );
 
   //! Return the free gas thermal treatment temperature threshold
-  static double getFreeGasThreshold();
+  double getFreeGasThreshold() const;
 
   //! Set the minimum neutron energy (MeV)
-  static void setMinNeutronEnergy( const double energy );
+  void setMinNeutronEnergy( const double energy );
 
   //! Return the minimum neutron energy (MeV)
-  static double getMinNeutronEnergy();
+  double getMinNeutronEnergy() const;
 
   //! Return the absolute minimum neutron energy (MeV)
   static double getAbsoluteMinNeutronEnergy();
 
   //! Set the max neutron energy (MeV)
-  static void setMaxNeutronEnergy( const double energy );
+  void setMaxNeutronEnergy( const double energy );
 
   //! Return the maximum neutron energy (MeV)
-  static double getMaxNeutronEnergy();
+  double getMaxNeutronEnergy() const;
 
   //! Return the absolute maximum neutron
   static double getAbsoluteMaxNeutronEnergy();
 
 private:
 
-  // The free gas thermal treatment temperature threshold
-  // Note: free gas thermal treatment used when energy<threshold*kT (and A > 1)
-  static double free_gas_threshold;
-
   // The absolute minimum neutron energy (MeV)
-  static const double absolute_min_neutron_energy;
-
-  // The minimum neutron energy (MeV)
-  static double min_neutron_energy;
-
-  // The maximum neutron energy (MeV)
-  static double max_neutron_energy;
+  static const double s_absolute_min_neutron_energy;
 
   // The absolute maximum neutron energy (MeV)
-  static const double absolute_max_neutron_energy;
+  static const double s_absolute_max_neutron_energy;
 
-  // The absolute minimum photon energy (MeV)
-  static const double absolute_min_photon_energy;
+  // The free gas thermal treatment temperature threshold
+  // Note: free gas thermal treatment used when energy<threshold*kT (and A > 1)
+  double d_free_gas_threshold;
+
+  // The minimum neutron energy (MeV)
+  double d_min_neutron_energy;
+
+  // The maximum neutron energy (MeV)
+  double d_max_neutron_energy;
 };
-
-// Return the free gas thermal treatment temperature threshold
-inline double SimulationNeutronProperties::getFreeGasThreshold()
-{
-  return SimulationNeutronProperties::free_gas_threshold;
-}
-
-// Return the minimum neutron energy (MeV)
-inline double SimulationNeutronProperties::getMinNeutronEnergy()
-{
-  return SimulationNeutronProperties::min_neutron_energy;
-}
-
-// Return the absolute min neutron energy (MeV)
-inline double SimulationNeutronProperties::getAbsoluteMinNeutronEnergy()
-{
-  return SimulationNeutronProperties::absolute_min_neutron_energy;
-}
-
-// Return the maximum neutron energy (MeV) - cannot be set at runtime
-inline double SimulationNeutronProperties::getMaxNeutronEnergy()
-{
-  return SimulationNeutronProperties::max_neutron_energy;
-}
-
-// Return the absolute maximum neutron energy (MeV)
-inline double SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy()
-{
-  return SimulationNeutronProperties::absolute_max_neutron_energy;
-}
 
 } // end MonteCarlo namespace
 

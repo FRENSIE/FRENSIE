@@ -12,9 +12,13 @@
 // Std Lib Includes
 #include <stdexcept>
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
+
+// FRENSIE Includes
+#include "MonteCarlo_SimulationProperties.hpp"
 
 namespace MonteCarlo{
 
@@ -25,7 +29,7 @@ class SimulationPropertiesFactory
 public:
 
   //! Initialize the simulation properties
-  static void initializeSimulationProperties(
+  static std::shared_ptr<const SimulationProperties> createProperties(
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn = &std::cerr );
 };

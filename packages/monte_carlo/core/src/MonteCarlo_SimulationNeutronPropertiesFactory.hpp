@@ -16,6 +16,9 @@
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
 
+// FRENSIE Includes
+#include "MonteCarlo_SimulationNeutronProperties.hpp"
+
 namespace MonteCarlo{
 
 //! The simulation neutron properties factory
@@ -25,9 +28,10 @@ class SimulationNeutronPropertiesFactory
 public:
 
   //! Initialize the simulation neutron properties
-  static void initializeSimulationNeutronProperties(
-				      const Teuchos::ParameterList& properties,
-				      std::ostream* os_warn = &std::cerr );
+  static void initializeProperties(
+			       const Teuchos::ParameterList& properties,
+                               SimulationNeutronProperties& neutron_properties,
+                               std::ostream* os_warn = &std::cerr );
 };
 
 } // end MonteCarlo namespace
