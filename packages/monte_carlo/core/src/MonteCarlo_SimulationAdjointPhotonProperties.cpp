@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
+#include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -23,7 +24,8 @@ SimulationAdjointPhotonProperties::SimulationAdjointPhotonProperties()
   : d_min_adjoint_photon_energy( s_absolute_min_adjoint_photon_energy ),
     d_max_adjoint_photon_energy( s_absolute_max_adjoint_photon_energy ),
     d_num_adjoint_photon_hash_grid_bins( 500 ),
-    d_incoherent_adjoint_model_type( DB_IMPULSE_INCOHERENT_ADJOINT_MODEL )
+    d_incoherent_adjoint_model_type( DB_IMPULSE_INCOHERENT_ADJOINT_MODEL ),
+    d_critical_line_energies()
 { /* ... */ }
   
 // Set the minimum adjoint photon energy (MeV)
@@ -97,6 +99,35 @@ void SimulationAdjointPhotonProperties::setIncoherentAdjointModelType(
 IncoherentAdjointModelType SimulationAdjointPhotonProperties::getIncoherentAdjointModelType() const
 {
   return d_incoherent_adjoint_model_type;
+}
+
+// Set the critical line energies
+/*! \details Do not change with min/max adjoint photon energy after setting
+ * the critical line energies as the line energies may become invalid!
+ */
+void SimulationAdjointPhotonProperties::setCriticalAdjointPhotonLineEnergies(
+                         const Teuchos::Array<double>& critical_line_energies )
+{
+  // Make sure there is at least one energy
+  testPrecondition( critical_line_energies.size() > 0 );
+  // Make sure the critical line energies are sorted
+  testPrecondition( Utility::Sort::isSortedAscending(
+                                              critical_line_energies.begin(),
+                                              critical_line_energies.end() ) );
+  // Make sure the critical line energies are valid
+  testPrecondition( critical_line_energies.back() <=
+                    d_max_adjoint_photon_energy );
+  testPrecondition( critical_line_energies.front() >=
+                    d_min_adjoint_photon_energy );
+
+  d_critical_line_energies = critical_line_energies;
+}
+
+// Get the critical line energies
+const Teuchos::Array<double>&
+SimulationAdjointPhotonProperties::getCriticalAdjointPhotonLineEnergies() const
+{
+  return d_critical_line_energies;
 }
   
 } // end MonteCarlo namespace

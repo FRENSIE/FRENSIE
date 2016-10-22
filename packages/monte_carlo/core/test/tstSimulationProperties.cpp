@@ -61,6 +61,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
                        500 );
   TEST_EQUALITY_CONST( properties.getIncoherentAdjointModelType(),
                        MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
+  TEST_EQUALITY_CONST( properties.getCriticalAdjointPhotonLineEnergies().size(), 0 );
 
   // Electron properties
   TEST_EQUALITY_CONST( properties.getAbsoluteMinElectronEnergy(), 1.5e-5 );
@@ -71,8 +72,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST(
                      properties.getBremsstrahlungAngularDistributionFunction(),
                      MonteCarlo::TWOBS_DISTRIBUTION );
-  TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(),
-                       1.0 );
+  TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//

@@ -68,6 +68,10 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
                        500 );
   TEST_EQUALITY_CONST( parsed_properties->getIncoherentAdjointModelType(),
                        MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
+  TEST_EQUALITY_CONST( parsed_properties->getCriticalAdjointPhotonLineEnergies().size(), 3 );
+  TEST_EQUALITY_CONST( parsed_properties->getCriticalAdjointPhotonLineEnergies()[0], 0.1 );
+  TEST_EQUALITY_CONST( parsed_properties->getCriticalAdjointPhotonLineEnergies()[1], 1.0 );
+  TEST_EQUALITY_CONST( parsed_properties->getCriticalAdjointPhotonLineEnergies()[2], 10.0 );
   
   // Electron Properties
   TEST_EQUALITY_CONST( parsed_properties->getMinElectronEnergy(), 1e-2 );

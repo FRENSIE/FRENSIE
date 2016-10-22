@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_SIMULATION_ADJOINT_PHOTON_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_ADJOINT_PHOTON_PROPERTIES_HPP
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
 
@@ -58,6 +61,13 @@ public:
   //! Return the incoherent adjoint model type
   IncoherentAdjointModelType getIncoherentAdjointModelType() const;
 
+  //! Set the critical line energies
+  void setCriticalAdjointPhotonLineEnergies(
+                        const Teuchos::Array<double>& critical_line_energies );
+
+  //! Get the critical line energies
+  const Teuchos::Array<double>& getCriticalAdjointPhotonLineEnergies() const;
+
 private:
 
   // The absolute mimimum adjoint photon energy (MeV)
@@ -77,6 +87,9 @@ private:
 
   // The incoherent adjoint model
   IncoherentAdjointModelType d_incoherent_adjoint_model_type;
+
+  // The critical line energies
+  Teuchos::Array<double> d_critical_line_energies;
 };
   
 } // end MonteCarlo namespace

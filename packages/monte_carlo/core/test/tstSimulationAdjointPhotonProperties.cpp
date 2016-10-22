@@ -31,6 +31,7 @@ TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties, defaults )
                        500 );
   TEST_EQUALITY_CONST( properties.getIncoherentAdjointModelType(),
                        MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
+  TEST_EQUALITY_CONST( properties.getCriticalAdjointPhotonLineEnergies().size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -82,6 +83,23 @@ TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
 
   TEST_EQUALITY_CONST( properties.getIncoherentAdjointModelType(),
                        MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
+                   getCriticalAdjointPhotonLineEnergies )
+{
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
+
+  Teuchos::Array<double> critical_line_energies( 2 );
+  critical_line_energies[0] = 1.0;
+  critical_line_energies[1] = 10.0;
+  
+  properties.setCriticalAdjointPhotonLineEnergies( critical_line_energies );
+
+  TEST_COMPARE_ARRAYS( properties.getCriticalAdjointPhotonLineEnergies(),
+                       critical_line_energies );
 }
 
 //---------------------------------------------------------------------------//

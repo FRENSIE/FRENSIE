@@ -31,6 +31,7 @@
     <Parameter name="Max Adjoint Photon Energy" type="double" value="10.0"/>
     <Parameter name="Adjoint Photon Hash Grid Bins" type="unsigned int" value="500"/>
     <Parameter name="Incoherent Adjoint Photon Scattering Model" type="string" value="Klein-Nishina Adjoint Model"/>
+    <Parameter name="Critical Adjoint Photon Line Energies" type="Array" value="{0.1, 1.0, 10.0}"/>
   </ParameterList>
 
   <ParameterList name="Electron Properties">

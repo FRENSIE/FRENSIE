@@ -6,8 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <algorithm>
+
 // FRENSIE Includes
 #include "MonteCarlo_SimulationAdjointPhotonPropertiesFactory.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -86,6 +90,42 @@ void SimulationAdjointPhotonPropertiesFactory::initializeProperties(
     }
 
     adjoint_photon_properties.setIncoherentAdjointModelType( model );
+  }
+
+  // Get the critical line energies - optional
+  if( properties.isParameter( "Critical Adjoint Photon Line Energies" ) )
+  {
+    const Utility::ArrayString& array_string =
+      properties.get<Utility::ArrayString>( "Critical Adjoint Photon Line Energies" );
+
+    Teuchos::Array<double> critical_line_energies;
+
+    try{
+      critical_line_energies = array_string.getConcreteArray<double>();
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+                                std::runtime_error,
+                                "Error: the critical adjoint photon line "
+                                "energies in the xml file are not valid!" );
+
+    // Ensure that the line energies are sorted
+    std::sort( critical_line_energies.begin(), critical_line_energies.end() );
+
+    // Check that the critical line energies are valid
+    TEST_FOR_EXCEPTION( critical_line_energies.back() >
+                        adjoint_photon_properties.getMaxAdjointPhotonEnergy(),
+                        std::runtime_error,
+                        "Error: a critical line energy cannot be greater than "
+                        "the max adjoint photon energy!" );
+
+    TEST_FOR_EXCEPTION( critical_line_energies.front() <
+                        adjoint_photon_properties.getMinAdjointPhotonEnergy(),
+                        std::runtime_error,
+                        "Error: a critical line energy cannot be lower than "
+                        "the min adjoint photon energy!" );
+
+    // Set the critical line energies
+    adjoint_photon_properties.setCriticalAdjointPhotonLineEnergies( critical_line_energies );
   }
 }
   
