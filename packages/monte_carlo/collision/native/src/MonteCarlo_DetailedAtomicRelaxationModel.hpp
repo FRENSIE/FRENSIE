@@ -38,7 +38,9 @@ public:
   //! Constructor
   DetailedAtomicRelaxationModel(
 	    const Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
-	    subshell_relaxtion_models );
+	    subshell_relaxtion_models,
+            const double min_photon_energy,
+            const double min_electron_energy );
 
   //! Destructor
   ~DetailedAtomicRelaxationModel()
@@ -55,6 +57,12 @@ private:
   boost::unordered_map<Data::SubshellType,
 		       Teuchos::RCP<const SubshellRelaxationModel> >
   d_subshell_relaxation_models;
+
+  // The min photon energy
+  double d_min_photon_energy;
+
+  // The min electron energy
+  double d_min_electron_energy;
 };
 
 } // end MonteCarlo namespace

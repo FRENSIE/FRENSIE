@@ -22,7 +22,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatom.hpp"
-#include "MonteCarlo_IncoherentAdjointModelType.hpp"
+#include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
 
 namespace MonteCarlo{
 
@@ -37,10 +37,7 @@ public:
               const std::string& cross_sections_xml_directory,
               const Teuchos::ParameterList& cross_section_table_info,
               const std::unordered_set<std::string>& adjoint_photoatom_aliases,
-              const double max_energy,
-              const unsigned hash_grid_bins,
-              const IncoherentAdjointModelType incoherent_adjoint_model,
-              const Teuchos::Array<double>& user_critical_line_energies,
+              const SimulationAdjointPhotonProperties& properties,
               std::ostream* os_message = &std::cout );
 
   //! Destructor
@@ -60,10 +57,7 @@ private:
                    const std::string& adjoint_photoatom_alias,
                    const std::string& native_file_path,
                    const double atomic_weight,
-                   const double max_energy,
-                   const unsigned hash_grid_bins,
-                   const IncoherentAdjointModelType incoherent_adjoint_model,
-                   const Teuchos::Array<double>& user_critical_line_energies );
+                   const SimulationAdjointPhotonProperties& properties );
 
   // The adjoint photoatom map
   std::unordered_map<std::string,Teuchos::RCP<AdjointPhotoatom> >

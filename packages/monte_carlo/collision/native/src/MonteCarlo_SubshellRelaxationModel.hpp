@@ -30,10 +30,12 @@ public:
 
   //! Relax the shell
   virtual void relaxSubshell(
-			 const ParticleState& particle,
-			 ParticleBank& bank,
-			 Data::SubshellType& new_primary_vacancy_shell,
-			 Data::SubshellType& new_secondary_vacancy_shell ) const = 0;
+                   const ParticleState& particle,
+                   const double min_photon_energy,
+                   const double min_electron_energy,
+                   ParticleBank& bank,
+                   Data::SubshellType& new_primary_vacancy_shell,
+		   Data::SubshellType& new_secondary_vacancy_shell ) const = 0;
 
   //! Return the subshell that contains the vacancy
   Data::SubshellType getVacancySubshell() const;

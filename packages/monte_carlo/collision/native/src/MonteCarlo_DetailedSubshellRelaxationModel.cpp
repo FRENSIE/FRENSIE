@@ -77,10 +77,12 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
  * number is appropriate.
  */
 void DetailedSubshellRelaxationModel::relaxSubshell(
-			      const ParticleState& particle,
-			      ParticleBank& bank,
-			      Data::SubshellType& new_primary_vacancy_shell,
-		              Data::SubshellType& new_secondary_vacancy_shell ) const
+			const ParticleState& particle,
+                        const double min_photon_energy,
+                        const double min_electron_energy,
+                        ParticleBank& bank,
+                        Data::SubshellType& new_primary_vacancy_shell,
+		        Data::SubshellType& new_secondary_vacancy_shell ) const
 {
   // Sample the transition that occurs
   unsigned transition_index;
@@ -98,10 +100,16 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
 
   // A secondary transition will only occur with Auger electron emission
   if( new_secondary_vacancy_shell == Data::INVALID_SUBSHELL ||
-      new_secondary_vacancy_shell ==Data::UNKNOWN_SUBSHELL )
-    this->generateFluorescencePhoton( particle, new_particle_energy, bank );
+      new_secondary_vacancy_shell == Data::UNKNOWN_SUBSHELL )
+  {
+    if( new_particle_energy >= min_photon_energy )
+      this->generateFluorescencePhoton( particle, new_particle_energy, bank );
+  }
   else
-    this->generateAugerElectron( particle, new_particle_energy, bank );
+  {
+    if( new_particle_energy >= min_electron_energy )
+      this->generateAugerElectron( particle, new_particle_energy, bank );
+  }
 }
 
 // Generate a fluorescence photon
@@ -113,25 +121,21 @@ void DetailedSubshellRelaxationModel::generateFluorescencePhoton(
   // Make sure the new energy is valid
   testPrecondition( new_photon_energy > 0.0 );
 
-  // Only generate the photon if it is above the cutoff energy
-  if( new_photon_energy >= SimulationPhotonProperties::getMinPhotonEnergy() )
-  {
-    Teuchos::RCP<ParticleState> fluorescence_photon(
+  Teuchos::RCP<ParticleState> fluorescence_photon(
 				     new PhotonState( particle, true, true ) );
 
-    // Set the new energy
-    fluorescence_photon->setEnergy( new_photon_energy );
-
-    double angle_cosine, azimuthal_angle;
-
-    this->sampleEmissionDirection( angle_cosine, azimuthal_angle );
-
-    // Set the new direction
-    fluorescence_photon->rotateDirection( angle_cosine, azimuthal_angle );
-
-    // Bank the relaxation particle
-    bank.push( fluorescence_photon );
-  }
+  // Set the new energy
+  fluorescence_photon->setEnergy( new_photon_energy );
+  
+  double angle_cosine, azimuthal_angle;
+  
+  this->sampleEmissionDirection( angle_cosine, azimuthal_angle );
+  
+  // Set the new direction
+  fluorescence_photon->rotateDirection( angle_cosine, azimuthal_angle );
+  
+  // Bank the relaxation particle
+  bank.push( fluorescence_photon );
 }
 
 // Generate an Auger electron
@@ -144,24 +148,21 @@ void DetailedSubshellRelaxationModel::generateAugerElectron(
   // table
   testPrecondition( new_electron_energy >= 0.0 );
 
-  if( new_electron_energy >= SimulationElectronProperties::getMinElectronEnergy() )
-  {
-    Teuchos::RCP<ParticleState> auger_electron(
+  Teuchos::RCP<ParticleState> auger_electron(
 				   new ElectronState( particle, true, true ) );
 
-    // Set the new energy
-    auger_electron->setEnergy( new_electron_energy );
-
-    double angle_cosine, azimuthal_angle;
-
-    this->sampleEmissionDirection( angle_cosine, azimuthal_angle );
-
-    // Set the new direction
-    auger_electron->rotateDirection( angle_cosine, azimuthal_angle );
-
-    // Bank the relaxation particle
-    bank.push( auger_electron );
-  }
+  // Set the new energy
+  auger_electron->setEnergy( new_electron_energy );
+  
+  double angle_cosine, azimuthal_angle;
+  
+  this->sampleEmissionDirection( angle_cosine, azimuthal_angle );
+  
+  // Set the new direction
+  auger_electron->rotateDirection( angle_cosine, azimuthal_angle );
+  
+  // Bank the relaxation particle
+  bank.push( auger_electron );
 }
 
 // Sample emission direction

@@ -41,18 +41,24 @@ public:
   static void createAtomicRelaxationModel(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+                  const double min_photon_energy,
+                  const double min_electron_energy,
 		  const bool use_atomic_relaxation_data );
 
   //! Create the atomic relaxation model (using Native data)
   static void createAtomicRelaxationModel(
 	const Data::ElectronPhotonRelaxationDataContainer& raw_photoatomc_data,
 	Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+        const double min_photon_energy,
+        const double min_electron_energy,
 	const bool use_atomic_relaxation_data );
 
   //! Create the atomic relaxation model (using Native eedl data)
   static void createAtomicRelaxationModel(
 	const Data::ENDLDataContainer& raw_photoatomc_data,
 	Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+        const double min_photon_energy,
+        const double min_electron_energy,
 	const bool use_atomic_relaxation_data );
 
   //! Constructor
@@ -65,32 +71,38 @@ public:
 
   //! Create and cache the atomic relaxation model (ACE)
   void createAndCacheAtomicRelaxationModel(
-        const Data::XSSEPRDataExtractor& raw_photoatom_data,
-        Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-        const bool use_atomic_relaxation_data );
+                  const Data::XSSEPRDataExtractor& raw_photoatom_data,
+                  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+                  const double min_photon_energy,
+                  const double min_electron_energy,
+                  const bool use_atomic_relaxation_data );
 
   //! Create and cache the atomic relaxation model (Native)
   void createAndCacheAtomicRelaxationModel(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-        Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-        const bool use_atomic_relaxation_data );
+         const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+         const double min_photon_energy,
+         const double min_electron_energy,
+	 const bool use_atomic_relaxation_data );
 
   //! Create and cache the atomic relaxation model (ENDL)
   void createAndCacheAtomicRelaxationModel(
-        const Data::ENDLDataContainer& raw_photoatom_data,
-        Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-        const bool use_atomic_relaxation_data );
+                  const Data::ENDLDataContainer& raw_photoatom_data,
+                  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+                  const double min_photon_energy,
+                  const double min_electron_energy,
+                  const bool use_atomic_relaxation_data );
 
 private:
 
   //! Create the subshell relaxation models
   static void createSubshellRelaxationModels(
-		  const Teuchos::Array<Data::SubshellType>& subshell_designators,
-		  const Teuchos::ArrayView<const double>& subshell_transitions,
-		  const Teuchos::ArrayView<const double>& relo_block,
-		  const Teuchos::ArrayView<const double>& xprob_block,
-		  Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
-		  subshell_relaxation_models );
+		const Teuchos::Array<Data::SubshellType>& subshell_designators,
+                const Teuchos::ArrayView<const double>& subshell_transitions,
+                const Teuchos::ArrayView<const double>& relo_block,
+                const Teuchos::ArrayView<const double>& xprob_block,
+                Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
+                subshell_relaxation_models );
 
   // The default void atomic relaxation model
   static const Teuchos::RCP<AtomicRelaxationModel> default_void_model;

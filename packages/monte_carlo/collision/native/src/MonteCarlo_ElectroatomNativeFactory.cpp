@@ -28,12 +28,8 @@ namespace MonteCarlo{
 void ElectroatomNativeFactory::createElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-          Teuchos::RCP<ElectroatomCore>& electroatom_core,
-        const unsigned hash_grid_bins,
-        const BremsstrahlungAngularDistributionType
-          photon_distribution_function,
-        const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine )
+        const SimulationElectronProperties& properties,
+        Teuchos::RCP<ElectroatomCore>& electroatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -50,8 +46,8 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Construct the hash-based grid searcher for this atom
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-						     energy_grid,
-						     hash_grid_bins ) );
+                                energy_grid,
+                                properties.getNumberOfElectronHashGridBins() );
 
   // Create the analog elastic scattering reaction (no moment preserving elastic scattering)
   if ( cutoff_angle_cosine == 1.0 )
@@ -66,17 +62,17 @@ void ElectroatomNativeFactory::createElectroatomCore(
 					   reaction_pointer );
   }
   // Create the moment preserving elastic scattering reaction (no analog elastic scattering)
-  else if ( cutoff_angle_cosine == -1.0 )
+  else if ( properties.getElasticCutoffAngleCosine() == -1.0 )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
-					   raw_electroatom_data,
-					   energy_grid,
-					   grid_searcher,
-					   reaction_pointer,
-                       cutoff_angle_cosine );
+				    raw_electroatom_data,
+                                    energy_grid,
+                                    grid_searcher,
+                                    reaction_pointer,
+                                    properties.getElasticCutoffAngleCosine() );
   }
   // Create the hybrid elastic scattering reaction (if cutoff is within range)
   else
@@ -85,11 +81,11 @@ void ElectroatomNativeFactory::createElectroatomCore(
         scattering_reactions[HYBRID_ELASTIC_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionNativeFactory::createHybridElasticReaction(
-					   raw_electroatom_data,
-					   energy_grid,
-					   grid_searcher,
-					   reaction_pointer,
-                       cutoff_angle_cosine );
+                                    raw_electroatom_data,
+                                    energy_grid,
+                                    grid_searcher,
+                                    reaction_pointer,
+                                    properties.getElasticCutoffAngleCosine() );
 
   }
 
@@ -99,11 +95,11 @@ void ElectroatomNativeFactory::createElectroatomCore(
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-						 raw_electroatom_data,
-						 energy_grid,
-					     grid_searcher,
-						 reaction_pointer,
-                         photon_distribution_function );
+                   raw_electroatom_data,
+                   energy_grid,
+                   grid_searcher,
+                   reaction_pointer,
+                   properties.getBremsstrahlungAngularDistributionFunction() );
   }
 
   // Create the atomic excitation scattering reaction
@@ -113,18 +109,18 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
     ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
                                raw_electroatom_data,
-	                           energy_grid,
-					           grid_searcher,
+                               energy_grid,
+                               grid_searcher,
                                reaction_pointer );
   }
 
   std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
   ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
-							   raw_electroatom_data,
-							   energy_grid,
-					           grid_searcher,
-							   reaction_pointers );
+							  raw_electroatom_data,
+                                                          energy_grid,
+                                                          grid_searcher,
+                                                          reaction_pointers );
 
   for( unsigned i = 0; i < reaction_pointers.size(); ++i )
   {
@@ -149,16 +145,12 @@ void ElectroatomNativeFactory::createElectroatomCore(
  * Otherwise a single total electroionization reaction will be created.
  */
 void ElectroatomNativeFactory::createElectroatom(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const std::string& electroatom_name,
-        const double atomic_weight,
-        const unsigned hash_grid_bins,
-        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-          Teuchos::RCP<Electroatom>& electroatom,
-        const BremsstrahlungAngularDistributionType
-          photon_distribution_function,
-        const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine )
+       const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+       const std::string& electroatom_name,
+       const double atomic_weight,
+       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+       const SimulationElectronProperties& properties,
+       Teuchos::RCP<Electroatom>& electroatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -169,18 +161,14 @@ void ElectroatomNativeFactory::createElectroatom(
 
   ElectroatomNativeFactory::createElectroatomCore(raw_electroatom_data,
                                                   atomic_relaxation_model,
-                                                  core,
-                                                  hash_grid_bins,
-                                                  photon_distribution_function,
-                                                  use_atomic_relaxation_data,
-                                                  cutoff_angle_cosine );
+                                                  properties,
+                                                  core );
 
   // Create the electroatom
-  electroatom.reset(
-    new Electroatom( electroatom_name,
-                     raw_electroatom_data.getAtomicNumber(),
-                     atomic_weight,
-                     *core ) );
+  electroatom.reset( new Electroatom( electroatom_name,
+                                      raw_electroatom_data.getAtomicNumber(),
+                                      atomic_weight,
+                                      *core ) );
 }
 
 } // end MonteCarlo namespace

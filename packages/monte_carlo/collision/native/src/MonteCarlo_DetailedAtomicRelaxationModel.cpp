@@ -22,10 +22,19 @@ DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel()
 // Constructor
 DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel(
             const Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
-	    subshell_relaxation_models )
+	    subshell_relaxation_models,
+            const double min_photon_energy,
+            const double min_electron_energy)
+  : d_subshell_relaxation_models(),
+    d_min_photon_energy( min_photon_energy ),
+    d_min_electron_energy( min_electron_energy )
 {
   // Make sure that the array is valid
   //testPrecondition( subshell_reaction_models.size() > 0 );
+  // Make sure the min photon energy is valid
+  testPrecondition( min_photon_energy > 0.0 );
+  // Make sure the min electron energy is valid
+  testPrecondition( min_electron_energy > 0.0 );
 
   for( unsigned i = 0; i < subshell_relaxation_models.size(); ++i )
   {
@@ -41,9 +50,10 @@ DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel(
 
 // Relax the atom
 void
-DetailedAtomicRelaxationModel::relaxAtom( const Data::SubshellType vacancy_shell,
-					  const ParticleState& particle,
-					  ParticleBank& bank ) const
+DetailedAtomicRelaxationModel::relaxAtom(
+                                        const Data::SubshellType vacancy_shell,
+                                        const ParticleState& particle,
+                                        ParticleBank& bank ) const
 {
   // Check if the vacancy shell has relaxation data
   if( d_subshell_relaxation_models.find( vacancy_shell ) !=
@@ -56,6 +66,8 @@ DetailedAtomicRelaxationModel::relaxAtom( const Data::SubshellType vacancy_shell
       d_subshell_relaxation_models.find( vacancy_shell )->second;
 
     model->relaxSubshell( particle,
+                          d_min_photon_energy,
+                          d_min_electron_energy,
 			  bank,
 			  primary_vacancy_shell,
 			  secondary_vacancy_shell );
