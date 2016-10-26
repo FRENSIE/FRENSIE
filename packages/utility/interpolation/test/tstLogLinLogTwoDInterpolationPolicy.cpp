@@ -347,6 +347,261 @@ TEUCHOS_UNIT_TEST( LogLinLog, interpolate_no_tuple_grids )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the log-linear-log interpolation policy between four points
+// can be done
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
+					      LogLinLog,
+					      interpolateWeighted_separate_tuple_grids,
+					      ymember,
+					      zmember,
+					      ytuple,
+					      ztuple )
+{
+  double x0 = 0.1, x1 = 1.0, x = 0.3, y = 0.0;
+
+  Teuchos::Array<ytuple> y_0_grid( 4 );
+  Utility::set<ymember>( y_0_grid[0], -10.0 );
+  Utility::set<ymember>( y_0_grid[1], -1.0 );
+  Utility::set<ymember>( y_0_grid[2], 1.0 );
+  Utility::set<ymember>( y_0_grid[3], 10.0 );
+
+  Teuchos::Array<ztuple> z_0_grid( 4 );
+  Utility::set<zmember>( z_0_grid[0], 100.0 );
+  Utility::set<zmember>( z_0_grid[1], 0.1 );
+  Utility::set<zmember>( z_0_grid[2], 1.0 );
+  Utility::set<zmember>( z_0_grid[3], 10.0 );
+
+  Teuchos::Array<ytuple> y_1_grid( 3 );
+  Utility::set<ymember>( y_1_grid[0], -10.0 );
+  Utility::set<ymember>( y_1_grid[1], -5.0 );
+  Utility::set<ymember>( y_1_grid[2], 10.0 );
+
+  Teuchos::Array<ztuple> z_1_grid( 3 );
+  Utility::set<zmember>( z_1_grid[0], 50.0 );
+  Utility::set<zmember>( z_1_grid[1], 5.0 );
+  Utility::set<zmember>( z_1_grid[2], 0.5 );
+
+  double z = Utility::LogLinLog::interpolateWeighted<ymember,zmember>(x0,
+							      x1,
+							      x,
+							      y,
+							      y_0_grid.begin(),
+							      y_0_grid.end(),
+							      z_0_grid.begin(),
+							      z_0_grid.end(),
+							      y_1_grid.begin(),
+							      y_1_grid.end(),
+							      z_1_grid.begin(),
+							      z_1_grid.end(),
+							      1.0,
+							      1.0 );
+
+  TEST_FLOATING_EQUALITY( z, 0.8184905217915075, 1e-12 );
+
+  x = 0.1;
+
+  z = Utility::LogLinLog::interpolateWeighted<ymember,zmember>( x0,
+							x1,
+							x,
+							y,
+							y_0_grid.begin(),
+							y_0_grid.end(),
+							z_0_grid.begin(),
+							z_0_grid.end(),
+							y_1_grid.begin(),
+							y_1_grid.end(),
+							z_1_grid.begin(),
+							z_1_grid.end(),
+							1.0,
+							1.0 );
+
+  TEST_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
+
+  x = 1.0;
+
+  z = Utility::LogLinLog::interpolateWeighted<ymember,zmember>( x0,
+							x1,
+							x,
+							y,
+							y_0_grid.begin(),
+							y_0_grid.end(),
+							z_0_grid.begin(),
+							z_0_grid.end(),
+							y_1_grid.begin(),
+							y_1_grid.end(),
+							z_1_grid.begin(),
+							z_1_grid.end(),
+							1.0,
+							1.0 );
+
+  TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
+}
+
+UNIT_TEST_INSTANTIATION_2_TUPLE( LogLinLog, interpolateWeighted_separate_tuple_grids );
+
+//---------------------------------------------------------------------------//
+// Check that the log-linear-log interpolation policy between four points
+// can be done
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
+					      LogLinLog,
+					      interpolateWeighted_combined_tuple_grids,
+					      ymember,
+					      zmember,
+					      tuple )
+{
+  double x0 = 0.1, x1 = 1.0, x = 0.3, y = 0.0;
+
+  Teuchos::Array<tuple> grid_0( 4 );
+  Utility::set<ymember>( grid_0[0], -10.0 );
+  Utility::set<ymember>( grid_0[1], -1.0 );
+  Utility::set<ymember>( grid_0[2], 1.0 );
+  Utility::set<ymember>( grid_0[3], 10.0 );
+  Utility::set<zmember>( grid_0[0], 100.0 );
+  Utility::set<zmember>( grid_0[1], 0.1 );
+  Utility::set<zmember>( grid_0[2], 1.0 );
+  Utility::set<zmember>( grid_0[3], 10.0 );
+
+  Teuchos::Array<tuple> grid_1( 3 );
+  Utility::set<ymember>( grid_1[0], -10.0 );
+  Utility::set<ymember>( grid_1[1], -5.0 );
+  Utility::set<ymember>( grid_1[2], 10.0 );
+  Utility::set<zmember>( grid_1[0], 50.0 );
+  Utility::set<zmember>( grid_1[1], 5.0 );
+  Utility::set<zmember>( grid_1[2], 0.5 );
+
+  double z = Utility::LogLinLog::interpolateWeighted<ymember,zmember>(x0,
+							      x1,
+							      x,
+							      y,
+							      grid_0.begin(),
+							      grid_0.end(),
+							      grid_1.begin(),
+							      grid_1.end(),
+							      1.0,
+							      1.0 );
+
+  TEST_FLOATING_EQUALITY( z, 0.8184905217915075, 1e-12 );
+
+  x = 0.1;
+
+  z = Utility::LogLinLog::interpolateWeighted<ymember,zmember>( x0,
+							x1,
+							x,
+							y,
+							grid_0.begin(),
+							grid_0.end(),
+							grid_1.begin(),
+							grid_1.end(),
+							1.0,
+							1.0 );
+
+  TEST_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
+
+  x = 1.0;
+
+  z = Utility::LogLinLog::interpolateWeighted<ymember,zmember>( x0,
+							x1,
+							x,
+							y,
+							grid_0.begin(),
+							grid_0.end(),
+							grid_1.begin(),
+							grid_1.end(),
+							1.0,
+							1.0 );
+
+  TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
+}
+
+UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( LogLinLog,
+					  interpolateWeighted_combined_tuple_grids );
+
+//---------------------------------------------------------------------------//
+// Check that the log-linear-log interpolation policy between four points
+// can be done
+TEUCHOS_UNIT_TEST( LogLinLog, interpolateWeighted_no_tuple_grids )
+{
+  double x0 = 0.1, x1 = 1.0, x = 0.3, y = 0.0;
+
+  Teuchos::Array<double> y_0_grid( 4 );
+  y_0_grid[0] = -10.0;
+  y_0_grid[1] = -1.0;
+  y_0_grid[2] = 1.0;
+  y_0_grid[3] = 10.0;
+
+  Teuchos::Array<double> z_0_grid( 4 );
+  z_0_grid[0] = 100.0;
+  z_0_grid[1] = 0.1;
+  z_0_grid[2] = 1.0;
+  z_0_grid[3] = 10.0;
+
+  Teuchos::Array<double> y_1_grid( 3 );
+  y_1_grid[0] = -10.0;
+  y_1_grid[1] = -5.0;
+  y_1_grid[2] = 10.0;
+
+  Teuchos::Array<double> z_1_grid( 3 );
+  z_1_grid[0] = 50.0;
+  z_1_grid[1] = 5.0;
+  z_1_grid[2] = 0.5;
+
+  double z = Utility::LogLinLog::interpolateWeighted( x0,
+					      x1,
+					      x,
+					      y,
+					      y_0_grid.begin(),
+					      y_0_grid.end(),
+					      z_0_grid.begin(),
+					      z_0_grid.end(),
+					      y_1_grid.begin(),
+					      y_1_grid.end(),
+					      z_1_grid.begin(),
+					      z_1_grid.end(),
+					      1.0,
+					      1.0 );
+
+  TEST_FLOATING_EQUALITY( z, 0.8184905217915075, 1e-12 );
+
+  x = 0.1;
+
+  z = Utility::LogLinLog::interpolateWeighted( x0,
+				       x1,
+				       x,
+				       y,
+				       y_0_grid.begin(),
+				       y_0_grid.end(),
+				       z_0_grid.begin(),
+				       z_0_grid.end(),
+				       y_1_grid.begin(),
+				       y_1_grid.end(),
+				       z_1_grid.begin(),
+				       z_1_grid.end(),
+				       1.0,
+				       1.0 );
+
+  TEST_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
+
+  x = 1.0;
+
+  z = Utility::LogLinLog::interpolateWeighted( x0,
+				       x1,
+				       x,
+				       y,
+				       y_0_grid.begin(),
+				       y_0_grid.end(),
+				       z_0_grid.begin(),
+				       z_0_grid.end(),
+				       y_1_grid.begin(),
+				       y_1_grid.end(),
+				       z_1_grid.begin(),
+				       z_1_grid.end(),
+				       1.0,
+				       1.0 );
+
+  TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the intermediate grid length can be calculated
 TEUCHOS_UNIT_TEST( LogLinLog, calculateIntermediateGridLength )
 {

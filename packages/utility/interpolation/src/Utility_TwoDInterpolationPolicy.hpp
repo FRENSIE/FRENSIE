@@ -239,6 +239,83 @@ public:
 			ZIterator start_dep_var_1,
 			ZIterator end_dep_var_1 );
 
+
+
+
+
+  //! Conduct the interpolation between two grids
+  template<typename FirstIndepType,
+           typename SecondIndepType,
+           typename ZYLowerFunctor,
+           typename ZYUpperFunctor>
+  static typename ZYLowerFunctor::result_type interpolateWeighted(
+                           const FirstIndepType indep_var_x_0,
+                           const FirstIndepType indep_var_x_1,
+                           const FirstIndepType indep_var_x,
+                           const double weighted_indep_var_y,
+                           const ZYLowerFunctor& evaluate_z_with_y_0_functor,
+                           const ZYUpperFunctor& evaluate_z_with_y_1_functor,
+                           const SecondIndepType weighting_factor_y_0,
+                           const SecondIndepType weighting_factor_y_1 );
+
+  //! Conduct the interpolation between two grids
+  template<TupleMember YIndepMember,
+	   TupleMember DepMember,
+	   typename YIterator,
+	   typename ZIterator,
+	   typename T>
+  static T interpolateWeighted( const T indep_var_x_0,
+			const T indep_var_x_1,
+			const T indep_var_x,
+			const T weighted_indep_var_y,
+			YIterator start_indep_y_grid_0,
+			YIterator end_indep_y_grid_0,
+			ZIterator start_dep_grid_0,
+			ZIterator end_dep_grid_0,
+			YIterator start_indep_y_grid_1,
+			YIterator end_indep_y_grid_1,
+			ZIterator start_dep_grid_1,
+			ZIterator end_dep_grid_1,
+            const T weighting_factor_y_0,
+            const T weighting_factor_y_1 );
+
+  //! Conduct the interpolation between two grids
+  template<TupleMember YIndepMember,
+	   TupleMember DepMember,
+	   typename Iterator,
+	   typename T >
+  static T interpolateWeighted( const T indep_var_x_0,
+			const T indep_var_x_1,
+			const T indep_var_x,
+			const T weighted_indep_var_y,
+			Iterator start_grid_0,
+			Iterator end_grid_0,
+			Iterator start_grid_1,
+			Iterator end_grid_1,
+            const T weighting_factor_y_0,
+            const T weighting_factor_y_1 );
+
+  //! Conduct the interpolation between two grids (no tuples)
+  template<typename YIterator, typename ZIterator, typename T>
+  static T interpolateWeighted( const T indep_var_x_0,
+			const T indep_var_x_1,
+			const T indep_var_x,
+			const T weighted_indep_var_y,
+			YIterator start_indep_var_y_0,
+			YIterator end_indep_var_y_0,
+			ZIterator start_dep_var_0,
+			ZIterator end_dep_var_0,
+			YIterator start_indep_var_y_1,
+			YIterator end_indep_var_y_1,
+			ZIterator start_dep_var_1,
+			ZIterator end_dep_var_1,
+            const T weighting_factor_y_0,
+            const T weighting_factor_y_1 );
+
+
+
+
+
   //! Conduct unit base interpolation between two grids
   template<typename FirstIndepType,
            typename SecondIndepType,
@@ -258,7 +335,8 @@ public:
     const typename ZYLowerFunctor::result_type below_lower_limit_return_value =
     QuantityTraits<typename ZYLowerFunctor::result_type>::zero(),
     const typename ZYLowerFunctor::result_type above_upper_limit_return_value =
-    QuantityTraits<typename ZYLowerFunctor::result_type>::zero() );
+    QuantityTraits<typename ZYLowerFunctor::result_type>::zero(),
+    const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct unit base interpolation between two grids
   template<TupleMember YIndepMember,
@@ -277,7 +355,8 @@ public:
 				YIterator start_indep_y_grid_1,
 				YIterator end_indep_y_grid_1,
 				ZIterator start_dep_grid_1,
-				ZIterator end_dep_grid_1 );
+				ZIterator end_dep_grid_1,
+                const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct the interpolation between two grids
   template<TupleMember YIndepMember,
@@ -291,7 +370,8 @@ public:
 				Iterator start_grid_0,
 				Iterator end_grid_0,
 				Iterator start_grid_1,
-				Iterator end_grid_1 );
+				Iterator end_grid_1,
+                const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct unit base interpolation between two grids (no tuples)
   template<typename YIterator, typename ZIterator, typename T>
@@ -306,7 +386,8 @@ public:
 				YIterator start_indep_var_y_1,
 				YIterator end_indep_var_y_1,
 				ZIterator start_dep_var_1,
-				ZIterator end_dep_var_1 );
+				ZIterator end_dep_var_1,
+                const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct the interpolation between two processed grids
   template<TupleMember YIndepMember,
@@ -412,11 +493,13 @@ private:
 
   // Calculate the "fuzzy" lower bound (lower bound with roundoff tolerance)
   template<typename T>
-  static T calculateFuzzyLowerBound( const T lower_bound );
+  static T calculateFuzzyLowerBound( const T lower_bound,
+                                     const double tol = 1e-3 );
 
   // Calculate the "fuzzy" upper bound (upper bound with roundoff tolerance)
   template<typename T>
-  static T calculateFuzzyUpperBound( const T upper_bound );
+  static T calculateFuzzyUpperBound( const T upper_bound,
+                                     const double tol = 1e-3 );
 
   // Interpolate on the specified y grid
   template<TupleMember YIndepMember,
