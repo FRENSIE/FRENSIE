@@ -68,7 +68,8 @@ public:
 
   //! Constructor
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
-                                        const DistributionType& distribution );
+                                        const DistributionType& distribution,
+                                        const double fuzzy_boundary_tol = 1e-3 );
   
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -76,19 +77,45 @@ public:
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
-                secondary_distributions );
+                secondary_distributions,
+                const double fuzzy_boundary_tol = 1e-3 );
 
   //! Destructor
   virtual ~UnitAwareInterpolatedTabularTwoDDistributionImplBase()
   { /* ... */ }
 
-  //! Evaluate the distribution
+  //! Evaluate the distribution using unit based interpolation
   DepQuantity evaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the secondary conditional PDF
+  //! Evaluate the distribution
+  DepQuantity evaluateExact(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Evaluate the distribution using weighted interpolation
+  DepQuantity evaluateWeighted(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const double weighted_secondary_indep_var_value ) const;
+
+  //! Evaluate the secondary conditional PDF using unit based interpolation
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Evaluate the secondary conditional PDF
+  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Evaluate the secondary conditional PDF using weighted interpolation
+  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFWeighted(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const double weighted_secondary_indep_var_value ) const;
+
+  //! Evaluate the secondary conditional CDF
+  InverseSecondaryIndepQuantity evaluateSecondaryConditionalCDFExact(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
@@ -118,7 +145,7 @@ protected:
   UnitAwareInterpolatedTabularTwoDDistributionImplBase()
   { /* ... */ }
 
-  //! Evaluate the distribution using the desired evaluation method
+  //! Evaluate the distribution using the desired evaluation method and unit based interpolation
   template<typename LocalTwoDInterpPolicy,
            typename ReturnType,
            typename EvaluationMethod>
@@ -130,6 +157,24 @@ protected:
                         QuantityTraits<ReturnType>::zero(),
                         const ReturnType above_upper_bound_return =
                         QuantityTraits<ReturnType>::zero() ) const;
+
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateExactImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluate ) const;
+
+  //! Evaluate the distribution using the desired evaluation method and the ratio of the secondary indep variable
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateWeightedImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const double weighted_secondary_indep_var_value,
+                        EvaluationMethod evaluate ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
@@ -163,6 +208,8 @@ private:
   bool areSecondaryDistsCompatibleWithInterpType(
                  const Array<std::shared_ptr<const BaseOneDDistributionType> >&
                  secondary_distributions ) const;
+
+  double d_fuzzy_boundary_tol;
 };
   
 } // end Utility namespace

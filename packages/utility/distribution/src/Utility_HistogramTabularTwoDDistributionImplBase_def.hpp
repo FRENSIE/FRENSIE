@@ -25,6 +25,28 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
                                           &BaseOneDDistributionType::evaluate);
 }
 
+// Evaluate the distribution
+template<typename Distribution>
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateExact(
+  const PrimaryIndepQuantity primary_indep_var_value,
+  const SecondaryIndepQuantity secondary_indep_var_value ) const -> DepQuantity
+{
+  return this->evaluate( primary_indep_var_value,
+                         secondary_indep_var_value );
+}
+
+// Evaluate the distribution using a weighted interpolation scheme
+template<typename Distribution>
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateWeighted(
+  const PrimaryIndepQuantity primary_indep_var_value,
+  const double weighted_secondary_indep_var_value ) const -> DepQuantity
+{
+  return this->evaluateWeightedImpl<DepQuantity>(
+                primary_indep_var_value,
+                weighted_secondary_indep_var_value,
+                &BaseOneDDistributionType::evaluate );
+}
+
 // Evaluate the secondary conditional PDF
 template<typename Distribution>
 auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDF(
@@ -38,6 +60,29 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSe
                                       &BaseOneDDistributionType::evaluatePDF );
 }
 
+// Evaluate the secondary conditional PDF
+template<typename Distribution>
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDFExact(
+                 const PrimaryIndepQuantity primary_indep_var_value,
+                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+  -> InverseSecondaryIndepQuantity
+{
+  return this->evaluateSecondaryConditionalPDF( primary_indep_var_value,
+                                                secondary_indep_var_value );
+}
+
+// Evaluate the secondary conditional PDF using a weighted interpolation scheme
+template<typename Distribution>
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDFWeighted(
+  const PrimaryIndepQuantity primary_indep_var_value,
+  const double weighted_secondary_indep_var_value ) const -> InverseSecondaryIndepQuantity
+{
+  return this->evaluateWeightedImpl<InverseSecondaryIndepQuantity>(
+                primary_indep_var_value,
+                weighted_secondary_indep_var_value,
+                &BaseOneDDistributionType::evaluatePDF );
+}
+
 // Evaluate the distribution using the desired evaluation method
 template<typename Distribution>
 template<typename ReturnType, typename EvaluationMethod>
@@ -47,7 +92,7 @@ inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution
                         EvaluationMethod evaluate ) const
 {
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
+
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
@@ -62,6 +107,44 @@ inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution
   }
   else
     return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
+}
+
+// Evaluate the distribution using the desired evaluation method
+template<typename Distribution>
+template<typename ReturnType, typename EvaluationMethod>
+inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateWeightedImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const double weighted_secondary_indep_var_value,
+                        EvaluationMethod evaluate ) const
+{
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  // Check for a primary value outside of the primary grid limits
+  if( lower_bin_boundary == upper_bin_boundary )
+  {
+    if( this->arePrimaryLimitsExtended() )
+    {
+      SecondaryIndepQuantity secondary_indep_var_value =
+        weighted_secondary_indep_var_value*
+        lower_bin_boundary->second->getUpperBoundOfIndepVar();
+
+      return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
+    }
+    else
+      return QuantityTraits<ReturnType>::zero();
+  }
+  else
+  {
+    SecondaryIndepQuantity secondary_indep_var_value =
+        weighted_secondary_indep_var_value*
+        lower_bin_boundary->second->getUpperBoundOfIndepVar();
+
+    return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
+  }
 }
 
 // Sample from the distribution using the desired sampling functor

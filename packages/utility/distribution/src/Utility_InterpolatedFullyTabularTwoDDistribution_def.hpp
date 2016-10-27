@@ -31,7 +31,8 @@ template<template<typename T, typename... Args> class ArrayA,
 UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularTwoDDistribution(
        const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
        const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
-       const ArrayC<SubarrayC<DepQuantity> >& dependent_values )
+       const ArrayC<SubarrayC<DepQuantity> >& dependent_values,
+       const double fuzzy_boundary_tol )
 {
   // Make sure the grids are valid
   testPrecondition( Sort::isSortedAscending( primary_indep_grid.begin(),
@@ -71,6 +72,21 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,Primar
                                       &BaseOneDDistributionType::evaluateCDF,
                                       0.0,
                                       1.0 );
+}
+
+// Evaluate the secondary conditional CDF
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFExact(
+                 const PrimaryIndepQuantity primary_indep_var_value,
+                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+{
+  return this->template evaluateExactImpl<CDFInterpPolicy,double>(
+                                      primary_indep_var_value,
+                                      secondary_indep_var_value,
+                                      &BaseOneDDistributionType::evaluateCDF );
 }
 
 // Return a random sample from the secondary conditional PDF and the index
@@ -314,6 +330,18 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
+    // Check for a primary value at the primary grid upper limit
+    if( primary_indep_var_value == upper_bin_boundary->first )
+    {
+      return upper_bin_boundary->second->sampleWithRandomNumber( random_number );
+    }
+
+    // Check for a primary value at the primary grid upper limit
+    if( primary_indep_var_value == lower_bin_boundary->first )
+    {
+      return lower_bin_boundary->second->sampleWithRandomNumber( random_number );  
+    }
+
     return TwoDInterpPolicy::calculateIntermediateGridLimit(
          lower_bin_boundary->first,
          upper_bin_boundary->first,

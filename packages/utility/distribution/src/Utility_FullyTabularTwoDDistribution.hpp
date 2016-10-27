@@ -83,6 +83,26 @@ public:
   virtual ~UnitAwareFullyTabularTwoDDistribution()
   { /* ... */ }
 
+  //! Evaluate the distribution
+  virtual DepQuantity evaluateExact(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
+
+  //! Evaluate the distribution using a weighted interpolation
+  virtual DepQuantity evaluateWeighted(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double weighted_secondary_indep_var_value ) const = 0;
+
+  //! Evaluate the secondary conditional PDF
+  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
+
+  //! Evaluate the secondary conditional PDF
+  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFWeighted(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const double weighted_secondary_indep_var_value ) const = 0;
+
   //! Evaluate the secondary conditional CDF
   virtual double evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,

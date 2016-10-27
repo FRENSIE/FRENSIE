@@ -110,8 +110,9 @@ public:
 
   //! Constructor
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
-                                         const DistributionType& distribution )
-    : ParentType( distribution )
+                                        const DistributionType& distribution,
+                                        const double fuzzy_boundary_tol = 1e-3 )
+    : ParentType( distribution, fuzzy_boundary_tol )
   { /* ... */ }
 
   //! Constructor
@@ -119,8 +120,9 @@ public:
            template<typename T, typename... Args> class ArrayB>
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
                    const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                   const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions )
-    : ParentType( primary_indep_grid, secondary_distributions )
+                   const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
+                   const double fuzzy_boundary_tol = 1e-3 )
+    : ParentType( primary_indep_grid, secondary_distributions, fuzzy_boundary_tol )
   { /* ... */ }
 
   //! Raw constructor
@@ -132,7 +134,8 @@ public:
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
        const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
        const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
-       const ArrayC<SubarrayC<DepQuantity> >& dependent_values );
+       const ArrayC<SubarrayC<DepQuantity> >& dependent_values,
+       const double fuzzy_boundary_tol = 1e-3 );
 
   //! Destructor
   ~UnitAwareInterpolatedFullyTabularTwoDDistribution()
@@ -140,6 +143,11 @@ public:
 
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Evaluate the secondary conditional CDF exact
+  double evaluateSecondaryConditionalCDFExact(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 

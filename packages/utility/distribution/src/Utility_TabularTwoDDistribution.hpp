@@ -109,6 +109,12 @@ public:
   //! Test if the distribution is tabular in the primary dimension
   bool isPrimaryDimensionTabular() const;
 
+  //! Find the bin boundaries
+  void findBinBoundaries(
+         const PrimaryIndepQuantity primary_indep_var_value,
+         typename DistributionType::const_iterator& lower_bin_boundary,
+         typename DistributionType::const_iterator& upper_bin_boundary ) const;
+
 protected:
 
   //! Default constructor
@@ -117,12 +123,6 @@ protected:
 
   //! Set the distribution
   void setDistribution( const DistributionType distribution );
-
-  //! Find the bin boundaries
-  void findBinBoundaries(
-         const PrimaryIndepQuantity primary_indep_var_value,
-         typename DistributionType::const_iterator& lower_bin_boundary,
-         typename DistributionType::const_iterator& upper_bin_boundary ) const;
 
   //! Calculate the index of the desired bin
   size_t calculateBinIndex(
