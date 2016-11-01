@@ -1675,6 +1675,338 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the secondary conditional CDF can be evaluated
+TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
+                   evaluateSecondaryConditionalCDFExact )
+{
+  // Before the first bin - no extension
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, 5.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, 10.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, 11.0 ), 0.0 );
+
+  // Before the first bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, 5.0 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, 10.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, 11.0 ), 1.0 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin boundary
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 5.0 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 10.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 11.0 ), 1.0 );
+
+  // In the second bin
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5, 1.0 ), 0.05 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5, 1.25 ), 0.0625 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5, 5.0 ),
+                          0.461538461538462,
+                          1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5, 8.75 ), 0.9375 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5, 9.0 ), 0.95 );
+
+  // On the third bin boundary
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 2.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 2.5 ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 5.0 ),
+                          0.4230769230769231,
+                          1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 7.5 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 8.0 ), 1.0 );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 1.0 ), 0.05 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 1.25 ), 0.0625 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 5.0 ),
+                          0.461538461538462,
+                          1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 8.75 ), 0.9375 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 9.0 ), 0.95 );
+
+  // On the upper bin boundary
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 5.0 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 10.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 11.0 ), 1.0 );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 5.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 10.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 11.0 ), 0.0 );
+
+  // After the third bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 5.0 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 10.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 11.0 ), 1.0 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware secondary conditional CDF can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
+                   evaluateSecondaryConditionalCDFExact )
+{
+  // Before the first bin - no extension
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, -1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, 0.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, 5.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, 10.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, 11.0*cgs::centimeter ), 0.0 );
+
+  // Before the first bin - with extension
+  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, -1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, 0.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, 5.0*cgs::centimeter ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, 10.0*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, 11.0*cgs::centimeter ), 1.0 );
+
+  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin boundary
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, -1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 0.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 5.0*cgs::centimeter ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 10.0*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 11.0*cgs::centimeter ), 1.0 );
+
+  // In the second bin
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5*MeV, 1.0*cgs::centimeter ), 0.05 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5*MeV, 1.25*cgs::centimeter ), 0.0625 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5*MeV, 5.0*cgs::centimeter ),
+                          0.461538461538462,
+                          1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5*MeV, 8.75*cgs::centimeter ), 0.9375 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.5*MeV, 9.0*cgs::centimeter ), 0.95 );
+
+  // On the third bin boundary
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 2.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 2.5*cgs::centimeter ), 0.0 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 5.0*cgs::centimeter ),
+                          0.4230769230769231,
+                          1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 7.5*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 8.0*cgs::centimeter ), 1.0 );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 1.0*cgs::centimeter ), 0.05 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 1.25*cgs::centimeter ), 0.0625 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 5.0*cgs::centimeter ),
+                          0.461538461538462,
+                          1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 8.75*cgs::centimeter ), 0.9375 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 9.0*cgs::centimeter ), 0.95 );
+
+  // On the upper bin boundary
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, -1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, 0.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, 5.0*cgs::centimeter ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, 10.0*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, 11.0*cgs::centimeter ), 1.0 );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, -1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 0.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 5.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 10.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 11.0*cgs::centimeter ), 0.0 );
+
+  // After the third bin - with extension
+  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, -1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 0.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 5.0*cgs::centimeter ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 10.0*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 11.0*cgs::centimeter ), 1.0 );
+
+  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the secondary conditional CDF can be evaluated
+TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
+                   evaluateSecondaryConditionalCDFWeighted )
+{
+  // Before the first bin - no extension
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, 5.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, 10.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, 11.0/10 ), 0.0 );
+
+  // Before the first bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, 5.0/10 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, 10.0/10 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0, 11.0/10 ), 1.0 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin boundary
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0, 5.0/10 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0, 10.0/10 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0, 11.0/10 ), 1.0 );
+
+  // In the second bin
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5, 1.0/7.5 ), 1.0/15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5, 1.25/7.5 ), 1.0/12 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5, 5.0/7.5 ),
+                          0.544871794871795,
+                          1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5, 8.75/7.5 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5, 9.0/7.5 ), 1.0 );
+
+  // On the third bin boundary
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0, 2.0/7.5 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0, 2.5/7.5 ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0, 5.0/7.5 ),
+                          0.4230769230769231,
+                          1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0, 7.5/7.5 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0, 8.0/7.5 ), 1.0 );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5, 1.0/7.5 ), 1.0/15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5, 1.25/7.5 ), 1.0/12 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5, 5.0/7.5 ),
+                          0.544871794871795,
+                          1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5, 8.75/7.5 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5, 9.0/7.5 ), 1.0 );
+
+  // On the upper bin boundary
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0, 5.0/10 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0, 10.0/10 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0, 11.0/10 ), 1.0 );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, 5.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, 10.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, 11.0/10 ), 0.0 );
+
+  // After the third bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, 5.0/10 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, 10.0/10 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0, 11.0/10 ), 1.0 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware secondary conditional CDF can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
+                   evaluateSecondaryConditionalCDFWeighted )
+{
+  // Before the first bin - no extension
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, 5.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, 10.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, 11.0/10 ), 0.0 );
+
+  // Before the first bin - with extension
+  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, 5.0/10 ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, 10.0/10 ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( -1.0*MeV, 11.0/10 ), 1.0 );
+
+  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin boundary
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0*MeV, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0*MeV, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0*MeV, 5.0/10 ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0*MeV, 10.0/10 ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.0*MeV, 11.0/10 ), 1.0 );
+
+  // In the second bin
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5*MeV, 1.0/7.5 ), 1.0/15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5*MeV, 1.25/7.5 ), 1.0/12 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5*MeV, 5.0/7.5 ),
+                          0.544871794871795,
+                          1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5*MeV, 8.75/7.5 ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 0.5*MeV, 9.0/7.5 ), 1.0 );
+
+  // On the third bin boundary
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0*MeV, 2.0/7.5 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0*MeV, 2.5/7.5 ), 0.0 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0*MeV, 5.0/7.5 ),
+                          0.4230769230769231,
+                          1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0*MeV, 7.5/7.5 ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.0*MeV, 8.0/7.5 ), 1.0 );
+
+  // In the third bin
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5*MeV, 1.0/7.5 ), 1.0/15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5*MeV, 1.25/7.5 ), 1.0/12 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5*MeV, 5.0/7.5 ),
+                          0.544871794871795,
+                          1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5*MeV, 8.75/7.5 ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 1.5*MeV, 9.0/7.5 ), 1.0 );
+
+  // On the upper bin boundary
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0*MeV, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0*MeV, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0*MeV, 5.0/10 ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0*MeV, 10.0/10 ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 2.0*MeV, 11.0/10 ), 1.0 );
+
+  // After the third bin - no extension
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, 5.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, 10.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, 11.0/10 ), 0.0 );
+
+  // After the third bin - with extension
+  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, -1.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, 0.0/10 ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, 5.0/10 ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, 10.0/10 ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFWeighted( 3.0*MeV, 11.0/10 ), 1.0 );
+
+  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditional )

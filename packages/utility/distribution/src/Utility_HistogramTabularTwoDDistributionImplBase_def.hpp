@@ -83,6 +83,29 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSe
                 &BaseOneDDistributionType::evaluatePDF );
 }
 
+// Evaluate the secondary conditional CDF
+template<typename Distribution>
+double UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalCDFExact(
+                 const PrimaryIndepQuantity primary_indep_var_value,
+                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+{
+  return this->evaluateImpl<double>( primary_indep_var_value,
+                                     secondary_indep_var_value,
+                                     &BaseOneDDistributionType::evaluateCDF );
+}
+
+// Evaluate the secondary conditional CDF using weighted interpolation
+template<typename Distribution>
+double UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalCDFWeighted(
+                 const PrimaryIndepQuantity primary_indep_var_value,
+                 const double weighted_secondary_indep_var_value ) const
+{
+  return this->evaluateWeightedImpl<double>(
+                                      primary_indep_var_value,
+                                      weighted_secondary_indep_var_value,
+                                      &BaseOneDDistributionType::evaluateCDF );
+}
+
 // Evaluate the distribution using the desired evaluation method
 template<typename Distribution>
 template<typename ReturnType, typename EvaluationMethod>

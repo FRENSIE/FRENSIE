@@ -146,10 +146,10 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the secondary conditional CDF exact
-  double evaluateSecondaryConditionalCDFExact(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+//  //! Evaluate the secondary conditional CDF exact
+//  double evaluateSecondaryConditionalCDFExact(
+//                const PrimaryIndepQuantity primary_indep_var_value,
+//                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(

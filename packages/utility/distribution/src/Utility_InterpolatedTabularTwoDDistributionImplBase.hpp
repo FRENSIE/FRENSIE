@@ -115,9 +115,14 @@ public:
                 const double weighted_secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional CDF
-  InverseSecondaryIndepQuantity evaluateSecondaryConditionalCDFExact(
+  double evaluateSecondaryConditionalCDFExact(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Evaluate the secondary conditional CDF using weighted interpolation
+  double evaluateSecondaryConditionalCDFWeighted(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const double weighted_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(

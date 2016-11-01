@@ -74,20 +74,20 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,Primar
                                       1.0 );
 }
 
-// Evaluate the secondary conditional CDF
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFExact(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-{
-  return this->template evaluateExactImpl<CDFInterpPolicy,double>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF );
-}
+//// Evaluate the secondary conditional CDF
+//template<typename TwoDInterpPolicy,
+//         typename PrimaryIndependentUnit,
+//         typename SecondaryIndependentUnit,
+//         typename DependentUnit>
+//double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFExact(
+//                 const PrimaryIndepQuantity primary_indep_var_value,
+//                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+//{
+//  return this->template evaluateExactImpl<CDFInterpPolicy,double>(
+//                                      primary_indep_var_value,
+//                                      secondary_indep_var_value,
+//                                      &BaseOneDDistributionType::evaluateCDF );
+//}
 
 // Return a random sample from the secondary conditional PDF and the index
 /*! \details The primary_bin_index stores the index of the bin boundary that
@@ -224,7 +224,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   {
     // Find the bin boundaries
     typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
+
     this->findBinBoundaries( primary_indep_var_value,
                              lower_bin_boundary,
                              upper_bin_boundary );
@@ -242,19 +242,19 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
 
     SecondaryIndepQuantity intermediate_grid_lower_bound =
     this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
-                                                                         
+
     typename QuantityTraits<SecondaryIndepQuantity>::RawType
       intermediate_grid_length =
       TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
                                                intermediate_grid_lower_bound,
                                                intermediate_grid_upper_bound );
-    
+
     typename QuantityTraits<SecondaryIndepQuantity>::RawType eta =
       TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
                                                  max_secondary_indep_var_value,
                                                  intermediate_grid_lower_bound,
                                                  intermediate_grid_length );
-    
+
     SecondaryIndepQuantity max_secondary_indep_var_value_bin_bound =
       TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
                        eta,
