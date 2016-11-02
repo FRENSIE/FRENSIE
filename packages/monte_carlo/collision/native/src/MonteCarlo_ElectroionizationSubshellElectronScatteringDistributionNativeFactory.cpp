@@ -29,8 +29,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
         raw_electroionization_data.getElectroionizationEnergyGrid( subshell );
 
   // Subshell distribution
-  ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-        subshell_distribution( energy_grid.size() );
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
 
   // Create the subshell distribution
   createSubshellDistribution( raw_electroionization_data,
@@ -49,12 +48,16 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid,
     const unsigned subshell,
-    ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution&
-	 subshell_distribution )
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+	    subshell_distribution )
 {
+  // Create the scattering function
+  Utility::FullyTabularTwoDDistribution::DistributionType
+     function_data( energy_grid.size() );
+
   for( unsigned n = 0; n < energy_grid.size(); ++n )
   {
-    subshell_distribution[n].first = energy_grid[n];
+    function_data[n].first = energy_grid[n];
 
     // Get the recoil energy distribution at the incoming energy
     Teuchos::Array<double> recoil_energy(
@@ -68,10 +71,15 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
             subshell,
             energy_grid[n] ) );
 
-    subshell_distribution[n].second.reset(
+    function_data[n].second.reset(
 	  new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy,
                                                                pdf ) );
   }
+
+  // Create the scattering function
+  subshell_distribution.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+            function_data ) );
 }
 
 } // end MonteCarlo namespace

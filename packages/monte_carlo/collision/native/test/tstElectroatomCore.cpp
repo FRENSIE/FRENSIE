@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomCore.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
 #include "MonteCarlo_VoidAtomicRelaxationModel.hpp"
@@ -422,66 +423,14 @@ int main( int argc, char** argv )
     unsigned b_threshold_index =
       energy_grid.size() - b_cross_section.size();
 
-    //! \todo Find real bremsstrahlung photon angular distribution
-    // Create the tabular angular distribution
-    Teuchos::Array<double> b_energy_bins( 3 ); // (MeV)
-    b_energy_bins[0] = 1e-7;
-    b_energy_bins[1] = 1.0;
-    b_energy_bins[2] = 1e5;
-
-    Teuchos::Array<double> b_angular_distribution_values( 3 );
-    b_angular_distribution_values[0] =  0.0;
-    b_angular_distribution_values[1] =  0.5;
-    b_angular_distribution_values[2] =  1.0;
-
-    std::shared_ptr<const Utility::OneDDistribution> b_angular_distribution(
-	  		    new Utility::TabularDistribution<Utility::LinLin>(
-						b_energy_bins,
-						b_angular_distribution_values ) );
-
-    // Extract the elastic scattering information data block (BREMI)
-    Teuchos::ArrayView<const double> bremi_block(
-	  			      xss_data_extractor->extractBREMIBlock() );
-
-    // Extract the number of tabulated distributions
-    int N = bremi_block.size()/3;
-
-    // Extract the electron energy grid for bremsstrahlung energy distributions
-    Teuchos::Array<double> b_energy_grid(bremi_block(0,N));
-
-    // Extract the table lengths for bremsstrahlung energy distributions
-    Teuchos::Array<double> table_length(bremi_block(N,N));
-
-    // Extract the offsets for bremsstrahlung energy distributions
-    Teuchos::Array<double> offset(bremi_block(2*N,N));
-
-    // Extract the bremsstrahlung photon energy distributions block (BREME)
-    Teuchos::ArrayView<const double> breme_block =
-      xss_data_extractor->extractBREMEBlock();
-
-    // Create the bremsstrahlung scattering distributions
-    MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-      b_scattering_function( N );
-
-    for( unsigned n = 0; n < N; ++n )
-    {
-      b_scattering_function[n].first = b_energy_grid[n];
-
-      b_scattering_function[n].second.reset(
-	    new Utility::HistogramDistribution(
-		   breme_block( offset[n], table_length[n] ),
-		   breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
-           true ) );
-    }
-
 	std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution;
 
-    b_scattering_distribution.reset(
-        new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-            b_scattering_function,
-            xss_data_extractor->extractAtomicNumber() ) );
 
+MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+        *xss_data_extractor,
+        b_scattering_distribution,
+        xss_data_extractor->extractAtomicNumber() );
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
@@ -518,7 +467,7 @@ int main( int argc, char** argv )
     // Create the native data file container
     Data::ElectronPhotonRelaxationDataContainer data_container(
         test_native_file_name );
- 
+
     // Create the atomic excitation, bremsstrahlung cross sections
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( data_container.getElectronEnergyGrid() );
@@ -531,11 +480,11 @@ int main( int argc, char** argv )
 					     energy_grid[energy_grid.size()-1],
 					     100 ) );
 
-  // Atomic Excitation cross section
-  Teuchos::ArrayRCP<double> ae_cross_section;
-  ae_cross_section.assign(
-    data_container.getAtomicExcitationCrossSection().begin(),
-	data_container.getAtomicExcitationCrossSection().end() );
+    // Atomic Excitation cross section
+    Teuchos::ArrayRCP<double> ae_cross_section;
+    ae_cross_section.assign(
+      data_container.getAtomicExcitationCrossSection().begin(),
+	  data_container.getAtomicExcitationCrossSection().end() );
 
     unsigned ae_threshold_index =
         data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex();
@@ -561,40 +510,46 @@ int main( int argc, char** argv )
             ae_energy_loss_distribution ) );
 
 
-  // Bremsstrahlung cross section
-  Teuchos::ArrayRCP<double> b_cross_section;
-  b_cross_section.assign(
-    data_container.getBremsstrahlungCrossSection().begin(),
-	data_container.getBremsstrahlungCrossSection().end() );
+    // Bremsstrahlung cross section
+    Teuchos::ArrayRCP<double> b_cross_section;
+    b_cross_section.assign(
+      data_container.getBremsstrahlungCrossSection().begin(),
+	  data_container.getBremsstrahlungCrossSection().end() );
 
     unsigned b_threshold_index =
         data_container.getBremsstrahlungCrossSectionThresholdEnergyIndex();
 
 
-  // Get the energy grid for bremsstrahlung energy distributions
-  std::vector<double> b_energy_grid =
+    // Get the energy grid for bremsstrahlung energy distributions
+    std::vector<double> b_energy_grid =
         data_container.getBremsstrahlungEnergyGrid();
 
-  MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-        b_energy_loss_function( b_energy_grid.size() );
-  for( unsigned n = 0; n < b_energy_grid.size(); ++n )
-  {
-    b_energy_loss_function[n].first = b_energy_grid[n];
+    Utility::FullyTabularTwoDDistribution::DistributionType
+      function_data( b_energy_grid.size() );
 
-    // Get the energy of the bremsstrahlung photon at the incoming energy
-    Teuchos::Array<double> photon_energy(
+    for( unsigned n = 0; n < b_energy_grid.size(); ++n )
+    {
+      function_data[n].first = b_energy_grid[n];
+
+      // Get the energy of the bremsstrahlung photon at the incoming energy
+      Teuchos::Array<double> photon_energy(
         data_container.getBremsstrahlungPhotonEnergy( b_energy_grid[n] ) );
 
-    // Get the bremsstrahlung photon pdf at the incoming energy
-    Teuchos::Array<double> pdf(
+      // Get the bremsstrahlung photon pdf at the incoming energy
+      Teuchos::Array<double> pdf(
         data_container.getBremsstrahlungPhotonPDF( b_energy_grid[n] ) );
 
-    b_energy_loss_function[n].second.reset(
-	  new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
-                                                               pdf ) );
-  }
+      function_data[n].second.reset(
+	    new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
+                                                                 pdf ) );
+    }
 
-	std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+    // Create the scattering function
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution> b_energy_loss_function(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+            function_data ) );
+
+    std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution(
             new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
                 b_energy_loss_function,

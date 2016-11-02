@@ -16,7 +16,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -29,15 +29,12 @@ class ElectroionizationSubshellElectronScatteringDistribution : public ElectronS
 
 public:
 
-  //! Typedef for the  electroionization subshell distribution
-  typedef MonteCarlo::TwoDDistribution ElectroionizationSubshellDistribution;
-
-  //! Typedef for interpolation policy
-  typedef Utility::LinLin InterpolationPolicy;
+  //! Typedef for the two d distributions
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor
   ElectroionizationSubshellElectronScatteringDistribution(
-    const ElectroionizationSubshellDistribution&
+    const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy );
 
@@ -53,13 +50,7 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double scattering_angle ) const
-  { /* ... */ }
-
-  //! Evaluate the PDF value for a given incoming and outgoing energy (efficient)
-  double evaluatePDF( const unsigned lower_bin_index,
-                      const double incoming_energy,
-                      const double outgoing_energy_1 ) const;
+                   const double scattering_angle ) const;
 
   //! Evaluate the PDF value for a given incoming and outgoing energy
   double evaluatePDF( const double incoming_energy,
@@ -67,8 +58,7 @@ public:
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle ) const
-  { /* ... */ }
+                      const double scattering_angle ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -96,8 +86,7 @@ public:
 private:
 
   // electroionization subshell scattering cross sections
-  ElectroionizationSubshellDistribution
-     d_electroionization_subshell_scattering_distribution;
+  std::shared_ptr<TwoDDist> d_electroionization_subshell_scattering_distribution;
 
   // Subshell binding energy
   double d_binding_energy;

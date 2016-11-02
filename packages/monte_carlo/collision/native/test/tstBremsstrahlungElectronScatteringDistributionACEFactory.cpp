@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
 }
-/*
+
 //---------------------------------------------------------------------------//
 // Check that the sample() function using detailed tabular
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
@@ -137,7 +137,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05 , 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
 }
-
+/*
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function using detailed tabular
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,

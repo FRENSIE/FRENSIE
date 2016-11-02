@@ -195,16 +195,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
 
   diff_cross_section =
     ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
-        0u,
-        1.0e-5,
-        9.0e-6 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  8.859383971725880E+08,
-                                  1e-12 );
-
-  diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
         3.16228E-01,
         3.16115596E-01 );
 
@@ -214,16 +204,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
 
   diff_cross_section =
     ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
-        1.0e5,
-        8.0E4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  2.665370886148930E-03,
-                                  1e-12 );
-
-  diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
-        8u,
         1.0e5,
         8.0E4 );
 
@@ -243,16 +223,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
 
   diff_cross_section =
     ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
-        0u,
-        1.0e-5,
-        9.0e-6 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  8.859383971725880E+08,
-                                  1e-12 );
-
-  diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
         3.16228E-01,
         3.16115596E-01 );
 
@@ -262,16 +232,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
 
   diff_cross_section =
     ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
-        1.0e5,
-        8.0E4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  2.665370886148930E-03,
-                                  1e-12 );
-
-  diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
-        8u,
         1.0e5,
         8.0E4 );
 
@@ -291,16 +251,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
 
   diff_cross_section =
     ace_dipole_bremsstrahlung_reaction->getDifferentialCrossSection(
-        0u,
-        1.0e-5,
-        9.0e-6 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  8.859383971725880E+08,
-                                  1e-12 );
-
-  diff_cross_section =
-    ace_dipole_bremsstrahlung_reaction->getDifferentialCrossSection(
         3.16228E-01,
         3.16115596E-01 );
 
@@ -310,16 +260,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
 
   diff_cross_section =
     ace_dipole_bremsstrahlung_reaction->getDifferentialCrossSection(
-        1.0e5,
-        8.0E4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  2.665370886148930E-03,
-                                  1e-12 );
-
-  diff_cross_section =
-    ace_dipole_bremsstrahlung_reaction->getDifferentialCrossSection(
-        8u,
         1.0e5,
         8.0E4 );
 
@@ -483,19 +423,23 @@ int main( int argc, char** argv )
     xss_data_extractor->extractBREMEBlock();
 
   // Create the bremsstrahlung scattering distributions
-  MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-    scattering_function( N );
+  Utility::FullyTabularTwoDDistribution::DistributionType function_data( N );
 
   for( unsigned n = 0; n < N; ++n )
   {
-    scattering_function[n].first = bremsstrahlung_energy_grid[n];
+    function_data[n].first = bremsstrahlung_energy_grid[n];
 
-    scattering_function[n].second.reset(
+    function_data[n].second.reset(
 	  new Utility::HistogramDistribution(
 		 breme_block( offset[n], table_length[n] ),
 		 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
   }
+
+  // Create the scattering function
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+            function_data ) );
 
   double lower_cutoff_energy = 0.001;
   double upper_cutoff_energy = 1000;

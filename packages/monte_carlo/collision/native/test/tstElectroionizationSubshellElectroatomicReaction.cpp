@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_SubshellType.hpp"
@@ -207,27 +208,6 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
       1.0E+05,
       max_ionization_subshell_adjoint_energy+1.0e-10 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 0.0, 1e-12 );
-
-  // Test the efficient method
-  diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection( 0, 8.829E-02, 1.0E-08 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 0.0, 1e-12 );
-
-  diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection( 2, 1.0, 9.7163E-02 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.143341410953940E+01, 1e-12 );
-
-  diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection( 2, 1.0, 8.145469E-01 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.143341410953940E+01, 1e-12 );
-
-  diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection( 4, 1.0E+05, 1.75297E+02 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 1.605436200739700E-05, 1e-12 );
-
-  diff_cross_section =
-    ace_first_subshell_reaction->getDifferentialCrossSection( 4, 1e5, 9.982461471e4 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 1.6054362007397e-5, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -256,7 +236,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         1.98284583249127E-03,
         8.52126000399011E-04 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 4.05416988790885389e+08 );
+  TEST_EQUALITY_CONST( diff_cross_section, 4.05416988790866375e+08 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 4.05416988790885389e+08, 1e-12 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
@@ -279,7 +260,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         0.0025118800000459773,
         0.0012514500000459765489 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 2.32902371071580835e+07 );
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32902371071467660e+07 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.32902371071580835e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
@@ -293,14 +275,16 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         0.0025118897153524992472,
         0.0012514500000459765489 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 2.32411290601508170e+07 );
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32411290601451583e+07 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.32411290601508170e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118908794333669708,
         0.0012514500000459765489 );
 
-  TEST_EQUALITY_CONST( diff_cross_section, 2.32396920675203465e+07 );
+  TEST_EQUALITY_CONST( diff_cross_section, 2.32396920675203428e+07 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.32396920675203465e+07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -431,34 +415,19 @@ int main( int argc, char** argv )
                              first_subshell_info + 2*num_tables[first_subshell],
                              num_tables[first_subshell] ) );
 
-   // Create the electroionization sampling table for the first subshell
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      first_subshell_function( num_tables[first_subshell] );
-
-
-  for( unsigned n = 0; n < num_tables[first_subshell]; ++n )
-  {
-    first_subshell_function[n].first = first_energy_grid[n];
-
-    first_subshell_function[n].second.reset(
-     new Utility::HistogramDistribution(
-       eion_block( first_subshell_loc + first_table_offset[n],
-                   first_table_length[n] ),
-       eion_block( first_subshell_loc + first_table_offset[n] + first_table_length[n] + 1,
-                   first_table_length[n] - 1),
-       true ) );
-  }
-
-  // Create the subshell distribution from the function
+  // Create the electroionization sampling table for the first subshell
   std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
     first_subshell_distribution;
 
-    first_subshell_distribution.reset(
-      new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
-                                           first_subshell_function,
-                                           binding_energies[first_subshell] ) );
+   // Create the electroionization sampling table for the last_subshell
+MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
+    first_subshell_info,
+    first_subshell_loc,
+    num_tables[first_subshell],
+    binding_energies[first_subshell],
+	eion_block,
+	first_subshell_distribution );
 
-  double binding_energy = binding_energies[first_subshell];
 
   // Set the max allowed adjoint energy
   max_ionization_subshell_adjoint_energy = 9.99999117099E+04;
@@ -523,32 +492,18 @@ int main( int argc, char** argv )
                              last_subshell_info + 2*num_tables[last_subshell],
                              num_tables[last_subshell] ) );
 
-   // Create the electroionization sampling table for the last_subshell
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      last_subshell_function( num_tables[last_subshell] );
-
-
-  for( unsigned n = 0; n < num_tables[last_subshell]; ++n )
-  {
-    last_subshell_function[n].first = last_energy_grid[n];
-
-    last_subshell_function[n].second.reset(
-     new Utility::HistogramDistribution(
-       eion_block( last_subshell_loc + last_table_offset[n],
-                   last_table_length[n] ),
-       eion_block( last_subshell_loc + last_table_offset[n] + last_table_length[n] + 1,
-                   last_table_length[n] - 1),
-       true ) );
-  }
-
   // Create the subshell distribution from the function
   std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
     last_subshell_distribution;
 
-  last_subshell_distribution.reset(
-    new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
-                                           last_subshell_function,
-                                           binding_energies[last_subshell] ) );
+   // Create the electroionization sampling table for the last_subshell
+MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
+    last_subshell_info,
+    last_subshell_loc,
+    num_tables[last_subshell],
+    binding_energies[last_subshell],
+	eion_block,
+	last_subshell_distribution );
 
   // Create the reaction
   ace_last_subshell_reaction.reset(

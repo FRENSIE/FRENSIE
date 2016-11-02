@@ -53,7 +53,7 @@ public:
   static void createEnergyLossFunction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double> bremsstrahlung_energy_grid,
-    BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         energy_loss_function );
 };
 

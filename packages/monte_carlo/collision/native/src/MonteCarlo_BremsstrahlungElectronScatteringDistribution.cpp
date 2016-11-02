@@ -18,13 +18,14 @@
 #include "Utility_TabularDistribution.hpp"
 
 namespace MonteCarlo{
+
 // Constructor with simple analytical photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution )
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution )
 {
   // Make sure the array is valid
-  testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
+  testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
 
   // Use simple analytical photon angular distribution
   d_angular_distribution_func = boost::bind<double>(
@@ -36,7 +37,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
 // Constructor with detailed tabular photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
     const std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
     const double lower_cutoff_energy,
     const double upper_cutoff_energy )
@@ -46,7 +47,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
     d_upper_cutoff_energy( upper_cutoff_energy )
 {
   // Make sure the arraies are valid
-  testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
+  testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
   testPrecondition( d_angular_distribution.use_count() > 0 );
 
   // Use detailed photon angular distribution
@@ -59,13 +60,13 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
 // Constructor with detailed 2BS photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-  const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
+  const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
   const int atomic_number )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
     d_atomic_number( atomic_number )
 {
   // Make sure the arraies are valid
-  testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
+  testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
 
   // Use detailed photon angular distribution
   d_angular_distribution_func = boost::bind<double>(
@@ -78,70 +79,13 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 // Return the min incoming energy
 double BremsstrahlungElectronScatteringDistribution::getMinEnergy() const
 {
-  return d_bremsstrahlung_scattering_distribution.front().first;
+  return d_bremsstrahlung_scattering_distribution->getLowerBoundOfPrimaryIndepVar();
 }
 
 // Return the Max incoming energy
 double BremsstrahlungElectronScatteringDistribution::getMaxEnergy() const
 {
-  return d_bremsstrahlung_scattering_distribution.back().first;
-}
-
-// Return the max incoming electron energy for a given outgoing electron energy
-double BremsstrahlungElectronScatteringDistribution::getMaxIncomingEnergyAtOutgoingEnergy(
-        const double energy ) const
-{
-  // Start at the largest energy grid point
-  unsigned grid_point = d_bremsstrahlung_scattering_distribution.size();
-
-  MonteCarlo::TwoDDistribution::const_iterator
-                                        highest_energy_bin, lowest_energy_bin;
-
-  lowest_energy_bin = d_bremsstrahlung_scattering_distribution.begin();
-  highest_energy_bin = d_bremsstrahlung_scattering_distribution.end();
-  highest_energy_bin--;
-
-  // Make sure the outgoing energy is possible
-  testPrecondition( energy < highest_energy_bin->first -
-                    highest_energy_bin->second->getLowerBoundOfIndepVar() );
-
-  for ( highest_energy_bin; highest_energy_bin !=lowest_energy_bin; highest_energy_bin -- )
-  {
-    // Find the maximum photon energy for an electron at the grid_point energy
-    double max_photon_energy =
-      highest_energy_bin->second->getUpperBoundOfIndepVar();
-
-    // Calculate the corresponding minimum outgoing electron energy
-    double min_energy = highest_energy_bin->first - max_photon_energy;
-
-    /* If the minimum outgoing electron energy is at or below the given energy
-       then return the grid_point energy */
-    if ( min_energy <= energy )
-    {
-      return highest_energy_bin->first;
-    }
-  }
-  return 0.0;
-}
-
-// Evaluate the distribution for a given incoming and photon energy (efficient)
-double BremsstrahlungElectronScatteringDistribution::evaluate(
-                    const unsigned lower_bin_index,
-                    const double incoming_energy,
-                    const double photon_energy ) const
-{
-  // Make sure the energies are valid
-  testPrecondition( lower_bin_index >= 0 );
-  testPrecondition( lower_bin_index <
-                    d_bremsstrahlung_scattering_distribution.size() );
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( photon_energy > 0.0 );
-
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedWithWeightedVariable<BremsstrahlungDistribution, InterpolationPolicy>(
-            lower_bin_index,
-            incoming_energy,
-            photon_energy/incoming_energy,
-            d_bremsstrahlung_scattering_distribution );
+  return d_bremsstrahlung_scattering_distribution->getUpperBoundOfPrimaryIndepVar();
 }
 
 // Evaluate the distribution for a given incoming and photon energy
@@ -151,32 +95,14 @@ double BremsstrahlungElectronScatteringDistribution::evaluate(
 {
   // Make sure the energies are valid
   testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
 
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedWithWeightedVariable<BremsstrahlungDistribution, InterpolationPolicy>(
+  // evaluate the distribution using a weighted interpolation scheme
+  return d_bremsstrahlung_scattering_distribution->evaluateWeighted(
             incoming_energy,
-            photon_energy/incoming_energy,
-            d_bremsstrahlung_scattering_distribution );
-}
+            photon_energy/incoming_energy );
 
-// Evaluate the PDF value for a given incoming and photon energy (efficient)
-double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
-                    const unsigned lower_bin_index,
-                    const double incoming_energy,
-                    const double photon_energy ) const
-{
-  // Make sure the energies are valid
-  testPrecondition( lower_bin_index >= 0 );
-  testPrecondition( lower_bin_index <
-                    d_bremsstrahlung_scattering_distribution.size() );
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( photon_energy > 0.0 );
-
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable<BremsstrahlungDistribution, InterpolationPolicy>(
-            lower_bin_index,
-            incoming_energy,
-            photon_energy/incoming_energy,
-            d_bremsstrahlung_scattering_distribution );
 }
 
 // Evaluate the PDF value for a given incoming and photon energy
@@ -186,12 +112,29 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
 {
   // Make sure the energies are valid
   testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
 
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable<BremsstrahlungDistribution, InterpolationPolicy>(
+  // evaluate the PDF using a weighted interpolation scheme
+  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDFWeighted(
             incoming_energy,
-            photon_energy/incoming_energy,
-            d_bremsstrahlung_scattering_distribution );
+            photon_energy/incoming_energy );
+}
+
+// Evaluate the CDF value for a given incoming and photon energy
+double BremsstrahlungElectronScatteringDistribution::evaluateCDF(
+                     const double incoming_energy,
+                     const double photon_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_energy );
+  testPrecondition( photon_energy > 0.0 );
+
+  // evaluate the PDF using a weighted interpolation scheme
+  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDFWeighted(
+            incoming_energy,
+            photon_energy/incoming_energy );
 }
 
 // Sample the photon energy and direction from the distribution
@@ -201,9 +144,9 @@ void BremsstrahlungElectronScatteringDistribution::sample(
              double& photon_angle_cosine ) const
 {
   // Sample the photon energy
-  photon_energy = sampleTwoDDistributionCorrelated<BremsstrahlungDistribution>(
-                                     incoming_energy,
-                                     d_bremsstrahlung_scattering_distribution );
+  photon_energy =
+    d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalExact(
+      incoming_energy );
 
   // Sample the photon outgoing angle cosine
   photon_angle_cosine = d_angular_distribution_func( incoming_energy,
@@ -224,9 +167,9 @@ void BremsstrahlungElectronScatteringDistribution::sampleAndRecordTrials(
 }
 // Randomly scatter the electron
 void BremsstrahlungElectronScatteringDistribution::scatterElectron(
-                                ElectronState& electron,
-			                    ParticleBank& bank,
-                                Data::SubshellType& shell_of_interaction ) const
+                          ElectronState& electron,
+                          ParticleBank& bank,
+                          Data::SubshellType& shell_of_interaction ) const
 {
   // Incoming electron energy
   double incoming_energy = electron.getEnergy();
