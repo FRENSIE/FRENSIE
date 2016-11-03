@@ -17,43 +17,34 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_DiscreteDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+
+
+
 
 namespace MonteCarlo{
 
 //! The moment preserving scattering distribution base class
 class MomentPreservingElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
-                                                  public AdjointElectronScatteringDistribution
+        public AdjointElectronScatteringDistribution
 {
 
 public:
 
-  //! Typedef for the elastic discrete distribution
-  typedef std::vector<Utility::Pair< double,
-		       std::shared_ptr<const Utility::DiscreteDistribution> > >
-  DiscreteElasticDistribution;
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor
   MomentPreservingElasticElectronScatteringDistribution(
-        const DiscreteElasticDistribution& discrete_scattering_distribution,
+        const std::shared_ptr<TwoDDist>& discrete_scattering_distribution,
         const double cutoff_angle_cosine );
 
   //! Destructor
   virtual ~MomentPreservingElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the distribution
-  double evaluate( const unsigned incoming_energy_bin,
-                   const double scattering_angle_cosine ) const;
-
   //! Evaluate the PDF
   double evaluate( const double incoming_energy,
                    const double scattering_angle_cosine ) const;
-
-  //! Evaluate the PDF
-  double evaluatePDF( const unsigned incoming_energy_bin,
-                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the distribution
   double evaluatePDF( const double incoming_energy,
@@ -94,7 +85,7 @@ protected:
 private:
 
   // elastic discrete scattering distribution
-  DiscreteElasticDistribution d_discrete_scattering_distribution;
+  std::shared_ptr<TwoDDist> d_discrete_scattering_distribution;
 
   // The cutoff angle cosine
   double d_cutoff_angle_cosine;

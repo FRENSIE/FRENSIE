@@ -29,14 +29,10 @@ class ElasticElectronScatteringDistributionNativeFactory
 
 public:
 
-  typedef AnalogElasticElectronScatteringDistribution::CutoffDistribution
-            CutoffDistribution;
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
-  typedef HybridElasticElectronScatteringDistribution::DiscreteDistribution
-            DiscreteDistribution;
-
-  typedef MomentPreservingElasticElectronScatteringDistribution::DiscreteElasticDistribution
-            DiscreteElasticDistribution;
+  typedef HybridElasticElectronScatteringDistribution::HybridDistribution
+            HybridDistribution;
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
   static void createAnalogElasticDistribution(
@@ -103,13 +99,13 @@ protected:
   static void createCutoffScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::vector<double>& angular_energy_grid,
-        CutoffDistribution& scattering_function );
+        std::shared_ptr<TwoDDist>& scattering_function );
 
   //! Create the moment preserving elastic scattering function
   static void createMomentPreservingScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::vector<double>& angular_energy_grid,
-        DiscreteElasticDistribution& scattering_function );
+        std::shared_ptr<TwoDDist>& scattering_function );
 
   //! Create the hybrid elastic scattering functions and cross section ratio
   static void createHybridScatteringFunction(
@@ -120,15 +116,14 @@ protected:
         const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
         const std::vector<double>& angular_energy_grid,
         const double cutoff_angle_cosine,
-        CutoffDistribution& cutoff_function,
-        DiscreteDistribution& moment_preserving_function );
+        std::shared_ptr<HybridDistribution>& hybrid_function );
 
   //! Create the cutoff elastic scattering function
   static void createScatteringFunction(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
-    CutoffDistribution& scattering_function );
+    std::shared_ptr<TwoDDist>& scattering_function );
 };
 
 } // end MonteCarlo namespace

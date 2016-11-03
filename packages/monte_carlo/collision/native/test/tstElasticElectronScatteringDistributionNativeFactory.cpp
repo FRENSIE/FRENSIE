@@ -21,6 +21,17 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Structs.
+//---------------------------------------------------------------------------//
+class TestElasticElectronScatteringDistributionNativeFactory : public MonteCarlo::ElasticElectronScatteringDistributionNativeFactory
+{
+public:
+
+  // Allow public access to the protected member functions
+  using MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction;
+};
+
+//---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
@@ -35,6 +46,7 @@ std::shared_ptr< const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   native_analog_elastic_distribution;
 std::shared_ptr< const MonteCarlo::HybridElasticElectronScatteringDistribution>
   native_hybrid_elastic_distribution;
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -420,6 +432,53 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Test 4
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.817110812843E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the hybrid distribution can be created
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
+                   createHybridScatteringFunction )
+{
+  double cutoff_angle_cosine = 0.9;
+
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign(
+    data_container->getElectronEnergyGrid().begin(),
+    data_container->getElectronEnergyGrid().end() );
+
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(   
+    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+		     energy_grid,
+		     energy_grid[0],
+		     energy_grid[energy_grid.size()-1],
+		     100 ) );
+
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
+    data_container->getCutoffElasticCrossSection().begin(),
+    data_container->getCutoffElasticCrossSection().end() );
+
+  Teuchos::ArrayRCP<double> mp_cross_section;
+  mp_cross_section.assign(
+    data_container->getMomentPreservingCrossSection().begin(),
+    data_container->getMomentPreservingCrossSection().end() );
+
+  // Get the angular energy grid
+  std::vector<double> angular_energy_grid =
+    data_container->getElasticAngularEnergyGrid();
+
+  std::shared_ptr<MonteCarlo::HybridElasticElectronScatteringDistribution::HybridDistribution>
+    hybrid_function;
+
+  TestElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
+        *data_container,
+        grid_searcher,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        angular_energy_grid,
+        cutoff_angle_cosine,
+        hybrid_function );
 }
 
 //---------------------------------------------------------------------------//

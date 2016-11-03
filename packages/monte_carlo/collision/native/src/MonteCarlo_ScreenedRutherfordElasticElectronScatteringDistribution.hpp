@@ -12,19 +12,9 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "Utility_TabularDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"

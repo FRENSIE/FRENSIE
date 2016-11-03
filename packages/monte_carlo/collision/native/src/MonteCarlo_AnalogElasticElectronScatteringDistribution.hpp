@@ -12,10 +12,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -26,12 +26,12 @@ class AnalogElasticElectronScatteringDistribution : public ElectronScatteringDis
 
 public:
 
-  //! Typedef for the elastic cutoff distribution
-  typedef MonteCarlo::TwoDDistribution CutoffDistribution;
+  //! Typedef for the two d distributions
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor
   AnalogElasticElectronScatteringDistribution(
-    const CutoffDistribution& elastic_cutoff_distribution,
+    const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
     const int atomic_number );
 
   //! Destructor
@@ -86,17 +86,31 @@ public:
             const double scattering_angle_cosine,
             const double eta ) const;
 
+  //! Evaluate the PDF
+  double evaluateScreenedRutherfordPDF(
+            const double incoming_energy,
+            const double scattering_angle_cosine,
+            const double eta,
+            const double norm_factor ) const;
+
   //! Evaluate the CDF
   double evaluateScreenedRutherfordCDF(
             const double incoming_energy,
             const double scattering_angle_cosine,
             const double eta ) const;
 
+  //! Evaluate the CDF
+  double evaluateScreenedRutherfordCDF(
+            const double incoming_energy,
+            const double scattering_angle_cosine,
+            const double eta,
+            const double norm_factor ) const;
+
 protected:
 
    //! Sample an outgoing direction from the distribution
-  void sampleIndependent(
-            const CutoffDistribution::const_iterator& distribution_bin,
+  void sampleBin(
+            const TwoDDist::DistributionType::const_iterator& distribution_bin,
             double& scattering_angle_cosine ) const;
 
    //! Sample an outgoing direction from the distribution
@@ -128,7 +142,7 @@ private:
   double d_screening_param2;
 
   // Cutoff elastic scattering distribution
-  CutoffDistribution d_elastic_cutoff_distribution;
+  std::shared_ptr<TwoDDist> d_elastic_cutoff_distribution;
 };
 
 } // end MonteCarlo namespace

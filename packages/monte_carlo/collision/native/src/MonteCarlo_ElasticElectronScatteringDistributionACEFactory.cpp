@@ -12,7 +12,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
 #include "Utility_HistogramDistribution.hpp"
-#include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -24,15 +23,12 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const double upper_cutoff_angle_cosine )
 {
-  // Extract the number of tabulated distributions
-  int size = raw_electroatom_data.extractELASIBlock().size()/3;
-
   // Create the scattering function
-  ElasticDistribution scattering_function(size);
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
   ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
-							  raw_electroatom_data,
-							  scattering_function );
+    raw_electroatom_data,
+    scattering_function );
 
   cutoff_elastic_distribution.reset(
         new CutoffElasticElectronScatteringDistribution(
@@ -43,14 +39,18 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
 // Create the scattering function
 void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
-        ElasticDistribution& scattering_function )
+        std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+            scattering_function )
 {
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
 				     raw_electroatom_data.extractELASIBlock() );
 
   // Get the size of the angular energy grid
-  double size = elasi_block.size()/3;
+  int size = elasi_block.size()/3;
+
+  // Get the distribution data
+  Utility::FullyTabularTwoDDistribution::DistributionType function_data(size);
 
   // Extract the energy grid for elastic scattering angular distributions
   Teuchos::Array<double> angular_energy_grid(elasi_block(0,size));
@@ -67,14 +67,20 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 
   for( unsigned n = 0; n < size; ++n )
   {
-    scattering_function[n].first = angular_energy_grid[n];
+    function_data[n].first = angular_energy_grid[n];
 
-    scattering_function[n].second.reset(
+    function_data[n].second.reset(
 	  new const Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
   }
+
+  // Set the scattering function
+  scattering_function.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+        function_data ) );
+
 }
 
 } // end MonteCarlo namespace
