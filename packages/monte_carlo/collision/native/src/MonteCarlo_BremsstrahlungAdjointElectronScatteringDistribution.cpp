@@ -8,18 +8,18 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistribution.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_AdjointElectronState.hpp"
 #include "Utility_TabularDistribution.hpp"
 
 namespace MonteCarlo{
+
 // Constructor
 BremsstrahlungAdjointElectronScatteringDistribution::BremsstrahlungAdjointElectronScatteringDistribution(
-    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution )
-  : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution )
+    const std::shared_ptr<TwoDDist>& brem_distribution )
+  : d_brem_distribution( brem_distribution )
 {
   // Make sure the array is valid
-  testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
+  testPrecondition( d_brem_distribution.use_count() > 0 );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -32,9 +32,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sample(
   scattering_angle_cosine = 1.0;
 
   outgoing_energy = incoming_energy +
-                    sampleTwoDDistributionCorrelated(
-                                     incoming_energy,
-                                     d_bremsstrahlung_scattering_distribution );
+    d_brem_distribution->sampleSecondaryConditionalExact( incoming_energy );
 }
 
 // Sample an outgoing energy and direction and record the number of trials

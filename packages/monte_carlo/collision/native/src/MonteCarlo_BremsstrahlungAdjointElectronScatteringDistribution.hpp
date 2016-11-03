@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -22,11 +22,11 @@ class BremsstrahlungAdjointElectronScatteringDistribution : public AdjointElectr
 public:
 
   //! Typedef for the adjoint bremsstrahlung distribution
-  typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor
   BremsstrahlungAdjointElectronScatteringDistribution(
-     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution );
+     const std::shared_ptr<TwoDDist>& brem_distribution );
 
   //! Destructor
   virtual ~BremsstrahlungAdjointElectronScatteringDistribution()
@@ -67,7 +67,7 @@ public:
 private:
 
   // bremsstrahlung scattering distribution
-  BremsstrahlungDistribution d_bremsstrahlung_scattering_distribution;
+  std::shared_ptr<TwoDDist> d_brem_distribution;
 
 };
 

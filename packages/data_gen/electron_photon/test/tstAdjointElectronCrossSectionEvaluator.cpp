@@ -321,7 +321,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  86337758835252.609375,
+                                  86520750279153.6875,
                                   1e-6 );
 
   cross_section =
@@ -330,7 +330,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  75464585466573.9375,
+                                  75466546905114.078125,
                                   1e-6 );
 
   cross_section =
@@ -339,7 +339,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  10079940387275.714844,
+                                  10085581081074.943359,
                                   1e-6 );
 
   cross_section =
@@ -348,7 +348,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1938039652.6394810677,
+                                  1938458649.968537569,
                                   1e-6 );
 
   cross_section =
@@ -357,7 +357,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  62398.608078867961012,
+                                  62391.378301361241029,
                                   1e-6 );
 
   cross_section =
@@ -366,7 +366,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  62349.572898067643109,
+                                  62392.26249033951899,
                                   1e-6 );
 
 
@@ -377,7 +377,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  65.906051560081564844,
+                                  66.126275367513628112,
                                   1e-6 );
 
   cross_section =
@@ -386,7 +386,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  22.003018357441984421,
+                                  21.938989594004841166,
                                   1e-6 );
 
   cross_section =
@@ -395,7 +395,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  315.36765545956581036,
+                                  317.35235101211605979,
                                   1e-6 );
 
   cross_section =
@@ -413,7 +413,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  64.868945448181960955,
+                                  64.853718071424239611,
                                   1e-6 );
 
   cross_section =
@@ -422,7 +422,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  21.246347644570818147,
+                                  21.242051324516516786,
                                   1e-6 );
 
   cross_section =
@@ -431,7 +431,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
         integrator );
 
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  320.56258466204508295,
+                                  317.49462962888333095,
                                   1e-6 );
 
   cross_section =
@@ -603,20 +603,20 @@ TEUCHOS_UNIT_TEST( AdjointElectronCrossSectionEvaluator,
   // Native Electroionization
   double diff_cross_section =
     native_adjoint_ionization_cs->evaluateAdjointPDF( 1.88E-05,
-                                                      1.0E-04,
-                                                      1.0e-16 );
+                                                      1e-4,
+                                                      1e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
                                   0.0085138663210346018223,
                                   1e-6 );
 
   diff_cross_section =
-    native_adjoint_ionization_cs->evaluateAdjointPDF( 1.123900E-02,
+    native_adjoint_ionization_cs->evaluateAdjointPDF( 1.1239e-2,
                                                       3.16228,
-                                                      1.0e-16 );
+                                                      1e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  2.1790962149543619076e-10,
+                                  2.1791068996014191233e-10,
                                   1e-6 );
 
   diff_cross_section =
@@ -762,24 +762,29 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> breme_block =
     xss_data_extractor->extractBREMEBlock();
 
-  // Create the bremsstrahlung scattering functions
-  MonteCarlo::TwoDDistribution energy_loss_distribution( N );
+  // Get the scattering data
+  Utility::FullyTabularTwoDDistribution::DistributionType function_data( N );
 
   for( unsigned n = 0; n < N; ++n )
   {
-    energy_loss_distribution[n].first = electron_energy_grid[n];
+    function_data[n].first = electron_energy_grid[n];
 
-    energy_loss_distribution[n].second.reset(
+    function_data[n].second.reset(
 	  new Utility::HistogramDistribution(
 		 breme_block( offset[n], table_length[n] ),
 		 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
   }
 
+  // Create the function
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+            function_data ) );
+
   std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
     bremsstrahlung_distribution(
         new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-            energy_loss_distribution ) );
+            scattering_function ) );
 
   // Create the hash-based grid searcher
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(

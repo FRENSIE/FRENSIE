@@ -683,7 +683,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
     const typename QuantityTraits<SecondIndepType>::RawType L1 =
       ZYInterpPolicy::calculateUnitBaseGridLength( indep_var_y_1_min,
                                                    indep_var_y_1_max );
-    
+
     const typename QuantityTraits<SecondIndepType>::RawType Lx =
       ThisType::calculateIntermediateGridLength( indep_var_x_0,
                                                  indep_var_x_1,
@@ -698,7 +698,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
                                                 indep_var_x,
                                                 indep_var_y_0_min,
                                                 indep_var_y_1_min );
-    
+
     const SecondIndepType y_x_min_with_tol =
       ThisType::calculateFuzzyLowerBound( y_x_min, fuzzy_boundary_tol );
 
@@ -712,7 +712,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
 
     const SecondIndepType y_x_max_with_tol =
       ThisType::calculateFuzzyUpperBound( y_x_max, fuzzy_boundary_tol );
-    
+
     // Check if the secondary indep value is in the intermediate grid
     if( indep_var_y >= y_x_min_with_tol && indep_var_y <= y_x_max_with_tol )
     {
@@ -728,15 +728,15 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
         eta = 0.0;
       else // indep_var_y >= y_x_max && indep_var_y <= y_x_max_with_tol
         eta = 1.0;
-      
+
       // Calculate the y value on the first grid
       const SecondIndepType indep_var_y_0 = ZYInterpPolicy::calculateIndepVar(
                                        eta, indep_var_y_0_min, L0 );
-    
+
       // Calculate the y value on the second grid
       const SecondIndepType indep_var_y_1 = ZYInterpPolicy::calculateIndepVar(
                                        eta, indep_var_y_1_min, L1 );
-    
+
       // Evaluate the dependent value on the first y grid
       const typename ZYLowerFunctor::result_type dep_var_0 =
         evaluate_z_with_y_0_functor( indep_var_y_0 );

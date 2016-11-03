@@ -36,7 +36,7 @@ std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   tabular_brem_dist;
 
 std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  native_twobs_brem_dist;
+  twobs_brem_dist;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -45,7 +45,7 @@ std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                    getMinEnergy )
 {
-  TEST_EQUALITY_CONST( native_twobs_brem_dist->getMinEnergy(), 1E-5 );
+  TEST_EQUALITY_CONST( twobs_brem_dist->getMinEnergy(), 1E-5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -53,7 +53,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                    getMaxEnergy )
 {
-  TEST_EQUALITY_CONST( native_twobs_brem_dist->getMaxEnergy(), 1e5 );
+  TEST_EQUALITY_CONST( twobs_brem_dist->getMaxEnergy(), 1e5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -62,16 +62,16 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 		               evaluate )
 {
   // LinLinLog interpoation used.
-  double pdf = native_twobs_brem_dist->evaluate( 1.0e-5, 1.0e-6 );
+  double pdf = twobs_brem_dist->evaluate( 1.0e-5, 1.0e-6 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065520E+05, 1e-12 );
 
-  pdf = native_twobs_brem_dist->evaluate( 9.0e-4, 9.0e-4 );
+  pdf = twobs_brem_dist->evaluate( 9.0e-4, 9.0e-4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 264.26069810584175457, 1e-12 );
   // (LinLinLin) UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.54862854225938E+02, 1e-12 );
 
-  pdf = native_twobs_brem_dist->evaluate( 1.0e5, 2.0e4 );
+  pdf = twobs_brem_dist->evaluate( 1.0e5, 2.0e4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
 				  1.363940131180460E-06,
@@ -84,16 +84,16 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                    evaluatePDF )
 {
   // LinLinLog interpoation used.
-  double pdf = native_twobs_brem_dist->evaluatePDF( 1.0e-5, 1.0e-6 );
+  double pdf = twobs_brem_dist->evaluatePDF( 1.0e-5, 1.0e-6 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065520E+05, 1e-12 );
 
-  pdf = native_twobs_brem_dist->evaluatePDF( 9.0e-4, 9.0e-4 );
+  pdf = twobs_brem_dist->evaluatePDF( 9.0e-4, 9.0e-4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 264.26069810584175457, 1e-12 );
   // (LinLinLin) UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.54862854225938E+02, 1e-12 );
 
-  pdf = native_twobs_brem_dist->evaluatePDF( 1.0e5, 2.0e4 );
+  pdf = twobs_brem_dist->evaluatePDF( 1.0e5, 2.0e4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.363940131180460E-06, 1e-12 );
 }
@@ -104,15 +104,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                    evaluateCDF )
 {
   // LinLinLog interpoation used.
-  double cdf = native_twobs_brem_dist->evaluateCDF( 1.0e-5, 1.0e-6 );
+  double cdf = twobs_brem_dist->evaluateCDF( 1.0e-5, 1.0e-6 );
 
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 4.974034148027E-01, 1e-12 );
 
-  cdf = native_twobs_brem_dist->evaluateCDF( 9.0e-4, 9.0e-4 );
+  cdf = twobs_brem_dist->evaluateCDF( 9.0e-4, 9.0e-4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
 
-  cdf = native_twobs_brem_dist->evaluateCDF( 1.0e5, 2.0e4 );
+  cdf = twobs_brem_dist->evaluateCDF( 1.0e5, 2.0e4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.575978856479E-01, 1e-12 );
 }
@@ -230,7 +230,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  native_twobs_brem_dist->sample( incoming_energy,
+  twobs_brem_dist->sample( incoming_energy,
                                   photon_energy,
                                   photon_angle_cosine );
 
@@ -263,7 +263,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  native_twobs_brem_dist->sampleAndRecordTrials( incoming_energy,
+  twobs_brem_dist->sampleAndRecordTrials( incoming_energy,
                                                  photon_energy,
                                                  photon_angle_cosine,
                                                  trials );
@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  native_twobs_brem_dist->scatterElectron( electron,
+  twobs_brem_dist->scatterElectron( electron,
                                            bank,
                                            shell_of_interaction );
 
@@ -721,7 +721,7 @@ int main( int argc, char** argv )
       lower_cutoff_energy,
       upper_cutoff_energy ) );
 
-  native_twobs_brem_dist.reset(
+  twobs_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
       scattering_distribution,
       xss_data_extractor->extractAtomicNumber() ) );

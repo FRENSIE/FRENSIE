@@ -425,7 +425,7 @@ void ParticleSimulationManager<GeometryHandler,
         EMI::updateObserversFromParticleCollidingInCellEvent(
                                           particle,
                                           1.0/cell_total_macro_cross_section );
-        
+
         // Update the global observers: particle subtrack ending global event
         EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
                                                       particle,
@@ -434,7 +434,7 @@ void ParticleSimulationManager<GeometryHandler,
 
         // Undergo a collision with the material in the cell
         CMI::collideWithCellMaterial( particle, bank, true );
-        
+
         if( !particle.isGone() )
         {
           GMI::changeInternalRayDirection( particle.getDirection() );

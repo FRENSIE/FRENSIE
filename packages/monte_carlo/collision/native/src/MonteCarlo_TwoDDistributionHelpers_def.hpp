@@ -94,7 +94,7 @@ void findLowerAndUpperBinBoundary(
 							upper_bin_boundary,
 							independent_variable );
     upper_bin_boundary = lower_bin_boundary;
-    
+
     if ( lower_bin_boundary->first != independent_variable )
       ++upper_bin_boundary;
   }

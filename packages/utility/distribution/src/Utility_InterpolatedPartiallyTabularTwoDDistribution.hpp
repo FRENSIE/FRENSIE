@@ -66,7 +66,7 @@ public:
   { /* ... */ }
 };
 
-/*! \brief The interpolated partially tabular two-dimensional distribution 
+/*! \brief The interpolated partially tabular two-dimensional distribution
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */

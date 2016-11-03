@@ -246,7 +246,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
     grid_generator.evaluateAdjointPDF( 1.123900E-02, 3.16228, 1.0e-16 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  2.1790962149543619076e-10,
+                                  2.1791068996014191233e-10,
                                   1e-6 );
 
   diff_cross_section =

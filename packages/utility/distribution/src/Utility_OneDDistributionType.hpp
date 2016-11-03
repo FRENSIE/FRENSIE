@@ -36,6 +36,7 @@ enum OneDDistributionType{
   POLYNOMIAL_DISTRIBUTION,
   HYDROGEN_FORM_FACTOR_DISTRIBUTION,
   ADJOINT_KLEIN_NISHINA_DISTRIBUTION,
+  HYBRID_DISTRIBUTION
 };
 
 //! Convert the OneDDistribution type to a string

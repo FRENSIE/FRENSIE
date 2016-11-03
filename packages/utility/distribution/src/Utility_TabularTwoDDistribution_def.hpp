@@ -188,7 +188,7 @@ inline void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryInd
   {
     lower_bin_boundary = d_distribution.begin();
     upper_bin_boundary = d_distribution.end();
-    
+
     lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
 					       lower_bin_boundary,
                                                upper_bin_boundary,
@@ -217,7 +217,7 @@ template<typename PrimaryIndependentUnit,
 bool UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::areSecondaryDistributionsContinuous() const
 {
   bool all_continuous = true;
-  
+
   for( size_t i = 0; i < d_distribution.size(); ++i )
   {
     if( !d_distribution[i].second->isContinuous() )
