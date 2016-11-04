@@ -34,18 +34,16 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double outgoing_energy ) const
-  { /* ... */ }
+                   const double outgoing_energy ) const;
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                      const double outgoing_energy ) const
-  { /* ... */ }
+                      const double outgoing_energy ) const;
 
-  //! Evaluate the integrated cross section (b)
-  double evaluateIntegratedCrossSection( const double incoming_energy,
-                                         const double precision) const
-  { /* ... */ }
+  //! Evaluate the PDF
+  double evaluateCDF( const double incoming_energy,
+                      const double outgoing_energy ) const;
+
 
 
   //! Sample an outgoing energy and direction from the distribution

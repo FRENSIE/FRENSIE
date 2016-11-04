@@ -22,11 +22,52 @@ BremsstrahlungAdjointElectronScatteringDistribution::BremsstrahlungAdjointElectr
   testPrecondition( d_brem_distribution.use_count() > 0 );
 }
 
+// Evaluate the distribution
+double BremsstrahlungAdjointElectronScatteringDistribution::evaluate(
+        const double incoming_energy,
+        const double outgoing_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy > incoming_energy );
+
+  // evaluate the distribution
+  return d_brem_distribution->evaluate( incoming_energy, outgoing_energy );
+}
+
+// Evaluate the PDF
+double BremsstrahlungAdjointElectronScatteringDistribution::evaluatePDF(
+        const double incoming_energy,
+        const double outgoing_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy > incoming_energy );
+
+  // evaluate the pdf
+  return d_brem_distribution->evaluateSecondaryConditionalPDF( incoming_energy,
+                                                               outgoing_energy );
+}
+
+// Evaluate the PDF
+double BremsstrahlungAdjointElectronScatteringDistribution::evaluateCDF(
+        const double incoming_energy,
+        const double outgoing_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy > incoming_energy );
+
+  // evaluate the cdf
+  return d_brem_distribution->evaluateSecondaryConditionalCDF( incoming_energy,
+                                                               outgoing_energy );
+}
+
 // Sample an outgoing energy and direction from the distribution
 void BremsstrahlungAdjointElectronScatteringDistribution::sample(
-             const double incoming_energy,
-             double& outgoing_energy,
-             double& scattering_angle_cosine ) const
+        const double incoming_energy,
+        double& outgoing_energy,
+        double& scattering_angle_cosine ) const
 {
   // The adjoint electron angle scattering is assumed to be negligible
   scattering_angle_cosine = 1.0;
