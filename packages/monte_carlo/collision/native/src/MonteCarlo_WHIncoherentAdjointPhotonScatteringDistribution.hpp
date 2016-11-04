@@ -88,7 +88,7 @@ inline double WHIncoherentAdjointPhotonScatteringDistribution::evaluateScatterin
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( incoming_energy <= max_energy );
   // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= 
+  testPrecondition( scattering_angle_cosine >=
 		    calculateMinScatteringAngleCosine( incoming_energy,
 						       max_energy ));
   testPrecondition( scattering_angle_cosine <= 1.0 );

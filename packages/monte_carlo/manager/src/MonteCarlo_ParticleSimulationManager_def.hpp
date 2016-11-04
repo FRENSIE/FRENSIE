@@ -204,6 +204,15 @@ void ParticleSimulationManager<GeometryHandler,
     #pragma omp for
     for( unsigned long long history = batch_start_history; history < batch_end_history; ++history )
     {
+      double history_start_time =
+        Utility::GlobalOpenMPSession::getTime(); - d_start_time;
+      #pragma omp critical( ostream_update )
+      {
+        std::cerr << "Start History #: " << history
+	      << " Start Time: " << history_start_time
+	      << std::endl;
+      }
+
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
       if( !d_end_simulation )
@@ -264,6 +273,13 @@ void ParticleSimulationManager<GeometryHandler,
         #pragma omp atomic
 	++d_histories_completed;
       }
+
+      #pragma omp critical( ostream_update )
+      {
+        std::cerr << "End History #: " << history
+	      << " Run Time: " << Utility::GlobalOpenMPSession::getTime(); - history_start_time
+	      << std::endl;
+      }
     }
   }
 }
@@ -308,6 +324,22 @@ void ParticleSimulationManager<GeometryHandler,
 
   while( !particle.isLost() && !particle.isGone() )
   {
+
+    #pragma omp flush( d_end_simulation )
+    if( d_end_simulation )
+    {
+      particle.setAsGone();
+
+      // Print particle information
+      #pragma omp critical( ostream_update )
+      {
+        std::cerr << " History #: " << particle.getHistoryNumber()
+	              << " Collision #: " << particle.getCollisionNumber()
+                  << " Time: " << particle.getTime()
+	              << std::endl;
+      }
+    }
+
     // Sample the mfp traveled by the particle on this subtrack
     remaining_subtrack_op = CMI::sampleOpticalPathLength();
 
@@ -399,18 +431,18 @@ void ParticleSimulationManager<GeometryHandler,
           break;
   	    }
 
-  	// Update the remaining subtrack mfp
-  	remaining_subtrack_op -= op_to_surface_hit;
+  	    // Update the remaining subtrack mfp
+  	    remaining_subtrack_op -= op_to_surface_hit;
       }
 
       // A collision occurs in this cell
       else
       {
-  	// Advance the particle to the collision site
-  	double distance_to_collision =
+  	    // Advance the particle to the collision site
+  	    double distance_to_collision =
           remaining_subtrack_op/cell_total_macro_cross_section;
 
-  	particle.advance( distance_to_collision );
+  	    particle.advance( distance_to_collision );
 
         GMI::advanceInternalRayBySubstep( distance_to_collision );
 
