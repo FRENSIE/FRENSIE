@@ -19,12 +19,12 @@ class KleinNishinaPhotonScatteringDistribution : public IncoherentPhotonScatteri
 {
 
 public:
-  
+
   //! Default Constructor
   KleinNishinaPhotonScatteringDistribution();
 
   //! Constructor
-  KleinNishinaPhotonScatteringDistribution( 
+  KleinNishinaPhotonScatteringDistribution(
 				    const double kahn_sampling_cutoff_energy );
 
   //! Destructor
@@ -53,7 +53,7 @@ public:
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const;
+		      Data::SubshellType& shell_of_interaction ) const;
 };
 
 } // end MonteCarlo namespace

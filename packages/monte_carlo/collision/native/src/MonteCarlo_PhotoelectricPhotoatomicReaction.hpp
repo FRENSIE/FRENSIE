@@ -24,13 +24,13 @@ class PhotoelectricPhotoatomicReaction : public StandardPhotoatomicReaction<Inte
 
 public:
 
-  //! Basic constructor 
+  //! Basic constructor
   PhotoelectricPhotoatomicReaction(
 		const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		const Teuchos::ArrayRCP<const double>& cross_section,
 		const unsigned threshold_energy_index );
 
-  //! Constructor 
+  //! Constructor
   PhotoelectricPhotoatomicReaction(
      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
      const Teuchos::ArrayRCP<const double>& cross_section,
@@ -44,13 +44,16 @@ public:
   //! Return the number of photons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
+  //! Return the number of electrons emitted from the rxn at the given energy
+  virtual unsigned getNumberOfEmittedElectrons( const double energy ) const;
+
   //! Return the reaction type
-  virtual PhotoatomicReactionType getReactionType() const;
+  PhotoatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  virtual void react( PhotonState& photon, 
+  virtual void react( PhotonState& photon,
 		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const;
+		      Data::SubshellType& shell_of_interaction ) const;
 };
 
 } // end MonteCarlo namespace

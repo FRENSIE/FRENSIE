@@ -20,6 +20,7 @@ namespace Utility{
 enum OneDDistributionType{
   DELTA_DISTRIBUTION,
   DISCRETE_DISTRIBUTION,
+  ELASTIC_ELECTRON_DISTRIBUTION,
   EXPONENTIAL_DISTRIBUTION,
   EVAPORATION_DISTRIBUTION,
   HISTOGRAM_DISTRIBUTION,
@@ -35,10 +36,11 @@ enum OneDDistributionType{
   POLYNOMIAL_DISTRIBUTION,
   HYDROGEN_FORM_FACTOR_DISTRIBUTION,
   ADJOINT_KLEIN_NISHINA_DISTRIBUTION,
+  HYBRID_DISTRIBUTION
 };
 
 //! Convert the OneDDistribution type to a string
-std::string convertOneDDistributionTypeToString( 
+std::string convertOneDDistributionTypeToString(
 					     const OneDDistributionType type );
 
 } // end Utility namespace

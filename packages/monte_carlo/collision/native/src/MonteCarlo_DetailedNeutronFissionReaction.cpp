@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_DetailedNeutronFissionReaction.cpp
 //! \author Alex Robinson
 //! \brief  The detailed neutron fission reaction class definition
@@ -45,8 +45,8 @@ void DetailedNeutronFissionReaction::react( NeutronState& neutron,
 					    ParticleBank& bank ) const
 {
   neutron.incrementCollisionNumber();
-  
-  unsigned num_delayed_neutrons = 
+
+  unsigned num_delayed_neutrons =
     this->getNumberOfDelayedNeutrons( neutron.getEnergy() );
 
   // Create the additional delayed neutrons

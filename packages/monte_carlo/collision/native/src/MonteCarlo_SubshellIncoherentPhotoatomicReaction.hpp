@@ -25,7 +25,7 @@ class SubshellIncoherentPhotoatomicReaction : public StandardPhotoatomicReaction
 
 public:
 
-  //! Basic constructor 
+  //! Basic constructor
   SubshellIncoherentPhotoatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
@@ -49,16 +49,19 @@ public:
   //! Return the number of photons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
+  //! Return the number of electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( PhotonState& photon, 
+  void react( PhotonState& photon,
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const;
 
   //! Get the interaction subshell (non-standard interface)
-  SubshellType getSubshell() const;
+  Data::SubshellType getSubshell() const;
 
   //! Get the subshell binding energy (non-standard interface)
   double getSubshellBindingEnergy() const;
@@ -66,9 +69,9 @@ public:
 private:
 
   // The incoherent scattering distribution
-  Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution> 
+  Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution>
   d_scattering_distribution;
-  
+
   // The reaction type
   PhotoatomicReactionType d_reaction_type;
 };

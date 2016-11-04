@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <stdexcept>
+#include <iostream>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
@@ -20,12 +21,13 @@ namespace MonteCarlo{
 //! The simulation electron properties factory
 class SimulationElectronPropertiesFactory
 {
-  
+
 public:
-  
+
   //! Initialize the simulation electron properties
-  static void initializeSimulationElectronProperties( 
-				    const Teuchos::ParameterList& properties );
+  static void initializeSimulationElectronProperties(
+				      const Teuchos::ParameterList& properties,
+				      std::ostream* os_warn = &std::cerr );
 };
 
 } // end MonteCarlo namespace

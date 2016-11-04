@@ -40,7 +40,7 @@ TEUCHOS_UNIT_TEST( Ray, getDirection )
 {
   double head_position[3] = {1.0, 1.0, -1.0};
   double direction[3] = {0.0, 0.0, 1.0};
-  
+
   Geometry::Ray ray( head_position, direction );
 
   TEST_EQUALITY_CONST( ray.getXDirection(), 0.0 );
@@ -55,14 +55,39 @@ TEUCHOS_UNIT_TEST( Ray, getDirection )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the direction can be changed
+TEUCHOS_UNIT_TEST( Ray, changeDirection )
+{
+  Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+
+  ray.changeDirection( 1.0, 0.0, 0.0 );
+
+  const double* ray_direction = ray.getDirection();
+
+  TEST_EQUALITY_CONST( ray_direction[0], 1.0 );
+  TEST_EQUALITY_CONST( ray_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( ray_direction[2], 0.0 );
+
+  const double new_direction[3] = {0.0, 1.0, 0.0};
+
+  ray.changeDirection( new_direction );
+
+  ray_direction = ray.getDirection();
+
+  TEST_EQUALITY_CONST( ray_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( ray_direction[1], 1.0 );
+  TEST_EQUALITY_CONST( ray_direction[2], 0.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Advance the ray head along its direction by a specified distance
 TEUCHOS_UNIT_TEST( Ray, advanceHead )
 {
   const double position[3] = {1.0, 1.0, 1.0};
-  const double direction[3] = {0.5773502691896258, 
+  const double direction[3] = {0.5773502691896258,
 			       0.5773502691896258,
 			       0.5773502691896258};
-  
+
   Geometry::Ray ray( position, direction );
 
   ray.advanceHead( 1.7320508075688772 );
@@ -77,7 +102,7 @@ TEUCHOS_UNIT_TEST( Ray, advanceHead )
 TEUCHOS_UNIT_TEST( Ray, non_owning )
 {
   double position[3] = {1.0, 1.0, 1.0};
-  double direction[3] = {0.5773502691896258, 
+  double direction[3] = {0.5773502691896258,
 			 0.5773502691896258,
 			 0.5773502691896258};
 
@@ -113,7 +138,7 @@ TEUCHOS_UNIT_TEST( Ray, non_owning )
   TEST_EQUALITY_CONST( ray.getZPosition(), 4.0 );
   TEST_EQUALITY_CONST( position[0], 3.0 );
   TEST_EQUALITY_CONST( position[1], 3.0 );
-  TEST_EQUALITY_CONST( position[2], 4.0 ); 
+  TEST_EQUALITY_CONST( position[2], 4.0 );
 }
 
 //---------------------------------------------------------------------------//

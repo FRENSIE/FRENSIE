@@ -10,11 +10,15 @@
 #define GEOMETRY_MODULE_INTERFACE_HPP
 
 // FRENSIE Includes
-#include "FRENSIE_dagmc_config.hpp"
+#include "Geometry_Config.hpp"
 #include "Geometry_ModuleInterfaceDecl.hpp"
 
 #ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_ModuleInterface_DagMC.hpp"
+#endif
+
+#ifdef HAVE_FRENSIE_ROOT
+#include "Geometry_ModuleInterface_Root.hpp"
 #endif
 
 #endif // end GEOMETRY_MODULE_INTERFACE_HPP

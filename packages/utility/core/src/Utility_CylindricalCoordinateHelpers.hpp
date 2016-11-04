@@ -24,7 +24,7 @@ void convertCartesianCoordsToCylindrical( const double cartesian_point[3],
 					  const double origin[3],
 					  double cylindrical_point[3],
 					  const Axis axis = Z_AXIS );
-					  
+
 } // end Utility namespace
 
 #endif // end UTILITY_CYLINDRICAL_COORDINATE_HELPERS_HPP

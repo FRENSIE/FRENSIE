@@ -27,14 +27,14 @@ PointSpatialDistribution::PointSpatialDistribution( const double x_position,
 }
 
 // Evaluate the spatial distribution
-double PointSpatialDistribution::evaluate( 
+double PointSpatialDistribution::evaluate(
 					const double cartesian_point[3] ) const
 {
   return 0.0;
 }
 
 // Evaluate the spatial distribution PDF
-double PointSpatialDistribution::evaluatePDF( 
+double PointSpatialDistribution::evaluatePDF(
 					const double cartesian_point[3] ) const
 {
   return 0.0;
@@ -53,7 +53,7 @@ SpatialDistributionType PointSpatialDistribution::getDistributionType() const
 {
   return POINT_SPATIAL_DISTRIBUTION;
 }
-  
+
 // Check if the distribution is uniform
 bool PointSpatialDistribution::isUniform() const
 {
@@ -61,12 +61,12 @@ bool PointSpatialDistribution::isUniform() const
 }
 
 // Check if the distribution has the same bounds
-bool PointSpatialDistribution::hasSameBounds( 
+bool PointSpatialDistribution::hasSameBounds(
 				const SpatialDistribution& distribution ) const
 {
   if( this->getDistributionType() == distribution.getDistributionType() )
   {
-    const PointSpatialDistribution& true_dist = 
+    const PointSpatialDistribution& true_dist =
       dynamic_cast<const PointSpatialDistribution&>( distribution );
 
     return d_x_position == true_dist.d_x_position &&

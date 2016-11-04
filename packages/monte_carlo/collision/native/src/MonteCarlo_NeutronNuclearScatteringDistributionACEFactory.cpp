@@ -19,11 +19,11 @@
 namespace MonteCarlo{
 
 // Constructor
-NeutronNuclearScatteringDistributionACEFactory::NeutronNuclearScatteringDistributionACEFactory( 
+NeutronNuclearScatteringDistributionACEFactory::NeutronNuclearScatteringDistributionACEFactory(
 		       const std::string& table_name,
 		       const double atomic_weight_ratio,
 		       const Data::XSSNeutronDataExtractor& raw_nuclide_data )
-  : NuclearScatteringDistributionACEFactory<MonteCarlo::NeutronState,MonteCarlo::NeutronState>( 
+  : NuclearScatteringDistributionACEFactory<MonteCarlo::NeutronState,MonteCarlo::NeutronState>(
 					   table_name,
 					   atomic_weight_ratio,
 					   raw_nuclide_data.extractMTRBlock(),

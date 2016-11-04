@@ -34,13 +34,13 @@ void initializeSolidHydrogen()
   std::string cross_section_xml_file = test_cross_sections_xml_directory;
   cross_section_xml_file += "/cross_sections.xml";
 
-  // Read in the xml file storing the cross section table information 
+  // Read in the xml file storing the cross section table information
   Teuchos::ParameterList cross_section_table_info;
-  Teuchos::updateParametersFromXmlFile( 
+  Teuchos::updateParametersFromXmlFile(
 			         cross_section_xml_file,
 			         Teuchos::inoutArg(cross_section_table_info) );
-  
-  boost::unordered_set<std::string> nuclide_aliases;
+
+  std::unordered_set<std::string> nuclide_aliases;
   nuclide_aliases.insert( "H-1_293.6K" );
 
   MonteCarlo::NuclideFactory nuclide_factory(test_cross_sections_xml_directory,
@@ -49,7 +49,7 @@ void initializeSolidHydrogen()
 					     false,
 					     false );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> >
     nuclide_map;
 
   nuclide_factory.createNuclideMap( nuclide_map );
@@ -59,7 +59,7 @@ void initializeSolidHydrogen()
 
   nuclide_fractions[0] = -1.0; // weight fraction
   nuclide_names[0] = "H-1_293.6K";
-  
+
   material.reset( new MonteCarlo::NeutronMaterial( 0,
 					       -1.0, // mass density (g/cm^3)
 					       nuclide_map,
@@ -74,7 +74,7 @@ void initializeSolidHydrogen()
 TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, getId )
 {
   initializeSolidHydrogen();
-  
+
   TEST_EQUALITY_CONST( material->getId(), 0 );
 }
 
@@ -86,7 +86,7 @@ TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, getNumberDensity )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the macroscopic total cross section can be returned 
+// Check that the macroscopic total cross section can be returned
 TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, getMacroscopicTotalCrossSection )
 {
   double cross_section = material->getMacroscopicTotalCrossSection( 1.0e-11 );
@@ -100,10 +100,10 @@ TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, getMacroscopicTotalCrossSection )
 
 //---------------------------------------------------------------------------//
 // Check that the macroscopic absorption cross section can be returned
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, 
+TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen,
 		   getMacroscopicAbsorptionCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     material->getMacroscopicAbsorptionCrossSection( 1.0e-11 );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
@@ -128,73 +128,73 @@ TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, getSurvivalProbability )
 
 //---------------------------------------------------------------------------//
 // Check that a reaction cross section can be returned
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, 
+TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen,
 		   getMacroscopicReationCrossSection )
 {
-  double cross_section = 
-    material->getMacroscopicReactionCrossSection( 1.0e-11, 
+  double cross_section =
+    material->getMacroscopicReactionCrossSection( 1.0e-11,
 						  MonteCarlo::N__TOTAL_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 703.45055504218, 1e-13 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
-						   2.0e1, 
+  cross_section = material->getMacroscopicReactionCrossSection(
+						   2.0e1,
 						   MonteCarlo::N__TOTAL_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.28847574157342, 1e-9 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
+  cross_section = material->getMacroscopicReactionCrossSection(
 					       1.0e-11,
 					       MonteCarlo::N__N_ELASTIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 693.47099764974, 1e-13 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
+  cross_section = material->getMacroscopicReactionCrossSection(
 					       2.0e1,
 					       MonteCarlo::N__N_ELASTIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.28845947418338, 1e-13 );
-  
-  cross_section = material->getMacroscopicReactionCrossSection( 
+
+  cross_section = material->getMacroscopicReactionCrossSection(
 					           1.0e-11,
 					           MonteCarlo::N__GAMMA_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
+  cross_section = material->getMacroscopicReactionCrossSection(
 					           2.0e1,
 					           MonteCarlo::N__GAMMA_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
+  cross_section = material->getMacroscopicReactionCrossSection(
 					       1.0e-11,
 					       MonteCarlo::N__TOTAL_D_PRODUCTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
+  cross_section = material->getMacroscopicReactionCrossSection(
 					       2.0e1,
 					       MonteCarlo::N__TOTAL_D_PRODUCTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
+  cross_section = material->getMacroscopicReactionCrossSection(
 					                      1.0e-11,
 					                      MonteCarlo::N__DPA );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
 
-  cross_section = material->getMacroscopicReactionCrossSection( 
+  cross_section = material->getMacroscopicReactionCrossSection(
 					                      2.0e1,
 					                      MonteCarlo::N__DPA );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 1.833066682067e-4, 1e-13 );
-  
-  cross_section = material->getMacroscopicReactionCrossSection( 
+
+  cross_section = material->getMacroscopicReactionCrossSection(
 					         1.0e-11,
 					         MonteCarlo::N__FISSION_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
 }
 
@@ -249,7 +249,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }

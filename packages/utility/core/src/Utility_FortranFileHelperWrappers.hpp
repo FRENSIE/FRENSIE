@@ -18,7 +18,7 @@ extern "C" {
   void readLineUsingFortran( const int file_id , char* c_string, const int string_size );
   void moveToLineUsingFortran( const int file_id , const int start_line );
   void rewindFileUsingFortran( const int file_id );
-} 
+}
 
 
 #endif // end UTILITY_FORTRAN_FILE_HELPER_WRAPPERS_HPP

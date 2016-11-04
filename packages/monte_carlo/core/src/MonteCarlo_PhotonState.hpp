@@ -24,7 +24,7 @@ private:
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
-  
+
   // The photon tag
   struct PhotonTag{};
 

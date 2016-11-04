@@ -22,7 +22,7 @@
 
 namespace DataGen{
 
-//! The free gas elastic marginal alpha function 
+//! The free gas elastic marginal alpha function
 class FreeGasElasticMarginalAlphaFunction
 {
 
@@ -30,7 +30,7 @@ public:
 
   //! Constructor
   FreeGasElasticMarginalAlphaFunction(
-         const Teuchos::RCP<Utility::OneDDistribution>& 
+         const Teuchos::RCP<Utility::OneDDistribution>&
 	 zero_temp_elastic_cross_section,
          const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	 cm_scattering_distribution,
@@ -57,7 +57,7 @@ public:
 
   //! Evaluate the marginal PDF
   double operator()( const double alpha );
-  
+
   //! Evaluate the marginal CDF
   double evaluateCDF( const double alpha );
 
@@ -67,7 +67,7 @@ private:
   void updateCachedValues();
 
   // The integration gkq_set
-  Utility::GaussKronrodIntegrator d_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
   FreeGasElasticSAlphaBetaFunction d_sab_function;

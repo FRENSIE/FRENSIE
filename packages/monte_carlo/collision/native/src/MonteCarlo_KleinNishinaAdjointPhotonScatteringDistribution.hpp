@@ -32,11 +32,11 @@ public:
 		   const double max_energy,
 		   const double scattering_angle_cosine ) const;
 
-  //! Evaluate the integrated cross section (cm^2)
+  //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSection( const double incoming_energy,
 					 const double max_energy,
 					 const double precision ) const;
-  
+
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
 	       double& outgoing_energy,
@@ -51,7 +51,7 @@ public:
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterAdjointPhoton( AdjointPhotonState& adjoint_photon,
 			     ParticleBank& bank,
-			     SubshellType& shell_of_interaction ) const;
+			     Data::SubshellType& shell_of_interaction ) const;
 };
 
 } // end MonteCarlo namespace

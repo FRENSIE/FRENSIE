@@ -15,24 +15,25 @@
 #include <Teuchos_Utils.hpp>
 
 // FRENSIE Includes
+#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_FortranFileHelperWrappers.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Variables 
+// Testing Variables
 //---------------------------------------------------------------------------//
- 
+
 std::string test_file_name;
 
 //---------------------------------------------------------------------------//
-// Tests 
+// Tests
 //---------------------------------------------------------------------------//
 //Checks that the file exists.
 TEUCHOS_UNIT_TEST( FortranFileHelpers, fileExistsUsingFortran )
 {
   TEST_ASSERT( fileExistsUsingFortran( test_file_name.c_str(), test_file_name.size() ) );
-  
+
   std::string file_name = "dummy_file.txt" ;
-  
+
   TEST_ASSERT( !fileExistsUsingFortran( file_name.c_str(), file_name.size() ) );
 
 }
@@ -42,9 +43,9 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, fileExistsUsingFortran )
 TEUCHOS_UNIT_TEST( FortranFileHelpers, fileIsReadableUsingFortran )
 {
   TEST_ASSERT( fileIsReadableUsingFortran( test_file_name.c_str(), test_file_name.size() ) );
-  
+
   std::string file_name = "dummy_file.txt" ;
-  
+
   TEST_ASSERT( !fileIsReadableUsingFortran( file_name.c_str(), file_name.size() ) );
 
 }
@@ -59,7 +60,7 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, fileIsOpenUsingFortran )
   openFileUsingFortran(test_file_name.c_str(), test_file_name.size(), file_id);
 
   TEST_ASSERT( fileIsOpenUsingFortran( file_id ) );
-  
+
 }
 
 //---------------------------------------------------------------------------//
@@ -81,14 +82,14 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, readLineUsingFortran )
   int file_id = 1;
 
   openFileUsingFortran(test_file_name.c_str(), test_file_name.size(), file_id);
-  
+
   std::string line( 100, ' ' );
 
   readLineUsingFortran( file_id, &line[0], line.size() );
 
   line = Teuchos::Utils::trimWhiteSpace( line );
 
-  TEST_ASSERT( line.compare( "This is a test file. Line 1" ) == 0 ); 
+  TEST_ASSERT( line.compare( "This is a test file. Line 1" ) == 0 );
 
   closeFileUsingFortran( file_id );
 }
@@ -102,14 +103,14 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, moveToLineUsingFortran )
   openFileUsingFortran(test_file_name.c_str(), test_file_name.size(), file_id);
 
   moveToLineUsingFortran(file_id, 3 );
-  
+
   std::string line( 100, ' ' );
 
   readLineUsingFortran( file_id, &line[0], line.size() );
 
   line = Teuchos::Utils::trimWhiteSpace( line );
 
-  TEST_ASSERT( line.compare( "This is a test file. Line 3" ) == 0 ); 
+  TEST_ASSERT( line.compare( "This is a test file. Line 3" ) == 0 );
 
   closeFileUsingFortran( file_id );
 }
@@ -125,35 +126,33 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, rewindFileUsingFortran )
   moveToLineUsingFortran(file_id, 3 );
 
   rewindFileUsingFortran( file_id );
-  
+
   std::string line( 100, ' ' );
 
   readLineUsingFortran( file_id, &line[0], line.size() );
 
   line = Teuchos::Utils::trimWhiteSpace( line );
 
-  TEST_ASSERT( line.compare( "This is a test file. Line 1" ) == 0 ); 
+  TEST_ASSERT( line.compare( "This is a test file. Line 1" ) == 0 );
 
   closeFileUsingFortran( file_id );
 }
-//---------------------------------------------------------------------------//
-// Custom Main Function 
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-   
-   clp.setOption( "test_file",
-                  &test_file_name,
-                  "Test file for checking FORTRAN file helpers." );
 
-   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_file",
+                   &test_file_name,
+                   "Test file for checking FORTRAN file helpers." );
 }
 
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstFortranFileHelpers.cpp
 //---------------------------------------------------------------------------//
- 
+

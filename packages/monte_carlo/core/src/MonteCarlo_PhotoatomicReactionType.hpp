@@ -14,10 +14,10 @@
 #include <iostream>
 
 // FRENSIE Includes
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 
 namespace MonteCarlo{
-  
+
 //! The photoatomic reaction type enum.
 enum PhotoatomicReactionType{
   TOTAL_PHOTOATOMIC_REACTION = 1,
@@ -109,18 +109,18 @@ enum PhotoatomicReactionType{
 };
 
 //! Convert a PhotoatomicReactionType enum to a string
-std::string convertPhotoatomicReactionEnumToString( 
+std::string convertPhotoatomicReactionEnumToString(
 				      const PhotoatomicReactionType reaction );
 
-//! Convert a SubshellType enum to a Photoelectric PhotoatomicReactionType enum
-PhotoatomicReactionType 
+//! Convert a Data::SubshellType enum to a Photoelectric PhotoatomicReactionType enum
+PhotoatomicReactionType
 convertSubshellEnumToPhotoelectricPhotoatomicReactionEnum(
-						 const SubshellType subshell );
+						 const Data::SubshellType subshell );
 
-//! Convert a SubshellType enum to a Incoherent PhotoatomicReactionType enum
+//! Convert a Data::SubshellType enum to a Incoherent PhotoatomicReactionType enum
 PhotoatomicReactionType
 convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
-						 const SubshellType subshell );
+						 const Data::SubshellType subshell );
 
 //! Stream operator for printing PhotoatomicReactionType enums
 inline std::ostream& operator<<( std::ostream& os,

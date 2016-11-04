@@ -90,7 +90,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::AdjointElectronState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronState, 
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronState,
 			 "AdjointElectronState" );
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTRON_STATE_HPP

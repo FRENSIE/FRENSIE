@@ -1,0 +1,115 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Geometry.Ray class unit tests
+#  \file   tstGeometry.Ray.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Geometry.Ray class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the Ray class
+class RayTestCase(unittest.TestCase):
+    "TestCase class for Geometry.Ray class"
+
+    def testConstructor(self):
+        "*Test Geometry.Ray constructor"
+        ray = Geometry.Ray( 1.0, 1.0, -1.0, 0.0, 0.0, 1.0 )
+        self.assertTrue(isinstance(ray, Geometry.Ray))
+
+        ray = Geometry.Ray( [1.0, 1.0, -1.0], [0.0, 0.0, 1.0])
+        self.assertTrue(isinstance(ray, Geometry.Ray))
+
+        ray = Geometry.Ray( (1.0, 1.0, -1.0), (0.0, 0.0, 1.0))
+        self.assertTrue(isinstance(ray, Geometry.Ray))
+
+        ray = Geometry.Ray( numpy.array([1.0, 1.0, -1.0], dtype=numpy.dtype('d')), numpy.array([0.0, 0.0, 1.0], dtype=numpy.dtype('d')) )
+        self.assertTrue(isinstance(ray, Geometry.Ray))
+
+    def testGetPosition(self):
+        "*Test Geometry.Ray getPosition method"
+        ray = Geometry.Ray( 1.0, 1.0, -1.0, 0.0, 0.0, 1.0 )
+        self.assertEqual(ray.getXPosition(), 1.0)
+        self.assertEqual(ray.getYPosition(), 1.0)
+        self.assertEqual(ray.getZPosition(), -1.0)
+
+        position = ray.getPosition()
+        self.assertEqual(position[0], 1.0)
+        self.assertEqual(position[1], 1.0)
+        self.assertEqual(position[2], -1.0)
+
+    def testGetDirection(self):
+        "*Test Geometry.Ray getDirection method"
+        ray = Geometry.Ray( 1.0, 1.0, -1.0, 0.0, 0.0, 1.0 )
+        self.assertEqual(ray.getXDirection(), 0.0)
+        self.assertEqual(ray.getYDirection(), 0.0)
+        self.assertEqual(ray.getZDirection(), 1.0)
+
+        direction = ray.getDirection()
+        self.assertEqual(direction[0], 0.0)
+        self.assertEqual(direction[1], 0.0)
+        self.assertEqual(direction[2], 1.0)
+
+    def testChangeDirection(self):
+        "*Test Geometry.Ray changeDirection method"
+        ray = Geometry.Ray( 1.0, 1.0, -1.0, 0.0, 0.0, 1.0 )
+        ray.changeDirection( 1.0, 0.0, 0.0 )
+        self.assertEqual(ray.getXDirection(), 1.0)
+        self.assertEqual(ray.getYDirection(), 0.0)
+        self.assertEqual(ray.getZDirection(), 0.0)
+
+    def testAdvanceHead(self):
+        "*Test Geometry.Ray advanceHead method"
+        ray = Geometry.Ray( 1.0, 1.0, 1.0, 0.5773502691896258, 0.5773502691896258, 0.5773502691896258 )
+        ray.advanceHead( 1.7320508075688772 )
+        self.assertAlmostEqual( ray.getXPosition(), 2.0, delta=1e-12)
+        self.assertAlmostEqual( ray.getYPosition(), 2.0, delta=1e-12)
+        self.assertAlmostEqual( ray.getZPosition(), 2.0, delta=1e-12)
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(RayTestCase))
+
+    print >>sys.stderr, \
+        "\n********************\n" + \
+        "Testing Geometry.Ray \n" + \
+        "********************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstGeometry.Ray.py
+#-----------------------------------------------------------------------------#

@@ -9,8 +9,10 @@
 #ifndef UTILITY_CYLINDRICAL_SPATIAL_DISTRIBUTION_HPP
 #define UTILITY_CYLINDRICAL_SPATIAL_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
@@ -27,7 +29,7 @@ class CylindricalSpatialDistribution : public SpatialDistribution
 {
 
 private:
-  
+
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
@@ -35,14 +37,14 @@ public:
 
   //! Constructor
   CylindricalSpatialDistribution(
-	              const Teuchos::RCP<OneDDistribution>& r_distribution,
-	              const Teuchos::RCP<OneDDistribution>& theta_distribution,
-		      const Teuchos::RCP<OneDDistribution>& axis_distribution,
-		      const double center_x_position,
-		      const double center_y_position,
-		      const double center_z_position,
-		      const Axis axis = Z_AXIS );
-  
+	           const std::shared_ptr<OneDDistribution>& r_distribution,
+	           const std::shared_ptr<OneDDistribution>& theta_distribution,
+                   const std::shared_ptr<OneDDistribution>& axis_distribution,
+                   const double center_x_position,
+                   const double center_y_position,
+                   const double center_z_position,
+                   const Axis axis = Z_AXIS );
+
   //! Destructor
   ~CylindricalSpatialDistribution()
   { /* ... */ }
@@ -52,7 +54,7 @@ public:
 
   //! Evaluate the spatial distribution PDF
   double evaluatePDF( const double cartesian_point[3] ) const;
-  
+
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   void sample( double sampled_point[3] ) const;
 
@@ -74,13 +76,13 @@ protected:
 private:
 
   // r dimension distribution
-  Teuchos::RCP<OneDDistribution> d_r_distribution;
+  std::shared_ptr<OneDDistribution> d_r_distribution;
 
   // theta dimension distribution
-  Teuchos::RCP<OneDDistribution> d_theta_distribution;
+  std::shared_ptr<OneDDistribution> d_theta_distribution;
 
   // axis dimension distribution
-  Teuchos::RCP<OneDDistribution> d_axis_distribution;
+  std::shared_ptr<OneDDistribution> d_axis_distribution;
 
   // The start position of the cylindrical axis
   double d_center_x_position;

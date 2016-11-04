@@ -2,7 +2,7 @@
 //!
 //! \file   Data_XSSPhotonuclearDataExtractor.hpp
 //! \author Ryan Pease
-//! \brief  XSS array (from ace table) photonuclear transport data extractor 
+//! \brief  XSS array (from ace table) photonuclear transport data extractor
 //!
 //---------------------------------------------------------------------------//
 
@@ -23,7 +23,7 @@ namespace Data{
  * \ingroup ace_table
  * \todo Ensure SIG and ISX block are correct.
  *
- * After a photonuclear transport table has been read by the 
+ * After a photonuclear transport table has been read by the
  * Data::ACEFileHandler the individual data blocks must be extracted from the
  * XSS array using the Data::XSSPhotonuclearDataExtractor. Both the NXS array
  * and the JXS array are required to successfully extract the blocks. The NXS
@@ -63,7 +63,7 @@ namespace Data{
  */
 class XSSPhotonuclearDataExtractor
 {
-  
+
 public:
 
   //! Constructor
@@ -85,14 +85,14 @@ public:
   bool hasHeatingNumberData() const;
 
   //! Return secondary particle types
-  const std::set<unsigned>& getSecondaryParticleTypes() const;  
-  
+  const std::set<unsigned>& getSecondaryParticleTypes() const;
+
   //! Extract the ESZ block
   Teuchos::ArrayView<const double> extractESZBlock() const;
 
   //! Extract the TOT block
   Teuchos::ArrayView<const double> extractTOTBlock() const;
- 
+
   //! Extract the NON block
   Teuchos::ArrayView<const double> extractNONBlock() const;
 

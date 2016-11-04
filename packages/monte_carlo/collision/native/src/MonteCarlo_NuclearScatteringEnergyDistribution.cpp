@@ -12,7 +12,7 @@
 namespace MonteCarlo{
 
 // Constructor
-NuclearScatteringEnergyDistribution::NuclearScatteringEnergyDistribution( 
+NuclearScatteringEnergyDistribution::NuclearScatteringEnergyDistribution(
 						      const unsigned law )
   : d_law( law )
 { /* ... */ }

@@ -20,14 +20,14 @@ class NeutronScatteringReaction : public NuclearReaction
 {
 
 private:
-  
+
   // Teuchos ScalarTraits typedef
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
 
-  //! Constructor 
-  NeutronScatteringReaction( 
+  //! Constructor
+  NeutronScatteringReaction(
 		   const NuclearReactionType reaction_type,
 		   const double temperature,
 		   const double q_value,
@@ -35,13 +35,13 @@ public:
 		   const unsigned threshold_energy_index,
 	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
+		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
 		   scattering_distribution );
 
   //! Destructor
   ~NeutronScatteringReaction()
   { /* ... */ }
-  
+
   //! Return the number of neutrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedNeutrons( const double energy ) const;
 
@@ -54,7 +54,7 @@ private:
   unsigned d_multiplicity;
 
   // The scattering distribution
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >
   d_scattering_distribution;
 };
 

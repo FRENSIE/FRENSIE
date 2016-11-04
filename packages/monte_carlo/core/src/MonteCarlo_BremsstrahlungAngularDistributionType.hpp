@@ -19,11 +19,11 @@ namespace MonteCarlo{
 enum BremsstrahlungAngularDistributionType{
   DIPOLE_DISTRIBUTION = 1,
   TABULAR_DISTRIBUTION = 2,
-  TWOBS_DISTRIBUTION = 3 
+  TWOBS_DISTRIBUTION = 3
 };
 
 //! Convert a BremsstrahlungAngularDistributionType enum to a string
-std::string convertBremsstrahlungAngularDistributionEnumToString( 
+std::string convertBremsstrahlungAngularDistributionEnumToString(
 				      const BremsstrahlungAngularDistributionType reaction );
 
 //! Stream operator for printing BremsstrahlungAngularDistributionType enums

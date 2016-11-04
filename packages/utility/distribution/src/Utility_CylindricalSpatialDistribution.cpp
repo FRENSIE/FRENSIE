@@ -16,13 +16,13 @@ namespace Utility{
 
 // Constructor
 CylindricalSpatialDistribution::CylindricalSpatialDistribution(
-                      const Teuchos::RCP<OneDDistribution>& r_distribution,
-		      const Teuchos::RCP<OneDDistribution>& theta_distribution,
-		      const Teuchos::RCP<OneDDistribution>& axis_distribution,
-		      const double center_x_position,
-		      const double center_y_position,
-		      const double center_z_position,
-		      const Axis axis )
+                   const std::shared_ptr<OneDDistribution>& r_distribution,
+		   const std::shared_ptr<OneDDistribution>& theta_distribution,
+                   const std::shared_ptr<OneDDistribution>& axis_distribution,
+                   const double center_x_position,
+                   const double center_y_position,
+                   const double center_z_position,
+                   const Axis axis )
   : d_r_distribution( r_distribution ),
     d_theta_distribution( theta_distribution ),
     d_axis_distribution( axis_distribution ),
@@ -33,11 +33,11 @@ CylindricalSpatialDistribution::CylindricalSpatialDistribution(
     d_uniform( true )
 {
   // Make sure that the distributions have been set
-  testPrecondition( !r_distribution.is_null() );
-  testPrecondition( !theta_distribution.is_null() );
-  testPrecondition( !axis_distribution.is_null() );
+  testPrecondition( r_distribution.get() );
+  testPrecondition( theta_distribution.get() );
+  testPrecondition( axis_distribution.get() );
   // Make sure that the theta distribution is valid
-  testPrecondition( theta_distribution->getUpperBoundOfIndepVar() 
+  testPrecondition( theta_distribution->getUpperBoundOfIndepVar()
 		    <= 2*PhysicalConstants::pi );
   testPrecondition( theta_distribution->getLowerBoundOfIndepVar()
 		    >= 0.0 );
@@ -49,7 +49,7 @@ CylindricalSpatialDistribution::CylindricalSpatialDistribution(
   // Determine if the distribution is uniform
   if( r_distribution->getDistributionType() != POWER_1_DISTRIBUTION )
     d_uniform = false;
-  
+
   if( theta_distribution->getDistributionType() != UNIFORM_DISTRIBUTION )
     d_uniform = false;
 
@@ -63,11 +63,11 @@ CylindricalSpatialDistribution::CylindricalSpatialDistribution(
  * the radius to account for the volume element. When specifying a radial
  * distribution, the r term of the volume element is assumed to be incorporated
  * into the distribution (this means that a power_1 distribution is actually
- * a uniform distribution, a uniform distribution is actually a 1/r 
+ * a uniform distribution, a uniform distribution is actually a 1/r
  * distribution, etc.). This implicit handling of the volume element does not
  * effect sampling, only evaluation.
- */ 
-double CylindricalSpatialDistribution::evaluate( 
+ */
+double CylindricalSpatialDistribution::evaluate(
 				        const double cartesian_point[3] ) const
 {
   double cylindrical_point[3];
@@ -75,11 +75,11 @@ double CylindricalSpatialDistribution::evaluate(
   CylindricalSpatialDistribution::convertCartesianCoordsToCylindrical(
 							   cartesian_point,
 							   cylindrical_point );
-  
-  // If r = 0, re-evaluate at r~0 
+
+  // If r = 0, re-evaluate at r~0
   if( cylindrical_point[0] == 0.0 )
     cylindrical_point[0] = std::numeric_limits<double>::min();
-  
+
   double distribution_value = d_r_distribution->evaluate(cylindrical_point[0])/
     cylindrical_point[0];
   distribution_value *= d_theta_distribution->evaluate( cylindrical_point[1] );
@@ -92,7 +92,7 @@ double CylindricalSpatialDistribution::evaluate(
 
   // Make sure that the distribution value is valid
   testPostcondition( distribution_value == distribution_value );
-  
+
   return distribution_value;
 }
 
@@ -105,7 +105,7 @@ double CylindricalSpatialDistribution::evaluatePDF(
   CylindricalSpatialDistribution::convertCartesianCoordsToCylindrical(
 							   cartesian_point,
 							   cylindrical_point );
-  
+
   double pdf_value = d_r_distribution->evaluatePDF( cylindrical_point[0] );
   pdf_value *= d_theta_distribution->evaluatePDF( cylindrical_point[1] );
   pdf_value *= d_axis_distribution->evaluatePDF( cylindrical_point[2] );
@@ -126,10 +126,10 @@ void CylindricalSpatialDistribution::sample( double sampled_point[3] ) const
 				       d_theta_distribution->sample(),
 				       d_axis_distribution->sample()};
   // Convert the cylindrical coordinate to cartesian
-  convertCylindricalCoordsToCartesian( cylindrical_point, 
+  convertCylindricalCoordsToCartesian( cylindrical_point,
 				       sampled_point,
 				       d_axis );
-  
+
   // Add the initialize position to the sampled point
   sampled_point[0] += d_center_x_position;
   sampled_point[1] += d_center_y_position;
@@ -137,7 +137,7 @@ void CylindricalSpatialDistribution::sample( double sampled_point[3] ) const
 }
 
 // Return the distribution type
-SpatialDistributionType 
+SpatialDistributionType
 CylindricalSpatialDistribution::getDistributionType() const
 {
   return CYLINDRICAL_SPATIAL_DISTRIBUTION;
@@ -150,7 +150,7 @@ bool CylindricalSpatialDistribution::isUniform() const
 }
 
 // Check if the distribution has the same bounds
-bool CylindricalSpatialDistribution::hasSameBounds( 
+bool CylindricalSpatialDistribution::hasSameBounds(
 				const SpatialDistribution& distribution ) const
 {
   if( this->getDistributionType() == distribution.getDistributionType() )
@@ -160,7 +160,7 @@ bool CylindricalSpatialDistribution::hasSameBounds(
 
     if( d_axis == true_dist.d_axis )
     {
-      return 
+      return
 	Policy::relError( d_center_x_position,
 			  true_dist.d_center_x_position ) < 1e-9 &&
 	Policy::relError( d_center_y_position,
@@ -170,7 +170,7 @@ bool CylindricalSpatialDistribution::hasSameBounds(
 	Policy::relError(d_r_distribution->getLowerBoundOfIndepVar(),
 			 true_dist.d_r_distribution->getLowerBoundOfIndepVar())
 	< 1e-9 &&
-	Policy::relError(d_r_distribution->getUpperBoundOfIndepVar(), 
+	Policy::relError(d_r_distribution->getUpperBoundOfIndepVar(),
 			 true_dist.d_r_distribution->getUpperBoundOfIndepVar())
 	< 1e-9 &&
 	Policy::relError(d_theta_distribution->getLowerBoundOfIndepVar(),
@@ -198,7 +198,7 @@ void CylindricalSpatialDistribution::convertCartesianCoordsToCylindrical(
 					    const double cartesian_point[3],
 					    double cylindrical_point[3] ) const
 {
-  const double origin[3] = 
+  const double origin[3] =
     {d_center_x_position, d_center_y_position, d_center_z_position};
 
   Utility::convertCartesianCoordsToCylindrical( cartesian_point,

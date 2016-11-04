@@ -29,7 +29,7 @@ Teuchos::RCP<Utility::SpatialDistribution> spatial_distribution;
 TEUCHOS_UNIT_TEST( PointSpatialDistribution, evaluate )
 {
   double point[3] = {0.0, 0.0, 0.0};
-  
+
   TEST_EQUALITY_CONST( spatial_distribution->evaluate( point ), 0.0 );
 }
 
@@ -85,19 +85,20 @@ TEUCHOS_UNIT_TEST( PointSpatialDistribution, hasSameBounds )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 
-  spatial_distribution.reset( 
+  spatial_distribution.reset(
 		      new Utility::PointSpatialDistribution( 1.0, 1.0, 1.0 ) );
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstPointSpatialDistribution.cpp

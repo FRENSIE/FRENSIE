@@ -18,17 +18,17 @@ namespace Data{
 /*! \defgroup continuous_energy_neutron_table Continuous Energy Neutron Table
  * \ingroup ace_table
  *
- * After a continuous energy neutron table has been read by the 
- * Data::ACEFileHandler the individual data blocks must be extracted from 
- * the XSS array using the Data::XSSNeutronDataExtractor. Both the NXS array 
- * and the JXS array are required to successfully extract the blocks. The NXS 
+ * After a continuous energy neutron table has been read by the
+ * Data::ACEFileHandler the individual data blocks must be extracted from
+ * the XSS array using the Data::XSSNeutronDataExtractor. Both the NXS array
+ * and the JXS array are required to successfully extract the blocks. The NXS
  * array elements have the following meanings:
  * <ul>
  *  <li> NXS[0]  = length of XSS array
  *  <li> NXS[1]  = 1000*Z+A (ZA)
  *  <li> NXS[2]  = number of energies (NES)
  *  <li> NXS[3]  = number of reactions excluding elastic (NTR)
- *  <li> NXS[4]  = number of reactions having secondary neutrons excluding 
+ *  <li> NXS[4]  = number of reactions having secondary neutrons excluding
  *                 elastic (NR)
  *  <li> NXS[5]  = number of photon production reactions (NTRP)
  *  <li> NXS[6]  = N/A
@@ -57,7 +57,7 @@ namespace Data{
  *  <li> JXS[10] = location of energy distribution (DLW)
  *  <li> JXS[11] = location of photon production total cross section (GPD)
  *  <li> JXS[12] = location of photon production MT array (MTRP)
- *  <li> JXS[13] = location of table of photon production cross section 
+ *  <li> JXS[13] = location of table of photon production cross section
  *                 locators (LSIGP)
  *  <li> JXS[14] = location of table of photon production cross sections (SIGP)
  *  <li> JXS[15] = location of table of photon production angular distribution
@@ -144,9 +144,9 @@ public:
 
   //! Extract the LSIG block from the XSS array
   Teuchos::ArrayView<const double> extractLSIGBlock() const;
-  
+
   //! Extract the LSIGP block from the XSS array
-  Teuchos::ArrayView<const double> extractLISGPBlock() const;
+  Teuchos::ArrayView<const double> extractLSIGPBlock() const;
 
   //! Extract the SIG block from the XSS array
   Teuchos::ArrayView<const double> extractSIGBlock() const;
@@ -201,7 +201,7 @@ public:
 
   //! Extract the DNED (delayed neutron DLW) block from the XSS array
   Teuchos::ArrayView<const double> extractDNEDBlock() const;
-  
+
   //! Extract the Ace Laws used for each MT Number from the XSS array
   Teuchos::ArrayRCP<double> extractAceLaws() const;
 
@@ -209,7 +209,7 @@ private:
 
   // The nxs array (a copy will be stored)
   Teuchos::Array<int> d_nxs;
-  
+
   // The jxs array (a copy will be stored so that modifications can be made)
   Teuchos::Array<int> d_jxs;
 

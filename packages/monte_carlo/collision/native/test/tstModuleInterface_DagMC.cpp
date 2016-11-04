@@ -31,7 +31,7 @@
 TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
 {
   typedef MonteCarlo::CollisionModuleInterface<MonteCarlo::CollisionHandler> CMI;
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 26, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 27, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 28, MonteCarlo::NEUTRON ) );
@@ -68,12 +68,12 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
   TEST_ASSERT( !CMI::isCellVoid( 79, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 80, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 81, MonteCarlo::NEUTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 9, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 88, MonteCarlo::NEUTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 136, MonteCarlo::NEUTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 19, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 41, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 63, MonteCarlo::NEUTRON ) );
@@ -81,14 +81,14 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
   TEST_ASSERT( !CMI::isCellVoid( 152, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 166, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 184, MonteCarlo::NEUTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 3, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 7, MonteCarlo::NEUTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 5, MonteCarlo::NEUTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 1, MonteCarlo::NEUTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 13, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 83, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 154, MonteCarlo::NEUTRON ) );
@@ -130,12 +130,12 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
   TEST_ASSERT( !CMI::isCellVoid( 79, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 80, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 81, MonteCarlo::PHOTON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 9, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 88, MonteCarlo::PHOTON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 136, MonteCarlo::PHOTON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 19, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 41, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 63, MonteCarlo::PHOTON ) );
@@ -143,14 +143,14 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
   TEST_ASSERT( !CMI::isCellVoid( 152, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 166, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 184, MonteCarlo::PHOTON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 3, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 7, MonteCarlo::PHOTON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 5, MonteCarlo::PHOTON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 1, MonteCarlo::PHOTON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 13, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 83, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !CMI::isCellVoid( 154, MonteCarlo::PHOTON ) );
@@ -162,19 +162,19 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
 TEUCHOS_UNIT_TEST( ModuleInterface, getMacroscopicTotalCrossSection )
 {
   typedef MonteCarlo::CollisionModuleInterface<MonteCarlo::CollisionHandler> CMI;
-  
+
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setEnergy( 1.0e-11 );
   neutron.setCell( 26 );
-  
-  double cross_section = 
+
+  double cross_section =
     CMI::getMacroscopicTotalCrossSection( neutron );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 5508.0178459802, 1e-13 );
 
   neutron.setEnergy( 2.0e1 );
 
-  cross_section = 
+  cross_section =
     CMI::getMacroscopicTotalCrossSection( neutron );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.2587650565199, 1e-9 );
@@ -185,37 +185,37 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getMacroscopicTotalCrossSection )
 TEUCHOS_UNIT_TEST( ModuleInterface, getMacroscopicReactionCrossSection )
 {
   typedef MonteCarlo::CollisionModuleInterface<MonteCarlo::CollisionHandler> CMI;
-  
+
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setEnergy( 1.0e-11 );
   neutron.setCell( 26 );
-  
-  double cross_section = 
-    CMI::getMacroscopicReactionCrossSection( neutron, 
+
+  double cross_section =
+    CMI::getMacroscopicReactionCrossSection( neutron,
 					     MonteCarlo::N__TOTAL_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 5508.0178459802, 1e-13 );
 
   neutron.setEnergy( 2.0e1 );
 
-  cross_section = 
-    CMI::getMacroscopicReactionCrossSection( neutron, 
+  cross_section =
+    CMI::getMacroscopicReactionCrossSection( neutron,
 					     MonteCarlo::N__TOTAL_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.2587650565199, 1e-9 );
 
   neutron.setEnergy( 1.0e-11 );
 
-  cross_section = 
-    CMI::getMacroscopicReactionCrossSection( neutron, 
+  cross_section =
+    CMI::getMacroscopicReactionCrossSection( neutron,
 					     MonteCarlo::N__N_ELASTIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 5429.8779115975, 1e-13 );
 
   neutron.setEnergy( 2.0e1 );
 
-  cross_section = 
-    CMI::getMacroscopicReactionCrossSection( neutron, 
+  cross_section =
+    CMI::getMacroscopicReactionCrossSection( neutron,
 					     MonteCarlo::N__N_ELASTIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.2586376828559, 1e-9 );
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getMacroscopicReactionCrossSection )
 TEUCHOS_UNIT_TEST( ModuleInterface, collideWithCellMaterial )
 {
   typedef MonteCarlo::CollisionModuleInterface<MonteCarlo::CollisionHandler> CMI;
-  
+
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setCell( 26 );
   neutron.setDirection( 0.0, 0.0, 1.0 );
@@ -240,10 +240,10 @@ TEUCHOS_UNIT_TEST( ModuleInterface, collideWithCellMaterial )
   TEST_EQUALITY_CONST( neutron.getWeight(), 1.0 );
 
   neutron.setEnergy( 1.0 );
-  
+
   CMI::collideWithCellMaterial( neutron, bank, true );
 
-  TEST_EQUALITY_CONST( neutron.getWeight(), 1.0 );  
+  TEST_EQUALITY_CONST( neutron.getWeight(), 1.0 );
 
   neutron.setEnergy( 1.03125e-11 );
 
@@ -260,7 +260,7 @@ int main( int argc, char** argv )
   std::string test_cross_sections_xml_directory;
   std::string test_material_xml_file_name;
   std::string test_geom_xml_file_name;
- 
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_cross_sections_xml_directory",
@@ -275,10 +275,10 @@ int main( int argc, char** argv )
 		 &test_geom_xml_file_name,
 		 "Test xml geometry file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -288,25 +288,25 @@ int main( int argc, char** argv )
 
   {
     // Initialize DagMC
-    Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+    Teuchos::RCP<Teuchos::ParameterList> geom_rep =
       Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
-    
+
     Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
     // Initialize the particle mode
     MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
-    
+
     // Initialize the random number generator
     Utility::RandomNumberGenerator::createStreams();
-    
+
     // Initialize the collison handler
     // Assign the name of the cross_sections.xml file with path
     std::string cross_section_xml_file = test_cross_sections_xml_directory;
     cross_section_xml_file += "/cross_sections.xml";
-    
-    // Read in the xml file storing the cross section table information 
+
+    // Read in the xml file storing the cross section table information
     Teuchos::ParameterList cross_section_table_info;
-    Teuchos::updateParametersFromXmlFile( 
+    Teuchos::updateParametersFromXmlFile(
 			         cross_section_xml_file,
 			         Teuchos::inoutArg(cross_section_table_info) );
 
@@ -315,7 +315,7 @@ int main( int argc, char** argv )
     Teuchos::updateParametersFromXmlFile( test_material_xml_file_name,
 					  Teuchos::inoutArg(material_reps) );
 
-  MonteCarlo::getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler( 
+  MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::DagMC>()->initializeHandler(
 					   material_reps,
 					   cross_section_table_info,
 					   test_cross_sections_xml_directory );
@@ -323,7 +323,7 @@ int main( int argc, char** argv )
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

@@ -29,22 +29,22 @@ public:
   { /* ... */ }
 
   //! Convert a subshell enum to a compton profile subshell index
-  unsigned convertSubshellToIndex( const SubshellType subshell ) const;
+  unsigned convertSubshellToIndex( const Data::SubshellType subshell ) const;
 
   //! Test if a subshell enum is valid
-  bool isSubshellValid( const SubshellType subshell ) const;
+  bool isSubshellValid( const Data::SubshellType subshell ) const;
 };
 
 // Convert a subshell enum to a compton profile subshell index
-inline unsigned VoidComptonProfileSubshellConverter::convertSubshellToIndex( 
-					    const SubshellType subshell ) const
+inline unsigned VoidComptonProfileSubshellConverter::convertSubshellToIndex(
+					    const Data::SubshellType subshell ) const
 {
   return (unsigned)subshell - 1u;
 }
 
 // Test if a subshell enum is valid
-inline bool VoidComptonProfileSubshellConverter::isSubshellValid( 
-					    const SubshellType subshell ) const
+inline bool VoidComptonProfileSubshellConverter::isSubshellValid(
+					    const Data::SubshellType subshell ) const
 {
   return true;
 }

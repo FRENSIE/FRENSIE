@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
+#include "MonteCarlo_StandardPhotoatomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -24,9 +25,9 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
 	   const unsigned threshold_energy_index,
 	   const PhotoatomicReactionType reaction )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index ),
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index ),
     d_reaction( reaction )
 {
   // Make sure the incoming energy grid is valid
@@ -36,13 +37,13 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 }
 
-// Constructor 
+// Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionPhotoatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -51,10 +52,10 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        const PhotoatomicReactionType reaction )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index,
-						      grid_searcher ),
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index,
+        grid_searcher ),
     d_reaction( reaction )
 {
   // Make sure the incoming energy grid is valid
@@ -64,8 +65,8 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the grid searcher is valid
@@ -79,6 +80,13 @@ unsigned AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ge
   return 0u;
 }
 
+// Return the number of electrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  return 0u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
@@ -88,14 +96,14 @@ PhotoatomicReactionType AbsorptionPhotoatomicReaction<InterpPolicy,processed_cro
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     PhotonState& photon, 
+void AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   photon.setAsGone();
-  
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+
+  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 }
 
 } // end MonteCarlo namespace

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp
 //! \author Alex Bennett
 //! \brief  The law 4 scattering energy distribution class
@@ -33,7 +33,7 @@ public:
   typedef Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::TabularOneDDistribution> > >
                                                         EnergyDistribution;
   //! Constructor
-  AceLaw4NuclearScatteringEnergyDistribution( 
+  AceLaw4NuclearScatteringEnergyDistribution(
 				     EnergyDistribution& energy_distribution );
 
   //! Destructor
@@ -44,8 +44,8 @@ public:
   double sampleEnergy( const double energy ) const;
 
   //! Sample a scattering energy
-  double sampleEnergy( const double energy, 
-                       unsigned& incoming_index, 
+  double sampleEnergy( const double energy,
+                       unsigned& incoming_index,
                        unsigned& outgoing_index,
                        double& energy_prime ) const;
 

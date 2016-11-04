@@ -54,7 +54,7 @@ private:
   typedef Teuchos::OrdinalTraits<cellOrdinalType> CellOT;
   // Typedef for surface ordinal traits
   typedef Teuchos::OrdinalTraits<surfaceOrdinalType> SurfaceOT;
-  
+
 public:
 
   //! Get an instance of the handler (singleton pattern)
@@ -80,7 +80,7 @@ public:
   //! Test if a cell contains a given point
   PointLocation getPointLocation( const cellOrdinalType cell_id,
 				  const scalarType point[3] ) const;
-  
+
   //! Get the volume of a cell
   scalarType getCellVolume( const cellOrdinalType cell_id ) const;
 
@@ -115,15 +115,15 @@ private:
 
   // Sole instance of handler
   static Teuchos::RCP<NativeGeometryHandler> instance;
-  
+
   // Surface id map
   boost::unordered_map<surfaceOrdinalType,scalarType> d_surface_map;
 
   // Cell id map
   boost::unordered_map<cellOrdinalType,scalarType> d_cell_map;
 
-  // Cells that have been previously found to contain points. This list is 
-  // appended every time the getCellContainingPoint function is called and a 
+  // Cells that have been previously found to contain points. This list is
+  // appended every time the getCellContainingPoint function is called and a
   // new cell is found.
   std::set<cellOrdinalType> d_cells_containing_test_points;
 

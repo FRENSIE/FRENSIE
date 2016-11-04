@@ -42,7 +42,7 @@ public:
 		   const unsigned threshold_energy_index );
 
   //! Constructor
-  StandardPhotoatomicReaction( 
+  StandardPhotoatomicReaction(
      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
      const Teuchos::ArrayRCP<const double>& cross_section,
      const unsigned threshold_energy_index,
@@ -75,12 +75,12 @@ private:
   // The processed incoming energy grid
   Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
 
-  // The processed cross section values evaluated on the incoming e. grid 
+  // The processed cross section values evaluated on the incoming e. grid
   Teuchos::ArrayRCP<const double> d_cross_section;
 
   // The threshold energy
   unsigned d_threshold_energy_index;
-  
+
   // The hash-based grid searcher
   Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
@@ -92,13 +92,13 @@ class StandardPhotoatomicReaction<InterpPolicy,false> : public PhotoatomicReacti
 public:
 
   //! Basic constructor
-  StandardPhotoatomicReaction( 
+  StandardPhotoatomicReaction(
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const unsigned threshold_energy_index );
 
   //! Constructor
-  StandardPhotoatomicReaction( 
+  StandardPhotoatomicReaction(
      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
      const Teuchos::ArrayRCP<const double>& cross_section,
      const unsigned threshold_energy_index,
@@ -113,7 +113,7 @@ public:
 
   //! Return the cross section at the given energy
   double getCrossSection( const double energy ) const;
-  
+
   //! Return the cross section at the given energy (efficient)
   double getCrossSection( const double energy,
 			  const unsigned bin_index ) const;

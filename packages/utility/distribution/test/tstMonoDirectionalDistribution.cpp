@@ -29,7 +29,7 @@ Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
 TEUCHOS_UNIT_TEST( MonoDirectionalDistribution, evaluate )
 {
   double point[3] = {0.0, 0.0, 0.0};
-  
+
   TEST_EQUALITY_CONST( directional_distribution->evaluate( point ), 0.0 );
 }
 
@@ -38,7 +38,7 @@ TEUCHOS_UNIT_TEST( MonoDirectionalDistribution, evaluate )
 TEUCHOS_UNIT_TEST( MonoDirectionalDistribution, evaluatePDF )
 {
   double point[3] = {0.0, 0.0, 0.0};
-  
+
   TEST_EQUALITY_CONST( directional_distribution->evaluatePDF( point ), 0.0 );
 }
 
@@ -48,7 +48,7 @@ TEUCHOS_UNIT_TEST( MonoDirectionalDistribution, sample )
 {
   double direction[3];
   directional_distribution->sample( direction );
-  
+
   TEST_FLOATING_EQUALITY( direction[0], 0.5773502691896258, 1e-15 );
   TEST_FLOATING_EQUALITY( direction[1], 0.5773502691896258, 1e-15 );
   TEST_FLOATING_EQUALITY( direction[2], 0.5773502691896258, 1e-15 );
@@ -77,19 +77,20 @@ TEUCHOS_UNIT_TEST( MonoDirectionalDistribution, hasSameBounds )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-  
   directional_distribution.reset( new Utility::MonoDirectionalDistribution(
 							     1.0, 1.0, 1.0 ) );
 
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstMonoDirectionalDistribution.cpp

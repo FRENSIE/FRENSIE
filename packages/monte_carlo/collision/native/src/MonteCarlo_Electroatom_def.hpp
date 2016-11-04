@@ -41,7 +41,7 @@ Electroatom::Electroatom(
   testPrecondition( standard_scattering_reactions.size() +
                     standard_absorption_reactions.size() > 0 );
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );  
+  testPrecondition( !atomic_relaxation_model.is_null() );
 
   // Populate the core
   d_core = ElectroatomCore( energy_grid,

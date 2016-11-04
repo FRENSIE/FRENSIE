@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_ElectroatomFactory.cpp
-//! \author Alex Robinson
+//! \author Luke Kersting
 //! \brief  The electroatom factory class definition
 //!
 //---------------------------------------------------------------------------//
@@ -9,8 +9,11 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_ElectroatomACEFactory.hpp"
+#include "MonteCarlo_ElectroatomNativeFactory.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -20,61 +23,73 @@ namespace MonteCarlo{
 
 // Constructor
 ElectroatomFactory::ElectroatomFactory(
-		  const std::string& cross_sections_xml_directory,
-		  const Teuchos::ParameterList& cross_section_table_info,
-		  const boost::unordered_set<std::string>& electroatom_aliases,
-		  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-		  atomic_relaxation_model_factory,
-		  const BremsstrahlungAngularDistributionType 
-		  photon_distribution_function,
-		  const bool use_atomic_relaxation_data,
-		  std::ostream* os_message )
-  : d_os_message( os_message )
+    const std::string& cross_sections_xml_directory,
+    const Teuchos::ParameterList& cross_section_table_info,
+    const std::unordered_set<std::string>& electroatom_aliases,
+    const Teuchos::RCP<AtomicRelaxationModelFactory>&
+        atomic_relaxation_model_factory,
+    const unsigned hash_grid_bins,
+    const BremsstrahlungAngularDistributionType
+        photon_distribution_function,
+    const bool use_atomic_relaxation_data,
+    const double cutoff_angle_cosine,
+    std::ostream* os_message )
+  :d_os_message( os_message )
 {
   // Make sure the message stream is valid
   testPrecondition( os_message != NULL );
-  
+
   // Create each electroatom in the set
-  boost::unordered_set<std::string>::const_iterator electroatom_name = 
+  std::unordered_set<std::string>::const_iterator electroatom_name =
     electroatom_aliases.begin();
+
+  std::string electroatom_file_path, electroatom_file_type, electroatom_table_name;
+  int electroatom_file_start_line;
+  double atomic_weight;
 
   while( electroatom_name != electroatom_aliases.end() )
   {
-    Teuchos::ParameterList table_info;
+    Data::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
+						  cross_sections_xml_directory,
+						  *electroatom_name,
+						  cross_section_table_info,
+						  electroatom_file_path,
+						  electroatom_file_type,
+						  electroatom_table_name,
+						  electroatom_file_start_line,
+						  atomic_weight );
 
-    try{
-      table_info = cross_section_table_info.sublist( *electroatom_name );
-    }
-    EXCEPTION_CATCH_AND_EXIT( std::exception,
-			      "There is no data present in the "
-			      "cross_sections.xml file at "
-			      << cross_sections_xml_directory <<
-			      " for atom " << *electroatom_name << "!" );
-
-    // Use the appropriate procedure for the particular table type
-    std::string table_type;
-    
-    try{
-      table_type = table_info.get<std::string>( "electroatomic_file_type" );
-    }
-    EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			      "Error: cross section table entry "
-			      << *electroatom_name << 
-			      " is invalid! Please fix this entry." );
-
-    if( table_type == "ACE" )
+    if( electroatom_file_type == Data::CrossSectionsXMLProperties::ace_file )
     {
-      createElectroatomFromACETable( cross_sections_xml_directory, 
-                                     *electroatom_name,
-                                     table_info,
-                                     atomic_relaxation_model_factory,
-                                     photon_distribution_function,
-                                     use_atomic_relaxation_data );
+      createElectroatomFromACETable(
+                *electroatom_name,
+                electroatom_file_path,
+                electroatom_table_name,
+                electroatom_file_start_line,
+                atomic_weight,
+                atomic_relaxation_model_factory,
+                hash_grid_bins,
+                photon_distribution_function,
+                use_atomic_relaxation_data,
+                cutoff_angle_cosine );
+    }
+    else if( electroatom_file_type == Data::CrossSectionsXMLProperties::native_file )
+    {
+      createElectroatomFromNativeTable(
+                *electroatom_name,
+                electroatom_file_path,
+                atomic_weight,
+                atomic_relaxation_model_factory,
+                hash_grid_bins,
+                photon_distribution_function,
+                use_atomic_relaxation_data,
+                cutoff_angle_cosine );
     }
     else
     {
       THROW_EXCEPTION( std::logic_error,
-		       "Error: electroatomic table type " << table_type <<
+		       "Error: electroatomic file type "
+		       << electroatom_file_type <<
 		       " is not supported!" );
     }
 
@@ -88,91 +103,34 @@ ElectroatomFactory::ElectroatomFactory(
 
 // Create the map of electroatoms
 void ElectroatomFactory::createElectroatomMap(
-		    boost::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
+		    std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
 		    electroatom_map ) const
 {
   // Reset the electroatom map
   electroatom_map.clear();
 
   // Copy the stored map
-  electroatom_map.insert( d_electroatom_name_map.begin(), 
+  electroatom_map.insert( d_electroatom_name_map.begin(),
 			              d_electroatom_name_map.end() );
 }
 
 // Create a electroatom from an ACE table
 void ElectroatomFactory::createElectroatomFromACETable(
-			  const std::string& cross_sections_xml_directory,
-			  const std::string& electroatom_alias,
-			  const Teuchos::ParameterList& electroatom_table_info,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-			  atomic_relaxation_model_factory,
-              const BremsstrahlungAngularDistributionType 
-                     photon_distribution_function,
-              const bool use_atomic_relaxation_data )
+    const std::string& electroatom_alias,
+    const std::string& ace_file_path,
+    const std::string& electroatomic_table_name,
+    const int electroatomic_file_start_line,
+    const double atomic_weight,
+    const Teuchos::RCP<AtomicRelaxationModelFactory>&
+        atomic_relaxation_model_factory,
+    const unsigned hash_grid_bins,
+    const BremsstrahlungAngularDistributionType photon_distribution_function,
+    const bool use_atomic_relaxation_data,
+    const double cutoff_angle_cosine )
 {
-
-  // Set the abs. path to the ace library file containing the desired table
-  std::string ace_file_path = cross_sections_xml_directory + "/";
-  
-  try{
-    ace_file_path += 
-      electroatom_table_info.get<std::string>("electroatomic_file_path");
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << electroatom_alias <<
-			    "is invalid! Please fix this entry." );
-
-  // Get the start line
-  int electroatomic_file_start_line;
-  
-  try{
-    electroatomic_file_start_line = 
-      electroatom_table_info.get<int>( "electroatomic_file_start_line" );
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << electroatom_alias <<
-			    " is invalid! Please fix this entry." );
-  
-  // Get the table name
-  std::string electroatomic_table_name;
-  
-  try{
-    electroatomic_table_name = 
-      electroatom_table_info.get<std::string>( "electroatomic_table_name" );
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << electroatom_alias <<
-			    " is invalid! Please fix this entry." );
-
-  // Get the atomic weight of the electroatom
-  double atomic_weight;
-  
-  try{
-    atomic_weight = electroatom_table_info.get<double>( "atomic_weight_ratio" );
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << electroatom_alias <<
-			    " is invalid! Please fix this entry." );
-  
-  atomic_weight *= Utility::PhysicalConstants::neutron_rest_mass_amu;
-
-  bool electroatomic_file_is_ascii;
-  try{
-    electroatomic_file_is_ascii = 
-      (electroatom_table_info.get<std::string>( "electroatomic_file_type" ) ==
-       "ACE");
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << electroatom_alias <<
-			    " is invalid! Please fix this entry." );
-  
   *d_os_message << "Loading ACE electroatomic cross section table "
 		<< electroatomic_table_name << " (" << electroatom_alias << ") ... ";
+
 
   // Check if the table has already been loaded
   if( d_electroatomic_table_name_map.find( electroatomic_table_name ) ==
@@ -182,21 +140,21 @@ void ElectroatomFactory::createElectroatomFromACETable(
     Data::ACEFileHandler ace_file_handler( ace_file_path,
 					   electroatomic_table_name,
 					   electroatomic_file_start_line,
-					   electroatomic_file_is_ascii );
-    
+					   true );
+
     // Create the XSS data extractor
-    Data::XSSEPRDataExtractor xss_data_extractor( 
+    Data::XSSEPRDataExtractor xss_data_extractor(
 					 ace_file_handler.getTableNXSArray(),
 					 ace_file_handler.getTableJXSArray(),
 					 ace_file_handler.getTableXSSArray() );
-  
+
     // Create the atomic relaxation model
     Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
-    
+
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
-						  xss_data_extractor,
-						  atomic_relaxation_model,
-			                          use_atomic_relaxation_data );
+                                                xss_data_extractor,
+                                                atomic_relaxation_model,
+                                                use_atomic_relaxation_data );
 
     // Initialize the new electroatom
     Teuchos::RCP<Electroatom>& electroatom = d_electroatom_name_map[electroatom_alias];
@@ -205,10 +163,12 @@ void ElectroatomFactory::createElectroatomFromACETable(
     ElectroatomACEFactory::createElectroatom( xss_data_extractor,
                                               electroatomic_table_name,
                                               atomic_weight,
+                                              hash_grid_bins,
                                               atomic_relaxation_model,
                                               electroatom,
                                               photon_distribution_function,
-                                              use_atomic_relaxation_data );
+                                              use_atomic_relaxation_data,
+                                              cutoff_angle_cosine );
 
     // Cache the new electroatom in the table name map
     d_electroatomic_table_name_map[electroatomic_table_name] = electroatom;
@@ -216,11 +176,71 @@ void ElectroatomFactory::createElectroatomFromACETable(
   // The table has already been loaded
   else
   {
-    d_electroatom_name_map[electroatom_alias] = 
+    d_electroatom_name_map[electroatom_alias] =
       d_electroatomic_table_name_map[electroatomic_table_name];
   }
 
   *d_os_message << "done." << std::endl;
+}
+
+
+// Create a electroatom from a Native table
+void ElectroatomFactory::createElectroatomFromNativeTable(
+    const std::string& electroatom_alias,
+    const std::string& native_file_path,
+    const double atomic_weight,
+    const Teuchos::RCP<AtomicRelaxationModelFactory>&
+        atomic_relaxation_model_factory,
+    const unsigned hash_grid_bins,
+    const BremsstrahlungAngularDistributionType
+        photon_distribution_function,
+    const bool use_atomic_relaxation_data,
+    const double cutoff_angle_cosine )
+{
+  std::cout << "Loading native electroatomic cross section table "
+	    << electroatom_alias << " ... ";
+
+  // Check if the table has already been loaded
+  if( d_electroatomic_table_name_map.find( native_file_path ) ==
+      d_electroatomic_table_name_map.end() )
+  {
+    // Create the eedl data container
+    Data::ElectronPhotonRelaxationDataContainer
+      data_container( native_file_path );
+
+    // Create the atomic relaxation model
+    Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
+
+    atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
+				    data_container,
+					atomic_relaxation_model,
+                    use_atomic_relaxation_data );
+
+    // Initialize the new electroatom
+    Teuchos::RCP<Electroatom>& electroatom = d_electroatom_name_map[electroatom_alias];
+
+    // Create the new electroatom
+    ElectroatomNativeFactory::createElectroatom( data_container,
+                                                 native_file_path,
+                                                 atomic_weight,
+                                                 hash_grid_bins,
+                                                 atomic_relaxation_model,
+                                                 electroatom,
+                                                 photon_distribution_function,
+                                                 use_atomic_relaxation_data,
+                                                 cutoff_angle_cosine );
+
+    // Cache the new electroatom in the table name map
+    d_electroatomic_table_name_map[native_file_path] = electroatom;
+  }
+  // The table has already been loaded
+  else
+  {
+    d_electroatom_name_map[electroatom_alias] =
+      d_electroatomic_table_name_map[native_file_path];
+  }
+
+  std::cout << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace

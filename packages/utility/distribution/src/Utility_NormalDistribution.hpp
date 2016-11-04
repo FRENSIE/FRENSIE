@@ -55,27 +55,22 @@ public:
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
 
-  //! Default Constructor ( exp(-[x-meam]^2/[2*sigma]^2), x E (b,c) )
-  UnitAwareNormalDistribution( 
-			   const IndepQuantity mean = IQT::zero(),
-			   const IndepQuantity standard_deviation = IQT::one(),
-			   const IndepQuantity min_independent_value = 
-			   -QuantityTraits<IndepQuantity>::inf(),
-			   const IndepQuantity max_independent_value = 
-			   QuantityTraits<IndepQuantity>::inf() );
-
   //! Constructor ( a*exp(-[x-meam]^2/[2*sigma]^2), x E (b,c) )
-  template<typename InputDepQuantity,
-	   typename InputIndepQuantityA,
-	   typename InputIndepQuantityB,
-	   typename InputIndepQuantityC>
-  UnitAwareNormalDistribution(const InputDepQuantity constant_multiplier,
-			      const InputIndepQuantityA mean,
-			      const InputIndepQuantityB standard_deviation,
-			      const InputIndepQuantityC min_independent_value,
+  template<typename InputDepQuantity = DepQuantity,
+	   typename InputIndepQuantityA = IndepQuantity,
+	   typename InputIndepQuantityB = IndepQuantity,
+	   typename InputIndepQuantityC = IndepQuantity>
+  UnitAwareNormalDistribution(const InputIndepQuantityA mean =
+                              QuantityTraits<InputIndepQuantityA>::zero(),
+                              const InputIndepQuantityB standard_deviation =
+                              QuantityTraits<InputIndepQuantityB>::one(),
+                              const InputDepQuantity constant_multiplier =
+                              QuantityTraits<InputDepQuantity>::one(),
+                              const InputIndepQuantityC min_independent_value =
+                              -QuantityTraits<InputIndepQuantityC>::inf(),
 			      const InputIndepQuantityC max_independent_value =
-			      QuantityTraits<InputIndepQuantityC>::inf() );
-			      
+                              QuantityTraits<InputIndepQuantityC>::inf() );
+
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -100,27 +95,27 @@ public:
   //! Return a random sample from the distribution
   static IndepQuantity sample( const IndepQuantity mean,
 			       const IndepQuantity standard_deviation,
-			       const IndepQuantity min_independent_value = 
+			       const IndepQuantity min_independent_value =
 			       -QuantityTraits<IndepQuantity>::inf(),
-			       const IndepQuantity max_independent_value = 
+			       const IndepQuantity max_independent_value =
 			       QuantityTraits<IndepQuantity>::inf() );
 
   //! Return a random sample from the distribution and record the trials
-  static IndepQuantity sampleAndRecordTrials( 
+  static IndepQuantity sampleAndRecordTrials(
 			       unsigned& trials,
 			       const IndepQuantity mean,
 			       const IndepQuantity standard_deviation,
-			       const IndepQuantity min_independent_value = 
+			       const IndepQuantity min_independent_value =
 			       -QuantityTraits<IndepQuantity>::inf(),
-			       const IndepQuantity max_independent_value = 
+			       const IndepQuantity max_independent_value =
 			       QuantityTraits<IndepQuantity>::inf() );
-  
+
   //! Return a random sample from the distribution
   IndepQuantity sample() const;
-  
+
   //! Return a random sample from the distribution and record the trials
   IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
-  
+
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
 
@@ -143,9 +138,12 @@ public:
   bool isEqual( const UnitAwareNormalDistribution& other ) const;
 
 protected:
-  
+
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareNormalDistribution( const UnitAwareNormalDistribution<void,void>& unitless_dist_instance, int );
+
+  //! Test if the dependent variable can be zero within the indep bounds
+  bool canDepVarBeZeroInIndepBounds() const;
 
 private:
 
@@ -197,14 +195,14 @@ public:
   {
     return "Normal Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 				const Utility::NormalDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareNormalDistribution
  *
  * \details The name function will set the type name that must be used in
@@ -220,7 +218,7 @@ public:
       Utility::UnitTraits<U>::symbol() + "," +
       Utility::UnitTraits<V>::symbol() + ")";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 		    const Utility::UnitAwareNormalDistribution<U,V>& instance )
   {
     return name();

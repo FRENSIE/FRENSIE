@@ -9,7 +9,7 @@
 #ifndef GEOMETRY_VECTOR_HELPERS_HPP
 #define GEOMETRY_VECTOR_HELPERS_HPP
 
-// FACEMC Includes
+// FRENSIE Includes
 #include "Geometry_Vector.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Axis.hpp"
@@ -18,13 +18,13 @@ namespace Geometry{
 
 // Create a vector
 template<typename ScalarType>
-Vector<ScalarType> createVector( const ScalarType x, 
+Vector<ScalarType> createVector( const ScalarType x,
 				 const ScalarType y,
 				 const ScalarType z );
 
 // Create a vector from a tuple struct
 template<typename ScalarType>
-Vector<ScalarType> createVector( 
+Vector<ScalarType> createVector(
 		const Utility::Trip<ScalarType,ScalarType,ScalarType> &tuple );
 
 //! Create a x-axis vector

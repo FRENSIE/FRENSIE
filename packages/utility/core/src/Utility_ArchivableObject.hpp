@@ -14,7 +14,7 @@ namespace Utility{
 //! The base class for archivable objects
 class ArchivableObject
 {
-  
+
 public:
 
   //! The archive types that are supported
@@ -27,7 +27,7 @@ public:
   //! Export the data in the container to the desired archive type
   virtual void exportData( const std::string& archive_name,
 			   const ArchiveType archive_type ) const = 0;
-  
+
   //! Import data from the desired archive
   virtual void importData( const std::string& archive_name,
 			   const ArchiveType archive_type ) = 0;

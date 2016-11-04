@@ -34,23 +34,23 @@ void initializeNuclideFactory()
   std::string cross_section_xml_file = test_cross_sections_xml_directory;
   cross_section_xml_file += "/cross_sections.xml";
 
-  // Read in the xml file storing the cross section table information 
+  // Read in the xml file storing the cross section table information
   Teuchos::ParameterList cross_section_table_info;
-  Teuchos::updateParametersFromXmlFile( 
+  Teuchos::updateParametersFromXmlFile(
 			         cross_section_xml_file,
 			         Teuchos::inoutArg(cross_section_table_info) );
-  
-  boost::unordered_set<std::string> nuclide_aliases;
+
+  std::unordered_set<std::string> nuclide_aliases;
   nuclide_aliases.insert( "H-1_293.6K" );
   nuclide_aliases.insert( "H-1_300K" );
   nuclide_aliases.insert( "H-1_900K" );
-  
-  nuclide_factory.reset( new MonteCarlo::NuclideFactory( 
+
+  nuclide_factory.reset( new MonteCarlo::NuclideFactory(
 					     test_cross_sections_xml_directory,
 					     cross_section_table_info,
 					     nuclide_aliases,
 					     false,
-					     false ) );
+					     true ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -59,7 +59,7 @@ void initializeNuclideFactory()
 // Check that a nuclide map can be created
 TEUCHOS_UNIT_TEST( NuclideFactory, createNuclideMap )
 {
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > nuclide_map;
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > nuclide_map;
 
   nuclide_factory->createNuclideMap( nuclide_map );
 
@@ -83,10 +83,10 @@ int main( int argc, char** argv )
 		 &test_cross_sections_xml_directory,
 		 "Test cross_sections.xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -96,7 +96,7 @@ int main( int argc, char** argv )
 
   // Initialize the nuclide factory
   initializeNuclideFactory();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

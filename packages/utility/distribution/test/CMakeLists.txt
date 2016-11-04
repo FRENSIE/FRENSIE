@@ -1,119 +1,191 @@
-ADD_EXECUTABLE(tstDeltaDistribution tstDeltaDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstDeltaDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstDeltaDistribution
+  tstDeltaDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDeltaDistribution utility_dist)
 ADD_TEST(DeltaDistribution_test tstDeltaDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_delta_distributions.xml")
+SET_PROPERTY(TEST DeltaDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstDiscreteDistribution 
-  tstDiscreteDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstDiscreteDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstDiscreteDistribution
+  tstDiscreteDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDiscreteDistribution utility_dist)
 ADD_TEST(DiscreteDistribution_test tstDiscreteDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_discrete_distributions.xml")
+SET_PROPERTY(TEST DiscreteDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstUniformDistribution 
-  tstUniformDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstUniformDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstUniformDistribution
+  tstUniformDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstUniformDistribution utility_dist)
 ADD_TEST(UniformDistribution_test tstUniformDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_uniform_distributions.xml")
+SET_PROPERTY(TEST UniformDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstHistogramDistribution 
-  tstHistogramDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstHistogramDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstHistogramDistribution
+  tstHistogramDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHistogramDistribution utility_dist)
 ADD_TEST(HistogramDistribution_test tstHistogramDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_histogram_distributions.xml")
+SET_PROPERTY(TEST HistogramDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstMaxwellFissionDistribution 
-  tstMaxwellFissionDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstMaxwellFissionDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstMaxwellFissionDistribution
+  tstMaxwellFissionDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstMaxwellFissionDistribution utility_dist)
 ADD_TEST(MaxwellFissionDistribution_test tstMaxwellFissionDistribution
 --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_maxwell_fission_distributions.xml")
+SET_PROPERTY(TEST MaxwellFissionDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstWattDistribution 
-  tstWattDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstWattDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstWattDistribution
+  tstWattDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstWattDistribution utility_dist)
 ADD_TEST(WattDistribution_test tstWattDistribution
 --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_watt_distributions.xml")
+SET_PROPERTY(TEST WattDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstEquiprobableBinDistribution 
-  tstEquiprobableBinDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstEquiprobableBinDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstEquiprobableBinDistribution
+  tstEquiprobableBinDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEquiprobableBinDistribution utility_dist)
 ADD_TEST(EquiprobableBinDistribution_test tstEquiprobableBinDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_equiprobable_bin_distributions.xml")
+SET_PROPERTY(TEST EquiprobableBinDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstTabularDistribution 
-  tstTabularDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstTabularDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstTabularDistribution
+  tstTabularDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTabularDistribution utility_dist)
 ADD_TEST(TabularDistribution_test tstTabularDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_distributions.xml")
+SET_PROPERTY(TEST TabularDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstEvaporationDistribution 
-  tstEvaporationDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstEvaporationDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstEvaporationDistribution
+  tstEvaporationDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEvaporationDistribution utility_dist)
 ADD_TEST(EvaporationDistribution_test tstEvaporationDistribution
 --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_evaporation_distributions.xml")
+SET_PROPERTY(TEST EvaporationDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstExponentialDistribution 
-  tstExponentialDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstExponentialDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstExponentialDistribution
+  tstExponentialDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstExponentialDistribution utility_dist)
 ADD_TEST(ExponentialDistribution_test tstExponentialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_exponential_distributions.xml")
+SET_PROPERTY(TEST ExponentialDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstNormalDistribution 
-  tstNormalDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstNormalDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstNormalDistribution
+  tstNormalDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNormalDistribution utility_dist)
 ADD_TEST(NormalDistribution_test tstNormalDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_normal_distributions.xml")
+SET_PROPERTY(TEST NormalDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstPowerDistribution 
-  tstPowerDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstPowerDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstPowerDistribution
+  tstPowerDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPowerDistribution utility_dist)
 ADD_TEST(PowerDistribution_test tstPowerDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_power_distributions.xml")
+SET_PROPERTY(TEST PowerDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstPolynomialDistribution 
-  tstPolynomialDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstPolynomialDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstPolynomialDistribution
+  tstPolynomialDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPolynomialDistribution utility_dist)
 ADD_TEST(PolynomialDistribution_test tstPolynomialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_polynomial_distributions.xml")
+SET_PROPERTY(TEST PolynomialDistribution_test PROPERTY LABELS utility_dist)
 
 ADD_EXECUTABLE(tstOneDDistribution
   tstOneDDistribution.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstOneDDistribution utility_core utility_prng utility_dist)
-ADD_TEST(OneDDistribution_test tstOneDDistribution )
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstOneDDistribution utility_dist)
+ADD_TEST(OneDDistribution_test tstOneDDistribution)
+SET_PROPERTY(TEST OneDDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstCartesianSpatialDistribution 
-  tstCartesianSpatialDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstCartesianSpatialDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstHistogramPartiallyTabularTwoDDistribution
+  tstHistogramPartiallyTabularTwoDDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHistogramPartiallyTabularTwoDDistribution utility_dist)
+ADD_TEST(HistogramPartiallyTabularTwoDDistribution_test tstHistogramPartiallyTabularTwoDDistribution)
+SET_PROPERTY(TEST HistogramPartiallyTabularTwoDDistribution_test PROPERTY LABELS utility_dist)
+
+ADD_EXECUTABLE(tstHistogramFullyTabularTwoDDistribution
+  tstHistogramFullyTabularTwoDDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHistogramFullyTabularTwoDDistribution utility_dist)
+ADD_TEST(HistogramFullyTabularTwoDDistribution_test tstHistogramFullyTabularTwoDDistribution)
+SET_PROPERTY(TEST HistogramFullyTabularTwoDDistribution_test PROPERTY LABELS utility_dist)
+
+ADD_EXECUTABLE(tstLinLinLinInterpolatedPartiallyTabularTwoDDistribution
+  tstLinLinLinInterpolatedPartiallyTabularTwoDDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinLinLinInterpolatedPartiallyTabularTwoDDistribution utility_dist)
+ADD_TEST(LinLinLinInterpolatedPartiallyTabularTwoDDistribution_test tstLinLinLinInterpolatedPartiallyTabularTwoDDistribution)
+SET_PROPERTY(TEST LinLinLinInterpolatedPartiallyTabularTwoDDistribution_test PROPERTY LABELS utility_dist)
+
+ADD_EXECUTABLE(tstLinLinLinInterpolatedFullyTabularTwoDDistribution
+  tstLinLinLinInterpolatedFullyTabularTwoDDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinLinLinInterpolatedFullyTabularTwoDDistribution utility_dist)
+ADD_TEST(LinLinLinInterpolatedFullyTabularTwoDDistribution_test tstLinLinLinInterpolatedFullyTabularTwoDDistribution)
+SET_PROPERTY(TEST LinLinLinInterpolatedFullyTabularTwoDDistribution_test PROPERTY LABELS utility_dist)
+
+ADD_EXECUTABLE(tstCartesianSpatialDistribution
+  tstCartesianSpatialDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCartesianSpatialDistribution utility_dist)
 ADD_TEST(CartesianSpatialDistribution_test tstCartesianSpatialDistribution)
+SET_PROPERTY(TEST CartesianSpatialDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstCylindricalSpatialDistribution 
-  tstCylindricalSpatialDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstCylindricalSpatialDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstCylindricalSpatialDistribution
+  tstCylindricalSpatialDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCylindricalSpatialDistribution utility_dist)
 ADD_TEST(CylindricalSpatialDistribution_test tstCylindricalSpatialDistribution)
+SET_PROPERTY(TEST CylindricalSpatialDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstSphericalSpatialDistribution 
-  tstSphericalSpatialDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstSphericalSpatialDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstSphericalSpatialDistribution
+  tstSphericalSpatialDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSphericalSpatialDistribution utility_dist)
 ADD_TEST(SphericalSpatialDistribution_test tstSphericalSpatialDistribution)
+SET_PROPERTY(TEST SphericalSpatialDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstPointSpatialDistribution 
-  tstPointSpatialDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstPointSpatialDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstPointSpatialDistribution
+  tstPointSpatialDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPointSpatialDistribution utility_dist)
 ADD_TEST(PointSpatialDistribution_test tstPointSpatialDistribution)
+SET_PROPERTY(TEST PointSpatialDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstSpatialDistribution 
-  tstSpatialDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSpatialDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstSpatialDistribution
+  tstSpatialDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSpatialDistribution utility_dist)
 ADD_TEST(SpatialDistribution_test tstSpatialDistribution)
+SET_PROPERTY(TEST SpatialDistribution_test PROPERTY LABELS utility_dist)
 
 ADD_EXECUTABLE(tstSpatialDistributionFactory
-  tstSpatialDistributionFactory.cpp)
-TARGET_LINK_LIBRARIES(tstSpatialDistributionFactory utility_core utility_prng utility_dist)
+  tstSpatialDistributionFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSpatialDistributionFactory utility_dist)
 ADD_TEST(SpatialDistributionFactory_test tstSpatialDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_spatial_distributions.xml")
+SET_PROPERTY(TEST SpatialDistributionFactory_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstSphericalDirectionalDistribution 
-  tstSphericalDirectionalDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstSphericalDirectionalDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstSphericalDirectionalDistribution
+  tstSphericalDirectionalDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSphericalDirectionalDistribution utility_dist)
 ADD_TEST(SphericalDirectionalDistribution_test tstSphericalDirectionalDistribution)
+SET_PROPERTY(TEST SphericalDirectionalDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstMonoDirectionalDistribution 
-  tstMonoDirectionalDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstMonoDirectionalDistribution utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstMonoDirectionalDistribution
+  tstMonoDirectionalDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstMonoDirectionalDistribution utility_dist)
 ADD_TEST(MonoDirectionalDistribution_test tstMonoDirectionalDistribution)
+SET_PROPERTY(TEST MonoDirectionalDistribution_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstDirectionalDistributionFactory 
-  tstDirectionalDistributionFactory.cpp )
-TARGET_LINK_LIBRARIES(tstDirectionalDistributionFactory utility_core utility_prng utility_dist)
+ADD_EXECUTABLE(tstDirectionalDistributionFactory
+  tstDirectionalDistributionFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDirectionalDistributionFactory utility_dist)
 ADD_TEST(DirectionalDistributionFactory_test tstDirectionalDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_directional_distributions.xml")
-
+SET_PROPERTY(TEST DirectionalDistributionFactory_test PROPERTY LABELS utility_dist)

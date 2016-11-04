@@ -17,7 +17,7 @@
 namespace Geometry{
 
 template<typename ScalarType>
-class SerialDenseMatrixExtension : 
+class SerialDenseMatrixExtension :
     public Teuchos::SerialDenseMatrix<int,ScalarType>
 {
 
@@ -32,7 +32,7 @@ public:
   //@}
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<ScalarType> ST;
 
@@ -88,7 +88,7 @@ public:
 		 const SerialDenseMatrixExtension<ScalarType> &B,
 		 const bool transpose_B,
 		 const ScalarType beta );
-  
+
   //! Swap columns of <em> this </em> matrix
   void swapColumns( const ordinalType column_a_index,
 		    const ordinalType column_b_index );
@@ -116,7 +116,7 @@ public:
   //! I/O methods
   //! Print method that defines the behavior of the std::stream << operator
   virtual void print( std::ostream &os ) const;
-  //@}  
+  //@}
 };
 
 } // end Geometry namespace

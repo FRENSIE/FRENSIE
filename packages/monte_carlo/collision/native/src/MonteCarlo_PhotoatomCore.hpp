@@ -27,13 +27,13 @@
 namespace MonteCarlo{
 
 /*! The photoatom core class for storing photoatomic reactions
- * \details This class can be used to store all reactions and the atomic 
+ * \details This class can be used to store all reactions and the atomic
  * relaxation model associated with a photoatom. Exposing this object (e.g.
- * get method or export method) is safe since it only allows access to 
+ * get method or export method) is safe since it only allows access to
  * the underlying member data in a way that prohibits modification of that
  * data. This class was created to address the issue that arrises when dealing
  * with photonuclear data - photonuclide's that share the same atomic number
- * need the same photoatomic data. This class allows each photonuclide to 
+ * need the same photoatomic data. This class allows each photonuclide to
  * share the photoatomic data without copying that data (even if each
  * photonuclide has its own copy of the photoatom core object).
  */
@@ -53,7 +53,7 @@ public:
   ConstReactionMap;
 
   // Reactions that should be treated as absorption
-  static const boost::unordered_set<PhotoatomicReactionType> 
+  static const boost::unordered_set<PhotoatomicReactionType>
   absorption_reaction_types;
 
   //! Default constructor
@@ -71,7 +71,7 @@ public:
        const InterpPolicy policy );
 
   //! Advanced constructor
-  PhotoatomCore( 
+  PhotoatomCore(
      const Teuchos::RCP<const PhotoatomicReaction>& total_reaction,
      const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
      const ConstReactionMap& scattering_reactions,
@@ -89,7 +89,7 @@ public:
   //! Destructor
   ~PhotoatomCore()
   { /* ... */ }
-  
+
   //! Return the total reaction
   const PhotoatomicReaction& getTotalReaction() const;
 
@@ -141,7 +141,7 @@ private:
       const ConstReactionMap& scattering_reactions,
       const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
       Teuchos::RCP<PhotoatomicReaction>& total_reaction );
-  
+
   // Calculate the processed total absorption cross section
   template<typename InterpPolicy>
   static void createProcessedTotalReaction(
@@ -179,35 +179,35 @@ inline const PhotoatomicReaction& PhotoatomCore::getTotalReaction() const
 }
 
 // Return the total absorption reaction
-inline const PhotoatomicReaction& 
+inline const PhotoatomicReaction&
 PhotoatomCore::getTotalAbsorptionReaction() const
 {
   return *d_total_absorption_reaction;
 }
 
 // Return the scattering reactions
-inline const PhotoatomCore::ConstReactionMap& 
+inline const PhotoatomCore::ConstReactionMap&
 PhotoatomCore::getScatteringReactions() const
 {
   return d_scattering_reactions;
 }
 
 // Return the absorption reactions
-inline const PhotoatomCore::ConstReactionMap& 
+inline const PhotoatomCore::ConstReactionMap&
 PhotoatomCore::getAbsorptionReactions() const
 {
   return d_absorption_reactions;
 }
 
 // Return the miscellaneous reactions
-inline const PhotoatomCore::ConstReactionMap& 
+inline const PhotoatomCore::ConstReactionMap&
 PhotoatomCore::getMiscReactions() const
 {
   return d_miscellaneous_reactions;
 }
 
 // Return the atomic relaxation model
-inline const AtomicRelaxationModel& 
+inline const AtomicRelaxationModel&
 PhotoatomCore::getAtomicRelaxationModel() const
 {
   return *d_relaxation_model;

@@ -30,7 +30,7 @@
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> 
+Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer>
   native_data_container;
 
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
@@ -42,18 +42,18 @@ Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 		   createAtomicRelaxationModel_ace_void )
 {
-  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel( 
+  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 							   *xss_data_extractor,
 							   relaxation_model,
 							   false );
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 1.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   relaxation_model->relaxAtom( vacancy, photon, bank );
 
@@ -68,7 +68,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 		   createAtomicRelaxationModel_ace_detailed )
 {
-  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel( 
+  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 							   *xss_data_extractor,
 							   relaxation_model,
 							   true );
@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.966; // Choose the non-radiative L1-L2 transition
@@ -108,13 +108,13 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
   // L1 radiative transition
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.584170000000E-02 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  
+
   bank.pop();
-  
+
   // L2 radiative transition
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.523590000000E-02 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Clear the relaxation model
@@ -126,18 +126,18 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 		   createAtomicRelaxationModel_native_void )
 {
-  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel( 
+  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 						        *native_data_container,
 							relaxation_model,
 							false );
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 1.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   relaxation_model->relaxAtom( vacancy, photon, bank );
 
@@ -152,7 +152,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 		   createAtomicRelaxationModel_native_detailed )
 {
-  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel( 
+  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 							*native_data_container,
 							relaxation_model,
 							true );
@@ -164,7 +164,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.966; // Choose the non-radiative L1-L2 transition
@@ -192,9 +192,9 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
   // L1 radiative transition
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.584170000000E-02 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  
+
   bank.pop();
-  
+
   // L2 radiative transition
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.523590000000E-02 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
@@ -216,13 +216,13 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
 					       true );
 
   Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> copy_a_relaxation_model;
-  
+
   factory_a.createAndCacheAtomicRelaxationModel( *xss_data_extractor,
 					       copy_a_relaxation_model,
 					       true );
 
   TEST_EQUALITY( relaxation_model, copy_a_relaxation_model );
-  
+
   Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> copy_b_relaxation_model;
 
   factory_a.createAndCacheAtomicRelaxationModel( *native_data_container,
@@ -236,17 +236,17 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
   factory_b.createAndCacheAtomicRelaxationModel( *native_data_container,
 						 relaxation_model,
 						 true );
-  
+
   factory_b.createAndCacheAtomicRelaxationModel( *native_data_container,
 						 copy_a_relaxation_model,
 						 true );
 
   TEST_EQUALITY( relaxation_model, copy_a_relaxation_model );
-  
+
   factory_b.createAndCacheAtomicRelaxationModel( *xss_data_extractor,
 						 copy_b_relaxation_model,
 						 true );
-  
+
   TEST_EQUALITY( relaxation_model, copy_b_relaxation_model );
 }
 
@@ -268,37 +268,37 @@ int main( int argc, char** argv )
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-    xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
+    xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
     // Create the native data container
-    native_data_container.reset( 
-			      new Data::ElectronPhotonRelaxationDataContainer( 
+    native_data_container.reset(
+			      new Data::ElectronPhotonRelaxationDataContainer(
 						     test_native_file_name ) );
   }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

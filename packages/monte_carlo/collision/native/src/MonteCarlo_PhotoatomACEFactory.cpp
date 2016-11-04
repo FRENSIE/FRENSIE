@@ -19,9 +19,9 @@
 namespace MonteCarlo{
 
 // Create a photoatom core (using the provided atomic relaxation model)
-/*! \details The provided atomic relaxation model will be used with this 
+/*! \details The provided atomic relaxation model will be used with this
  * core. Special care must be taken to assure that the model corresponds to
- * the atom of interest. If the use of atomic relaxation data has been 
+ * the atom of interest. If the use of atomic relaxation data has been
  * requested, a photoelectric reaction for each subshell will be created.
  * Otherwize a single total photoelectric reaction will be created.
  */
@@ -45,7 +45,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_photoatom_data.extractPhotonEnergyGrid() );
-  
+
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, true>(
 						     energy_grid,
@@ -53,9 +53,9 @@ void PhotoatomACEFactory::createPhotoatomCore(
 
   // Create the incoherent scattering reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+    Photoatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[TOTAL_INCOHERENT_PHOTOATOMIC_REACTION];
-    
+
     PhotoatomicReactionACEFactory::createIncoherentReaction(
 						 raw_photoatom_data,
 						 energy_grid,
@@ -64,21 +64,21 @@ void PhotoatomACEFactory::createPhotoatomCore(
 						 incoherent_model,
 						 kahn_sampling_cutoff_energy );
   }
-  
+
   // Create the coherent scattering reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+    Photoatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COHERENT_PHOTOATOMIC_REACTION];
-    
+
     PhotoatomicReactionACEFactory::createCoherentReaction( raw_photoatom_data,
 							   energy_grid,
 							   grid_searcher,
 							   reaction_pointer );
   }
-  
+
   // Create the pair production reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+    Photoatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[PAIR_PRODUCTION_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionACEFactory::createPairProductionReaction(
@@ -88,7 +88,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
 					   reaction_pointer,
 					   use_detailed_pair_production_data );
   }
-  
+
   // Create the photoelectric reaction(s)
   if( use_atomic_relaxation_data )
   {
@@ -102,13 +102,13 @@ void PhotoatomACEFactory::createPhotoatomCore(
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {
-      absorption_reactions[reaction_pointers[i]->getReactionType()] = 
+      absorption_reactions[reaction_pointers[i]->getReactionType()] =
 	reaction_pointers[i];
     }
   }
   else
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+    Photoatom::ReactionMap::mapped_type& reaction_pointer =
       absorption_reactions[TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
@@ -119,14 +119,14 @@ void PhotoatomACEFactory::createPhotoatomCore(
   }
 
   // Create the heating reaction
-  Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+  Photoatom::ReactionMap::mapped_type& reaction_pointer =
       absorption_reactions[HEATING_PHOTOATOMIC_REACTION];
 
   PhotoatomicReactionACEFactory::createHeatingReaction( raw_photoatom_data,
 							energy_grid,
 							grid_searcher,
 							reaction_pointer );
-			
+
   // Create the photoatom core
   photoatom_core.reset( new PhotoatomCore( energy_grid,
 					   grid_searcher,
@@ -134,14 +134,14 @@ void PhotoatomACEFactory::createPhotoatomCore(
 					   absorption_reactions,
 					   atomic_relaxation_model,
 					   true,
-					   Utility::LogLog() ) );	   
+					   Utility::LogLog() ) );
 }
 
 // Create a photoatom (using the provided atomic relaxation model)
 /*! \details The provided atomic relaxation model will be used with this
  * atom. Special care must be taken to assure that the model corresponds with
  * the atom of interest. If the use of atomic relaxation data has been
- * requested, a photoelectric reaction for each subshell will be created. 
+ * requested, a photoelectric reaction for each subshell will be created.
  * Otherwise a single total photoelectric reaction will be created.
  */
 void PhotoatomACEFactory::createPhotoatom(
@@ -160,7 +160,7 @@ void PhotoatomACEFactory::createPhotoatom(
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
-  
+
   Teuchos::RCP<PhotoatomCore> core;
 
   PhotoatomACEFactory::createPhotoatomCore( raw_photoatom_data,
@@ -171,7 +171,7 @@ void PhotoatomACEFactory::createPhotoatom(
 					    kahn_sampling_cutoff_energy,
 					    use_detailed_pair_production_data,
 					    use_atomic_relaxation_data );
-					    
+
   // Create the photoatom
   photoatom.reset( new Photoatom( photoatom_name,
 				  raw_photoatom_data.extractAtomicNumber(),

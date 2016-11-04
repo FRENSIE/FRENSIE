@@ -12,7 +12,7 @@
 	     value="{4,0,pi}"/>
   <Parameter name="Power Distribution F" type="Power 3 Distribution"
 	     value="{0,5*pi/4}"/>
-  
+
   <Parameter name="Unit-Aware Power Distribution A"
   	     type="Unit-Aware Power 1 Distribution (cm,mol)"
   	     value="{2,0,1}"/>

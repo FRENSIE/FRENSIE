@@ -1,24 +1,27 @@
-# Configure the Moab options that will be required in this project. The 
+# Configure the Moab options that will be required in this project. The
 # following variables will be set:
 # 1.) MOAB - stores the Moab library name
 MACRO(ENABLE_MOAB_SUPPORT)
 
   # Add the user supplied Moab prefix to help find Moab
-  SET(CMAKE_PREFIX_PATH ${MOAB_PREFIX}/lib ${CMAKE_PREFIX_PATH})
+  IF(DEFINED MOAB_PREFIX)
+    SET(CMAKE_PREFIX_PATH ${MOAB_PREFIX}/lib ${CMAKE_PREFIX_PATH})
+  ELSE()
+    MESSAGE(FATAL_ERROR "The MOAB_PREFIX must be set currently.")
+  ENDIF()
 
-  # Find the Moab package available on this system
+  # Find the Moab package available on this system (version checking is
+  # not currently supported)
   FIND_PACKAGE(MOAB REQUIRED)
 
   # Use the user supplied prefix to find the Moab libraries and include dirs.
-  # SET(MOAB_INCLUDE_DIRS ${MOAB_PREFIX}/include)
+  SET(MOAB_INCLUDE_DIRS ${MOAB_PREFIX}/include)
   SET(MOAB_LIBRARY_DIRS ${MOAB_PREFIX}/lib)
   FIND_LIBRARY(MOAB MOAB ${MOAB_LIBRARY_DIRS})
-  
+
   IF(${MOAB} MATCHES NOTFOUND)
     MESSAGE(FATAL_ERROR "The moab library could not be found.")
   ENDIF()
-
-  SET(MOAB ${MOAB} ${MOAB_LIBRARIES})
 
   IF(FRENSIE_ENABLE_DAGMC)
     # Check if the DagMC patch has been applied
@@ -56,7 +59,7 @@ MACRO(ENABLE_MOAB_SUPPORT)
 	MESSAGE("-- DagMC.cpp has been patched!")
       ENDIF()
     ENDIF()
-    
+
     # DagMC patch has been applied - now find DagMC library
     FIND_LIBRARY(DAGMC dagmc ${MOAB_LIBRARY_DIRS})
 
@@ -66,15 +69,9 @@ MACRO(ENABLE_MOAB_SUPPORT)
 
     SET(MOAB ${DAGMC} ${MOAB})
 
-    SET(HAVE_${PROJECT_NAME}_DAGMC "1")
+    SET(HAVE_FRENSIE_DAGMC "1")
   ENDIF()
 
-  SET(CMAKEDEFINE \#cmakedefine)
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dagmc_config.hpp.in
-    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_dagmc_config.hpp.in)
-  CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_dagmc_config.hpp.in
-    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_dagmc_config.hpp)
-  
   # Set the include paths for Moab
   INCLUDE_DIRECTORIES(${MOAB_INCLUDE_DIRS})
 
@@ -94,12 +91,12 @@ MACRO(ENABLE_MOAB_SUPPORT)
     ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
       MESSAGE(WARNING "Moab was compiled with a different version of ${CMAKE_C_COMPILER}. There may be conflicts!")
     ENDIF()
-    
+
     # Cache the MOAB C compiler
-    SET(MOAB_C_COMPILER ${MOAB_CC} 
+    SET(MOAB_C_COMPILER ${MOAB_CC}
       CACHE STRING "The MOAB C compiler" FORCE)
   ENDIF()
-  
+
   # Check if the CXX compiler compatibility needs to be checked
   STRING(COMPARE NOTEQUAL "${MOAB_CXX_COMPILER}" "${MOAB_CXX}" NEW_COMPILER)
   IF(NEW_COMPILER)
@@ -135,7 +132,7 @@ MACRO(ENABLE_MOAB_SUPPORT)
     SET(MOAB_Fortran_COMPILER ${MOAB_FC}
       CACHE STRING "The MOAB Fortran compiler" FORCE)
   ENDIF()
-  
+
   UNSET(SAME_VENDOR)
   UNSET(SAME_VERSION)
 

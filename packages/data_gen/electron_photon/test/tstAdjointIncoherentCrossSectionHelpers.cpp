@@ -21,7 +21,7 @@
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionHelpers, 
+TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionHelpers,
 		   getEnergyOfMaxCrossSection )
 {
   double energy = DataGen::getEnergyOfMaxCrossSection( 0.001 );
@@ -65,7 +65,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionHelpers,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the max energy resulting in a max cross section value at an 
+// Check that the max energy resulting in a max cross section value at an
 // energy can be returned
 TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionHelpers,
 		   getMaxEnergyResultingInMaxCrossSectionValueAtEnergy )
@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionHelpers,
 
   TEST_FLOATING_EQUALITY( max_energy, 0.16430890703649043, 1e-15 );
 
-  max_energy = DataGen::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( 
+  max_energy = DataGen::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy(
 							 0.25227662801581613 );
 
   TEST_FLOATING_EQUALITY( max_energy, 20.0, 1e-14 );

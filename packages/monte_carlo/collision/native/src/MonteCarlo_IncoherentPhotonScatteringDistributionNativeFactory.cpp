@@ -18,8 +18,9 @@
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
@@ -27,7 +28,7 @@
 namespace MonteCarlo{
 
 // Create an incoherent distribution
-void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
+void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
@@ -38,12 +39,12 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
-  
+
   switch( incoherent_model )
   {
     case KN_INCOHERENT_MODEL:
     {
-      IncoherentPhotonScatteringDistributionNativeFactory::createKleinNishinaDistribution( 
+      IncoherentPhotonScatteringDistributionNativeFactory::createKleinNishinaDistribution(
 						 incoherent_distribution,
 						 kahn_sampling_cutoff_energy );
       break;
@@ -58,9 +59,9 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
     }
     case COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL:
     {
-      Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>
+      std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
-      
+
       MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution(
 					              raw_photoatom_data,
 						      doppler_broadened_dist );
@@ -83,9 +84,9 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
     }
     case FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL:
     {
-      Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>
+      std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
-      
+
       MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution(
 					              raw_photoatom_data,
 						      endf_subshell,
@@ -118,9 +119,9 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDis
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
-  
+
   // Create the scattering function
-  Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
+  std::shared_ptr<const ScatteringFunction> scattering_function;
 
   IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFunction(
 							 raw_photoatom_data,
@@ -133,21 +134,21 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDis
 
   Teuchos::Array<double> occupancy_numbers;
 
-  Teuchos::Array<SubshellType> subshell_order;
-  
+  Teuchos::Array<Data::SubshellType> subshell_order;
+
   while( subshell_it != subshells.end() )
   {
     occupancy_numbers.push_back(
 		     raw_photoatom_data.getSubshellOccupancy( *subshell_it ) );
 
-    subshell_order.push_back( 
-			 convertENDFDesignatorToSubshellEnum( *subshell_it ) );
-    
+    subshell_order.push_back(
+			Data::convertENDFDesignatorToSubshellEnum( *subshell_it ) );
+
     ++subshell_it;
   }
 
-  incoherent_distribution.reset( 
-			 new DetailedWHIncoherentPhotonScatteringDistribution( 
+  incoherent_distribution.reset(
+			 new DetailedWHIncoherentPhotonScatteringDistribution(
 					       scattering_function,
 					       occupancy_numbers,
 					       subshell_order,
@@ -157,20 +158,20 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDis
 // Create a Doppler broadened hybrid incoherent distribution
 void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedHybridDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-    const Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+    const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
     Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-    incoherent_distribution,     
+    incoherent_distribution,
     const double kahn_sampling_cutoff_energy )
 {
   // Make sure the Doppler broadened distribution is valid
-  testPrecondition( !doppler_broadened_dist.is_null() );
+  testPrecondition( doppler_broadened_dist.get() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   // Create the scattering function
-  Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
+  std::shared_ptr<const ScatteringFunction> scattering_function;
 
   IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFunction(
 							 raw_photoatom_data,
@@ -182,7 +183,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
 					       doppler_broadened_dist,
 					       kahn_sampling_cutoff_energy ) );
 }
-  
+
 
 // Create a basic subshell incoherent distribution
 void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
@@ -197,20 +198,20 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribu
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   // Convert the endf subshell to a subshell type
-  SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );
-  
-  TEST_FOR_EXCEPTION( subshell == INVALID_SUBSHELL,
+  Data::SubshellType subshell =Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
+
+  TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
-		      "Error: the requested endf subshell " << 
+		      "Error: the requested endf subshell " <<
 		      endf_subshell << " is invalid! " );
-  
+
   // Create the occupation number distribution
   Teuchos::RCP<Utility::OneDDistribution> occupation_number(
-     new Utility::TabularDistribution<Utility::LinLin>( 
+     new Utility::TabularDistribution<Utility::LinLin>(
 	   raw_photoatom_data.getOccupationNumberMomentumGrid( endf_subshell ),
 	   raw_photoatom_data.getOccupationNumber( endf_subshell ) ) );
 
-  incoherent_distribution.reset( 
+  incoherent_distribution.reset(
 	   new SubshellIncoherentPhotonScatteringDistribution(
 		  subshell,
 		  raw_photoatom_data.getSubshellOccupancy( endf_subshell ),
@@ -223,48 +224,52 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribu
 void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
     const unsigned endf_subshell,
-    const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+    const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
     Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
     incoherent_distribution,
     const double kahn_sampling_cutoff_energy )
 {
   // Make sure the Doppler broadened energy distribution is valid
-  testPrecondition( !doppler_broadened_dist.is_null() );
+  testPrecondition( doppler_broadened_dist.get() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   // Convert the endf subshell to a subshell type
-  SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );
-  
-  TEST_FOR_EXCEPTION( subshell == INVALID_SUBSHELL,
+  Data::SubshellType subshell =Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
+
+  TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
-		      "Error: the requested endf subshell " << 
+		      "Error: the requested endf subshell " <<
 		      endf_subshell << " is invalid! " );
-  
+
   // Create the occupation number distribution
   Teuchos::RCP<Utility::OneDDistribution> occupation_number(
-     new Utility::TabularDistribution<Utility::LinLin>( 
+     new Utility::TabularDistribution<Utility::LinLin>(
 	   raw_photoatom_data.getOccupationNumberMomentumGrid( endf_subshell ),
 	   raw_photoatom_data.getOccupationNumber( endf_subshell ) ) );
 
-  incoherent_distribution.reset( 
+  incoherent_distribution.reset(
 	    new DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
 		  doppler_broadened_dist,
-		  occupation_number, 
+		  occupation_number,
 		  kahn_sampling_cutoff_energy ) );
 }
 
 // Create the scattering function
-void IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFunction( 
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
+void IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFunction(
+	const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	std::shared_ptr<const ScatteringFunction>& scattering_function )
 {
-  scattering_function.reset(
-       new Utility::TabularDistribution<Utility::LinLin>(
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function(
+     new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseCentimeter,void>(
 	   raw_photoatom_data.getWallerHartreeScatteringFunctionMomentumGrid(),
 	   raw_photoatom_data.getWallerHartreeScatteringFunction() ) );
+
+  scattering_function.reset(
+	     new StandardScatteringFunction<Utility::Units::InverseCentimeter>(
+						   raw_scattering_function ) );
 }
 
 } // end MonteCarlo namespace

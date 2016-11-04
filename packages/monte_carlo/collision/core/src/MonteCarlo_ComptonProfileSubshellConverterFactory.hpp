@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_ComptonProfileSubshellConverterFactory.hpp
 //! \author Alex Robinson
 //! \brief  Compton profile subshell-to-index converter factory decl.
@@ -23,8 +23,9 @@ class ComptonProfileSubshellConverterFactory
 public:
 
   //! Create the converter
-  static void createConverter( 
-		      Teuchos::RCP<ComptonProfileSubshellConverter>& converter,
+  template<template<typename> class SmartPointer>
+  static void createConverter(
+		      SmartPointer<ComptonProfileSubshellConverter>& converter,
 		      const unsigned atomic_number );
 
 private:
@@ -34,6 +35,14 @@ private:
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ComptonProfileSubshellConverterFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_COMPTON_PROFILE_SUBSHELL_CONVERTER_FACTORY_HPP
 

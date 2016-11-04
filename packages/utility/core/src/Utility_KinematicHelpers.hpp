@@ -27,7 +27,7 @@ double calculateKineticEnergy( const double rest_mass_energy,
                                const double speed );
 
 //! Calculate the dimensionless speed of a relativistic particle: velocity / speed of light
-double calculateDimensionlessRelativisticSpeedSquared( 
+double calculateDimensionlessRelativisticSpeedSquared(
                                                   const double rest_mass_energy,
                                                   const double kinetic_energy );
 
@@ -40,7 +40,7 @@ double calculateSpeed( const double rest_mass_energy,
                        const double kinetic_energy );
 
 //! Calculate the momentum-energy squared of a relativistic particle ( MeV^2 )
-double calculateRelativisticMomentumEnergySquared( 
+double calculateRelativisticMomentumEnergySquared(
                                                   const double rest_mass_energy,
                                                   const double kinetic_energy );
 
@@ -73,7 +73,7 @@ double calculateAlphaMax( const double kinetic_energy,
 // Calculate the kinetic enery of a relativistic particle (MeV)
 inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
                                                  const double speed )
-{ 
+{
   // Make sure the rest mass energy is valid
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
   testPrecondition( rest_mass_energy > 0.0 );
@@ -81,7 +81,7 @@ inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( speed ) );
   testPrecondition( speed < Utility::PhysicalConstants::speed_of_light );
   testPrecondition( speed > 0.0 );
-  
+
   return rest_mass_energy*(Utility::PhysicalConstants::speed_of_light/
                            sqrt( Utility::PhysicalConstants::speed_of_light*
                                  Utility::PhysicalConstants::speed_of_light -
@@ -92,7 +92,7 @@ inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
 // Calculate the kinetic enery of a massive particle (MeV)
 inline double calculateKineticEnergy( const double rest_mass_energy,
 				      const double speed )
-{ 
+{
   // Make sure the rest mass energy is valid
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
   testPrecondition( rest_mass_energy > 0.0 );
@@ -100,14 +100,14 @@ inline double calculateKineticEnergy( const double rest_mass_energy,
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( speed ) );
   testPrecondition( speed < Utility::PhysicalConstants::speed_of_light );
   testPrecondition( speed > 0.0 );
-  
-  return 0.5 * rest_mass_energy * speed * speed / 
-        ( Utility::PhysicalConstants::speed_of_light * 
+
+  return 0.5 * rest_mass_energy * speed * speed /
+        ( Utility::PhysicalConstants::speed_of_light *
           Utility::PhysicalConstants::speed_of_light );
 }
 
 //! Calculate the dimensionless speed**2 of a massive particle (beta = v/c)**2
-inline double calculateDimensionlessRelativisticSpeedSquared( 
+inline double calculateDimensionlessRelativisticSpeedSquared(
                                                 const double rest_mass_energy,
                                                 const double kinetic_energy )
 {
@@ -123,7 +123,7 @@ inline double calculateDimensionlessRelativisticSpeedSquared(
   return 1.0 - rest_mass_energy*rest_mass_energy/(energy*energy);
 }
 
-// Calculate the speed of a relativistic particle 
+// Calculate the speed of a relativistic particle
 inline double calculateRelativisticSpeed( const double rest_mass_energy,
                                           const double kinetic_energy )
 {
@@ -134,7 +134,7 @@ inline double calculateRelativisticSpeed( const double rest_mass_energy,
                                                           kinetic_energy ) );
 }
 
-// Calculate the speed of a massive particle 
+// Calculate the speed of a massive particle
 inline double calculateSpeed( const double rest_mass_energy,
                               const double kinetic_energy )
 {
@@ -150,7 +150,7 @@ inline double calculateSpeed( const double rest_mass_energy,
 }
 
 // Calculate the momentum-energy squared of a relativistic particle ( momentum*c )^2
-inline double calculateRelativisticMomentumEnergySquared( 
+inline double calculateRelativisticMomentumEnergySquared(
                                                   const double rest_mass_energy,
                                                   const double kinetic_energy )
 {
@@ -166,11 +166,11 @@ inline double calculateRelativisticMomentumEnergySquared(
 
 // Calculate the dimensionless momentum of a relativistic particle ( momentum/mass*c )**2
 //! Write Unit Test
-inline double calculateDimensionlessRelativisticMomentumSquared( 
+inline double calculateDimensionlessRelativisticMomentumSquared(
                                                   const double rest_mass_energy,
                                                   const double kinetic_energy )
 {
-  return calculateRelativisticMomentumEnergySquared( 
+  return calculateRelativisticMomentumEnergySquared(
                rest_mass_energy, kinetic_energy ) /
                (rest_mass_energy*rest_mass_energy);
 }
@@ -180,7 +180,7 @@ inline double calculateDimensionlessRelativisticMomentumSquared(
 inline double calculateRelativisticMomentum( const double rest_mass_energy,
                                              const double kinetic_energy )
 {
-  return sqrt( calculateRelativisticMomentumEnergySquared( 
+  return sqrt( calculateRelativisticMomentumEnergySquared(
                     rest_mass_energy, kinetic_energy ) ) /
                     Utility::PhysicalConstants::speed_of_light;
 }

@@ -18,27 +18,27 @@ namespace MonteCarlo{
  * The Compton profile must be in inverse me*c units.
  */
 DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-    const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+    const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_energy_dist,
     const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
     const double kahn_sampling_cutoff_energy )
-  : SubshellIncoherentPhotonScatteringDistribution( 
+  : SubshellIncoherentPhotonScatteringDistribution(
 	       doppler_broadened_energy_dist->getSubshell(),
-	       doppler_broadened_energy_dist->getNumberOfElectronsInSubshell(),
-	       doppler_broadened_energy_dist->getBindingEnergy(),
+	       doppler_broadened_energy_dist->getSubshellOccupancy(),
+	       doppler_broadened_energy_dist->getSubshellBindingEnergy(),
 	       occupation_number,
 	       kahn_sampling_cutoff_energy ),
     d_doppler_broadened_energy_dist( doppler_broadened_energy_dist )
 {
   // Make sure the Doppler broadened energy dist is valid
-  testPrecondition( !doppler_broadened_energy_dist.is_null() );
+  testPrecondition( doppler_broadened_energy_dist.get() );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with
-void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhoton( 
+void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
 				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   double outgoing_energy, scattering_angle_cosine;
 
@@ -52,7 +52,7 @@ void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhot
 					   scattering_angle_cosine,
 					   outgoing_energy,
 					   shell_of_interaction );
-  
+
   // Sample an azimuthal angle
   const double azimuthal_angle = this->sampleAzimuthalAngle();
 
@@ -66,7 +66,7 @@ void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhot
   if( outgoing_energy > 0.0 )
   {
     photon.setEnergy( outgoing_energy );
-    
+
     // Set the new direction
     photon.rotateDirection( scattering_angle_cosine, azimuthal_angle );
   }
@@ -75,7 +75,7 @@ void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhot
     photon.setEnergy( std::numeric_limits<double>::min() );
 
     photon.setAsGone();
-  }  
+  }
 }
 
 } // end MonteCarlo namespace

@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -24,31 +25,31 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<Utility::SpatialDistribution> spatial_distribution;
+std::shared_ptr<Utility::SpatialDistribution> spatial_distribution;
 
 //---------------------------------------------------------------------------//
 // Testing Functions
 //---------------------------------------------------------------------------//
 // Initialize the distribution
-void initializeDistribution( 
-		     Teuchos::RCP<Utility::SpatialDistribution>& distribution )
+void initializeDistribution(
+		  std::shared_ptr<Utility::SpatialDistribution>& distribution )
 {
   // Power distribution in r dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     r_distribution( new Utility::PowerDistribution<1u>( 2.0, 0.0, 1.0 ) );
 
   // Uniform distribution in theta dimension
-  Teuchos::RCP<Utility::OneDDistribution>
-    theta_distribution( new Utility::UniformDistribution( 
-					      0.0, 
+  std::shared_ptr<Utility::OneDDistribution>
+    theta_distribution( new Utility::UniformDistribution(
+					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
 
   // Uniform distribution in axis dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     axis_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
-  distribution.reset( new Utility::CylindricalSpatialDistribution( 
+  distribution.reset( new Utility::CylindricalSpatialDistribution(
 							   r_distribution,
 							   theta_distribution,
 							   axis_distribution,
@@ -73,30 +74,30 @@ TEUCHOS_UNIT_TEST( CylindricalSpatialDistribution, evaluate )
   cartesian_point[0] = 1.0;
   cartesian_point[1] = 2.0;
   TEST_EQUALITY_CONST( spatial_distribution->evaluate( cartesian_point ), 2.0);
-  
+
   cartesian_point[2] = 2.0;
   TEST_EQUALITY_CONST( spatial_distribution->evaluate( cartesian_point ), 2.0);
-  
+
   cartesian_point[0] = 1.0/sqrt(2.0)+1;
   cartesian_point[1] = 1.0/sqrt(2.0)+1;
   cartesian_point[2] = 1.0;
-  TEST_FLOATING_EQUALITY( spatial_distribution->evaluate( cartesian_point ), 
-			  2.0, 
+  TEST_FLOATING_EQUALITY( spatial_distribution->evaluate( cartesian_point ),
+			  2.0,
 			  1e-15 );
 
-  
+
   cartesian_point[0] = -1.0/sqrt(2.0)+1;
   cartesian_point[1] = -1.0/sqrt(2.0)+1;
   cartesian_point[2] = 0.0;
-  TEST_FLOATING_EQUALITY( spatial_distribution->evaluate( cartesian_point ), 
-			  2.0, 
+  TEST_FLOATING_EQUALITY( spatial_distribution->evaluate( cartesian_point ),
+			  2.0,
 			  1e-15 );
 
   cartesian_point[0] = 1.0;
   cartesian_point[1] = 2.0;
   cartesian_point[2] = 3.0;
   TEST_EQUALITY_CONST( spatial_distribution->evaluate( cartesian_point ), 0.0);
-  
+
   cartesian_point[0] = 1.0;
   cartesian_point[1] = 0.0;
   cartesian_point[2] = -1.0;
@@ -110,16 +111,16 @@ TEUCHOS_UNIT_TEST( CylindricalSpatialDistribution, evaluatePDF )
   double pdf_value = 2.0/(Utility::PhysicalConstants::pi*4);
 
   double cartesian_point[3] = {1.0, 1.0, 1.0};
-  TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( cartesian_point ), 
+  TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( cartesian_point ),
 		       0.0 );
 
   cartesian_point[0] = 2.0;
-  TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( cartesian_point ), 
+  TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( cartesian_point ),
 		       pdf_value );
 
   cartesian_point[0] = 1.0;
   cartesian_point[1] = 2.0;
-  TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( cartesian_point ), 
+  TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( cartesian_point ),
 		       pdf_value );
 
   cartesian_point[0] = 1.0/sqrt(2.0)+1;
@@ -139,7 +140,7 @@ TEUCHOS_UNIT_TEST( CylindricalSpatialDistribution, evaluatePDF )
   cartesian_point[0] = 2.0;
   cartesian_point[1] = 2.0;
   cartesian_point[2] = 1.0;
-  TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( cartesian_point ), 
+  TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( cartesian_point ),
 		       0.0 );
 }
 
@@ -196,40 +197,17 @@ TEUCHOS_UNIT_TEST( CylindricalSpatialDistribution, isUniform )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-  
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCylindricalSpatialDistribution.cpp

@@ -9,20 +9,7 @@
 #ifndef MONTE_CARLO_ATOMIC_EXCITATION_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_ATOMIC_EXCITATION_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Std Lib Includes
-#include <limits>
-
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_ElectronState.hpp"
-#include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
 
@@ -35,24 +22,56 @@ class AtomicExcitationElectronScatteringDistribution : public ElectronScattering
 public:
 
   //! Typedef for the atomic excitation distribution
-  typedef Teuchos::RCP<const Utility::OneDDistribution> AtomicDistribution;
+  typedef std::shared_ptr<const Utility::OneDDistribution> AtomicDistribution;
 
   //! Constructor
   AtomicExcitationElectronScatteringDistribution(
     const AtomicDistribution& energy_loss_distribution );
 
-  //! Destructor 
+  //! Destructor
   virtual ~AtomicExcitationElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+                   const double scattering_angle_cosine ) const
+  { /*...*/}
+
+  //! Evaluate the PDF
+  double evaluatePDF( const double incoming_energy,
+                      const double scattering_angle_cosine ) const
+  { /*...*/}
+
+  //! Evaluate the CDF
+  double evaluateCDF( const double incoming_energy,
+                      const double scattering_angle_cosine ) const
+  { /* ... */ }
+
+  //! Evaluate the integrated cross section (b)
+  double evaluateIntegratedCrossSection( const double incoming_energy,
+                                         const double precision) const
+  { /*...*/}
+
+
+  //! Sample an outgoing energy and direction from the distribution
+  void sample( const double incoming_energy,
+               double& outgoing_energy,
+               double& scattering_angle_cosine ) const;
+
+  //! Sample an outgoing energy and direction and record the number of trials
+  void sampleAndRecordTrials( const double incoming_energy,
+                              double& outgoing_energy,
+                              double& scattering_angle_cosine,
+                              unsigned& trials ) const;
 
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
 	                    ParticleBank& bank,
-                        SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const;
 
 private:
 
-  // elastic scattering distribution without forward screening data
+  // Atomic excitation energy loss table
   AtomicDistribution d_energy_loss_distribution;
 
 

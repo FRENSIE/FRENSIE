@@ -64,7 +64,7 @@ public:
   { /* ... */ }
 
   //! Return the reactions with scattering distributions
-  void getReactionsWithScatteringDistributions( 
+  void getReactionsWithScatteringDistributions(
 			     boost::unordered_set<unsigned>& reactions ) const;
 
   //! Check if a reaction has a scattering distribution
@@ -95,22 +95,22 @@ protected:
 		   const Teuchos::ArrayView<const double> and_block,
 		   const Teuchos::ArrayView<const double> ldlw_block,
 		   const Teuchos::ArrayView<const double> dlw_block );
-  
+
   // Returns a map of the reaction types (MT #s) and their AND block ordering
-  const boost::unordered_map<unsigned,unsigned>& 
+  const boost::unordered_map<unsigned,unsigned>&
   getReactionOrdering() const;
 
   // Returns a map of the reaction types (MT #s) and the scattering ref. frame
   // Note: True = center-of-mass, False = lab
-  const boost::unordered_map<unsigned,bool>& 
+  const boost::unordered_map<unsigned,bool>&
   getReactionCMScattering() const;
-  
+
   // Returns a set of the reaction types (MT #s) with isotropic scattering only
-  const boost::unordered_set<unsigned>& 
+  const boost::unordered_set<unsigned>&
   getReactionsWithIsotropicScatteringOnly() const;
 
   // Returns a set of the reaction types (MT #s) with coupled energy-angle dist
-  const boost::unordered_set<unsigned>& 
+  const boost::unordered_set<unsigned>&
   getReactionsWithCoupledEnergyAngleDist() const;
 
   // Returns a map of the reaction types (MT #s) and the corresp. angular dist
@@ -118,26 +118,26 @@ protected:
   getReactionAngularDist() const;
 
   // Returns a map of the reaction types (MT #s) and angular dist start index
-  const boost::unordered_map<unsigned,unsigned>& 
+  const boost::unordered_map<unsigned,unsigned>&
   getReactionAngularDistStartIndex() const;
-  
+
   // Returns a map of the reaction types (MT #s) and the corresp. energy dist
   const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >&
   getReactionEnergyDist() const;
 
   // Returns a map of the reaction types (MT #s) and energy dist start index
-  const boost::unordered_map<unsigned,unsigned>& 
+  const boost::unordered_map<unsigned,unsigned>&
   getReactionEnergyDistStartIndex() const;
 
 private:
 
   // Initialize the reaction type ordering map
-  void initializeReactionOrderingMap( 
+  void initializeReactionOrderingMap(
 			   const Teuchos::ArrayView<const double>& mtr_block,
 			   const Teuchos::ArrayView<const double>& tyr_block );
 
   // Initialize the reaction type scattering ref. frame map
-  void initializeReactionRefFrameMap( 
+  void initializeReactionRefFrameMap(
 			   const Teuchos::ArrayView<const double>& mtr_block,
 			   const Teuchos::ArrayView<const double>& tyr_block );
 
@@ -171,7 +171,7 @@ private:
   // A map of the reaction types (MT #s) and the scattering reference frame
   // Note: True = center-of-mass, False = lab
   boost::unordered_map<unsigned,bool> d_reaction_cm_scattering;
-  
+
   // A set of the reaction types (MT #s) with isotropic scattering only
   boost::unordered_set<unsigned>
   d_reactions_with_isotropic_scattering_only;
@@ -185,13 +185,13 @@ private:
   d_reaction_angular_dist;
 
   // A map of the reaction types (MT #s) and the angular dist start index
-  boost::unordered_map<unsigned,unsigned> 
+  boost::unordered_map<unsigned,unsigned>
   d_reaction_angular_dist_start_index;
-  
+
   // A map of the reaction types (MT #s) and the energy dist start index
-  boost::unordered_map<unsigned,unsigned> 
+  boost::unordered_map<unsigned,unsigned>
   d_reaction_energy_dist_start_index;
-  
+
   // A map of the reaction types (MT #s) and the corresponding energy dist
   boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >
   d_reaction_energy_dist;

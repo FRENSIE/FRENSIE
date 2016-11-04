@@ -9,7 +9,8 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
-  
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -19,12 +20,17 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "Data_SubshellType.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
+#include "MonteCarlo_StandardComptonProfile.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_DirectionHelpers.hpp"
+#include "Utility_InverseAngstromUnit.hpp"
+#include "Utility_MeCMomentumUnit.hpp"
+#include "Utility_InverseMeCMomentumUnit.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -43,26 +49,26 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   double dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
 
-  dist_value = distribution->evaluate( 
+  dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
-  
-  TEST_FLOATING_EQUALITY( dist_value, 0.18204031443868224, 1e-6 );
+
+  TEST_FLOATING_EQUALITY( dist_value, 0.182031495370433727, 1e-6 );
 
   dist_value = distribution->evaluate( 1.0, 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
-  
+
   dist_value = distribution->evaluate( 1.0, 0.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 0.1309675807668618, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.10574024270641422, 1e-15 );	
+  TEST_FLOATING_EQUALITY( dist_value, 0.10574024270641422, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -70,17 +76,17 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   evaluatePDF )
 {
-  double pdf_value = distribution->evaluatePDF( 
+  double pdf_value = distribution->evaluatePDF(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-15 );
 
-  pdf_value = distribution->evaluatePDF( 
+  pdf_value = distribution->evaluatePDF(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
-  
-  TEST_FLOATING_EQUALITY( pdf_value, 0.468206881760033666, 1e-6 );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 0.468210959354766421, 1e-6 );
 
   pdf_value = distribution->evaluatePDF( 1.0, 1.0 );
 
@@ -88,11 +94,11 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 
   pdf_value = distribution->evaluatePDF( 1.0, 0.0 );
 
-  TEST_FLOATING_EQUALITY( pdf_value, 0.361055269849248517, 1e-15 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.361065574572935588, 1e-9 );
 
   pdf_value = distribution->evaluatePDF( 1.0, -1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf_value, 0.291507803998082682, 1e-15 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.291516123797359028, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -100,19 +106,19 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   evaluateIntegratedCrossSection )
 {
-  double cross_section = distribution->evaluateIntegratedCrossSection( 
+  double cross_section = distribution->evaluateIntegratedCrossSection(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1e-3 );
-  
-  TEST_FLOATING_EQUALITY( cross_section, 0.38880309491689713, 1e-15 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.388780936741182304, 1e-9 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-3 );
-  
-  TEST_FLOATING_EQUALITY( cross_section, 0.362735546891601146, 1e-15 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.362725194507310333, 1e-9 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 20.0, 1e-3 );
-  
-  TEST_FLOATING_EQUALITY( cross_section, 0.0603100615156834663, 1e-15 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0603100048795882984, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -124,18 +130,18 @@ Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
     derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
 
   TEST_EQUALITY_CONST( derived_dist->getSubshell(),
-		       MonteCarlo::K_SUBSHELL );
+		       Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the binding energy can be returned
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
-		   getBindingEnergy )
+		   getSubshellBindingEnergy )
 {
   Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
     derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
-  
-  TEST_EQUALITY_CONST( derived_dist->getBindingEnergy(),
+
+  TEST_EQUALITY_CONST( derived_dist->getSubshellBindingEnergy(),
 		       8.82899999999999935e-02 );
 }
 
@@ -145,12 +151,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   scatterPhoton )
 {
   MonteCarlo::ParticleBank bank;
-  
+
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
-  MonteCarlo::SubshellType shell_of_interaction;
+
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
@@ -170,21 +176,21 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
-			  0.9996898054103247, 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+			  0.9996898054103247,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
-			  0.024905681252821114, 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+			  0.024905681252821114,
 			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -200,13 +206,13 @@ int main( int argc, char** argv )
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
@@ -214,27 +220,31 @@ int main( int argc, char** argv )
 
   {
     // Create the native data file container
-    Data::ElectronPhotonRelaxationDataContainer 
+    Data::ElectronPhotonRelaxationDataContainer
       data_container( test_native_file_name );
-    
+
     // Extract the Compton profile and occupation number for the first subshell
-    const std::vector<double>& compton_profile_grid_s1 = 
+    const std::vector<double>& compton_profile_grid_s1 =
       data_container.getComptonProfileMomentumGrid( 1 );
-    
-    const std::vector<double>& compton_profile_s1 = 
+
+    const std::vector<double>& compton_profile_s1 =
       data_container.getComptonProfile( 1 );
-    
-    const std::vector<double>& occupation_number_grid_s1 = 
+
+    const std::vector<double>& occupation_number_grid_s1 =
       data_container.getOccupationNumberMomentumGrid( 1 );
-    
-    const std::vector<double>& occupation_number_s1 = 
+
+    const std::vector<double>& occupation_number_s1 =
       data_container.getOccupationNumber( 1 );
-    
+
     // Create the Compton profile and occupation number distributions
-    Teuchos::RCP<const Utility::TabularOneDDistribution> compton_profile_s1_dist(
-			    new Utility::TabularDistribution<Utility::LinLin>( 
-						       compton_profile_grid_s1,
+    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
+                                                       compton_profile_grid_s1,
 						       compton_profile_s1 ) );
+
+    std::shared_ptr<const MonteCarlo::ComptonProfile> compton_profile_s1_dist(
+          new MonteCarlo::StandardComptonProfile<Utility::Units::MeCMomentum>(
+                                                       raw_compton_profile ) );
 
     Teuchos::RCP<const Utility::OneDDistribution> occupation_number_s1_dist(
 			    new Utility::TabularDistribution<Utility::LinLin>(
@@ -242,9 +252,9 @@ int main( int argc, char** argv )
 						    occupation_number_s1 ) );
 
     // Create the Doppler broadened energy distribution
-    Teuchos::RCP<const MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution>
-      doppler_dist( new MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution(
-		    MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
+    std::shared_ptr<const MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution>
+      doppler_dist( new MonteCarlo::StandardSubshellDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
+		    Data::convertENDFDesignatorToSubshellEnum( 1 ),
 		    data_container.getSubshellOccupancy( 1 ),
 		    data_container.getSubshellBindingEnergy( 1 ),
 		    compton_profile_s1_dist ) );
@@ -259,7 +269,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -272,7 +282,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);      
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

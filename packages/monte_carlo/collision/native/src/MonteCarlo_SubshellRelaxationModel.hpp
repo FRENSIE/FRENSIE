@@ -10,7 +10,7 @@
 #define MONTE_CARLO_SUBSHELL_RELAXATION_MODEL_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 
@@ -20,32 +20,32 @@ namespace MonteCarlo{
 class SubshellRelaxationModel
 {
 public:
-  
+
   //! Constructor
-  SubshellRelaxationModel( const SubshellType vacancy_subshell );
+  SubshellRelaxationModel( const Data::SubshellType vacancy_subshell );
 
   //! Destructor
   ~SubshellRelaxationModel()
   { /* ... */ }
 
   //! Relax the shell
-  virtual void relaxSubshell( 
+  virtual void relaxSubshell(
 			 const ParticleState& particle,
 			 ParticleBank& bank,
-			 SubshellType& new_primary_vacancy_shell,
-			 SubshellType& new_secondary_vacancy_shell ) const = 0;
+			 Data::SubshellType& new_primary_vacancy_shell,
+			 Data::SubshellType& new_secondary_vacancy_shell ) const = 0;
 
   //! Return the subshell that contains the vacancy
-  SubshellType getVacancySubshell() const;
+  Data::SubshellType getVacancySubshell() const;
 
 private:
 
   // The vacancy subshell
-  SubshellType d_vacancy_subshell;
+  Data::SubshellType d_vacancy_subshell;
 };
 
 // Return the subshell that contains the vacancy
-inline SubshellType SubshellRelaxationModel::getVacancySubshell() const
+inline Data::SubshellType SubshellRelaxationModel::getVacancySubshell() const
 {
   return d_vacancy_subshell;
 }

@@ -19,11 +19,11 @@ namespace Utility{
 
 // Constructor
 template<typename T>
-Measurement<T>::Measurement( const Measurement<T>::ValueType& value, 
+Measurement<T>::Measurement( const Measurement<T>::ValueType& value,
 			     const Measurement<T>::ValueType& uncertainty )
   : d_value( value ),
     d_uncertainty( uncertainty )
-{ 
+{
   // Make sure the value is valid
   testPrecondition( !ST::isnaninf( value ) );
   // Make sure the uncertainty is valid
@@ -55,7 +55,7 @@ inline void Measurement<T>::print( std::ostream& os ) const
 
 // Return the value of the measurement
 template<typename T>
-inline const typename Measurement<T>::ValueType& 
+inline const typename Measurement<T>::ValueType&
 Measurement<T>::getValue() const
 {
   return d_value;
@@ -63,7 +63,7 @@ Measurement<T>::getValue() const
 
 // Return the uncertainty of the measurement
 template<typename T>
-inline const typename Measurement<T>::ValueType& 
+inline const typename Measurement<T>::ValueType&
 Measurement<T>::getUncertainty() const
 {
   return d_uncertainty;
@@ -82,7 +82,7 @@ Measurement<T>::getRelativeUncertainty() const
 
 // Return the lower bound of the measurement
 template<typename T>
-inline const typename Measurement<T>::ValueType 
+inline const typename Measurement<T>::ValueType
 Measurement<T>::getLowerBound() const
 {
   return d_value - d_uncertainty;
@@ -105,12 +105,12 @@ inline Measurement<T>::operator Measurement<T>::ValueType() const
 
 // In-place addition operator
 template<typename T>
-inline Measurement<T>& Measurement<T>::operator+=( 
+inline Measurement<T>& Measurement<T>::operator+=(
 				       const Measurement<T>::ValueType& value )
 {
   // Make sure the value is valid
   testPrecondition( !ST::isnaninf( value ) );
-  
+
   d_value += value;
 
   return *this;
@@ -125,7 +125,7 @@ inline Measurement<T>& Measurement<T>::operator+=(
   testPrecondition( !ST::isnaninf( other_measurement.d_value ) );
   testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
   testPrecondition( other_measurement.d_uncertainty >= 0.0 );
-  
+
   d_value += other_measurement.d_value;
 
   // Propagate the uncertainty of the measurements
@@ -138,12 +138,12 @@ inline Measurement<T>& Measurement<T>::operator+=(
 
 // In-place subtraction operator
 template<typename T>
-inline Measurement<T>& Measurement<T>::operator-=( 
+inline Measurement<T>& Measurement<T>::operator-=(
 				       const Measurement<T>::ValueType& value )
 {
   // Make sure the value is valid
   testPrecondition( !ST::isnaninf( value ) );
-  
+
   d_value -= value;
 
   return *this;
@@ -151,14 +151,14 @@ inline Measurement<T>& Measurement<T>::operator-=(
 
 // In-place subtraction operator
 template<typename T>
-inline Measurement<T>& Measurement<T>::operator-=( 
+inline Measurement<T>& Measurement<T>::operator-=(
 				      const Measurement<T>& other_measurement )
 {
   // Make sure the other measurement is valid
   testPrecondition( !ST::isnaninf( other_measurement.d_value ) );
   testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
   testPrecondition( other_measurement.d_uncertainty >= 0.0 );
-  
+
   d_value -= other_measurement.d_value;
 
   // Propagate the uncertainty of the measurements
@@ -171,14 +171,14 @@ inline Measurement<T>& Measurement<T>::operator-=(
 
 // In-place multiplication operator
 template<typename T>
-inline Measurement<T>& Measurement<T>::operator*=( 
+inline Measurement<T>& Measurement<T>::operator*=(
 				       const Measurement<T>::ValueType& value )
 {
   // Make sure the value is valid
   testPrecondition( !ST::isnaninf( value ) );
-  
+
   d_value *= value;
-  
+
   d_uncertainty *= fabs( value );
 
   return *this;
@@ -186,7 +186,7 @@ inline Measurement<T>& Measurement<T>::operator*=(
 
 // In-place multiplication operator
 template<typename T>
-inline Measurement<T>& Measurement<T>::operator*=( 
+inline Measurement<T>& Measurement<T>::operator*=(
 				      const Measurement<T>& other_measurement )
 {
   // Make sure the other measurement is valid
@@ -200,19 +200,19 @@ inline Measurement<T>& Measurement<T>::operator*=(
 	       d_value*d_value );
 
   d_value *= other_measurement.d_value;
-    
+
   return *this;
 }
 
 // In-place division operator
 template<typename T>
-inline Measurement<T>& Measurement<T>::operator/=( 
+inline Measurement<T>& Measurement<T>::operator/=(
 				       const Measurement<T>::ValueType& value )
 {
   // Make sure the value is valid
   testPrecondition( !ST::isnaninf( value ) );
   testPrecondition( value != 0.0 );
-  
+
   d_value /= value;
 
   d_uncertainty /= fabs( value );
@@ -222,7 +222,7 @@ inline Measurement<T>& Measurement<T>::operator/=(
 
 // In-place division operator
 template<typename T>
-inline Measurement<T>& Measurement<T>::operator/=( 
+inline Measurement<T>& Measurement<T>::operator/=(
 				      const Measurement<T>& other_measurement )
 {
   // Make sure the other measurement is valid
@@ -230,15 +230,15 @@ inline Measurement<T>& Measurement<T>::operator/=(
   testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
   testPrecondition( other_measurement.d_value != 0.0 );
   testPrecondition( other_measurement.d_uncertainty >= 0.0 );
-  
+
   double other_value_sqr = other_measurement.d_value*other_measurement.d_value;
 
   double term_1 = d_uncertainty*d_uncertainty/other_value_sqr;
-  
-  double term_2 = 
+
+  double term_2 =
     other_measurement.d_uncertainty*other_measurement.d_uncertainty*
     d_value*d_value/(other_value_sqr*other_value_sqr);
-    
+
 
   // Propagate the uncertainty of the measurements
   d_uncertainty = std::sqrt( term_1 + term_2 );

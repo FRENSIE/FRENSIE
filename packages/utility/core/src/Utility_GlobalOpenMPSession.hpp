@@ -13,7 +13,7 @@
 #include <time.h>
 
 // FRENSIE Includes
-#include "FRENSIE_openmp_config.hpp"
+#include "FRENSIE_config.hpp"
 
 namespace Utility{
 
@@ -21,7 +21,7 @@ namespace Utility{
 class GlobalOpenMPSession
 {
 public:
-  
+
   //! Set the number of threads to use in parallel blocks
   static void setNumberOfThreads( const unsigned number_of_threads );
 
@@ -36,7 +36,7 @@ public:
 
   //! Get the current wall time (s)
   static double getTime();
- 
+
   //! Return if OpenMP has been configured for use
   static bool isOpenMPUsed();
 
@@ -58,7 +58,7 @@ inline unsigned GlobalOpenMPSession::getRequestedNumberOfThreads()
 // Get the default number of threads used in the current parallel scope
 /*! \details If OpenMP is not used or if the program execution state is not
  * within an omp parallel block only the master thread will be active
- */ 
+ */
 inline unsigned GlobalOpenMPSession::getNumberOfThreads()
 {
 #ifdef HAVE_FRENSIE_OPENMP
@@ -71,7 +71,7 @@ inline unsigned GlobalOpenMPSession::getNumberOfThreads()
 // Get the thread id within the current parallel scope
 /*! \details If OpenMP is not used or if the program execution state is not
  *  within an omp parallel block the master thread id (0) will be returned.
- */ 
+ */
 inline unsigned GlobalOpenMPSession::getThreadId()
 {
 #ifdef HAVE_FRENSIE_OPENMP

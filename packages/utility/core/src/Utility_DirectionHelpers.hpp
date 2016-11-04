@@ -26,7 +26,7 @@ double vectorMagnitude( const double x_component,
 double vectorMagnitude( const double vector[3] );
 
 //! Test if the direction is valid (on unit sphere)
-bool validDirection( const double x_direction, 
+bool validDirection( const double x_direction,
 		     const double y_direction,
 		     const double z_direction );
 
@@ -39,6 +39,11 @@ void normalizeDirection( double direction[3] );
 //! Calculate the cosine of the angle between two directions
 double calculateCosineOfAngleBetweenVectors( const double direction_a[3],
 					     const double direction_b[3] );
+
+//! Reflect direction about the given unit normal
+double reflectDirection( const double direction[3],
+                         const double unit_normal[3],
+                         double reflected_direction[3] );
 
 //! Rotate a direction (unit vector) through a polar and azimuthal angle
 void rotateDirectionThroughPolarAndAzimuthalAngle(
@@ -54,10 +59,11 @@ inline double vectorMagnitude( const double x_component,
 {
   // Make sure that the coordinates are valid
   remember( typedef Teuchos::ScalarTraits<double> ST );
+
   testPrecondition( !ST::isnaninf( x_component ) );
   testPrecondition( !ST::isnaninf( y_component ) );
   testPrecondition( !ST::isnaninf( z_component ) );
-  
+
   return sqrt( x_component*x_component + y_component*y_component +
 	       z_component*z_component );
 }

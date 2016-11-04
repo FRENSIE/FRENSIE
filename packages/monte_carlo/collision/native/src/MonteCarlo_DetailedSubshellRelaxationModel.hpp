@@ -24,19 +24,19 @@
 namespace MonteCarlo{
 
 /*! Detailed subshell relaxation model class
- * \details This model accounts for all possible transitions to fill a 
+ * \details This model accounts for all possible transitions to fill a
  * vacancy in the initial shell.
  */
 class DetailedSubshellRelaxationModel : public SubshellRelaxationModel
 {
-  
+
 public:
 
   //! Constructor
-  DetailedSubshellRelaxationModel( 
-       const SubshellType vacancy_subshell,
-       const Teuchos::Array<SubshellType>& primary_transition_vacancy_shells,
-       const Teuchos::Array<SubshellType>& secondary_transition_vacancy_shells,
+  DetailedSubshellRelaxationModel(
+       const Data::SubshellType vacancy_subshell,
+       const Teuchos::Array<Data::SubshellType>& primary_transition_vacancy_shells,
+       const Teuchos::Array<Data::SubshellType>& secondary_transition_vacancy_shells,
        const Teuchos::Array<double>& outgoing_particle_energies,
        const Teuchos::Array<double>& transition_pdf_or_cdf,
        const bool interpret_as_cdf = true );
@@ -48,13 +48,13 @@ public:
   //! Relax the shell
   void relaxSubshell( const ParticleState& particle,
 		      ParticleBank& bank,
-		      SubshellType& new_primary_vacancy_shell,
-		      SubshellType& new_secondary_vacancy_shell ) const;
+		      Data::SubshellType& new_primary_vacancy_shell,
+		      Data::SubshellType& new_secondary_vacancy_shell ) const;
 
 private:
 
   // Generate a fluorescence photon
-  void generateFluorescencePhoton( 
+  void generateFluorescencePhoton(
 			       const ParticleState& particle,
 			       const double new_photon_energy,
 			       ParticleBank& bank ) const;
@@ -67,7 +67,7 @@ private:
   // Sample emission direction
   void sampleEmissionDirection( double& angle_cosine,
 				double& azimuthal_angle ) const;
-				   
+
   // The transition distribution (also stores the outgoing particle energies )
   boost::scoped_ptr<Utility::DiscreteDistribution> d_transition_distribution;
 
@@ -75,7 +75,7 @@ private:
   Teuchos::Array<double> d_outgoing_particle_energies;
 
   // The transition vacancy shells (first = primary, second = secondary)
-  Teuchos::Array<Utility::Pair<SubshellType,SubshellType> > 
+  Teuchos::Array<Utility::Pair<Data::SubshellType,Data::SubshellType> >
   d_transition_vacancy_shells;
 };
 

@@ -9,8 +9,10 @@
 #ifndef UTILITY_SPHERICAL_DIRECTIONAL_DISTRIBUTION_HPP
 #define UTILITY_SPHERICAL_DIRECTIONAL_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
@@ -26,21 +28,21 @@ class SphericalDirectionalDistribution : public DirectionalDistribution
 {
 
 private:
-  
+
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
 
   //! Constructor
-  SphericalDirectionalDistribution( 
-		      const Teuchos::RCP<OneDDistribution>& theta_distribution,
-		      const Teuchos::RCP<OneDDistribution>& mu_distribution,
-		      const Axis axis = Z_AXIS );
+  SphericalDirectionalDistribution(
+		   const std::shared_ptr<OneDDistribution>& theta_distribution,
+                   const std::shared_ptr<OneDDistribution>& mu_distribution,
+                   const Axis axis = Z_AXIS );
 
   //! Destructor
   ~SphericalDirectionalDistribution()
-  { /* ... */ } 
+  { /* ... */ }
 
   //! Evaluate the directional distribution
   double evaluate( const double cartesian_point[3] ) const;
@@ -58,18 +60,18 @@ public:
   bool hasSameBounds( const DirectionalDistribution& distribution ) const;
 
 protected:
-  
+
   //! Convert a cartesian coordinate to a spherical coordinate
   void convertCartesianCoordsToSpherical( const double cartesian_point[3],
-					  double spherical_point[3] ) const; 
+					  double spherical_point[3] ) const;
 
 private:
 
   // The theta distribution
-  Teuchos::RCP<OneDDistribution> d_theta_distribution;
+  std::shared_ptr<OneDDistribution> d_theta_distribution;
 
   // The mu distribution
-  Teuchos::RCP<OneDDistribution> d_mu_distribution;
+  std::shared_ptr<OneDDistribution> d_mu_distribution;
 
   // The spherical axis (direction of the mu distribution)
   Axis d_axis;

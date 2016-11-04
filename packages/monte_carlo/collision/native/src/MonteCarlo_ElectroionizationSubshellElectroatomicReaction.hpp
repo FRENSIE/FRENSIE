@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The electroionization subshell electroatomic reaction class decl.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTROATOMIC_REACTION_HPP
@@ -25,25 +25,39 @@ class ElectroionizationSubshellElectroatomicReaction : public ElectroionizationE
 
 public:
 
+  //! Basic Constructor
+  ElectroionizationSubshellElectroatomicReaction(
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Data::SubshellType interaction_subshell,
+    const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
+            electroionization_subshell_distribution );
+
   //! Constructor
-  ElectroionizationSubshellElectroatomicReaction( 
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
-      const SubshellType interaction_subshell,
-      const double binding_energy,   
-      const ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution& 
-      electroionization_subshell_scattering_distribution );
+  ElectroionizationSubshellElectroatomicReaction(
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const Data::SubshellType interaction_subshell,
+    const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
+            electroionization_subshell_distribution );
 
 
   //! Destructor
   ~ElectroionizationSubshellElectroatomicReaction()
   { /* ... */ }
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy ) const;
+
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const;
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;
@@ -51,18 +65,21 @@ public:
   //! Get the interaction subshell (non-standard interface)
   unsigned getSubshell() const;
 
-
 private:
-
-  // The electroionization subshell scattering distribution
-  ElectroionizationSubshellElectronScatteringDistribution
-    d_scattering_distribution;
+  // The electroionization distribution
+  std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
+    d_electroionization_subshell_distribution;
 
   // The interaction subshell
-  SubshellType d_interaction_subshell;
+  Data::SubshellType d_interaction_subshell;
 
   // The reaction type
   ElectroatomicReactionType d_reaction_type;
+/*
+  // The electroionization subshell scattering distribution
+  ElectroionizationSubshellElectronScatteringDistribution
+    d_scattering_distribution;
+*/
 };
 
 } // end MonteCarlo namespace

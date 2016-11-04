@@ -71,7 +71,7 @@ public:
 
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
-  
+
   //! Default constructor
   UnitAwarePowerDistribution();
 
@@ -91,8 +91,8 @@ public:
   //! Assignment operator
   UnitAwarePowerDistribution& operator=( const UnitAwarePowerDistribution& dist_instance );
 
-  //! Destructor
-  ~UnitAwarePowerDistribution()
+  //! Destructor (virtual for python interface extenstions)
+  virtual ~UnitAwarePowerDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -133,9 +133,12 @@ public:
   bool isEqual( const UnitAwarePowerDistribution& other ) const;
 
 protected:
-  
+
   //! Copy constructor (copying from unitless distribution only)
   UnitAwarePowerDistribution( const UnitAwarePowerDistribution<N,void,void>& unitless_dist_instance, int );
+
+  //! Test if the dependent variable can be zero within the indep bounds
+  bool canDepVarBeZeroInIndepBounds() const;
 
 private:
 
@@ -157,7 +160,7 @@ private:
 
   // The max independent variable limit
   IndepQuantity d_max_indep_limit;
-  
+
   // The max independent variable limit to the power N+1
   IndepQuantityNp1 d_max_indep_limit_to_power_Np1;
 
@@ -168,7 +171,7 @@ private:
 /*! The power distribution (unit-agnostic)
  * \ingroup one_d_distributions
  */
-template<unsigned N> using PowerDistribution = 
+template<unsigned N> using PowerDistribution =
   UnitAwarePowerDistribution<N,void,void>;
 
 /*! Power distribution traits struct for power N
@@ -189,16 +192,16 @@ struct PowerDistributionTraits
   //! The pow N function
   template<typename Quantity>
   static inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N>::type powN( const Quantity& quantity )
-  { 
+  {
     return QuantityTraits<typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N>::type>::initializeQuantity( Exponentiation::recursive( getRawQuantity( quantity ), N ) );
-  } 
+  }
 
   //! The pow Np1 function
   template<typename Quantity>
   static inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N+1>::type powNp1( const Quantity& quantity )
-  { 
+  {
     return QuantityTraits<typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N+1>::type>::initializeQuantity( Exponentiation::recursive( getRawQuantity( quantity ), N+1 ) );
-  } 
+  }
 };
 
 /*! Power distribution traits struct for power 2
@@ -278,10 +281,10 @@ public:
   {
     std::ostringstream iss;
     iss << "Power " << N << " Distribution";
-    
+
     return iss.str();
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 				const Utility::PowerDistribution<N>& instance )
   {
     return name();
@@ -301,13 +304,13 @@ public:
   static std::string name()
   {
     std::ostringstream iss;
-    iss << "Unit-Aware Power " << N << " Distribution (" 
+    iss << "Unit-Aware Power " << N << " Distribution ("
 	<< Utility::UnitTraits<U>::symbol() << ","
 	<< Utility::UnitTraits<V>::symbol() << ")";
 
     return iss.str();
   }
-      
+
   static std::string concreteName(
 		   const Utility::UnitAwarePowerDistribution<N,U,V>& instance )
   {
@@ -320,7 +323,7 @@ public:
 //---------------------------------------------------------------------------//
 // Template includes
 //---------------------------------------------------------------------------//
- 
+
 #include "Utility_PowerDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//

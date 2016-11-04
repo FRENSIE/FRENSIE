@@ -29,8 +29,8 @@ Ray::Ray( const double x_position,
   testPrecondition( !ST::isnaninf( d_position[1] ) );
   testPrecondition( !ST::isnaninf( d_position[2] ) );
   // Make sure the direction is a unit vector
-  testPrecondition( Utility::validDirection( x_direction, 
-					     y_direction, 
+  testPrecondition( Utility::validDirection( x_direction,
+					     y_direction,
 					     z_direction ) );
 
   d_position[0] = x_position;
@@ -45,7 +45,7 @@ Ray::Ray( const double x_position,
 // Constructor
 Ray::Ray( const double position[3],
 	  const double direction[3] )
-  : d_position( new double[3] ), 
+  : d_position( new double[3] ),
     d_direction( new double[3] ),
     d_deep_copy_initialization( true )
 {
@@ -54,8 +54,8 @@ Ray::Ray( const double position[3],
   testPrecondition( !ST::isnaninf( d_position[1] ) );
   testPrecondition( !ST::isnaninf( d_position[2] ) );
   // Make sure the direction is a unit vector
-  testPrecondition( Utility::validDirection( direction[0], 
-					     direction[1], 
+  testPrecondition( Utility::validDirection( direction[0],
+					     direction[1],
 					     direction[2] ) );
 
   d_position[0] = position[0];
@@ -74,7 +74,7 @@ Ray::Ray( const double position[3],
 Ray::Ray( double position[3],
 	  double direction[3],
 	  const bool deep_copy )
-  : d_position( position ), 
+  : d_position( position ),
     d_direction( direction ),
     d_deep_copy_initialization( deep_copy )
 {
@@ -85,8 +85,8 @@ Ray::Ray( double position[3],
     testPrecondition( !ST::isnaninf( d_position[1] ) );
     testPrecondition( !ST::isnaninf( d_position[2] ) );
     // Make sure the direction is a unit vector
-    testPrecondition( Utility::validDirection( direction[0], 
-					       direction[1], 
+    testPrecondition( Utility::validDirection( direction[0],
+					       direction[1],
 					       direction[2] ) );
     d_position = new double[3];
     d_position[0] = position[0];
@@ -158,6 +158,33 @@ const double* Ray::getDirection() const
   return d_direction;
 }
 
+// Change the direction of the ray
+void Ray::changeDirection( const double direction[3] )
+{
+  // Make sure the direction is valid
+  testPrecondition( Utility::validDirection( direction ) );
+
+  // Deep copy the direction
+  d_direction[0] = direction[0];
+  d_direction[1] = direction[1];
+  d_direction[2] = direction[2];
+}
+
+// Change the direction of the ray
+void Ray::changeDirection( const double x_direction,
+                           const double y_direction,
+                           const double z_direction )
+{
+  // Make sure the direction is valid
+  testPrecondition( Utility::validDirection( x_direction,
+                                             y_direction,
+                                             z_direction ) );
+
+  d_direction[0] = x_direction;
+  d_direction[1] = y_direction;
+  d_direction[2] = z_direction;
+}
+
 // Advance the head along its direction by the requested distance
 void Ray::advanceHead( const double distance )
 {
@@ -175,7 +202,7 @@ void Ray::print( std::ostream& os ) const
   os.precision( 16 );
   os << "Position: {" << d_position[0] << "," << d_position[1] << ","
      << d_position[2] << "}" << std::endl;
-  os << "Direction: {" << d_direction[0] << "," 
+  os << "Direction: {" << d_direction[0] << ","
      << d_direction[1] << ","
      << d_direction[2] << "}" << std::endl;
 }

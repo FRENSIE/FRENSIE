@@ -21,17 +21,17 @@
 
 namespace MonteCarlo{
 
-//! The delayed neutron emission distribution class 
+//! The delayed neutron emission distribution class
 class DelayedNeutronEmissionDistribution : public NuclearScatteringDistribution<NeutronState,NeutronState>
 {
-  
+
 public:
 
   //! Constructor
-  DelayedNeutronEmissionDistribution( 
+  DelayedNeutronEmissionDistribution(
       const double atomic_weight_ratio,
       const Teuchos::Array<double>& precursor_group_decay_consts,
-      const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& 
+      const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >&
       precursor_group_prob_distributions,
       const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
       precursor_group_emission_distributions );
@@ -54,7 +54,7 @@ private:
 
   // The delayed neutron precursor group decay constants
   Teuchos::Array<double> d_precursor_group_decay_consts;
-  
+
   // The delayed neutron precursor group probability distributions
   Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
   d_precursor_group_prob_distributions;

@@ -9,14 +9,16 @@
 #ifndef MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "MonteCarlo_FormFactorSquared.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
@@ -24,15 +26,15 @@ namespace MonteCarlo{
 //! The coherent scattering distribution class
 class CoherentScatteringDistribution : public PhotonScatteringDistribution,
 				       public AdjointPhotonScatteringDistribution
-					 
+
 {
 
 public:
 
   //! Constructor
   CoherentScatteringDistribution(
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    form_factor_function_squared );
+                                const std::shared_ptr<const FormFactorSquared>&
+                                form_factor_function_squared );
 
   //! Destructor
   virtual ~CoherentScatteringDistribution()
@@ -64,23 +66,23 @@ public:
   //! Randomly scatter the photon
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const;
+		      Data::SubshellType& shell_of_interaction ) const;
 
   //! Randomly scatter the adjoint photon
   void scatterAdjointPhoton( AdjointPhotonState& adjoint_photon,
 			     ParticleBank& bank,
-			     SubshellType& shell_of_interaction ) const;
+			     Data::SubshellType& shell_of_interaction ) const;
 
 protected:
 
   //! Sample an outgoing direction from the distribution
-  virtual void sampleAndRecordTrialsImpl( 
+  virtual void sampleAndRecordTrialsImpl(
 				   const double incoming_energy,
 				   double& scattering_angle_cosine,
 				   unsigned& trials ) const = 0;
 
   //! Evaluate the form factor squared
-  double evaluateFormFactorSquared( 
+  double evaluateFormFactorSquared(
 				  const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
 
@@ -89,14 +91,13 @@ protected:
 				       double& scattering_angle_cosine,
 				       unsigned& trials ) const;
 
-  //! Return the form factor function squared distribution
-  const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-  getFormFactorSquaredDistribution() const;
+  //! Return the form factor squared distribution
+  const FormFactorSquared& getFormFactorSquaredDistribution() const;
 
 private:
 
   // The coherent form factor function squared
-  Teuchos::RCP<const Utility::TabularOneDDistribution> 
+  std::shared_ptr<const FormFactorSquared>
   d_form_factor_function_squared;
 };
 

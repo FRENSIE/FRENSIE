@@ -19,18 +19,18 @@
 
 namespace Utility{
 
-// Calculate tetrahedron barycentric transform matrix                        
-template<typename Matrix>                                                      
-void calculateBarycentricTransformMatrix( const double vertex_a[3],    
-					  const double vertex_b[3],    
-					  const double vertex_c[3],    
-					  const double reference_vertex[3],    
-					  Matrix& matrix ) 
+// Calculate tetrahedron barycentric transform matrix
+template<typename Matrix>
+void calculateBarycentricTransformMatrix( const double vertex_a[3],
+					  const double vertex_b[3],
+					  const double vertex_c[3],
+					  const double reference_vertex[3],
+					  Matrix& matrix )
 {
   // Make sure the matrix is valid
   testPrecondition( matrix.numRows() == 3 );
   testPrecondition( matrix.numCols() == 3 );
-  
+
   matrix( 0, 0 ) = vertex_a[0] - reference_vertex[0];
   matrix( 0, 1 ) = vertex_b[0] - reference_vertex[0];
   matrix( 0, 2 ) = vertex_c[0] - reference_vertex[0];
@@ -44,7 +44,7 @@ void calculateBarycentricTransformMatrix( const double vertex_a[3],
   Teuchos::SerialDenseSolver<typename Matrix::ordinalType,
 			     typename Matrix::scalarType> solver;
   solver.setMatrix( Teuchos::rcp<Matrix>( &matrix, false ) );
-  
+
   int return_value = solver.invert();
 
   // Make sure the tet is valid
@@ -52,11 +52,11 @@ void calculateBarycentricTransformMatrix( const double vertex_a[3],
 }
 
 // Determine if a point is in a given tet
-/*! \details Make sure the matrix has dimensions 3x3!                        
+/*! \details Make sure the matrix has dimensions 3x3!
  */
-template<typename TestPoint, typename ReferencePoint, typename Matrix>      
-bool isPointInTet( const TestPoint& point, 
-                   const ReferencePoint& reference_vertex,   
+template<typename TestPoint, typename ReferencePoint, typename Matrix>
+bool isPointInTet( const TestPoint& point,
+                   const ReferencePoint& reference_vertex,
 		   const Matrix& matrix,
 		   const double tol )
 {
@@ -79,7 +79,7 @@ bool isPointInTet( const TestPoint& point,
                                    (point[1] - reference_vertex[1]) +
                                    matrix( 2, 2 ) *
                                    (point[2] - reference_vertex[2]);
-  
+
   if ( ( barycentric_location_vector[0] < -tol ||
          barycentric_location_vector[1] < -tol ||
          barycentric_location_vector[2] < -tol ) ||

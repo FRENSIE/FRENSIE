@@ -36,15 +36,15 @@ IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentP
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the scattering distribution is valid
   testPrecondition( !scattering_distribution.is_null() );
 }
 
-// Constructor 
+// Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentPhotoatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -67,8 +67,8 @@ IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentP
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the scattering function is valid
@@ -89,6 +89,18 @@ unsigned IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::ge
     return 0u;
 }
 
+// Return the number of electrons emitted from the rxn at the given energy
+/*! \details This does not include electrons from atomic relaxation.
+ */
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  if( energy >= this->getThresholdEnergy() )
+    return 1u;
+  else
+    return 0u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
@@ -98,10 +110,10 @@ PhotoatomicReactionType IncoherentPhotoatomicReaction<InterpPolicy,processed_cro
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     PhotonState& photon, 
+void IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution->scatterPhoton(photon, bank, shell_of_interaction);
 

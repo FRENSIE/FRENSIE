@@ -13,8 +13,8 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-const boost::unordered_set<ElectroatomicReactionType> 
-ElectroatomCore::scattering_reaction_types = 
+const boost::unordered_set<ElectroatomicReactionType>
+ElectroatomCore::scattering_reaction_types =
   ElectroatomCore::setDefaultScatteringReactionTypes();
 
 // Set the default scattering reaction types
@@ -22,19 +22,25 @@ boost::unordered_set<ElectroatomicReactionType>
 ElectroatomCore::setDefaultScatteringReactionTypes()
 {
   boost::unordered_set<ElectroatomicReactionType> tmp_scattering_reaction_types;
-  tmp_scattering_reaction_types.insert( 
-				  ELASTIC_ELECTROATOMIC_REACTION );
-  tmp_scattering_reaction_types.insert( 
+  tmp_scattering_reaction_types.insert(
+				  ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+  tmp_scattering_reaction_types.insert(
+				  HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+  tmp_scattering_reaction_types.insert(
+				  CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+  tmp_scattering_reaction_types.insert(
+				  SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+  tmp_scattering_reaction_types.insert(
+				  MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+  tmp_scattering_reaction_types.insert(
 				  BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
-  tmp_scattering_reaction_types.insert( 
-				  INELASTIC_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
 				  ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
 				  TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
 			       K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  tmp_scattering_reaction_types.insert( 
+  tmp_scattering_reaction_types.insert(
 			      L1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
 			      L2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
@@ -50,7 +56,7 @@ ElectroatomCore::setDefaultScatteringReactionTypes()
 			      M4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
 			      M5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  tmp_scattering_reaction_types.insert( 
+  tmp_scattering_reaction_types.insert(
 			      N1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
 			      N2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
@@ -130,9 +136,9 @@ ElectroatomCore::ElectroatomCore()
  * absorption cross sections should have been created from the scattering
  * and absorption reactions.
  */
-ElectroatomCore::ElectroatomCore( 
-      const Teuchos::RCP<const ElectroatomicReaction>& total_reaction,
-      const Teuchos::RCP<const ElectroatomicReaction>& total_absorption_reaction,
+ElectroatomCore::ElectroatomCore(
+      const std::shared_ptr<const ElectroatomicReaction>& total_reaction,
+      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
       const ConstReactionMap& scattering_reactions,
       const ConstReactionMap& absorption_reactions,
       const ConstReactionMap& miscellaneous_reactions,
@@ -145,11 +151,11 @@ ElectroatomCore::ElectroatomCore(
     d_relaxation_model( relaxation_model )
 {
   // Make sure the total reaction is valid
-  testPrecondition( !total_reaction.is_null() );
+  testPrecondition( total_reaction.use_count() > 0 );
   // Make sure the absorption reaction is valid
-  testPrecondition( !total_absorption_reaction.is_null() );
+  testPrecondition( total_absorption_reaction.use_count() > 0 );
   // Make sure the scattering reactions map is valid
-  testPrecondition( scattering_reactions.size() > 0 );  
+  testPrecondition( scattering_reactions.size() > 0 );
   // Make sure the absorption reactions map is valid
   testPrecondition( absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
@@ -166,9 +172,9 @@ ElectroatomCore::ElectroatomCore( const ElectroatomCore& instance )
     d_relaxation_model( instance.d_relaxation_model )
 {
   // Make sure the total reaction is valid
-  testPrecondition( !instance.d_total_reaction.is_null() );
+  testPrecondition( instance.d_total_reaction.use_count() > 0 );
   // Make sure the absorption reaction is valid
-  testPrecondition( !instance.d_total_absorption_reaction.is_null() );
+  testPrecondition( instance.d_total_absorption_reaction.use_count() > 0 );
   // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
@@ -180,9 +186,9 @@ ElectroatomCore::ElectroatomCore( const ElectroatomCore& instance )
 ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
 {
   // Make sure the total reaction is valid
-  testPrecondition( !instance.d_total_reaction.is_null() );
+  testPrecondition( instance.d_total_reaction.use_count() > 0 );
   // Make sure the absorption reaction is valid
-  testPrecondition( !instance.d_total_absorption_reaction.is_null() );
+  testPrecondition( instance.d_total_absorption_reaction.use_count() > 0 );
   // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
@@ -198,7 +204,7 @@ ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
     d_absorption_reactions = instance.d_absorption_reactions;
     d_relaxation_model = instance.d_relaxation_model;
   }
-   
+
   return *this;
 }
 

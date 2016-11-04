@@ -43,10 +43,10 @@ public:
 				      unsigned& trials ) const = 0;
 
   //! Randomly scatter the electron and return the shell that was interacted with
-  virtual void scatterAdjointElectron( 
+  virtual void scatterAdjointElectron(
 				AdjointElectronState& adjoint_electron,
 				ParticleBank& bank,
-				SubshellType& shell_of_interaction ) const = 0;
+				Data::SubshellType& shell_of_interaction ) const = 0;
 };
 
 } // end MonteCarlo namespace

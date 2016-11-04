@@ -20,7 +20,7 @@ namespace Data{
  * \ingroup ace_table
  * \todo Add reference for table layout.
  *
- * After a continuous energy EPR table has been read by the 
+ * After a continuous energy EPR table has been read by the
  * Data::ACEFileHandler the individual data blocks must be extracted from the
  * XSS array using the Data::XSSPhotoatomicDataExtractor. Both the NXS array
  * and the JXS array are required to successfully extract the blocks. The NXS
@@ -35,7 +35,7 @@ namespace Data{
  *  <li> NXS[6] = number of subshells for photoelectric and electron
  *                impact ionization (Ns)</li>
  *  <li> NXS[7] = number of electron energies in common grid (Ne)</li>
- *  <li> NXS[8] = length of {energy,energy-loss} table for electron 
+ *  <li> NXS[8] = length of {energy,energy-loss} table for electron
  *                excitation (Nxl)</li>
  *  <li> NXS[9] = number of energies for which there are electron elastic
  *                angular tables (Na)</li>
@@ -61,11 +61,11 @@ namespace Data{
  *                broadening (LPIPS)</li>
  *  <li> JXS[8] = location of relative locations of shell data for Compton
  *                Doppler broadening (LSWD)</li>
- *  <li> JXS[9] = location of shell data for Compton Doppler broadening 
+ *  <li> JXS[9] = location of shell data for Compton Doppler broadening
  *                (SWD)</li>
  *  <li> JXS[10] = location of subshell designators in ENDF representation
  *                 (SUBSH)</li>
- *  <li> JXS[11] = location of number of electrons in each subshell 
+ *  <li> JXS[11] = location of number of electrons in each subshell
  *                 (SPHEL)</li>
  *  <li> JXS[12] = location of binding energies for each subshell</li>
  *  <li> JXS[13] = location of probabilities for Compton-induced vacancies</li>
@@ -73,11 +73,11 @@ namespace Data{
  *                 each subshell</li>
  *  <li> JXS[15] = location of subshell photoelectric cross sections
  *                 (SPHEL)</li>
- *  <li> JXS[16] = location of offsets to atomic relaxation transition 
+ *  <li> JXS[16] = location of offsets to atomic relaxation transition
  *                 data (RELO)</li>
  *  <li> JXS[17] = location of atomic relaxation transition data (XPROB)</li>
  *  <li> JXS[18] = location of electron energies (ESZE)</li>
- *  <li> JXS[19] = location of average energy-loss table for electron 
+ *  <li> JXS[19] = location of average energy-loss table for electron
  *                 excitation (EXCIT)</li>
  *  <li> JXS[20] = location of electron elastic angular distribution info
  *                 (ELASI)</li>
@@ -85,7 +85,7 @@ namespace Data{
  *                 tables (ELAS)</li>
  *  <li> JXS[22] = location of electroionization table info (EION)</li>
  *  <li> JXS[23] = location of bremsstrahlung table info (BREMI)</li>
- *  <li> JXS[24] = location of bremsstrahlung photon energy spectrum 
+ *  <li> JXS[24] = location of bremsstrahlung photon energy spectrum
  *                 tables (BREME)</li>
  *  <li> JXS[25] = location of bremsstrahlung electron average energy-loss
  *                 table (BREML)</li>
@@ -96,7 +96,7 @@ namespace Data{
  */
 class XSSEPRDataExtractor
 {
-  
+
 public:
 
   //! Constructor
@@ -122,17 +122,17 @@ public:
 
   //! Extract the incoming photon energy grid
   Teuchos::ArrayView<const double> extractPhotonEnergyGrid() const;
-  
+
   //! Extract the incoherent cross section
   Teuchos::ArrayView<const double> extractIncoherentCrossSection() const;
-  
+
   //! Extract the coherent cross section
   Teuchos::ArrayView<const double> extractCoherentCrossSection() const;
-  
+
   //! Extract the photoelectric cross section
   Teuchos::ArrayView<const double> extractPhotoelectricCrossSection() const;
 
-  //! Extract the pair production cross section 
+  //! Extract the pair production cross section
   Teuchos::ArrayView<const double> extractPairProductionCrossSection() const;
 
   //! Extract the JINCE block
@@ -176,7 +176,7 @@ public:
 
   //! Extract the subshell Compton interaction cdf
   Teuchos::ArrayView<const double> extractSubshellComptonInteractionCDF() const;
-  
+
   //! Extract the number of transitions to fill a vacancy in each subshell
   Teuchos::ArrayView<const double> extractSubshellVacancyTransitionPaths() const;
 
@@ -194,7 +194,7 @@ public:
 
   //! Extract the incoming electron energy grid
   Teuchos::ArrayView<const double> extractElectronEnergyGrid() const;
-  
+
   //! Extract the electron total cross section
   Teuchos::ArrayView<const double> extractElectronTotalCrossSection() const;
 
@@ -209,7 +209,7 @@ public:
 
   //! Extract the total electroionization cross section
   Teuchos::ArrayView<const double> extractElectroionizationCrossSection() const;
-  
+
   //! Extract the electroionization subshell cross sections
   Teuchos::ArrayView<const double> extractElectroionizationSubshellCrossSections() const;
 

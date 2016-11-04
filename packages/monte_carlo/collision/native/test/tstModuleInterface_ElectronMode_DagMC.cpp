@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstModuleInterfaceElectronMode.cpp
+//! \file   tstModuleInterface_ElectronMode_DagMC.cpp
 //! \author Luke Kersting
 //! \brief  Collision module interface unit tests for electron mode
 //!
@@ -31,7 +31,7 @@
 TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
 {
   typedef MonteCarlo::CollisionModuleInterface<MonteCarlo::CollisionHandler> CMI;
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 26, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 27, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 28, MonteCarlo::ELECTRON ) );
@@ -68,12 +68,12 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
   TEST_ASSERT( !CMI::isCellVoid( 79, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 80, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 81, MonteCarlo::ELECTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 9, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 88, MonteCarlo::ELECTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 136, MonteCarlo::ELECTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 19, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 41, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 63, MonteCarlo::ELECTRON ) );
@@ -81,41 +81,43 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
   TEST_ASSERT( !CMI::isCellVoid( 152, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 166, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 184, MonteCarlo::ELECTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 3, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 7, MonteCarlo::ELECTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 5, MonteCarlo::ELECTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 1, MonteCarlo::ELECTRON ) );
-  
+
   TEST_ASSERT( !CMI::isCellVoid( 13, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 83, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 154, MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 168, MonteCarlo::ELECTRON ) );
 }
-/*
+
 //---------------------------------------------------------------------------//
 // Check if the macroscopic total cross section in a cell can be retrieved
 TEUCHOS_UNIT_TEST( ModuleInterface, getMacroscopicTotalCrossSection )
 {
   typedef MonteCarlo::CollisionModuleInterface<MonteCarlo::CollisionHandler> CMI;
-  
+
   MonteCarlo::ElectronState electron( 0ull );
   electron.setEnergy( 1.0e-05 );
   electron.setCell( 26 );
-  
-  double cross_section = 
+
+  double fraction = 4.6787270057349674701;
+
+  double cross_section =
     CMI::getMacroscopicTotalCrossSection( electron );
-  
-  TEST_FLOATING_EQUALITY( cross_section, 7.641204418336E+06, 1e-12 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.748960297832000E+08*fraction, 1e-12 );
 
   electron.setEnergy( 1.0e+05 );
 
-  cross_section = 
+  cross_section =
     CMI::getMacroscopicTotalCrossSection( electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.269992326372E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.643349906341180E+05*fraction, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -123,99 +125,130 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getMacroscopicTotalCrossSection )
 TEUCHOS_UNIT_TEST( ModuleInterface, getMacroscopicReactionCrossSection )
 {
   typedef MonteCarlo::CollisionModuleInterface<MonteCarlo::CollisionHandler> CMI;
-  
+
   MonteCarlo::ElectronState electron( 0ull );
   electron.setEnergy( 1.0e-05 );
   electron.setCell( 26 );
 
+  double fraction = 4.6787270057349674701;
   // Test that the atomic excitation cross section can be returned
-  double cross_section = CMI::getMacroscopicReactionCrossSection( 
+  double cross_section = CMI::getMacroscopicReactionCrossSection(
                          electron,
 				         MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.545329003693E+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   electron.setEnergy( 1.0e+05 );
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  cross_section = CMI::getMacroscopicReactionCrossSection(
                     electron,
 				    MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.588134602166E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.14416E+04*fraction, 1e-12 );
 
   // Test that the bremsstrahlung cross section can be returned
   electron.setEnergy( 1.0e-05 );
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  cross_section = CMI::getMacroscopicReactionCrossSection(
                     electron,
 				    MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.415377951846E+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.97832E+01*fraction, 1e-12 );
 
-  electron.setEnergy( 1.0e+05 );				      
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  electron.setEnergy( 1.0e+05 );
+  cross_section = CMI::getMacroscopicReactionCrossSection(
                     electron,
 				    MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.679677054824E+00, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.906209999999990E-01*fraction, 1e-12 );
 
   // Test that the K subshell electroionization cross section can be returned
   electron.setEnergy( 1.0e-05 );
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  cross_section = CMI::getMacroscopicReactionCrossSection(
               electron,
 		      MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.0*fraction, 1e-12 );
 
-  electron.setEnergy( 8.97540E-02 );
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  electron.setEnergy( 1.3784E-05 );
+  cross_section = CMI::getMacroscopicReactionCrossSection(
               electron,
 		      MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.6350071826026E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.260419689119170E+06*fraction, 1e-12 );
 
   electron.setEnergy( 1.0e+05 );
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  cross_section = CMI::getMacroscopicReactionCrossSection(
               electron,
 		      MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  
-  TEST_FLOATING_EQUALITY( cross_section, 1.060615028974E-01, 1e-12 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.289239999999990E+04*fraction, 1e-12 );
 
   // Test that the P3 subshell electroionization cross section can be returned
   electron.setEnergy( 1.0e-05 );
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  cross_section = CMI::getMacroscopicReactionCrossSection(
              electron,
 		     MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.096230095899E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.0*fraction, 1e-12 );
 
   electron.setEnergy( 1.0e+05 );
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  cross_section = CMI::getMacroscopicReactionCrossSection(
              electron,
 		     MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.0*fraction, 1e-12 );
 
-  // Test that the hard elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   electron.setEnergy( 1.0e-05 );
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  cross_section = CMI::getMacroscopicReactionCrossSection(
                     electron,
-			        MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+			        MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 7.234825686582E+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.748960000000000E+08*fraction, 1e-12 );
 
   electron.setEnergy( 1.0e+05 );
-  cross_section = CMI::getMacroscopicReactionCrossSection( 
+  cross_section = CMI::getMacroscopicReactionCrossSection(
                     electron,
-			        MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+			        MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.566534386946E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.311759999999990E-05*fraction, 1e-12 );
+
+  // Test that the screened Rutherford elastic cross section can be returned
+  electron.setEnergy( 1.0e-05 );
+  cross_section = CMI::getMacroscopicReactionCrossSection(
+                    electron,
+			        MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
+  electron.setEnergy( 1.0e+05 );
+  cross_section = CMI::getMacroscopicReactionCrossSection(
+                    electron,
+			        MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
+  // Test that the moment preserving elastic cross section can be returned
+  electron.setEnergy( 1.0e-05 );
+  cross_section = CMI::getMacroscopicReactionCrossSection(
+                    electron,
+			        MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
+  electron.setEnergy( 1.0e+05 );
+  cross_section = CMI::getMacroscopicReactionCrossSection(
+                    electron,
+			        MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 }
-*/
+
 //---------------------------------------------------------------------------//
 // Check that a electron can collide with the material in a cell
 TEUCHOS_UNIT_TEST( ModuleInterface, collideWithCellMaterial )
 {
   typedef MonteCarlo::CollisionModuleInterface<MonteCarlo::CollisionHandler> CMI;
-  
+
   MonteCarlo::ElectronState electron( 0ull );
   electron.setCell( 26 );
   electron.setDirection( 0.0, 0.0, 1.0 );
@@ -229,10 +262,10 @@ TEUCHOS_UNIT_TEST( ModuleInterface, collideWithCellMaterial )
   TEST_EQUALITY_CONST( electron.getWeight(), 1.0 );
 
   electron.setEnergy( 1.0 );
-  
+
   CMI::collideWithCellMaterial( electron, bank, true );
 
-  TEST_EQUALITY_CONST( electron.getWeight(), 1.0 );  
+  TEST_EQUALITY_CONST( electron.getWeight(), 1.0 );
 
   electron.setEnergy( 1.0e-05 );
 
@@ -249,7 +282,7 @@ int main( int argc, char** argv )
   std::string test_cross_sections_xml_directory;
   std::string test_material_xml_file_name;
   std::string test_geom_xml_file_name;
- 
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_cross_sections_xml_directory",
@@ -264,10 +297,10 @@ int main( int argc, char** argv )
 		 &test_geom_xml_file_name,
 		 "Test xml geometry file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -277,25 +310,25 @@ int main( int argc, char** argv )
 
   {
     // Initialize DagMC
-    Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+    Teuchos::RCP<Teuchos::ParameterList> geom_rep =
       Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
-    
+
     Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
     // Initialize the particle mode
     MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::ELECTRON_MODE );
-    
+
     // Initialize the random number generator
     Utility::RandomNumberGenerator::createStreams();
-    
+
     // Initialize the collison handler
     // Assign the name of the cross_sections.xml file with path
     std::string cross_section_xml_file = test_cross_sections_xml_directory;
     cross_section_xml_file += "/cross_sections.xml";
-    
-    // Read in the xml file storing the cross section table information 
+
+    // Read in the xml file storing the cross section table information
     Teuchos::ParameterList cross_section_table_info;
-    Teuchos::updateParametersFromXmlFile( 
+    Teuchos::updateParametersFromXmlFile(
 			         cross_section_xml_file,
 			         Teuchos::inoutArg(cross_section_table_info) );
 
@@ -304,7 +337,7 @@ int main( int argc, char** argv )
     Teuchos::updateParametersFromXmlFile( test_material_xml_file_name,
 					  Teuchos::inoutArg(material_reps) );
 
-  MonteCarlo::getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler( 
+    MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::DagMC>()->initializeHandler(
 					   material_reps,
 					   cross_section_table_info,
 					   test_cross_sections_xml_directory );
@@ -312,7 +345,7 @@ int main( int argc, char** argv )
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)
@@ -326,5 +359,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstModuleInterface.cpp
+// end tstModuleInterface_ElectronMode_DagMC.cpp
 //---------------------------------------------------------------------------//

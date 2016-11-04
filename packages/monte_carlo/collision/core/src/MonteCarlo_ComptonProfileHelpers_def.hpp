@@ -28,11 +28,11 @@ namespace MonteCarlo{
  * units of me*e^2/h_bar (atomic units) and not me*c units. The Compton
  * profile should have units of h_bar/(me*e^2) and not 1/(me*c) units.
  */
-template<typename GridIterator, 
-	 typename ProfileIterator, 
+template<typename GridIterator,
+	 typename ProfileIterator,
 	 typename STLCompliantArrayA,
 	 typename STLCompliantArrayB>
-void createFullProfileFromHalfProfile( 
+void createFullProfileFromHalfProfile(
 			      const GridIterator half_momentum_grid_start,
 			      const GridIterator half_momentum_grid_end,
 			      const ProfileIterator half_profile_start,
@@ -62,12 +62,12 @@ void createFullProfileFromHalfProfile(
   // Check if a grid extension is possible
   bool grid_extension_possible;
 
-  unsigned half_grid_size = 
+  unsigned half_grid_size =
     std::distance( half_momentum_grid_start, half_momentum_grid_end );
 
   GridIterator half_momentum_grid_true_end = half_momentum_grid_end;
   --half_momentum_grid_true_end;
-  
+
   if( *half_momentum_grid_true_end <
       Utility::PhysicalConstants::inverse_fine_structure_constant )
     grid_extension_possible = true;
@@ -76,7 +76,7 @@ void createFullProfileFromHalfProfile(
 
   // Calculate the size of the full grid
   unsigned full_grid_size, middle_index;
-  
+
   if( grid_extension_possible && extend_if_possible )
   {
     full_grid_size = (half_grid_size + 1)*2 - 1;
@@ -92,7 +92,7 @@ void createFullProfileFromHalfProfile(
 
   full_momentum_grid.resize( full_grid_size );
   full_profile.resize( full_grid_size );
-  
+
   // Create the full grid
   GridIterator half_momentum_grid_point = half_momentum_grid_start;
   ProfileIterator half_profile_point = half_profile_start;
@@ -103,13 +103,13 @@ void createFullProfileFromHalfProfile(
     if( half_grid_index != 0u )
     {
       // Positive side of profile
-      full_momentum_grid[middle_index+half_grid_index] = 
+      full_momentum_grid[middle_index+half_grid_index] =
 	*half_momentum_grid_point;
 
       full_profile[middle_index+half_grid_index] = *half_profile_point;
 
       // Negative side of profile
-      full_momentum_grid[middle_index-half_grid_index] = 
+      full_momentum_grid[middle_index-half_grid_index] =
 	-(*half_momentum_grid_point);
 
       full_profile[middle_index-half_grid_index] = *half_profile_point;
@@ -120,7 +120,7 @@ void createFullProfileFromHalfProfile(
 
       full_profile[middle_index] = *half_profile_point;
     }
-    
+
     ++half_momentum_grid_point;
     ++half_profile_point;
     ++half_grid_index;
@@ -132,17 +132,17 @@ void createFullProfileFromHalfProfile(
     for( unsigned i = 0; i < full_profile.size(); ++i )
       full_profile[i] /= 2.0;
   }
-  
+
   // Extend the grid if required
   if( grid_extension_possible && extend_if_possible )
   {
-    double profile_0 = 
+    double profile_0 =
       full_profile[full_profile.size()-3];
     double profile_1 =
       full_profile[full_profile.size()-2];
-    double momentum_0 = 
+    double momentum_0 =
       full_momentum_grid[full_momentum_grid.size()-3];
-    double momentum_1 = 
+    double momentum_1 =
       full_momentum_grid[full_momentum_grid.size()-2];
 
     double processed_slope = (log(profile_1)-log(profile_0))/
@@ -151,17 +151,17 @@ void createFullProfileFromHalfProfile(
     double extrapolated_profile = exp( log(profile_0) +processed_slope*(
      Utility::PhysicalConstants::inverse_fine_structure_constant-momentum_0) );
 
-    full_momentum_grid.front() = 
+    full_momentum_grid.front() =
       -Utility::PhysicalConstants::inverse_fine_structure_constant;
     full_profile.front() = extrapolated_profile;
 
-    full_momentum_grid.back() = 
+    full_momentum_grid.back() =
       Utility::PhysicalConstants::inverse_fine_structure_constant;
     full_profile.back() = extrapolated_profile;
   }
 }
 
-// Convert the momentum grid from me*e^2/h_bar to me*c units	     
+// Convert the momentum grid from me*e^2/h_bar to me*c units
 template<typename GridIterator>
 void convertMomentumGridToMeCUnits( GridIterator momentum_grid_start,
 				    GridIterator momentum_grid_end )
@@ -185,7 +185,7 @@ void convertProfileToInverseMeCUnits( ProfileIterator profile_start,
 {
   // Make sure the profile is valid
   testPrecondition( std::distance( profile_start, profile_end ) > 1 );
-  
+
   while( profile_start != profile_end )
   {
     *profile_start *=

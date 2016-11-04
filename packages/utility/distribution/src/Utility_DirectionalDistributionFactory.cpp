@@ -15,23 +15,23 @@
 namespace Utility{
 
 // Initialize static member data
-const Teuchos::RCP<Utility::OneDDistribution> 
-DirectionalDistributionFactory::s_default_mu_dist( 
+const std::shared_ptr<Utility::OneDDistribution>
+DirectionalDistributionFactory::s_default_mu_dist(
 			     new Utility::UniformDistribution( -1., 1., 2. ) );
 
-const Teuchos::RCP<Utility::OneDDistribution>
+const std::shared_ptr<Utility::OneDDistribution>
 DirectionalDistributionFactory::s_default_theta_dist(
    new Utility::UniformDistribution( 0., 2*PhysicalConstants::pi, 1. ) );
 
-const Teuchos::RCP<Utility::SphericalDirectionalDistribution>
+const std::shared_ptr<Utility::SphericalDirectionalDistribution>
 DirectionalDistributionFactory::s_isotropic_directional_dist(
-	      new Utility::SphericalDirectionalDistribution( 
+	      new Utility::SphericalDirectionalDistribution(
 		      DirectionalDistributionFactory::s_default_theta_dist,
 		      DirectionalDistributionFactory::s_default_mu_dist ) );
 
 // Create the directional distribution represented by the parameter list
-Teuchos::RCP<DirectionalDistribution>
-DirectionalDistributionFactory::createDistribution( 
+std::shared_ptr<DirectionalDistribution>
+DirectionalDistributionFactory::createDistribution(
 			       const Teuchos::ParameterList& distribution_rep )
 {
   // Validate the distribution representation
@@ -40,7 +40,7 @@ DirectionalDistributionFactory::createDistribution(
   // Create the directional distribution
   if( distribution_rep.isParameter( "Direction" ) )
   {
-    Teuchos::Array<double> direction = 
+    Teuchos::Array<double> direction =
       distribution_rep.get<Teuchos::Array<double> >( "Direction" );
 
     TEST_FOR_EXCEPTION( direction.size() != 3,
@@ -48,18 +48,18 @@ DirectionalDistributionFactory::createDistribution(
 			"Error: the direction is invalid - size ("
 			<< direction.size() << ") != 3" );
 
-    return Teuchos::RCP<DirectionalDistribution>(
+    return std::shared_ptr<DirectionalDistribution>(
 			     new MonoDirectionalDistribution( direction[0],
 							      direction[1],
 							      direction[2] ) );
   }
   else
   {
-    Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
+    Teuchos::RCP<const Teuchos::ParameterEntry> entry =
       distribution_rep.getEntryRCP( "Mu Distribution" );
-    
-    Teuchos::RCP<OneDDistribution> mu_distribution = 
-      OneDDistributionEntryConverterDB::convertEntry( entry );
+
+    std::shared_ptr<OneDDistribution> mu_distribution =
+      OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
 
     // Make sure the mu distribution is valid
     TEST_FOR_EXCEPTION( mu_distribution->getLowerBoundOfIndepVar() < -1.0,
@@ -73,14 +73,14 @@ DirectionalDistributionFactory::createDistribution(
 			"the interval [-1,1]!" );
 
     // Optional argument
-    Teuchos::RCP<OneDDistribution> theta_distribution;
+    std::shared_ptr<OneDDistribution> theta_distribution;
 
     if( distribution_rep.isParameter( "Theta Distribution" ) )
     {
       entry = distribution_rep.getEntryRCP( "Theta Distribution" );
-      
-      theta_distribution = 
-	OneDDistributionEntryConverterDB::convertEntry( entry );
+
+      theta_distribution =
+	OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
     }
     else
       theta_distribution = s_default_theta_dist;
@@ -91,25 +91,25 @@ DirectionalDistributionFactory::createDistribution(
 			"Error: the theta distribution must only be defined "
 			"in the interval [0,2pi]" );
 
-    TEST_FOR_EXCEPTION( theta_distribution->getUpperBoundOfIndepVar() > 
+    TEST_FOR_EXCEPTION( theta_distribution->getUpperBoundOfIndepVar() >
 			2*Utility::PhysicalConstants::pi,
 			InvalidDirectionalDistributionRepresentation,
 			"Error: the theta distribution must only be defined "
 			"in the interval [0,2pi]" );
-    
+
     // Optional argument
     std::string axis_name;
-    
+
     if( distribution_rep.isParameter( "Axis" ) )
       axis_name = distribution_rep.get<std::string>( "Axis" );
     else
       axis_name = "Z";
 
     DirectionalDistributionFactory::validateAxisName( axis_name );
-    
+
     Axis axis = convertAxisNameToAxisEnum( axis_name );
-    
-    return Teuchos::RCP<DirectionalDistribution>(
+
+    return std::shared_ptr<DirectionalDistribution>(
 		     new SphericalDirectionalDistribution( theta_distribution,
 							   mu_distribution,
 							   axis ) );
@@ -117,18 +117,18 @@ DirectionalDistributionFactory::createDistribution(
 }
 
 // Create an isotropic distribution
-Teuchos::RCP<DirectionalDistribution> 
+std::shared_ptr<DirectionalDistribution>
 DirectionalDistributionFactory::createIsotropicDistribution()
 {
   return s_isotropic_directional_dist;
 }
 
 // Validate a distribution representation
-void DirectionalDistributionFactory::validateDistributionRep( 
+void DirectionalDistributionFactory::validateDistributionRep(
 			       const Teuchos::ParameterList& distribution_rep )
 {
   if( !distribution_rep.isParameter( "Direction" ) )
-  {  
+  {
     TEST_FOR_EXCEPTION( !distribution_rep.isParameter( "Mu Distribution" ),
 			InvalidDirectionalDistributionRepresentation,
 			"Error: A spherical directional distribution needs to "
@@ -144,12 +144,12 @@ void DirectionalDistributionFactory::validateDistributionRep(
 }
 
 // Validate the axis name
-void DirectionalDistributionFactory::validateAxisName( 
+void DirectionalDistributionFactory::validateAxisName(
 						 const std::string& axis_name )
 {
   TEST_FOR_EXCEPTION( !isValidAxisName( axis_name ),
 		      InvalidDirectionalDistributionRepresentation,
-		      "Error: An invalid axis was specified (" 
+		      "Error: An invalid axis was specified ("
 		      << axis_name << "). Only 'X', 'Y', and 'Z' are valid "
 		      " names!" );
 }

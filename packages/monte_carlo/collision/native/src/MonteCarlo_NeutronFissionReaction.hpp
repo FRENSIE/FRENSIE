@@ -21,7 +21,7 @@ namespace MonteCarlo{
 //! The neutron fission reaction base class
 class NeutronFissionReaction : public NuclearReaction
 {
-  
+
 private:
 
   // Teuchos ScalarTraits typedef
@@ -29,8 +29,8 @@ private:
 
 public:
 
-  //! Constructor 
-  NeutronFissionReaction( 
+  //! Constructor
+  NeutronFissionReaction(
 		   const NuclearReactionType reaction_type,
 		   const double temperature,
 		   const double q_value,
@@ -70,7 +70,7 @@ public:
 protected:
 
   //! Implementation of the reaction simulation
-  void reactImplementation( NeutronState& neutron, 
+  void reactImplementation( NeutronState& neutron,
 			    ParticleBank& bank,
 			    const bool increment_collision_number ) const;
 
@@ -79,18 +79,18 @@ private:
   // The fission neutron multiplicity distribution (prompt, delayed, total nu)
   Teuchos::RCP<FissionNeutronMultiplicityDistribution>
   d_fission_neutron_multiplicity_distribution;
-  
+
   // The prompt neutron scattering distribution
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
-  d_prompt_neutron_emission_distribution;		  
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >
+  d_prompt_neutron_emission_distribution;
 };
 
 // Return the average number of neutrons emitted from the reaction
-inline double NeutronFissionReaction::getAverageNumberOfEmittedNeutrons( 
+inline double NeutronFissionReaction::getAverageNumberOfEmittedNeutrons(
 						    const double energy ) const
 {
-  return 
-    d_fission_neutron_multiplicity_distribution->getAverageNumberOfEmittedNeutrons( 
+  return
+    d_fission_neutron_multiplicity_distribution->getAverageNumberOfEmittedNeutrons(
 								      energy );
 }
 
@@ -99,15 +99,15 @@ inline double NeutronFissionReaction::getAverageNumberOfPromptNeutrons(
 						    const double energy ) const
 {
   return
-    d_fission_neutron_multiplicity_distribution->getAverageNumberOfPromptNeutrons( 
+    d_fission_neutron_multiplicity_distribution->getAverageNumberOfPromptNeutrons(
 								      energy );
 }
 
 // Return the average number of delayed neutrons emitted from the rxn
-inline double NeutronFissionReaction::getAverageNumberOfDelayedNeutrons(  
+inline double NeutronFissionReaction::getAverageNumberOfDelayedNeutrons(
 						    const double energy ) const
 {
-  return 
+  return
     d_fission_neutron_multiplicity_distribution->getAverageNumberOfDelayedNeutrons(
 								      energy );
 }

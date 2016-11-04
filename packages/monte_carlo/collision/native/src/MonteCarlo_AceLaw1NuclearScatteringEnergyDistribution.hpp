@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw1NuclearScatteringEnergyDistribution.hpp
 //! \author Alex Bennett
 //! \brief  The nuclear equiprobable bin scattering energy distribution class
@@ -19,7 +19,7 @@
 
 namespace MonteCarlo{
 
-/*! \brief The inelastic equiprobable energy bins scattering enery 
+/*! \brief The inelastic equiprobable energy bins scattering enery
  * distribution class (ENDF Law 1)
  * \ingroup ace_laws
  */

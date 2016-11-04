@@ -1,0 +1,52 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## testing helper functions module
+#  \file   testingHelpers.py
+#  \author Alex Robinson
+#  \brief  Custom import function to get the PyFrensie modules from the
+#          build directory instead of the PYTHONPATH. This is based off of
+#          the fromPyTrilinosImport python function.
+#-----------------------------------------------------------------------------#
+
+# System module imports
+from distutils.util import get_platform
+import os.path
+import sys
+
+# Import the PyFrensie module from the build directory
+def importPyFrensieModuleFromBuildDir(name, globals={}, locals={}):
+    """
+    importPyFrensieModuleFromBuildDir(name, globals={}, locals={}) -> module
+
+    Return the requested PyFrensie module from the build directory. This
+    method should only be used for unit testing and is only designed to work
+    from the local build directory. The 'name' must be a valid PyFrensie module
+    name.
+    """
+
+    pyfrensie_name = "PyFrensie"
+
+    # The build directory must be put into the python search path.
+    current_dir,file_name = os.path.split(__file__)
+    build_dir = os.path.normpath(os.path.join(current_dir, "..", "src"))
+
+    if build_dir not in sys.path:
+        sys.path.insert(1, build_dir)
+
+    # Import the desired PyFrensie module
+    full_module_name = pyfrensie_name + "." + name
+    pyfrensie_package = __import__(full_module_name, globals, locals)
+    module = sys.modules[full_module_name]
+
+    # Check that the correct PyFrensie module was imported
+    pyfrensie_dir = os.path.join(build_dir, pyfrensie_name)
+    import_dir = pyfrensie_package.__path__[0]
+
+    if import_dir != pyfrensie_dir:
+        raise ImportError, "PyFrensie not imported from the build directory!"
+
+    return module
+
+#-----------------------------------------------------------------------------#
+# end testingHelpers.py.in
+#-----------------------------------------------------------------------------#

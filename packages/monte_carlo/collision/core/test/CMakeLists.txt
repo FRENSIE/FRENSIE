@@ -3,21 +3,25 @@ ADD_EXECUTABLE(tstStandardComptonProfileSubshellConverter
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStandardComptonProfileSubshellConverter monte_carlo_collision_core)
 ADD_TEST(StandardComptonProfileSubshellConverter_test tstStandardComptonProfileSubshellConverter)
+SET_PROPERTY(TEST StandardComptonProfileSubshellConverter_test PROPERTY LABELS monte_carlo_collision_core photon)
 
 ADD_EXECUTABLE(tstComptonProfileHelpers
   tstComptonProfileHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstComptonProfileHelpers monte_carlo_collision_core)
 ADD_TEST(ComptonProfileHelpers_test tstComptonProfileHelpers)
+SET_PROPERTY(TEST ComptonProfileHelpers_test PROPERTY LABELS monte_carlo_collision_core photon)
 
 ADD_EXECUTABLE(tstPhotonKinematicsHelpers
   tstPhotonKinematicsHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPhotonKinematicsHelpers monte_carlo_collision_core)
 ADD_TEST(PhotonKinematicsHelpers_test tstPhotonKinematicsHelpers)
+SET_PROPERTY(TEST PhotonKinematicsHelpers_test PROPERTY LABELS monte_carlo_collision_core photon)
 
 ADD_EXECUTABLE(tstAdjointPhotonKinematicsHelpers
   tstAdjointPhotonKinematicsHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointPhotonKinematicsHelpers monte_carlo_collision_core)
 ADD_TEST(AdjointPhotonKinematicsHelpers_test tstAdjointPhotonKinematicsHelpers)
+SET_PROPERTY(TEST AdjointPhotonKinematicsHelpers_test PROPERTY LABELS monte_carlo_collision_core photon adjoint)

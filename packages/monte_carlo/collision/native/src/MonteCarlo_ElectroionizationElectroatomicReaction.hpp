@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_ElectroionizationElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The electroionization electroatomic reaction class decl.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_HPP
@@ -28,11 +28,18 @@ class ElectroionizationElectroatomicReaction : public StandardElectroatomicReact
 
 public:
 
+  //! Basic Constructor
+  ElectroionizationElectroatomicReaction(
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index );
+
   //! Constructor
   ElectroionizationElectroatomicReaction(
-  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-  const Teuchos::ArrayRCP<const double>& cross_section,
-  const unsigned threshold_energy_index );
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
 
   //! Destructor
@@ -49,9 +56,9 @@ public:
   ElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const;
 };
 
 } // end MonteCarlo namespace

@@ -1,3 +1,6 @@
+##---------------------------------------------------------------------------##
+## Initialize the FRENSIE Project
+##---------------------------------------------------------------------------##
 # Define the minimum required version of CMake
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.1 FATAL_ERROR)
 
@@ -22,10 +25,6 @@ ENFORCE_OUT_OF_SOURCE_BUILD()
 ENABLE_CXX11_STANDARD_SUPPORT()
 
 # Load the patch files
-SET(TEUCHOS_TWO_D_ARRAY_PATCH 
-  ${CMAKE_SOURCE_DIR}/patches/Teuchos_TwoDArray_patch
-  CACHE STRING "The Teuchos::TwoDArray patch file" FORCE)
-
 SET(DAGMC_THREAD_SAFE_PATCH
   ${CMAKE_SOURCE_DIR}/patches/DagMC_cpp_patch
   CACHE STRING "The DagMC.cpp patch file" FORCE)
@@ -36,102 +35,109 @@ IF(${PATCH_EXEC} MATCHES NOTFOUND)
   MESSAGE(FATAL_ERROR "The patch program could not be found!")
 ENDIF()
 
-# Enable OpenMP support
-IF(${${PROJECT_NAME}_ENABLE_OPENMP})
-  SET(HAVE_${PROJECT_NAME}_OPENMP "1")
-  ENABLE_OPENMP_SUPPORT()
+# Force shared libraries to be built
+SET(BUILD_SHARED_LIBS ON)
+
+# Set the install rpath to the lib install path - this should prevent the
+# installed targets from reporting undefined .so files (check with ldd tool)
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
+##---------------------------------------------------------------------------##
+## Command Line Options
+##---------------------------------------------------------------------------##
+OPTION(FRENSIE_ENABLE_DBC "Enable Design-by-Contract checks in FRENSIE" ON)
+OPTION(FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST "Enable explicit template instantiation to speed up build times and reduce build memory overhead" ON)
+OPTION(FRENSIE_ENABLE_COLOR_OUTPUT "Enable color output from FRENSIE" ON)
+OPTION(FRENSIE_ENABLE_PROFILING "Enable profiling with FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_COVERAGE "Enable coverage testing in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_OPENMP "Enable shared-memory parallelism in FRENSIE" ON)
+OPTION(FRENSIE_ENABLE_MPI "Enable distributed-memory parallelism in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_PYTHON "Enable python interfaces in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_ROOT "Enable the Root geometry interfaces in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_DAGMC "Enable the DagMC geometry interfaces in FRENSIE" OFF)
+OPTION(FRENSIE_ENABLE_DASHBOARD_CLIENT "Enable dashboard client support" OFF)
+OPTION(FRENSIE_ENABLE_MANUAL "Enable the manual in FRENSIE" ON)
+
+##---------------------------------------------------------------------------##
+## Setup FRENSIE Configuration
+##---------------------------------------------------------------------------##
+# Add Design-by-Contract support if requested
+IF(FRENSIE_ENABLE_DBC)
+  SET(HAVE_FRENSIE_DBC "1")
+ELSE()
+  SET(HAVE_FRENSIE_DBC "0")
 ENDIF()
 
-# Parse the OpenMP configure file so that it can be used in our source files
-SET(CMAKEDEFINE \#cmakedefine)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/openmp_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_openmp_config.hpp.in)
-CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_openmp_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_openmp_config.hpp)
+# Add explicit template instantiation support if requested
+IF(FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST)
+  SET(HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION "1")
+ELSE()
+  SET(HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION "0")
+ENDIF()
 
-# Enable MPI support 
-IF(${${PROJECT_NAME}_ENABLE_MPI})
-  SET(HAVE_${PROJECT_NAME}_MPI "1")
+# Add MPI support if requested
+# If the MPI package is in a non-standard location, set the MPI_PREFIX variable
+IF(FRENSIE_ENABLE_MPI)
+  SET(HAVE_FRENSIE_MPI "1")
   ENABLE_MPI_SUPPORT()
 ENDIF()
 
-# Parse the MPI configure file so that it can be used in our source files
+# Add openmp support if requested
+IF(FRENSIE_ENABLE_OPENMP)
+  SET(HAVE_FRENSIE_OPENMP "1")
+  ENABLE_OPENMP_SUPPORT()
+ENDIF()
+
+# Parse the DBC configure file so it can be used in the source files
 SET(CMAKEDEFINE \#cmakedefine)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/mpi_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp.in)
-CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp)
-    
-# Enable Trilinos Support
-IF(TRILINOS_PREFIX)
-  ENABLE_TRILINOS_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The TRILINOS_PREFIX must be set!")
-ENDIF()
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
 
-# Enable MOAB Support
-IF(MOAB_PREFIX)
-  ENABLE_MOAB_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The MOAB_PREFIX must be set!")
-ENDIF()
+# Add the CMAKE_BINARY_DIR to the include path to access config file
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
-# Enable HDF5 Support
-IF(HDF5_PREFIX)
-  ENABLE_HDF5_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The HDF5_PREFIX must be set!")
-ENDIF()
+# Add the config file to the install target
+INSTALL(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
-# Enable ODEPACK Support
-IF(ODEPACK_PREFIX)
-  ENABLE_ODEPACK_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The ODEPACK_PREFIX must be set!")
-ENDIF()
-
-# Enable BOOST Support
-IF(BOOST_PREFIX)
-  ENABLE_BOOST_SUPPORT(serialization)
-ELSE()
-  MESSAGE(STATUS "The BOOST_PREFIX has not been set. The system default will be used.")
-ENDIF()
-
-# Enable ROOT Support
-IF(${FRENSIE_ENABLE_ROOT})
-  IF(ROOT_PREFIX)
-    ENABLE_ROOT_SUPPORT()
-  ELSE()
-    MESSAGE(FATAL_ERROR "The ROOT_PREFIX must be set!")
+##---------------------------------------------------------------------------##
+## Enable Color Output Support
+##---------------------------------------------------------------------------##
+# Check if the required header files are present on the system
+# Note: Color output is only supported in tty terminals
+IF(FRENSIE_ENABLE_COLOR_OUTPUT)
+  INCLUDE(CheckIncludeFiles)
+  CHECK_INCLUDE_FILES("unistd.h" IS_TTY_FORMATTING_SUPPORTED)
+  
+  IF(IS_TTY_FORMATTING_SUPPORTED)
+    SET(TTY_FORMATTING_SUPPORTED "1")
   ENDIF()
 ENDIF()
 
 SET(CMAKEDEFINE \#cmakedefine)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/root_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in)
-CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/tty_format_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_tty_format_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_tty_format_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_tty_format_config.hpp)
 
-# Add Design-by-Contract support if requested
-IF(${${PROJECT_NAME}_ENABLE_DBC})
-  SET(HAVE_${PROJECT_NAME}_DBC "1")
-ELSE()
-  SET(HAVE_${PROJECT_NAME}_DBC "0")
-ENDIF()
-
-# Enable profiling support if requested
-IF(${${PROJECT_NAME}_ENABLE_PROFILING})
+##---------------------------------------------------------------------------##
+## Configure Profiling Support
+##---------------------------------------------------------------------------##
+IF(FRENSIE_ENABLE_PROFILING)
   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg")
   SET(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -pg")
   SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} -pg")
-  
+
   IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
     MESSAGE(WARNING "profiling can only be done in debug builds!")
   ENDIF()
 ENDIF()
 
-# Enable coverage support if requested
-IF(${${PROJECT_NAME}_ENABLE_COVERAGE})
+##---------------------------------------------------------------------------##
+## Configure Coverage Support
+##---------------------------------------------------------------------------##
+IF(FRENSIE_ENABLE_COVERAGE)
   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage")
   SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
 
@@ -140,37 +146,81 @@ IF(${${PROJECT_NAME}_ENABLE_COVERAGE})
   ENDIF()
 ENDIF()
 
-# Parse the DBC configure file so it can be used in the source files
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
+##---------------------------------------------------------------------------##
+## Configure Python Support
+##---------------------------------------------------------------------------##
+# SWIG will be used to generate the Python interfaces. If SWIG is located
+# in a non-standard location set the SWIG_PREFIX variable.
+IF(FRENSIE_ENABLE_PYTHON)
+  ENABLE_SWIG_SUPPORT()
+ENDIF()
 
-# Parse the HDF5 data file names configure file
-SET(${PROJECT_NAME}_DATA_DIRECTORY ${CMAKE_SOURCE_DIR}/data/)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/HDF5DataFileNames.hpp.in ${CMAKE_BINARY_DIR}/HDF5DataFileNames.hpp)
+##---------------------------------------------------------------------------##
+## Configure HDF5 Support
+##---------------------------------------------------------------------------##
+# If the HDF5 package is in a non-standard location, set the HDF5_PREFIX
+# variable.
+ENABLE_HDF5_SUPPORT()
 
-# Parse the Fission Product Data Path configure file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/FissionProductDataPath.hpp.in ${CMAKE_BINARY_DIR}/FissionProductDataPath.hpp)
+##---------------------------------------------------------------------------##
+## Configure MOAB Support
+##---------------------------------------------------------------------------##
+# If the MOAB package is in a non-standard location, set the MOAB_PREFIX
+# variable. If FRENSIE_ENABLE_DAGMC is set to ON, the DagMC library will
+# be found.
+ENABLE_MOAB_SUPPORT()
 
-# Parse the Decay Data Path configure file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/DecayDataPath.hpp.in ${CMAKE_BINARY_DIR}/DecayDataPath.hpp)
+##---------------------------------------------------------------------------##
+## Configure Trilinos Support
+##---------------------------------------------------------------------------##
+# If the Trilinos package is in a non-standard location, set the
+# TRILINOS_PREFIX variable. If the Trilinos source directory is not located
+# in the TRILINOS_PREFIX directory, the TRILINOS_SOURCE variable can also be
+# set.
+ENABLE_TRILINOS_SUPPORT()
 
-# Add the CMAKE_BINARY_DIR to the include path to access config files
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+##---------------------------------------------------------------------------##
+## Configure Boost Support
+##---------------------------------------------------------------------------##
+# If the Boost package is in a non-standard location, set the BOOST_PREFIX
+# variable. The boost subpackages that must be found can be passed to
+# the ENABLE_BOOST_SUPPORT macro.
+ENABLE_BOOST_SUPPORT(serialization)
 
-# Add an uninstall target
-ADD_UNINSTALL_TARGET()
+# NOTE: Boost still uses the std::auto_ptr class, which is now depricated.
+#       The newer GNU C++ compilers will generate a large number of warning
+#       messages regarding this usage of the std::auto_ptr class. To avoid
+#       these warning messages that are not direcly related to FRENSIE we
+#       will simply turn them off
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 
-# Set up the testing dashboard
-IF(${SETUP_DASHBOARD_CLIENT})
+##---------------------------------------------------------------------------##
+## Configure Root Support
+##---------------------------------------------------------------------------##
+# If the Root package is in a non-standard location, set the ROOT_PREFIX
+# variable.
+IF(FRENSIE_ENABLE_ROOT)
+  ENABLE_ROOT_SUPPORT()
+ENDIF()
+
+##---------------------------------------------------------------------------##
+## Configure Dashboard Client Support
+##---------------------------------------------------------------------------##
+# The default build name is CMAKE_SYSTEM_NAME, which is often not very
+# descriptive. Set the BUILDNAME_PREFIX if a more descriptive name is
+# desired. It can be useful to use the following command:
+# BUILDNAME_PREFIX="$(lsb_release -i -s)-$(lsb_release -r -s)"
+IF(FRENSIE_ENABLE_DASHBOARD_CLIENT)
   SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
-  
+
   # Set the BuildName used by the dashboard (see DartConfiguration.tcl)
   DETERMINE_COMPILER_ID(CXX ${CMAKE_CXX_COMPILER})
   STRING(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-  
+
   IF(NOT BUILDNAME_PREFIX)
     SET(BUILDNAME_PREFIX ${CMAKE_SYSTEM_NAME})
   ENDIF()
-  
+
   SET(BUILDNAME "${BUILDNAME_PREFIX}_${ID}-${VERSION}_${BUILD_TYPE}")
 
   UNSET(ID)
@@ -179,30 +229,60 @@ IF(${SETUP_DASHBOARD_CLIENT})
 
   # Set the valgrind supressions file
   SET(MEMORYCHECK_SUPPRESSIONS_FILE ${CMAKE_SOURCE_DIR}/valgrind/frensie-deps.supp CACHE STRING "File that contains suppressions for the memory checker" FORCE)
-  
+
   # Initialize CTest
   INCLUDE(CTest)
 
   # Configure the CTestCustom.cake file for extended output for dashboard
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/CTestCustom.cmake.in
     ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 ELSE()
   ENABLE_TESTING()
 ENDIF()
 
-# Set up the project directory hierarchy
+##---------------------------------------------------------------------------##
+## Add an Unistall Target
+##---------------------------------------------------------------------------##
+# run `make uninstall` to remove all installed files
+ADD_UNINSTALL_TARGET()
+
+##---------------------------------------------------------------------------##
+## Set Up the Project Directory Hierarchy
+
 ADD_SUBDIRECTORY(scripts)
 
 ADD_SUBDIRECTORY(packages)
 
 ADD_SUBDIRECTORY(tools)
 
+SET(GLOBAL_TOOLS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
+
 ADD_SUBDIRECTORY(doc)
 
-# Add additional testing targets for convenience
-ADD_CUSTOM_TARGET(test-fast 
+##---------------------------------------------------------------------------##
+## Add additional testing targets for convenience
+##---------------------------------------------------------------------------##
+# run `make test-fast` to run all tests except for the facemc tests
+ADD_CUSTOM_TARGET(test-fast
   COMMAND ctest -E Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+ADD_CUSTOM_TARGET(test-fast4
+  COMMAND ctest -E Facemc -LE no_threads -j4
+  COMMAND ctest -E Facemc -L no_threads
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+ADD_CUSTOM_TARGET(test-fast8
+  COMMAND ctest -E Facemc -LE no_threads -j8
+  COMMAND ctest -E Facemc -L no_threads
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+ADD_CUSTOM_TARGET(test-fast12
+  COMMAND ctest -E Facemc -LE no_threads -j12
+  COMMAND ctest -E Facemc -L no_threads
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# run `make test-facemc` to run only the facemc tests
 ADD_CUSTOM_TARGET(test-facemc
   COMMAND ctest -R Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

@@ -17,14 +17,14 @@
 namespace MonteCarlo{
 
 // Convert a BremsstrahlungAngularDistributionType enum to a string
-std::string convertBremsstrahlungAngularDistributionEnumToString( 
+std::string convertBremsstrahlungAngularDistributionEnumToString(
 				       const BremsstrahlungAngularDistributionType reaction )
 {
   switch( reaction )
   {
-  case DIPOLE_DISTRIBUTION: 
+  case DIPOLE_DISTRIBUTION:
     return "Dipole Distribution";
-  case TABULAR_DISTRIBUTION: 
+  case TABULAR_DISTRIBUTION:
     return "Tabular Distribution";
   case TWOBS_DISTRIBUTION:
     return "2BS Distribution";

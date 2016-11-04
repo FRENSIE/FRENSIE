@@ -19,9 +19,13 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDiscreteDistribution<void,void> );
 
 // Default Constructor
 template<typename IndependentUnit,typename DependentUnit>
@@ -31,16 +35,18 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 // Basic Constructor (potentiall dangerous)
 /*! \details A precalculated CDF can be passed as the dependent values as
  * long as the interpret_dependent_values_as_cdf argument is true.
- */ 
+ */
 template<typename IndependentUnit,typename DependentUnit>
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution( 
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 			      const Teuchos::Array<double>& independent_values,
 			      const Teuchos::Array<double>& dependent_values,
-			      const bool interpret_dependent_values_as_cdf )
+			      const bool interpret_dependent_values_as_cdf,
+                  const bool treat_as_continuous )
   : d_distribution( independent_values.size() ),
+    d_continuous( treat_as_continuous ),
     d_norm_constant()
 {
-  this->initializeDistribution( independent_values, 
+  this->initializeDistribution( independent_values,
 				dependent_values,
 				interpret_dependent_values_as_cdf );
 }
@@ -48,39 +54,43 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 // CDF Constructor (potentially dangerous)
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity>
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution( 
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<double>& dependent_values )
+	      const Teuchos::Array<double>& dependent_values,
+          const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
+    d_continuous( treat_as_continuous ),
     d_norm_constant()
 {
-  this->initializeDistributionFromCDF( independent_quantities, 
+  this->initializeDistributionFromCDF( independent_quantities,
 				       dependent_values );
 }
 
 // Constructor
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity,typename InputDepQuantity>
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution( 
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<InputDepQuantity>& dependent_values )
+	      const Teuchos::Array<InputDepQuantity>& dependent_values,
+          const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
+    d_continuous( treat_as_continuous ),
     d_norm_constant()
 {
-  this->initializeDistribution( independent_quantities, 
+  this->initializeDistribution( independent_quantities,
 				dependent_values );
 }
 
 // Copy constructor
-/*! \details Just like boost::units::quantity objects, the unit-aware 
+/*! \details Just like boost::units::quantity objects, the unit-aware
  * distribution can be explicitly cast to a distribution with compatible
  * units. If the units are not compatible, this function will not compile. Note
- * that this allows distributions to be scaled safely (unit conversions 
+ * that this allows distributions to be scaled safely (unit conversions
  * are completely taken care of by boost::units)!
  */
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepUnit, typename InputDepUnit>
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution( 
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 	  const UnitAwareDiscreteDistribution<InputIndepUnit,InputDepUnit>& dist_instance )
   : d_distribution(),
     d_norm_constant()
@@ -104,7 +114,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 
 // Copy constructor (copying from unitless distribution only)
 template<typename IndependentUnit,typename DependentUnit>
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution( 
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
   const UnitAwareDiscreteDistribution<void,void>& unitless_dist_instance, int )
   : d_distribution(),
     d_norm_constant()
@@ -122,15 +132,15 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
-/*! \details Constructing a unit-aware distribution from a unitless 
+/*! \details Constructing a unit-aware distribution from a unitless
  * distribution is potentially dangerous. By forcing users to construct objects
  * using this method instead of a standard constructor we are trying to make
- * sure users are aware of the danger. This is designed to mimic the interface 
- * of the boost::units::quantity, which also has to deal with this issue. 
+ * sure users are aware of the danger. This is designed to mimic the interface
+ * of the boost::units::quantity, which also has to deal with this issue.
  */
 template<typename IndependentUnit,typename DependentUnit>
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> 
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( 
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution(
         const UnitAwareDiscreteDistribution<void,void>& unitless_distribution )
 {
   return ThisType( unitless_distribution, 0 );
@@ -138,13 +148,13 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistri
 
 // Assignment operator
 template<typename IndependentUnit,typename DependentUnit>
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>& 
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::operator=( 
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>&
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::operator=(
 	  const UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
   // Make sure that the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
-  
+
   if( this != &dist_instance )
   {
     d_distribution = dist_instance.d_distribution;
@@ -156,21 +166,21 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::operator=(
 
 // Evaluate the distribution
 /*! \details The discrete distribution can be expressed as a sum of delta
- * functions, which allows it to behave as a continuous distribution. 
+ * functions, which allows it to behave as a continuous distribution.
  * Therefore, the discrete distribution can technically only take on
  * two values: 0.0 and infinity. It is more useful to return the dependent
- * value associated with a defined independent value. 
+ * value associated with a defined independent value.
  */
 template<typename IndependentUnit,typename DependentUnit>
-typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::DepQuantity 
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluate( const typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const 
+typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::DepQuantity
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluate( const typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   return getRawQuantity(this->evaluatePDF( indep_var_value ))*d_norm_constant;
 }
 
 // Evaluate the PDF
 /*! \details It is acceptable for the same independent variable to appear
- * multiple times. When multiple occurances are found, the sum will be 
+ * multiple times. When multiple occurances are found, the sum will be
  * returned.
  */
 template<typename IndependentUnit,typename DependentUnit>
@@ -182,36 +192,36 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluatePDF( const
   if( indep_var_value >= d_distribution.front().first &&
       indep_var_value <= d_distribution.back().first )
   {
-    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin = 
+    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin =
       Search::binaryLowerBound<FIRST>( d_distribution.begin(),
 				       d_distribution.end(),
 				       indep_var_value );
 
-    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator 
+    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator
       prev_bin = bin;
     --prev_bin;
-    
+
     // The same independent variable may appear multiple times
     while( bin->first == indep_var_value )
     {
       if( bin != d_distribution.begin() )
       {
 	raw_pdf += bin->second - prev_bin->second;
-	
+
 	--bin;
 	--prev_bin;
       }
       else
       {
 	raw_pdf += bin->second;
-	
+
 	break;
       }
     }
   }
   else
     raw_pdf = 0.0;
-  
+
   return QuantityTraits<InverseIndepQuantity>::initializeQuantity( raw_pdf );
 }
 
@@ -224,7 +234,7 @@ double UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluateCDF
   if( indep_var_value >= d_distribution.front().first &&
       indep_var_value <= d_distribution.back().first )
   {
-    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin = 
+    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin =
       Search::binaryLowerBound<FIRST>( d_distribution.begin(),
 				       d_distribution.end(),
 				       indep_var_value );
@@ -236,18 +246,18 @@ double UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluateCDF
     cdf = 0.0;
   else
     cdf = 1.0;
-  
+
   return cdf;
 }
 
 
 // Return a random sample from the distribution
 template<typename IndependentUnit,typename DependentUnit>
-typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
+typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
-  
+
   unsigned dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
@@ -255,7 +265,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sample() const
 
 // Return a random sample and record the number of trials
 template<typename IndependentUnit,typename DependentUnit>
-typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
+typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
 {
   ++trials;
@@ -265,23 +275,23 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTri
 
 // Return a random sample and sampled index from the corresponding CDF
 template<typename IndependentUnit,typename DependentUnit>
-typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
+typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
 					    unsigned& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
-  
+
   return this->sampleImplementation( random_number, sampled_bin_index );
 }
 
 // Return a random sample and sampled index from the corresponding CDF
 template<typename IndependentUnit,typename DependentUnit>
-typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumber( 
+typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumber(
 					     const double random_number ) const
 {
   unsigned dummy_index;
-  
+
   return this->sampleImplementation( random_number, dummy_index );
 }
 
@@ -292,7 +302,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleInSubrange( 
 {
   // Make sure the max independent variable is valid
   testPrecondition( max_indep_var >= d_distribution.front().first );
-  
+
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
   return this->sampleWithRandomNumberInSubrange( random_number,
@@ -302,16 +312,16 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleInSubrange( 
 // Return a random sample using the random number and record the bin index
 template<typename IndependentUnit,typename DependentUnit>
 inline typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleImplementation( 
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleImplementation(
 					    double random_number,
 					    unsigned& sampled_bin_index ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
-  
+
   // Get the bin index sampled
-  sampled_bin_index = 
+  sampled_bin_index =
     Search::binaryUpperBoundIndex<SECOND>( d_distribution.begin(),
 					   d_distribution.end(),
 					   random_number );
@@ -322,7 +332,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleImplementati
 // Return a random sample from the distribution at the given CDF value in a subrange
 template<typename IndependentUnit,typename DependentUnit>
 inline typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange(
    const double random_number,
    const typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
@@ -333,11 +343,11 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNu
   testPrecondition( max_indep_var >= d_distribution.front().first );
 
   // Scale the random number to the cdf at the max indep var
-  double scaled_random_number = 
+  double scaled_random_number =
     random_number*this->evaluateCDF( max_indep_var );
 
   unsigned dummy_index;
-  
+
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
 
@@ -359,7 +369,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfInd
 
 // Return the distribution type
 template<typename IndependentUnit,typename DependentUnit>
-OneDDistributionType 
+OneDDistributionType
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return UnitAwareDiscreteDistribution::distribution_type;
@@ -369,7 +379,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionTyp
 template<typename IndependentUnit,typename DependentUnit>
 bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::isContinuous() const
 {
-  return false;
+  return d_continuous;
 }
 
 // Method for placing the object in an output stream
@@ -392,9 +402,9 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream( s
   std::string start_bracket;
   std::getline( is, start_bracket, '{' );
   start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
-  
-  TEST_FOR_EXCEPTION( start_bracket.size() != 0, 
-		      InvalidDistributionStringRepresentation, 
+
+  TEST_FOR_EXCEPTION( start_bracket.size() != 0,
+		      InvalidDistributionStringRepresentation,
 		      "Error: the input stream is not a valid discrete "
 		      "distribution representation!" );
 
@@ -412,10 +422,10 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream( s
 			      "Error: the discrete distribution cannot be "
 			      "constructed because the independent values are "
 			      "not valid (see details below)!\n" );
-  
+
   Teuchos::Array<double> independent_values;
   try{
-    independent_values = 
+    independent_values =
       Teuchos::fromStringToArray<double>( independent_values_rep );
   }
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
@@ -430,11 +440,11 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream( s
 		      "Error: the discrete distribution cannot be constructed "
 		      "because the bin boundaries "
 		      << independent_values_rep << " are not sorted!" );
-    
+
   // Read the ","
   std::string separator;
   std::getline( is, separator, ',' );
-  
+
   std::string dependent_values_rep;
   std::getline( is, dependent_values_rep, '}' );
   dependent_values_rep += "}";
@@ -449,10 +459,10 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream( s
 			      "Error: the discrete distribution cannot be "
 			      "constructed because the dependent values are "
 			      "not valid (see details below)!\n" );
-  
+
   Teuchos::Array<double> dependent_values;
   try{
-    dependent_values = 
+    dependent_values =
       Teuchos::fromStringToArray<double>( dependent_values_rep );
   }
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
@@ -460,16 +470,16 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream( s
 			      "Error: the discrete distribution cannot be "
 			      "constructed because the dependent values are "
 			      "not valid (see details below)!\n" );
-  
+
   TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
-		      InvalidDistributionStringRepresentation, 
+		      InvalidDistributionStringRepresentation,
 		      "Error: the discrete distribution "
 		      "{" << independent_values_rep << "},{"
 		      << dependent_values_rep << "} "
 		      "cannot be constructed because the number of "
 		      "independent values does not match the number of "
 		      "dependent values!" );
-  
+
   this->initializeDistribution( independent_values, dependent_values, false );
 }
 
@@ -477,7 +487,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream( s
 template<typename IndependentUnit,typename DependentUnit>
 bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::isEqual( const UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>& other ) const
 {
-  return d_distribution == other.d_distribution && 
+  return d_distribution == other.d_distribution &&
     d_norm_constant == other.d_norm_constant;
 }
 
@@ -539,10 +549,10 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   for( unsigned i = 0; i < cdf_values.size(); ++i )
   {
     d_distribution[i].first = IndepQuantity( independent_quantities[i] );
-    
+
     d_distribution[i].second = cdf_values[i];
   }
-    
+
   // Verify that the CDF is normalized (in event of round-off errors)
   if( cdf_values.back() != 1.0 )
   {
@@ -557,7 +567,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 // Initialize the distribution
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity,typename InputDepQuantity>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDistribution( 
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
 		  const Teuchos::Array<InputIndepQuantity>& independent_values,
 		  const Teuchos::Array<InputDepQuantity>& dependent_values )
 {
@@ -566,20 +576,20 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   // Make sure that the bins are sorted
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
 					     independent_values.end() ) );
-  
+
   // Resize the distribution array
   d_distribution.resize( independent_values.size() );
-  
+
   // Assign the raw distribution data
   for( unsigned i = 0; i < dependent_values.size(); ++i )
   {
     d_distribution[i].first = IndepQuantity( independent_values[i] );
-    
+
     // Use an explicit cast to desired unit
     DepQuantity dep_quantity( dependent_values[i] );
-    
+
     d_distribution[i].second = getRawQuantity( dep_quantity );
-    
+
     d_norm_constant += dep_quantity;
   }
 
@@ -632,7 +642,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
     }
     else
     {
-      dependent_values[i] = 
+      dependent_values[i] =
 	d_distribution[i].second*getRawQuantity( d_norm_constant );
     }
   }
@@ -641,7 +651,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
 // Convert the unitless values to the correct units
 template<typename IndependentUnit,typename DependentUnit>
 template<typename Quantity>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::convertUnitlessValues( 
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::convertUnitlessValues(
 		                 const Teuchos::Array<double>& unitless_values,
 				 Teuchos::Array<Quantity>& quantities )
 {
@@ -651,6 +661,13 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::convertUnitle
   // Copy the values
   for( unsigned i = 0u; i < unitless_values.size(); ++i )
     setQuantity( quantities[i], unitless_values[i] );
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit,typename DependentUnit>
+bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return true;
 }
 
 } // end Utility namespace

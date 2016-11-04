@@ -13,8 +13,8 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-Teuchos::RCP<const CoherentScatteringDistribution> 
-CoherentScatteringDistributionFactory::s_thompson_distribution( 
+Teuchos::RCP<const CoherentScatteringDistribution>
+CoherentScatteringDistributionFactory::s_thompson_distribution(
 				        new ThompsonScatteringDistribution() );
 
 // Create a Thompson distribution

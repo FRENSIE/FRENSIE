@@ -8,7 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
-  
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -31,6 +31,7 @@ Teuchos::RCP<MonteCarlo::AdjointPhotonScatteringDistribution> distribution;
 TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   evaluate )
 {
+  // Incoming energy = 0.1 MeV
   double dist_value = distribution->evaluate( 0.1, -1.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 0.5617250013852311, 1e-15 );
@@ -43,6 +44,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
+  // Incoming energy = 1.0 MeV
   dist_value = distribution->evaluate( 1.0, 0.5145510353765 );
 
   TEST_FLOATING_EQUALITY( dist_value, 4.818399835538855, 1e-15 );
@@ -55,8 +57,9 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
+  // Incoming energy = 10.0 MeV
   dist_value = distribution->evaluate( 10.0, 0.9744500544935 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.6110831116179009, 1e-15 );
 
   dist_value = distribution->evaluate( 10.0, 0.99 );
@@ -73,6 +76,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   evaluatePDF )
 {
+  // Incoming energy = 0.1 MeV
   double pdf = distribution->evaluatePDF( 0.1, -1.0 );
 
   TEST_FLOATING_EQUALITY( pdf, 0.8005229502046525, 1e-14 );
@@ -85,18 +89,20 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( pdf, 0.7110391044282447, 1e-14 );
 
+  // Incoming energy = 1.0 MeV
   pdf = distribution->evaluatePDF( 1.0, 0.5145510353765 );
 
   TEST_FLOATING_EQUALITY( pdf, 12.161802488005854, 1e-15 );
 
   pdf = distribution->evaluatePDF( 1.0, 0.9 );
-  
+
   TEST_FLOATING_EQUALITY( pdf, 1.1696721875147562, 1e-15 );
 
   pdf = distribution->evaluatePDF( 1.0, 1.0 );
 
   TEST_FLOATING_EQUALITY( pdf, 1.2593271410147135, 1e-15 );
 
+  // Incoming energy = 10.0 MeV
   pdf = distribution->evaluatePDF( 10.0, 0.9744500544935 );
 
   TEST_FLOATING_EQUALITY( pdf, 45.41678914783313, 1e-15 );
@@ -115,7 +121,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   evaluateIntegratedCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     distribution->evaluateIntegratedCrossSection( 0.1, 1e-6 );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.7016975606278707, 1e-14 );
@@ -153,7 +159,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution, sample )
   fake_stream[9] = 0.1; // select x = 0.8071682233277445
   fake_stream[10] = 0.99; // branch 3
   fake_stream[11] = 0.5; // select x = 0.9000009536743164
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->sample(
@@ -163,7 +169,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution, sample )
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.053789358961052636, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.5, 1e-15 );
-  
+
   distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
@@ -171,25 +177,25 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution, sample )
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640385, 1e-15);
-  
+
   distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
-  
+
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.06330760990853734, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225548, 1e-15);
-  
+
   distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
-		    
+
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 
-			  9.536743164284545e-06, 
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+			  9.536743164284545e-06,
 			  1e-15 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -215,7 +221,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
   fake_stream[9] = 0.1; // select x = 0.8071682233277445
   fake_stream[10] = 0.99; // branch 3
   fake_stream[11] = 0.5; // select x = 0.9000009536743164
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->sampleAndRecordTrials(
@@ -242,8 +248,8 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
-		    trials ); 
-  
+		    trials );
+
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.06330760990853734, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225548, 1e-15);
   TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
@@ -252,11 +258,11 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
-		    trials ); 
+		    trials );
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 
-			  9.536743164284545e-06, 
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+			  9.536743164284545e-06,
 			  1e-15 );
   TEST_EQUALITY_CONST( 4.0/trials, 0.8 );
 
@@ -269,35 +275,36 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   scatterAdjointPhoton )
 {
   MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
-  adjoint_photon.setEnergy( 
+  adjoint_photon.setEnergy(
 		  Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set the fake stream
-  std::vector<double> fake_stream( 12 );
+  std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.15; // branch 1
   fake_stream[1] = 0.4721647344828152; // select x = 0.9
   fake_stream[2] = 0.55; // reject
   fake_stream[3] = 0.15; // branch 1
   fake_stream[4] = 0.22986680137273696; // select x = 0.95
-  fake_stream[5] = 0.0;
+  fake_stream[5] = 0.0; // accept
+  fake_stream[6] = 0.0; // azimuthal angle = 0.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  distribution->scatterAdjointPhoton( adjoint_photon, 
-				      bank, 
+  distribution->scatterAdjointPhoton( adjoint_photon,
+				      bank,
 				      shell_of_interaction );
 
   TEST_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
-			  0.053789358961052636, 
+			  0.053789358961052636,
 			  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.5, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -311,7 +318,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 0.08 );
-  TEST_FLOATING_EQUALITY( bank.top().getWeight(), 
+  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  29.993834199062107,
 			  1e-14 );
 
@@ -326,7 +333,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 				      shell_of_interaction );
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  1.3851251716307225,
@@ -348,7 +355,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.3987875470381571,
 			  1e-15 );
-  
+
   bank.pop();
 
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
@@ -366,7 +373,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayRCP<double> critical_line_energies( 3 );
 
   critical_line_energies[0] = 0.08;
-  critical_line_energies[1] = 
+  critical_line_energies[1] =
     Utility::PhysicalConstants::electron_rest_mass_energy;
   critical_line_energies[2] = 1.0;
 

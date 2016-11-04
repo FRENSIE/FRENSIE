@@ -28,13 +28,13 @@
  *
  * This group defines how some types used by Utility are output when printed to
  * the terminal using the stream operator.
- */ 
+ */
 
 /*! Stream operator for std::list
  * \ingroup print_format
  */
 template<typename T, template<typename,typename> class List>
-std::ostream& operator<<( std::ostream& out, 
+std::ostream& operator<<( std::ostream& out,
 			  List<T,std::allocator<T> >& list)
 {
   typename List<T,std::allocator<T> >::const_iterator element, end_element;
@@ -46,14 +46,14 @@ std::ostream& operator<<( std::ostream& out,
   while( element != end_element )
   {
     out << *element;
-    
+
     ++element;
     if( element != end_element )
       out << ", ";
   }
 
   out << "}";
-  
+
   return out;
 }
 
@@ -62,16 +62,16 @@ namespace Utility{
 /*! \brief A function for comparing individual types.
  *
  * This function is used by the Teuchos Unit Test Harness extension testing
- * macros (see \ref unit_test_harness_extensions). It allows any type commonly 
+ * macros (see \ref unit_test_harness_extensions). It allows any type commonly
  * used by Utility to be tested. The generality is made possible through the
- * Utility::Policy::ComparePolicy. Refer to the Utility::Policy::ComparePolicy 
+ * Utility::Policy::ComparePolicy. Refer to the Utility::Policy::ComparePolicy
  * to gain a better understanding of how this function operates.
  * \tparam T A data type that will be tested.
  * \param[in] first_value The first value that will be tested.
- * \param[in] first_name The name given to the first value, which will be 
+ * \param[in] first_name The name given to the first value, which will be
  * used to refer to the value if the test fails.
  * \param[in] second_value The second value that will be tested.
- * \param[in] second_name The name given to the second value, which will be 
+ * \param[in] second_name The name given to the second value, which will be
  * used to refer to the value if the test fails.
  * \param[in,out] out The output stream that will be used to output the
  * results of the test.
@@ -100,14 +100,14 @@ bool compare( const T &first_value,
 						    tol );
   return success;
 }
-  
+
 /*! \brief A function for comparing arrays of types.
- * 
+ *
  * This function is used by the Teuchos Unit Test Harness extension testing
  * macros (see \ref unit_test_harness_extensions). It allows any type commonly
  * used by Utility in an array to be tested. The generality is made possible
- * through the Utility::Policy::ComparePolicy. Refer to the 
- * Utility::Policy::ComparePolicy to gain a better understanding of how this 
+ * through the Utility::Policy::ComparePolicy. Refer to the
+ * Utility::Policy::ComparePolicy to gain a better understanding of how this
  * function operates.
  * \tparam T A data type that will be tested.
  * \tparam Array1 The first array type containing data that will be tested.
@@ -118,7 +118,7 @@ bool compare( const T &first_value,
  * \param[in] a2 The second array containing data that needs to be tested.
  * \param[in] a2_name The name given to the second array, which will be used
  * to refer to the array if the test fails.
- * \param[in,out] out The output stream that will be used to output the 
+ * \param[in,out] out The output stream that will be used to output the
  * results of the test.
  * \param[in] tol The testing tolerance used to compare floating point values
  * in the arrays. This will be ignored with integer comparisons.
@@ -143,12 +143,12 @@ bool compareSingleTemplateParameterArrays( const Array1<T> &a1,
 }
 
 /*! \brief A function for comparing arrays of types.
- * 
+ *
  * This function is used by the Teuchos Unit Test Harness extension testing
  * macros (see \ref unit_test_harness_extensions). It allows any type commonly
  * used by Utility in an array to be tested. The generality is made possible
- * through the Utility::Policy::ComparePolicy. Refer to the 
- * Utility::Policy::ComparePolicy to gain a better understanding of how this 
+ * through the Utility::Policy::ComparePolicy. Refer to the
+ * Utility::Policy::ComparePolicy to gain a better understanding of how this
  * function operates.
  * \tparam Array1 The first array type containing data that will be tested.
  * \tparam Array2 The second array type containing data that will be tested.
@@ -158,7 +158,7 @@ bool compareSingleTemplateParameterArrays( const Array1<T> &a1,
  * \param[in] a2 The second array containing data that needs to be tested.
  * \param[in] a2_name The name given to the second array, which will be used
  * to refer to the array if the test fails.
- * \param[in,out] out The output stream that will be used to output the 
+ * \param[in,out] out The output stream that will be used to output the
  * results of the test.
  * \param[in] tol The testing tolerance used to compare floating point values
  * in the arrays. This will be ignored with integer comparisons.
@@ -173,18 +173,18 @@ bool compareArrays( const Array1 &a1,
 		    const double tol = 0.0 )
 {
   typedef typename Utility::ArrayTraits<Array1>::value_type value_type;
-  
+
   bool success = true;
 
   out << "Comparing " << a1_name << " == " << a2_name << " ... " << "\n";
-  
+
   // ArrayViews are used so that TwoDArrays will be linearized
   Teuchos::ArrayView<const value_type> view1 = Utility::getArrayView( a1 );
   Teuchos::ArrayView<const value_type> view2 = Utility::getArrayView( a2 );
-  
+
   const int n = view1.size();
   const int m = view2.size();
-  
+
   // Compare sizes
   if( m != n )
   {
@@ -196,9 +196,9 @@ bool compareArrays( const Array1 &a1,
   // Compare Elements
   for( int i = 0; i < n; ++i )
   {
-    bool local_success = Policy::ComparePolicy<value_type>::compare( view1[i], 
-								     a1_name, 
-								     view2[i], 
+    bool local_success = Policy::ComparePolicy<value_type>::compare( view1[i],
+								     a1_name,
+								     view2[i],
 								     a2_name,
 								     out,
 								     i,
@@ -206,7 +206,7 @@ bool compareArrays( const Array1 &a1,
     if( !local_success )
       success = false;
   }
-  
+
   return success;
 }
 

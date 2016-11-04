@@ -10,7 +10,7 @@
 #include <iostream>
 #include <limits>
 #include <iterator>
-  
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -26,7 +26,7 @@
 class TestIncoherentAdjointPhotonScatteringDistribution : public MonteCarlo::IncoherentAdjointPhotonScatteringDistribution
 {
 public:
-  
+
   // Constructor
   TestIncoherentAdjointPhotonScatteringDistribution( const double max_energy )
     : MonteCarlo::IncoherentAdjointPhotonScatteringDistribution( max_energy )
@@ -40,7 +40,7 @@ public:
   double evaluate( const double incoming_energy,
 		   const double max_energy,
 		   const double scattering_angle_cosine ) const
-  { 
+  {
     return 0.0;
   }
 
@@ -48,10 +48,10 @@ public:
   double evaluateIntegratedCrossSection( const double incoming_energy,
 					 const double max_energy,
 					 const double precision ) const
-  { 
+  {
     return 1.0;
   }
-  
+
   // Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
 	       double& outgoing_energy,
@@ -68,7 +68,7 @@ public:
   // Randomly scatter the photon and return the shell that was interacted with
   void scatterAdjointPhoton( MonteCarlo::AdjointPhotonState& adjoint_photon,
 			     MonteCarlo::ParticleBank& bank,
-			     MonteCarlo::SubshellType& shell_of_interaction ) const
+			     Data::SubshellType& shell_of_interaction ) const
   { /* ... */ }
 
   using MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::LineEnergyIterator;
@@ -90,7 +90,7 @@ Teuchos::RCP<TestIncoherentAdjointPhotonScatteringDistribution> distribution;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the max energy can be returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution, 
+TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 		   getMaxEnergy )
 {
   TEST_EQUALITY_CONST( distribution->getMaxEnergy(), 20.0 );
@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 		   evaluateAdjointKleinNishinaDist )
 {
-  double dist_value = 
+  double dist_value =
     distribution->evaluateAdjointKleinNishinaDist( 0.1, 20.0, -1.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 0.5617250013852311, 1e-15 );
@@ -114,7 +114,7 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
-  dist_value = 
+  dist_value =
     distribution->evaluateAdjointKleinNishinaDist( 1.0, 20.0, 0.5145510353765);
 
   TEST_FLOATING_EQUALITY( dist_value, 4.818399835538855, 1e-15 );
@@ -127,9 +127,9 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
-  dist_value = 
+  dist_value =
     distribution->evaluateAdjointKleinNishinaDist(10.0, 20.0, 0.9744500544935);
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 0.6110831116179009, 1e-15 );
 
   dist_value = distribution->evaluateAdjointKleinNishinaDist(10.0, 20.0, 0.99);
@@ -163,7 +163,7 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
   fake_stream[9] = 0.1; // select x = 0.8071682233277445
   fake_stream[10] = 0.99; // branch 3
   fake_stream[11] = 0.5; // select x = 0.9000009536743164
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->sampleAndRecordTrialsAdjointKleinNishina(
@@ -190,8 +190,8 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
-		    trials ); 
-  
+		    trials );
+
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.06330760990853734, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225548, 1e-15);
   TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
@@ -200,11 +200,11 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine,
-		    trials ); 
+		    trials );
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 
-			  9.536743164284545e-06, 
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+			  9.536743164284545e-06,
 			  1e-15 );
   TEST_EQUALITY_CONST( 4.0/trials, 0.8 );
 
@@ -218,7 +218,7 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 {
   TEST_ASSERT( distribution->isEnergyBelowScatteringWindow( 0.1, 0.0718 ) );
 
-  TEST_ASSERT( !distribution->isEnergyBelowScatteringWindow( 
+  TEST_ASSERT( !distribution->isEnergyBelowScatteringWindow(
 						   0.1, 0.0718705616632476 ) );
 
   TEST_ASSERT( !distribution->isEnergyBelowScatteringWindow( 0.1, 0.1 ) );
@@ -232,8 +232,8 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 		   isEnergyAboveScattringWindow )
 {
   TEST_ASSERT( !distribution->isEnergyAboveScatteringWindow( 0.1, 0.0718 ) );
-  
-  TEST_ASSERT( !distribution->isEnergyAboveScatteringWindow( 
+
+  TEST_ASSERT( !distribution->isEnergyAboveScatteringWindow(
 						   0.1, 0.0718705616632476 ) );
 
   TEST_ASSERT( !distribution->isEnergyAboveScatteringWindow( 0.1, 0.1 ) );
@@ -247,13 +247,13 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 {
   TEST_ASSERT( !distribution->isEnergyInScatteringWindow( 0.1, 0.0718 ) );
 
-  TEST_ASSERT( distribution->isEnergyInScatteringWindow( 0.1, 
+  TEST_ASSERT( distribution->isEnergyInScatteringWindow( 0.1,
 							 0.0718705616632476 ));
 
   TEST_ASSERT( distribution->isEnergyInScatteringWindow( 0.1, 0.1 ) );
 
   TEST_ASSERT( !distribution->isEnergyInScatteringWindow( 0.1, 0.11 ) );
-  
+
   TEST_ASSERT( !distribution->isEnergyInScatteringWindow( 21.0, 1.0 ) );
 
   TEST_ASSERT( !distribution->isEnergyInScatteringWindow( 21.0, 21.0 ) );
@@ -280,15 +280,15 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 							   end_energy );
 
   TEST_EQUALITY_CONST( *start_energy, 0.08 );
-  TEST_EQUALITY_CONST( *end_energy, 
+  TEST_EQUALITY_CONST( *end_energy,
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_EQUALITY_CONST( std::distance( start_energy, end_energy ), 1 );
-  
+
   distribution->getCriticalLineEnergiesInScatteringWindow( 0.18,
 							   start_energy,
 							   end_energy );
 
-  TEST_EQUALITY_CONST( *start_energy, 
+  TEST_EQUALITY_CONST( *start_energy,
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_EQUALITY_CONST( *end_energy, 1.0 );
   TEST_EQUALITY_CONST( std::distance( start_energy, end_energy), 1 );
@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_EQUALITY_CONST( *end_energy, 5.0 );
   TEST_EQUALITY_CONST( std::distance( start_energy, end_energy ), 2 );
-					
+
   distribution->getCriticalLineEnergiesInScatteringWindow( 0.25,
 							   start_energy,
 							   end_energy );
@@ -340,12 +340,12 @@ int main( int argc, char** argv )
   Teuchos::ArrayRCP<double> critical_line_energies( 5 );
 
   critical_line_energies[0] = 0.08;
-  critical_line_energies[1] = 
+  critical_line_energies[1] =
     Utility::PhysicalConstants::electron_rest_mass_energy;
   critical_line_energies[2] = 1.0;
   critical_line_energies[3] = 5.0;
   critical_line_energies[4] = 21.0;
-  
+
   distribution.reset( new TestIncoherentAdjointPhotonScatteringDistribution(
 							              20.0 ) );
 

@@ -14,7 +14,7 @@
 #include "PhotonDataDopplerBroadening.hpp"
 #include "Tuple.hpp"
 #include "DefaultParameterValues.hpp"
-#include "FACEMC_UnitTestHarnessExtensions.hpp"
+#include "FRENSIE_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info
@@ -39,13 +39,13 @@
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestingPhotonDataDopplerBroadening : public FACEMC::PhotonDataDopplerBroadening
+class TestingPhotonDataDopplerBroadening : public FRENSIE::PhotonDataDopplerBroadening
 {
 public:
   TestingPhotonDataDopplerBroadening( unsigned int atomic_number,
 				       double energy_min,
 				       double energy_max )
-    : FACEMC::PhotonDataDopplerBroadening( atomic_number,
+    : FRENSIE::PhotonDataDopplerBroadening( atomic_number,
 					   energy_min,
 					   energy_max )
   { /* ... */ }
@@ -53,10 +53,10 @@ public:
   virtual ~TestingPhotonDataDopplerBroadening()
   { /* ... */ }
 
-  using FACEMC::PhotonDataDopplerBroadening::getIncoherentScatteringVacancyShellData;
-  using FACEMC::PhotonDataDopplerBroadening::getComptonProfileCDF;
-  using FACEMC::PhotonDataDopplerBroadening::getComptonProfileMomentum;
-  using FACEMC::PhotonDataDopplerBroadening::getShellKineticEnergy;
+  using FRENSIE::PhotonDataDopplerBroadening::getIncoherentScatteringVacancyShellData;
+  using FRENSIE::PhotonDataDopplerBroadening::getComptonProfileCDF;
+  using FRENSIE::PhotonDataDopplerBroadening::getComptonProfileMomentum;
+  using FRENSIE::PhotonDataDopplerBroadening::getShellKineticEnergy;
 };
 
 //---------------------------------------------------------------------------//
@@ -81,15 +81,15 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getIncoherentScatteringVacancySh
 							  ENERGY_MIN,
 							  ENERGY_MAX );
 
-  FACEMC::Trip<unsigned int, unsigned int, double> shell_data =
+  FRENSIE::Trip<unsigned int, unsigned int, double> shell_data =
     test_photon_data_db.getIncoherentScatteringVacancyShellData( CDF_VALUE );
 
-  FACEMC::Trip<unsigned int, unsigned int, double> shell_data_ref;
+  FRENSIE::Trip<unsigned int, unsigned int, double> shell_data_ref;
   shell_data_ref.first = 3;
   shell_data_ref.second = 1;
   shell_data_ref.third = BINDING_ENERGY_REF;
-  
-  FACEMC_TEST_EQUALITY( shell_data, shell_data_ref );
+
+  FRENSIE_TEST_EQUALITY( shell_data, shell_data_ref );
 }
 
 //---------------------------------------------------------------------------//
@@ -104,17 +104,17 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getComptonProfileCDF )
   double cdf_value =
     test_photon_data_db.getComptonProfileCDF( COMPTON_PROFILE_INDEX_1,
 					      MOMENTUM );
-  
-  TEST_FLOATING_EQUALITY( cdf_value, 
-			  CDF_VALUE_REF_1, 
+
+  TEST_FLOATING_EQUALITY( cdf_value,
+			  CDF_VALUE_REF_1,
 			  TOL );
 
-  cdf_value = 
+  cdf_value =
     test_photon_data_db.getComptonProfileCDF( COMPTON_PROFILE_INDEX_2,
 					      MOMENTUM );
-  
-  TEST_FLOATING_EQUALITY( cdf_value, 
-			  CDF_VALUE_REF_2, 
+
+  TEST_FLOATING_EQUALITY( cdf_value,
+			  CDF_VALUE_REF_2,
 			  TOL );
 }
 
@@ -130,32 +130,32 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getComptonProfileMomentum )
   double momentum =
     test_photon_data_db.getComptonProfileMomentum( COMPTON_PROFILE_INDEX_1,
 						   CDF_VALUE );
-  
-  TEST_FLOATING_EQUALITY( momentum, 
-			  MOMENTUM_REF_1, 
+
+  TEST_FLOATING_EQUALITY( momentum,
+			  MOMENTUM_REF_1,
 			  TOL );
 
-  momentum = 
+  momentum =
     test_photon_data_db.getComptonProfileMomentum( COMPTON_PROFILE_INDEX_2,
 						   CDF_VALUE );
-  
-  TEST_FLOATING_EQUALITY( momentum, 
-			  MOMENTUM_REF_2, 
+
+  TEST_FLOATING_EQUALITY( momentum,
+			  MOMENTUM_REF_2,
 			  TOL );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonDataDopplerBroadening class returns the correct 
+// Check that the PhotonDataDopplerBroadening class returns the correct
 // kinetic energy
 TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getShellKineticEnergy )
 {
   TestingPhotonDataDopplerBroadening test_photon_data_db( ATOMIC_NUMBER,
 							  ENERGY_MIN,
 							  ENERGY_MAX );
-  
-  double kinetic_energy = 
+
+  double kinetic_energy =
     test_photon_data_db.getShellKineticEnergy( SHELL_1 );
-  
+
   TEST_FLOATING_EQUALITY( kinetic_energy,
 			  KINETIC_ENERGY_REF,
 			  TOL );

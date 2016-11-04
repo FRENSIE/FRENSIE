@@ -28,11 +28,11 @@
 class TestElasticNeutronScatteringDistribution : public MonteCarlo::ElasticNeutronNuclearScatteringDistribution
 {
 public:
-  TestElasticNeutronScatteringDistribution( 
+  TestElasticNeutronScatteringDistribution(
 	 const double atomic_weight_ratio,
 	 const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	 angular_scattering_distribution )
-    : MonteCarlo::ElasticNeutronNuclearScatteringDistribution( 
+    : MonteCarlo::ElasticNeutronNuclearScatteringDistribution(
 					      atomic_weight_ratio,
 					      angular_scattering_distribution )
   { /* ... */ }
@@ -51,13 +51,13 @@ public:
 // Testing Functions.
 //---------------------------------------------------------------------------//
 template<typename DistType>
-void initializeScatteringDistribution( 
+void initializeScatteringDistribution(
   const double atomic_weight_ratio,
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >& scattering_dist )
 {
-  Teuchos::RCP<Utility::TabularOneDDistribution> uniform_dist( 
+  Teuchos::RCP<Utility::TabularOneDDistribution> uniform_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
-  
+
   Teuchos::Array<Utility::Pair<double,
 		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
     raw_scattering_distribution( 5 );
@@ -76,7 +76,7 @@ void initializeScatteringDistribution(
   Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution> angular_dist(
                          new MonteCarlo::NuclearScatteringAngularDistribution(
 					       raw_scattering_distribution ) );
-  
+
   scattering_dist.reset( new DistType( atomic_weight_ratio, angular_dist ) );
 }
 
@@ -84,31 +84,31 @@ void initializeScatteringDistribution(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the center of mass velocity can be calculated
-TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 		   calculateCenterOfMassVelocity )
 {
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >
     base_distribution;
 
-  initializeScatteringDistribution<TestElasticNeutronScatteringDistribution>( 
+  initializeScatteringDistribution<TestElasticNeutronScatteringDistribution>(
 						      2.0, base_distribution );
 
-  Teuchos::RCP<TestElasticNeutronScatteringDistribution> 
+  Teuchos::RCP<TestElasticNeutronScatteringDistribution>
     scattering_distribution = Teuchos::rcp_dynamic_cast<TestElasticNeutronScatteringDistribution>( base_distribution );
-  
+
   Teuchos::Array<double> neutron_velocity( 3 );
   neutron_velocity[0] = 1.0;
   neutron_velocity[1] = 1.0;
   neutron_velocity[2] = 1.0;
-  
+
   Teuchos::Array<double> target_velocity( 3 );
   target_velocity[0] = 1.0;
   target_velocity[1] = 1.0;
   target_velocity[2] = -1.0;
-  
+
   Teuchos::Array<double> center_of_mass_velocity( 3 );
 
-  scattering_distribution->calculateCenterOfMassVelocity( 
+  scattering_distribution->calculateCenterOfMassVelocity(
 					 neutron_velocity.getRawPtr(),
 					 target_velocity.getRawPtr(),
 					 center_of_mass_velocity.getRawPtr() );
@@ -117,7 +117,7 @@ TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
   ref_center_of_mass_velocity[0] = 1.0;
   ref_center_of_mass_velocity[1] = 1.0;
   ref_center_of_mass_velocity[2] = -1.0/3.0;
-  
+
   TEST_COMPARE_FLOATING_ARRAYS( center_of_mass_velocity,
 				ref_center_of_mass_velocity,
 				1e-15 );
@@ -125,32 +125,32 @@ TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a lab velocity can be converted to a center-of-mass velocity
-TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 		   transformVelocityToCenterOfMassFrame )
 {
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >
     base_distribution;
 
-  initializeScatteringDistribution<TestElasticNeutronScatteringDistribution>( 
+  initializeScatteringDistribution<TestElasticNeutronScatteringDistribution>(
 						      2.0, base_distribution );
 
-  Teuchos::RCP<TestElasticNeutronScatteringDistribution> 
+  Teuchos::RCP<TestElasticNeutronScatteringDistribution>
     scattering_distribution = Teuchos::rcp_dynamic_cast<TestElasticNeutronScatteringDistribution>( base_distribution );
 
   Teuchos::Array<double> neutron_velocity( 3 );
   neutron_velocity[0] = 1.0;
   neutron_velocity[1] = 1.0;
   neutron_velocity[2] = 1.0;
-  
+
   Teuchos::Array<double> center_of_mass_velocity( 3 );
   center_of_mass_velocity[0] = 1.0;
   center_of_mass_velocity[1] = 1.0;
   center_of_mass_velocity[2] = -1.0/3.0;
 
-  scattering_distribution->transformVelocityToCenterOfMassFrame( 
+  scattering_distribution->transformVelocityToCenterOfMassFrame(
 					   center_of_mass_velocity.getRawPtr(),
 					   neutron_velocity.getRawPtr() );
-  
+
   Teuchos::Array<double> cm_neutron_velocity( 3 );
   cm_neutron_velocity[0] = 0.0;
   cm_neutron_velocity[1] = 0.0;
@@ -158,21 +158,21 @@ TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 
   TEST_COMPARE_FLOATING_ARRAYS( cm_neutron_velocity,
 				neutron_velocity,
-				1e-15 );				
+				1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a center-of-mass velocity can be converted to a lab velocity
-TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 		   transformVelocityToLabFrame )
 {
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >
     base_distribution;
 
-  initializeScatteringDistribution<TestElasticNeutronScatteringDistribution>( 
+  initializeScatteringDistribution<TestElasticNeutronScatteringDistribution>(
 						      2.0, base_distribution );
 
-  Teuchos::RCP<TestElasticNeutronScatteringDistribution> 
+  Teuchos::RCP<TestElasticNeutronScatteringDistribution>
     scattering_distribution = Teuchos::rcp_dynamic_cast<TestElasticNeutronScatteringDistribution>( base_distribution );
 
   Teuchos::Array<double> neutron_velocity( 3 );
@@ -201,13 +201,13 @@ TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that an incoming neutron can be scattered
-TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 		   scatterNeutron )
 {
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
-  
+
   initializeScatteringDistribution<MonteCarlo::ElasticNeutronNuclearScatteringDistribution>( 2.0, scattering_dist );
-  
+
   MonteCarlo::NeutronState neutron( 0ull );
   double initial_angle[3];
   initial_angle[0] = 0.0;
@@ -216,17 +216,17 @@ TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
   neutron.setDirection( initial_angle );
   double start_energy = 1.0;
   neutron.setEnergy( start_energy );
-  
+
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0; // go to second branch (alpha)
   fake_stream[1] = 0.0; // \
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   scattering_dist->scatterParticle( neutron, 2.53010e-8 );
 
-  double angle = Utility::calculateCosineOfAngleBetweenVectors( 
-					      initial_angle, 
+  double angle = Utility::calculateCosineOfAngleBetweenVectors(
+					      initial_angle,
 					      neutron.getDirection() );
 
   TEST_FLOATING_EQUALITY( neutron.getEnergy(),0.1111111, 1e-6);
@@ -234,7 +234,7 @@ TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.5;
- 
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   neutron.setDirection( initial_angle );
@@ -242,8 +242,8 @@ TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 
   scattering_dist->scatterParticle( neutron, 2.53010e-8 );
 
-  angle = Utility::calculateCosineOfAngleBetweenVectors( 
-					      initial_angle, 
+  angle = Utility::calculateCosineOfAngleBetweenVectors(
+					      initial_angle,
 					      neutron.getDirection() );
 
   TEST_FLOATING_EQUALITY( neutron.getEnergy(),0.555556, 1e-6);
@@ -251,7 +251,7 @@ TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 
   fake_stream[0] = 0.99999999999;
   fake_stream[1] = 0.99999999999;
- 
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   neutron.setDirection( initial_angle );
@@ -259,8 +259,8 @@ TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution,
 
   scattering_dist->scatterParticle( neutron, 2.53010e-8 );
 
-  angle = Utility::calculateCosineOfAngleBetweenVectors( 
-					      initial_angle, 
+  angle = Utility::calculateCosineOfAngleBetweenVectors(
+					      initial_angle,
 					      neutron.getDirection() );
 
   TEST_FLOATING_EQUALITY( neutron.getEnergy(),1.0, 1e-11);

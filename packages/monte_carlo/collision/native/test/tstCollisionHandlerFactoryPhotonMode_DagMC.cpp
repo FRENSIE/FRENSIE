@@ -16,9 +16,6 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
-// Moab Includes
-#include <DagMC.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NeutronMaterial.hpp"
@@ -44,9 +41,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   std::string cross_section_xml_file = test_cross_sections_xml_directory;
   cross_section_xml_file += "/cross_sections.xml";
 
-  // Read in the xml file storing the cross section table information 
+  // Read in the xml file storing the cross section table information
   Teuchos::ParameterList cross_section_table_info;
-  Teuchos::updateParametersFromXmlFile( 
+  Teuchos::updateParametersFromXmlFile(
 			         cross_section_xml_file,
 			         Teuchos::inoutArg(cross_section_table_info) );
 
@@ -58,7 +55,7 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   // Set the particle mode to PHOTON_MODE
   MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::PHOTON_MODE );
 
-  MonteCarlo::getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler( 
+  MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::DagMC>()->initializeHandler(
 					   material_reps,
 					   cross_section_table_info,
 					   test_cross_sections_xml_directory );
@@ -136,27 +133,27 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 80 )->getId() == 9 );
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 81, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 81 )->getId() == 9 );
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 	   MonteCarlo::CollisionHandler::getCellPhotonMaterial( 81 )->getNumberDensity(),
 	   4.6787270057348,
 	   1e-12 );
-  
+
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 9, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 9 )->getId() == 1 );
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 88, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 88 )->getId() == 1 );
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 	   MonteCarlo::CollisionHandler::getCellPhotonMaterial( 88 )->getNumberDensity(),
 	   4.7964421040911,
 	   1e-12 );
-  
+
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 136, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 136 )->getId() == 2);
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 136 )->getNumberDensity(),
 	  4.6309239201079,
 	  1e-12 );
-  
+
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 19, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 19 )->getId() == 3 );
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 41, MonteCarlo::PHOTON ) );
@@ -171,34 +168,34 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 166 )->getId() == 3);
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 184, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 184 )->getId() == 3);
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 184 )->getNumberDensity(),
 	  9.7578048535952e-4,
 	  1e-12 );
-  
+
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 3, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 3 )->getId() == 4 );
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 7 )->getId() == 4 );
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 7 )->getNumberDensity(),
 	  0.59648092706701,
 	  1e-12 );
-  
+
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 5 )->getId() == 10 );
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 5 )->getNumberDensity(),
 	  7.9532383711789,
 	  1e-12 );
-  
+
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 1 )->getId() == 8 );
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 1 )->getNumberDensity(),
 	  1.1104059252563,
 	  1e-12 );
-  
+
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 13, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 13 )->getId() == 7 );
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 83, MonteCarlo::PHOTON ) );
@@ -207,7 +204,7 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 154 )->getId() == 7);
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 168, MonteCarlo::PHOTON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 168 )->getId() == 7);
-  TEST_FLOATING_EQUALITY( 
+  TEST_FLOATING_EQUALITY(
 	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 168 )->getNumberDensity(),
 	  3.3760929224013,
 	  1e-12 );
@@ -344,10 +341,10 @@ int main( int argc, char** argv )
 		 &test_geom_xml_file_name,
 		 "Test xml geometry file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -356,14 +353,14 @@ int main( int argc, char** argv )
   }
 
   // Initialize DagMC
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep =
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

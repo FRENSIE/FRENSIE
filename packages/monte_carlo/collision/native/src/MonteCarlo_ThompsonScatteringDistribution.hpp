@@ -33,6 +33,10 @@ public:
 
 private:
 
+  // Return a dummy form factor squared distribution
+  static std::shared_ptr<const FormFactorSquared>
+  getDummyFormFactorSquaredDistribution();
+
   // Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
 				  double& scattering_angle_cosine,

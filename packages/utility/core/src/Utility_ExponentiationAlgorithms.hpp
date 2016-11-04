@@ -15,12 +15,12 @@ namespace Exponentiation{
 
 //! Recursive exponentiation algorithm
 template<typename BaseScalarType, typename ExponentOrdinalType>
-BaseScalarType recursive( const BaseScalarType x, 
+BaseScalarType recursive( const BaseScalarType x,
 			  const ExponentOrdinalType y );
 
 //! Recursive modular exponentiation algorithm
 template<typename OrdinalType>
-OrdinalType recursiveMod( const OrdinalType x, 
+OrdinalType recursiveMod( const OrdinalType x,
 			  const OrdinalType y,
 			  const OrdinalType m );
 

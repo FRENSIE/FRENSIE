@@ -132,7 +132,7 @@ ParticleModeType convertParticleModeTypeNameToParticleModeTypeEnum(
 {
   // Make sure the particle mode type name is valid
   testPrecondition( isValidParticleModeTypeName( particle_mode_type_name ) );
-  
+
   if( particle_mode_type_name == "NEUTRON_MODE" )
     return NEUTRON_MODE;
   else if( particle_mode_type_name == "PHOTON_MODE" )

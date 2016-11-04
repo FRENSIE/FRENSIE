@@ -20,7 +20,7 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that a Utility::Assertion looks different than a 
+// Check that a Utility::Assertion looks different than a
 // std::runtime_error as it inherits from std::logic_error.
 TEUCHOS_UNIT_TEST( Assertion, differentiation_test )
 {
@@ -68,7 +68,7 @@ TEUCHOS_UNIT_TEST( Assertion, teuchos_throw_test )
 {
   try
   {
-    TEUCHOS_TEST_FOR_EXCEPTION( true, 
+    TEUCHOS_TEST_FOR_EXCEPTION( true,
 				Utility::Assertion,
 				"Utility assertion failed" << std::endl );
   }
@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST( Assertion, assert_throw_test )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a Utility::CriticalAssertion looks different than a 
+// Check that a Utility::CriticalAssertion looks different than a
 // std::logic_error as it inherits from std::runtime_error
 TEUCHOS_UNIT_TEST( CriticalAssertion, differentiation_test )
 {
@@ -149,7 +149,7 @@ TEUCHOS_UNIT_TEST( CriticalAssertion, teuchos_throw_test )
 {
   try
   {
-    TEUCHOS_TEST_FOR_EXCEPTION( true, 
+    TEUCHOS_TEST_FOR_EXCEPTION( true,
 				Utility::CriticalAssertion,
 				"Utility assertion failed" << std::endl );
   }

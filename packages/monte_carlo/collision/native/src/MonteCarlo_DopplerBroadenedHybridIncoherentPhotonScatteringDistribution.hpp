@@ -30,11 +30,11 @@ class DopplerBroadenedHybridIncoherentPhotonScatteringDistribution : public WHIn
 public:
 
   //! Constructor
-  DopplerBroadenedHybridIncoherentPhotonScatteringDistribution( 
-    const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-    const Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
-    doppler_broadened_energy_dist,
-    const double kahn_sampling_cutoff_energy = 3.0 );
+  DopplerBroadenedHybridIncoherentPhotonScatteringDistribution(
+	  const std::shared_ptr<const ScatteringFunction>& scattering_function,
+	  const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+	  doppler_broadened_energy_dist,
+	  const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
   ~DopplerBroadenedHybridIncoherentPhotonScatteringDistribution()
@@ -43,12 +43,12 @@ public:
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const;
+		      Data::SubshellType& shell_of_interaction ) const;
 
 private:
 
   // The Doppler broadened photon energy distribution
-  Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>
+  std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
   d_doppler_broadened_energy_dist;
 };
 

@@ -26,7 +26,7 @@ class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<Indep
 {
 
 private:
-  
+
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
 
@@ -55,7 +55,7 @@ public:
 
   //! Default Constructor
   UnitAwareDeltaDistribution();
-  
+
   //! Basic constructor
   template<typename InputIndepQuantity>
   explicit UnitAwareDeltaDistribution( const InputIndepQuantity location );
@@ -66,7 +66,7 @@ public:
 			      const InputDepQuantity multiplier );
 
   //! Copy constructor
-  template<typename InputIndepUnit, typename InputDepUnit>
+  template<typename InputIndepUnit, typename InputDepUnit, typename Dummy=void>
   UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
   //! Construct distribution from a unitless dist. (potentially dangerous)
@@ -94,7 +94,7 @@ public:
   //! Return a random sample from the corresponding CDF and record the number of trials
   IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
-  //! Return a random sample from the distribution and the sampled index 
+  //! Return a random sample from the distribution and the sampled index
   IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
 
   //! Return a random sample from the distribution at the given CDF value
@@ -104,13 +104,13 @@ public:
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  IndepQuantity sampleWithRandomNumberInSubrange( 
+  IndepQuantity sampleWithRandomNumberInSubrange(
 				     const double random_number,
 				     const IndepQuantity max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
-  
+
   //! Return the lower bound of the distribution independent variable
   IndepQuantity getLowerBoundOfIndepVar() const;
 
@@ -133,6 +133,9 @@ protected:
 
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int );
+
+  //! Test if the dependent variable can be zero within the indep bounds
+  bool canDepVarBeZeroInIndepBounds() const;
 
 private:
 
@@ -178,7 +181,7 @@ public:
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareDeltaDistribution
  *
  * \details The name function will set the type name that must be used in

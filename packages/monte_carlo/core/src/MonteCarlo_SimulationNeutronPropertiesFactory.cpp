@@ -15,9 +15,10 @@
 namespace MonteCarlo{
 
 //! Initialize the simulation properties
-void SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties( 
-				    const Teuchos::ParameterList& properties )
-{  
+void SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties(
+				      const Teuchos::ParameterList& properties,
+				      std::ostream* os_warn )
+{
   // Get the free gas thermal treatment temperature threshold - optional
   if( properties.isParameter( "Free Gas Threshold" ) )
   {
@@ -40,10 +41,10 @@ void SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties(
       SimulationNeutronProperties::setMinNeutronEnergy( min_energy );
     else
     {
-      SimulationNeutronProperties::setMinNeutronEnergy( 
+      SimulationNeutronProperties::setMinNeutronEnergy(
 			 SimulationNeutronProperties::getAbsoluteMinNeutronEnergy() );
-      
-      std::cerr << "Warning: the lowest supported neutron energy is "
+
+      *os_warn << "Warning: the lowest supported neutron energy is "
 		<< SimulationNeutronProperties::getAbsoluteMinNeutronEnergy()
 		<< ". This value will be used instead of "
 		<< min_energy << "." << std::endl;
@@ -61,15 +62,15 @@ void SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties(
     {
       SimulationNeutronProperties::setMaxNeutronEnergy(
 			 SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy() );
-      
-      std::cerr << "Warning: the highest supported neutron energy is "
+
+      *os_warn << "Warning: the highest supported neutron energy is "
 		<< SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy()
 		<< ". This value will be used instead of "
 		<< max_energy << "." << std::endl;
     }
   }
 
-  properties.unused( std::cerr );
+  properties.unused( *os_warn );
 }
 
 } // end MonteCarlo namespace

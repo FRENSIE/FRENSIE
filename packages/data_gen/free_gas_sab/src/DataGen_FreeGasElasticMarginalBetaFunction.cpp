@@ -23,7 +23,7 @@ namespace DataGen{
 
 // Constructor
 FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
-	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  const Teuchos::RCP<Utility::OneDDistribution>&
 	  zero_temp_elastic_cross_section,
           const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	  cm_scattering_distribution,
@@ -47,17 +47,17 @@ FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
-  
+
   updateCachedValues();
 }
 
 // Set the beta and energy values
-void FreeGasElasticMarginalBetaFunction::setIndependentVariables( 
+void FreeGasElasticMarginalBetaFunction::setIndependentVariables(
 							       const double E )
 {
   // Make sure the energy is valid
   testPrecondition( E > 0.0 );
-  
+
   d_E = E;
 
   updateCachedValues();
@@ -68,7 +68,7 @@ double FreeGasElasticMarginalBetaFunction::getBetaMin() const
 {
   return d_beta_min;
 }
-  
+
 // Get the normalization constant
 double FreeGasElasticMarginalBetaFunction::getNormalizationConstant() const
 {
@@ -91,7 +91,7 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
   testPrecondition( beta >= d_beta_min );
 
   // Find the nearest cached evaluation of cdf
-  std::list<Utility::Pair<double,double> >::iterator lower_cdf_point = 
+  std::list<Utility::Pair<double,double> >::iterator lower_cdf_point =
     d_cached_cdf_values.begin();
 
   lower_cdf_point = Utility::Search::binaryLowerBound<Utility::FIRST>(
@@ -127,18 +127,18 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
   // Calculate the norm constant
   double norm_constant_error;
 
-  boost::function<double (double beta)> d_integrated_sab_function = 
+  boost::function<double (double beta)> d_integrated_sab_function =
     boost::bind<double>( &FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction, boost::ref( *this ), _1 );
-  
+
   d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
   					 400.0,
   					 540.0,
   					 d_norm_constant,
   					 norm_constant_error );
-  
-  // Teuchos::Tuple<double,3> points_of_interest = 
+
+  // Teuchos::Tuple<double,3> points_of_interest =
   //   Teuchos::tuple( d_beta_min, 515.0, -d_beta_min );
-  
+
   // d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( d_integrated_sab_function,
   // 						points_of_interest(),
   // 						d_norm_constant,
@@ -146,7 +146,7 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 
   // Make sure the norm constant is non-zero
   testPostcondition( d_norm_constant > 0.0 );
-  
+
   // Reset the cached cdf values
   d_cached_cdf_values.clear();
 
@@ -164,15 +164,15 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
 {
   // Make sure beta is valid
   testPrecondition( beta >= d_beta_min );
-  
+
   double alpha_min = Utility::calculateAlphaMin( d_E, beta, d_A, d_kT );
   double alpha_max = Utility::calculateAlphaMax( d_E, beta, d_A, d_kT );
 
   double function_value, function_value_error;
-  
-  boost::function<double (double alpha)> sab_function_wrapper = 
+
+  boost::function<double (double alpha)> sab_function_wrapper =
     boost::bind<double>( boost::ref( d_sab_function ), _1, beta, d_E );
-  
+
   // d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
   // 					  alpha_min,
   // 					  alpha_max,
@@ -181,7 +181,7 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
 
   if( beta < 0.0 && beta > d_beta_min )
   {
-    Teuchos::Tuple<double,3> points_of_interest = 
+    Teuchos::Tuple<double,3> points_of_interest =
       Teuchos::tuple( alpha_min, -beta, alpha_max );
     std::cout << points_of_interest() << std::endl;
     d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( sab_function_wrapper,

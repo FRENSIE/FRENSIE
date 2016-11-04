@@ -8,17 +8,22 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <limits>
+#include <stdexcept>
 
 // Boost Includes
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#include <boost/math/tools/precision.hpp>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "Utility_GaussKronrodIntegrator.hpp"
+
+typedef boost::multiprecision::cpp_dec_float_50 long_float;
 
 //---------------------------------------------------------------------------//
 // Testing Functors
@@ -32,7 +37,7 @@ struct X2Functor
     else
       return 0.0;
   }
-  
+
   static double getIntegratedValue()
   {
     return 1.0/3.0;
@@ -46,6 +51,84 @@ struct X2Functor
   static double getUpperIntegratedValue()
   {
     return 7.0/24.0;
+  }
+};
+
+struct X2FunctorParameter
+{
+  double operator()( const double x, const double y ) const
+  {
+    if( y >= 0.0 && y <= 1.0 )
+      return y*y*x;
+    else
+      return 0.0;
+  }
+
+  static double getIntegratedValue()
+  {
+    return 1.0/3.0;
+  }
+
+  static double getLowerIntegratedValue()
+  {
+    return 1.0/24.0;
+  }
+
+  static double getUpperIntegratedValue()
+  {
+    return 7.0/24.0;
+  }
+};
+
+struct X2FunctorLong
+{
+  long double operator()( const long double x ) const
+  {
+    if( x >= 0.0L && x <= 1.0L )
+      return x*x;
+    else
+      return 0.0L;
+  }
+
+  static long double getIntegratedValue()
+  {
+    return 1.0L/3.0L;
+  }
+
+  static long double getLowerIntegratedValue()
+  {
+    return 1.0L/24.0L;
+  }
+
+  static long double getUpperIntegratedValue()
+  {
+    return 7.0L/24.0L;
+  }
+};
+
+struct X2FunctorBoost
+{
+  long_float operator()( const long_float x ) const
+  {
+    if( x >= 0.0L && x <= 1.0L )
+      return x*x;
+    else
+      return 0.0L;
+  }
+
+  static long_float getIntegratedValue()
+  {
+    return 1.0L/3.0L;
+  }
+
+  static long_float getLowerIntegratedValue()
+  {
+    return 1.0L/24.0L;
+  }
+
+  static long_float getUpperIntegratedValue()
+  {
+    return 7.0L/24.0L;
   }
 };
 
@@ -75,6 +158,84 @@ struct X3Functor
   }
 };
 
+struct X3FunctorParameter
+{
+  double operator()( const double x, const double y ) const
+  {
+    if( y >= 0.0 && y <= 1.0 )
+      return y*y*y*x;
+    else
+      return 0.0;
+  }
+
+  static double getIntegratedValue()
+  {
+    return 0.25;
+  }
+
+  static double getLowerIntegratedValue()
+  {
+    return 1.0/64.0;
+  }
+
+  static double getUpperIntegratedValue()
+  {
+    return 15.0/64.0;
+  }
+};
+
+struct X3FunctorLong
+{
+  long double operator()( const long double x ) const
+  {
+    if( x >= 0.0L && x <= 1.0L )
+      return x*x*x;
+    else
+      return 0.0L;
+  }
+
+  static long double getIntegratedValue()
+  {
+    return 0.25L;
+  }
+
+  static long double getLowerIntegratedValue()
+  {
+    return 1.0L/64.0L;
+  }
+
+  static long double getUpperIntegratedValue()
+  {
+    return 15.0L/64.0L;
+  }
+};
+
+struct X3FunctorBoost
+{
+  long_float operator()( const long_float x ) const
+  {
+    if( x >= 0.0L && x <= 1.0L )
+      return x*x*x;
+    else
+      return 0.0L;
+  }
+
+  static long_float getIntegratedValue()
+  {
+    return 0.25L;
+  }
+
+  static long_float getLowerIntegratedValue()
+  {
+    return 1.0L/64.0L;
+  }
+
+  static long_float getUpperIntegratedValue()
+  {
+    return 15.0L/64.0L;
+  }
+};
+
 double exp_neg_x( const double x )
 {
   return exp( -x );
@@ -93,24 +254,24 @@ double inv_sqrt_abs_x( const double x )
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestGaussKronrodIntegrator : public Utility::GaussKronrodIntegrator
+class TestGaussKronrodIntegrator : public Utility::GaussKronrodIntegrator<double>
 {
 public:
   TestGaussKronrodIntegrator( const double relative_error_tol )
-    : Utility::GaussKronrodIntegrator( relative_error_tol )
+    : Utility::GaussKronrodIntegrator<double>( relative_error_tol )
   { /* ... */ }
 
   ~TestGaussKronrodIntegrator()
   { /* ... */ }
 
   // Allow public access to the GaussKronrodIntegrator protected member functions
-  using Utility::GaussKronrodIntegrator::calculateQuadratureIntegrandValuesAtAbscissa;
-  using Utility::GaussKronrodIntegrator::bisectAndIntegrateBinInterval;
-  using Utility::GaussKronrodIntegrator::rescaleAbsoluteError;
-  using Utility::GaussKronrodIntegrator::subintervalTooSmall;
-  using Utility::GaussKronrodIntegrator::checkRoundoffError;
-  using Utility::GaussKronrodIntegrator::sortBins;
-  using Utility::GaussKronrodIntegrator::getWynnEpsilonAlgorithmExtrapolation;
+  using Utility::GaussKronrodIntegrator<double>::calculateQuadratureIntegrandValuesAtAbscissa;
+  using Utility::GaussKronrodIntegrator<double>::bisectAndIntegrateBinInterval;
+  using Utility::GaussKronrodIntegrator<double>::rescaleAbsoluteError;
+  using Utility::GaussKronrodIntegrator<double>::subintervalTooSmall;
+  using Utility::GaussKronrodIntegrator<double>::checkRoundoffError;
+  using Utility::GaussKronrodIntegrator<double>::sortBins;
+  using Utility::GaussKronrodIntegrator<double>::getWynnEpsilonAlgorithmExtrapolation;
 };
 
 //---------------------------------------------------------------------------//
@@ -120,6 +281,18 @@ public:
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2Functor ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X3Functor )
 
+#define UNIT_TEST_INSTANTIATION_2( type, name ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2FunctorLong ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X3FunctorLong )
+
+#define UNIT_TEST_INSTANTIATION_3( type, name ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2FunctorBoost ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X3FunctorBoost )
+
+#define UNIT_TEST_INSTANTIATION_4( type, name ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2FunctorParameter ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X3FunctorParameter )
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -128,19 +301,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				                   integrateWithPointRule,
                                    Functor )
 {
-  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
-  
+  Utility::GaussKronrodIntegrator<double> gk_integrator( 1e-12 );
+
   double absolute_error, result_abs, result_asc, test_result, tol;
-  long double result;
+  double result;
 
   Functor functor_instance;
 
-  gk_integrator.integrateWithPointRule<15>( functor_instance, 
-                                        0.0,  
-                                        1.0,  
-                                        result,  
-                                        absolute_error,  
-                                        result_abs, 
+  gk_integrator.integrateWithPointRule<15>( functor_instance,
+                                        0.0,
+                                        1.0,
+                                        result,
+                                        absolute_error,
+                                        result_abs,
                                         result_asc );
 
   tol = absolute_error/result;
@@ -148,12 +321,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), test_result, tol );
 
-  gk_integrator.integrateWithPointRule<21>( functor_instance, 
-                                        0.0,  
-                                        1.0,  
-                                        result,  
-                                        absolute_error,  
-                                        result_abs, 
+  gk_integrator.integrateWithPointRule<21>( functor_instance,
+                                        0.0,
+                                        1.0,
+                                        result,
+                                        absolute_error,
+                                        result_abs,
                                         result_asc );
 
   tol = absolute_error/result;
@@ -161,12 +334,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), test_result, tol );
 
-  gk_integrator.integrateWithPointRule<31>( functor_instance, 
-                                        0.0,  
-                                        1.0,  
-                                        result,  
-                                        absolute_error,  
-                                        result_abs, 
+  gk_integrator.integrateWithPointRule<31>( functor_instance,
+                                        0.0,
+                                        1.0,
+                                        result,
+                                        absolute_error,
+                                        result_abs,
                                         result_asc );
 
   tol = absolute_error/result;
@@ -174,12 +347,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), test_result, tol );
 
-  gk_integrator.integrateWithPointRule<41>( functor_instance, 
-                                        0.0,  
-                                        1.0,  
-                                        result,  
-                                        absolute_error,  
-                                        result_abs, 
+  gk_integrator.integrateWithPointRule<41>( functor_instance,
+                                        0.0,
+                                        1.0,
+                                        result,
+                                        absolute_error,
+                                        result_abs,
                                         result_asc );
 
   tol = absolute_error/result;
@@ -187,12 +360,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), test_result, tol );
 
-  gk_integrator.integrateWithPointRule<51>( functor_instance, 
-                                        0.0,  
-                                        1.0,  
-                                        result,  
-                                        absolute_error,  
-                                        result_abs, 
+  gk_integrator.integrateWithPointRule<51>( functor_instance,
+                                        0.0,
+                                        1.0,
+                                        result,
+                                        absolute_error,
+                                        result_abs,
                                         result_asc );
 
   tol = absolute_error/result;
@@ -200,12 +373,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), test_result, tol );
 
-  gk_integrator.integrateWithPointRule<61>( functor_instance, 
-                                        0.0,  
-                                        1.0,  
-                                        result,  
-                                        absolute_error,  
-                                        result_abs, 
+  gk_integrator.integrateWithPointRule<61>( functor_instance,
+                                        0.0,
+                                        1.0,
+                                        result,
+                                        absolute_error,
+                                        result_abs,
                                         result_asc );
 
   tol = absolute_error/result;
@@ -223,7 +396,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
                                    Functor )
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
-  
+
   double half_length = 0.5;
   double midpoint = 0.5;
   double abscissa = 0.5;
@@ -232,13 +405,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
   Functor functor_instance;
 
-  test_integrator.calculateQuadratureIntegrandValuesAtAbscissa( 
-                functor_instance, 
+  test_integrator.calculateQuadratureIntegrandValuesAtAbscissa(
+                functor_instance,
                 abscissa,
                 half_length,
                 midpoint,
                 integrand_value_lower,
-                integrand_value_upper );  
+                integrand_value_upper );
 
 
   double tol = 1e-12;
@@ -256,33 +429,33 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
                                    Functor )
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
-  
-  Utility::BinTraits bin, bin_1, bin_2;
+
+  Utility::BinTraits<double> bin, bin_1, bin_2;
 
   double bin_1_asc, bin_2_asc, tol_1, tol_2;
 
   bin.lower_limit = 0.0;
   bin.upper_limit = 1.0;
-  
+
 
   Functor functor_instance;
 
-  test_integrator.bisectAndIntegrateBinInterval<15>( 
-                functor_instance, 
+  test_integrator.bisectAndIntegrateBinInterval<15>(
+                functor_instance,
                 bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
-                bin_2_asc );  
+                bin_2_asc );
 
   tol_1 = bin_1.error/bin_1.result;
   tol_2 = bin_2.error/bin_2.result;
 
-  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(), 
-                          static_cast<double>( bin_1.result ), 
+  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(),
+                          static_cast<double>( bin_1.result ),
                           tol_1 );
   TEST_FLOATING_EQUALITY( Functor::getUpperIntegratedValue(),
-                          static_cast<double>( bin_2.result ), 
+                          static_cast<double>( bin_2.result ),
                           tol_2 );
 
   TEST_EQUALITY( bin_1.lower_limit, bin.lower_limit );
@@ -291,98 +464,98 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
   TEST_EQUALITY( bin_2.upper_limit, bin.upper_limit );
 
 
-  test_integrator.bisectAndIntegrateBinInterval<21>( 
-                functor_instance, 
+  test_integrator.bisectAndIntegrateBinInterval<21>(
+                functor_instance,
                 bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
-                bin_2_asc );  
+                bin_2_asc );
 
   tol_1 = bin_1.error/bin_1.result;
   tol_2 = bin_2.error/bin_2.result;
 
-  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(), 
-                          static_cast<double>( bin_1.result ), 
+  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(),
+                          static_cast<double>( bin_1.result ),
                           tol_1 );
   TEST_FLOATING_EQUALITY( Functor::getUpperIntegratedValue(),
-                          static_cast<double>( bin_2.result ), 
+                          static_cast<double>( bin_2.result ),
                           tol_2 );
 
 
-  test_integrator.bisectAndIntegrateBinInterval<31>( 
-                functor_instance, 
+  test_integrator.bisectAndIntegrateBinInterval<31>(
+                functor_instance,
                 bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
-                bin_2_asc );  
+                bin_2_asc );
 
   tol_1 = bin_1.error/bin_1.result;
   tol_2 = bin_2.error/bin_2.result;
 
-  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(), 
-                          static_cast<double>( bin_1.result ), 
+  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(),
+                          static_cast<double>( bin_1.result ),
                           tol_1 );
   TEST_FLOATING_EQUALITY( Functor::getUpperIntegratedValue(),
-                          static_cast<double>( bin_2.result ), 
+                          static_cast<double>( bin_2.result ),
                           tol_2 );
 
 
-  test_integrator.bisectAndIntegrateBinInterval<41>( 
-                functor_instance, 
+  test_integrator.bisectAndIntegrateBinInterval<41>(
+                functor_instance,
                 bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
-                bin_2_asc );  
+                bin_2_asc );
 
   tol_1 = bin_1.error/bin_1.result;
   tol_2 = bin_2.error/bin_2.result;
 
-  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(), 
-                          static_cast<double>( bin_1.result ), 
+  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(),
+                          static_cast<double>( bin_1.result ),
                           tol_1 );
   TEST_FLOATING_EQUALITY( Functor::getUpperIntegratedValue(),
-                          static_cast<double>( bin_2.result ), 
+                          static_cast<double>( bin_2.result ),
                           tol_2 );
 
 
-  test_integrator.bisectAndIntegrateBinInterval<51>( 
-                functor_instance, 
+  test_integrator.bisectAndIntegrateBinInterval<51>(
+                functor_instance,
                 bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
-                bin_2_asc );  
+                bin_2_asc );
 
   tol_1 = bin_1.error/bin_1.result;
   tol_2 = bin_2.error/bin_2.result;
 
-  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(), 
-                          static_cast<double>( bin_1.result ), 
+  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(),
+                          static_cast<double>( bin_1.result ),
                           tol_1 );
   TEST_FLOATING_EQUALITY( Functor::getUpperIntegratedValue(),
-                          static_cast<double>( bin_2.result ), 
+                          static_cast<double>( bin_2.result ),
                           tol_2 );
 
 
-  test_integrator.bisectAndIntegrateBinInterval<61>( 
-                functor_instance, 
+  test_integrator.bisectAndIntegrateBinInterval<61>(
+                functor_instance,
                 bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
-                bin_2_asc );  
+                bin_2_asc );
 
   tol_1 = bin_1.error/bin_1.result;
   tol_2 = bin_2.error/bin_2.result;
 
-  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(), 
-                          static_cast<double>( bin_1.result ), 
+  TEST_FLOATING_EQUALITY( Functor::getLowerIntegratedValue(),
+                          static_cast<double>( bin_1.result ),
                           tol_1 );
   TEST_FLOATING_EQUALITY( Functor::getUpperIntegratedValue(),
-                          static_cast<double>( bin_2.result ), 
+                          static_cast<double>( bin_2.result ),
                           tol_2 );
 }
 
@@ -390,11 +563,11 @@ UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, bisectAndIntegrateBinInterval )
 
 //---------------------------------------------------------------------------//
 // Check that the error can be rescaled
-TEUCHOS_UNIT_TEST( GaussKronrodIntegrator, 
+TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                    rescaleAbsoluteError )
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
-  
+
   double absolute_error = 0.0;
   double result_abs = 0.0;
   double result_asc = 0.0;
@@ -404,10 +577,10 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 
   absolute_error = limit/2.0;
 
-  test_integrator.rescaleAbsoluteError( 
-                absolute_error, 
+  test_integrator.rescaleAbsoluteError(
+                absolute_error,
                 result_abs,
-                result_asc );  
+                result_asc );
 
   TEST_FLOATING_EQUALITY( limit/2.0, absolute_error, tol );
 
@@ -415,10 +588,10 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   absolute_error = 1.0;
   result_asc = 2.0;
 
-  test_integrator.rescaleAbsoluteError( 
-                absolute_error, 
+  test_integrator.rescaleAbsoluteError(
+                absolute_error,
                 result_abs,
-                result_asc );  
+                result_asc );
 
   TEST_FLOATING_EQUALITY( 2.0, absolute_error, tol );
 
@@ -426,10 +599,10 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   absolute_error = 1.0;
   result_asc = 800.0;
 
-  test_integrator.rescaleAbsoluteError( 
-                absolute_error, 
+  test_integrator.rescaleAbsoluteError(
+                absolute_error,
                 result_abs,
-                result_asc );  
+                result_asc );
 
   TEST_FLOATING_EQUALITY( 100.0, absolute_error, tol );
 
@@ -439,22 +612,22 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   result_abs = 2.0;
   double min_error = 50.0*std::numeric_limits<double>::epsilon() * result_abs;
 
-  test_integrator.rescaleAbsoluteError( 
-                absolute_error, 
+  test_integrator.rescaleAbsoluteError(
+                absolute_error,
                 result_abs,
-                result_asc );  
+                result_asc );
 
   TEST_FLOATING_EQUALITY( min_error, absolute_error, tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check the roundoff error
-TEUCHOS_UNIT_TEST( GaussKronrodIntegrator, 
+TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                    checkRoundoffError )
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
-  
-  Utility::BinTraits bin, bin_1, bin_2;
+
+  Utility::BinTraits<double> bin, bin_1, bin_2;
   int round_off_1 = 0;
   int round_off_2 = 0;
   int number_of_interactions = 0;
@@ -473,15 +646,15 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_2_asc = bin_2.error;
 
 
-  test_integrator.checkRoundoffError( 
-                bin, 
+  test_integrator.checkRoundoffError(
+                bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
                 bin_2_asc,
                 round_off_1,
                 round_off_2,
-                number_of_interactions );  
+                number_of_interactions );
 
   TEST_EQUALITY_CONST( 0, round_off_1 );
   TEST_EQUALITY_CONST( 0, round_off_2 );
@@ -490,15 +663,15 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_2_asc = 0.0;
 
 
-  test_integrator.checkRoundoffError( 
-                bin, 
+  test_integrator.checkRoundoffError(
+                bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
                 bin_2_asc,
                 round_off_1,
                 round_off_2,
-                number_of_interactions );  
+                number_of_interactions );
 
   TEST_EQUALITY_CONST( 1, round_off_1 );
   TEST_EQUALITY_CONST( 0, round_off_2 );
@@ -507,15 +680,15 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_2.error = 0.501;
   number_of_interactions = 10;
 
-  test_integrator.checkRoundoffError( 
-                bin, 
+  test_integrator.checkRoundoffError(
+                bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
                 bin_2_asc,
                 round_off_1,
                 round_off_2,
-                number_of_interactions );  
+                number_of_interactions );
 
   TEST_EQUALITY_CONST( 2, round_off_1 );
   TEST_EQUALITY_CONST( 1, round_off_2 );
@@ -523,15 +696,15 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 
   bin.result = 9.9;
 
-  test_integrator.checkRoundoffError( 
-                bin, 
+  test_integrator.checkRoundoffError(
+                bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
                 bin_2_asc,
                 round_off_1,
                 round_off_2,
-                number_of_interactions );  
+                number_of_interactions );
 
   TEST_EQUALITY_CONST( 2, round_off_1 );
   TEST_EQUALITY_CONST( 2, round_off_2 );
@@ -539,12 +712,12 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 
 //---------------------------------------------------------------------------//
 // Check the roundoff error
-TEUCHOS_UNIT_TEST( GaussKronrodIntegrator, 
+TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                    checkRoundoffError2 )
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
-  
-  Utility::ExtrpolatedBinTraits bin, bin_1, bin_2;
+
+  Utility::ExtrpolatedBinTraits<double> bin, bin_1, bin_2;
   int round_off_1 = 0;
   int round_off_2 = 0;
   int round_off_3 = 0;
@@ -565,8 +738,8 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_2_asc = bin_2.error;
 
 
-  test_integrator.checkRoundoffError( 
-                bin, 
+  test_integrator.checkRoundoffError(
+                bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
@@ -575,7 +748,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                 round_off_2,
                 round_off_3,
                 extrapolate,
-                number_of_interactions );  
+                number_of_interactions );
 
   TEST_EQUALITY_CONST( 0, round_off_1 );
   TEST_EQUALITY_CONST( 0, round_off_2 );
@@ -585,8 +758,8 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_2_asc = 0.0;
 
 
-  test_integrator.checkRoundoffError( 
-                bin, 
+  test_integrator.checkRoundoffError(
+                bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
@@ -595,7 +768,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                 round_off_2,
                 round_off_3,
                 extrapolate,
-                number_of_interactions );  
+                number_of_interactions );
 
   TEST_EQUALITY_CONST( 1, round_off_1 );
   TEST_EQUALITY_CONST( 0, round_off_2 );
@@ -603,8 +776,8 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 
   extrapolate = true;
 
-  test_integrator.checkRoundoffError( 
-                bin, 
+  test_integrator.checkRoundoffError(
+                bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
@@ -613,7 +786,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                 round_off_2,
                 round_off_3,
                 extrapolate,
-                number_of_interactions );  
+                number_of_interactions );
 
   TEST_EQUALITY_CONST( 1, round_off_1 );
   TEST_EQUALITY_CONST( 1, round_off_2 );
@@ -622,8 +795,8 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_2.error = 0.501;
   number_of_interactions = 10;
 
-  test_integrator.checkRoundoffError( 
-                bin, 
+  test_integrator.checkRoundoffError(
+                bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
@@ -632,7 +805,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                 round_off_2,
                 round_off_3,
                 extrapolate,
-                number_of_interactions );   
+                number_of_interactions );
 
   TEST_EQUALITY_CONST( 1, round_off_1 );
   TEST_EQUALITY_CONST( 2, round_off_2 );
@@ -641,8 +814,8 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 
   bin.result = 9.9;
 
-  test_integrator.checkRoundoffError( 
-                bin, 
+  test_integrator.checkRoundoffError(
+                bin,
                 bin_1,
                 bin_2,
                 bin_1_asc,
@@ -651,7 +824,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                 round_off_2,
                 round_off_3,
                 extrapolate,
-                number_of_interactions );   
+                number_of_interactions );
 
   TEST_EQUALITY_CONST( 1, round_off_1 );
   TEST_EQUALITY_CONST( 2, round_off_2 );
@@ -660,24 +833,51 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 
 //---------------------------------------------------------------------------//
 // Check that the error list can be sorted
-TEUCHOS_UNIT_TEST( GaussKronrodIntegrator, 
+TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                    sortBins )
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
-  
-  Utility::ExtrpolatedBinTraits bin, bin_1, bin_2;
-  
+
+  Utility::ExtrpolatedBinTraits<double> bin, bin_1, bin_2;
+
   int nr_max = 0;
-  int number_of_intervals = 3;
+  int number_of_intervals = 1;
 
   // Set up bin order array
-  Teuchos::Array<int> bin_order(3);
+  Teuchos::Array<int> bin_order(1);
+  bin_order[0] = 0;
+
+  // Set bin array
+  Utility::GaussKronrodIntegrator<double>::BinArray bin_array(1000);
+  bin.error = 10.0;
+  bin_array[0] = bin;
+
+  // Set bin_1 and bin_2
+  bin_1.error = 5.0;
+  bin_2.error = 2.0;
+
+  test_integrator.sortBins(
+                bin_order,
+                bin_array,
+                bin_1,
+                bin_2,
+                number_of_intervals,
+                nr_max );
+
+  TEST_EQUALITY_CONST( 0, bin_order[0] );
+  TEST_EQUALITY_CONST( 1, bin_order[1] );
+  TEST_EQUALITY_CONST( 0, nr_max );
+
+  nr_max = 0;
+  number_of_intervals = 3;
+
+  // Set up bin order array
+  bin_order.resize(3);
   bin_order[0] = 0;
   bin_order[1] = 1;
   bin_order[2] = 2;
 
   // Set bin array
-  Utility::BinArray bin_array(1000);
   bin.error = 10.0;
   bin_array[0] = bin;
   bin.error = 8.0;
@@ -688,14 +888,14 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   // Set bin_1 and bin_2
   bin_1.error = 5.0;
   bin_2.error = 2.0;
- 
-  test_integrator.sortBins( 
-                bin_order, 
+
+  test_integrator.sortBins(
+                bin_order,
                 bin_array,
                 bin_1,
                 bin_2,
                 number_of_intervals,
-                nr_max );  
+                nr_max );
 
   TEST_EQUALITY_CONST( 1, bin_order[0] );
   TEST_EQUALITY_CONST( 0, bin_order[1] );
@@ -724,14 +924,14 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   // Set bin_1 and bin_2
   bin_1.error = 11.0;
   bin_2.error = 2.0;
- 
-  test_integrator.sortBins( 
-                bin_order, 
+
+  test_integrator.sortBins(
+                bin_order,
                 bin_array,
                 bin_1,
                 bin_2,
                 number_of_intervals,
-                nr_max ); 
+                nr_max );
 
   TEST_EQUALITY_CONST( 1, bin_order[0] );
   TEST_EQUALITY_CONST( 0, bin_order[1] );
@@ -764,13 +964,13 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_1.error = 0.673652;
   bin_2.error = 6.50353e-15;
 
-  test_integrator.sortBins( 
-                bin_order, 
+  test_integrator.sortBins(
+                bin_order,
                 bin_array,
                 bin_1,
                 bin_2,
                 number_of_intervals,
-                nr_max ); 
+                nr_max );
 
   TEST_EQUALITY_CONST( 1, bin_order[0] );
   TEST_EQUALITY_CONST( 0, bin_order[1] );
@@ -811,13 +1011,13 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_1.error = 2.5;
   bin_2.error = 0.5;
 
-  test_integrator.sortBins( 
-                bin_order, 
+  test_integrator.sortBins(
+                bin_order,
                 bin_array,
                 bin_1,
                 bin_2,
                 number_of_intervals,
-                nr_max ); 
+                nr_max );
 
   TEST_EQUALITY_CONST( 3, bin_order[0] );
   TEST_EQUALITY_CONST( 4, bin_order[1] );
@@ -861,13 +1061,13 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_1.error = 4.5;
   bin_2.error = 0.5;
 
-  test_integrator.sortBins( 
-                bin_order, 
+  test_integrator.sortBins(
+                bin_order,
                 bin_array,
                 bin_1,
                 bin_2,
                 number_of_intervals,
-                nr_max ); 
+                nr_max );
 
   TEST_EQUALITY_CONST( 3, bin_order[0] );
   TEST_EQUALITY_CONST( 4, bin_order[1] );
@@ -881,13 +1081,13 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 
 //---------------------------------------------------------------------------//
 // Check that the Wynn Epsilon-Algorithm extrapolated value can be calculated
-TEUCHOS_UNIT_TEST( GaussKronrodIntegrator, 
+TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                    getWynnEpsilonAlgorithmExtrapolation )
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
-  
-  Teuchos::Array<double> bin_extrapolated_result(52);
-  Teuchos::Array<double> last_three_results(3);
+
+  std::vector<double> bin_extrapolated_result(52);
+  std::vector<double> last_three_results(3);
   double extrapolated_result, extrapolated_error;
   int number_of_extrapolated_intervals, number_of_extrapolated_calls;
   double tol = 1e-16;
@@ -898,31 +1098,31 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_extrapolated_result[0] = 3.93505142975913369L;
   bin_extrapolated_result[1] = 3.95407442555431254L;
   bin_extrapolated_result[2] = 3.96752571487956640L;
- 
-  test_integrator.getWynnEpsilonAlgorithmExtrapolation( 
-                bin_extrapolated_result, 
+
+  test_integrator.getWynnEpsilonAlgorithmExtrapolation(
+                bin_extrapolated_result,
                 last_three_results,
                 extrapolated_result,
                 extrapolated_error,
                 number_of_extrapolated_intervals,
-                number_of_extrapolated_calls ); 
+                number_of_extrapolated_calls );
 
   TEST_EQUALITY_CONST( number_of_extrapolated_intervals, 2 );
-  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 1 ); 
-  TEST_FLOATING_EQUALITY( extrapolated_error, 
-                          std::numeric_limits<double>::max(), 
+  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 1 );
+  TEST_FLOATING_EQUALITY( extrapolated_error,
+                          std::numeric_limits<double>::max(),
                           tol );
-  TEST_FLOATING_EQUALITY( extrapolated_result, 
-                          3.99999999999999645, 
+  TEST_FLOATING_EQUALITY( extrapolated_result,
+                          3.99999999999999645,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[0], 
-                          3.99999999999999645, 
+  TEST_FLOATING_EQUALITY( last_three_results[0],
+                          3.99999999999999645,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[1], 
-                          0.0, 
+  TEST_FLOATING_EQUALITY( last_three_results[1],
+                          0.0,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[2], 
-                          0.0, 
+  TEST_FLOATING_EQUALITY( last_three_results[2],
+                          0.0,
                           tol );
 
   // test 2
@@ -932,31 +1132,31 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_extrapolated_result[2] = 3.96752571487956640L;
   bin_extrapolated_result[3] = 3.97703721277715605L;
   bin_extrapolated_result[4] = 3.96752571487956640L;
- 
-  test_integrator.getWynnEpsilonAlgorithmExtrapolation( 
-                bin_extrapolated_result, 
+
+  test_integrator.getWynnEpsilonAlgorithmExtrapolation(
+                bin_extrapolated_result,
                 last_three_results,
                 extrapolated_result,
                 extrapolated_error,
                 number_of_extrapolated_intervals,
-                number_of_extrapolated_calls ); 
+                number_of_extrapolated_calls );
 
   TEST_EQUALITY_CONST( number_of_extrapolated_intervals, 3 );
-  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 2 ); 
-  TEST_FLOATING_EQUALITY( extrapolated_error, 
-                          std::numeric_limits<double>::max(), 
+  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 2 );
+  TEST_FLOATING_EQUALITY( extrapolated_error,
+                          std::numeric_limits<double>::max(),
                           tol );
-  TEST_FLOATING_EQUALITY( extrapolated_result, 
-                          4.00000000000000355, 
+  TEST_FLOATING_EQUALITY( extrapolated_result,
+                          4.00000000000000355,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[0], 
-                          3.99999999999999645, 
+  TEST_FLOATING_EQUALITY( last_three_results[0],
+                          3.99999999999999645,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[1], 
-                          4.00000000000000355, 
+  TEST_FLOATING_EQUALITY( last_three_results[1],
+                          4.00000000000000355,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[2], 
-                          0.0, 
+  TEST_FLOATING_EQUALITY( last_three_results[2],
+                          0.0,
                           tol );
 
 
@@ -968,31 +1168,31 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_extrapolated_result[3] = 3.97703721277715605L;
   bin_extrapolated_result[4] = 3.98376285743978320L;
   bin_extrapolated_result[5] = 3.97703721277715605L;
- 
-  test_integrator.getWynnEpsilonAlgorithmExtrapolation( 
-                bin_extrapolated_result, 
+
+  test_integrator.getWynnEpsilonAlgorithmExtrapolation(
+                bin_extrapolated_result,
                 last_three_results,
                 extrapolated_result,
                 extrapolated_error,
                 number_of_extrapolated_intervals,
-                number_of_extrapolated_calls ); 
+                number_of_extrapolated_calls );
 
   TEST_EQUALITY_CONST( number_of_extrapolated_intervals, 4 );
-  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 3 ); 
-  TEST_FLOATING_EQUALITY( extrapolated_error, 
-                          std::numeric_limits<double>::max(), 
+  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 3 );
+  TEST_FLOATING_EQUALITY( extrapolated_error,
+                          std::numeric_limits<double>::max(),
                           tol );
-  TEST_FLOATING_EQUALITY( extrapolated_result, 
-                          4.00000000000000089, 
+  TEST_FLOATING_EQUALITY( extrapolated_result,
+                          4.00000000000000089,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[0], 
-                          3.99999999999999645, 
+  TEST_FLOATING_EQUALITY( last_three_results[0],
+                          3.99999999999999645,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[1], 
-                          4.00000000000000355, 
+  TEST_FLOATING_EQUALITY( last_three_results[1],
+                          4.00000000000000355,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[2], 
-                          4.00000000000000089, 
+  TEST_FLOATING_EQUALITY( last_three_results[2],
+                          4.00000000000000089,
                           tol );
 
 
@@ -1006,31 +1206,31 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_extrapolated_result[5] = 3.98851860638857758L;
   bin_extrapolated_result[6] = 3.98376285743978320L;
 
- 
-  test_integrator.getWynnEpsilonAlgorithmExtrapolation( 
-                bin_extrapolated_result, 
+
+  test_integrator.getWynnEpsilonAlgorithmExtrapolation(
+                bin_extrapolated_result,
                 last_three_results,
                 extrapolated_result,
                 extrapolated_error,
                 number_of_extrapolated_intervals,
-                number_of_extrapolated_calls ); 
+                number_of_extrapolated_calls );
 
   TEST_EQUALITY_CONST( number_of_extrapolated_intervals, 5 );
-  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 4 ); 
-  TEST_FLOATING_EQUALITY( extrapolated_error, 
-                          5.68434188608080149e-14, 
+  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 4 );
+  TEST_FLOATING_EQUALITY( extrapolated_error,
+                          5.68434188608080149e-14,
                           tol );
-  TEST_FLOATING_EQUALITY( extrapolated_result, 
-                          3.99999999999998135, 
+  TEST_FLOATING_EQUALITY( extrapolated_result,
+                          3.99999999999998135,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[0], 
-                          4.00000000000000355, 
+  TEST_FLOATING_EQUALITY( last_three_results[0],
+                          4.00000000000000355,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[1], 
-                          4.00000000000000089, 
+  TEST_FLOATING_EQUALITY( last_three_results[1],
+                          4.00000000000000089,
                           tol );
-  TEST_FLOATING_EQUALITY( last_three_results[2], 
-                          3.99999999999998135, 
+  TEST_FLOATING_EQUALITY( last_three_results[2],
+                          3.99999999999998135,
                           tol );
 
 }
@@ -1041,17 +1241,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				   integrateAdaptively,
 				   Functor )
 {
-  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
+  Utility::GaussKronrodIntegrator<double> gk_integrator( 1e-12 );
 
   double result, absolute_error, tol;
 
   Functor functor_instance;
 
   // Test the 15-point rule
-  gk_integrator.integrateAdaptively<15>( functor_instance, 
-				  0.0, 
-				  1.0, 
-				  result, 
+  gk_integrator.integrateAdaptively<15>( functor_instance,
+				  0.0,
+				  1.0,
+				  result,
 				  absolute_error );
 
   tol = absolute_error/result;
@@ -1060,10 +1260,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 21-point rule
-  gk_integrator.integrateAdaptively<21>( functor_instance, 
-				  0.0, 
-				  1.0, 
-				  result, 
+  gk_integrator.integrateAdaptively<21>( functor_instance,
+				  0.0,
+				  1.0,
+				  result,
 				  absolute_error );
 
   tol = absolute_error/result;
@@ -1072,10 +1272,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 31-point rule
-  gk_integrator.integrateAdaptively<31>( functor_instance, 
-				  0.0, 
-				  1.0, 
-				  result, 
+  gk_integrator.integrateAdaptively<31>( functor_instance,
+				  0.0,
+				  1.0,
+				  result,
 				  absolute_error );
 
   tol = absolute_error/result;
@@ -1084,10 +1284,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 41-point rule
-  gk_integrator.integrateAdaptively<41>( functor_instance, 
-				  0.0, 
-				  1.0, 
-				  result, 
+  gk_integrator.integrateAdaptively<41>( functor_instance,
+				  0.0,
+				  1.0,
+				  result,
 				  absolute_error );
 
   tol = absolute_error/result;
@@ -1096,10 +1296,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 51-point rule
-  gk_integrator.integrateAdaptively<51>( functor_instance, 
-				  0.0, 
-				  1.0, 
-				  result, 
+  gk_integrator.integrateAdaptively<51>( functor_instance,
+				  0.0,
+				  1.0,
+				  result,
 				  absolute_error );
 
   tol = absolute_error/result;
@@ -1108,10 +1308,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 61-point rule
-  gk_integrator.integrateAdaptively<61>( functor_instance, 
-				  0.0, 
-				  1.0, 
-				  result, 
+  gk_integrator.integrateAdaptively<61>( functor_instance,
+				  0.0,
+				  1.0,
+				  result,
 				  absolute_error );
 
   tol = absolute_error/result;
@@ -1120,6 +1320,295 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 }
 
 UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptively );
+
+//---------------------------------------------------------------------------//
+// Check that functions can be integrated over [0,1] adaptively
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
+				   integrateAdaptively_long_double,
+				   Functor )
+{
+  Utility::GaussKronrodIntegrator<long double> gk_integrator( 1e-12 );
+
+  long double result, absolute_error, tol;
+
+  Functor functor_instance;
+
+  // Test the 15-point rule
+  gk_integrator.integrateAdaptively<15,long double>( functor_instance,
+				  0.0L,
+				  1.0L,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 21-point rule
+  gk_integrator.integrateAdaptively<21>( functor_instance,
+				  0.0L,
+				  1.0L,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 31-point rule
+  gk_integrator.integrateAdaptively<31,long double>( functor_instance,
+				  0.0L,
+				  1.0L,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 41-point rule
+  gk_integrator.integrateAdaptively<41,long double>( functor_instance,
+				  0.0L,
+				  1.0L,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 51-point rule
+  gk_integrator.integrateAdaptively<51,long double>( functor_instance,
+				  0.0L,
+				  1.0L,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 61-point rule
+  gk_integrator.integrateAdaptively<61,long double>( functor_instance,
+				  0.0L,
+				  1.0L,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+}
+
+UNIT_TEST_INSTANTIATION_2( GaussKronrodIntegrator, integrateAdaptively_long_double );
+
+//---------------------------------------------------------------------------//
+// Check that functions can be integrated over [0,1] adaptively
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
+				   integrateAdaptively_long_float,
+				   Functor )
+{
+  Utility::GaussKronrodIntegrator<long_float> gk_integrator( 1e-12 );
+
+  long_float result, absolute_error, tol;
+
+  Functor functor_instance;
+
+  // Test the 15-point rule
+  gk_integrator.integrateAdaptively<15,long_float>( functor_instance,
+				  (long_float)0,
+				  (long_float)1,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 21-point rule
+  gk_integrator.integrateAdaptively<21,long_float>( functor_instance,
+				  (long_float)0,
+				  (long_float)1,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 31-point rule
+  gk_integrator.integrateAdaptively<31,long_float>( functor_instance,
+				  (long_float)0,
+				  (long_float)1,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 41-point rule
+  gk_integrator.integrateAdaptively<41,long_float>( functor_instance,
+				  (long_float)0,
+				  (long_float)1,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 51-point rule
+  gk_integrator.integrateAdaptively<51,long_float>( functor_instance,
+				  (long_float)0,
+				  (long_float)1,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+
+
+  // Test the 61-point rule
+  gk_integrator.integrateAdaptively<61,long_float>( functor_instance,
+				  (long_float)0,
+				  (long_float)1,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(),
+                          (double)result,
+                          (double)tol );
+}
+
+UNIT_TEST_INSTANTIATION_3( GaussKronrodIntegrator, integrateAdaptively_long_float );
+
+//---------------------------------------------------------------------------//
+// Check that functions can be integrated over [0,1] adaptively
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
+				   integrateAdaptively_parameter,
+				   Functor )
+{
+  Utility::GaussKronrodIntegrator<double> gk_integrator( 1e-12 );
+
+  double result, absolute_error, tol;
+
+  Functor functor_instance;
+
+  // Test the 15-point rule
+  gk_integrator.integrateAdaptively<15>( functor_instance,
+          1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 21-point rule
+  gk_integrator.integrateAdaptively<21>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 31-point rule
+  gk_integrator.integrateAdaptively<31>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 41-point rule
+  gk_integrator.integrateAdaptively<41>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 51-point rule
+  gk_integrator.integrateAdaptively<51>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 61-point rule
+  gk_integrator.integrateAdaptively<61>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+}
+
+UNIT_TEST_INSTANTIATION_4( GaussKronrodIntegrator, integrateAdaptively_parameter );
 
 //---------------------------------------------------------------------------//
 // Check that a function with integrable singularities can be integrated
@@ -1133,7 +1622,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   points_of_interest[1] = 0.0; // integrable singularity
   points_of_interest[2] = 1.0;
 
-  Utility::GaussKronrodIntegrator gk_int( 1e-12, 0.0, 100000 );
+  Utility::GaussKronrodIntegrator<double> gk_int( 1e-12, 0.0, 100000 );
 
   double result, absolute_error;
 
@@ -1142,10 +1631,30 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 					 result,
 					 absolute_error );
 
-  
+
   double tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( result, 4.0, tol );
+
+
+
+  Teuchos::Array<long double> long_points_of_interest( 2 );
+  points_of_interest[0] = -1.0L;
+  points_of_interest[1] = 1.0L;
+
+  Utility::GaussKronrodIntegrator<long double> gk_long_int( 1e-12, 0.0, 100000 );
+
+  long double long_result, long_absolute_error;
+
+  gk_long_int.integrateAdaptivelyWynnEpsilon( function_wrapper,
+					 long_points_of_interest(),
+					 long_result,
+					 long_absolute_error );
+
+
+  long double long_tol = long_absolute_error/long_result;
+
+  TEST_FLOATING_EQUALITY( (double)result, 4.0, (double)tol );
 }
 
 //---------------------------------------------------------------------------//
@@ -1161,22 +1670,116 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
   points_of_interest[1] = 0.5;
   points_of_interest[2] = 1.0;
 
-  Utility::GaussKronrodIntegrator gkq_set( 1e-12, 0.0, 100000 );
+  Utility::GaussKronrodIntegrator<double> gkq_set( 1e-12, 0.0, 100000 );
 
   double result, absolute_error;
 
-  gkq_set.integrateAdaptivelyWynnEpsilon( 
+  gkq_set.integrateAdaptivelyWynnEpsilon(
             functor_instance,
     		points_of_interest(),
 			result,
 			absolute_error );
-  
+
   double tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
 UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptivelyWynnEpsilon_no_singularities );
+
+//---------------------------------------------------------------------------//
+// Check that warnings can be thrown
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
+                                   warnOnDirtyIntegration,
+                                   Functor )
+{
+
+  Utility::GaussKronrodIntegrator<long_float> gk_integrator( 1e-20, 0.0, 2 );
+
+  long_float result, absolute_error, tol;
+
+  Functor functor_instance;
+
+  // Integration should only throw warnings
+  try
+  {
+    gk_integrator.integrateAdaptively<15,long_float>( functor_instance,
+				  (long_float)-1,
+				  (long_float)2,
+				  result,
+				  absolute_error );
+  }
+  catch( std::exception exception )
+  {
+    TEST_ASSERT( 1 );
+  }
+  catch( ... )
+  {
+    TEST_ASSERT( 0 );
+  }
+
+  // Integration should throw exception
+  try
+  {
+    gk_integrator.throwExceptionOnDirtyIntegration();
+
+    gk_integrator.integrateAdaptively<15,long_float>( functor_instance,
+				  (long_float)-1,
+				  (long_float)2,
+				  result,
+				  absolute_error );
+  }
+  catch( std::exception exception )
+  {
+    TEST_ASSERT( 1 );
+  }
+  catch( ... )
+  {
+    TEST_ASSERT( 0 );
+  }
+
+  // Integration should only throw warnings
+  try
+  {
+    gk_integrator.warnOnDirtyIntegration();
+
+    gk_integrator.integrateAdaptively<15,long_float>( functor_instance,
+				  (long_float)-1,
+				  (long_float)2,
+				  result,
+				  absolute_error );
+  }
+  catch( std::exception exception )
+  {
+    TEST_ASSERT( 0 );
+  }
+  catch( ... )
+  {
+    TEST_ASSERT( 0 );
+  }
+
+  // Integration should throw exception
+  try
+  {
+  Utility::GaussKronrodIntegrator<long_float> gk_int( 1e-50, 0.0, 2);
+
+  gk_integrator.integrateAdaptively<15,long_float>( functor_instance,
+				  (long_float)0,
+				  (long_float)1,
+				  result,
+				  absolute_error );
+  }
+  catch( std::exception exception )
+  {
+    TEST_ASSERT( 1 );
+  }
+  catch( ... )
+  {
+    TEST_ASSERT( 0 );
+  }
+}
+
+UNIT_TEST_INSTANTIATION_3( GaussKronrodIntegrator, warnOnDirtyIntegration );
 
 //---------------------------------------------------------------------------//
 // end tstGaussKronrodIntegrator.cpp

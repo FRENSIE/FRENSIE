@@ -56,48 +56,57 @@ Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
 TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, evaluate )
 {
   double test_value_1 = 0.0 ;
-  double test_value_2 = exp( -1.0 );
-  
+  double test_value_2 = sqrt( 0.9 )*exp( -0.9 );
+
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.9 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, evaluate )
 {
-  double scale_factor = exp(-1.0);
-
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
 		       0.0*si::mole );
+  
+  double scale_factor = sqrt( 0.9 )*exp( -0.9 );
+
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.9*MeV ),
+                       scale_factor*si::mole );
+  
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
-		       scale_factor*si::mole );
+		       0.0*si::mole );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, evaluatePDF )
 {
-  double test_value_1 = 0.0 ;
-  double test_value_2 = ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(0.9)) - sqrt(0.9) * exp(-0.9) );
-  test_value_2 = pow( test_value_2, -1.0 );
-  test_value_2 = test_value_2 * exp( -1.0 );
-
+  double test_value_1 = 0.0;
+  double test_value_2 = sqrt( 0.9 )*exp( -0.9 )/
+    (sqrt(Utility::PhysicalConstants::pi)*0.5*erf(sqrt(0.9)) -
+     sqrt(0.9)*exp(-0.9));
+  
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.9 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware PDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, evaluatePDF )
 {
-  double scale_factor = exp(-1.0)/( sqrt(Utility::PhysicalConstants::pi)*0.5*
-				    erf(sqrt(0.9)) - sqrt(0.9)*exp(-0.9) );
+  double scale_factor = sqrt( 0.9 )*exp( -0.9 )/
+    (sqrt(Utility::PhysicalConstants::pi)*0.5*erf(sqrt(0.9)) -
+     sqrt(0.9)*exp(-0.9));
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ),
 		       0.0/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.9*MeV ),
+                       scale_factor/MeV );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*MeV ),
-		       scale_factor/MeV );
+		       0.0/MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -153,7 +162,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be sampled using OpenMC method and the 
+// Check that the distribution can be sampled using OpenMC method and the
 // trials can be recorded
 TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, sampleAndRecordTrials )
 {
@@ -203,7 +212,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sampleAndRecordTrials )
 
   unsigned trials = 0;
 
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.78269807500829*MeV, 1e-14 );
   TEST_EQUALITY_CONST( trials, 1.0 );
@@ -218,7 +227,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sampleAndRecordTrials )
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled using OpenMC method, passing in
 // parameters
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, 
+TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
 		   sample_pass_parameters )
 {
   std::vector<double> fake_stream( 9 );
@@ -233,16 +242,16 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
   fake_stream[8] = 0.4770873202414019;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double incident_energy, nuclear_temperature, restriction_energy, sample;
-  
+
   incident_energy = 0.5;
   nuclear_temperature = 0.1;
   restriction_energy = 0.01;
 
   sample = Utility::MaxwellFissionDistribution::sample( incident_energy, nuclear_temperature, restriction_energy );
   TEST_FLOATING_EQUALITY( sample, 0.20924646054839, 1e-13 );
-  
+
   incident_energy = 0.75;
   nuclear_temperature = 0.5;
   restriction_energy = 0.25;
@@ -256,7 +265,7 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled using OpenMC method,
 // passing in parameters
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 		   sample_pass_parameters )
 {
   std::vector<double> fake_stream( 9 );
@@ -271,17 +280,17 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
   fake_stream[8] = 0.4770873202414019;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
-  quantity<MegaElectronVolt> incident_energy, nuclear_temperature, 
+
+  quantity<MegaElectronVolt> incident_energy, nuclear_temperature,
     restriction_energy, sample;
-    
+
   incident_energy = 0.5*MeV;
   nuclear_temperature = 0.1*MeV;
   restriction_energy = 0.01*MeV;
 
   sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt>::sample( incident_energy, nuclear_temperature, restriction_energy );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.20924646054839*MeV, 1e-13 );
-  
+
   incident_energy = 0.75*MeV;
   nuclear_temperature = 0.5*MeV;
   restriction_energy = 0.25*MeV;
@@ -295,7 +304,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled using OpenMC method, passing in
 // parameters
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, 
+TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
 		   sampleAndRecordTrials_pass_parameters )
 {
   std::vector<double> fake_stream( 9 );
@@ -310,17 +319,17 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
   fake_stream[8] = 0.4770873202414019;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double incident_energy, nuclear_temperature, restriction_energy, sample;
   unsigned trials = 0;
-  
+
   incident_energy = 0.5;
   nuclear_temperature = 0.1;
   restriction_energy = 0.01;
 
   sample = Utility::MaxwellFissionDistribution::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
   TEST_FLOATING_EQUALITY( sample, 0.20924646054839, 1e-13 );
-  
+
   incident_energy = 0.75;
   nuclear_temperature = 0.5;
   restriction_energy = 0.25;
@@ -334,7 +343,7 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled using OpenMC method,
 // passing in parameters
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 		   sampleAndRecordTrials_pass_parameters )
 {
   std::vector<double> fake_stream( 9 );
@@ -349,18 +358,18 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
   fake_stream[8] = 0.4770873202414019;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
-  quantity<MegaElectronVolt> incident_energy, nuclear_temperature, 
+
+  quantity<MegaElectronVolt> incident_energy, nuclear_temperature,
     restriction_energy, sample;
   unsigned trials = 0;
-  
+
   incident_energy = 0.5*MeV;
   nuclear_temperature = 0.1*MeV;
   restriction_energy = 0.01*MeV;
 
   sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,void>::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.20924646054839*MeV, 1e-13 );
-  
+
   incident_energy = 0.75*MeV;
   nuclear_temperature = 0.5*MeV;
   restriction_energy = 0.25*MeV;
@@ -380,12 +389,12 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, getUpperBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 		   getUpperBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
 		       0.9*MeV );
 }
 
@@ -398,12 +407,12 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the unit-aware distribution independent 
+// Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 		   getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       0.0*MeV );
 }
 
@@ -452,26 +461,47 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, isContinuous )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the distribution is compatible with the interpolation type
+TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, isCompatibleWithInterpType )
+{
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is compatible with the interp type
+TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
+                   isCompatibleWithInterpType )
+{
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file
 TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::MaxwellFissionDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Utility::MaxwellFissionDistribution>( distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Utility::MaxwellFissionDistribution>( "test distribution", 
+
+  parameter_list.set<Utility::MaxwellFissionDistribution>( "test distribution",
 						     *true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"maxwellfission_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "maxwellfission_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<Utility::MaxwellFissionDistribution> 
+  Teuchos::RCP<Utility::MaxwellFissionDistribution>
     copy_distribution( new Utility::MaxwellFissionDistribution );
 
   *copy_distribution = read_parameter_list->get<Utility::MaxwellFissionDistribution>(
@@ -486,24 +516,24 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, toParameterList )
 {
   typedef Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>
     UnitAwareMaxwellFissionDistribution;
-  
+
   Teuchos::RCP<UnitAwareMaxwellFissionDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<UnitAwareMaxwellFissionDistribution>( unit_aware_distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<UnitAwareMaxwellFissionDistribution>( "test distribution", 
+
+  parameter_list.set<UnitAwareMaxwellFissionDistribution>( "test distribution",
 							   *true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"unit_aware_maxwellfission_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "unit_aware_maxwellfission_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<UnitAwareMaxwellFissionDistribution> 
+  Teuchos::RCP<UnitAwareMaxwellFissionDistribution>
     copy_distribution( new UnitAwareMaxwellFissionDistribution );
 
   *copy_distribution = read_parameter_list->get<UnitAwareMaxwellFissionDistribution>(
@@ -519,36 +549,37 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, fromParameterList )
   double test_value_1;
   double test_value_2;
 
-  Utility::MaxwellFissionDistribution read_distribution = 
+  Utility::MaxwellFissionDistribution read_distribution =
     test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution A" );
 
   test_value_1 = 0.0 ;
-  test_value_2 = ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(0.9)) - sqrt(0.9) * exp(-0.9) );
-  test_value_2 = pow( test_value_2, -1.0 );
-  test_value_2 = test_value_2 * exp( -1.0 );
-  
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
+  test_value_2 = sqrt(0.9)*exp(-0.9)/
+    (sqrt( Utility::PhysicalConstants::pi)*0.5*erf(sqrt(0.9)) -
+     sqrt(0.9)*exp(-0.9));
 
-  read_distribution = 
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.9 ), test_value_2 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_1 );
+
+  read_distribution =
     test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution B" );
-  
+
   test_value_1 = 0.0 ;
   test_value_2 = pow( 2.0, 1.5 ) * ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(1.0)) - sqrt(1.0) * exp(-1.0) );
   test_value_2 = pow( test_value_2, -1.0 );
   test_value_2 = test_value_2 * exp( -0.5 );
-  
+
   TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
   TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution C" );
 
   test_value_1 = 0.0 ;
   test_value_2 = ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(1.0)) - sqrt(1.0) * exp(-1.0) );
   test_value_2 = pow( test_value_2, -1.0 );
   test_value_2 = test_value_2 * exp( -1.0 );
-  
+
   TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
   TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
 }
@@ -559,52 +590,58 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, fromParameterList )
 {
   typedef Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>
     UnitAwareMaxwellFissionDistribution;
-  
-  UnitAwareMaxwellFissionDistribution read_distribution = 
+
+  UnitAwareMaxwellFissionDistribution read_distribution =
     test_dists_list->get<UnitAwareMaxwellFissionDistribution>( "Unit-Aware Maxwell Fission Distribution A" );
 
-  double scale_factor = exp(-1.0)/
-    ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(0.9)) - 
+  double scale_factor = sqrt(0.9)*exp(-0.9)/
+    ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(0.9)) -
       sqrt(0.9) * exp(-0.9) );
-    
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 0.0*MeV ), 
+
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 0.0*MeV ),
 				  0.0*si::mole,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.0*MeV ), 
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.0*MeV ),
 				  0.0/MeV,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0*MeV ), 
-				  10.0*exp(-1.0)*si::mole,
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 0.9*MeV ),
+				  10.0*sqrt(0.9)*exp(-0.9)*si::mole,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ), 
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.9*MeV ),
 				  scale_factor/MeV,
 				  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0*MeV ),
+				  0.0*si::mole,
+				  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ),
+				  0.0/MeV,
+				  1e-15 );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<UnitAwareMaxwellFissionDistribution>( "Unit-Aware Maxwell Fission Distribution B" );
-  
+
   scale_factor = exp( -0.5 )/
     ( pow( 2.0, 1.5 )*(sqrt(Utility::PhysicalConstants::pi)*0.5*erf(sqrt(1.0))-
 		       sqrt(1.0)*exp(-1.0)) );
-    
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.0*MeV ), 
+
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.0*MeV ),
 				  0.0/MeV,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ), 
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ),
 				  scale_factor/MeV,
 				  1e-15 );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<UnitAwareMaxwellFissionDistribution>( "Unit-Aware Maxwell Fission Distribution C" );
 
   scale_factor = exp(-1.0 )/
     (sqrt(Utility::PhysicalConstants::pi)*0.5* erf(sqrt(1.0)) -
      sqrt(1.0)*exp(-1.0));
-  
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.0*MeV ), 
+
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.0*MeV ),
 				  0.0/MeV,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ), 
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ),
 				  scale_factor/MeV,
 				  1e-15 );
 }
@@ -620,10 +657,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareMaxwellFissionDistribution,
 {
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
@@ -635,61 +672,62 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareMaxwellFissionDistribution,
   Utility::UnitAwareMaxwellFissionDistribution<IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.0 );
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 0.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
-  
-  Utility::setQuantity( indep_quantity_a, 1.0 );
+
+  Utility::setQuantity( indep_quantity_a, 0.899999999999999 );
   Utility::setQuantity( inv_indep_quantity_a,
-			exp(-1.0)/( sqrt(Utility::PhysicalConstants::pi)*0.5*
-				    erf(sqrt(0.9)) - sqrt(0.9)*exp(-0.9) ) );
-  Utility::setQuantity( dep_quantity_a, exp(-1.0) );			
+			sqrt(0.9)*exp(-0.9)/
+                        (sqrt(Utility::PhysicalConstants::pi)*0.5*
+                         erf(sqrt(0.9)) - sqrt(0.9)*exp(-0.9) ) );
+  Utility::setQuantity( dep_quantity_a, sqrt(0.9)*exp(-0.9) );
 
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
-  
+
   // std::cout << indep_quantity_a << " " << indep_quantity_b << " " << std::endl;
   // std::cout << inv_indep_quantity_a << " " << inv_indep_quantity_b << " " << std::endl;
   // std::cout << dep_quantity_a << " " << dep_quantity_b << " " << std::endl;
@@ -845,53 +883,33 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
 				      KiloElectronVolt );
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_dists_xml_file;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_dists_xml_file;
+  clp().setOption( "test_dists_xml_file",
+                   &test_dists_xml_file,
+                   "Test distributions xml file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_dists_xml_file",
-		 &test_dists_xml_file,
-		 "Test distributions xml file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::MaxwellFissionDistribution );
   typedef Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>
     UnitAwareMaxwellFissionDistribution;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareMaxwellFissionDistribution );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstMaxwellFissionDistribution.cpp

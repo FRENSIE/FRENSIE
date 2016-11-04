@@ -12,7 +12,7 @@
 
 namespace MonteCarlo{
 
-// The particle mode 
+// The particle mode
 ParticleModeType SimulationGeneralProperties::particle_mode = NEUTRON_MODE;
 
 // The number of histories to run
@@ -26,19 +26,19 @@ bool SimulationGeneralProperties::display_warnings = true;
 
 // The capture mode (true = implicit, false = analogue - default)
 bool SimulationGeneralProperties::implicit_capture_mode_on = false;
-                             
+
 // The ideal number of batches per processor
-unsigned SimulationGeneralProperties::number_of_batches_per_processor = 25;
+unsigned SimulationGeneralProperties::number_of_batches_per_processor = 1;
 
 // Set the particle mode
-void SimulationGeneralProperties::setParticleMode( 
+void SimulationGeneralProperties::setParticleMode(
 					 const ParticleModeType particle_mode )
 {
   SimulationGeneralProperties::particle_mode = particle_mode;
 }
 
 // Set the number of histories to run
-void SimulationGeneralProperties::setNumberOfHistories( 
+void SimulationGeneralProperties::setNumberOfHistories(
 					   const unsigned long long histories )
 {
   SimulationGeneralProperties::number_of_histories = histories;
@@ -49,7 +49,7 @@ void SimulationGeneralProperties::setNumberOfHistories(
  * approximation is used for the angle cosine to help bound the flux (avoids
  * a possible divide by zero).
  */
-void SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff( 
+void SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
 							  const double cutoff )
 {
   // Make sure the cutoff is valid
@@ -72,7 +72,7 @@ void SimulationGeneralProperties::setImplicitCaptureModeOn()
 }
 
 // Set the ideal number of batches per processor for an MPI configuration
-void SimulationGeneralProperties::setNumberOfBatchesPerProcessor( 
+void SimulationGeneralProperties::setNumberOfBatchesPerProcessor(
                                                        const unsigned batches )
 {
   SimulationGeneralProperties::number_of_batches_per_processor = batches;

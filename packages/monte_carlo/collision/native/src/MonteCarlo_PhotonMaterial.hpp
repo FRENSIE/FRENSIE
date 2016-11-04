@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_PHOTON_MATERIAL_HPP
 #define MONTE_CARLO_PHOTON_MATERIAL_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
+// Std Lib Includes
+#include <unordered_map>
 
 // Trilinos Includes
 #include "Teuchos_RCP.hpp"
@@ -33,25 +33,25 @@ private:
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
-  
+
   //! Typedef for photoatom name map
-  typedef boost::unordered_map<std::string,Teuchos::RCP<Photoatom> >
+  typedef std::unordered_map<std::string,Teuchos::RCP<Photoatom> >
   PhotoatomNameMap;
 
-  //! Constructor 
+  //! Constructor
   PhotonMaterial( const ModuleTraits::InternalMaterialHandle id,
 		  const double density,
 		  const PhotoatomNameMap& photoatom_name_map,
 		  const Teuchos::Array<double>& photoatom_fractions,
 		  const Teuchos::Array<std::string>& photoatom_names );
-  
+
   //! Destructor
   ~PhotonMaterial()
   { /* ... */ }
 
   //! Return the material id
   ModuleTraits::InternalMaterialHandle getId() const;
-  
+
   //! Return the number density (atom/b-cm)
   double getNumberDensity() const;
 
@@ -65,7 +65,7 @@ public:
   double getSurvivalProbability( const double energy ) const;
 
   //! Return the macroscopic cross section (1/cm) for a specific reaction
-  double getMacroscopicReactionCrossSection( 
+  double getMacroscopicReactionCrossSection(
 				const double energy,
 				const PhotoatomicReactionType reaction ) const;
 
@@ -87,16 +87,16 @@ private:
 	    const Utility::Pair<double,Teuchos::RCP<const Photoatom> >& pair );
 
   // Sample the atom that is collided with
-  unsigned sampleCollisionAtom( const double energy ) const;  
+  unsigned sampleCollisionAtom( const double energy ) const;
 
   // The material id
   ModuleTraits::InternalMaterialHandle d_id;
 
-  // The number density of the atoms of the material 
+  // The number density of the atoms of the material
   double d_number_density;
 
   // The atoms that make up the material
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Photoatom> > > 
+  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Photoatom> > >
   d_atoms;
 };
 

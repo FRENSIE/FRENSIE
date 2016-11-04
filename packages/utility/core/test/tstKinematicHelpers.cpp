@@ -15,7 +15,7 @@
 #include "Utility_KinematicHelpers.hpp"
 
 //---------------------------------------------------------------------------//
-// Tests 
+// Tests
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticKineticEnergy )
 {
@@ -37,9 +37,9 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateKineticEnergy )
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( KinematicHelpers, calculateDimensionlessRelativisticSpeedSquared )
 {
-  double speed_squared = 
+  double speed_squared =
                Utility::calculateDimensionlessRelativisticSpeedSquared(1.0,1.0);
-  double result = 3.0 / 4.0; 
+  double result = 3.0 / 4.0;
   TEST_FLOATING_EQUALITY(speed_squared, result, 1e-15);
 }
 
@@ -48,7 +48,7 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticSpeed )
 {
   double speed = Utility::calculateRelativisticSpeed(1.0,1.0);
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
-  double result = speed_of_light * sqrt( 3.0 / 4.0 ); 
+  double result = speed_of_light * sqrt( 3.0 / 4.0 );
   TEST_FLOATING_EQUALITY(speed, result, 1e-15);
 }
 
@@ -56,34 +56,34 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticSpeed )
 TEUCHOS_UNIT_TEST( KinematicHelpers, calculateSpeed )
 {
   double speed = Utility::calculateSpeed(8.0,1.0);
-  double result = Utility::PhysicalConstants::speed_of_light/2.0; 
+  double result = Utility::PhysicalConstants::speed_of_light/2.0;
   TEST_FLOATING_EQUALITY(speed, result, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticMomentumEnergySquared )
 {
-  double momentum_squared = 
+  double momentum_squared =
                Utility::calculateRelativisticMomentumEnergySquared( 1.0, 1.0 );
-  double result = 3.0; 
+  double result = 3.0;
   TEST_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( KinematicHelpers, calculateDimensionlessRelativisticMomentumSquared )
 {
-  double momentum_squared = 
+  double momentum_squared =
          Utility::calculateDimensionlessRelativisticMomentumSquared( 1.0, 1.0 );
-  double result = 3.0; 
+  double result = 3.0;
   TEST_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticMomentum )
 {
-  double momentum_squared = 
+  double momentum_squared =
                Utility::calculateRelativisticMomentum( 1.0, 1.0 );
-  double result = sqrt( 3.0 )/Utility::PhysicalConstants::speed_of_light; 
+  double result = sqrt( 3.0 )/Utility::PhysicalConstants::speed_of_light;
   TEST_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
 }
 
@@ -94,7 +94,7 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateBetaMin )
   double kT = 2.53010e-8;
 
   double beta_min = Utility::calculateBetaMin( E, kT );
-  
+
   TEST_FLOATING_EQUALITY( beta_min, -E/kT, 1e-12 );
 }
 
@@ -117,7 +117,7 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAlphaMin )
 
   beta = 1e-6/2.53010e-8;
   alpha_min = Utility::calculateAlphaMin( E, beta, A, kT );
-  
+
   TEST_FLOATING_EQUALITY( alpha_min, 6.7869220430292, 1e-12 );
 }
 
@@ -140,7 +140,7 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAlphaMax )
 
   beta = 1e-6/2.53010e-8;
   alpha_max = Utility::calculateAlphaMax( E, beta, A, kT );
-  
+
   TEST_FLOATING_EQUALITY( alpha_max, 230.55556113174, 1e-12 );
 }
 
@@ -148,4 +148,4 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAlphaMax )
 //---------------------------------------------------------------------------//
 // end tstKinematicHelpers.cpp
 //---------------------------------------------------------------------------//
- 
+

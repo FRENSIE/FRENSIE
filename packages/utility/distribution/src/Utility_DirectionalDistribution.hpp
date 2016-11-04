@@ -26,7 +26,7 @@ public:
 
   //! Destructor
   virtual ~DirectionalDistribution()
-  { /* ... */ } 
+  { /* ... */ }
 
   //! Evaluate the directional distribution
   virtual double evaluate( const double cartesian_point[3] ) const = 0;
@@ -41,7 +41,7 @@ public:
   virtual DirectionalDistributionType getDistributionType() const = 0;
 
   //! Check if the distribution has the same bounds
-  virtual bool hasSameBounds( 
+  virtual bool hasSameBounds(
 		       const DirectionalDistribution& distribution ) const = 0;
 };
 

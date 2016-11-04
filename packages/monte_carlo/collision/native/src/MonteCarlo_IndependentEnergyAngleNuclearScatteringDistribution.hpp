@@ -33,7 +33,7 @@ class IndependentEnergyAngleNuclearScatteringDistribution : public NuclearScatte
 public:
 
   //! Constructor
-  IndependentEnergyAngleNuclearScatteringDistribution( 
+  IndependentEnergyAngleNuclearScatteringDistribution(
 		     const double atomic_weight_ratio,
 		     const Teuchos::RCP<NuclearScatteringEnergyDistribution>&
 		     energy_scattering_distribution,
@@ -54,9 +54,9 @@ private:
   // The energy scattering distribution
   Teuchos::RCP<NuclearScatteringEnergyDistribution>
   d_energy_scattering_distribution;
-  
+
   // The angular scattering distribution
-  Teuchos::RCP<NuclearScatteringAngularDistribution> 
+  Teuchos::RCP<NuclearScatteringAngularDistribution>
   d_angular_scattering_distribution;
 };
 

@@ -15,7 +15,9 @@
 #include "MonteCarlo_ThompsonScatteringDistribution.hpp"
 #include "MonteCarlo_BasicCoherentScatteringDistribution.hpp"
 #include "MonteCarlo_EfficientCoherentScatteringDistribution.hpp"
+#include "MonteCarlo_StandardFormFactorSquared.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_InverseSquareAngstromUnit.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -27,13 +29,13 @@ void CoherentScatteringDistributionACEFactory::createBasicCoherentDistribution(
 			   coherent_distribution )
 {
   // Create the form factor squared
-  Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
+  std::shared_ptr<const FormFactorSquared> form_factor_squared;
 
-  CoherentScatteringDistributionACEFactory::createFormFactorSquared( 
+  CoherentScatteringDistributionACEFactory::createFormFactorSquared(
 							 raw_photoatom_data,
 							 form_factor_squared );
 
-  coherent_distribution.reset( 
+  coherent_distribution.reset(
 	      new BasicCoherentScatteringDistribution( form_factor_squared ) );
 }
 
@@ -44,22 +46,22 @@ void CoherentScatteringDistributionACEFactory::createEfficientCoherentDistributi
 			   coherent_distribution )
 {
   // Create the form factor squared
-  Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
+  std::shared_ptr<const FormFactorSquared> form_factor_squared;
 
-  CoherentScatteringDistributionACEFactory::createFormFactorSquared( 
+  CoherentScatteringDistributionACEFactory::createFormFactorSquared(
 							 raw_photoatom_data,
 							 form_factor_squared );
-  
-  coherent_distribution.reset( 
+
+  coherent_distribution.reset(
 	  new EfficientCoherentScatteringDistribution( form_factor_squared ) );
 }
 
 // Create the form factor distribution
 void CoherentScatteringDistributionACEFactory::createFormFactorSquared(
-	   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-           Teuchos::RCP<const Utility::TabularOneDDistribution>& form_factor )
+                const Data::XSSEPRDataExtractor& raw_photoatom_data,
+                std::shared_ptr<const FormFactorSquared>& form_factor_squared )
 {
-  Teuchos::ArrayView<const double> jcohe_block = 
+  Teuchos::ArrayView<const double> jcohe_block =
     raw_photoatom_data.extractJCOHEBlock();
 
   unsigned form_factor_size = jcohe_block.size()/3;
@@ -67,21 +69,29 @@ void CoherentScatteringDistributionACEFactory::createFormFactorSquared(
   Teuchos::Array<double> recoil_momentum_squared(
 					  jcohe_block( 0, form_factor_size ) );
 
-  Teuchos::Array<double> form_factor_squared(
+  Teuchos::Array<double> form_factor_squared_values(
 			 jcohe_block( 2*form_factor_size, form_factor_size ) );
 
-  // The stored recoil momentum has units of inverse Angstroms - convert to
-  // inverse cm^2
+  // Square the grid points and the form factor factor values
+  // This operation is non-linear, which means that the grid is no longer
+  // guaranteed to give interpolated values within the convergence tolerance
+  // used to create the grid.
   for( unsigned i = 0; i < form_factor_size; ++i )
   {
-    recoil_momentum_squared[i] *= recoil_momentum_squared[i]*1e16;
-    
-    form_factor_squared[i] *= form_factor_squared[i];
+    recoil_momentum_squared[i] *= recoil_momentum_squared[i];
+
+    form_factor_squared_values[i] *= form_factor_squared_values[i];
   }
 
-  form_factor.reset( new Utility::TabularDistribution<Utility::LinLin>(
-						      recoil_momentum_squared,
-						      form_factor_squared ) );
+  // The stored recoil momentum squared has units of inverse square Angstroms.
+  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareAngstrom,void> > raw_form_factor_squared(
+           new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseSquareAngstrom,void>(
+                                                recoil_momentum_squared,
+                                                form_factor_squared_values ) );
+
+  form_factor_squared.reset(
+         new StandardFormFactorSquared<Utility::Units::InverseSquareAngstrom>(
+                                                   raw_form_factor_squared ) );
 }
 
 } // end MonteCarlo namespace

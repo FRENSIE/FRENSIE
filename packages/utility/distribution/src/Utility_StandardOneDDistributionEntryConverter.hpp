@@ -23,12 +23,16 @@ public:
 
   //! Default constructor
   StandardOneDDistributionEntryConverter();
-  
+
   //! Return the OneDDistribution type name associated with this object
   virtual const std::string getTypeName() const;
 
   //! Return the OneDDistribution represented in the parameter entry
-  virtual Teuchos::RCP<OneDDistribution> getDistribution( 
+  virtual Teuchos::RCP<OneDDistribution> getDistributionRCP(
+	  const Teuchos::RCP<const Teuchos::ParameterEntry>& entry ) const;
+
+  //! Return the OneDDistribution represented in the parameter entry
+  virtual std::shared_ptr<OneDDistribution> getDistributionSharedPtr(
 	  const Teuchos::RCP<const Teuchos::ParameterEntry>& entry ) const;
 
   //! Return the parameter entry corresponding to the OneDDistribution object

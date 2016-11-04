@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 // Return the reactions that are treated as scattering
-const boost::unordered_set<ElectroatomicReactionType>& 
+const boost::unordered_set<ElectroatomicReactionType>&
 Electroatom::getScatteringReactionTypes()
 {
   return ElectroatomCore::scattering_reaction_types;
@@ -88,7 +88,7 @@ double Electroatom::getSurvivalProbability( const double energy ) const
 
   if( total_cross_section > 0.0 )
   {
-    survival_prob = 1.0 - 
+    survival_prob = 1.0 -
       this->getAbsorptionCrossSection( energy )/total_cross_section;
   }
   else
@@ -103,7 +103,7 @@ double Electroatom::getSurvivalProbability( const double energy ) const
 }
 
 // Return the cross section for a specific electroatomic reaction
-double Electroatom::getReactionCrossSection( 
+double Electroatom::getReactionCrossSection(
 			        const double energy,
 			        const ElectroatomicReactionType reaction ) const
 {
@@ -114,7 +114,7 @@ double Electroatom::getReactionCrossSection(
   case TOTAL_ABSORPTION_ELECTROATOMIC_REACTION:
     return this->getAbsorptionCrossSection( energy );
   default:
-    ConstReactionMap::const_iterator electroatomic_reaction = 
+    ConstReactionMap::const_iterator electroatomic_reaction =
       d_core.getScatteringReactions().find( reaction );
 
     if( electroatomic_reaction != d_core.getScatteringReactions().end() )
@@ -135,20 +135,20 @@ double Electroatom::getReactionCrossSection(
 }
 
 // Collide with a electron
-void Electroatom::collideAnalogue( ElectronState& electron, 
+void Electroatom::collideAnalogue( ElectronState& electron,
                                    ParticleBank& bank ) const
 {
-  double total_cross_section = 
+  double total_cross_section =
     this->getTotalCrossSection( electron.getEnergy() );
 
-  double scaled_random_number = 
+  double scaled_random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
       total_cross_section;
 
-  double absorption_cross_section = 
+  double absorption_cross_section =
     this->getAbsorptionCrossSection( electron.getEnergy() );
 
-  // Check if absorption occurs 
+  // Check if absorption occurs
   if( scaled_random_number < absorption_cross_section )
   {
     sampleAbsorptionReaction( scaled_random_number, electron, bank );
@@ -159,23 +159,23 @@ void Electroatom::collideAnalogue( ElectronState& electron,
   else
   {
     sampleScatteringReaction( scaled_random_number - absorption_cross_section,
-                              electron, 
+                              electron,
                               bank );
   }
 }
 
 // Collide with a electron and survival bias
-void Electroatom::collideSurvivalBias( ElectronState& electron, 
+void Electroatom::collideSurvivalBias( ElectronState& electron,
                                        ParticleBank& bank ) const
 {
-  double total_cross_section = 
+  double total_cross_section =
     this->getTotalCrossSection( electron.getEnergy() );
-  
+
   double scattering_cross_section = total_cross_section -
     this->getAbsorptionCrossSection( electron.getEnergy() );
 
   double survival_prob = scattering_cross_section/total_cross_section;
- 
+
   sampleScatteringReaction(
 	 	     Utility::RandomNumberGenerator::getRandomNumber<double>()*
 		     scattering_cross_section,
@@ -190,7 +190,7 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
 
       // Create a copy of the electron for sampling the absorption reaction
       ElectronState electron_copy( electron, false, false );
-    
+
       electron.multiplyWeight( survival_prob );
 
       sampleScatteringReaction(
@@ -198,7 +198,7 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
 		     scattering_cross_section,
 		     electron,
 		     bank );
- 
+
       electron_copy.multiplyWeight( 1.0 - survival_prob );
 
       sampleAbsorptionReaction(
@@ -222,7 +222,7 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
 
   double partial_cross_section = 0.0;
 
-  ConstReactionMap::const_iterator electroatomic_reaction = 
+  ConstReactionMap::const_iterator electroatomic_reaction =
     d_core.getAbsorptionReactions().begin();
 
   while( electroatomic_reaction != d_core.getAbsorptionReactions().end() )
@@ -236,10 +236,10 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
     ++electroatomic_reaction;
   }
 
-  // Note: the absorption cross section is calculated at run time. However, 
-  // it's possible that roundoff from interpolation can cause a small 
-  // difference between the calculated absorption cross section and 
-  // the sum of the stored cross sections. This test ensures that a valid 
+  // Note: the absorption cross section is calculated at run time. However,
+  // it's possible that roundoff from interpolation can cause a small
+  // difference between the calculated absorption cross section and
+  // the sum of the stored cross sections. This test ensures that a valid
   // reaction is always sampled.
   if( electroatomic_reaction == d_core.getAbsorptionReactions().end() )
   {
@@ -250,12 +250,12 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
   }
 
   // Make sure a reaction was selected
-  testPostcondition( electroatomic_reaction != 
+  testPostcondition( electroatomic_reaction !=
                        d_core.getAbsorptionReactions().end() );
 
   // Undergo reaction selected
-  SubshellType subshell_vacancy;
-  
+  Data::SubshellType subshell_vacancy;
+
   electroatomic_reaction->second->react( electron, bank, subshell_vacancy );
 
   // Relax the atom
@@ -270,10 +270,10 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
                                             ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
-  
-  ConstReactionMap::const_iterator electroatomic_reaction = 
+
+  ConstReactionMap::const_iterator electroatomic_reaction =
     d_core.getScatteringReactions().begin();
-  
+
   while( electroatomic_reaction != d_core.getScatteringReactions().end() )
   {
     partial_cross_section +=
@@ -285,10 +285,10 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
     ++electroatomic_reaction;
   }
 
-  // Note: the total cross section is calculated at run time. However, 
-  // it's possible that roundoff from interpolation can cause a small 
-  // difference between the calculated total cross section and 
-  // the sum of the stored cross sections. This test ensures that a valid 
+  // Note: the total cross section is calculated at run time. However,
+  // it's possible that roundoff from interpolation can cause a small
+  // difference between the calculated total cross section and
+  // the sum of the stored cross sections. This test ensures that a valid
   // reaction is always sampled.
   if( electroatomic_reaction == d_core.getScatteringReactions().end() )
   {
@@ -299,12 +299,12 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
   }
 
   // Make sure the reaction was found
-  testPostcondition( electroatomic_reaction != 
+  testPostcondition( electroatomic_reaction !=
                      d_core.getScatteringReactions().end() );
 
   // Undergo reaction selected
-  SubshellType subshell_vacancy;
-  
+  Data::SubshellType subshell_vacancy;
+
   electroatomic_reaction->second->react( electron, bank, subshell_vacancy );
 
   // Relax the atom

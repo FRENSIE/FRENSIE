@@ -15,7 +15,7 @@
 
 namespace MonteCarlo{
 
-// Basic constructor 
+// Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::SubshellIncoherentPhotoatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -37,8 +37,8 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the scattering distribution is valid
@@ -48,7 +48,7 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
 				    d_scattering_distribution->getSubshell() );
 }
 
-// Constructor 
+// Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::SubshellIncoherentPhotoatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -72,8 +72,8 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the scattering distribution is valid
@@ -87,7 +87,18 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
 
 // Return the number of photons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( 
+unsigned SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons(
+						    const double energy ) const
+{
+  if( energy >= this->getThresholdEnergy() )
+    return 1u;
+  else
+    return 0u;
+}
+
+// Return the number of electrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons(
 						    const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() )
@@ -105,10 +116,10 @@ PhotoatomicReactionType SubshellIncoherentPhotoatomicReaction<InterpPolicy,proce
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     PhotonState& photon, 
+void SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution->scatterPhoton(photon, bank, shell_of_interaction);
 
@@ -117,7 +128,7 @@ void SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>
 
 // Get the interaction subshell (non-standard interface)
 template<typename InterpPolicy, bool processed_cross_section>
-inline SubshellType SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getSubshell() const
+inline Data::SubshellType SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getSubshell() const
 {
   return d_scattering_distribution->getSubshell();
 }
@@ -126,7 +137,7 @@ inline SubshellType SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed
 template<typename InterpPolicy, bool processed_cross_section>
 inline double SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getSubshellBindingEnergy() const
 {
-  return d_scattering_distribution->getBindingEnergy();
+  return d_scattering_distribution->getSubshellBindingEnergy();
 }
 
 } // end MonteCarlo namespace

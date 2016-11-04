@@ -1,11 +1,11 @@
           Code Name & Version = MCNP, 6.1.1b
-  
+
      _/      _/        _/_/_/       _/      _/       _/_/_/         _/_/_/
-    _/_/  _/_/      _/             _/_/    _/       _/    _/     _/       
-   _/  _/  _/      _/             _/  _/  _/       _/_/_/       _/_/_/    
-  _/      _/      _/             _/    _/_/       _/           _/    _/   
- _/      _/        _/_/_/       _/      _/       _/             _/_/      
-  
+    _/_/  _/_/      _/             _/_/    _/       _/    _/     _/
+   _/  _/  _/      _/             _/  _/  _/       _/_/_/       _/_/_/
+  _/      _/      _/             _/    _/_/       _/           _/    _/
+ _/      _/        _/_/_/       _/      _/       _/             _/_/
+
   +---------------------------------------------------------------------+
   | Copyright 2008. Los Alamos National Security, LLC.  All rights      |
   | reserved.                                                           |
@@ -29,40 +29,40 @@
   | OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT INFRINGE |
   | PRIVATELY OWNED RIGHTS.                                             |
   +---------------------------------------------------------------------+
-  
-1mcnp     version 6     ld=06/19/14                     08/26/15 18:33:27 
- *************************************************************************                 probid =  08/26/15 18:33:27 
- n=HydrogenSphereTemp2500_MCNP.i                                                 
 
- 
+1mcnp     version 6     ld=06/19/14                     08/26/15 18:33:27
+ *************************************************************************                 probid =  08/26/15 18:33:27
+ n=HydrogenSphereTemp2500_MCNP.i
+
+
   warning.  Physics models disabled.
-         1-       1 MeV neutrons in a sphere of hydrogen at T = 2500 K                            
-         2-       100   1    1.0       -10         tmp=2.1543E-07     imp:n=1                     
-         3-       999   0              +10                            imp:n=0                     
-         4-                                                                                       
-         5-       10   so    1.0                                                                  
-         6-                                                                                       
-         7-       nps    1e6                                                                      
-         8-       sdef   pos = 0 0 0   erg = 1.000001                                             
-         9-       c                                                                               
-        10-       m1     1001.74c   1.0                                                           
-        11-       c                                                                               
-        12-       c      neutron capture rate                                                     
-        13-       f4:n   100                                                                      
-        14-       c                                                                               
-        15-       e0     1e-11  109ilog  1.0                                                      
-        16-       c                                                                               
-        17-       prdmp  j  1e7  1  1                                                             
-        18-                                                                                       
- 
+         1-       1 MeV neutrons in a sphere of hydrogen at T = 2500 K
+         2-       100   1    1.0       -10         tmp=2.1543E-07     imp:n=1
+         3-       999   0              +10                            imp:n=0
+         4-
+         5-       10   so    1.0
+         6-
+         7-       nps    1e6
+         8-       sdef   pos = 0 0 0   erg = 1.000001
+         9-       c
+        10-       m1     1001.74c   1.0
+        11-       c
+        12-       c      neutron capture rate
+        13-       f4:n   100
+        14-       c
+        15-       e0     1e-11  109ilog  1.0
+        16-       c
+        17-       prdmp  j  1e7  1  1
+        18-
+
   comment.  total nubar used if fissionable isotopes are present.
 1cells                                                                                                  print table 60
 
-                               atom        gram                                            neutron                                     
-              cell      mat   density     density     volume       mass            pieces importance                                   
+                               atom        gram                                            neutron
+              cell      mat   density     density     volume       mass            pieces importance
 
-        1      100        1  1.00000E+00 1.67356E+00 4.18879E+00 7.01019E+00           1  1.0000E+00                                   
-        2      999        0  0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00           0  0.0000E+00                                   
+        1      100        1  1.00000E+00 1.67356E+00 4.18879E+00 7.01019E+00           1  1.0000E+00
+        2      999        0  0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00           0  0.0000E+00
 
  total                                               4.18879E+00 7.01019E+00
 
@@ -84,11 +84,11 @@
 
      table    length
 
-                        tables from file xdata/endf70a                                                   
+                        tables from file xdata/endf70a
 
    1001.74c    3652   1-H -  1 at 2500K  from endf/b-vii.0 njoy99.248                             mat 125      03/27/08
                      Energy range:   1.00000E-11  to  2.00000E+01 MeV.
-                     particle-production data for deuterons being expunged from   1001.74c          
+                     particle-production data for deuterons being expunged from   1001.74c
 
   total        3652
 
@@ -99,7 +99,7 @@
    particle type         energy        energy        maximum       maximum       below         above
 
     1  n    neutron     0.0000E+00    1.0000E+36    2.0000E+01    2.0000E+01    1.0000E+36    1.0000E+36
- 
+
   comment.  setting up hash-based fast table search for xsec tables
 
  ------------------------------------------------------------------------------------------
@@ -117,39 +117,39 @@
 
  ***********************************************************************************************************************
 
- dump no.    1 on file HydrogenSphereTemp2500_MCNP.ir     nps =           0     coll =              0     ctm =       
+ dump no.    1 on file HydrogenSphereTemp2500_MCNP.ir     nps =           0     coll =              0     ctm =
  0.00   nrn =                 0
 
           1 warning message so far.
- warning.  tally not scored beyond last energy bin.                    
- nps =           1     nrn =                   3 tal =    4     erg = 1.0000E+00      
-1problem summary                                                                                                           
+ warning.  tally not scored beyond last energy bin.
+ nps =           1     nrn =                   3 tal =    4     erg = 1.0000E+00
+1problem summary
 
       run terminated when     1000000  particle histories were done.
-+                                                                                                    08/26/15 18:35:54 
-      1 MeV neutrons in a sphere of hydrogen at T = 2500 K                                 probid =  08/26/15 18:33:27 
++                                                                                                    08/26/15 18:35:54
+      1 MeV neutrons in a sphere of hydrogen at T = 2500 K                                 probid =  08/26/15 18:33:27
 
  neutron creation    tracks      weight        energy            neutron loss        tracks      weight        energy
                                  (per source particle)                                           (per source particle)
 
  source             1000000    1.0000E+00    1.0000E+00          escape              957001    6.8755E-01    5.4280E-02
- nucl. interaction        0    0.            0.                  energy cutoff            0    0.            0.        
- particle decay           0    0.            0.                  time cutoff              0    0.            0.        
- weight window            0    0.            0.                  weight window            0    0.            0.        
- cell importance          0    0.            0.                  cell importance          0    0.            0.        
+ nucl. interaction        0    0.            0.                  energy cutoff            0    0.            0.
+ particle decay           0    0.            0.                  time cutoff              0    0.            0.
+ weight window            0    0.            0.                  weight window            0    0.            0.
+ cell importance          0    0.            0.                  cell importance          0    0.            0.
  weight cutoff            0    1.0767E-02    3.4625E-09          weight cutoff        42999    1.0730E-02    3.4320E-09
- e or t importance        0    0.            0.                  e or t importance        0    0.            0.        
- dxtran                   0    0.            0.                  dxtran                   0    0.            0.        
- forced collisions        0    0.            0.                  forced collisions        0    0.            0.        
- exp. transform           0    0.            0.                  exp. transform           0    0.            0.        
+ e or t importance        0    0.            0.                  e or t importance        0    0.            0.
+ dxtran                   0    0.            0.                  dxtran                   0    0.            0.
+ forced collisions        0    0.            0.                  forced collisions        0    0.            0.
+ exp. transform           0    0.            0.                  exp. transform           0    0.            0.
  upscattering             0    0.            9.5439E-06          downscattering           0    0.            9.4572E-01
  photonuclear             0    0.            0.                  capture                  0    3.1249E-01    1.4619E-05
- (n,xn)                   0    0.            0.                  loss to (n,xn)           0    0.            0.        
- prompt fission           0    0.            0.                  loss to fission          0    0.            0.        
- delayed fission          0    0.            0.                  nucl. interaction        0    0.            0.        
- prompt photofis          0    0.            0.                  particle decay           0    0.            0.        
- tabular boundary         0    0.            0.                  tabular boundary         0    0.            0.        
- tabular sampling         0    0.            0.                  elastic scatter          0    0.            0.        
+ (n,xn)                   0    0.            0.                  loss to (n,xn)           0    0.            0.
+ prompt fission           0    0.            0.                  loss to fission          0    0.            0.
+ delayed fission          0    0.            0.                  nucl. interaction        0    0.            0.
+ prompt photofis          0    0.            0.                  particle decay           0    0.            0.
+ tabular boundary         0    0.            0.                  tabular boundary         0    0.            0.
+ tabular sampling         0    0.            0.                  elastic scatter          0    0.            0.
      total          1000000    1.0108E+00    1.0000E+00              total          1000000    1.0108E+00    1.0000E+00
 
    number of neutrons banked                       0        average time of (shakes)              cutoffs
@@ -175,15 +175,15 @@
            total       1000000      1000000    145929814    1.0181E+02
 
 1tally        4        nps =     1000000
-           tally type 4    track length estimate of particle flux.      units   1/cm**2        
-           particle(s): neutrons 
+           tally type 4    track length estimate of particle flux.      units   1/cm**2
+           particle(s): neutrons
 
-           volumes 
-                   cell:      100                                                                                  
+           volumes
+                   cell:      100
                          4.18879E+00
- 
- cell  100                                                                                                                             
-      energy   
+
+ cell  100
+      energy
     1.0000E-11   7.64010E-10 0.3149
     1.2589E-11   3.74023E-12 1.0000
     1.5849E-11   1.09090E-09 0.4177
@@ -352,7 +352,7 @@
 1    some tally scores were not made for various reasons:
 
                                   beyond last bin     not in
-                   tally       user  segment   mult   angle   energy   time             
+                   tally       user  segment   mult   angle   energy   time
                       4          0       0       0       0 1000001       0
 
 1status of the statistical checks used to form confidence intervals for the mean for each tally bin
@@ -360,14 +360,14 @@
 
  tally   result of statistical checks for the tfc bin (the first check not passed is listed) and error magnitude check for all bins
 
-        4   passed the 10 statistical checks for the tally fluctuation chart bin result               
+        4   passed the 10 statistical checks for the tally fluctuation chart bin result
          missed all bin error check:   112 tally bins had     0 bins with zeros and    11 bins with relative errors exceeding 0.10
 
 
  the 10 statistical checks are only for the tally fluctuation chart bin and do not apply to other tally bins.
 
  warning.       1 of the     1 tallies had bins with relative errors greater than recommended.
-1tally fluctuation charts                              
+1tally fluctuation charts
 
                             tally        4
           nps      mean     error   vov  slope    fom
@@ -390,7 +390,7 @@
 
  ***********************************************************************************************************************
 
- dump no.    2 on file HydrogenSphereTemp2500_MCNP.ir     nps =     1000000     coll =      145929814     ctm =       
+ dump no.    2 on file HydrogenSphereTemp2500_MCNP.ir     nps =     1000000     coll =      145929814     ctm =
  2.45   nrn =        2358307791
  tally data written to file HydrogenSphereTemp2500_MCNP.im
 
@@ -401,4 +401,4 @@
 
  computer time =    2.46 minutes
 
- mcnp     version 6     06/19/14                     08/26/15 18:35:54                     probid =  08/26/15 18:33:27 
+ mcnp     version 6     06/19/14                     08/26/15 18:35:54                     probid =  08/26/15 18:33:27

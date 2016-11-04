@@ -28,7 +28,7 @@ PhotonState::PhotonState(const ParticleState::historyNumberType history_number)
 PhotonState::PhotonState( const ParticleState& existing_base_state,
 			  const bool increment_generation_number,
 			  const bool reset_collision_number )
-  : MasslessParticleState( existing_base_state, 
+  : MasslessParticleState( existing_base_state,
 			   PHOTON,
 			   increment_generation_number,
 			   reset_collision_number )
@@ -38,7 +38,7 @@ PhotonState::PhotonState( const ParticleState& existing_base_state,
 PhotonState::PhotonState( const PhotonState& existing_base_state,
 			  const bool increment_generation_number,
 			  const bool reset_collision_number )
-  : MasslessParticleState( existing_base_state, 
+  : MasslessParticleState( existing_base_state,
 			   PHOTON,
 			   increment_generation_number,
 			   reset_collision_number )
@@ -54,7 +54,7 @@ PhotonState* PhotonState::clone() const
 void PhotonState::print( std::ostream& os ) const
 {
   os << "Particle Type: Photon" << std::endl;
-  
+
   this->printImplementation<PhotonState>( os );
 }
 

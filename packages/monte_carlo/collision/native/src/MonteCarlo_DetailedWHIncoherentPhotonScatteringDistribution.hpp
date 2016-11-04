@@ -17,12 +17,13 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
 
 namespace MonteCarlo{
 
 /*! The detailed Waller-Hartree incoherent photon scattering distribution class
- * \details This class will sample an interaction subshell for atomic 
- * relaxation eventhough the Waller-Hartree model doesn't directly provide
+ * \details This class will sample an interaction subshell for atomic
+ * relaxation even though the Waller-Hartree model doesn't directly provide
  * that information. The subshell occupancies are used instead of the
  * more accurate subshell incoherent cross sections.
  */
@@ -33,10 +34,10 @@ public:
 
   //! Constructor
   DetailedWHIncoherentPhotonScatteringDistribution(
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const Teuchos::Array<double>& subshell_occupancies,
-      const Teuchos::Array<SubshellType>& subshell_order,
-      const double kahn_sampling_cutoff_energy = 3.0 );
+	  const std::shared_ptr<const ScatteringFunction>& scattering_function,
+	  const Teuchos::Array<double>& subshell_occupancies,
+	  const Teuchos::Array<Data::SubshellType>& subshell_order,
+	  const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
   ~DetailedWHIncoherentPhotonScatteringDistribution()
@@ -45,19 +46,19 @@ public:
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const;
+		      Data::SubshellType& shell_of_interaction ) const;
 
 private:
 
   //! Sample the subshell that is interacted with
-  void sampleInteractionSubshell( SubshellType& shell_of_interaction ) const;
+  void sampleInteractionSubshell( Data::SubshellType& shell_of_interaction ) const;
 
   // The shell interaction probabilities
   boost::scoped_ptr<const Utility::TabularOneDDistribution>
   d_subshell_occupancy_distribution;
 
   // The subshell ordering
-  Teuchos::Array<SubshellType> d_subshell_order;
+  Teuchos::Array<Data::SubshellType> d_subshell_order;
 };
 
 } // end MonteCarlo namespace

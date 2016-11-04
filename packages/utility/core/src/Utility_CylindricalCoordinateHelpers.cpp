@@ -33,7 +33,7 @@ void convertCylindricalCoordsToCartesian( const double cylindrical_point[3],
 
   double cos_theta = cos( cylindrical_point[1] );
   double sin_theta = sin( cylindrical_point[1] );
-  
+
   switch( axis )
   {
   case Z_AXIS:
@@ -41,13 +41,13 @@ void convertCylindricalCoordsToCartesian( const double cylindrical_point[3],
     cartesian_point[1] = cylindrical_point[0]*sin_theta;
     cartesian_point[2] = cylindrical_point[2];
     break;
-    
+
   case Y_AXIS:
     cartesian_point[0] = cylindrical_point[0]*sin_theta;
     cartesian_point[1] = cylindrical_point[2];
     cartesian_point[2] = cylindrical_point[0]*cos_theta;
     break;
-    
+
   case X_AXIS:
     cartesian_point[0] = cylindrical_point[2];
     cartesian_point[1] = cylindrical_point[0]*cos_theta;
@@ -83,7 +83,7 @@ void convertCartesianCoordsToCylindrical( const double cartesian_point[3],
   double x_distance = (cartesian_point[0] - origin[0]);
   double y_distance = (cartesian_point[1] - origin[1]);
   double z_distance = (cartesian_point[2] - origin[2]);
-  
+
   switch( axis )
   {
   case Z_AXIS:
@@ -126,7 +126,7 @@ void convertCartesianCoordsToCylindrical( const double cartesian_point[3],
   testPostcondition( !ST::isnaninf( cylindrical_point[2] ) );
   testPostcondition( cylindrical_point[0] >= 0.0 );
   testPostcondition( cylindrical_point[1] >= 0.0 );
-  testPostcondition( cylindrical_point[1] <= 2*PhysicalConstants::pi );  
+  testPostcondition( cylindrical_point[1] <= 2*PhysicalConstants::pi );
 }
 
 } // end Utility namespace

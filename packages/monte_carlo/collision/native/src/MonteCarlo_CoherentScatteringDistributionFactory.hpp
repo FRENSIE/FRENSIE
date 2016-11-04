@@ -29,9 +29,9 @@ public:
 			    coherent_distribution );
 
 private:
-  
+
   // The default Thompson distribution
-  static Teuchos::RCP<const CoherentScatteringDistribution> 
+  static Teuchos::RCP<const CoherentScatteringDistribution>
   s_thompson_distribution;
 };
 

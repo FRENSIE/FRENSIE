@@ -49,7 +49,7 @@ void DelayedNeutronEmissionDistributionACEFactory::createEmissionDistribution(
 }
 
 // Return the precursor group decay constants
-const Teuchos::Array<double>& 
+const Teuchos::Array<double>&
 DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupDecayConsts() const
 {
   return d_precursor_group_decay_consts;
@@ -70,7 +70,7 @@ DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupEmissionDists() c
 }
 
 // Initialize basic delayed neutron data
-void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutronData( 
+void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutronData(
 			    const std::string& table_name,
 			    const Teuchos::ArrayView<const double>& bdd_block )
 {
@@ -78,7 +78,7 @@ void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutron
   Teuchos::ArrayView<const double> precursor_prob_values;
   double group_decay_const;
   unsigned number_of_interp_regions, number_of_energies;
-  
+
   unsigned bdd_loc = 0u;
 
   while( bdd_loc < bdd_block.size() )
@@ -86,7 +86,7 @@ void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutron
     // Extract the group decay constant
     group_decay_const = bdd_block[bdd_loc];
 
-    // The group decay constants have units of inverse shakes in ACE files - 
+    // The group decay constants have units of inverse shakes in ACE files -
     // convert to units of inverse seconds
     group_decay_const *= 1e8;
 
@@ -104,34 +104,34 @@ void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutron
 			"is not currently supported!" );
 
     ++bdd_loc;
-    
+
     // Extract the number of energies
     number_of_energies = static_cast<unsigned>( bdd_block[bdd_loc] );
 
     ++bdd_loc;
-    
+
     // Extract the energy grid
     precursor_prob_energy_grid = bdd_block( bdd_loc, number_of_energies );
-    
+
     bdd_loc += number_of_energies;
 
     // Extract the probabilities
     precursor_prob_values = bdd_block( bdd_loc, number_of_energies );
 
     bdd_loc += number_of_energies;
-    
+
     // Create the group probability distribution
     Teuchos::RCP<Utility::OneDDistribution> group_prob_dist(
-	               new Utility::TabularDistribution<Utility::LinLin>( 
+	               new Utility::TabularDistribution<Utility::LinLin>(
 						    precursor_prob_energy_grid,
 						    precursor_prob_values ) );
-    
+
     d_precursor_group_prob_distributions.push_back( group_prob_dist );
   }
 }
 
 // Initialize the emission distributions
-void 
+void
 DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
@@ -139,7 +139,7 @@ DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 			   const Teuchos::ArrayView<const double>& dned_block )
 {
   // Create the default (isotropic in lab system)
-  Teuchos::RCP<NuclearScatteringAngularDistribution> 
+  Teuchos::RCP<NuclearScatteringAngularDistribution>
     default_angular_distribution;
 
   NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution(
@@ -152,33 +152,33 @@ DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
   calculateDistArraySizes( dnedl_block, dned_block, energy_dist_array_sizes );
 
   unsigned dist_index, ace_law;
-  
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
+
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >
     emission_distribution;
   Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_distribution;
-  
+
   for( unsigned i = 0u; i < dnedl_block.size(); ++i )
   {
     dist_index = static_cast<unsigned>( dnedl_block[i] ) - 1u;
-    
-    energy_dist_array = dned_block( dist_index, 
+
+    energy_dist_array = dned_block( dist_index,
 				    energy_dist_array_sizes[i] );
-    
+
     ace_law = static_cast<unsigned>( energy_dist_array[1] );
 
     if( ace_law != 44 )
     {
-      NuclearScatteringEnergyDistributionACEFactory::createDistribution( 
+      NuclearScatteringEnergyDistributionACEFactory::createDistribution(
 						     energy_dist_array,
 						     dist_index,
 						     table_name,
 						     N__TOTAL_FISSION_REACTION,
 						     energy_distribution );
 
-      emission_distribution.reset( 
+      emission_distribution.reset(
 	new IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,
 	                                                        NeutronState,
-	                                                        LabSystemConversionPolicy>( 
+	                                                        LabSystemConversionPolicy>(
 					      atomic_weight_ratio,
 					      energy_distribution,
 					      default_angular_distribution ) );

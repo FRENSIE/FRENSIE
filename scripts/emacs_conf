@@ -1,5 +1,7 @@
 ;; prevent emacs from adding a newline character at end of file
 (setq next-line-add-newlines nil)
+;; use spaces instead of tabs
+(setq-default indent-tabs-mode nil)
 ;; set the default column width
 (setq-default fill-column 79)
 ;; shown the column-number

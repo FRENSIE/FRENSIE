@@ -27,7 +27,7 @@ StandardOneDDistributionEntryConverter<Distribution>::StandardOneDDistributionEn
 
 // Return the OneDDistribution type name associated with this object
 template<typename Distribution>
-const std::string 
+const std::string
 StandardOneDDistributionEntryConverter<Distribution>::getTypeName() const
 {
   return Teuchos::TypeNameTraits<Distribution>::name();
@@ -35,20 +35,33 @@ StandardOneDDistributionEntryConverter<Distribution>::getTypeName() const
 
 // Return the OneDDistribution represented in the parameter entry
 template<typename Distribution>
-Teuchos::RCP<OneDDistribution> 
-StandardOneDDistributionEntryConverter<Distribution>::getDistribution( 
+Teuchos::RCP<OneDDistribution>
+StandardOneDDistributionEntryConverter<Distribution>::getDistributionRCP(
 	       const Teuchos::RCP<const Teuchos::ParameterEntry>& entry ) const
 {
   // Make sure the entry is valid
   testPrecondition( entry->getAny().typeName() == getTypeName() );
-  
-  return Teuchos::RCP<OneDDistribution>( new Distribution( 
+
+  return Teuchos::RCP<OneDDistribution>( new Distribution(
+				  Teuchos::getValue<Distribution>( entry ) ) );
+}
+
+// Return the OneDDistribution represented in the parameter entry
+template<typename Distribution>
+std::shared_ptr<OneDDistribution>
+StandardOneDDistributionEntryConverter<Distribution>::getDistributionSharedPtr(
+	       const Teuchos::RCP<const Teuchos::ParameterEntry>& entry ) const
+{
+  // Make sure the entry is valid
+  testPrecondition( entry->getAny().typeName() == getTypeName() );
+
+  return std::shared_ptr<OneDDistribution>( new Distribution(
 				  Teuchos::getValue<Distribution>( entry ) ) );
 }
 
 // Return the parameter entry corresponding to the OneDDistribution object
 template<typename Distribution>
-Teuchos::RCP<Teuchos::ParameterEntry> 
+Teuchos::RCP<Teuchos::ParameterEntry>
 StandardOneDDistributionEntryConverter<Distribution>::getParameterEntry(
 		     const Teuchos::RCP<OneDDistribution>& distribution ) const
 {

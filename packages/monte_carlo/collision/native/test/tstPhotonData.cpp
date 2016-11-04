@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "PhotonData.hpp"
 #include "DefaultParameterValues.hpp"
-#include "FACEMC_UnitTestHarnessExtensions.hpp"
+#include "FRENSIE_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info.
@@ -31,13 +31,13 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the PhotonData class with only basic physics turn on can be 
+// Check that the PhotonData class with only basic physics turn on can be
 // constructed correctly
 TEUCHOS_UNIT_TEST( PhotonData, basic_physics_constructor_test )
 {
   // The constructor will throw an exception and exit if an error occurs,
   // therefore no tesing macros are needed.
-  FACEMC::PhotonData<false,false> photon_data( ATOMIC_NUMBER,
+  FRENSIE::PhotonData<false,false> photon_data( ATOMIC_NUMBER,
 					       ENERGY_MIN,
 					       ENERGY_MAX );
 
@@ -46,32 +46,32 @@ TEUCHOS_UNIT_TEST( PhotonData, basic_physics_constructor_test )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonData class with fluorescence physics turned on can be 
+// Check that the PhotonData class with fluorescence physics turned on can be
 // constructed correctly
 TEUCHOS_UNIT_TEST( PhotonData, fluorescence_physics_constructor_test )
 {
   // The constructor will throw an exception and exit if an error occurs,
   // therefore no tesing macros are needed.
-  FACEMC::PhotonData<true,false> photon_data( ATOMIC_NUMBER,
+  FRENSIE::PhotonData<true,false> photon_data( ATOMIC_NUMBER,
 					      ENERGY_MIN,
 					      ENERGY_MAX );
 
    unsigned int atomic_number = photon_data.getAtomicNumber();
    TEST_EQUALITY_CONST( atomic_number, ATOMIC_NUMBER );
 
-   double rad_trans_prob = 
+   double rad_trans_prob =
      photon_data.getShellRadiativeTransitionProbability( SHELL );
    TEST_EQUALITY_CONST( rad_trans_prob, RAD_TRANS_PROB_REF );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonData class with doppler physics turned on can be 
+// Check that the PhotonData class with doppler physics turned on can be
 // constructed correctly
 TEUCHOS_UNIT_TEST( PhotonData, doppler_physics_constructor_test )
 {
   // The constructor will throw an exception and exit if an error occurs,
   // therefore no tesing macros are needed.
-  FACEMC::PhotonData<false,true> photon_data( ATOMIC_NUMBER,
+  FRENSIE::PhotonData<false,true> photon_data( ATOMIC_NUMBER,
 					      ENERGY_MIN,
 					      ENERGY_MAX );
 
@@ -83,20 +83,20 @@ TEUCHOS_UNIT_TEST( PhotonData, doppler_physics_constructor_test )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonData class with all physics turned on can be 
+// Check that the PhotonData class with all physics turned on can be
 // constructed correctly
 TEUCHOS_UNIT_TEST( PhotonData, all_physics_constructor_test )
 {
   // The constructor will throw an exception and exit if an error occurs,
   // therefore no tesing macros are needed.
-  FACEMC::PhotonData<true,true> photon_data( ATOMIC_NUMBER,
+  FRENSIE::PhotonData<true,true> photon_data( ATOMIC_NUMBER,
 					     ENERGY_MIN,
 					     ENERGY_MAX );
 
   unsigned int atomic_number = photon_data.getAtomicNumber();
   TEST_EQUALITY_CONST( atomic_number, ATOMIC_NUMBER );
 
-  double rad_trans_prob = 
+  double rad_trans_prob =
      photon_data.getShellRadiativeTransitionProbability( SHELL );
    TEST_EQUALITY_CONST( rad_trans_prob, RAD_TRANS_PROB_REF );
 

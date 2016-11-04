@@ -45,7 +45,7 @@ Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 Teuchos::RCP<Utility::OneDDistribution> distribution(
 				 new Utility::NormalDistribution( 0.0, 1.0 ) );
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 0.5*si::mole, 0.0*si::meter, 0.01*si::meter, -Utility::QuantityTraits<quantity<si::length> >::inf() ) );
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 0.0*si::meter, 0.01*si::meter, 0.5*si::mole, -Utility::QuantityTraits<quantity<si::length> >::inf(), Utility::QuantityTraits<quantity<si::length> >::inf() ) );
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST( NormalDistribution, evaluate )
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, evaluate )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*cgs::centimeter ), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*cgs::centimeter ),
 		       0.5*si::mole );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*cgs::centimeter ),
 		       0.5*exp( -4.0/2.0 )*si::mole );
@@ -76,7 +76,7 @@ TEUCHOS_UNIT_TEST( NormalDistribution, evaluatePDF )
 {
   double center_value = 1.0/sqrt( 2.0*Utility::PhysicalConstants::pi );
   double off_center_value = center_value*exp( -4.0/2.0 );
-  
+
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), center_value);
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), off_center_value );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( -2.0 ), off_center_value );
@@ -146,23 +146,23 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sample_static )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  quantity<cgs::length> sample = 
-    Utility::UnitAwareNormalDistribution<cgs::length>::sample( 
+  quantity<cgs::length> sample =
+    Utility::UnitAwareNormalDistribution<cgs::length>::sample(
 				    0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
-  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sample( 
+  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sample(
 				    0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
-  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sample( 
+  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sample(
 				    0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -189,17 +189,17 @@ TEUCHOS_UNIT_TEST( NormalDistribution, sampleAndRecordTrials_static )
 
   unsigned trials = 0;
 
-  double sample = Utility::NormalDistribution::sampleAndRecordTrials( 
+  double sample = Utility::NormalDistribution::sampleAndRecordTrials(
 							    trials, 0.0, 1.0 );
   TEST_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
-  sample = Utility::NormalDistribution::sampleAndRecordTrials( 
+  sample = Utility::NormalDistribution::sampleAndRecordTrials(
 							    trials, 0.0, 1.0 );
   TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
-  sample = Utility::NormalDistribution::sampleAndRecordTrials( 
+  sample = Utility::NormalDistribution::sampleAndRecordTrials(
 							    trials, 0.0, 1.0 );
   TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
   TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
@@ -228,25 +228,25 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials_static )
 
   unsigned trials = 0;
 
-  quantity<cgs::length> sample = 
-    Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials( 
+  quantity<cgs::length> sample =
+    Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials(
 			    trials, 0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  0.69314718055995*cgs::centimeter,
 				  1e-14 );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
-  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials( 
+  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials(
 			    trials, 0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
-  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials( 
+  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials(
 			    trials, 0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
   TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
 
@@ -304,18 +304,18 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sample )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<cgs::length> sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -378,22 +378,22 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials )
 
   unsigned trials = 0;
 
-  quantity<cgs::length> sample = 
+  quantity<cgs::length> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  0.69314718055995*cgs::centimeter,
 				  1e-14 );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  UTILITY_TEST_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
   TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
 
@@ -410,7 +410,7 @@ TEUCHOS_UNIT_TEST( NormalDistribution, getUpperBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, getUpperBoundOfIndepVar )
 {
@@ -428,7 +428,7 @@ TEUCHOS_UNIT_TEST( NormalDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the unit-aware distribution independent 
+// Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, getLowerBoundOfIndepVar )
 {
@@ -481,26 +481,69 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, isContinuous )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the distribution is compatible with the interpolation type
+TEUCHOS_UNIT_TEST( NormalDistribution, isCompatibleWithInterpType )
+{
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Utility::NormalDistribution test_dist( 10.0, 1.0, 1.0, 19.0 );
+
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is compatible with the interp type
+TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, isCompatibleWithInterpType )
+{
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Utility::UnitAwareNormalDistribution<cgs::length,si::amount>
+    test_dist( 10.0*si::meter,
+               1.0*si::meter,
+               1.0*si::mole,
+               1.0*si::meter,
+               19.0*si::meter );
+
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist.isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file
 TEUCHOS_UNIT_TEST( NormalDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::NormalDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Utility::NormalDistribution>( distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Utility::NormalDistribution>( "test distribution", 
+
+  parameter_list.set<Utility::NormalDistribution>( "test distribution",
 						     *true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"normal_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "normal_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<Utility::NormalDistribution> 
+  Teuchos::RCP<Utility::NormalDistribution>
     copy_distribution( new Utility::NormalDistribution );
 
   *copy_distribution = read_parameter_list->get<Utility::NormalDistribution>(
@@ -515,24 +558,24 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, toParameterList )
 {
   typedef Utility::UnitAwareNormalDistribution<cgs::length,si::amount>
     UnitAwareNormalDistribution;
-  
+
   Teuchos::RCP<UnitAwareNormalDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<UnitAwareNormalDistribution>( unit_aware_distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<UnitAwareNormalDistribution>( "test distribution", 
+
+  parameter_list.set<UnitAwareNormalDistribution>( "test distribution",
 						   *true_distribution );
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
 				       "unit_aware_normal_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "unit_aware_normal_dist_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<UnitAwareNormalDistribution> 
+  Teuchos::RCP<UnitAwareNormalDistribution>
     copy_distribution( new UnitAwareNormalDistribution );
 
   *copy_distribution = read_parameter_list->get<UnitAwareNormalDistribution>(
@@ -545,7 +588,7 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, toParameterList )
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( NormalDistribution, fromParameterList )
 {
-  Utility::NormalDistribution read_distribution = 
+  Utility::NormalDistribution read_distribution =
     test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution A" );
 
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
@@ -554,23 +597,23 @@ TEUCHOS_UNIT_TEST( NormalDistribution, fromParameterList )
 		       std::numeric_limits<double>::infinity() );
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 1.0 );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution B" );
-  
+
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
 		       -Utility::PhysicalConstants::pi );
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
 		       Utility::PhysicalConstants::pi );
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 1.0 );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution C" );
 
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0 );
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 2.0 );
   TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0 ), 0.5 );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution D" );
 
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
@@ -586,45 +629,45 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, fromParameterList )
 {
   typedef Utility::UnitAwareNormalDistribution<cgs::length,si::amount>
     UnitAwareNormalDistribution;
-  
-  UnitAwareNormalDistribution read_distribution = 
+
+  UnitAwareNormalDistribution read_distribution =
     test_dists_list->get<UnitAwareNormalDistribution>( "Unit-Aware Normal Distribution A" );
 
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
 		       -Utility::QuantityTraits<quantity<cgs::length> >::inf());
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
 		       Utility::QuantityTraits<quantity<cgs::length> >::inf() );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ), 
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ),
 		       1.0*si::mole );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<UnitAwareNormalDistribution>( "Unit-Aware Normal Distribution B" );
-  
+
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
   		       -Utility::PhysicalConstants::pi*cgs::centimeter );
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
   		       Utility::PhysicalConstants::pi*cgs::centimeter );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ), 
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ),
 		       1.0*si::mole );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<UnitAwareNormalDistribution>( "Unit-Aware Normal Distribution C" );
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
 		       0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
 		       2.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*cgs::centimeter ), 
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*cgs::centimeter ),
 		       0.5*si::mole );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<UnitAwareNormalDistribution>( "Unit-Aware Normal Distribution D" );
 
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
   		       -Utility::QuantityTraits<quantity<cgs::length> >::inf());
   TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
   		       Utility::QuantityTraits<quantity<cgs::length> >::inf());
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*cgs::centimeter ), 
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*cgs::centimeter ),
 		       1.0*si::mole );
 }
 
@@ -639,13 +682,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareNormalDistribution,
 {
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
-  
+
   // Copy from unitless distribution to distribution type A (static method)
   Utility::UnitAwareNormalDistribution<IndepUnitA,DepUnitA>
     unit_aware_dist_a_copy = Utility::UnitAwareNormalDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::NormalDistribution>( distribution ) );
@@ -654,34 +697,34 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareNormalDistribution,
   Utility::UnitAwareNormalDistribution<IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 1.0/sqrt( 2.0*Utility::PhysicalConstants::pi ) );
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 1.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
-  
+
   Utility::setQuantity( indep_quantity_a, 2.0 );
   Utility::setQuantity( inv_indep_quantity_a, exp( -4.0/2.0 )/sqrt( 2.0*Utility::PhysicalConstants::pi ) );
   Utility::setQuantity( dep_quantity_a, exp( -4.0/2.0 ) );
@@ -690,19 +733,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareNormalDistribution,
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
@@ -858,51 +901,31 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
 				      KiloElectronVolt );
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_dists_xml_file;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_dists_xml_file;
-  
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
-  clp.setOption( "test_dists_xml_file",
-		 &test_dists_xml_file,
-		 "Test distributions xml file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
+  clp().setOption( "test_dists_xml_file",
+                   &test_dists_xml_file,
+                   "Test distributions xml file name" );
+}
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::NormalDistribution );
   typedef Utility::UnitAwareNormalDistribution<cgs::length,si::amount> UnitAwareNormalDistribution;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareNormalDistribution );
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNormalDistribution.cpp

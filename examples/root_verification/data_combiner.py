@@ -7,7 +7,7 @@ def main(argv):
     mcnpinputfile = ''
     facemcinputfile = ''
     outputfile = ''
-    try: 
+    try:
         opts, args = getopt.getopt(argv,"hm:f:o:",["mfile=","ffile=","ofile="])
     except getopt.GetoptError:
         print 'data_extractor.py -m <mcnpinputfile> -f <facemcinputfile -o <outputfile>'
@@ -22,7 +22,7 @@ def main(argv):
             facemcinputfile = arg
         elif opt in ("-o", "--ofile"):
             outputfile = arg
-    
+
     # open the estimator file
     f = open(facemcinputfile, 'r')
 
@@ -67,21 +67,21 @@ def main(argv):
         energy.append( (facemc_energy[i-1] + facemc_energy[i])/2 )
         facemc_average_values.append( facemc_value[i]/(facemc_energy[i]-facemc_energy[i-1]) )
         mcnp_average_values.append( mcnp_value[i]/(mcnp_energy[i]-mcnp_energy[i-1]) )
-    
+
     # Calculate the propagated uncertainty
     prop_uncert = []
-    
+
     for i in range(0,len(energy)):
         if mcnp_average_values[i] > 0:
             prop_uncert.append( m.sqrt( ((1.0/mcnp_average_values[i])**2)*(facemc_average_values[i]*facemc_error[i])**2 + ((facemc_average_values[i]/mcnp_average_values[i]**2)**2)*(mcnp_average_values[i]*mcnp_error[i])**2 ) )
         else:
             prop_uncert.append( 0.0 )
-    
-    # Create the output file                        
+
+    # Create the output file
     f = open(outputfile, 'w')
     f.write( "#MCNP     FACEMC\n" )
-    f.write( "#Energy    Values    Error\n" )  
-    
+    f.write( "#Energy    Values    Error\n" )
+
     for i in range(0,len(energy)):
         line = ' '
         line = line + str(energy[i])
@@ -96,7 +96,7 @@ def main(argv):
         line = line + ' '
         line = line + str(prop_uncert[i])
         line = line + '\n'
-        
+
         f.write( line )
 
     # Calculate c/e values
@@ -107,7 +107,7 @@ def main(argv):
             c_e_ratio.append( facemc_average_values[i]/mcnp_average_values[i] )
             c_e_uncert.append( prop_uncert[i] )
             print energy[i], facemc_average_values[i], mcnp_average_values[i], c_e_ratio[-1], c_e_uncert[-1]
-    
+
     # calculate % of c/e values within 1,2,3 sigma
     num_c_e_in_one_sigma = 0
     num_c_e_in_two_sigma = 0
@@ -121,7 +121,7 @@ def main(argv):
             num_below = num_below+1
         else:
             num_above = num_above+1
-        
+
         diff = abs( 1.0 - c_e_ratio[i] )
         #print c_e_ratio[i], diff, 2*c_e_uncert[i]
         if diff <= c_e_uncert[i]:

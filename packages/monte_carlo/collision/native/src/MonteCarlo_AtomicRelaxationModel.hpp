@@ -10,7 +10,7 @@
 #define MONTE_CARLO_ATOMIC_RELAXATION_MODEL_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 
@@ -19,7 +19,7 @@ namespace MonteCarlo{
 //! The atomic relaxation model base class
 class AtomicRelaxationModel
 {
-  
+
 public:
 
   //! Constructor
@@ -31,7 +31,7 @@ public:
   { /* ... */ }
 
   //! Relax atom
-  virtual void relaxAtom( const SubshellType vacancy_shell,
+  virtual void relaxAtom( const Data::SubshellType vacancy_shell,
 			  const ParticleState& particle,
 			  ParticleBank& bank ) const = 0;
 };

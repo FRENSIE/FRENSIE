@@ -10,10 +10,12 @@
  * package is further divided into a series of subpackages, which are
  * listed below.
  * <ul>
+ *  <li>units</li>
  *  <li>core</li>
  *  <li>hdf5</li>
  *  <li>prng</li>
  *  <li>distribution</li>
+ *  <li>integrator</li>
  * </ul>
  *
  * \section utility_core_sec The Core Subpackage
@@ -23,17 +25,23 @@
  * are provided by this subpackage are listed below.
  * <ul>
  *  <li>XML io (Utility::XMLCompatibleObject)</li>
- *  <li>xtream output (Utility::PrintableObject)</li>
+ *  <li>TTY formatted output (Utility::StaticOutputFormatter,
+ *                            Utility::DynamicOutputFormatter)</li>
+ *  <li>boost units extensions (Utility::UnitTraits, Utility::QuantityTraits,
+ *                              Utility::Units::ElectronVolt, etc.)</li>
+ *  <li>stream output (Utility::PrintableObject)</li>
  *  <li>binary searching (Utility::SearchAlgorithms)</li>
  *  <li>sorting (Utility::SortAlgorithms)</li>
  *  <li>interpolation (Utility::InterpolationPolicy)</li>
- *  <li>linearized grid generation (Utility::LinearGridGenerator)</li>
- *  <li>ODE solving (Utility::ODESolver)</li>
+ *  <li>tabular grid generation (Utility::GridGenerator)</li>
+ *  <li>2D grid generation (Utility::TwoDGridGenerator)</li>
  *  <li>efficient integer exponentiation (Utility::ExponentiationAlgorithms)</li>
  *  <li>Fortran file ops (Utility::FortranFileHelperWrappers)</li>
  *  <li>physical constant encapsulation (Utility::PhysicalConstants)</li>
  *  <li>tuple object creation (Utility::Tuple)</li>
  *  <li>unit testing helpers (Utility::TestingHelpers)</li>
+ *  <li>Teuchos Unit Test Harness extension 
+ *      (Utility_UnitTestHarnessExtensions.hpp)</li>
  *  <li>kinematic equations (Utility::KinematicHelpers)</li>
  *  <li>omp helper functions (Utility::GlobalOpenMPSession)</li>
  *  <li>exception testing (Utility::ExceptionTestMacros)</li>
@@ -47,9 +55,9 @@
  * another category, add them to this subpackage.
  *
  * \section utility_hdf5_sec The HDF5 Subpackage
- * The hdf5 subpackage provides hdf5 file io functionality. The 
+ * The hdf5 subpackage provides hdf5 file io functionality. The
  * Utility::HDF5FileHandler class is used to interact with hdf5 files
- * and provides all functions for writing to and reading from hdf5 files. 
+ * and provides all functions for writing to and reading from hdf5 files.
  * The functions are all templates and rely on the Utility::HDF5TypeTraits
  * class to convert the type of interest to an appropriate hdf5 type. All
  * types that will be written to and read from hdf5 files must have
@@ -66,8 +74,8 @@
  * All packages that need random number generation capabilities should use
  * the Utility::RandomNumberGenerator class, which is simply a wrapper
  * around the random number generator classes. It also provides support for
- * generating random numbers in multithreaded programs. 
- * 
+ * generating random numbers in multithreaded programs.
+ *
  * \section utility_dist_sec The Distribution Subpackage
  * The distribution subpackage contains a collection of distributions that
  * can be customized and used for Monte Carlo sampling. All 1D distributions
@@ -75,9 +83,12 @@
  * a Utility::SpatialDistribution base class for sampling from 3D distributions
  * and a Utility::DirectionalDistribution for sampling of directions. All
  * distribution classes can be written to and read from XML files. For the
- * 1D distributions, this is accomplished with the 
+ * 1D distributions, this is accomplished with the
  * Utility::XMLCompatibleObject. For details regarding all of the distribution
- * classes, refer to the \ref distribution "distribution" page. 
+ * classes, refer to the \ref distribution "distribution" page.
+ *
+ * \section utility_integrator_sec The Integrator Subpackage
+ *
  */
 
 

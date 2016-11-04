@@ -32,8 +32,8 @@ PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::Photoele
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 }
@@ -58,8 +58,8 @@ PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::Photoele
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the grid searcher is valid
@@ -68,9 +68,19 @@ PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::Photoele
 
 // Return the number of photons emitted from the rxn at the given energy
 /*! \details This does not include photons from atomic relaxation.
- */ 
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+{
+  return 0u;
+}
+
+// Return the number of electrons emitted from the rxn at the given energy
+/*! \details Without the subshell information we cannot generate secondary
+ * electrons. This does not include electrons from atomic relaxation.
+ */
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }
@@ -84,17 +94,17 @@ PhotoatomicReactionType PhotoelectricPhotoatomicReaction<InterpPolicy,processed_
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void 
+void
 PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     PhotonState& photon, 
+				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   // End the photon history
   photon.setAsGone();
 
   // The interaction subshell is not taken into account in this reaction
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
 } // end MonteCarlo namespace

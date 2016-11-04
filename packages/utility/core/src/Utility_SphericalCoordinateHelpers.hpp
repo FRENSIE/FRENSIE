@@ -25,7 +25,7 @@ void convertCartesianCoordsToSpherical( const double cartesian_point[3],
 					double spherical_point[3],
 					const Axis axis = Z_AXIS );
 
-} // end Utility namespace 
+} // end Utility namespace
 
 #endif // end UTILITY_SPHERICAL_COORDINATE_HELPERS_HPP
 

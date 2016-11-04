@@ -56,22 +56,25 @@ unit_aware_distribution( new Utility::UnitAwareWattDistribution<MegaElectronVolt
 TEUCHOS_UNIT_TEST( WattDistribution, evaluate )
 {
   double test_value_1 = 0.0 ;
-  double test_value_2 = exp( -1.0 ) * sinh( 1.0 );
-  
+  double test_value_2 = exp(-0.9)*sinh(sqrt(0.9));
+
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.9 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, evaluate )
 {
-  double scale_factor = exp( -1.0 )*sinh( 1.0 );
+  double scale_factor = exp(-0.9)*sinh(sqrt(0.9));
 
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.9*MeV ),
 		       scale_factor*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
+                       0.0*si::mole );
 }
 
 //---------------------------------------------------------------------------//
@@ -79,24 +82,31 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, evaluate )
 TEUCHOS_UNIT_TEST( WattDistribution, evaluatePDF )
 {
   double test_value_1 = 0.0 ;
-  double test_value_2 = 0.25 * sqrt( Utility::PhysicalConstants::pi ) * exp( 0.25 ) * ( erf( sqrt(0.9) - sqrt(0.25) ) + erf( sqrt(0.9) + sqrt(0.25) ) ) - exp( -0.9 ) * sinh( sqrt(0.9) );
-  test_value_2 = pow( test_value_2, -1.0 ) * exp( -1.0 ) * sinh( 1.0 );
+  double test_value_2 = exp(-0.9)*sinh(sqrt(0.9))/
+    (0.25*sqrt(Utility::PhysicalConstants::pi)*exp(0.25)*
+     (erf(sqrt(0.9)-sqrt(0.25))+erf(sqrt(0.9)+sqrt(0.25))) -
+     exp(-0.9)*sinh(sqrt(0.9)));
 
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.9 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), test_value_1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware PDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, evaluatePDF )
 {
-  double scale_factor = exp( -1.0 )*sinh( 1.0 );
-  scale_factor /= 0.25 * sqrt( Utility::PhysicalConstants::pi ) * exp( 0.25 ) * ( erf( sqrt(0.9) - sqrt(0.25) ) + erf( sqrt(0.9) + sqrt(0.25) ) ) - exp( -0.9 ) * sinh( sqrt(0.9) );
+  double scale_factor = exp(-0.9)*sinh(sqrt(0.9))/
+    (0.25*sqrt(Utility::PhysicalConstants::pi)*exp(0.25)*
+     (erf(sqrt(0.9)-sqrt(0.25))+erf(sqrt(0.9)+sqrt(0.25))) -
+     exp(-0.9)*sinh(sqrt(0.9)));
 
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ),
 		       0.0/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.9*MeV ),
+                       scale_factor/MeV );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*MeV ),
-		       scale_factor/MeV );
+		       0.0/MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -186,9 +196,9 @@ TEUCHOS_UNIT_TEST( WattDistribution, sample_pass_parameters )
   fake_stream[14] = 0.4721727279140688; // Watt Distribution Sample Accepted. Sample is: 0.04844237604136
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double incident_energy, a_parameter, b_parameter, restriction_energy, sample;
-  
+
   incident_energy = 0.5;
   a_parameter = 0.2;
   b_parameter = 0.3;
@@ -196,7 +206,7 @@ TEUCHOS_UNIT_TEST( WattDistribution, sample_pass_parameters )
 
   sample = Utility::WattDistribution::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
   TEST_FLOATING_EQUALITY( sample, 0.07927727029875, 1e-13 );
-    
+
   incident_energy = 0.3;
   a_parameter = 0.2;
   b_parameter = 0.1;
@@ -204,14 +214,14 @@ TEUCHOS_UNIT_TEST( WattDistribution, sample_pass_parameters )
 
   sample = Utility::WattDistribution::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
   TEST_FLOATING_EQUALITY( sample, 0.04844237604136, 1e-13 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be sampled using OpenMC method, 
+// Check that the unit-aware distribution can be sampled using OpenMC method,
 // passing in parameters
-TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
 		   sample_pass_parameters )
 {
   std::vector<double> fake_stream( 15 );
@@ -234,7 +244,7 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   Utility::UnitAwareWattDistribution<MegaElectronVolt>::IndepQuantity incident_energy, a_parameter, restriction_energy, sample;
-  
+
   Utility::UnitAwareWattDistribution<MegaElectronVolt>::InverseIndepQuantity b_parameter;
 
   incident_energy = 0.5*MeV;
@@ -244,7 +254,7 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
 
   sample = Utility::UnitAwareWattDistribution<MegaElectronVolt>::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.07927727029875*MeV, 1e-13 );
-    
+
   incident_energy = 0.3*MeV;
   a_parameter = 0.2*MeV;
   b_parameter = 0.1/MeV;
@@ -252,7 +262,7 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
 
   sample = Utility::UnitAwareWattDistribution<MegaElectronVolt>::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.04844237604136*MeV, 1e-13 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -279,10 +289,10 @@ TEUCHOS_UNIT_TEST( WattDistribution, sampleAndRecordTrials_pass_parameters )
   fake_stream[14] = 0.4721727279140688; // Watt Distribution Sample Accepted. Sample is: 0.04844237604136
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double incident_energy, a_parameter, b_parameter, restriction_energy, sample;
   unsigned trials = 0;
-  
+
   incident_energy = 0.5;
   a_parameter = 0.2;
   b_parameter = 0.3;
@@ -291,7 +301,7 @@ TEUCHOS_UNIT_TEST( WattDistribution, sampleAndRecordTrials_pass_parameters )
   sample = Utility::WattDistribution::sampleAndRecordTrials(incident_energy, a_parameter, b_parameter, restriction_energy, trials);
   TEST_FLOATING_EQUALITY( sample, 0.07927727029875, 1e-13 );
   TEST_EQUALITY_CONST( trials, 1.0 );
-  
+
   incident_energy = 0.3;
   a_parameter = 0.2;
   b_parameter = 0.1;
@@ -305,9 +315,9 @@ TEUCHOS_UNIT_TEST( WattDistribution, sampleAndRecordTrials_pass_parameters )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be sampled using OpenMC method, 
+// Check that the unit-aware distribution can be sampled using OpenMC method,
 // passing in parameters
-TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, 
+TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
 		   sampleAndRecordTrials_pass_parameters )
 {
   std::vector<double> fake_stream( 15 );
@@ -330,11 +340,11 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>::IndepQuantity incident_energy, a_parameter, restriction_energy, sample;
-  
+
   Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>::InverseIndepQuantity b_parameter;
 
   unsigned trials = 0;
-  
+
   incident_energy = 0.5*MeV;
   a_parameter = 0.2*MeV;
   b_parameter = 0.3/MeV;
@@ -343,7 +353,7 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
   sample = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>::sampleAndRecordTrials(incident_energy, a_parameter, b_parameter, restriction_energy, trials);
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.07927727029875*MeV, 1e-13 );
   TEST_EQUALITY_CONST( trials, 1.0 );
-  
+
   incident_energy = 0.3*MeV;
   a_parameter = 0.2*MeV;
   b_parameter = 0.1/MeV;
@@ -365,11 +375,11 @@ TEUCHOS_UNIT_TEST( WattDistribution, getUpperBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, getUpperBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
 		       0.9*MeV );
 }
 
@@ -382,11 +392,11 @@ TEUCHOS_UNIT_TEST( WattDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the unit-aware distribution independent 
+// Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       0.0*MeV );
 }
 
@@ -435,31 +445,51 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, isContinuous )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the distribution is compatible with the interpolation type
+TEUCHOS_UNIT_TEST( WattDistribution, isCompatibleWithInterpType )
+{
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is compatible with the interp type
+TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, isCompatibleWithInterpType )
+{
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file
 TEUCHOS_UNIT_TEST( WattDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::WattDistribution> true_distribution =
   Teuchos::rcp_dynamic_cast<Utility::WattDistribution>( distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
+
   parameter_list.set<Utility::WattDistribution>( "test distribution",
                                                   *true_distribution );
-  
+
   Teuchos::writeParameterListToXmlFile( parameter_list,
                                        "watt_dist_test_list.xml" );
-  
+
   Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
   Teuchos::getParametersFromXmlFile( "watt_dist_test_list.xml" );
 
   TEST_EQUALITY( parameter_list, *read_parameter_list );
-  
+
   Teuchos::RCP<Utility::WattDistribution>
   copy_distribution( new Utility::WattDistribution );
-  
+
   *copy_distribution = read_parameter_list->get<Utility::WattDistribution>(
                                                                              "test distribution");
-  
+
   TEST_EQUALITY( *copy_distribution, *true_distribution );
 }
 
@@ -468,29 +498,29 @@ TEUCHOS_UNIT_TEST( WattDistribution, toParameterList )
 TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, toParameterList )
 {
   typedef Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount> UnitAwareWattDistribution;
-  
+
   Teuchos::RCP<UnitAwareWattDistribution> true_distribution =
   Teuchos::rcp_dynamic_cast<UnitAwareWattDistribution>( unit_aware_distribution );
-  
+
   Teuchos::ParameterList parameter_list;
-  
+
   parameter_list.set<UnitAwareWattDistribution>( "test distribution",
                                                   *true_distribution );
-  
+
   Teuchos::writeParameterListToXmlFile( parameter_list,
                                        "unit_aware_watt_dist_test_list.xml" );
-  
+
   Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
   Teuchos::getParametersFromXmlFile( "unit_aware_watt_dist_test_list.xml" );
 
   TEST_EQUALITY( parameter_list, *read_parameter_list );
-  
+
   Teuchos::RCP<UnitAwareWattDistribution>
   copy_distribution( new UnitAwareWattDistribution );
-  
+
   *copy_distribution = read_parameter_list->get<UnitAwareWattDistribution>(
 							 "test distribution" );
-  
+
   TEST_EQUALITY( *copy_distribution, *true_distribution );
 }
 
@@ -501,19 +531,22 @@ TEUCHOS_UNIT_TEST( WattDistribution, fromParameterList )
   double test_value_1;
   double test_value_2;
 
-  Utility::WattDistribution read_distribution = 
+  Utility::WattDistribution read_distribution =
     test_dists_list->get<Utility::WattDistribution>( "Watt Distribution A" );
 
   test_value_1 = 0.0 ;
-  test_value_2 = 0.25 * sqrt( Utility::PhysicalConstants::pi ) * exp( 0.25 ) * ( erf( sqrt(0.9) - sqrt(0.25) ) + erf( sqrt(0.9) + sqrt(0.25) ) ) - exp( -0.9 ) * sinh( sqrt(0.9) );
-  test_value_2 = pow( test_value_2, -1.0 ) * exp( -1.0 ) * sinh( 1.0 );
-  
+  test_value_2 = exp(-0.9)*sinh(sqrt(0.9))/
+    (0.25*sqrt(Utility::PhysicalConstants::pi)*exp(0.25)*
+     (erf(sqrt(0.9)-sqrt(0.25))+erf(sqrt(0.9)+sqrt(0.25))) -
+     exp(-0.9)*sinh(sqrt(0.9)));
+
   TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
-  TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0 ), 
+  TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.9 ),
 			  test_value_2,
 			  1e-15 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_1 );
 
-   read_distribution = 
+   read_distribution =
     test_dists_list->get<Utility::WattDistribution>( "Watt Distribution B" );
 
   test_value_1 = 0.0 ;
@@ -522,9 +555,9 @@ TEUCHOS_UNIT_TEST( WattDistribution, fromParameterList )
     + erf( sqrt( 1.5 ) + sqrt( 0.25 * 2.0 ) ) )
     - 2.0 * exp( - 1.5 ) * sinh( sqrt( 3.0 ) );
   test_value_2 = pow( test_value_2, -1.0 ) * exp( -0.5 ) * sinh( 1.0 );
- 
+
   TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
-  TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0 ), 
+  TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0 ),
 			  test_value_2,
 			  1e-15 );
 
@@ -535,38 +568,39 @@ TEUCHOS_UNIT_TEST( WattDistribution, fromParameterList )
 TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, fromParameterList )
 {
   typedef Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount> UnitAwareWattDistribution;
-  
-  double scale_factor;
-  scale_factor = exp( -1.0 )*sinh( 1.0 );
-  scale_factor /= 0.25*sqrt( Utility::PhysicalConstants::pi )*exp( 0.25 )*
-    ( erf( sqrt(0.9) - sqrt(0.25) ) + 
-      erf( sqrt(0.9) + sqrt(0.25) ) ) - exp( -0.9 ) * sinh( sqrt(0.9) );
 
-  UnitAwareWattDistribution read_distribution = 
+  double scale_factor;
+  scale_factor = exp(-0.9)*sinh(sqrt(0.9))/
+    (0.25*sqrt(Utility::PhysicalConstants::pi)*exp(0.25)*
+     (erf(sqrt(0.9)-sqrt(0.25))+erf(sqrt(0.9)+sqrt(0.25))) -
+     exp(-0.9)*sinh(sqrt(0.9)));
+
+  UnitAwareWattDistribution read_distribution =
     test_dists_list->get<UnitAwareWattDistribution>( "Unit-Aware Watt Distribution A" );
-  
+
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*MeV ), 0.0*si::mole );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0*MeV ), 
-				  exp( -1.0 )*sinh( 1.0 )*si::mole,
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 0.9*MeV ),
+				  exp(-0.9)*sinh(sqrt(0.9))*si::mole,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ), 
+  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.9*MeV ),
 				  scale_factor/MeV,
 				  1e-15 );
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*MeV ), 0.0*si::mole );
 
-  read_distribution = 
+  read_distribution =
     test_dists_list->get<UnitAwareWattDistribution>( "Unit-Aware Watt Distribution B" );
-   
-   scale_factor = exp( -0.5 )*sinh( 1.0 ); 
+
+   scale_factor = exp( -0.5 )*sinh( 1.0 );
    scale_factor /= 0.25*sqrt( Utility::PhysicalConstants::pi*pow( 2.0, 3.0 ) )*
-     exp( 0.25 * 2.0 )*( erf( sqrt( 1.5 ) - sqrt( 0.25 * 2.0 ) ) + 
-			 erf( sqrt( 1.5 ) + sqrt( 0.25 * 2.0 ) ) ) - 
+     exp( 0.25 * 2.0 )*( erf( sqrt( 1.5 ) - sqrt( 0.25 * 2.0 ) ) +
+			 erf( sqrt( 1.5 ) + sqrt( 0.25 * 2.0 ) ) ) -
      2.0*exp( -1.5 )*sinh( sqrt( 3.0 ) );
- 
+
    TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*MeV ), 0.0*si::mole );
-   UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0*MeV ), 
+   UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0*MeV ),
 				   2*exp( -0.5 )*sinh( 1.0 )*si::mole,
 				   1e-15 );
-   UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ), 
+   UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ),
 				   scale_factor/MeV,
 				   1e-15 );
 
@@ -583,10 +617,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareWattDistribution,
 {
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
@@ -598,64 +632,63 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareWattDistribution,
   Utility::UnitAwareWattDistribution<IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.0 );
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 0.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
 
-  Utility::setQuantity( indep_quantity_a, 1.0 );
+  Utility::setQuantity( indep_quantity_a, 0.89999999999999 );
   Utility::setQuantity( inv_indep_quantity_a,
-			exp(-1.0)*sinh(1.0)/
-			(0.25*sqrt( Utility::PhysicalConstants::pi )* 
-			 exp( 0.25 )*( erf( sqrt(0.9) - sqrt(0.25) ) + 
-				       erf( sqrt(0.9) + sqrt(0.25) ) ) - 
-			 exp( -0.9 ) * sinh( sqrt(0.9) )) );
-  Utility::setQuantity( dep_quantity_a, 
-			exp(-1.0)*sinh(1.0) );
-  
+                        exp(-0.9)*sinh(sqrt(0.9))/
+                        (0.25*sqrt(Utility::PhysicalConstants::pi)*exp(0.25)*
+                         (erf(sqrt(0.9)-sqrt(0.25))+erf(sqrt(0.9)+sqrt(0.25)))-
+                         exp(-0.9)*sinh(sqrt(0.9))) );
+  Utility::setQuantity( dep_quantity_a,
+			exp(-0.9)*sinh(sqrt(0.9)) );
+
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
-			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+			   1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
-			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+			1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
-			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+			   1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
-			1e-15 );
+			1e-14 );
 }
 
 typedef si::energy si_energy;
@@ -808,52 +841,32 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareWattDistribution,
 				      KiloElectronVolt );
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_dists_xml_file;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_dists_xml_file;
+  clp().setOption( "test_dists_xml_file",
+                   &test_dists_xml_file,
+                   "Test distributions xml file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_dists_xml_file",
-		 &test_dists_xml_file,
-		 "Test distributions xml file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::WattDistribution );
   typedef Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount> UnitAwareWattDistribution;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareWattDistribution );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstWattDistribution.cpp

@@ -51,7 +51,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 
   // (r=1.0,theta=pi,axis=0.0) -> (x=-1.0,y=0.0,z=0.0)
   cylindrical_point[1] = Utility::PhysicalConstants::pi;
-  
+
   Utility::convertCylindricalCoordsToCartesian( cylindrical_point,
 						cartesian_point,
 						Utility::Z_AXIS );
@@ -66,7 +66,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
   Utility::convertCylindricalCoordsToCartesian( cylindrical_point,
 						cartesian_point,
 						Utility::Z_AXIS );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( cartesian_point[0], 0.0, 1e-15 );
   TEST_EQUALITY_CONST( cartesian_point[1], -1.0 );
   TEST_EQUALITY_CONST( cartesian_point[2], 0.0 );
@@ -75,11 +75,11 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
   cylindrical_point[0] = 2.0;
   cylindrical_point[1] = Utility::PhysicalConstants::pi/4;
   cylindrical_point[2] = 2.0;
-  
+
   Utility::convertCylindricalCoordsToCartesian( cylindrical_point,
 						cartesian_point,
 						Utility::Z_AXIS );
-  
+
   TEST_FLOATING_EQUALITY( cartesian_point[0], sqrt(2.0), 1e-15 );
   TEST_FLOATING_EQUALITY( cartesian_point[1], sqrt(2.0), 1e-15 );
   TEST_EQUALITY_CONST( cartesian_point[2], 2.0 );
@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 
   // (r=1.0,theta=pi,axis=0.0) -> (x=0.0,y=0.0,z=-1.0)
   cylindrical_point[1] = Utility::PhysicalConstants::pi;
-  
+
   Utility::convertCylindricalCoordsToCartesian( cylindrical_point,
 						cartesian_point,
 						Utility::Y_AXIS );
@@ -145,7 +145,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
   Utility::convertCylindricalCoordsToCartesian( cylindrical_point,
 						cartesian_point,
 						Utility::Y_AXIS );
-  
+
   TEST_EQUALITY_CONST( cartesian_point[0], -1.0 );
   TEST_EQUALITY_CONST( cartesian_point[1], 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( cartesian_point[2], 0.0, 1e-15 );
@@ -154,11 +154,11 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
   cylindrical_point[0] = 2.0;
   cylindrical_point[1] = Utility::PhysicalConstants::pi/4;
   cylindrical_point[2] = 2.0;
-  
+
   Utility::convertCylindricalCoordsToCartesian( cylindrical_point,
 						cartesian_point,
 						Utility::Y_AXIS );
-  
+
   TEST_FLOATING_EQUALITY( cartesian_point[0], sqrt(2.0), 1e-15 );
   TEST_EQUALITY_CONST( cartesian_point[1], 2.0 );
   TEST_FLOATING_EQUALITY( cartesian_point[2], sqrt(2.0), 1e-15 );
@@ -209,7 +209,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 
   // (r=1.0,theta=pi,axis=0.0) -> (x=0.0,y=-1.0,z=0.0)
   cylindrical_point[1] = Utility::PhysicalConstants::pi;
-  
+
   Utility::convertCylindricalCoordsToCartesian( cylindrical_point,
 						cartesian_point,
 						Utility::X_AXIS );
@@ -224,7 +224,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
   Utility::convertCylindricalCoordsToCartesian( cylindrical_point,
 						cartesian_point,
 						Utility::X_AXIS );
-  
+
   TEST_EQUALITY_CONST( cartesian_point[0], 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( cartesian_point[1], 0.0, 1e-15 );
   TEST_EQUALITY_CONST( cartesian_point[2], -1.0 );
@@ -233,11 +233,11 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
   cylindrical_point[0] = 2.0;
   cylindrical_point[1] = Utility::PhysicalConstants::pi/4;
   cylindrical_point[2] = 2.0;
-  
+
   Utility::convertCylindricalCoordsToCartesian( cylindrical_point,
 						cartesian_point,
 						Utility::X_AXIS );
-  
+
   TEST_EQUALITY_CONST( cartesian_point[0], 2.0 );
   TEST_FLOATING_EQUALITY( cartesian_point[1], sqrt(2.0), 1e-15 );
   TEST_FLOATING_EQUALITY( cartesian_point[2], sqrt(2.0), 1e-15 );
@@ -268,7 +268,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 
   // (x'=1.0,y'=0.0,z'=0.0) -> (r=1.0,theta=0.0,axis=0.0)
   double cartesian_point[3] = {2.0, 1.0, 1.0};
-  
+
   Utility::convertCartesianCoordsToCylindrical( cartesian_point,
 						origin,
 						cylindrical_point,
@@ -288,7 +288,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 						Utility::Z_AXIS );
 
   TEST_EQUALITY_CONST( cylindrical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( cylindrical_point[1], 
+  TEST_EQUALITY_CONST( cylindrical_point[1],
 		       Utility::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( cylindrical_point[2], 0.0 );
 
@@ -330,7 +330,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 						Utility::Z_AXIS );
 
   TEST_EQUALITY_CONST( cylindrical_point[0], sqrt(2) );
-  TEST_EQUALITY_CONST( cylindrical_point[1], 
+  TEST_EQUALITY_CONST( cylindrical_point[1],
 		       Utility::PhysicalConstants::pi/4 );
   TEST_EQUALITY_CONST( cylindrical_point[2], 1.0 );
 
@@ -362,7 +362,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 
   // (x'=0.0,y'=0.0,z'=1.0) -> (r=1.0,theta=0.0,axis=0.0)
   double cartesian_point[3] = {1.0, 1.0, 2.0};
-  
+
   Utility::convertCartesianCoordsToCylindrical( cartesian_point,
 						origin,
 						cylindrical_point,
@@ -382,7 +382,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 						Utility::Y_AXIS );
 
   TEST_EQUALITY_CONST( cylindrical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( cylindrical_point[1], 
+  TEST_EQUALITY_CONST( cylindrical_point[1],
 		       Utility::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( cylindrical_point[2], 0.0 );
 
@@ -424,7 +424,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 						Utility::Y_AXIS );
 
   TEST_EQUALITY_CONST( cylindrical_point[0], sqrt(2) );
-  TEST_EQUALITY_CONST( cylindrical_point[1], 
+  TEST_EQUALITY_CONST( cylindrical_point[1],
 		       Utility::PhysicalConstants::pi/4 );
   TEST_EQUALITY_CONST( cylindrical_point[2], 1.0 );
 
@@ -456,12 +456,12 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 
   // (x'=0.0,y'=1.0,z'=0.0) -> (r=1.0,theta=0.0,axis=0.0)
   double cartesian_point[3] = {1.0, 2.0, 1.0};
-  
+
   Utility::convertCartesianCoordsToCylindrical( cartesian_point,
 						origin,
 						cylindrical_point,
 						Utility::X_AXIS );
-  
+
   TEST_EQUALITY_CONST( cylindrical_point[0], 1.0 );
   TEST_EQUALITY_CONST( cylindrical_point[1], 0.0 );
   TEST_EQUALITY_CONST( cylindrical_point[2], 0.0 );
@@ -476,7 +476,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 						Utility::X_AXIS );
 
   TEST_EQUALITY_CONST( cylindrical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( cylindrical_point[1], 
+  TEST_EQUALITY_CONST( cylindrical_point[1],
 		       Utility::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( cylindrical_point[2], 0.0 );
 
@@ -518,7 +518,7 @@ TEUCHOS_UNIT_TEST( CylindricalCoordinateHelpers,
 						Utility::X_AXIS );
 
   TEST_EQUALITY_CONST( cylindrical_point[0], sqrt(2) );
-  TEST_EQUALITY_CONST( cylindrical_point[1], 
+  TEST_EQUALITY_CONST( cylindrical_point[1],
 		       Utility::PhysicalConstants::pi/4 );
   TEST_EQUALITY_CONST( cylindrical_point[2], 1.0 );
 

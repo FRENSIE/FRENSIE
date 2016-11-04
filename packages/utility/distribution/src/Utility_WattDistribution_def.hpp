@@ -11,48 +11,20 @@
 #define UTILITY_WATT_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_MaxwellFissionDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
-#include "Utility_MaxwellFissionDistribution.hpp"
 
 namespace Utility{
 
-// Default Constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribution(
-  const UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
-  const UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity a_parameter,
-  const UnitAwareWattDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity b_parameter,
-  const UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
-  const double constant_multiplier )
-  : d_incident_energy( incident_energy ),
-    d_a_parameter( a_parameter ),
-    d_b_parameter( b_parameter ),
-    d_restriction_energy( restriction_energy ),
-  d_multiplier( DMQT::initializeQuantity( constant_multiplier ) ),
-    d_norm_constant()
-{
-  // Make sure values are valid
-  testPrecondition( !IQT::isnaninf( incident_energy ) );
-  testPrecondition( !IQT::isnaninf( a_parameter ) );
-  testPrecondition( !IIQT::isnaninf( b_parameter ) );
-  testPrecondition( !IQT::isnaninf( restriction_energy ) );
-  testPrecondition( !QT::isnaninf( constant_multiplier ) );
-  // Make sure that incident energy, a_parameter, and b_parameter are positive
-  testPrecondition( incident_energy > IQT::zero() );
-  testPrecondition( a_parameter > IQT::zero() );
-  testPrecondition( b_parameter > IIQT::zero() );
-  // Make sure that the constant multiplier is positive
-  testPrecondition( constant_multiplier > 0.0 );
-
-  // Calculate the normalization constant
-  this->calculateNormalizationConstant();
-}
-
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareWattDistribution<void,void> );
+  
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
@@ -84,11 +56,11 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
   testPrecondition( !QuantityTraits<InputIndepQuantityC>::isnaninf( restriction_energy ) );
   testPrecondition( !QT::isnaninf( constant_multiplier ) );
   // Make sure that incident energy, a_parameter, and b_parameter are positive
-  testPrecondition( incident_energy > 
+  testPrecondition( incident_energy >
 		    QuantityTraits<InputIndepQuantityA>::zero() );
-  testPrecondition( a_parameter > 
+  testPrecondition( a_parameter >
 		    QuantityTraits<InputIndepQuantityB>::zero() );
-  testPrecondition( b_parameter > 
+  testPrecondition( b_parameter >
 		    QuantityTraits<InputInverseIndepQuantity>::zero() );
   // Make sure that the constant multiplier is positive
   testPrecondition( constant_multiplier > 0.0 );
@@ -98,10 +70,10 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
 }
 
 // Copy constructor
-/*! \details Just like boost::units::quantity objects, the unit-aware 
+/*! \details Just like boost::units::quantity objects, the unit-aware
  * distribution can be explicitly cast to a distribution with compatible
  * units. If the units are not compatible, this function will not compile. Note
- * that this allows distributions to be scaled safely (unit conversions 
+ * that this allows distributions to be scaled safely (unit conversions
  * are completely taken care of by boost::units)!
  */
 template<typename IndependentUnit, typename DependentUnit>
@@ -156,14 +128,14 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
-/*! \details Constructing a unit-aware distribution from a unitless 
+/*! \details Constructing a unit-aware distribution from a unitless
  * distribution is potentially dangerous. By forcing users to construct objects
  * using this method instead of a standard constructor we are trying to make
- * sure users are aware of the danger. This is designed to mimic the interface 
- * of the boost::units::quantity, which also has to deal with this issue. 
+ * sure users are aware of the danger. This is designed to mimic the interface
+ * of the boost::units::quantity, which also has to deal with this issue.
  */
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareWattDistribution<IndependentUnit,DependentUnit> 
+UnitAwareWattDistribution<IndependentUnit,DependentUnit>
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareWattDistribution<void,void>& unitless_distribution )
 {
   return ThisType( unitless_distribution, 0 );
@@ -171,7 +143,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistributi
 
 // Assignment operator
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareWattDistribution<IndependentUnit,DependentUnit>& 
+UnitAwareWattDistribution<IndependentUnit,DependentUnit>&
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::operator=(
 const UnitAwareWattDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
@@ -193,21 +165,23 @@ const UnitAwareWattDistribution<IndependentUnit,DependentUnit>& dist_instance )
     d_multiplier = dist_instance.d_multiplier;
     d_norm_constant = dist_instance.d_norm_constant;
   }
-  
+
   return *this;
 }
 
 // Evaluate the distribution
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::DepQuantity
-UnitAwareWattDistribution<IndependentUnit,DependentUnit>::evaluate( 
+UnitAwareWattDistribution<IndependentUnit,DependentUnit>::evaluate(
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < IQT::zero() )
+  if( indep_var_value < this->getLowerBoundOfIndepVar() )
+    return DQT::zero();
+  else if( indep_var_value > this->getUpperBoundOfIndepVar() )
     return DQT::zero();
   else
   {
-    return d_multiplier*exp( -indep_var_value / d_a_parameter )* 
+    return d_multiplier*exp( -indep_var_value / d_a_parameter )*
       sinh( sqrt( d_b_parameter * indep_var_value ) );
   }
 }
@@ -216,8 +190,8 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::evaluate(
 /*! \details PDF(x) = c*e^(-x/a)*sinh(sqrt(b*x))
  */
 template<typename IndependentUnit, typename DependentUnit>
-typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity 
-UnitAwareWattDistribution<IndependentUnit,DependentUnit>::evaluatePDF( 
+typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity
+UnitAwareWattDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   return this->evaluate( indep_var_value )*d_norm_constant;
@@ -225,7 +199,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
 
 // Return a random sample from the distribution
 template<typename IndependentUnit, typename DependentUnit>
-typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
+typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   return ThisType::sample( d_incident_energy,
@@ -237,14 +211,14 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sample() const
 // Return a sample from the distribution
 template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sample( 
+UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sample(
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity a_parameter,
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity b_parameter,
 	const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
 {
   unsigned trials = 0;
-  
+
   return ThisType::sampleAndRecordTrials( incident_energy,
 					  a_parameter,
 					  b_parameter,
@@ -254,7 +228,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sample(
 
 // Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
-typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
+typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
 {
   return ThisType::sampleAndRecordTrials( d_incident_energy,
@@ -283,10 +257,10 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
   testPrecondition( incident_energy > IQT::zero() );
   testPrecondition( a_parameter > IQT::zero() );
   testPrecondition( b_parameter > IIQT::zero() );
-  
+
   double random_number;
   IndepQuantity maxwell_sample, sample;
-  
+
   // Use ACE law 11
   while( true )
   {
@@ -295,19 +269,19 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
       incident_energy,
       a_parameter,
       restriction_energy,
-      trials ); 
-   
-    // Sample random number 
+      trials );
+
+    // Sample random number
     random_number = RandomNumberGenerator::getRandomNumber<double>();
-    
+
     sample = maxwell_sample + 0.25*a_parameter*a_parameter*b_parameter +
       (2.0*random_number-1.0)*Utility::sqrt( a_parameter*a_parameter*
 					     b_parameter*maxwell_sample );
- 
+
     if( sample <= (incident_energy - restriction_energy) )
       break;
   }
-  
+
   return sample;
 }
 
@@ -321,9 +295,9 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::calculateNormaliz
 {
   double argument_1 = (d_incident_energy - d_restriction_energy)/d_a_parameter;
   double argument_2 = d_a_parameter*d_b_parameter*0.25;
-  
+
   IndepQuantity term_1 = 0.5*exp( argument_2 )*
-    (erf( sqrt(argument_1) - sqrt(argument_2) ) + 
+    (erf( sqrt(argument_1) - sqrt(argument_2) ) +
      erf( sqrt(argument_1)+ sqrt(argument_2) ))*
     Utility::sqrt( 0.25*PhysicalConstants::pi*
 		   d_a_parameter*d_a_parameter*d_a_parameter*d_b_parameter );
@@ -352,7 +326,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVa
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType 
+OneDDistributionType
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -360,7 +334,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getDistributionType() 
 
 // Test if the distribution is continuous
 template<typename IndependentUnit, typename DependentUnit>
-bool 
+bool
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::isContinuous() const
 {
   return true;
@@ -370,9 +344,9 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::isContinuous() const
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_incident_energy ) 
-     << "," << getRawQuantity( d_a_parameter ) 
-     << "," << getRawQuantity( d_b_parameter ) 
+  os << "{" << getRawQuantity( d_incident_energy )
+     << "," << getRawQuantity( d_a_parameter )
+     << "," << getRawQuantity( d_b_parameter )
      << "," << getRawQuantity( d_restriction_energy );
 
   // Only print the multiplier when a scaling has been done
@@ -391,7 +365,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
   std::string dist_rep;
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
-  
+
   Teuchos::Array<std::string> distribution;
   try{
     distribution = Teuchos::fromStringToArray<std::string>( dist_rep );
@@ -402,17 +376,17 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
                         "constructed because the representation is not valid "
                         "(see details below)!\n" );
     message += error.what();
-    
+
     throw InvalidDistributionStringRepresentation( message );
   }
-  
+
   TEST_FOR_EXCEPTION( distribution.size() > 5,
                      InvalidDistributionStringRepresentation,
                      "Error: the Watt distribution cannot "
                      "be constructed because the representation is "
                      "not valid"
                      "(only 5 values or fewer  may be specified)!" );
-  
+
   // Set the incient neutron energy
   if( distribution.size() > 0 )
   {
@@ -424,26 +398,26 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
 			<< distribution[0] );
     {
       double incident_energy;
-      
+
       std::istringstream iss( distribution[0] );
       Teuchos::extractDataFromISS( iss, incident_energy );
 
       setQuantity( d_incident_energy, incident_energy );
     }
-  
+
     TEST_FOR_EXCEPTION( IQT::isnaninf( d_incident_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid incident energy "
 			<< d_incident_energy );
-  
+
     TEST_FOR_EXCEPTION( d_incident_energy < IQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid incident energy "
 			<< d_incident_energy );
   }
-  
+
   // Set the a_parameter
   if( distribution.size() > 1 )
   {
@@ -455,19 +429,19 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
 			<< distribution[1] );
     {
       double a_parameter;
-      
+
       std::istringstream iss( distribution[1] );
       Teuchos::extractDataFromISS( iss, a_parameter );
 
       setQuantity( d_a_parameter, a_parameter );
     }
-  
+
     TEST_FOR_EXCEPTION( IQT::isnaninf( d_a_parameter ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid a_parameter "
 			<< d_a_parameter );
-  
+
     TEST_FOR_EXCEPTION( d_a_parameter <= IQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
@@ -486,29 +460,29 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
 			<< distribution[2] );
     {
       double b_parameter;
-      
+
       std::istringstream iss( distribution[2] );
       Teuchos::extractDataFromISS( iss, b_parameter );
 
       setQuantity( d_b_parameter, b_parameter );
     }
-  
+
     TEST_FOR_EXCEPTION( IIQT::isnaninf( d_b_parameter ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid b_parameter "
 			<< d_b_parameter );
-  
+
     TEST_FOR_EXCEPTION( d_b_parameter <= IIQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid b_parameter "
 			<< d_b_parameter );
   }
-  
+
   // Set the restriction energy
   if( distribution.size() > 3 )
-  {  
+  {
     TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( " 0123456789.e" ) <
 			distribution[3].size(),
 			InvalidDistributionStringRepresentation,
@@ -517,20 +491,20 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
 			<< distribution[3] );
     {
       double restriction_energy;
-      
+
       std::istringstream iss( distribution[3] );
       Teuchos::extractDataFromISS( iss, restriction_energy );
 
       setQuantity( d_restriction_energy, restriction_energy );
     }
-  
+
     TEST_FOR_EXCEPTION( IQT::isnaninf( d_restriction_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid restriction energy "
 			<< d_restriction_energy );
   }
-  
+
   // Set the multiplier
   if( distribution.size() > 4 )
   {
@@ -562,7 +536,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
 
 // Method for testing if two objects are equivalent
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareWattDistribution<IndependentUnit,DependentUnit>::isEqual( 
+bool UnitAwareWattDistribution<IndependentUnit,DependentUnit>::isEqual(
   const UnitAwareWattDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_incident_energy == other.d_incident_energy &&
@@ -570,6 +544,13 @@ bool UnitAwareWattDistribution<IndependentUnit,DependentUnit>::isEqual(
   d_b_parameter == other.d_b_parameter &&
   d_restriction_energy == other.d_restriction_energy &&
   d_multiplier == other.d_multiplier;
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareWattDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return true;
 }
 
 } // end Utility namespace

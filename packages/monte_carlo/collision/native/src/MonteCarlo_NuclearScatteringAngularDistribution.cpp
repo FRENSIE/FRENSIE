@@ -21,25 +21,25 @@
 namespace MonteCarlo{
 
 // Constructor
-NuclearScatteringAngularDistribution::NuclearScatteringAngularDistribution( 
+NuclearScatteringAngularDistribution::NuclearScatteringAngularDistribution(
 	const NuclearScatteringAngularDistribution::AngularDistribution& dist )
   : d_angular_distribution( dist )
 {
   // Make sure the array has at least one value
   testPrecondition( dist.size() > 0 );
   // Make sure that the array is sorted
-  testPrecondition( Utility::Sort::isSortedAscending<Utility::FIRST>( 
+  testPrecondition( Utility::Sort::isSortedAscending<Utility::FIRST>(
 				                                dist.begin(),
 								dist.end() ) );
 }
 
 // Sample a scattering angle cosine
-double NuclearScatteringAngularDistribution::sampleAngleCosine( 
+double NuclearScatteringAngularDistribution::sampleAngleCosine(
 						    const double energy ) const
 {
   double angle_cosine;
 
-  angle_cosine = 
+  angle_cosine =
     sampleTwoDDistributionIndependent( energy, d_angular_distribution );
 
   // Due to floating-point roundoff, it is possible for the scattering angle
@@ -55,15 +55,15 @@ double NuclearScatteringAngularDistribution::sampleAngleCosine(
 }
 
 // Evaluate the PDF
-double NuclearScatteringAngularDistribution::evaluatePDF( 
+double NuclearScatteringAngularDistribution::evaluatePDF(
 				const double energy,
 				const double scattering_angle_cosine ) const
 {
   double pdf_value;
-  
+
   if( energy < d_angular_distribution.front().first )
   {
-    pdf_value = d_angular_distribution.front().second->evaluatePDF( 
+    pdf_value = d_angular_distribution.front().second->evaluatePDF(
 						  scattering_angle_cosine );
   }
   else if( energy >= d_angular_distribution.back().first )
@@ -74,11 +74,11 @@ double NuclearScatteringAngularDistribution::evaluatePDF(
   else
   {
     AngularDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
-    
+
     lower_bin_boundary = d_angular_distribution.begin();
     upper_bin_boundary = d_angular_distribution.end();
-    
-    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
+
+    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>(
 							  lower_bin_boundary,
 							  upper_bin_boundary,
 							  energy );
@@ -87,13 +87,13 @@ double NuclearScatteringAngularDistribution::evaluatePDF(
     ++upper_bin_boundary;
 
     // Get the PDF value on the two grid points
-    double pdf_low = lower_bin_boundary->second->evaluatePDF( 
+    double pdf_low = lower_bin_boundary->second->evaluatePDF(
 						  scattering_angle_cosine );
     double pdf_high = upper_bin_boundary->second->evaluatePDF(
 						  scattering_angle_cosine );
 
     // Use linear interpolation to evaluate the PDF at the desired energy
-    pdf_value = pdf_low + 
+    pdf_value = pdf_low +
       (pdf_high-pdf_low)/(upper_bin_boundary->first-lower_bin_boundary->first)*
       (energy - lower_bin_boundary->first);
   }

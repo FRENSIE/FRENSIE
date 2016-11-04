@@ -11,10 +11,8 @@
 
 // Std Lib Includes
 #include <string>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
+#include <unordered_map>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
@@ -31,14 +29,14 @@ namespace MonteCarlo{
 //! The photoatom factory class
 class PhotoatomFactory
 {
-  
+
 public:
 
   //! Constructor
   PhotoatomFactory( const std::string& cross_sections_xml_directory,
                     const Teuchos::ParameterList& cross_section_table_info,
-                    const boost::unordered_set<std::string>& photoatom_aliases,
-		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+                    const std::unordered_set<std::string>& photoatom_aliases,
+		    const Teuchos::RCP<AtomicRelaxationModelFactory>&
 		    atomic_relaxation_model_factory,
 		    const unsigned hash_grid_bins,
 		    const IncoherentModelType incoherent_model,
@@ -53,7 +51,7 @@ public:
 
   //! Create the map of photoatoms
   void createPhotoatomMap(
-		    boost::unordered_map<std::string,Teuchos::RCP<Photoatom> >&
+		    std::unordered_map<std::string,Teuchos::RCP<Photoatom> >&
 		    photoatom_map ) const;
 
 private:
@@ -66,7 +64,7 @@ private:
 			  const std::string& photoatomic_table_name,
 			  const int photoatomic_file_start_line,
 			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
 			  atomic_relaxation_model_factory,
 			  const unsigned hash_grid_bins,
 			  const IncoherentModelType incoherent_model,
@@ -89,11 +87,11 @@ private:
 			  const bool use_atomic_relaxation_data );
 
   // The photoatom map
-  boost::unordered_map<std::string,Teuchos::RCP<Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<Photoatom> >
   d_photoatom_name_map;
-  
+
   // The table map
-  boost::unordered_map<std::string,Teuchos::RCP<Photoatom> >
+  std::unordered_map<std::string,Teuchos::RCP<Photoatom> >
   d_photoatomic_table_name_map;
 
   // The message output stream

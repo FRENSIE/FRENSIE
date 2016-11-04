@@ -67,7 +67,7 @@ protected:
 private:
 
   // Initialize basic delayed neutron data
-  void initializeBasicDelayedNeutronData( 
+  void initializeBasicDelayedNeutronData(
 			   const std::string& table_name,
 			   const Teuchos::ArrayView<const double>& bdd_block );
 

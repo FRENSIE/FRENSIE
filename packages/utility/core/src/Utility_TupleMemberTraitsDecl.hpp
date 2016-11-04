@@ -21,7 +21,7 @@
  * functions to easily access members of a tuple in a generic way. Partial
  * specializations are provided for each tuple member enumeration. Attempting
  * to use the class without a specialization will result in a compile time
- * error. The compile time error message is defined by the 
+ * error. The compile time error message is defined by the
  * Utility::UndefinedTraits struct.
  */
 
@@ -35,14 +35,14 @@ struct UndefinedTupleMemberTraits
 };
 
 /*! This structure defines which member of the tuple will be read or set.
- * 
+ *
  * The functions in the templated base unspecialized struct are designed not to
- * compile (giving a nice compile-time error message) and therefore 
+ * compile (giving a nice compile-time error message) and therefore
  * specializations must be written for each TupleMember enumeration.
- * \tparam T A tuple type (either Utility::Pair, Utility::Trip or 
+ * \tparam T A tuple type (either Utility::Pair, Utility::Trip or
  * Utility::Quad).
  * \tparam member A tuple member enumeration.
- * \note The default defined specializations are provided for FIRST, SECOND, 
+ * \note The default defined specializations are provided for FIRST, SECOND,
  * THIRD and FOURTH
  * \ingroup tuple_member_traits
  */
@@ -60,12 +60,12 @@ struct TupleMemberTraits
   static inline void set(Tuple &tuple, const tupleMemberType &value)
   { (void)UndefinedTupleMemberTraits<Tuple,member>::notDefined(); }
 };
-  
+
 /*! This function allows access to the get TupleMemberTraits function.
  *
  * This function is simply a more concise way to access the get static
- * member function associated with the TupleMemberTraits class. It simply 
- * forwards calls to get a member to the associated 
+ * member function associated with the TupleMemberTraits class. It simply
+ * forwards calls to get a member to the associated
  * Utility::TupleMemberTraits class. It is important to note that the
  * tuple type will be deduced by the function. The Utility::TupleMember must be
  * specified manually (i.e. get<FIRST>( my_tuple ) ).
@@ -75,12 +75,12 @@ template<TupleMember member, typename Tuple>
 inline typename TupleMemberTraits<Tuple,member>::tupleMemberType
 get( const Tuple &tuple )
 { return TupleMemberTraits<Tuple,member>::get( tuple ); }
-  
+
 /*! This function allows access to the set TupleMemberTraits function.
  *
- * This function is simply a more concise way to access the set static 
- * member function associated with the TupleMemberTraits class. It simply 
- * forwards calls to set a member to the associated 
+ * This function is simply a more concise way to access the set static
+ * member function associated with the TupleMemberTraits class. It simply
+ * forwards calls to set a member to the associated
  * Utility::TupleMemberTraits class. It is important to note that The
  * tuple type will be deduced by the function. The Utility::TupleMember must be
  * specified manually (i.e. set<SECOND>( my_tuple, desired_value ) ).
@@ -88,8 +88,8 @@ get( const Tuple &tuple )
  */
 template<TupleMember member, typename Tuple>
 inline void
-set( Tuple &tuple, 
-     const typename TupleMemberTraits<Tuple,member>::tupleMemberType 
+set( Tuple &tuple,
+     const typename TupleMemberTraits<Tuple,member>::tupleMemberType
      &value )
 { TupleMemberTraits<Tuple,member>::set( tuple, value ); }
 

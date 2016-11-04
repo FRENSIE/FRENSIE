@@ -36,7 +36,7 @@ protected:
   //! Create the energy gain function
   static void createEnergyGainFunction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      AtomicExcitationAdjointElectronScatteringDistribution::AtomicDistribution& 
+      AtomicExcitationAdjointElectronScatteringDistribution::AtomicDistribution&
                                                         scattering_function );
 };
 

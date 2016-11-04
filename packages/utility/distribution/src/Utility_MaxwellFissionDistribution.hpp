@@ -53,10 +53,10 @@ private:
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
   typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
-  
+
   // Typedef for QuantityTraits<DepQuantity>
   typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
-  
+
   // Typedef for QuantityTraits<DistMultiplierQuantity>
   typedef QuantityTraits<DistMultiplierQuantity> DMQT;
 
@@ -73,22 +73,18 @@ public:
 
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
- 
-  //! Default Constructor
-  UnitAwareMaxwellFissionDistribution( 
-			const IndepQuantity incident_energy = IQT::one(),
-			const IndepQuantity nuclear_temperature = IQT::one(),
-			const IndepQuantity restriction_energy = IQT::zero(),
-			const double constant_multiplier = 1.0 );
 
   //! Constructor
-  template<typename InputIndepQuantityA,
-	   typename InputIndepQuantityB,
-	   typename InputIndepQuantityC>
+  template<typename InputIndepQuantityA = IndepQuantity,
+	   typename InputIndepQuantityB = IndepQuantity,
+	   typename InputIndepQuantityC = IndepQuantity>
   UnitAwareMaxwellFissionDistribution(
-				const InputIndepQuantityA incident_energy,
-				const InputIndepQuantityB nuclear_temperature,
-				const InputIndepQuantityC restriction_energy,
+				const InputIndepQuantityA incident_energy =
+                                QuantityTraits<InputIndepQuantityA>::one(),
+				const InputIndepQuantityB nuclear_temperature =
+                                QuantityTraits<InputIndepQuantityB>::one(),
+				const InputIndepQuantityC restriction_energy =
+                                QuantityTraits<InputIndepQuantityC>::zero(),
 				const double constant_multiplier = 1.0 );
 
   //! Copy constructor
@@ -155,6 +151,9 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareMaxwellFissionDistribution( const UnitAwareMaxwellFissionDistribution<void,void>& unitless_dist_instance, int );
 
+  //! Test if the dependent variable can be zero within the indep bounds
+  bool canDepVarBeZeroInIndepBounds() const;
+
 private:
 
   // Calculate the normalization constant of the distribution
@@ -163,7 +162,7 @@ private:
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
   friend class UnitAwareMaxwellFissionDistribution;
- 
+
   // The distribution type
   static const OneDDistributionType distribution_type = MAXWELLFISSION_DISTRIBUTION;
 
@@ -172,7 +171,7 @@ private:
 
   // The nuclear temperature of the distribution
   IndepQuantity d_nuclear_temperature;
-  
+
   // The restriction energy of the distribution
   IndepQuantity d_restriction_energy;
 
@@ -205,14 +204,14 @@ public:
   {
     return "Maxwell Fission Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 				const Utility::MaxwellFissionDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareMaxwellFissionDistribution
  *
  * \details The name function will set the type name that must be used in

@@ -26,13 +26,14 @@ template<typename IncomingParticleType, typename OutgoingParticleType>
 class NuclearScatteringDistributionACEFactoryHelper
 {
 public:
-  
+
   //! Create the elastic scattering distribution
-  static void createElasticScatteringDistribution( 
+  static void createElasticScatteringDistribution(
 		      Teuchos::RCP<NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType> >& distribution,
+		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
-                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+          const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		      angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,
@@ -43,7 +44,7 @@ public:
 
   /*! Check if elastic scattering is handled implicitly in ACE table
    * \details In some ACE tables, an elastic scattering distribution is always
-   * given and will therefore not appear in the mtr block 
+   * given and will therefore not appear in the mtr block
    * (e.g. continuous-energy neutron tables).
    */
   static bool isElasticScatteringImplicit()
@@ -57,13 +58,14 @@ template<typename ParticleType>
 class NuclearScatteringDistributionACEFactoryHelper<ParticleType,ParticleType>
 {
 public:
-  
+
   //! Create the elastic scattering distribution
-  static void createElasticScatteringDistribution( 
-                      Teuchos::RCP<NuclearScatteringDistribution<ParticleType,ParticleType> >& distribution,
+  static void createElasticScatteringDistribution(
+          Teuchos::RCP<NuclearScatteringDistribution<ParticleType,ParticleType> >& distribution,
+          const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
-                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+          const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		      angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,
@@ -83,9 +85,9 @@ template<>
 class NuclearScatteringDistributionACEFactoryHelper<NeutronState,NeutronState>
 {
 public:
-  
+
   //! Create the elastic scattering distribution
-  static void createElasticScatteringDistribution( 
+  static void createElasticScatteringDistribution(
 		      Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& distribution,
 		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,

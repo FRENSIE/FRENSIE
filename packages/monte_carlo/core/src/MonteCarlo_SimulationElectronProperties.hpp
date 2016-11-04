@@ -21,7 +21,7 @@ namespace MonteCarlo{
  */
 class SimulationElectronProperties
 {
-  
+
 public:
 
   //! Set the minimum electron energy (MeV)
@@ -35,7 +35,7 @@ public:
 
   //! Set the maximum electron energy (MeV)
   static void setMaxElectronEnergy( const double energy );
-  
+
   //! Return the maximum electron energy (MeV)
   static double getMaxElectronEnergy();
 
@@ -49,12 +49,24 @@ public:
   static bool isAtomicRelaxationModeOn();
 
   //! Set the bremsstrahlung photon angular distribution function (2BS by default)
-  static void setBremsstrahlungAngularDistributionFunction( 
+  static void setBremsstrahlungAngularDistributionFunction(
                          const BremsstrahlungAngularDistributionType function );
 
   //! Return the bremsstrahlung photon angular distribution function
-  static BremsstrahlungAngularDistributionType 
+  static BremsstrahlungAngularDistributionType
           getBremsstrahlungAngularDistributionFunction();
+
+  //! Set the elastic cutoff angle cosine (mu = 1.0 by default)
+  static void setElasticCutoffAngleCosine( const double cutoff_angle_cosine );
+
+  //! Return the elastic cutoff angle cosine
+  static double getElasticCutoffAngleCosine();
+
+  //! Set the number of electron hash grid bins
+  static void setNumberOfElectronHashGridBins( const unsigned bins );
+
+  //! Return the number of electron hash grid bins
+  static unsigned getNumberOfElectronHashGridBins();
 
 private:
 
@@ -77,8 +89,14 @@ private:
   static bool detailed_pair_production_mode_on;
 
   // The bremsstrahlung photon angular distribution function (default is 2BS)
-  static BremsstrahlungAngularDistributionType 
+  static BremsstrahlungAngularDistributionType
            bremsstrahlung_angular_distribution_function;
+
+  // The elastic cutoff angle cosine (mu = 1.0 by default)
+  static double elastic_cutoff_angle_cosine;
+
+  // The number of electron hash grid bins
+  static unsigned num_electron_hash_grid_bins;
 };
 
 // Return the minimum electron energy (MeV)
@@ -92,7 +110,7 @@ inline double SimulationElectronProperties::getAbsoluteMinElectronEnergy()
 {
   return SimulationElectronProperties::absolute_min_electron_energy;
 }
-  
+
 // Return the maximum electron energy (MeV) - cannot be set at runtime
 inline double SimulationElectronProperties::getMaxElectronEnergy()
 {
@@ -112,10 +130,22 @@ inline bool SimulationElectronProperties::isAtomicRelaxationModeOn()
 }
 
 // Return if detailed bremsstrahlung mode is on
-inline BremsstrahlungAngularDistributionType 
+inline BremsstrahlungAngularDistributionType
   SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction()
 {
   return SimulationElectronProperties::bremsstrahlung_angular_distribution_function;
+}
+
+// Return the elastic cutoff angle cosine
+inline double SimulationElectronProperties::getElasticCutoffAngleCosine()
+{
+  return SimulationElectronProperties::elastic_cutoff_angle_cosine;
+}
+
+// Get the number of electron hash grid bins
+inline unsigned SimulationElectronProperties::getNumberOfElectronHashGridBins()
+{
+  return SimulationElectronProperties::num_electron_hash_grid_bins;
 }
 
 } // end MonteCarlo namespace

@@ -22,7 +22,7 @@ class Ray : public Utility::PrintableObject
 {
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
@@ -47,7 +47,7 @@ public:
 
   //! Destructor
   ~Ray();
-  
+
   //! Return the x position of the ray
   double getXPosition() const;
 
@@ -72,6 +72,14 @@ public:
   //! Return the direction of the ray
   const double* getDirection() const;
 
+  //! Change the direction of the ray
+  void changeDirection( const double direction[3] );
+
+  //! Change the direction of the ray
+  void changeDirection( const double x_direction,
+                        const double y_direction,
+                        const double z_direction );
+
   //! Advance the head along its direction by the requested distance
   void advanceHead( const double distance );
 
@@ -82,7 +90,7 @@ private:
 
   // Default constructor
   Ray();
-  
+
   // Copy constructor
   Ray( const Ray& );
 

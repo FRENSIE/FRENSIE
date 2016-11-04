@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_HPP
-#define FACEMC_PARTICLE_SIMULATION_MANAGER_HPP
+#ifndef FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
+#define FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
 
 // Boost Function
 #include <boost/function.hpp>
@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SourceModuleInterface.hpp"
-#include "MonteCarlo_EstimatorModuleInterface.hpp"
+#include "MonteCarlo_EventModuleInterface.hpp"
 #include "MonteCarlo_CollisionModuleInterface.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -27,7 +27,7 @@
 namespace MonteCarlo{
 
 //! The generic particle simulation manager class
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
@@ -38,20 +38,20 @@ protected:
 
   // Typedef for geometry module interface
   typedef Geometry::ModuleInterface<GeometryHandler> GMI;
-  
+
   // Typedef for source module interface
   typedef SourceModuleInterface<SourceHandler> SMI;
-  
-  // Typedef for estimator module interface
-  typedef EstimatorModuleInterface<EstimatorHandler> EMI;
-  
+
+  // Typedef for event module interface
+  typedef EventModuleInterface<EstimatorHandler> EMI;
+
   // Typedef for collision module interface
   typedef CollisionModuleInterface<CollisionHandler> CMI;
 
 public:
 
-  //! Constructor 
-  ParticleSimulationManager( 
+  //! Constructor
+  ParticleSimulationManager(
 		const unsigned long long number_of_histories,
 		const unsigned long long start_history = 0ull,
 		const unsigned long long previously_completed_histories = 0ull,
@@ -65,10 +65,11 @@ public:
   virtual void runSimulation();
 
   //! Print the data in all estimators to the desired stream
-  virtual void printSimulationSummary( std::ostream &os ) const;
+  virtual void printSimulationSummary( std::ostream& os ) const;
 
   //! Export the simulation data (to an hdf5 file)
-  virtual void exportSimulationData( const std::string& data_file_name ) const;
+  virtual void exportSimulationData( const std::string& data_file_name,
+                                     std::ostream& os ) const;
 
   // Signal handler
   virtual void signalHandler(int signal);
@@ -76,7 +77,7 @@ public:
 protected:
 
   //! Run the simulation batch
-  void runSimulationBatch( const unsigned long long start_history, 
+  void runSimulationBatch( const unsigned long long start_history,
 			   const unsigned long long end_history );
 
   //! Return the number of histories
@@ -92,7 +93,7 @@ protected:
 
   //! Set the start time
   void setStartTime( const double start_time );
-  
+
   //! Set the end time
   void setEndTime( const double end_time );
 
@@ -111,9 +112,16 @@ private:
   void ignoreParticle( ParticleStateType& particle,
 		       ParticleBank& particle_bank ) const;
 
+  // Print lost particle info
+  void printLostParticleInfo( const std::string& file,
+                              const int line,
+                              const std::string& error_message,
+                              const ParticleState& particle ) const;
+
+
   // Starting history
   unsigned long long d_start_history;
-  
+
   // Number of particle histories to simulate
   unsigned long long d_history_number_wall;
 
@@ -146,35 +154,28 @@ private:
 #define CATCH_LOST_PARTICLE_AND_BREAK( particle )			\
   catch( std::runtime_error& exception )				\
   {									\
-    std::cout << exception.what() << std::endl;				\
-    std::cout << "Lost particle info: " << std::endl;			\
-    std::cout << " History: " << particle.getHistoryNumber() << std::endl; \
-    std::cout << " Cell: " << particle.getCell() << std::endl;		\
-    std::cout << " Position: " << particle.getXPosition() << " ";	\
-    std::cout << particle.getYPosition() << " ";			\
-    std::cout << particle.getZPosition() << std::endl;			\
-    std::cout << " Direction: " << particle.getXDirection() << " ";	\
-    std::cout << particle.getYDirection() << " ";			\
-    std::cout << particle.getZDirection() << std::endl;			\
     particle.setAsLost();						\
+                                                                        \
+    this->printLostParticleInfo( __FILE__,                              \
+                                 __LINE__,                              \
+                                 exception.what(),                      \
+                                 particle );                            \
     break;								\
-    }
+  }
 
 //! Macro for catching a lost source particle
 #define CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank )			\
   catch( std::runtime_error& exception )				\
   {									\
-    std::cout << exception.what() << std::endl;				\
-    std::cout << "Lost particle info: " << std::endl;			\
-    std::cout << " History: " << bank.top().getHistoryNumber() << std::endl; \
-    std::cout << " Cell: " << bank.top().getCell() << std::endl;	\
-    std::cout << " Position: " << bank.top().getXPosition() << " ";	\
-    std::cout << bank.top().getYPosition() << " ";			\
-    std::cout << bank.top().getZPosition() << std::endl;		\
-    std::cout << " Direction: " << bank.top().getXDirection() << " ";	\
-    std::cout << bank.top().getYDirection() << " ";			\
-    std::cout << bank.top().getZDirection() << std::endl;		\
+    bank.top().setAsLost();                                             \
+                                                                        \
+    this->printLostParticleInfo( __FILE__,                              \
+                                 __LINE__,                              \
+                                 exception.what(),                      \
+                                 bank.top() );                          \
+                                                                        \
     bank.pop();								\
+                                                                        \
     continue;								\
   }
 
@@ -188,7 +189,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTICLE_SIMULATION_MANAGER_HPP
+#endif // end FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSimulationManager.hpp

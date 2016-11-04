@@ -26,23 +26,23 @@ namespace Utility{
 //! Struct that is used to obtain random numbers
 class RandomNumberGenerator
 {
-  
+
 public:
+
+  //! Check if the streams have been created
+  static bool hasStreams();
 
   //! Create the number of random number streams required
   static void createStreams();
 
-  //! Create the number of random number streams requested
-  static void createStreams( const unsigned number_of_streams );
-  
   //! Initialize the generator for the desired history
   static void initialize( const unsigned long long history_number = 0ULL );
 
   //! Initialize the generator for the next history
   static void initializeNextHistory();
-  
+
   //! Set a fake stream for the generator
-  static void setFakeStream( std::vector<double>& fake_stream,
+  static void setFakeStream( const std::vector<double>& fake_stream,
 			     const unsigned thread_id = 0u );
 
   //! Unset the fake stream
@@ -51,17 +51,17 @@ public:
   //! Return a random number in interval [0,1)
   template<typename ScalarType>
   static ScalarType getRandomNumber();
-  
+
   //! Destructor
   ~RandomNumberGenerator()
   { /* ... */ }
 
 private:
-  
+
   // Constructor
   RandomNumberGenerator();
 
-  // Pointer to generator 
+  // Pointer to generator
   static boost::ptr_vector<LinearCongruentialGenerator> generator;
 };
 
@@ -73,8 +73,8 @@ inline ScalarType RandomNumberGenerator::getRandomNumber()
   testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
   // Make sure that the generator has been initialized
   testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
-  
-  return static_cast<ScalarType>( 
+
+  return static_cast<ScalarType>(
 	     generator[GlobalOpenMPSession::getThreadId()].getRandomNumber() );
 }
 
@@ -86,13 +86,13 @@ inline double RandomNumberGenerator::getRandomNumber<double>()
   testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
   // Make sure that the generator has been initialized
   testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
-  
+
   return generator[GlobalOpenMPSession::getThreadId()].getRandomNumber();
 }
 
 // Return a random long long unsigned integer in [0,2^64)
 template<>
-inline unsigned long long 
+inline unsigned long long
 RandomNumberGenerator::getRandomNumber<unsigned long long>()
 {
   // Make sure the generator has been set up correctly
