@@ -277,7 +277,7 @@ void ParticleSimulationManager<GeometryHandler,
       #pragma omp critical( ostream_update )
       {
         std::cerr << "End History #: " << history
-	      << " Run Time: " << Utility::GlobalOpenMPSession::getTime(); - history_start_time
+	      << " Run Time: " << Utility::GlobalOpenMPSession::getTime() - history_start_time
 	      << std::endl;
       }
     }
