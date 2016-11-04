@@ -30,7 +30,7 @@ std::shared_ptr<MonteCarlo::ElectroatomicReaction>
     ace_elastic_reaction, test_elastic_reaction;
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_scattering_distribution;
-std::vector<Utility::Pair<double,std::shared_ptr<const Utility::TabularOneDDistribution> > >
+std::shared_ptr<Utility::FullyTabularTwoDDistribution>
     elastic_scattering_function;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -241,14 +241,14 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> elas_block =
     xss_data_extractor->extractELASBlock();
 
-  // Create the elastic scattering distributions
-  elastic_scattering_function.resize( size );
+  // Create the scattering function
+  Utility::FullyTabularTwoDDistribution::DistributionType function_data( size );
 
   for( unsigned n = 0; n < size; ++n )
   {
-    elastic_scattering_function[n].first = elastic_energy_grid[n];
+    function_data[n].first = elastic_energy_grid[n];
 
-    elastic_scattering_function[n].second.reset(
+    function_data[n].second.reset(
 	  new Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
@@ -259,6 +259,11 @@ int main( int argc, char** argv )
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
   upper_cutoff_angle_cosine = 1.0;
+
+  // Create the scattering function
+  elastic_scattering_function.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+            function_data ) );
 
   elastic_scattering_distribution.reset(
 	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(

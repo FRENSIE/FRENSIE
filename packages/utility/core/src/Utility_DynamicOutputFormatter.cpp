@@ -89,12 +89,14 @@ void DynamicOutputFormatter::boldWhiteKeyword( const std::string& keyword )
 }
 
 // Format the standard error message keywords in the output
-/*! \details The standard error keyword "\\s*[E|e]rror:". Any matches will 
- * be formatted in bold-red.
+/*! \details The standard error keyword "(\\s*|\\s\\S+)[E|e]rror:". Note
+ * that the "\\s\\S+" section allows matches such as "std::logic_error:" or
+ * "FatalError:" in addition to the standard "Error:" or "error:". Any matches
+ * will be formatted in bold-red.
  */
 void DynamicOutputFormatter::formatStandardErrorKeywords()
 {
-  this->boldRedKeyword( "\\s*[E|e]rror:" );
+  this->boldRedKeyword( "(\\s*|\\s\\S+)[E|e]rror:" );
 }
 
 // Format the standard warning message keywords in the output
@@ -106,6 +108,15 @@ void DynamicOutputFormatter::formatStandardWarningKeywords()
   this->boldMagentaKeyword( "\\s*[W|w]arning:" );
 }
 
+// Format the standard note keywords in the output
+/*! \details The standard note keyword is "\\s*[N|n]ote:". Any matches
+ * will be formatted in bold-cyan.
+ */
+void DynamicOutputFormatter::formatStandardNoteKeywords()
+{
+  this->boldCyanKeyword( "\\s*[N|n]ote:" );
+}
+
 // Format the standard filename keywords in the output
 /*! \details The standard filename keyword 
  * "[\\s/|\\s\\w][\\w|/]*\\.[h|c]pp:?\\d*:?". Any matches will be formatted in
@@ -114,6 +125,37 @@ void DynamicOutputFormatter::formatStandardWarningKeywords()
 void DynamicOutputFormatter::formatStandardFilenameKeywords()
 {
   this->boldKeyword( "[\\s/|\\s\\w][\\w|/]*\\.[h|c]pp:?\\d*:?" );
+}
+
+// Format the standard pass keywords in the output
+/*! \details The standard pass keyword is "[P|p]ass(ed)?". Any matches
+ * will be formatted in green.
+ */
+void DynamicOutputFormatter::formatStandardPassKeywords()
+{
+  this->formatKeyword<Utility::DefaultTextFormat,Utility::GreenTextColor,Utility::DefaultTextBackgroundColor>( "[P|p]ass(ed)?" );
+}
+
+// Format the standard fail keywords in the output
+/*! \details The standard fail keyword is "[F|f]ail(ed)?". Any matches
+ * will be formatted in red.
+ */
+void DynamicOutputFormatter::formatStandardFailKeywords()
+{
+  this->formatKeyword<Utility::DefaultTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor>( "[F|f]ail(ed)?" );
+}
+
+// Format the Teuchos unit test keywords in the output
+void DynamicOutputFormatter::formatTeuchosUnitTestKeywords()
+{
+  this->formatStandardErrorKeywords();
+  this->formatStandardWarningKeywords();
+  this->formatStandardFilenameKeywords();
+  this->formatStandardNoteKeywords();
+  this->formatStandardPassKeywords();
+  this->formatStandardFailKeywords();
+  this->formatKeyword<Utility::DefaultTextFormat,Utility::GreenTextColor,Utility::DefaultTextBackgroundColor>( "(TEST\\s)?PASSED" );
+  this->formatKeyword<Utility::DefaultTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor>( "(TEST\\s)?FAILED" );
 }
   
 } // end Utility namespace

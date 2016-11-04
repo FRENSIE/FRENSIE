@@ -24,11 +24,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
   std::vector<double> angular_energy_grid =
     data_container.getElasticAngularEnergyGrid();
 
-  // Get size of paramters
-  int size = angular_energy_grid.size();
-
   // Create the scattering function
-  CutoffDistribution scattering_function(size);
+  std::shared_ptr<TwoDDist> scattering_function;
   ElasticElectronScatteringDistributionNativeFactory::createCutoffScatteringFunction(
 	data_container,
 	angular_energy_grid,
@@ -72,7 +69,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
   int size = angular_energy_grid.size();
 
   // Create the scattering function
-  CutoffDistribution scattering_function(size);
+  std::shared_ptr<TwoDDist> scattering_function;
   ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
         cutoff_elastic_angles,
         cutoff_elastic_pdf,
@@ -105,8 +102,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
   int size = angular_energy_grid.size();
 
   // Create the hybrid scattering functions and cross section ratio
-  CutoffDistribution cutoff_function(size);
-  DiscreteDistribution moment_preserving_function(size);
+  std::shared_ptr<HybridDistribution> hybrid_function;
   ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
         data_container,
         grid_searcher,
@@ -115,14 +111,12 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
         moment_preserving_cross_section,
         angular_energy_grid,
         cutoff_angle_cosine,
-        cutoff_function,
-        moment_preserving_function );
+        hybrid_function );
 
   // Create hybrid distribution
   hybrid_elastic_distribution.reset(
-        new HybridElasticElectronScatteringDistribution(
-                cutoff_function,
-                moment_preserving_function,
+    new HybridElasticElectronScatteringDistribution(
+                hybrid_function,
                 cutoff_angle_cosine ) );
 }
 
@@ -137,11 +131,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
   std::vector<double> angular_energy_grid =
         data_container.getElasticAngularEnergyGrid();
 
-  // Get size of paramters
-  int size = angular_energy_grid.size();
-
   // Create the scattering function
-  CutoffDistribution scattering_function(size);
+  std::shared_ptr<TwoDDist> scattering_function;
 
   ElasticElectronScatteringDistributionNativeFactory::createCutoffScatteringFunction(
 		data_container,
@@ -187,7 +178,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
   int size = angular_energy_grid.size();
 
   // Create the scattering function
-  DiscreteElasticDistribution scattering_function(size);
+  std::shared_ptr<TwoDDist> scattering_function;
   ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingScatteringFunction(
 		data_container,
         angular_energy_grid,
@@ -257,12 +248,11 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
   return grid;
 }
 
-
 // Create the cutoff scattering function
 void ElasticElectronScatteringDistributionNativeFactory::createCutoffScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& data_container,
         const std::vector<double>& angular_energy_grid,
-        CutoffDistribution& scattering_function )
+        std::shared_ptr<TwoDDist>& scattering_function )
 {
   std::map<double,std::vector<double> > 
     angles( data_container.getCutoffElasticAngles() );
@@ -286,7 +276,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
         const std::map<double,std::vector<double> >& cutoff_elastic_angles,
         const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
         const std::vector<double>& angular_energy_grid,
-        CutoffDistribution& scattering_function )
+        std::shared_ptr<TwoDDist>& scattering_function )
 {
   // Make sure the angular energy grid is valid
   testPrecondition( angular_energy_grid.back() > 0 );
@@ -296,9 +286,13 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
 
   Data::testPreconditionValuesGreaterThanZero( angular_energy_grid );
 
+  // Get the distribution data
+  TwoDDist::DistributionType
+    function_data( angular_energy_grid.size() );
+
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
   {
-    scattering_function[n].first = angular_energy_grid[n];
+    function_data[n].first = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     std::vector<double> angles(
@@ -308,20 +302,28 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
     std::vector<double> pdf(
         cutoff_elastic_pdf.find( angular_energy_grid[n] )->second );
 
-    scattering_function[n].second.reset(
+    function_data[n].second.reset(
 	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
   }
+
+  // Set the scattering function
+  scattering_function.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+        function_data ) );
 }
 
 // Create the moment preserving scattering function
 void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& data_container,
         const std::vector<double>& angular_energy_grid,
-        DiscreteElasticDistribution& scattering_function )
+        std::shared_ptr<TwoDDist>& scattering_function )
 {
+  TwoDDist::DistributionType
+    function_data( angular_energy_grid.size() );
+
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
   {
-    scattering_function[n].first = angular_energy_grid[n];
+    function_data[n].first = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     std::vector<double> angles(
@@ -333,9 +335,13 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingS
         data_container.getMomentPreservingElasticWeights(
             angular_energy_grid[n] ) );
 
-    scattering_function[n].second.reset(
-	  new const Utility::DiscreteDistribution( angles, pdf ) );
+    function_data[n].second.reset(
+	  new const Utility::DiscreteDistribution( angles, pdf, false, true ) );
   }
+
+  scattering_function.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+        function_data ) );
 }
 
 // Create the hybrid elastic scattering functions and cross section ratio
@@ -347,13 +353,15 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
         const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
         const std::vector<double>& angular_energy_grid,
         const double cutoff_angle_cosine,
-        CutoffDistribution& cutoff_function,
-        DiscreteDistribution& moment_preserving_function )
+        std::shared_ptr<HybridDistribution>& hybrid_function )
 {
+  // Get the distribution data
+  HybridDistribution function_data( angular_energy_grid.size() );
+
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
   {
     // Create the cutoff elastic scattering function
-    cutoff_function[n].first = angular_energy_grid[n];
+    function_data[n].first = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     Teuchos::Array<double> angles(
@@ -363,12 +371,9 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
     Teuchos::Array<double> pdf(
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
-    cutoff_function[n].second.reset(
+    function_data[n].second.reset(
       new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
 
-
-    // Create the moment preserving discrete elastic scattering function
-    moment_preserving_function[n].first = angular_energy_grid[n];
 
     // Get the moment preserving elastic scattering angle cosines at the energy
     std::vector<double> discrete_angles(
@@ -380,10 +385,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
         data_container.getMomentPreservingElasticWeights(
             angular_energy_grid[n] ) );
 
-    moment_preserving_function[n].second.reset(
-	  new const Utility::DiscreteDistribution(
-        discrete_angles,
-        weights ) );
+    function_data[n].third.reset(
+	  new const Utility::DiscreteDistribution( discrete_angles, weights ) );
 
     unsigned energy_index =
         grid_searcher->findLowerBinIndex( angular_energy_grid[n] );
@@ -408,11 +411,15 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
-        cutoff_function[n].second->evaluateCDF( cutoff_angle_cosine );
+        function_data[n].second->evaluateCDF( cutoff_angle_cosine );
 
-    // Get the ratio of the cutoff cross section to the moment preserving cross section
-    moment_preserving_function[n].third = cutoff_cross_section_i*cutoff_cdf/mp_cross_section_i;
+    // Get the ratio of the cutoff the moment preserving cross section
+    function_data[n].fourth =
+        cutoff_cross_section_i*cutoff_cdf/mp_cross_section_i;
   }
+
+  // Set the cutoff scattering function
+  hybrid_function.reset( new HybridDistribution( function_data ) );
 }
 
 } // end MonteCarlo namespace

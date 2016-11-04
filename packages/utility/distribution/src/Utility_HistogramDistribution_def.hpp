@@ -19,9 +19,13 @@
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareHistogramDistribution<void,void> );
 
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
@@ -666,6 +670,25 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::convertUnitl
   // Copy the bin boundaries
   for( unsigned i = 0u; i < unitless_values.size(); ++i )
     setQuantity( quantities[i], unitless_values[i] );
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  bool possible_zero = false;
+  
+  for( size_t i = 0; i < d_distribution.size(); ++i )
+  {
+    if( d_distribution[i].second == DQT::zero() )
+    {
+      possible_zero = true;
+
+      break;
+    }
+  }
+
+  return possible_zero;
 }
 
 } // end Utility namespace

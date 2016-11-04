@@ -19,10 +19,14 @@
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ArrayString.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareExponentialDistribution<void,void> );
 
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
@@ -470,6 +474,19 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::initialize
     d_exp_lower_limit = exp( -d_exponent_multiplier*d_lower_limit );
   else
     d_exp_lower_limit = 1.0;
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+/*! \details If the upper limit is Inf then it is possible for the 
+ * distribution to return 0.0 from one of the evaluate methods. However, 
+ * the 0.0 value will only occur if the distribution is evaluated at Inf,
+ * which should never actually be done in practice, so we will return
+ * false from this method.
+ */
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return false;
 }
 
 } // end Utility namespace

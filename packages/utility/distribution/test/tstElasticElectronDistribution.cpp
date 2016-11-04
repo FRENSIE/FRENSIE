@@ -396,6 +396,39 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 }
 
 UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, isContinuous );
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is compatible with the interpolation type
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
+                                   isCompatibleWithInterpType,
+                                   InterpolationPolicy )
+{
+  initializeACEDistribution<InterpolationPolicy>();
+
+  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  else
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+
+  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  else
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+
+  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  else
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+
+  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  else
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution,
+                         isCompatibleWithInterpType );
+
 /* !/todo Find out why test fails even though lists look correct
 //---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file

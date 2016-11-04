@@ -131,33 +131,6 @@ double BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>
   return cross_section*pdf;
 }
 
-// Return the differential cross section (efficient)
-template<typename InterpPolicy, bool processed_cross_section>
-double BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
-    const unsigned incoming_energy_bin,
-    const double incoming_energy,
-    const double outgoing_energy ) const
-{
-  // Make sure the energies are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( outgoing_energy <= incoming_energy );
-
-  if ( !this->isEnergyWithinEnergyGrid( incoming_energy ) )
-    return 0.0;
-
-  double outgoing_photon_energy = incoming_energy - outgoing_energy;
-
-  double cross_section = this->getCrossSection( incoming_energy );
-
-  // Evaluate the PDF at a given incoming and outgoing energy
-  double pdf =
-    d_bremsstrahlung_distribution->evaluatePDF( incoming_energy_bin,
-                                                incoming_energy,
-                                                outgoing_photon_energy );
-
-  return cross_section*pdf;
-}
-
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::react(

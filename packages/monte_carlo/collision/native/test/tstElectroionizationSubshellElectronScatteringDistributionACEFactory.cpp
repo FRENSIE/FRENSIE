@@ -80,20 +80,20 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-		   evaluatePDF )
+		           evaluatePDF )
 {
-  double pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 1e-8,
-                                                                1e-8 );
+  double pdf;
+  pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 2e-8, 1e-8 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.955696992576, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111035.20724850148, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 657.05096239747513209, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.63484458985044512, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );

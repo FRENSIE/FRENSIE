@@ -10,23 +10,17 @@
 #define DATA_GEN_ELASTIC_ELECTRON_MOMENTS_EVALUATOR_HPP
 
 // Boost Includes
-#include <boost/scoped_ptr.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 
 namespace DataGen{
@@ -36,13 +30,6 @@ class ElasticElectronMomentsEvaluator
 {
 
 public:
-
-  //! Typedef for the elastic distribution
-  typedef MonteCarlo::TwoDDistribution ElasticDistribution;
-
-  //! Typedef for the cutoff elastic distribution
-  typedef MonteCarlo::AnalogElasticElectronScatteringDistribution::CutoffDistribution
-    CutoffDistribution;
 
   //! Typedef for the elastic distribution
   typedef Utility::GaussKronrodIntegrator<Utility::long_float>

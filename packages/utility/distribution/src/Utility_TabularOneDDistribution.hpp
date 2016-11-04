@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 
@@ -73,6 +74,9 @@ inline bool UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::isT
  * \ingroup one_d_distributions
  */
 typedef UnitAwareTabularOneDDistribution<void,void> TabularOneDDistribution;
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularOneDDistribution<void,void> );
 
 } // end Utility namespace
 

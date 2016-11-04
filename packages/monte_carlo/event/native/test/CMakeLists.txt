@@ -173,7 +173,7 @@ Add_EXECUTABLE(tstCellCollisionFluxEstimator
   tstCellCollisionFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellCollisionFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellCollisionFluxEstimator_test tstCellCollisionFluxEstimator)
-SET_PROPERTY(TEST CellCollisionFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
+SET_PROPERTY(TEST CellCollisionFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native no_threads)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelCellCollisionFluxEstimator_2_test
@@ -188,7 +188,7 @@ Add_EXECUTABLE(tstCellTrackLengthFluxEstimator
   tstCellTrackLengthFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellTrackLengthFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)
-SET_PROPERTY(TEST CellTrackLengthFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
+SET_PROPERTY(TEST CellTrackLengthFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native no_threads)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_2_test
@@ -197,6 +197,19 @@ IF(${FRENSIE_ENABLE_OPENMP})
     tstCellTrackLengthFluxEstimator --threads=4)
   SET_PROPERTY(TEST SharedParallelCellTrackLengthFluxEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
   SET_PROPERTY(TEST SharedParallelCellTrackLengthFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+ENDIF()
+
+ADD_EXECUTABLE(tstHexMeshTrackLengthFluxEstimator
+  tstHexMeshTrackLengthFluxEstimator.cpp)
+TARGET_LINK_LIBRARIES(tstHexMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
+ADD_TEST(HexMeshTrackLengthFluxEstimator_test tstHexMeshTrackLengthFluxEstimator)
+SET_PROPERTY(TEST HexMeshTrackLengthFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelHexMeshTrackLengthFluxEstimator_2_test tstHexMeshTrackLengthFluxEstimator --threads=2)
+  ADD_TEST(SharedParallelHexMeshTrackLengthFluxEstimator_4_test tstHexMeshTrackLengthFluxEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelHexMeshTrackLengthFluxEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelHexMeshTrackLengthFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
@@ -358,7 +371,7 @@ IF(FRENSIE_ENABLE_DAGMC)
   ADD_EXECUTABLE(tstStandardEstimatorFactory_DagMC
     tstStandardEstimatorFactory_DagMC.cpp)
   TARGET_LINK_LIBRARIES(tstStandardEstimatorFactory_DagMC monte_carlo_estimator_native)
-  ADD_TEST(StandardEstimatorFactory_DagMC_test tstStandardEstimatorFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc.xml")
+  ADD_TEST(StandardEstimatorFactory_DagMC_test tstStandardEstimatorFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_estimators.xml")
   SET_PROPERTY(TEST StandardEstimatorFactory_DagMC_test PROPERTY LABELS monte_carlo_estimator_native dagmc)
 ENDIF()
 
@@ -366,21 +379,21 @@ IF(FRENSIE_ENABLE_ROOT)
   ADD_EXECUTABLE(tstStandardEstimatorFactory_Root
     tstStandardEstimatorFactory_Root.cpp)
   TARGET_LINK_LIBRARIES(tstStandardEstimatorFactory_Root monte_carlo_estimator_native)
-  ADD_TEST(StandardEstimatorFactory_Root_test tstStandardEstimatorFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root.xml")
+  ADD_TEST(StandardEstimatorFactory_Root_test tstStandardEstimatorFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_estimators.xml")
   SET_PROPERTY(TEST StandardEstimatorFactory_Root_test PROPERTY LABELS monte_carlo_estimator_native root)
 ENDIF()
 
 ADD_EXECUTABLE(tstParticleTrackerFactory
   tstParticleTrackerFactory.cpp)
 TARGET_LINK_LIBRARIES(tstParticleTrackerFactory monte_carlo_estimator_native)
-ADD_TEST(ParticleTrackerFactory_test tstParticleTrackerFactory --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_ptrac.xml")
+ADD_TEST(ParticleTrackerFactory_test tstParticleTrackerFactory --test_observer_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ptrac.xml")
 SET_PROPERTY(TEST ParticleTrackerFactory_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(FRENSIE_ENABLE_DAGMC)
   ADD_EXECUTABLE(tstEventHandlerFactory_DagMC
     tstEventHandlerFactory_DagMC.cpp)
   TARGET_LINK_LIBRARIES(tstEventHandlerFactory_DagMC monte_carlo_estimator_native)
-  ADD_TEST(EventHandlerFactory_DagMC_test tstEventHandlerFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc_factory.xml")
+  ADD_TEST(EventHandlerFactory_DagMC_test tstEventHandlerFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers.xml")
   SET_PROPERTY(TEST EventHandlerFactory_DagMC_test PROPERTY LABELS monte_carlo_estimator_native dagmc)
 ENDIF()
 
@@ -388,6 +401,6 @@ IF(FRENSIE_ENABLE_ROOT)
   ADD_EXECUTABLE(tstEventHandlerFactory_Root
     tstEventHandlerFactory_Root.cpp)
   TARGET_LINK_LIBRARIES(tstEventHandlerFactory_Root monte_carlo_estimator_native geometry_root)
-  ADD_TEST(EventHandlerFactoryRoot_test tstEventHandlerFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root_factory.xml")
+  ADD_TEST(EventHandlerFactoryRoot_test tstEventHandlerFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers.xml")
   SET_PROPERTY(TEST EventHandlerFactoryRoot_test PROPERTY LABELS monte_carlo_estimator_native root)
 ENDIF()

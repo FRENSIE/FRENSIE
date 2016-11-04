@@ -1,9 +1,11 @@
 # Set up the directory hierarchy
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/packages/utility/units/src"
+INCLUDE_DIRECTORIES(
 "${CMAKE_SOURCE_DIR}/packages/utility/core/src"
 "${CMAKE_SOURCE_DIR}/packages/utility/prng/src"
 "${CMAKE_SOURCE_DIR}/packages/utility/hdf5/src"
+"${CMAKE_SOURCE_DIR}/packages/utility/interpolation/src"
 "${CMAKE_SOURCE_DIR}/packages/utility/distribution/src"
+"${CMAKE_SOURCE_DIR}/packages/utility/grid/src"
 "${CMAKE_SOURCE_DIR}/packages/utility/integrator/src"
 "${CMAKE_SOURCE_DIR}/packages/data/endf/src"
 "${CMAKE_SOURCE_DIR}/packages/geometry/core/src"

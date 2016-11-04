@@ -18,9 +18,6 @@
  *  <li>integrator</li>
  * </ul>
  *
- * \section utility_units_sec The Unit Subpackage
- *
- *
  * \section utility_core_sec The Core Subpackage
  * The core subpackage provides all of the very low-level classes and
  * functions that cannot be organized into a more coherent group (misc might
@@ -28,17 +25,23 @@
  * are provided by this subpackage are listed below.
  * <ul>
  *  <li>XML io (Utility::XMLCompatibleObject)</li>
- *  <li>xtream output (Utility::PrintableObject)</li>
+ *  <li>TTY formatted output (Utility::StaticOutputFormatter,
+ *                            Utility::DynamicOutputFormatter)</li>
+ *  <li>boost units extensions (Utility::UnitTraits, Utility::QuantityTraits,
+ *                              Utility::Units::ElectronVolt, etc.)</li>
+ *  <li>stream output (Utility::PrintableObject)</li>
  *  <li>binary searching (Utility::SearchAlgorithms)</li>
  *  <li>sorting (Utility::SortAlgorithms)</li>
  *  <li>interpolation (Utility::InterpolationPolicy)</li>
- *  <li>linearized grid generation (Utility::LinearGridGenerator)</li>
- *  <li>ODE solving (Utility::ODESolver)</li>
+ *  <li>tabular grid generation (Utility::GridGenerator)</li>
+ *  <li>2D grid generation (Utility::TwoDGridGenerator)</li>
  *  <li>efficient integer exponentiation (Utility::ExponentiationAlgorithms)</li>
  *  <li>Fortran file ops (Utility::FortranFileHelperWrappers)</li>
  *  <li>physical constant encapsulation (Utility::PhysicalConstants)</li>
  *  <li>tuple object creation (Utility::Tuple)</li>
  *  <li>unit testing helpers (Utility::TestingHelpers)</li>
+ *  <li>Teuchos Unit Test Harness extension 
+ *      (Utility_UnitTestHarnessExtensions.hpp)</li>
  *  <li>kinematic equations (Utility::KinematicHelpers)</li>
  *  <li>omp helper functions (Utility::GlobalOpenMPSession)</li>
  *  <li>exception testing (Utility::ExceptionTestMacros)</li>

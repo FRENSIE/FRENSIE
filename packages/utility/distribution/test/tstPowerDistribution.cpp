@@ -505,6 +505,59 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
 UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, isContinuous );
 
 //---------------------------------------------------------------------------//
+// Check if the distribution is compatible with an interpolation type
+UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
+                                            isCompatibleWithInterpType,
+                                            N )
+{
+  initializeDistribution<N,void,void>( distribution );
+
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Utility::PowerDistribution<N> test_dist( 1.0, 1.0, 2.0 );
+
+  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+UNIT_TEST_INSTANTIATION( PowerDistribution, isCompatibleWithInterpType );
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is compatible with the interp type
+UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
+                                            isCompatibleWithInterpType,
+                                            N )
+{
+  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Utility::UnitAwarePowerDistribution<N,cgs::length,si::amount>
+    test_dist( 1.0, 1.0*si::meter, 2.0*si::meter );
+
+  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LogLog>() );
+}
+
+UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution,
+                         isCompatibleWithInterpType );
+
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file
 UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 					    toParameterList,
@@ -999,29 +1052,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
 				      cgs_dimensionless );
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_dists_xml_file;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_dists_xml_file;
+  clp().setOption( "test_dists_xml_file",
+                   &test_dists_xml_file,
+                   "Test distributions xml file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_dists_xml_file",
-		 &test_dists_xml_file,
-		 "Test distributions xml file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::PowerDistribution<1u> );
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::PowerDistribution<2u> );
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::PowerDistribution<3u> );
@@ -1036,21 +1081,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstPowerDistribution.cpp

@@ -10,14 +10,13 @@
 #define MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 
 // FRENSIE Includes
-//#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
 namespace MonteCarlo{
 
 //! The bremsstrahlung scattering distribution factory class that uses ACE data
-class BremsstrahlungElectronScatteringDistributionACEFactory //: public BremsstrahlungElectronScatteringDistributionFactory
+class BremsstrahlungElectronScatteringDistributionACEFactory
 {
 
 public:
@@ -49,7 +48,7 @@ protected:
   //! Create the energy loss function
   static void createScatteringFunction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
+      std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
                                                         scattering_function );
 };
 

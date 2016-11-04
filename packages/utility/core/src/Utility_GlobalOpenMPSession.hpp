@@ -13,7 +13,7 @@
 #include <time.h>
 
 // FRENSIE Includes
-#include "FRENSIE_openmp_config.hpp"
+#include "FRENSIE_config.hpp"
 
 namespace Utility{
 

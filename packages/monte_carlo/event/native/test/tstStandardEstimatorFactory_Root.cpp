@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, createAndRegisterEstimator )
   }
 
   // Check that all of the estimators got created
-  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 3 );
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 8 );
 
   std::string estimator_file_name( "estimator_factory_root.h5" );
 
@@ -152,11 +152,11 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, createAndRegisterEstimator )
   std::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
     cell_id_vols;
   hdf5_file_handler.getEstimatorEntities( 12, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 1 );
 
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
   TEST_ASSERT( cell_id_vols.count( 1 ) );
-  TEST_ASSERT( cell_id_vols.count( 2 ) );
-
+  
   // Check that estimator 13 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isCellEstimator( 13 ) );
 
@@ -177,10 +177,10 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, createAndRegisterEstimator )
 
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 13, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 1 );
 
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
   TEST_ASSERT( cell_id_vols.count( 1 ) );
-  TEST_ASSERT( cell_id_vols.count( 2 ) );
 
   // Check that estimator 14 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isCellEstimator( 14 ) );
@@ -203,10 +203,10 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, createAndRegisterEstimator )
 
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 14, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 1 );
 
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
   TEST_ASSERT( cell_id_vols.count( 1 ) );
-  TEST_ASSERT( cell_id_vols.count( 2 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -217,7 +217,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root,
   TEST_NOTHROW( estimator_factory->createAndRegisterCachedEstimators() );
 
   // Check that all of the estimators got created
-  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 3 );
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 8 );
 }
 
 //---------------------------------------------------------------------------//

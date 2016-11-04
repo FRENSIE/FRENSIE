@@ -38,7 +38,7 @@ public:
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid,
     const unsigned subshell,
-    ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution&
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
 	 subshell_distribution );
 };
 

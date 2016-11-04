@@ -12,11 +12,11 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
-#include "Utility_InterpolationPolicy.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TwoDInterpolationPolicy.hpp"
 
 namespace MonteCarlo{
 
@@ -27,19 +27,16 @@ class HybridElasticElectronScatteringDistribution : public ElectronScatteringDis
 
 public:
 
-  //! Typedef for the elastic cutoff distribution
-  typedef MonteCarlo::TwoDDistribution CutoffDistribution;
-
   //! Typedef for the elastic discrete distribution
-  typedef std::vector<Utility::Trip< double, 
+  typedef std::vector<Utility::Quad< double,
+                        std::shared_ptr<const Utility::TabularOneDDistribution>,
                         std::shared_ptr<const Utility::TabularOneDDistribution>,
                         double > >
-    DiscreteDistribution;
+    HybridDistribution;
 
   //! Constructor
   HybridElasticElectronScatteringDistribution(
-    const TwoDDistribution& elastic_cutoff_distribution,
-    const DiscreteDistribution& elastic_discrete_distribution,
+    const std::shared_ptr<HybridDistribution>& hybrid_distribution,
     const double& cutoff_angle_cosine );
 
   //! Destructor
@@ -94,25 +91,41 @@ protected:
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
 
-// Sample an outgoing direction from the given distribution
-void sampleIndependent(
-        const unsigned& energy_bin,
+  // Sample an outgoing direction from the given distribution
+  void sampleBin(
+        const HybridDistribution::const_iterator& distribution_bin,
         const double& random_number,
         double& scattering_angle_cosine ) const;
+
+  // Evaluate the distribution using the desired evaluation method
+  template<typename EvaluationMethod>
+  double evaluateImpl( const double incoming_energy,
+                       const double scattering_angle_cosine,
+                       EvaluationMethod evaluate,
+                       double below_lower_limit_return_value = 0.0,
+                       double above_upper_limit_return_value = 0.0  ) const;
 
 private:
 
   // cutoff angle cosine
   double d_cutoff_angle_cosine;
 
-  // Cutoff elastic scattering distribution
-  TwoDDistribution d_elastic_cutoff_distribution;
-
-  // Moment preserving discrete elastic scattering distribution and cross section ratio
-  DiscreteDistribution d_elastic_discrete_distribution;
+  /* Hybrid distribution ( first = energy, second = 1D cutoff distribution,
+   * third = 1D Moment preserving discrete distribution,
+   * fourth = sampling ratio bewteen the distributions )
+  */
+  std::shared_ptr<HybridDistribution> d_hybrid_distribution;
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template inludes.
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_HybridElasticElectronScatteringDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_HYBRID_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 

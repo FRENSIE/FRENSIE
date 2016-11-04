@@ -18,8 +18,15 @@
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLog,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLog,void,void> );
 
 // Default constructor
 template<typename InterpolationPolicy,
@@ -682,6 +689,67 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   // Copy the bin boundaries
   for( unsigned i = 0u; i < unitless_values.size(); ++i )
     setQuantity( quantities[i], unitless_values[i] );
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  bool possible_zero = false;
+
+  for( size_t i = 0; i < d_distribution.size(); ++i )
+  {
+    if( d_distribution[i].third == DQT::zero() )
+    {
+      possible_zero = true;
+
+      break;
+    }
+  }
+
+  return possible_zero;
+}
+
+// Test if the independent variable is compatible with Lin processing
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+                                         const LinIndepVarProcessingTag ) const
+{
+  return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LinIndepVarProcessingTag>::value;
+}
+  
+// Test if the independent variable is compatible with Log processing
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+                                         const LogIndepVarProcessingTag ) const
+{
+  return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LogIndepVarProcessingTag>::value;
+}
+
+// Test if the dependent variable is compatible with Lin processing
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
+                                           const LinDepVarProcessingTag ) const
+{
+  return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LinDepVarProcessingTag>::value;
+}
+
+// Test if the dependent variable is compatible with Log processing
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
+                                           const LogDepVarProcessingTag ) const
+{
+  return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LogDepVarProcessingTag>::value;
 }
 
 } // end Utility namespace

@@ -20,10 +20,11 @@
 #include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
+
+typedef Utility::FullyTabularTwoDDistribution TwoDDist;
+
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -165,12 +166,11 @@ int main( int argc, char** argv )
     int size = angular_energy_grid.size();
 
     // Create the scattering function
-    MonteCarlo::MomentPreservingElasticElectronScatteringDistribution::DiscreteElasticDistribution
-        scattering_function(size);
+    TwoDDist::DistributionType function_data(size);
 
     for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
     {
-    scattering_function[n].first = angular_energy_grid[n];
+    function_data[n].first = angular_energy_grid[n];
 
     // Get the moment preserving elastic scattering angle cosines at the energy
     std::vector<double> discrete_angles(
@@ -182,11 +182,17 @@ int main( int argc, char** argv )
         data_container.getMomentPreservingElasticWeights(
             angular_energy_grid[n] ) );
 
-    scattering_function[n].second.reset(
+    function_data[n].second.reset(
       new const Utility::DiscreteDistribution(
         discrete_angles,
-        weights ) );
+        weights,
+        false,
+        true ) );
     }
+
+    std::shared_ptr<TwoDDist> scattering_function(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+        function_data ) );
 
     discrete_elastic_distribution.reset(
         new MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(

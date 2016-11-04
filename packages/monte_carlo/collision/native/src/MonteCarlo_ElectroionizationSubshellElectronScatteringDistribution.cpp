@@ -13,6 +13,7 @@
 #include "Utility_KinematicHelpers.hpp"
 
 namespace MonteCarlo{
+
 // Constructor
 /*! \details Electroionization results in a secondary (knock-on) electron.
  * The primary scattered electron and secondary knock-on electron are
@@ -22,7 +23,7 @@ namespace MonteCarlo{
  * given as: 1/2(incoming energy - binding energy). 
  */
 ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellElectronScatteringDistribution(
-    const ElectroionizationSubshellDistribution&
+    const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy )
   : d_electroionization_subshell_scattering_distribution(
@@ -30,7 +31,8 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
     d_binding_energy( binding_energy )
 {
   // Make sure the arraies are valid
-  testPrecondition( d_electroionization_subshell_scattering_distribution.size() > 0 );
+  testPrecondition( d_electroionization_subshell_scattering_distribution.use_count() > 0 );
+  testPrecondition( binding_energy > 0.0 );
 }
 
 // Return the binding energy
@@ -49,24 +51,20 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMaxSecondaryE
     return 0.0;
 }
 
-// Evaluate the PDF value for a given incoming and outgoing energy (efficient)
+// Evaluate the distribution for a given incoming and outgoing energy
 /*! \details The outgoing energy can either be for the primary or secondary
- * (knock-on) electron. The lower bin index should be for the energy bin <= the
- * incoming energy. The PDF should be sampled with a correlated sampling
+ * (knock-on) electron. The PDF should be sampled with a correlated sampling
  * routine that samples the upper and lower distributions with a knock on energy
  * that has an equivalent ratio to the max knock on energy.
  */
-double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
-                    const unsigned lower_bin_index,
-                    const double incoming_energy,
-                    const double outgoing_energy_1 ) const
+double ElectroionizationSubshellElectronScatteringDistribution::evaluate(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
 {
   // Make sure the energies are valid
-  testPrecondition( lower_bin_index >= 0 );
-  testPrecondition( lower_bin_index <
-                    d_electroionization_subshell_scattering_distribution.size() );
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( outgoing_energy_1  > 0.0 );
+  testPrecondition( outgoing_energy_1 > 0.0 );
+  testPrecondition( incoming_energy > outgoing_energy_1 );
 
   // calcualte the energy of the second outgoing electron
   double outgoing_energy_2 = incoming_energy - outgoing_energy_1 - this->getBindingEnergy();
@@ -76,50 +74,13 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
 
   /* Assume the lower of the two outgoing energies is the knock-on electron and
    * get its ratio to the max knock on energy */
-  double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
+  double knock_on_energy_ratio = std::min( outgoing_energy_1, outgoing_energy_2 )/
+    this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
 
-  ElectroionizationSubshellDistribution::const_iterator 
-    lower_distribution = d_electroionization_subshell_scattering_distribution.begin();
-
-  std::advance( lower_distribution, lower_bin_index );
-
-  if( lower_distribution->first != incoming_energy )
-  {
-    ElectroionizationSubshellDistribution::const_iterator upper_distribution = lower_distribution;
-    ++upper_distribution;
-
-    // get the ratio of the knock on energy to the max knock-on energy
-    double knock_on_energy_ratio = knock_on_energy/
-      this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
-
-    // Calculate the lower knock-on energy using the knock on energy ratio
-    double lower_knock_on_energy = knock_on_energy_ratio*
-              lower_distribution->second->getUpperBoundOfIndepVar();
-
-    // Calculate the lower knock-on energy using the knock on energy ratio
-    double upper_knock_on_energy = knock_on_energy_ratio*
-              upper_distribution->second->getUpperBoundOfIndepVar();
-
-    return InterpolationPolicy::interpolate(
-            lower_distribution->first,
-            upper_distribution->first,
+  // evaluate the distribution using a weighted interpolation scheme
+  return d_electroionization_subshell_scattering_distribution->evaluateWeighted(
             incoming_energy,
-            lower_distribution->second->evaluatePDF( lower_knock_on_energy ),
-            upper_distribution->second->evaluatePDF( upper_knock_on_energy ) );
-  }
-  else
-  {
-    // get the max tabulated knock-on energy for the lower distribution
-    double max_knock_on_energy =
-      lower_distribution->second->getUpperBoundOfIndepVar();
-
-    /* Make sure the knock on energy isn't above the max tabulated knock on
-     * energy. This can sometimes happen do to roundoff of tabulated data.
-     */
-    knock_on_energy  = std::min( knock_on_energy, max_knock_on_energy );
-
-    return lower_distribution->second->evaluatePDF( knock_on_energy );
-  }
+            knock_on_energy_ratio );
 }
 
 // Evaluate the PDF value for a given incoming and outgoing energy
@@ -145,53 +106,47 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
 
   /* Assume the lower of the two outgoing energies is the knock-on electron and
    * get its ratio to the max knock on energy */
-  double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
+  double knock_on_energy_ratio = std::min( outgoing_energy_1, outgoing_energy_2 )/
+    this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
 
-  ElectroionizationSubshellDistribution::const_iterator lower_distribution,
-                                                        upper_distribution;
-
-  MonteCarlo::findLowerAndUpperBinBoundary(
-    incoming_energy,
-    d_electroionization_subshell_scattering_distribution,
-    lower_distribution,
-    upper_distribution );
-
-  if( lower_distribution != upper_distribution )
-  {
-    // get the ratio of the knock on energy to the max knock-on energy
-    double knock_on_energy_ratio = knock_on_energy/
-      this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
-
-    // Weight the lower knock-on energy to the same ratio of the max knock on energy.
-    double lower_knock_on_energy = knock_on_energy_ratio*
-              lower_distribution->second->getUpperBoundOfIndepVar();
-
-    // Weight the upper knock-on energy to the same ratio of the max knock on energy.
-    double upper_knock_on_energy = knock_on_energy_ratio*
-              upper_distribution->second->getUpperBoundOfIndepVar();
-
-    return InterpolationPolicy::interpolate(
-            lower_distribution->first,
-            upper_distribution->first,
+  // evaluate the distribution using a weighted interpolation scheme
+  return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalPDFWeighted(
             incoming_energy,
-            lower_distribution->second->evaluatePDF( lower_knock_on_energy ),
-            upper_distribution->second->evaluatePDF( upper_knock_on_energy ) );
-  }
-  else
-  {
-    // get the max tabulated knock-on energy for the lower distribution
-    double max_knock_on_energy =
-      lower_distribution->second->getUpperBoundOfIndepVar();
-
-    /* Make sure the knock on energy isn't above the max tabulated knock on
-     * energy. This can sometimes happen do to roundoff of tabulated data.
-     */
-    knock_on_energy  = std::min( knock_on_energy, max_knock_on_energy );
-
-    return lower_distribution->second->evaluatePDF( knock_on_energy );
-  }
-
+            knock_on_energy_ratio );
 }
+
+// Evaluate the CDF value for a given incoming and outgoing energy
+/*! \details The outgoing energy can either be for the primary or secondary
+ * (knock-on) electron. The PDF should be sampled with a correlated sampling
+ * routine that samples the upper and lower distributions with a knock on energy
+ * that has an equivalent ratio to the max knock on energy.
+ */
+double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
+                     const double incoming_energy,
+                     const double outgoing_energy_1 ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy_1 > 0.0 );
+  testPrecondition( incoming_energy > outgoing_energy_1 );
+
+  // calcualte the energy of the second outgoing electron
+  double outgoing_energy_2 = incoming_energy - outgoing_energy_1 - this->getBindingEnergy();
+
+  if ( outgoing_energy_2 <= 0.0 )
+    return 0.0;
+
+  /* Assume the lower of the two outgoing energies is the knock-on electron and
+   * get its ratio to the max knock on energy */
+  double knock_on_energy_ratio = std::min( outgoing_energy_1, outgoing_energy_2 )/
+    this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
+
+  // evaluate the distribution using a weighted interpolation scheme
+  return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalCDFWeighted(
+            incoming_energy,
+            knock_on_energy_ratio );
+}
+
 
 // Sample an knock on energy and direction from the distribution
 void ElectroionizationSubshellElectronScatteringDistribution::sample(
@@ -201,9 +156,8 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
 {
   // Sample knock-on electron energy
   knock_on_energy =
-    sampleTwoDDistributionCorrelated<ElectroionizationSubshellDistribution>(
-                         incoming_energy,
-                         d_electroionization_subshell_scattering_distribution );
+    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalExact(
+      incoming_energy );
 
   // Calculate the outgoing angle cosine for the knock on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,

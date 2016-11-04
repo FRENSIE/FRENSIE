@@ -62,6 +62,13 @@ TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)
 ADD_TEST(ParticleBank_test tstParticleBank)
 SET_PROPERTY(TEST ParticleBank_test PROPERTY LABELS monte_carlo_core)
 
+ADD_EXECUTABLE(tstIncoherentAdjointModelTypeHelpers
+  tstIncoherentAdjointModelTypeHelpers.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstIncoherentAdjointModelTypeHelpers monte_carlo_core)
+ADD_TEST(IncoherentAdjointModelTypeHelpers_test tstIncoherentAdjointModelTypeHelpers)
+SET_PROPERTY(TEST IncoherentAdjointModelTypeHelpers_test PROPERTY LABELS monte_carlo_core)
+
 ADD_EXECUTABLE(tstSimulationGeneralProperties
   tstSimulationGeneralProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -78,10 +85,17 @@ SET_PROPERTY(TEST SimulationNeutronProperties_test PROPERTY LABELS monte_carlo_c
 
 ADD_EXECUTABLE(tstSimulationPhotonProperties
   tstSimulationPhotonProperties.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSimulationPhotonProperties monte_carlo_core)
 ADD_TEST(SimulationPhotonProperties_test tstSimulationPhotonProperties)
 SET_PROPERTY(TEST SimulationPhotonProperties_test PROPERTY LABELS monte_carlo_core photon)
+
+ADD_EXECUTABLE(tstSimulationAdjointPhotonProperties
+  tstSimulationAdjointPhotonProperties.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationAdjointPhotonProperties monte_carlo_core)
+ADD_TEST(SimulationAdjointPhotonProperties_test tstSimulationAdjointPhotonProperties)
+SET_PROPERTY(TEST SimulationAdjointPhotonProperties_test PROPERTY LABELS monte_carlo_core photon)
 
 ADD_EXECUTABLE(tstSimulationElectronProperties
   tstSimulationElectronProperties.cpp

@@ -14,7 +14,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "FRENSIE_mpi_config.hpp"
+#include "FRENSIE_config.hpp"
 
 namespace Utility{
 

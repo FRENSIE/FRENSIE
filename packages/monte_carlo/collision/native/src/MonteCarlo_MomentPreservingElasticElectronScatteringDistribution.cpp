@@ -11,19 +11,18 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticElectronScatteringDistribution(
-    const DiscreteElasticDistribution& discrete_scattering_distribution,
+    const std::shared_ptr<TwoDDist>& discrete_scattering_distribution,
     const double cutoff_angle_cosine )
   : d_discrete_scattering_distribution( discrete_scattering_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the array is valid
-  testPrecondition( d_discrete_scattering_distribution.size() > 0 );
+  testPrecondition( d_discrete_scattering_distribution.use_count() > 0 );
   // Make sure the cutoff angle cosine is valid
   testPostcondition( d_cutoff_angle_cosine >= -1.0 );
   testPostcondition( d_cutoff_angle_cosine < 1.0 );
@@ -41,27 +40,9 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the distribution at the incoming energy and scattering_angle_cosine
-  return MonteCarlo::evaluateTwoDDistributionCorrelated<DiscreteElasticDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_discrete_scattering_distribution );
-}
-
-// Evaluate the distribution
-double MomentPreservingElasticElectronScatteringDistribution::evaluate(
-                            const unsigned incoming_energy_bin,
-                            const double scattering_angle_cosine ) const
-{
-  // Make sure the energy and angle are valid
-  testPrecondition( incoming_energy_bin <
-                    d_discrete_scattering_distribution.size() );
-  testPrecondition( incoming_energy_bin >= 0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // evaluate the distribution at the bin and scattering_angle_cosine
-  return d_discrete_scattering_distribution[incoming_energy_bin].second->evaluate(
-        scattering_angle_cosine );
+  return d_discrete_scattering_distribution->evaluateExact(
+                        incoming_energy,
+                        scattering_angle_cosine );
 }
 
 // Evaluate the PDF
@@ -75,27 +56,9 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the PDF at the incoming energy and scattering_angle_cosine
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<DiscreteElasticDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_discrete_scattering_distribution );
-}
-
-// Evaluate the PDF
-double MomentPreservingElasticElectronScatteringDistribution::evaluatePDF(
-                            const unsigned incoming_energy_bin,
-                            const double scattering_angle_cosine ) const
-{
-  // Make sure the energy and angle are valid
-  testPrecondition( incoming_energy_bin <
-                    d_discrete_scattering_distribution.size() );
-  testPrecondition( incoming_energy_bin >= 0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // evaluate the PDF at the bin and scattering_angle_cosine
-  return d_discrete_scattering_distribution[incoming_energy_bin].second->evaluatePDF(
-        scattering_angle_cosine );
+  return d_discrete_scattering_distribution->evaluateSecondaryConditionalPDFExact(
+                        incoming_energy,
+                        scattering_angle_cosine );
 }
 
 // Evaluate the CDF
@@ -109,10 +72,9 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the CDF at the incoming energy and scattering_angle_cosine
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF<DiscreteElasticDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_discrete_scattering_distribution );
+  return d_discrete_scattering_distribution->evaluateSecondaryConditionalCDFExact(
+                        incoming_energy,
+                        scattering_angle_cosine );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -204,9 +166,9 @@ void MomentPreservingElasticElectronScatteringDistribution::sampleAndRecordTrial
   // Increment the number of trials
   ++trials;
 
-  scattering_angle_cosine = MonteCarlo::sampleTwoDDistributionCorrelated(
-                                incoming_energy,
-                                d_discrete_scattering_distribution );
+  scattering_angle_cosine =
+    d_discrete_scattering_distribution->sampleSecondaryConditionalExact(
+        incoming_energy );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= d_cutoff_angle_cosine );

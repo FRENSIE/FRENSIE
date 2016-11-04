@@ -167,12 +167,11 @@ int main( int argc, char** argv )
     int size = angular_energy_grid.size();
 
     // Create the scattering function
-    MonteCarlo::CutoffElasticElectronScatteringDistribution::ElasticDistribution
-        scattering_function(size);
+    Utility::FullyTabularTwoDDistribution::DistributionType function_data(size);
 
     for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
     {
-    scattering_function[n].first = angular_energy_grid[n];
+    function_data[n].first = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     Teuchos::Array<double> angles(
@@ -182,9 +181,14 @@ int main( int argc, char** argv )
     Teuchos::Array<double> pdf(
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
-    scattering_function[n].second.reset(
+    function_data[n].second.reset(
       new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
     }
+
+    // Create the scattering function
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
+        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+                function_data ) );
 
     // Create cutoff distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>

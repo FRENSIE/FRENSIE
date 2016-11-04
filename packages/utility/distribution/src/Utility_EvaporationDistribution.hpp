@@ -150,6 +150,9 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareEvaporationDistribution( const UnitAwareEvaporationDistribution<void,void>& unitless_dist_instance, int );
 
+  //! Test if the dependent variable can be zero within the indep bounds
+  bool canDepVarBeZeroInIndepBounds() const;
+
 private:
 
   // Calculate the normalization constant of the distribution

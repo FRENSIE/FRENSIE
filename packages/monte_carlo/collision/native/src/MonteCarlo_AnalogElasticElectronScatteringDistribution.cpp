@@ -37,7 +37,7 @@ double AnalogElasticElectronScatteringDistribution::s_screening_param1 =
 
 // Constructor
 AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDistribution(
-    const CutoffDistribution& elastic_cutoff_distribution,
+    const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
     const int atomic_number )
   : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
     d_atomic_number( atomic_number ),
@@ -46,7 +46,7 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
                               d_atomic_number*d_atomic_number )
 {
   // Make sure the array is valid
-  testPrecondition( d_elastic_cutoff_distribution.size() > 0 );
+  testPrecondition( d_elastic_cutoff_distribution.use_count() > 0 );
   // Make sure the atomic number is valid
   testPrecondition( d_atomic_number > 0 );
   testPrecondition( d_atomic_number <= 100u );
@@ -76,10 +76,8 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   else
   {
     // evaluate on the cutoff distribution
-    return MonteCarlo::evaluateTwoDDistributionCorrelated<CutoffDistribution, Utility::LinLog>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_cutoff_distribution );
+    return d_elastic_cutoff_distribution->evaluateExact( incoming_energy,
+                                                         scattering_angle_cosine );
   }
 }
 
@@ -96,21 +94,16 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherford(
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
 
-  double delta_mu = 1.0 - scattering_angle_cosine;
-
   double cutoff_pdf =
-    MonteCarlo::evaluateTwoDDistributionCorrelated<CutoffDistribution, Utility::LinLog>(
-                         incoming_energy,
-                         s_cutoff_mu,
-                         d_elastic_cutoff_distribution );
+    d_elastic_cutoff_distribution->evaluateExact( incoming_energy, s_cutoff_mu );
 
-  double pdf = cutoff_pdf*
-            ( s_cutoff_delta_mu + eta )*( s_cutoff_delta_mu + eta )/(
-            ( delta_mu + eta )*( delta_mu + eta ) );
+  double pdf = evaluateScreenedRutherfordPDF( incoming_energy,
+                                              scattering_angle_cosine,
+                                              eta,
+                                              cutoff_pdf );
 
   return pdf;
 }
-
 
 // Evaluate the PDF at the given energy and scattering angle cosine
 //! \details This PDF is normalize to equal 1 when integrated from mu = -1.0 to mu = s_cutoff_mu (0.999999)
@@ -136,10 +129,9 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   else
   {
     // evaluate PDF on the cutoff distribution
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<CutoffDistribution, Utility::LinLog>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_cutoff_distribution );
+    return d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+            incoming_energy,
+            scattering_angle_cosine );
   }
 }
 
@@ -156,15 +148,34 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
 
+  double cutoff_pdf =
+    d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+            incoming_energy,
+            s_cutoff_mu );
+
+  return evaluateScreenedRutherfordPDF( incoming_energy,
+                                        scattering_angle_cosine,
+                                        eta,
+                                        cutoff_pdf );
+}
+
+// Evaluate the screened Rutherford PDF at the given energy and scattering angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
+        const double incoming_energy,
+        const double scattering_angle_cosine,
+        const double eta,
+        const double norm_factor ) const
+{
+  // Make sure the energy, eta and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  testPrecondition( eta > 0.0 );
+  testPrecondition( norm_factor > 0.0 );
+
   double delta_mu = 1.0 - scattering_angle_cosine;
 
-  double cutoff_pdf =
-    MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<CutoffDistribution, Utility::LinLog>(
-                         incoming_energy,
-                         s_cutoff_mu,
-                         d_elastic_cutoff_distribution );
-
-  return cutoff_pdf*
+  return norm_factor*
             ( s_cutoff_delta_mu + eta )*( s_cutoff_delta_mu + eta )/(
             ( delta_mu + eta )*( delta_mu + eta ) );
 }
@@ -193,10 +204,9 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   else
   {
     // evaluate CDF on the cutoff distribution
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF<CutoffDistribution, Utility::LinLog>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_cutoff_distribution );
+    return d_elastic_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+            incoming_energy,
+            scattering_angle_cosine );
   }
 }
 
@@ -216,12 +226,33 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCD
   double delta_mu = 1.0 - scattering_angle_cosine;
 
   double cutoff_pdf =
-    MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<CutoffDistribution, Utility::LinLog>(
-                         incoming_energy,
-                         s_cutoff_mu,
-                         d_elastic_cutoff_distribution );
+    d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+            incoming_energy,
+            s_cutoff_mu );
 
-  return 1.0 + cutoff_pdf*( scattering_angle_cosine - s_cutoff_mu )*
+  return 1.0 + evaluateScreenedRutherfordCDF( incoming_energy,
+                                              scattering_angle_cosine,
+                                              eta,
+                                              cutoff_pdf );
+}
+
+// Evaluate the screened Rutherford CDF
+double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF(
+        const double incoming_energy,
+        const double scattering_angle_cosine,
+        const double eta,
+        const double norm_factor ) const
+{
+  // Make sure the energy, eta and angle cosine are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  testPrecondition( eta > 0.0 );
+  testPrecondition( norm_factor > 0.0 );
+
+  double delta_mu = 1.0 - scattering_angle_cosine;
+
+  return norm_factor*( scattering_angle_cosine - s_cutoff_mu )*
                 ( s_cutoff_delta_mu + eta )/( delta_mu + eta );
 }
 
@@ -339,24 +370,31 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
   // Find the lower and upper distribution bins
   double upper_energy, lower_energy;
-  CutoffDistribution::const_iterator lower_bin, upper_bin;
-  findLowerAndUpperBinBoundary<CutoffDistribution>(
-        incoming_energy,
-        d_elastic_cutoff_distribution,
-        lower_bin,
-        upper_bin );
 
+  // Find the bin boundaries
+  TwoDDist::DistributionType::const_iterator lower_bin, upper_bin;
 
-  if ( lower_bin != upper_bin )
+  d_elastic_cutoff_distribution->findBinBoundaries( incoming_energy,
+                                                    lower_bin,
+                                                    upper_bin );
+
+  if ( lower_bin->first == incoming_energy )
+  {
+    sampleBin( lower_bin, scattering_angle_cosine );
+  }  
+  else if ( upper_bin->first == incoming_energy )
+  {
+    sampleBin( upper_bin, scattering_angle_cosine );
+  }
+  else if ( lower_bin != upper_bin )
   {
     // Sample lower bin
     double lower_angle;
-    sampleIndependent( lower_bin, lower_angle );
+    sampleBin( lower_bin, lower_angle );
 
     // Sample upper bin
     double upper_angle;
-    sampleIndependent( upper_bin, upper_angle );
-
+    sampleBin( upper_bin, upper_angle );
 
     // Interpolate
     scattering_angle_cosine = Utility::LinLog::interpolate(
@@ -368,7 +406,7 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   }
   else
   {
-    sampleIndependent( lower_bin, scattering_angle_cosine );
+    scattering_angle_cosine = 1.0;
   }
 
   // Make sure the scattering angle cosine is valid
@@ -377,8 +415,8 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 }
 
 // Sample an outgoing direction from the given distribution
-void AnalogElasticElectronScatteringDistribution::sampleIndependent(
-        const CutoffDistribution::const_iterator& distribution_bin,
+void AnalogElasticElectronScatteringDistribution::sampleBin(
+        const TwoDDist::DistributionType::const_iterator& distribution_bin,
         double& scattering_angle_cosine ) const
 {
   // Get the bin energy
@@ -393,19 +431,13 @@ void AnalogElasticElectronScatteringDistribution::sampleIndependent(
 
   if ( max_cdf*random_number > 1.0 ) // Sample screened Rutherford
   {
-    // scale the random number to the screened Ruthered cdf
-    double scaled_random_number = ( max_cdf - 1.0 )*random_number;
-
-    // Get the pdf value at s_cutoff_mu for the bin energy
-    double cutoff_pdf = distribution_bin->second->evaluatePDF( s_cutoff_mu );
-
     // calculated a reapeated variable
-    double var = cutoff_pdf*( s_cutoff_delta_mu + eta );
+    double var = s_cutoff_delta_mu*random_number;
 
     // calculate the screened Rutherford scattering angle
     scattering_angle_cosine = 
-        ( scaled_random_number*( 1.0 + eta ) + var*s_cutoff_mu )/
-        ( var + scaled_random_number );
+        ( var*( 1.0 + eta ) + eta*s_cutoff_mu )/
+        ( var + eta );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine >= s_cutoff_mu );

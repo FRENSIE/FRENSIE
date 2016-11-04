@@ -77,19 +77,20 @@ TEUCHOS_UNIT_TEST( MonoDirectionalDistribution, hasSameBounds )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   directional_distribution.reset( new Utility::MonoDirectionalDistribution(
 							     1.0, 1.0, 1.0 ) );
 
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstMonoDirectionalDistribution.cpp

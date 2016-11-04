@@ -36,7 +36,7 @@ struct FullComptonProfilePolicy
   static ComptonProfile::MomentumQuantity getUpperLimitOfIntegration(
                           const ComptonProfile& profile,
                           const ComptonProfile::MomentumQuantity upper_limit );
-    
+
   //! Evaluate a full Compton profile
   static ComptonProfile::ProfileQuantity evaluate(
                              const ComptonProfile& profile,
@@ -47,7 +47,7 @@ struct FullComptonProfilePolicy
                          const ComptonProfile& profile,
                          const ComptonProfile::MomentumQuantity momentum,
                          const ComptonProfile::MomentumQuantity max_momentum );
-  
+
   //! Sample from a full Compton profile
   static ComptonProfile::MomentumQuantity sample(
                          const ComptonProfile& profile,

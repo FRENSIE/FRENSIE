@@ -30,13 +30,13 @@
 //---------------------------------------------------------------------------//
 
 std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  dipole_bremsstrahlung_distribution;
+  ace_dipole_brem_dist;
 
 std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  tabular_bremsstrahlung_distribution;
+  tabular_brem_dist;
 
 std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  twobs_bremsstrahlung_distribution;
+  twobs_brem_dist;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -45,12 +45,7 @@ std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                    getMinEnergy )
 {
-  // Get min energy
-  double min_energy =
-    twobs_bremsstrahlung_distribution->getMinEnergy();
-
-  // Test original electron
-  TEST_EQUALITY_CONST( min_energy, 1E-5 );
+  TEST_EQUALITY_CONST( twobs_brem_dist->getMinEnergy(), 1E-5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -58,43 +53,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                    getMaxEnergy )
 {
-  // Get max energy
-  double min_energy =
-    twobs_bremsstrahlung_distribution->getMaxEnergy();
-
-  // Test original electron
-  TEST_EQUALITY_CONST( min_energy, 1e5 );
-}
-
-
-//---------------------------------------------------------------------------//
-// Check that the max incoming electron energy for a given outoing electron energy can be returned
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-                   getMaxIncomingEnergyAtOutgoingEnergy )
-{
-  // Get max energy
-  double max_energy =
-    twobs_bremsstrahlung_distribution->getMaxIncomingEnergyAtOutgoingEnergy(
-                                                                          1.0 );
-
-  // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 1E5 );
-
-  // Get max energy
-  max_energy =
-    twobs_bremsstrahlung_distribution->getMaxIncomingEnergyAtOutgoingEnergy(
-                                                                         1e-2 );
-
-  // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 1E5 );
-
-  // Get max energy
-  max_energy =
-    twobs_bremsstrahlung_distribution->getMaxIncomingEnergyAtOutgoingEnergy(
-                                                                         1e-8 );
-
-  // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 1E5 );
+  TEST_EQUALITY_CONST( twobs_brem_dist->getMaxEnergy(), 1e5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -102,38 +61,17 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 		               evaluate )
 {
+  // LinLinLog interpoation used.
+  double pdf = twobs_brem_dist->evaluate( 1.0e-5, 1.0e-6 );
 
-  double pdf = twobs_bremsstrahlung_distribution->evaluate( 1.0e-5, 1.0e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065520E+05, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.819250066065520E+05,
-				  1e-12 );
+  pdf = twobs_brem_dist->evaluate( 9.0e-4, 9.0e-4 );
 
-  pdf = twobs_bremsstrahlung_distribution->evaluate( 0u, 1.0e-5, 1.e-6  );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 264.26069810584175457, 1e-12 );
+  // (LinLinLin) UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.54862854225938E+02, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.819250066065520E+05,
-				  1e-12 );
-
-  pdf = twobs_bremsstrahlung_distribution->evaluate( 9.0e-4, 9.0e-4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  2.54862854225938E+02,
-				  1e-12 );
-
-  pdf = twobs_bremsstrahlung_distribution->evaluate( 3u, 9.0e-4, 9.0e-4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  2.54862854225938E+02,
-				  1e-12 );
-
-  pdf = twobs_bremsstrahlung_distribution->evaluate( 1.0e5, 2.0e4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.363940131180460E-06,
-				  1e-12 );
-
-  pdf = twobs_bremsstrahlung_distribution->evaluate( 8u, 1.0e5, 2.0e4 );
+  pdf = twobs_brem_dist->evaluate( 1.0e5, 2.0e4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
 				  1.363940131180460E-06,
@@ -143,45 +81,42 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-		               evaluatePDF )
+                   evaluatePDF )
 {
+  // LinLinLog interpoation used.
+  double pdf = twobs_brem_dist->evaluatePDF( 1.0e-5, 1.0e-6 );
 
-  double pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 1.0e-5, 1.0e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065520E+05, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.819250066065520E+05,
-				  1e-12 );
+  pdf = twobs_brem_dist->evaluatePDF( 9.0e-4, 9.0e-4 );
 
-  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 0u, 1.0e-5, 1.e-6  );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 264.26069810584175457, 1e-12 );
+  // (LinLinLin) UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.54862854225938E+02, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.819250066065520E+05,
-				  1e-12 );
+  pdf = twobs_brem_dist->evaluatePDF( 1.0e5, 2.0e4 );
 
-  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 9.0e-4, 9.0e-4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  2.54862854225938E+02,
-				  1e-12 );
-
-  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 3u, 9.0e-4, 9.0e-4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  2.54862854225938E+02,
-				  1e-12 );
-
-  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 1.0e5, 2.0e4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.363940131180460E-06,
-				  1e-12 );
-
-  pdf = twobs_bremsstrahlung_distribution->evaluatePDF( 8u, 1.0e5, 2.0e4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.363940131180460E-06,
-				  1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.363940131180460E-06, 1e-12 );
 }
+
+//---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated for a given incoming and knock-on energy
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
+                   evaluateCDF )
+{
+  // LinLinLog interpoation used.
+  double cdf = twobs_brem_dist->evaluateCDF( 1.0e-5, 1.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 4.974034148027E-01, 1e-12 );
+
+  cdf = twobs_brem_dist->evaluateCDF( 9.0e-4, 9.0e-4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
+
+  cdf = twobs_brem_dist->evaluateCDF( 1.0e5, 2.0e4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.575978856479E-01, 1e-12 );
+}
+
 //---------------------------------------------------------------------------//
 // Check that a bremsstrahlung photon can be sampled from a dipole distribution
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
@@ -197,9 +132,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   double incoming_energy = 0.0009;
   double photon_energy, photon_angle_cosine;
 
-  dipole_bremsstrahlung_distribution->sample( incoming_energy,
-                                              photon_energy,
-                                              photon_angle_cosine );
+  ace_dipole_brem_dist->sample( incoming_energy,
+                                photon_energy,
+                                photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -227,11 +162,10 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  dipole_bremsstrahlung_distribution->sampleAndRecordTrials(
-                                                incoming_energy,
-                                                photon_energy,
-                                                photon_angle_cosine,
-                                                trials );
+  ace_dipole_brem_dist->sampleAndRecordTrials( incoming_energy,
+                                               photon_energy,
+                                               photon_angle_cosine,
+                                               trials );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -262,9 +196,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  dipole_bremsstrahlung_distribution->scatterElectron( electron,
-						bank,
-						shell_of_interaction );
+  ace_dipole_brem_dist->scatterElectron( electron, bank, shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -298,9 +230,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  twobs_bremsstrahlung_distribution->sample( incoming_energy,
-                                               photon_energy,
-                                               photon_angle_cosine );
+  twobs_brem_dist->sample( incoming_energy,
+                                  photon_energy,
+                                  photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -331,11 +263,10 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  twobs_bremsstrahlung_distribution->sampleAndRecordTrials(
-                                                incoming_energy,
-                                                photon_energy,
-                                                photon_angle_cosine,
-                                                trials );
+  twobs_brem_dist->sampleAndRecordTrials( incoming_energy,
+                                                 photon_energy,
+                                                 photon_angle_cosine,
+                                                 trials );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -370,9 +301,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  twobs_bremsstrahlung_distribution->scatterElectron( electron,
-                                                      bank,
-                                                      shell_of_interaction );
+  twobs_brem_dist->scatterElectron( electron,
+                                           bank,
+                                           shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -405,9 +336,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  tabular_bremsstrahlung_distribution->sample( incoming_energy,
-                                               photon_energy,
-                                               photon_angle_cosine );
+  tabular_brem_dist->sample( incoming_energy,
+                             photon_energy,
+                             photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -433,9 +364,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  tabular_bremsstrahlung_distribution->sample( incoming_energy,
-                                               photon_energy,
-                                               photon_angle_cosine );
+  tabular_brem_dist->sample( incoming_energy,
+                             photon_energy,
+                             photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -461,9 +392,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  tabular_bremsstrahlung_distribution->sample( incoming_energy,
-                                               photon_energy,
-                                               photon_angle_cosine );
+  tabular_brem_dist->sample( incoming_energy,
+                             photon_energy,
+                             photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -491,11 +422,10 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  tabular_bremsstrahlung_distribution->sampleAndRecordTrials(
-                                                        incoming_energy,
-                                                        photon_energy,
-                                                        photon_angle_cosine,
-                                                        trials );
+  tabular_brem_dist->sampleAndRecordTrials( incoming_energy,
+                                            photon_energy,
+                                            photon_angle_cosine,
+                                            trials );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -524,11 +454,10 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  tabular_bremsstrahlung_distribution->sampleAndRecordTrials(
-                                                 incoming_energy,
-                                                 photon_energy,
-                                                 photon_angle_cosine,
-                                                 trials );
+  tabular_brem_dist->sampleAndRecordTrials( incoming_energy,
+                                            photon_energy,
+                                            photon_angle_cosine,
+                                            trials );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -557,11 +486,10 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   double photon_energy, photon_angle_cosine;
 
-  tabular_bremsstrahlung_distribution->sampleAndRecordTrials(
-                                               incoming_energy,
-                                               photon_energy,
-                                               photon_angle_cosine,
-                                               trials );
+  tabular_brem_dist->sampleAndRecordTrials( incoming_energy,
+                                            photon_energy,
+                                            photon_angle_cosine,
+                                            trials );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -592,9 +520,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  tabular_bremsstrahlung_distribution->scatterElectron( electron,
-						bank,
-						shell_of_interaction );
+  tabular_brem_dist->scatterElectron( electron, bank, shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -631,9 +557,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  tabular_bremsstrahlung_distribution->scatterElectron( electron,
-						bank,
-						shell_of_interaction );
+  tabular_brem_dist->scatterElectron( electron, bank, shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -670,9 +594,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  tabular_bremsstrahlung_distribution->scatterElectron( electron,
-                                                      bank,
-                                                      shell_of_interaction );
+  tabular_brem_dist->scatterElectron( electron, bank, shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -762,28 +684,29 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> breme_block =
     xss_data_extractor->extractBREMEBlock();
 
-  // Create the bremsstrahlung scattering distributions
-  MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-    scattering_distribution( N );
+  // Create the scattering function
+  Utility::FullyTabularTwoDDistribution::DistributionType function_data( N );
 
   for( unsigned n = 0; n < N; ++n )
   {
-    scattering_distribution[n].first = energy_grid[n];
+    function_data[n].first = energy_grid[n];
 
-    scattering_distribution[n].second.reset(
+    Teuchos::Array<double> photon_energy( breme_block( offset[n], table_length[n]) );
+
+    function_data[n].second.reset(
 	  new Utility::HistogramDistribution(
-		 breme_block( offset[n], table_length[n] ),
+		 photon_energy,
 		 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
-
-/*	  new Utility::TabularDistribution<Utility::LinLin>(
-		 breme_block( offset[n], table_length[n] ),
-		 breme_block( offset[n] + table_length[n], table_length[n] ),
-         true ) );     */
   }
 
+  // Create the scattering function
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_distribution(
+        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+            function_data ) );
+
   // Create the scattering distributions
-  dipole_bremsstrahlung_distribution.reset(
+  ace_dipole_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
       scattering_distribution ) );
 
@@ -791,14 +714,14 @@ int main( int argc, char** argv )
   double upper_cutoff_energy = 1000;
   double lower_cutoff_energy = 0.001;
 
-  tabular_bremsstrahlung_distribution.reset(
+  tabular_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
       scattering_distribution,
       angular_distribution,
       lower_cutoff_energy,
       upper_cutoff_energy ) );
 
-  twobs_bremsstrahlung_distribution.reset(
+  twobs_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
       scattering_distribution,
       xss_data_extractor->extractAtomicNumber() ) );

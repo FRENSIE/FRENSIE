@@ -12,7 +12,7 @@
 #define UTILITY_MPI_TYPE_TRAITS_DECL_HPP
 
 // FRENSIE Includes
-#include "FRENSIE_mpi_config.hpp"
+#include "FRENSIE_config.hpp"
 #include "Utility_UndefinedTraits.hpp"
 
 /*! \defgroup mpi_type_traits MPI Type Traits

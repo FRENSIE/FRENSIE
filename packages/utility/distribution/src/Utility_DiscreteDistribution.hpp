@@ -63,19 +63,22 @@ public:
   UnitAwareDiscreteDistribution(
 			const Teuchos::Array<double>& independent_values,
 			const Teuchos::Array<double>& dependent_values,
-			const bool interpret_dependent_values_as_cdf = false );
+			const bool interpret_dependent_values_as_cdf = false,
+            const bool treat_as_continuous = false );
 
   //! CDF constructor
   template<typename InputIndepQuantity>
   UnitAwareDiscreteDistribution(
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<double>& cdf_values );
+	      const Teuchos::Array<double>& cdf_values,
+          const bool treat_as_continuous = false );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareDiscreteDistribution(
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<InputDepQuantity>& dependent_quantities );
+	      const Teuchos::Array<InputDepQuantity>& dependent_quantities,
+          const bool treat_as_continuous = false );
 
 
   //! Copy constructor
@@ -148,6 +151,9 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution<void,void>& unitless_dist_instance, int );
 
+  // Test if the dependent variable can be zero within the indep bounds
+  bool canDepVarBeZeroInIndepBounds() const;
+
 private:
 
   // Return a random sample using the random number and record the bin index
@@ -200,6 +206,9 @@ private:
 
   // The distribution normalization constant
   DepQuantity d_norm_constant;
+
+  // Bool to treat the distribution as continuous or not
+  bool d_continuous;
 };
 
 /*! The discrete distribution (unit-agnostic)

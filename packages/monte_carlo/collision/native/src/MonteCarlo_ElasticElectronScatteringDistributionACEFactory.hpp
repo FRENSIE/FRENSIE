@@ -21,9 +21,6 @@ class ElasticElectronScatteringDistributionACEFactory
 
 public:
 
-  typedef CutoffElasticElectronScatteringDistribution::ElasticDistribution
-            ElasticDistribution;
-
   //! Create a cutoff elastic distribution
   static void createCutoffElasticDistribution(
 	std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
@@ -36,7 +33,7 @@ protected:
   //! Create the elastic scattering function
   static void createScatteringFunction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
-        ElasticDistribution&
+        std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
             scattering_function );
 };
 

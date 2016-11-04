@@ -74,6 +74,30 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   evaluate )
+{
+  double pdf = ace_electroionization_distribution->evaluate( 8.829e-2, 5e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
+
+  pdf = ace_electroionization_distribution->evaluate( 9.12175e-2, 4.275e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
+
+  pdf = ace_electroionization_distribution->evaluate( 1e-1, 1e-2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.63484458985044512, 1e-12 );
+
+  pdf = ace_electroionization_distribution->evaluate( 1.0, 1.33136131511529e-1 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );
+
+  pdf = ace_electroionization_distribution->evaluate( 1.0, 9.7163E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.045394577710E+00, 1e-12 );
+
+  pdf = ace_electroionization_distribution->evaluate( 1e5, 1.752970e2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.399431656723E-07, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PDF can be evaluated for a given incoming and knock-on energy
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluatePDF )
 {
   double pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2, 5e-8 );
@@ -83,7 +107,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 657.05096239747513209, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.63484458985044512, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );
@@ -94,25 +118,35 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   pdf = ace_electroionization_distribution->evaluatePDF( 1e5, 1.752970e2 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.399431656723E-07, 1e-12 );
 
+  pdf = ace_electroionization_distribution->evaluatePDF( 1e5, 5e4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.337458903100E-11, 1e-12 );
+}
 
-  // Test the efficient implementation
-  pdf = ace_electroionization_distribution->evaluatePDF( 0, 8.8290E-02, 5e-8 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
+//---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated for a given incoming and knock-on energy
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   evaluateCDF )
+{
+  double cdf = ace_electroionization_distribution->evaluateCDF( 8.829e-2, 5e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.0, 1e-12 );
 
-  pdf = ace_electroionization_distribution->evaluatePDF( 1, 9.12175e-2, 4.275e-4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
+  cdf = ace_electroionization_distribution->evaluateCDF( 9.12175e-2, 4.275e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 2.92009701772965E-01, 1e-12 );
 
-  pdf = ace_electroionization_distribution->evaluatePDF( 1, 1e-1	, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 657.05096239747513209, 1e-12 );
+  cdf = ace_electroionization_distribution->evaluateCDF( 1e-1, 1e-2 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 2.96911596049771E-01, 1e-12 );
 
-  pdf = ace_electroionization_distribution->evaluatePDF( 2, 1.0	, 1.33136131511529e-1 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );
+  cdf = ace_electroionization_distribution->evaluateCDF( 1.0, 1.33136131511529e-1 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 7.99240642349262E-01, 1e-12 );
 
-  pdf = ace_electroionization_distribution->evaluatePDF( 2, 1.0, 9.7163e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.045394577710E+00, 1e-12 );
+  cdf = ace_electroionization_distribution->evaluateCDF( 1.0, 9.7163E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 7.299181455072E-01, 1e-12 );
 
-  pdf = ace_electroionization_distribution->evaluatePDF( 4, 1e5, 1.75297e2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.399431656723E-07, 1e-12 );
+  cdf = ace_electroionization_distribution->evaluateCDF( 1e5, 1.752970e2 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.999123864280E-01, 1e-10 );
+
+  cdf = ace_electroionization_distribution->evaluateCDF( 1e5, 5e4 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -332,22 +366,26 @@ int main( int argc, char** argv )
                              subshell_info + 2*num_tables[subshell],
                              num_tables[subshell] ) );
 
-   // Create the electroionization sampling table for the subshell
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      subshell_distribution( num_tables[subshell] );
-
+  // Create the scattering function
+  Utility::FullyTabularTwoDDistribution::DistributionType
+     function_data( num_tables[subshell] );
 
   for( unsigned n = 0; n < num_tables[subshell]; ++n )
   {
-    subshell_distribution[n].first = table_energy_grid[n];
+    function_data[n].first = table_energy_grid[n];
 
-    subshell_distribution[n].second.reset(
+    function_data[n].second.reset(
      new Utility::HistogramDistribution(
 	  eion_block( subshell_loc + table_offset[n], table_length[n] ),
       eion_block( subshell_loc + table_offset[n] + table_length[n] + 1,
                   table_length[n] - 1),
       true ) );
   }
+
+  // Create the scattering function
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+            function_data ) );
 
   // Create the distributions
   ace_electroionization_distribution.reset(

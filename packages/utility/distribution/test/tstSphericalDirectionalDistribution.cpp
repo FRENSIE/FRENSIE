@@ -182,13 +182,12 @@ TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, hasSameBounds )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Uniform distribution in theta dimension
   std::shared_ptr<Utility::OneDDistribution>
     theta_distribution( new Utility::UniformDistribution(
@@ -203,10 +202,12 @@ int main( int argc, char** argv )
   directional_distribution.reset( new Utility::SphericalDirectionalDistribution(
 							   theta_distribution,
 							   mu_distribution ) );
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+  
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstDirectionalDistribution.cpp

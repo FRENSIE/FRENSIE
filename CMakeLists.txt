@@ -25,10 +25,6 @@ ENFORCE_OUT_OF_SOURCE_BUILD()
 ENABLE_CXX11_STANDARD_SUPPORT()
 
 # Load the patch files
-SET(TEUCHOS_TWO_D_ARRAY_PATCH
-  ${CMAKE_SOURCE_DIR}/patches/Teuchos_TwoDArray_patch
-  CACHE STRING "The Teuchos::TwoDArray patch file" FORCE)
-
 SET(DAGMC_THREAD_SAFE_PATCH
   ${CMAKE_SOURCE_DIR}/patches/DagMC_cpp_patch
   CACHE STRING "The DagMC.cpp patch file" FORCE)
@@ -46,13 +42,11 @@ SET(BUILD_SHARED_LIBS ON)
 # installed targets from reporting undefined .so files (check with ldd tool)
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
-# Add the CMAKE_BINARY_DIR to the include path to access config files
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
-
 ##---------------------------------------------------------------------------##
 ## Command Line Options
 ##---------------------------------------------------------------------------##
 OPTION(FRENSIE_ENABLE_DBC "Enable Design-by-Contract checks in FRENSIE" ON)
+OPTION(FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST "Enable explicit template instantiation to speed up build times and reduce build memory overhead" ON)
 OPTION(FRENSIE_ENABLE_COLOR_OUTPUT "Enable color output from FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_PROFILING "Enable profiling with FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_COVERAGE "Enable coverage testing in FRENSIE" OFF)
@@ -65,7 +59,7 @@ OPTION(FRENSIE_ENABLE_DASHBOARD_CLIENT "Enable dashboard client support" OFF)
 OPTION(FRENSIE_ENABLE_MANUAL "Enable the manual in FRENSIE" ON)
 
 ##---------------------------------------------------------------------------##
-## Configure DBC Support
+## Setup FRENSIE Configuration
 ##---------------------------------------------------------------------------##
 # Add Design-by-Contract support if requested
 IF(FRENSIE_ENABLE_DBC)
@@ -74,8 +68,38 @@ ELSE()
   SET(HAVE_FRENSIE_DBC "0")
 ENDIF()
 
+# Add explicit template instantiation support if requested
+IF(FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST)
+  SET(HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION "1")
+ELSE()
+  SET(HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION "0")
+ENDIF()
+
+# Add MPI support if requested
+# If the MPI package is in a non-standard location, set the MPI_PREFIX variable
+IF(FRENSIE_ENABLE_MPI)
+  SET(HAVE_FRENSIE_MPI "1")
+  ENABLE_MPI_SUPPORT()
+ENDIF()
+
+# Add openmp support if requested
+IF(FRENSIE_ENABLE_OPENMP)
+  SET(HAVE_FRENSIE_OPENMP "1")
+  ENABLE_OPENMP_SUPPORT()
+ENDIF()
+
 # Parse the DBC configure file so it can be used in the source files
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
+SET(CMAKEDEFINE \#cmakedefine)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
+
+# Add the CMAKE_BINARY_DIR to the include path to access config file
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+
+# Add the config file to the install target
+INSTALL(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
 ##---------------------------------------------------------------------------##
 ## Enable Color Output Support
@@ -121,37 +145,6 @@ IF(FRENSIE_ENABLE_COVERAGE)
     MESSAGE(WARNING "coverage testing can only be done in debug builds!")
   ENDIF()
 ENDIF()
-
-##---------------------------------------------------------------------------##
-## Configure OpenMP Support
-##---------------------------------------------------------------------------##
-IF(FRENSIE_ENABLE_OPENMP)
-  SET(HAVE_FRENSIE_OPENMP "1")
-  ENABLE_OPENMP_SUPPORT()
-ENDIF()
-
-# Parse the OpenMP configure file so that it can be used in our source files
-SET(CMAKEDEFINE \#cmakedefine)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/openmp_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_openmp_config.hpp.in)
-CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_openmp_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_openmp_config.hpp)
-
-##---------------------------------------------------------------------------##
-## Configure MPI Support
-##---------------------------------------------------------------------------##
-# If the MPI package is in a non-standard location, set the MPI_PREFIX variable
-IF(FRENSIE_ENABLE_MPI)
-  SET(HAVE_FRENSIE_MPI "1")
-  ENABLE_MPI_SUPPORT()
-ENDIF()
-
-# Parse the MPI configure file so that it can be used in our source files
-SET(CMAKEDEFINE \#cmakedefine)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/mpi_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp.in)
-CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp)
 
 ##---------------------------------------------------------------------------##
 ## Configure Python Support

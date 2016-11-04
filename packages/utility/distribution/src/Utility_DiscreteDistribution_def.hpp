@@ -19,9 +19,13 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDiscreteDistribution<void,void> );
 
 // Default Constructor
 template<typename IndependentUnit,typename DependentUnit>
@@ -36,8 +40,10 @@ template<typename IndependentUnit,typename DependentUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 			      const Teuchos::Array<double>& independent_values,
 			      const Teuchos::Array<double>& dependent_values,
-			      const bool interpret_dependent_values_as_cdf )
+			      const bool interpret_dependent_values_as_cdf,
+                  const bool treat_as_continuous )
   : d_distribution( independent_values.size() ),
+    d_continuous( treat_as_continuous ),
     d_norm_constant()
 {
   this->initializeDistribution( independent_values,
@@ -50,8 +56,10 @@ template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<double>& dependent_values )
+	      const Teuchos::Array<double>& dependent_values,
+          const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
+    d_continuous( treat_as_continuous ),
     d_norm_constant()
 {
   this->initializeDistributionFromCDF( independent_quantities,
@@ -63,8 +71,10 @@ template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity,typename InputDepQuantity>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<InputDepQuantity>& dependent_values )
+	      const Teuchos::Array<InputDepQuantity>& dependent_values,
+          const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
+    d_continuous( treat_as_continuous ),
     d_norm_constant()
 {
   this->initializeDistribution( independent_quantities,
@@ -369,7 +379,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionTyp
 template<typename IndependentUnit,typename DependentUnit>
 bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::isContinuous() const
 {
-  return false;
+  return d_continuous;
 }
 
 // Method for placing the object in an output stream
@@ -651,6 +661,13 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::convertUnitle
   // Copy the values
   for( unsigned i = 0u; i < unitless_values.size(); ++i )
     setQuantity( quantities[i], unitless_values[i] );
+}
+
+// Test if the dependent variable can be zero within the indep bounds
+template<typename IndependentUnit,typename DependentUnit>
+bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+{
+  return true;
 }
 
 } // end Utility namespace

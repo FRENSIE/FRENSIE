@@ -160,17 +160,13 @@ int main( int argc, char** argv )
     // Get size of paramters
     int size = angular_energy_grid.size();
 
-    // Create the cutoff scattering function
-    MonteCarlo::HybridElasticElectronScatteringDistribution::CutoffDistribution
-        cutoff_function(size);
-
-    // Create the moment preserving discrete scattering function
-  MonteCarlo::HybridElasticElectronScatteringDistribution::DiscreteDistribution
-        discrete_function(size);
+    // Create the scattering function
+    MonteCarlo::HybridElasticElectronScatteringDistribution::HybridDistribution
+        function_data( size );
 
     for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
     {
-    cutoff_function[n].first = angular_energy_grid[n];
+    function_data[n].first = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     Teuchos::Array<double> angles(
@@ -180,11 +176,8 @@ int main( int argc, char** argv )
     Teuchos::Array<double> pdf(
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
-    cutoff_function[n].second.reset(
+    function_data[n].second.reset(
       new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
-
-
-    discrete_function[n].first = angular_energy_grid[n];
 
     // Get the moment preserving elastic scattering angle cosines at the energy
     std::vector<double> discrete_angles(
@@ -196,7 +189,7 @@ int main( int argc, char** argv )
         data_container.getMomentPreservingElasticWeights(
             angular_energy_grid[n] ) );
 
-    discrete_function[n].second.reset(
+    function_data[n].third.reset(
 	  new const Utility::DiscreteDistribution(
         discrete_angles,
         weights ) );
@@ -205,12 +198,17 @@ int main( int argc, char** argv )
     double atomic_number = data_container.getAtomicNumber();
     double cutoff_angle_cosine = data_container.getCutoffAngleCosine();
 
+    // Create the cutoff scattering function
+    std::shared_ptr<MonteCarlo::HybridElasticElectronScatteringDistribution::HybridDistribution>
+      hybrid_function(
+        new MonteCarlo::HybridElasticElectronScatteringDistribution::HybridDistribution(
+            function_data ) );
+
     // Create hybrid distribution
     std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution(
             new MonteCarlo::HybridElasticElectronScatteringDistribution(
-                cutoff_function,
-                discrete_function,
+                hybrid_function,
                 cutoff_angle_cosine ) );
 
     Teuchos::ArrayRCP<double> energy_grid;

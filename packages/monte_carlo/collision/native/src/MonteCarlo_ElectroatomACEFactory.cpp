@@ -90,7 +90,6 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
 
   // Create the electroionization reaction(s)
-  if( use_atomic_relaxation_data )
   {
     std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
@@ -105,17 +104,6 @@ void ElectroatomACEFactory::createElectroatomCore(
       scattering_reactions[reaction_pointers[i]->getReactionType()] =
         reaction_pointers[i];
     }
-  }
-  else
-  {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-        scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
-
-    ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
-        raw_electroatom_data,
-        energy_grid,
-        grid_searcher,
-        reaction_pointer );
   }
 
   // Create the electroatom core

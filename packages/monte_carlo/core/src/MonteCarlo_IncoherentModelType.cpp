@@ -66,7 +66,7 @@ IncoherentModelType convertUnsignedToIncoherentModelTypeEnum(
   default:
     THROW_EXCEPTION( std::logic_error,
 		     "Error: unsigned integer " << incoherent_model_type <<
-		     " does not correspond to a incoherent model type!" );
+		     " does not correspond to an incoherent model type!" );
   }
 }
 

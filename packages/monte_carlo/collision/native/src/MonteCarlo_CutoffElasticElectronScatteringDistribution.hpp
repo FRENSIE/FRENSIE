@@ -17,7 +17,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -28,31 +28,21 @@ class CutoffElasticElectronScatteringDistribution : public ElectronScatteringDis
 
 public:
 
-  //! Typedef for the  elastic distribution
-  typedef std::vector<Utility::Pair< double,
-		       std::shared_ptr<const Utility::TabularOneDDistribution> > >
-  ElasticDistribution;
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor
   CutoffElasticElectronScatteringDistribution(
-        const ElasticDistribution& cutoff_elastic_scattering_distribution,
+        const std::shared_ptr<TwoDDist>& 
+            scattering_distribution,
         const double cutoff_angle_cosine = 1.0 );
 
   //! Destructor
   virtual ~CutoffElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the distribution
-  double evaluate( const unsigned incoming_energy_bin,
-                   const double scattering_angle_cosine ) const;
-
   //! Evaluate the PDF
   double evaluate( const double incoming_energy,
                    const double scattering_angle_cosine ) const;
-
-  //! Evaluate the PDF
-  double evaluatePDF( const unsigned incoming_energy_bin,
-                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the distribution
   double evaluatePDF( const double incoming_energy,
@@ -62,15 +52,8 @@ public:
   double evaluateCDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
 
-  //! Evaluate the CDF
-  double evaluateCDF( const unsigned incoming_energy_bin,
-                      const double scattering_angle_cosine ) const;
-
   //! Evaluate the cross section ratio for the cutoff angle cosine
   double evaluateCutoffCrossSectionRatio( const double incoming_energy ) const;
-
-  //! Return the energy at a given energy bin
-  double getEnergy( const unsigned energy_bin ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -106,7 +89,7 @@ private:
   double d_cutoff_angle_cosine;
 
   // cutoff elastic scattering distribution (no screened Rutherford data)
-  ElasticDistribution d_elastic_scattering_distribution;
+  std::shared_ptr<TwoDDist> d_cutoff_distribution;
 };
 
 } // end MonteCarlo namespace

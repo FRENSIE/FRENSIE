@@ -22,8 +22,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 		scattering_distribution )
 {
   // Create the scattering function
-  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-         energy_loss_function( bremsstrahlung_energy_grid.size() );
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function;
 
   BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
         raw_electroatom_data,
@@ -59,8 +58,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const int atomic_number )
 {
   // Create the scattering function
-  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-        energy_loss_function( bremsstrahlung_energy_grid.size() );
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function;
 
   BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
         raw_electroatom_data,
@@ -94,14 +92,15 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double> energy_grid,
-    BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
-        energy_loss_function )
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution>& energy_loss_function )
 {
-  testPrecondition( energy_loss_function.size() == energy_grid.size() );
+  // Get the function data
+  Utility::FullyTabularTwoDDistribution::DistributionType
+    function_data( energy_grid.size() );
 
   for( unsigned n = 0; n < energy_grid.size(); ++n )
   {
-    energy_loss_function[n].first = energy_grid[n];
+    function_data[n].first = energy_grid[n];
 
     // Get the energy of the bremsstrahlung photon at the incoming energy
     std::vector<double> photon_energy(
@@ -111,10 +110,15 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLoss
     std::vector<double> pdf(
         raw_electroatom_data.getBremsstrahlungPhotonPDF( energy_grid[n] ) );
 
-    energy_loss_function[n].second.reset(
+    function_data[n].second.reset(
 	  new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
                                                                pdf ) );
   }
+
+  // Create the scattering function
+  energy_loss_function.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+            function_data ) );
 }
 
 } // end MonteCarlo namespace

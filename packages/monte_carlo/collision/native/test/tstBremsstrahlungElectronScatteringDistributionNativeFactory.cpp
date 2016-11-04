@@ -51,7 +51,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
+  fake_stream[1] = 0.5; // Sample angle 0.0592724905908 (0.0557151835328) from analytical function
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -66,7 +66,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.51455974406695E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.61140375902222E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
 }
 
@@ -82,7 +82,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
+  fake_stream[1] = 0.5; // Sample angle 0.0592724905908 (0.0557151835328) from analytical function
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -97,7 +97,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.51455974406695E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.61140375902222E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
 }
@@ -115,9 +115,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
   fake_stream[0] = 0.5; // Correlated sample the 3.1622800E-01 MeV and 2.0 MeV distributions
-  fake_stream[1] = 0.5; // Sample a photon angle of 0.9118675275
+  fake_stream[1] = 0.5; // Sample a photon angle of 0.612270260118 (0.9118675275)
   fake_stream[2] = 0.49; // Reject the angle
-  fake_stream[3] = 0.5; // Sample a photon angle of 0.9118675275
+  fake_stream[3] = 0.5; // Sample a photon angle of 0.612270260118 (0.9118675275)
   fake_stream[4] = 0.48; // Accept the angle
 
 
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.63944375104991E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.92424327190399E-04, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
 }
 
@@ -168,7 +168,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.63944375104991E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.92424327190399E-04, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
   TEST_EQUALITY_CONST( trials, 1.0 );
 }

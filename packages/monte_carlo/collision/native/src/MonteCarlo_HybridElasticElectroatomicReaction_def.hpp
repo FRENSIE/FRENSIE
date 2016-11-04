@@ -12,7 +12,6 @@
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 namespace MonteCarlo{
 

@@ -27,8 +27,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
   double size = raw_electroatom_data.extractBREMIBlock().size()/3;
 
   // Create the scattering function
-  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-         scattering_function( size );
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
   BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
 							  raw_electroatom_data,
@@ -51,8 +50,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
   double size = raw_electroatom_data.extractBREMIBlock().size()/3;
 
   // Create the scattering function
-  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-         scattering_function( size );
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
   BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
 							  raw_electroatom_data,
@@ -76,8 +74,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
   double size = raw_electroatom_data.extractBREMIBlock().size()/3;
 
   // Create the scattering function
-  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-         scattering_function( size );
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
   BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
 							  raw_electroatom_data,
@@ -91,7 +88,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 // Create the energy loss function
 void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
 	   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-           BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
+       std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
                                                         scattering_function )
 {
   // Extract the bremsstrahlung scattering information data block (BREMI)
@@ -114,16 +111,24 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
   Teuchos::ArrayView<const double> breme_block =
     raw_electroatom_data.extractBREMEBlock();
 
+  // Get the scattering data
+  Utility::FullyTabularTwoDDistribution::DistributionType function_data( N );
+
   for( unsigned n = 0; n < N; ++n )
   {
-    scattering_function[n].first = electron_energy_grid[n];
+    function_data[n].first = electron_energy_grid[n];
 
-    scattering_function[n].second.reset(
+    function_data[n].second.reset(
 	  new Utility::HistogramDistribution(
 	      breme_block( offset[n], table_length[n] ),
 	      breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
           true ) );
   }
+
+  // Create the scattering function
+  scattering_function.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+            function_data ) );
 }
 
 } // end MonteCarlo namespace

@@ -54,12 +54,6 @@ public:
     const double incoming_energy,
     const double outgoing_energy ) const;
 
-  //! Return the differential cross section (efficient)
-  double getDifferentialCrossSection(
-    const unsigned incoming_energy_bin,
-    const double incoming_energy,
-    const double outgoing_energy ) const;
-
   //! Simulate the reaction
   void react( ElectronState& electron,
 	      ParticleBank& bank,

@@ -41,8 +41,8 @@ TEUCHOS_UNIT_TEST( EventHandlerFactoryDagMC, initializeHandlerUsingDagMC )
     MonteCarlo::EventHandlerFactory<Geometry::DagMC>::createHandler(
                                                     *observer_reps,
                                                     response_function_id_map );
-
-  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 18 );
+                                                    
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 19 );
 }
 
 //---------------------------------------------------------------------------//
