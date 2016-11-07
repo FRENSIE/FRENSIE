@@ -284,11 +284,11 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
+                 &test_ace_file_name,
+                 "Test ACE file name" );
   clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
+                 &test_ace_table_name,
+                 "Test ACE table name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -376,7 +376,7 @@ int main( int argc, char** argv )
 
     function_data[n].second.reset(
      new Utility::HistogramDistribution(
-	  eion_block( subshell_loc + table_offset[n], table_length[n] ),
+      eion_block( subshell_loc + table_offset[n], table_length[n] ),
       eion_block( subshell_loc + table_offset[n] + table_length[n] + 1,
                   table_length[n] - 1),
       true ) );
@@ -389,7 +389,7 @@ int main( int argc, char** argv )
 
   // Create the distributions
   ace_electroionization_distribution.reset(
-		new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
+        new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
                             binding_energies[subshell] ) );
 

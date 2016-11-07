@@ -146,11 +146,11 @@ public:
 
   //! Return the occupation number momentum grid
   const std::vector<double>& getOccupationNumberMomentumGrid(
-					       const unsigned subshell ) const;
+                   const unsigned subshell ) const;
 
   //! Return the occupation number for a subshell
   const std::vector<double>& getOccupationNumber(
-					       const unsigned subshell ) const;
+                   const unsigned subshell ) const;
 
   //! Return the Waller-Hartree scattering function momentum grid
   const std::vector<double>&
@@ -342,11 +342,11 @@ public:
 
   //! Return the bremsstrahlung electron energy for an incoming electron energy
   const std::vector<double>& getAdjointElectronBremsstrahlungEnergy(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the bremsstrahlung pdf for an incoming electron energy
   const std::vector<double>& getAdjointElectronBremsstrahlungPDF(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the atomic excitation average energy gain energy grid
   const std::vector<double>& getAdjointAtomicExcitationEnergyGrid() const;

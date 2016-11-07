@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstElectroionizationSubshellElectronScatteringDistributionNativeFactory.cpp
+//! \file   tstElectroionizationSubshellAdjointElectronScatteringDistribution.cpp
 //! \author Luke Kersting
-//! \brief  electroionization subshell scattering distribution Native factory unit tests
+//! \brief  adjoint electroionization subshell scattering distribution Native factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,8 +15,8 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
-#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.hpp"
+#include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -25,57 +25,59 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
+typedef MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
+    IonizationNativeFactory;
 
-std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+Teuchos::RCP<Data::AdjointElectronPhotonRelaxationDataContainer> data_container;
+
+std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
   native_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the subshell binding energy
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistribution,
                    getBindingEnergy )
 {
 
   // Get binding energy
-  double binding_energy =
-    native_distribution->getBindingEnergy();
+  double binding_energy = native_distribution->getBindingEnergy();
 
   // Test original electron
   TEST_EQUALITY_CONST( binding_energy, 8.8290E-02 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the max secondary (knock-on) electron energy can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
-                   getMaxSecondaryEnergyAtIncomingEnergy )
+// Check that the PDF can be evaluated for a given incoming and knock-on energy
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory,
+                   evaluate )
 {
-  // Get max energy
-  double max_energy =
-    native_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
+  double pdf = native_distribution->evaluate( 8.829e-2 + 1e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
-  // Test original electron
-  TEST_EQUALITY_CONST( max_energy, 0.0 );
+  pdf = native_distribution->evaluate( 8.829e-2 + 2e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.955596962944, 1e-12 );
 
-  // Get max energy
-  max_energy =
-    native_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
+  pdf = native_distribution->evaluate( 9.12175e-2, 4.275e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 689.2154402763227381, 1e-12 );
 
-  // Test original electron
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
+  pdf = native_distribution->evaluate( 1e-1, 1e-2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 662.81827321455386937, 1e-12 );
 
-  // Get max energy
-  max_energy =
-    native_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
+  pdf = native_distribution->evaluate( 1.0, 1.33136131511529e-1 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5969818328396216955, 1e-12 );
 
-  // Test original electron
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
+  pdf = native_distribution->evaluate( 1.0, 9.71630E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.38239950812861E+00, 1e-12 );
+
+  pdf = native_distribution->evaluate( 1.0e5, 1.752970E+02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.986498947129447938e-07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory,
                    evaluatePDF )
 {
   double pdf = native_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
@@ -101,9 +103,36 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 }
 
 //---------------------------------------------------------------------------//
+// Check that the PDF can be evaluated for a given incoming and knock-on energy
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory,
+                   evaluateCDF )
+{
+  double pdf = native_distribution->evaluateCDF( 8.829e-2 + 1e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
+
+  pdf = native_distribution->evaluateCDF( 8.829e-2 + 2e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.955596962944, 1e-12 );
+
+  pdf = native_distribution->evaluateCDF( 9.12175e-2, 4.275e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 689.2154402763227381, 1e-12 );
+
+  pdf = native_distribution->evaluateCDF( 1e-1, 1e-2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 662.81827321455386937, 1e-12 );
+
+  pdf = native_distribution->evaluateCDF( 1.0, 1.33136131511529e-1 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5969818328396216955, 1e-12 );
+
+  pdf = native_distribution->evaluateCDF( 1.0, 9.71630E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.38239950812861E+00, 1e-12 );
+
+  pdf = native_distribution->evaluateCDF( 1.0e5, 1.752970E+02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.986498947129447938e-07, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
-                   sample_knock_on )
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory,
+                   sample )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -114,54 +143,20 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 
   double incoming_energy = 1.0;
 
-  double knock_on_energy, knock_on_angle_cosine;
-
-  // sample the electron
-  native_distribution->sample( incoming_energy,
-                               knock_on_energy,
-                               knock_on_angle_cosine );
-
-  // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.2778434545019750, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 4.056721346111550E-02, 1e-12 );
-
-}
-
-//---------------------------------------------------------------------------//
-// Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
-                   sample )
-{
-  // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.5;
-  fake_stream[1] = 0.5;
-
-  double incoming_energy = 1.0;
-
-  double outgoing_energy, knock_on_energy,
-         scattering_angle_cosine, knock_on_angle_cosine;
-
   // sample the electron
   native_distribution->sample( incoming_energy,
                                outgoing_energy,
-                               knock_on_energy,
-                               scattering_angle_cosine,
-                               knock_on_angle_cosine );
-
-  // Test original electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9645918284466900, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.8711427865388850, 1e-12 );
+                               scattering_angle_cosine );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.2778434545019750, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 4.056721346111550E-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.2778434545019750, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 4.056721346111550E-02, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials )
 {
   // Set fake random number stream
@@ -173,27 +168,27 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 
   double incoming_energy = 1.0;
 
-  double knock_on_energy, scattering_angle_cosine, knock_on_angle_cosine;
+  double outgoing_energy, scattering_angle_cosine;
 
   // sample the electron
   native_distribution->sampleAndRecordTrials( incoming_energy,
-                                              knock_on_energy,
-                                              knock_on_angle_cosine,
+                                              outgoing_energy,
+                                              scattering_angle_cosine,
                                               trials );
 
   // Test trials
   TEST_EQUALITY_CONST( trials, 1.0 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.2778434545019750, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 4.056721346111550E-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.2778434545019750, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 4.056721346111550E-02, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
-                   scatterElectron )
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory,
+                   scatterAdjointElectron )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -205,22 +200,19 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   MonteCarlo::ParticleBank bank;
   Data::SubshellType shell_of_interaction;
 
-  MonteCarlo::ElectronState electron( 0 );
+  MonteCarlo::AdjointElectronState electron( 0 );
   electron.setEnergy( 1.0 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   // Analytically scatter electron
-  native_distribution->scatterElectron( electron,
-                                        bank,
-                                        shell_of_interaction );
+  native_distribution->scatterAdjointElectron( electron,
+                                               bank,
+                                               shell_of_interaction );
 
   // Test original electron
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.9645918284466900, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getEnergy(), 0.8711427865388850, 1e-12 );
-
-  // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.2778434545019750, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.056721346111550E-02, 1e-12 );
+}
 
 }
 //---------------------------------------------------------------------------//
@@ -249,7 +241,7 @@ int main( int argc, char** argv )
   }
 
   // Create the native data file container
-  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
+  data_container.reset( new Data::AdjointElectronPhotonRelaxationDataContainer(
                              test_native_file_name ) );
 
   // Set binding energy
@@ -258,7 +250,7 @@ int main( int argc, char** argv )
   std::set<unsigned> subshells = data_container->getSubshells();
 
   // Create the electroionization subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
+  IonizationNativeFactory::createElectroionizationSubshellDistribution(
     *data_container,
     *subshells.begin(),
     binding_energy,
@@ -283,5 +275,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstElectroionizationSubshellElectronScatteringDistributionNativeFactory.cpp
+// end tstElectroionizationSubshellAdjointElectronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

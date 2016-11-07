@@ -50,8 +50,6 @@ public:
   double evaluateCDF( const double incoming_energy,
                       const double outgoing_energy ) const;
 
-
-
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,

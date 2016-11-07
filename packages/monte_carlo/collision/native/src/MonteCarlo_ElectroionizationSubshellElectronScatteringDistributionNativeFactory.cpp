@@ -45,11 +45,11 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
 
 // Create the subshell recoil distribution
 void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubshellDistribution(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid,
     const unsigned subshell,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-	    subshell_distribution )
+        subshell_distribution )
 {
   // Create the scattering function
   Utility::FullyTabularTwoDDistribution::DistributionType
@@ -72,7 +72,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
             energy_grid[n] ) );
 
     function_data[n].second.reset(
-	  new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy,
+      new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy,
                                                                pdf ) );
   }
 

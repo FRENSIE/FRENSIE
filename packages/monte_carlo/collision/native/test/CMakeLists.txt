@@ -492,9 +492,10 @@ ADD_TEST(IncoherentAdjointPhotonScatteringDistributionNativeFactory_test tstInco
 SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon native)
 
 ##---------------------------------------------------------------------------##
-##      electron class tests                                                  
+##      electron class tests
 ##---------------------------------------------------------------------------##
-##      electron distribution tests                                           
+##      electron distribution tests
+
 ADD_EXECUTABLE(tstCutoffElasticElectronScatteringDistribution
   tstCutoffElasticElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstCutoffElasticElectronScatteringDistribution monte_carlo_collision_native)
@@ -552,9 +553,14 @@ SET_PROPERTY(TEST BremsstrahlungAdjointElectronScatteringDistribution_test PROPE
 ADD_EXECUTABLE(tstElectroionizationSubshellElectronScatteringDistribution
   tstElectroionizationSubshellElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectronScatteringDistribution monte_carlo_collision_native)
-
 ADD_TEST(ElectroionizationSubshellElectronScatteringDistribution_test tstElectroionizationSubshellElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST ElectroionizationSubshellElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
+
+ADD_EXECUTABLE(tstElectroionizationSubshellAdjointElectronScatteringDistribution
+  tstElectroionizationSubshellAdjointElectronScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstElectroionizationSubshellAdjointElectronScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(ElectroionizationSubshellAdjointElectronScatteringDistribution_test tstElectroionizationSubshellAdjointElectronScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
+SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
 
 ##      electron distribution ace factory tests
 

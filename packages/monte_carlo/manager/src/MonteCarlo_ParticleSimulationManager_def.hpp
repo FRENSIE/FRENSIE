@@ -261,24 +261,24 @@ void ParticleSimulationManager<GeometryHandler,
 			     "Error: particle type "
 			     << bank.top().getParticleType() <<
 			     " is not currently supported!" );
-	  }
+      }
 
-	bank.pop();
-	}
+    bank.pop();
+    }
 
-	// Commit all observer history contributions
-	EMI::commitObserverHistoryContributions();
+    // Commit all observer history contributions
+    EMI::commitObserverHistoryContributions();
 
-	// Increment the number of histories completed
+    // Increment the number of histories completed
         #pragma omp atomic
-	++d_histories_completed;
+    ++d_histories_completed;
       }
 
       #pragma omp critical( ostream_update )
       {
         std::cerr << "End History #: " << history
-	      << " Run Time: " << Utility::GlobalOpenMPSession::getTime() - history_start_time
-	      << std::endl;
+                  << " Run Time: " << Utility::GlobalOpenMPSession::getTime() - history_start_time
+                  << std::endl;
       }
     }
   }
