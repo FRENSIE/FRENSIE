@@ -33,9 +33,6 @@ Teuchos::RCP<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function
-
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution, 
-                   sample )
 TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                    sample )
 {

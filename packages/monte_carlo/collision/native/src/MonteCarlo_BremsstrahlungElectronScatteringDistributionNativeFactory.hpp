@@ -59,7 +59,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_BREMSSTRAHLUNG__ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
+#endif // end MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp

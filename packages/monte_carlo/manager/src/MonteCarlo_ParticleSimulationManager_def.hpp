@@ -328,8 +328,6 @@ void ParticleSimulationManager<GeometryHandler,
     #pragma omp flush( d_end_simulation )
     if( d_end_simulation )
     {
-      particle.setAsGone();
-
       // Print particle information
       #pragma omp critical( ostream_update )
       {
@@ -338,6 +336,9 @@ void ParticleSimulationManager<GeometryHandler,
                   << " Time: " << particle.getTime()
 	              << std::endl;
       }
+
+      particle.setAsGone();
+      break;
     }
 
     // Sample the mfp traveled by the particle on this subtrack
@@ -346,6 +347,22 @@ void ParticleSimulationManager<GeometryHandler,
     // Ray trace until the necessary number of optical paths have be traveled
     while( true )
     {
+      #pragma omp flush( d_end_simulation )
+      if( d_end_simulation )
+      {
+        // Print particle information
+        #pragma omp critical( ostream_update )
+        {
+          std::cerr << " History #: " << particle.getHistoryNumber()
+	                << " Collision #: " << particle.getCollisionNumber()
+                    << " Time: " << particle.getTime()
+	                << std::endl;
+        }
+
+        particle.setAsGone();
+        break;
+      }
+
       // Fire a ray at the cell currently containing the particle
       try
       {
@@ -438,6 +455,22 @@ void ParticleSimulationManager<GeometryHandler,
       // A collision occurs in this cell
       else
       {
+        #pragma omp flush( d_end_simulation )
+        if( d_end_simulation )
+        {
+          // Print particle information
+          #pragma omp critical( ostream_update )
+          {
+            std::cerr << " History #: " << particle.getHistoryNumber()
+	                  << " Collision #: " << particle.getCollisionNumber()
+                      << " Time: " << particle.getTime()
+	                  << std::endl;
+          }
+
+          particle.setAsGone();
+          break;
+        }
+
   	    // Advance the particle to the collision site
   	    double distance_to_collision =
           remaining_subtrack_op/cell_total_macro_cross_section;

@@ -10,10 +10,10 @@
 #define MONTE_CARLO_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_AdjointElectronState.hpp"
-#include "MonteCarlo_SubshellType.hpp"
-#include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
+#include "MonteCarlo_ParticleBank.hpp"
+#include "Data_SubshellType.hpp"
 
 namespace MonteCarlo{
 

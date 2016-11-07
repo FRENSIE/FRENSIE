@@ -32,6 +32,12 @@ public:
   virtual ~BremsstrahlungAdjointElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Return the min incoming energy
+  double getMinEnergy() const;
+
+  //! Return the Max incoming energy
+  double getMaxEnergy() const;
+
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
                    const double outgoing_energy ) const;

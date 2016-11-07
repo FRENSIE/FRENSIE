@@ -8,7 +8,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 

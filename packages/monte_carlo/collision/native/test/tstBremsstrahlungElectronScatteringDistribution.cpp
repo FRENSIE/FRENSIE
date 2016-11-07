@@ -749,5 +749,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstIncoherentPhotonScatteringDistribution.cpp
+// end tstBremsstrahlungElectronScatteringScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

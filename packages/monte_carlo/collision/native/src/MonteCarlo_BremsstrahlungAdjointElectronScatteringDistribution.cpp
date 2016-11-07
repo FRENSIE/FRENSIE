@@ -22,6 +22,18 @@ BremsstrahlungAdjointElectronScatteringDistribution::BremsstrahlungAdjointElectr
   testPrecondition( d_brem_distribution.use_count() > 0 );
 }
 
+// Return the min incoming energy
+double BremsstrahlungAdjointElectronScatteringDistribution::getMinEnergy() const
+{
+  return d_brem_distribution->getLowerBoundOfPrimaryIndepVar();
+}
+
+// Return the Max incoming energy
+double BremsstrahlungAdjointElectronScatteringDistribution::getMaxEnergy() const
+{
+  return d_brem_distribution->getUpperBoundOfPrimaryIndepVar();
+}
+
 // Evaluate the distribution
 double BremsstrahlungAdjointElectronScatteringDistribution::evaluate(
         const double incoming_energy,
@@ -32,7 +44,7 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluate(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the distribution
-  return d_brem_distribution->evaluate( incoming_energy, outgoing_energy );
+  return d_brem_distribution->evaluateExact( incoming_energy, outgoing_energy );
 }
 
 // Evaluate the PDF
@@ -45,7 +57,7 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluatePDF(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the pdf
-  return d_brem_distribution->evaluateSecondaryConditionalPDF( incoming_energy,
+  return d_brem_distribution->evaluateSecondaryConditionalPDFExact( incoming_energy,
                                                                outgoing_energy );
 }
 
@@ -59,7 +71,7 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluateCDF(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the cdf
-  return d_brem_distribution->evaluateSecondaryConditionalCDF( incoming_energy,
+  return d_brem_distribution->evaluateSecondaryConditionalCDFExact( incoming_energy,
                                                                outgoing_energy );
 }
 
