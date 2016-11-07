@@ -15,10 +15,10 @@ namespace MonteCarlo{
 
 // Create a bremsstrahlung adjoint distribution
 void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungAdjointDistribution(
-	const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double>& adjoint_energy_grid,
-	std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
-		scattering_distribution )
+    std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
+        scattering_distribution )
 {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_gain_function;
@@ -34,7 +34,7 @@ void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBre
 
 // Create the energy gain function
 void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEnergyGainFunction(
-	const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double> energy_grid,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>& energy_gain_function )
 {
@@ -55,7 +55,7 @@ void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEne
       raw_electroatom_data.getAdjointElectronBremsstrahlungPDF( energy_grid[n] ) );
 
     function_data[n].second.reset(
-	  new const Utility::TabularDistribution<Utility::LinLin>( outgoing_energy,
+      new const Utility::TabularDistribution<Utility::LinLin>( outgoing_energy,
                                                                pdf ) );
   }
 

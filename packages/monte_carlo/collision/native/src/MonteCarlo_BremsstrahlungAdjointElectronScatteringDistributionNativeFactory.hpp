@@ -31,7 +31,7 @@ public:
   //! Create the energy gain function
   static void createEnergyGainFunction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const std::vector<double> badjoint_energy_grid,
+    const std::vector<double> adjoint_energy_grid,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         energy_gain_function );
 };
