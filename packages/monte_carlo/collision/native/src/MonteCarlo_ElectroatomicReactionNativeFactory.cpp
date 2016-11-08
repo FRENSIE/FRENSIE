@@ -125,15 +125,56 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     raw_electroatom_data,
     cutoff_angle_cosine );
 
+  // Calculate the hybrid cross section
+  unsigned hybrid_threshold_energy_index =
+    std::min( mp_threshold_energy_index, cutoff_threshold_energy_index );
+
+  unsigned mp_threshold_diff =
+    mp_threshold_energy_index - hybrid_threshold_energy_index;
+  unsigned cutoff_threshold_diff =
+    cutoff_threshold_energy_index - hybrid_threshold_energy_index;
+
+  Teuchos::Array<double> combined_cross_section(
+                           energy_grid.size() - hybrid_threshold_energy_index );
+
+  for (unsigned i = 0; i < combined_cross_section.size(); ++i )
+  {
+    double energy = energy_grid[i + hybrid_threshold_energy_index];
+
+    if ( i < mp_threshold_diff )
+    {
+      double cutoff_cdf =
+        distribution->evaluateCDF( energy, cutoff_angle_cosine );
+
+      combined_cross_section[i] = cutoff_cross_section[i]*cutoff_cdf;
+    }
+    else if ( i < cutoff_threshold_diff )
+    {
+      combined_cross_section[i] = mp_cross_section[i];
+    }
+    else
+    {
+      double cutoff_cdf =
+        distribution->evaluateCDF( energy, cutoff_angle_cosine );
+
+      combined_cross_section[i] =
+        cutoff_cross_section[i-cutoff_threshold_diff]*cutoff_cdf + 
+        mp_cross_section[i-mp_threshold_diff];
+    }
+  }
+
+  Teuchos::ArrayRCP<double> hybrid_cross_section;
+  hybrid_cross_section.assign( combined_cross_section.begin(),
+                               combined_cross_section.end() );
+
+
   // Create the hybrid elastic reaction
   elastic_reaction.reset(
 	new HybridElasticElectroatomicReaction<Utility::LinLin>(
             energy_grid,
-            cutoff_cross_section,
-            cutoff_threshold_energy_index,
+            hybrid_cross_section,
+            hybrid_threshold_energy_index,
             grid_searcher,
-            mp_cross_section,
-            mp_threshold_energy_index,
             cutoff_angle_cosine,
             distribution ) );
 }

@@ -620,29 +620,29 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
   TEST_FLOATING_EQUALITY( cross_section, 9.235190E+03, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
-                    1.000000000000E-05,
+                    1e-5,
                     MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 4.869800E+03, 1e-12 );
 
   // Test that the hybrid elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
-                    1.00E+05,
+                    1e5,
                     MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCDF( 1.E+05, new_cutoff_angle_cosine );
+    cutoff_elastic_distribution->evaluateCDF( 1e5, new_cutoff_angle_cosine );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.830509999999990E-02*cross_section_ratio + 2.203770304996720E-03,
-                          1e-12 );
+                          8.83051e-2*cross_section_ratio + 2.20377030499672E-03,
+                          1e-11 );
 
   cross_section = atom->getReactionCrossSection(
-                    1.00E-03,
+                    1e-3,
                     MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCDF( 1.E-03, new_cutoff_angle_cosine );
+    cutoff_elastic_distribution->evaluateCDF( 1e-3, new_cutoff_angle_cosine );
   
   TEST_FLOATING_EQUALITY( cross_section,
                           2.902810E+08*cross_section_ratio + 1.2584013774057174E+08,
