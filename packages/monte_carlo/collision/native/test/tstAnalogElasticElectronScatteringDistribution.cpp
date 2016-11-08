@@ -710,8 +710,8 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test NATIVE file name" );
+                 &test_native_file_name,
+                 "Test NATIVE file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -753,7 +753,7 @@ int main( int argc, char** argv )
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
     function_data[n].second.reset(
-	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
+      new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
   }
 
   double atomic_number = data_container.getAtomicNumber();

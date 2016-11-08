@@ -61,7 +61,7 @@ protected:
 
 // Test if two Atomic reactions share the same energy grid
 inline bool AtomicReaction::isEnergyGridShared(
-			      const AtomicReaction& other_reaction ) const
+              const AtomicReaction& other_reaction ) const
 {
   return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
 }

@@ -462,24 +462,24 @@ void ParticleSimulationManager<GeometryHandler,
           #pragma omp critical( ostream_update )
           {
             std::cerr << " History #: " << particle.getHistoryNumber()
-	                  << " Collision #: " << particle.getCollisionNumber()
+                      << " Collision #: " << particle.getCollisionNumber()
                       << " Time: " << particle.getTime()
-	                  << std::endl;
+                      << std::endl;
           }
 
           particle.setAsGone();
           break;
         }
 
-  	    // Advance the particle to the collision site
-  	    double distance_to_collision =
+        // Advance the particle to the collision site
+        double distance_to_collision =
           remaining_subtrack_op/cell_total_macro_cross_section;
 
-  	    particle.advance( distance_to_collision );
+        particle.advance( distance_to_collision );
 
         GMI::advanceInternalRayBySubstep( distance_to_collision );
 
-	      // Update the observers: particle subtrack ending in cell event
+          // Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
                                                        particle,
                                                        particle.getCell(),
@@ -522,74 +522,74 @@ void ParticleSimulationManager<GeometryHandler,
 
   // Update the global observers: particle subtrack ending global event
   EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
-  						      particle,
-  						      ray_start_point,
-  						      particle.getPosition() );
+        particle,
+        ray_start_point,
+        particle.getPosition() );
 }
 
 // Return the number of histories
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-unsigned long long  ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::getNumberOfHistories() const
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
+unsigned long long ParticleSimulationManager<GeometryHandler,
+                   SourceHandler,
+                   EstimatorHandler,
+                   CollisionHandler>::getNumberOfHistories() const
 {
   return d_history_number_wall - d_start_history;
 }
 
 // Return the number of histories completed
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-unsigned long long  ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::getNumberOfHistoriesCompleted() const
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
+unsigned long long ParticleSimulationManager<GeometryHandler,
+                   SourceHandler,
+                   EstimatorHandler,
+                   CollisionHandler>::getNumberOfHistoriesCompleted() const
 {
   return d_histories_completed;
 }
 
 // Increment the number of histories completed
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
 void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::incrementHistoriesCompleted(
-					   const unsigned long long histories )
+                               SourceHandler,
+                               EstimatorHandler,
+                               CollisionHandler>::incrementHistoriesCompleted(
+                                            const unsigned long long histories )
 {
   d_histories_completed += histories;
 }
 
 // Set the number of histories completed
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
 void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::setHistoriesCompleted(
-					   const unsigned long long histories )
+                               SourceHandler,
+                               EstimatorHandler,
+                               CollisionHandler>::setHistoriesCompleted(
+                                            const unsigned long long histories )
 {
   d_histories_completed = histories;
 }
 
 // Set the start time
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
 void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::setStartTime( const double start_time )
+                               SourceHandler,
+                               EstimatorHandler,
+                      CollisionHandler>::setStartTime( const double start_time )
 {
   d_start_time = start_time;
 }
