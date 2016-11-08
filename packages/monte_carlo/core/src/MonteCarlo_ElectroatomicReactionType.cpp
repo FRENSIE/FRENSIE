@@ -18,7 +18,7 @@ namespace MonteCarlo{
 
 // Convert a ElectroatomicReactionType enum to a string
 std::string convertElectroatomicReactionEnumToString(
-				       const ElectroatomicReactionType reaction )
+                       const ElectroatomicReactionType reaction )
 {
   switch( reaction )
   {
@@ -176,8 +176,8 @@ ElectroatomicReactionType convertSubshellEnumToElectroatomicReactionEnum(
   case Data::Q3_SUBSHELL: return Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: the invalid shell does not have a corresponding "
-		     "Electroionization Electroatomic reaction!" );
+             "Error: the invalid shell does not have a corresponding "
+             "Electroionization Electroatomic reaction!" );
   }
 }
 
