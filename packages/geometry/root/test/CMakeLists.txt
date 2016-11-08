@@ -11,7 +11,7 @@ IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelRoot_2_test tstSharedParallelRoot --test_root_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root" --threads=2)
   ADD_TEST(SharedParallelRoot_4_test tstSharedParallelRoot --test_root_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root" --threads=4)
   SET_PROPERTY(TEST SharedParallelRoot_2_test PROPERTY LABELS geometry_root root no_threads)
-  SET_PROPERTY(TEST SharedParallelRoot_4_test PROPERTY LABELS geometry_root root no_threads))
+  SET_PROPERTY(TEST SharedParallelRoot_4_test PROPERTY LABELS geometry_root root no_threads)
 ENDIF()
 
 ADD_EXECUTABLE(tstRootInstanceFactoryBasic
