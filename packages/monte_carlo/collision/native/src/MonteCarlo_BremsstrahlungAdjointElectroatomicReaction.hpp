@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp
+//! \file   MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp
 //! \author Luke Kersting
-//! \brief  The atomic excitation adjoint electroatomic reaction class decl.
+//! \brief  The bremsstrahlung adjoint electroatomic reaction class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ATOMIC_EXCITATION_ELECTROATOMIC_REACTION_HPP
-#define MONTE_CARLO_ATOMIC_EXCITATION_ELECTROATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
+#define MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -15,14 +15,14 @@
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
-#include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistribution.hpp"
+#include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistribution.hpp"
 
 
 namespace MonteCarlo{
 
 //! The pair production photoatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class AtomicExcitationAdjointElectroatomicReaction : public StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
+class BremsstrahlungAdjointElectroatomicReaction : public StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
 
 private:
@@ -34,24 +34,24 @@ typedef StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,
 public:
 
   //! Basic Constructor
-  AtomicExcitationAdjointElectroatomicReaction(
+  BremsstrahlungAdjointElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>&
-            energy_gain_distribution );
+    const std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
+            bremsstrahlung_distribution );
 
   //! Constructor
-  AtomicExcitationAdjointElectroatomicReaction(
+  BremsstrahlungAdjointElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>&
-            energy_gain_distribution );
+    const std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
+            bremsstrahlung_distribution );
 
   //! Destructor
-  ~AtomicExcitationAdjointElectroatomicReaction()
+  ~BremsstrahlungAdjointElectroatomicReaction()
   { /* ... */ }
 
   //! Return the number of electrons emitted from the rxn at the given energy
@@ -70,9 +70,9 @@ public:
 
 private:
 
-  // The atomic excitation energy gain distribution
-  std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>
-    d_energy_gain_distribution;
+  // The bremsstrahlung distribution
+  std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>
+    d_bremsstrahlung_distribution;
 };
 
 } // end MonteCarlo namespace
@@ -81,12 +81,12 @@ private:
 // Template Includes.
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_AtomicExcitationAdjointElectroatomicReaction_def.hpp"
+#include "MonteCarlo_BremsstrahlungAdjointElectroatomicReaction_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_ATOMIC_EXCITATION_ELECTROATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp
+// end MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp
 //---------------------------------------------------------------------------//

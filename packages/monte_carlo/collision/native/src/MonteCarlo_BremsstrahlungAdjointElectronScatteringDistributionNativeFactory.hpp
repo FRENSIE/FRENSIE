@@ -23,10 +23,10 @@ public:
 
   //! Create a bremsstrahlung adjoint distribution
   static void createBremsstrahlungAdjointDistribution(
-	const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double>& adjoint_energy_grid,
-	std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
-		        	  scattering_distribution );
+    std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
+                scattering_distribution );
 
   //! Create the energy gain function
   static void createEnergyGainFunction(

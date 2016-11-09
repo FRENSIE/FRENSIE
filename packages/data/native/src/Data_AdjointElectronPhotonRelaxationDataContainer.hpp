@@ -265,11 +265,11 @@ public:
 
   //! Return the bremsstrahlung electron energy for an incoming photon energy
   const std::vector<double>& getAdjointPhotonBremsstrahlungEnergy(
-					       const double incoming_adjoint_energy ) const;
+                               const double incoming_adjoint_energy ) const;
 
   //! Return the bremsstrahlung pdf for an incoming photon energy
   const std::vector<double>& getAdjointPhotonBremsstrahlungPDF(
-					       const double incoming_adjoint_energy ) const;
+                               const double incoming_adjoint_energy ) const;
 
   //! Return the bremsstrahlung photon cross section
   const std::vector<double>& getAdjointBremsstrahlungPhotonCrossSection() const;

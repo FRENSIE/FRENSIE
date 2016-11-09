@@ -2,7 +2,7 @@
 //!
 //! \file   tstAtomicExcitationAdjointElectroatomicReaction.cpp
 //! \author Luke Kersting
-//! \brief  Atomic Excitation Adjoint electroatomic reaction unit tests
+//! \brief  Atomic Excitation adjoint electroatomic reaction unit tests
 //!
 //---------------------------------------------------------------------------//
 
