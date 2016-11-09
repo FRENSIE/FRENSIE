@@ -212,30 +212,21 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_file_name;
+  clp().setOption( "test_native_file",
+                   &test_native_file_name,
+                   "Test Native file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_file",
-                 &test_native_file_name,
-                 "Test native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
-  {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create the native data file container
   data_container.reset( new Data::AdjointElectronPhotonRelaxationDataContainer(
                              test_native_file_name ) );
@@ -250,6 +241,8 @@ int main( int argc, char** argv )
   Utility::FullyTabularTwoDDistribution::DistributionType
      function_data( energy_grid.size() );
 
+  std::set<unsigned> subshells = data_container->getSubshells();
+
   for( unsigned n = 0; n < energy_grid.size(); ++n )
   {
     function_data[n].first = energy_grid[n];
@@ -257,13 +250,13 @@ int main( int argc, char** argv )
     // Get the recoil energy distribution at the incoming energy
     Teuchos::Array<double> recoil_energy(
       data_container->getAdjointElectroionizationRecoilEnergy(
-        1,
+        *subshells.begin(),
         energy_grid[n] ) );
 
     // Get the recoil energy pdf at the incoming energy
     Teuchos::Array<double> pdf(
       data_container->getAdjointElectroionizationRecoilPDF(
-        1,
+        *subshells.begin(),
         energy_grid[n] ) );
 
     function_data[n].second.reset(
@@ -283,21 +276,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElectroionizationSubshellAdjointElectronScatteringDistribution.cpp
