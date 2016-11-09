@@ -23,6 +23,12 @@ template<typename InterpPolicy, bool processed_cross_section = false>
 class ElectroionizationSubshellElectroatomicReaction : public ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
 
+private:
+
+  // Typedef for the base class type
+typedef ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>
+    BaseType;
+
 public:
 
   //! Basic Constructor

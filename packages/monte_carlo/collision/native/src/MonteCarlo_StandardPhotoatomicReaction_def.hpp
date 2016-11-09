@@ -253,7 +253,7 @@ inline double StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 template<typename InterpPolicy>
 inline double StandardPhotoatomicReaction<InterpPolicy,false>::getCrossSection(
 			                       const double energy,
-				               const unsigned bin_index ) const
+			                       const unsigned bin_index ) const
 {
   // Make sure the bin index is valid
   testPrecondition( d_incoming_energy_grid[bin_index] <= energy );

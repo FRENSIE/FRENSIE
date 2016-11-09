@@ -18,23 +18,22 @@ namespace MonteCarlo{
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
       const double cutoff_angle_cosine,
       const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-        incoming_energy_grid,
-        cross_section,
-        threshold_energy_index ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index ),
     d_hybrid_distribution( hybrid_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                        incoming_energy_grid.begin(),
+                        incoming_energy_grid.end() ) );
   // Make sure the cross sections are valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
@@ -49,25 +48,24 @@ HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Hybrid
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const double cutoff_angle_cosine,
       const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-        incoming_energy_grid,
-        cross_section,
-        threshold_energy_index,
-        grid_searcher ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
     d_hybrid_distribution( hybrid_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                        incoming_energy_grid.begin(),
+                        incoming_energy_grid.end() ) );
   // Make sure the cross sections are valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
@@ -107,9 +105,9 @@ ElectroatomicReactionType HybridElasticElectroatomicReaction<InterpPolicy,proces
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+         ElectronState& electron,
+         ParticleBank& bank,
+         Data::SubshellType& shell_of_interaction ) const
 {
   d_hybrid_distribution->scatterElectron( electron,
                                           bank,

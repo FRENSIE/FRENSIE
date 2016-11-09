@@ -161,6 +161,14 @@ private:
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     d_analog_distribution;
 
+  // The cutoff reaction
+  std::shared_ptr<const MonteCarlo::ElectroatomicReaction>
+    d_cutoff_reaction;
+
+  // The screened rutherford reaction
+  std::shared_ptr<const MonteCarlo::ElectroatomicReaction>
+    d_screened_rutherford_reaction;
+
   // The map of the cutoff angles
   std::map<double,std::vector<double> > d_cutoff_elastic_angles;
 

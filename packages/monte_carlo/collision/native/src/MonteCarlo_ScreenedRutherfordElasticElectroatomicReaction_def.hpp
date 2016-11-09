@@ -23,10 +23,9 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const unsigned threshold_energy_index,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                    incoming_energy_grid,
-                                                    cross_section,
-                                                    threshold_energy_index ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure scattering distribution is valid
@@ -42,11 +41,10 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                    incoming_energy_grid,
-                                                    cross_section,
-                                                    threshold_energy_index,
-                                                    grid_searcher ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure scattering distribution is valid

@@ -20,20 +20,19 @@ ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::El
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                       incoming_energy_grid,
-                                                       cross_section,
-                                                       threshold_energy_index )
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                        incoming_energy_grid.begin(),
+                        incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
+                    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 }
@@ -45,21 +44,20 @@ ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::El
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                incoming_energy_grid,
-                cross_section,
-                threshold_energy_index,
-                grid_searcher )
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                        incoming_energy_grid.begin(),
+                        incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
+                    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 }

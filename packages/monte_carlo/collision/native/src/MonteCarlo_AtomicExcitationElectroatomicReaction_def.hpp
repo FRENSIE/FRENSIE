@@ -25,21 +25,20 @@ AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::Ato
        const unsigned threshold_energy_index,
        const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
             energy_loss_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-				                   incoming_energy_grid,
-		                           cross_section,
-		                           threshold_energy_index ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index ),
     d_energy_loss_distribution( energy_loss_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                                                incoming_energy_grid.begin(),
+                                                incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
+                    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the energy loss distribution data is valid
@@ -55,18 +54,17 @@ AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::Ato
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
             energy_loss_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                incoming_energy_grid,
-                cross_section,
-                threshold_energy_index,
-                grid_searcher ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
     d_energy_loss_distribution( energy_loss_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                                                incoming_energy_grid.begin(),
+                                                incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
@@ -103,8 +101,8 @@ ElectroatomicReactionType AtomicExcitationElectroatomicReaction<InterpPolicy,pro
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-						     ElectronState& electron,
-						     ParticleBank& bank,
+                             ElectronState& electron,
+                             ParticleBank& bank,
                              Data::SubshellType& shell_of_interaction ) const
 {
   d_energy_loss_distribution->scatterElectron( electron,

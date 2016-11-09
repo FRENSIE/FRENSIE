@@ -13,7 +13,8 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -23,8 +24,14 @@ namespace MonteCarlo{
 */
 
 template<typename InterpPolicy, bool processed_cross_section = false>
-class ElectroionizationElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
+class ElectroionizationElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
+
+private:
+
+  // Typedef for the base class type
+typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+    BaseType;
 
 public:
 

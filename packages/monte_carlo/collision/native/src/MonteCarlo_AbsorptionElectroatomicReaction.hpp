@@ -10,7 +10,8 @@
 #define MONTE_CARLO_ABSORPTION_ELECTROATOMIC_REACTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -19,17 +20,30 @@ namespace MonteCarlo{
  * absorption reactions (e.g. heating).
  */
 template<typename InterpPolicy, bool processed_cross_section = false>
-class AbsorptionElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
+class AbsorptionElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
+
+private:
+
+  // Typedef for the base class type
+typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+    BaseType;
 
 public:
 
   //! Constructor
   AbsorptionElectroatomicReaction(
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
-	  const ElectroatomicReactionType reaction );
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
+      const ElectroatomicReactionType reaction );
+
+  //! Constructor
+  AbsorptionElectroatomicReaction(
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Destructor
   ~AbsorptionElectroatomicReaction()

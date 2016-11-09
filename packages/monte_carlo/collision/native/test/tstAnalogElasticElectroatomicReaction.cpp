@@ -49,22 +49,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, getReactionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cutoff threshold energy can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, getCutoffThresholdEnergy )
-{
-  TEST_EQUALITY_CONST( analog_elastic_reaction->getCutoffThresholdEnergy(),
-                       1.0e-5 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the screened Rutherford threshold energy can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, getScreenedRutherfordThresholdEnergy )
-{
-  TEST_EQUALITY_CONST( analog_elastic_reaction->getScreenedRutherfordThresholdEnergy(),
-                       2.5902400000E-01 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, getThresholdEnergy )
 {
@@ -92,55 +76,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, getNumberOfEmittedPhotons
 
   TEST_EQUALITY_CONST( analog_elastic_reaction->getNumberOfEmittedPhotons(20.0),
 		       0u );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the cutoff cross section can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction,
-                   getCutoffCrossSection )
-{
-
-  double cross_section =
-    analog_elastic_reaction->getCutoffCrossSection( 1.0E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
-
-  cross_section =
-    analog_elastic_reaction->getCutoffCrossSection( 1.0E-03 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 2.80423E+06, 1e-12 );
-
-  cross_section =
-    analog_elastic_reaction->getCutoffCrossSection( 1.0E+05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 1.31176E-05, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the screened Rutherford cross section can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction,
-                   getScreenedRutherfordCrossSection )
-{
-
-  double cross_section =
-    analog_elastic_reaction->getScreenedRutherfordCrossSection( 1.0E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-
-  cross_section =
-    analog_elastic_reaction->getScreenedRutherfordCrossSection( 1.0E-03 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-
-  cross_section =
-    analog_elastic_reaction->getScreenedRutherfordCrossSection( 2.59024E-01 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 2.574552047073660E+00, 1e-12 );
-
-  cross_section =
-    analog_elastic_reaction->getScreenedRutherfordCrossSection( 1.0E+05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 1.298709998688240E+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -267,19 +202,61 @@ int main( int argc, char** argv )
         data_container.getCutoffElasticCrossSection().begin(),
         data_container.getCutoffElasticCrossSection().end() );
 
+    // Cutoff elastic cross section threshold energy bin index
+    unsigned cutoff_threshold_energy_index =
+      data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
+
     Teuchos::ArrayRCP<double> sr_cross_section;
     sr_cross_section.assign(
         data_container.getScreenedRutherfordElasticCrossSection().begin(),
         data_container.getScreenedRutherfordElasticCrossSection().end() );
 
+    // Screened Rutherford elastic cross section threshold energy bin index
+    unsigned sr_threshold_energy_index =
+      data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
+
+    // Calculate the analog cross section
+    unsigned analog_threshold_energy_index =
+      std::min( sr_threshold_energy_index, cutoff_threshold_energy_index );
+
+    unsigned sr_threshold_diff =
+      sr_threshold_energy_index - analog_threshold_energy_index;
+    unsigned cutoff_threshold_diff =
+      cutoff_threshold_energy_index - analog_threshold_energy_index;
+
+    Teuchos::Array<double> combined_cross_section(
+                             energy_grid.size() - analog_threshold_energy_index );
+
+    for (unsigned i = 0; i < combined_cross_section.size(); ++i )
+    {
+      double energy = energy_grid[i + analog_threshold_energy_index];
+
+      if ( i < sr_threshold_diff )
+      {
+        combined_cross_section[i] = cutoff_cross_section[i];
+      }
+      else if ( i < cutoff_threshold_diff )
+      {
+        combined_cross_section[i] = sr_cross_section[i];
+      }
+      else
+      {
+        combined_cross_section[i] =
+          cutoff_cross_section[i-cutoff_threshold_diff] +
+          sr_cross_section[i-sr_threshold_diff];
+      }
+    }
+
+    Teuchos::ArrayRCP<double> analog_cross_section;
+    analog_cross_section.assign( combined_cross_section.begin(),
+                                 combined_cross_section.end() );
+
     // Create the reaction
     analog_elastic_reaction.reset(
       new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
                 energy_grid,
-                cutoff_cross_section,
-                sr_cross_section,
-                data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-                data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+                analog_cross_section,
+                analog_threshold_energy_index,
                 analog_elastic_distribution ) );
   }
 

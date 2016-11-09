@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstVoidStandardElectroatomicReaction.cpp
+//! \file   tstVoidElectroatomicReaction.cpp
 //! \author Luke Kersting
 //! \brief  Bremsstrahlung electroatomic reaction unit tests
 //!
@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_VoidStandardElectroatomicReaction.hpp"
+#include "MonteCarlo_VoidElectroatomicReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -27,7 +27,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin> >
+std::shared_ptr<MonteCarlo::VoidElectroatomicReaction<Utility::LinLin> >
   ace_dipole_bremsstrahlung_reaction;
 
 //---------------------------------------------------------------------------//
@@ -42,7 +42,7 @@ bool notEqualZero( double value )
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getReactionType )
+TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getReactionType )
 {
   TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getReactionType(),
 		       MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
@@ -50,7 +50,7 @@ TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getReactionType )
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getThresholdEnergy )
+TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getThresholdEnergy )
 {
   TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getThresholdEnergy(),
                        1.000000000000E-05 );
@@ -58,7 +58,7 @@ TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getThresholdEnergy )
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getNumberOfEmittedElectrons )
+TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getNumberOfEmittedElectrons )
 {
   TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedElectrons(1e-5),
                        0u );
@@ -69,7 +69,7 @@ TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getNumberOfEmittedElectron
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getNumberOfEmittedPhotons )
+TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getNumberOfEmittedPhotons )
 {
   TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-5),
                        0u );
@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getNumberOfEmittedPhotons 
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getCrossSection )
+TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getCrossSection )
 {
   double cross_section =
     ace_dipole_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
@@ -100,7 +100,7 @@ TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, getCrossSection )
 
 //---------------------------------------------------------------------------//
 // Check that the basic dipole bremsstrahlung reaction can be simulated
-TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, react )
+TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, react )
 {
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 20 );
@@ -119,32 +119,24 @@ TEUCHOS_UNIT_TEST( VoidStandardElectroatomicReaction, react )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  clp().setOption( "test_ace_file",
+                   &test_ace_file_name,
+                   "Test ACE file name" );
+  clp().setOption( "test_ace_table",
+                   &test_ace_table_name,
+                   "Test ACE table name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
@@ -176,10 +168,10 @@ int main( int argc, char** argv )
 
   // Create the reactions
   ace_dipole_bremsstrahlung_reaction.reset(
-    new MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      bremsstrahlung_cross_section,
-						      bremsstrahlung_threshold_index ) );
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
+          energy_grid,
+          bremsstrahlung_cross_section,
+          bremsstrahlung_threshold_index ) );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -187,22 +179,8 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//
-// end tstBremsstrahlungElectroatomicReaction.cpp
+// end tstVoidElectroatomicReaction.cpp
 //---------------------------------------------------------------------------//

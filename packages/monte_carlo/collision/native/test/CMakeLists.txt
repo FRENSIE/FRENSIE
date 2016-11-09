@@ -636,12 +636,6 @@ SET_PROPERTY(TEST BremsstrahlungAdjointElectronScatteringDistributionNativeFacto
 
 ##      electroatomic reaction tests
 
-ADD_EXECUTABLE(tstStandardElectroatomicReaction
-  tstStandardElectroatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstStandardElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(StandardElectroatomicReaction_test tstStandardElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST StandardElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
-
 ADD_EXECUTABLE(tstAbsorptionElectroatomicReaction
   tstAbsorptionElectroatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstAbsorptionElectroatomicReaction monte_carlo_collision_native)
@@ -702,11 +696,11 @@ TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectroatomicReaction monte_ca
 ADD_TEST(ElectroionizationSubshellElectroatomicReaction_test tstElectroionizationSubshellElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_6_native.xml")
 SET_PROPERTY(TEST ElectroionizationSubshellElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
 
-ADD_EXECUTABLE(tstVoidStandardElectroatomicReaction
-  tstVoidStandardElectroatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstVoidStandardElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(VoidStandardElectroatomicReaction_test tstVoidStandardElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST VoidStandardElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+ADD_EXECUTABLE(tstVoidElectroatomicReaction
+  tstVoidElectroatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstVoidElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(VoidElectroatomicReaction_test tstVoidElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+SET_PROPERTY(TEST VoidElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
 
 ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
   tstElectroatomicReactionACEFactory.cpp)

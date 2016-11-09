@@ -62,50 +62,37 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
 
   // Test that the total cross section can be returned
   double energy = 2.000000000000E-03;
-  double cross_section =
-    atom->getTotalCrossSection( energy );
+  double cross_section = atom->getTotalCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          4.806193787852E+08,
-                          1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.806193787852E+08, 1e-12 );
 
 
   energy = 4.000000000000E-04;
-  cross_section =
-    atom->getTotalCrossSection( energy );
+  cross_section = atom->getTotalCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          1.278128947846E+09,
-                          1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.278128947846E+09, 1e-12 );
 
 
   energy = 9.000000000000E-05;
-  cross_section =
-    atom->getTotalCrossSection( energy );
+  cross_section = atom->getTotalCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          2.411603154884E+09,
-                          1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.411603154884E+09, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
-  cross_section =
-    atom->getAbsorptionCrossSection( 1.000000000E-02 );
+  cross_section = atom->getAbsorptionCrossSection( 1.000000000E-02 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section =
-    atom->getAbsorptionCrossSection( 2.000000000000E-03 );
+  cross_section = atom->getAbsorptionCrossSection( 2.000000000000E-03 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section =
-    atom->getAbsorptionCrossSection( 4.000000000000E-04 );
+  cross_section = atom->getAbsorptionCrossSection( 4.000000000000E-04 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section =
-    atom->getAbsorptionCrossSection( 9.000000000000E-05 );
+  cross_section = atom->getAbsorptionCrossSection( 9.000000000000E-05 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
@@ -222,6 +209,8 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
   TEST_FLOATING_EQUALITY( cross_section,
                           8.887469904554E+08,
                           1e-12 );
+
+  atom.reset();
 }
 /*
 //---------------------------------------------------------------------------//
@@ -265,54 +254,36 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
-  // Test that the total cross section can be returned
-  double energy = 2.000000000000E-03;
-  double cross_section =
-    atom->getTotalCrossSection( energy );
+  double energy, cross_section;
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          4.806193787852E+08,
-                          1e-12 );
+  // Test that the total cross section can be returned
+  energy = 2.000000000000E-03;
+  cross_section = atom->getTotalCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 4.806193787852E+08, 1e-12 );
 
 
   energy = 4.000000000000E-04;
-  cross_section =
-    atom->getTotalCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          1.278128947846E+09,
-                          1e-12 );
+  cross_section = atom->getTotalCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 1.278128947846E+09, 1e-12 );
 
 
   energy = 9.000000000000E-05;
-  cross_section =
-    atom->getTotalCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          2.411603154884E+09,
-                          1e-12 );
+  cross_section = atom->getTotalCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.411603154884E+09, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
-  cross_section =
-    atom->getAbsorptionCrossSection( 1.000000000E-02 );
+  cross_section = atom->getAbsorptionCrossSection( 1.000000000E-02 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-   TEST_EQUALITY_CONST( cross_section, 0.0 );
+  cross_section = atom->getAbsorptionCrossSection( 2.000000000000E-03 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section =
-    atom->getAbsorptionCrossSection( 2.000000000000E-03 );
+  cross_section = atom->getAbsorptionCrossSection( 4.000000000000E-04 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-   TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section =
-    atom->getAbsorptionCrossSection( 4.000000000000E-04 );
-
-   TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section =
-    atom->getAbsorptionCrossSection( 9.000000000000E-05 );
-
-   TEST_EQUALITY_CONST( cross_section, 0.0 );
+  cross_section = atom->getAbsorptionCrossSection( 9.000000000000E-05 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Test that the atomic excitation cross section can be returned
   cross_section = atom->getReactionCrossSection(

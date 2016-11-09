@@ -23,21 +23,20 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
        const unsigned threshold_energy_index,
        const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                    incoming_energy_grid,
-                                                    cross_section,
-                                                    threshold_energy_index ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                        incoming_energy_grid.begin(),
+                        incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
+                    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
@@ -53,22 +52,21 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                    incoming_energy_grid,
-                                                    cross_section,
-                                                    threshold_energy_index,
-                                                    grid_searcher ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                        incoming_energy_grid.begin(),
+                        incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
+                    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
@@ -133,7 +131,8 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
   double cross_section;
 
   cross_section =
-    StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( energy );
+    StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
+    energy );
 
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );
@@ -155,7 +154,8 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
   double cross_section;
 
   cross_section =
-    StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( energy );
+    StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
+    energy );
 
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );

@@ -13,7 +13,8 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
@@ -21,8 +22,14 @@ namespace MonteCarlo{
 //! \todo Write Unit Test once ENDL Data is available
 //! The screened rutherford elastic electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class ScreenedRutherfordElasticElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
+class ScreenedRutherfordElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
+
+private:
+
+  // Typedef for the base class type
+typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+    BaseType;
 
 public:
 

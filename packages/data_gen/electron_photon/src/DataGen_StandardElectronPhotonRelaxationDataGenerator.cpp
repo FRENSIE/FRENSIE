@@ -19,7 +19,6 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_ReactionHelpers.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
