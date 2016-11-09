@@ -1,17 +1,19 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CoherentScatteringDistributionNativeFactory.cpp
+//! \file   MonteCarlo_CoherentScatteringDistributionNativeFactory_def.hpp
 //! \author Alex Robinson
 //! \brief  The coherent scattering distribution native factory definition
 //!
 //---------------------------------------------------------------------------//
+
+#ifndef MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
+#define MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_CoherentScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ThompsonScatteringDistribution.hpp"
 #include "MonteCarlo_BasicCoherentScatteringDistribution.hpp"
 #include "MonteCarlo_EfficientCoherentScatteringDistribution.hpp"
@@ -22,10 +24,11 @@
 namespace MonteCarlo{
 
 // Create a basic coherent distribution
+  template<typename NativeContainer, template<typename> class SmartPtr>
 void CoherentScatteringDistributionNativeFactory::createBasicCoherentDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const CoherentScatteringDistribution>&
-	 coherent_distribution )
+                                const NativeContainer& raw_photoatom_data,
+	                        SmartPtr<const CoherentScatteringDistribution>&
+                                coherent_distribution )
 {
   // Create the form factor squared
   std::shared_ptr<const FormFactorSquared> form_factor_squared;
@@ -38,11 +41,12 @@ void CoherentScatteringDistributionNativeFactory::createBasicCoherentDistributio
 	      new BasicCoherentScatteringDistribution( form_factor_squared ) );
 }
 
-// Create an efficient coherent distribution
+// Create an efficient coherent distributio
+template<typename NativeContainer, template<typename> class SmartPtr>
 void CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const CoherentScatteringDistribution>&
-	 coherent_distribution )
+                                const NativeContainer& raw_photoatom_data,
+	                        SmartPtr<const CoherentScatteringDistribution>&
+                                coherent_distribution )
 {
   // Create the form factor squared
   std::shared_ptr<const FormFactorSquared> form_factor_squared;
@@ -56,9 +60,10 @@ void CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistrib
 }
 
 // Create the form factor distribution
+template<typename NativeContainer, template<typename> class SmartPtr>
 void CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 std::shared_ptr<const FormFactorSquared>& form_factor_squared )
+                       const NativeContainer& raw_photoatom_data,
+                       SmartPtr<const FormFactorSquared>& form_factor_squared )
 {
   // The stored recoil momentum squared has units of inverse squared cm.
   std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareCentimeter,void> > raw_form_factor_squared(
@@ -73,6 +78,8 @@ void CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
 
 } // end MonteCarlo namespace
 
+#endif // end MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
+
 //---------------------------------------------------------------------------//
-// end MonteCarlo_CoherentScatteringDistributionNativeFactory.cpp
+// end MonteCarlo_CoherentScatteringDistributionNativeFactory_def.hpp
 //---------------------------------------------------------------------------//

@@ -18,6 +18,7 @@
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_StandardScatteringFunction.hpp"
+#include "MonteCarlo_AdjointPhotonProbeState.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -350,6 +351,19 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.203384875392762621,
 			  1e-15 );
+
+  bank.pop();
+
+  // Make sure that probes do not generate more probe particles
+  MonteCarlo::AdjointPhotonProbeState adjoint_photon_probe( 0 );
+  adjoint_photon_probe.setEnergy( 0.3 );
+  adjoint_photon_probe.setDirection( 0.0, 0.0, 1.0 );
+
+  distribution->scatterAdjointPhoton( adjoint_photon_probe,
+                                      bank,
+                                      shell_of_interaction );
+
+  TEST_EQUALITY_CONST( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//

@@ -156,7 +156,9 @@ unsigned convertEADLDesignatorToENDFDesignator(
   case 58: return 37;
   case 60: return 38;
   case 61: return 39;
-  default: return INVALID_SUBSHELL;
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "Error: The EADL subshell designator is invalid!" );
   }
 }
 
@@ -205,7 +207,10 @@ std::string convertSubshellEnumToString( const SubshellType subshell )
   case Q2_SUBSHELL: return "Q2";
   case Q3_SUBSHELL: return "Q3";
   case UNKNOWN_SUBSHELL: return "Unknown";
-  default: return "Invalid";
+  case INVALID_SUBSHELL: return "Invalid";
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "Error: The requested subshell type is not supported! " );
   }
 }
 

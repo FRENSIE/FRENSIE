@@ -26,10 +26,9 @@ TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::Trip
                    const Teuchos::ArrayRCP<const double>& cross_section,
                    const unsigned threshold_energy_index,
                    const bool use_detailed_electron_emission_physics )
-  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                       incoming_energy_grid,
-                                                       cross_section,
-                                                       threshold_energy_index )
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index )
 {
   this->initializeInteractionModels( use_detailed_electron_emission_physics );
 }
@@ -42,11 +41,10 @@ TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::Trip
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        const bool use_detailed_electron_emission_physics )
-  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-						       incoming_energy_grid,
-						       cross_section,
-						       threshold_energy_index,
-						       grid_searcher )
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher )
 {
   // Make sure the grid searcher is valid
   testPrecondition( !grid_searcher.is_null() );

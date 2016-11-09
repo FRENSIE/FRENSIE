@@ -201,9 +201,9 @@ double Photoatom::getReactionCrossSection(
   switch( reaction )
   {
   case TOTAL_PHOTOATOMIC_REACTION:
-    return this->getTotalCrossSection( energy );
+    return this->getAtomicTotalCrossSection( energy );
   case TOTAL_ABSORPTION_PHOTOATOMIC_REACTION:
-    return this->getAbsorptionCrossSection( energy );
+    return this->getAtomicAbsorptionCrossSection( energy );
   default:
     ConstReactionMap::const_iterator photoatomic_reaction =
       d_core.getScatteringReactions().find( reaction );
@@ -249,17 +249,18 @@ void Photoatom::collideAnalogue( PhotonState& photon,
     // Check if absorption occurs
     if( scaled_random_number < absorption_cross_section )
     {
-      sampleAbsorptionReaction( scaled_random_number,
-				energy_grid_bin,
-				photon,
-				bank );
+      this->sampleAbsorptionReaction( scaled_random_number,
+                                      energy_grid_bin,
+                                      photon,
+                                      bank );
 
       // Set the photon as gone regardless of the reaction that occurred
       photon.setAsGone();
     }
     else
     {
-      sampleScatteringReaction(scaled_random_number - absorption_cross_section,
+      this->sampleScatteringReaction(
+                               scaled_random_number - absorption_cross_section,
 			       energy_grid_bin,
 			       photon,
 			       bank );
@@ -276,15 +277,16 @@ void Photoatom::collideSurvivalBias( PhotonState& photon,
     unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( photon.getEnergy() );
 
-    double total_cross_section =
-      d_core.getTotalReaction().getCrossSection( photon.getEnergy(),
-						 energy_grid_bin );
+    double scattering_cross_section =
+      this->getAtomicScatteringCrossSection( photon.getEnergy(),
+					     energy_grid_bin );
 
-    double scattering_cross_section = total_cross_section -
-      d_core.getTotalAbsorptionReaction().getCrossSection( photon.getEnergy(),
-							   energy_grid_bin );
+    double absorption_cross_section =
+      this->getAtomicAbsorptionCrossSection( photon.getEnergy(),
+					     energy_grid_bin );
 
-    double survival_prob = scattering_cross_section/total_cross_section;
+    double survival_prob = scattering_cross_section/
+      (scattering_cross_section+absorption_cross_section);
 
     // Multiply the photon's weigth by the survival probabilty
     if( survival_prob > 0.0 )
@@ -294,7 +296,7 @@ void Photoatom::collideSurvivalBias( PhotonState& photon,
 
       photon.multiplyWeight( survival_prob );
 
-      sampleScatteringReaction(
+      this->sampleScatteringReaction(
 		     Utility::RandomNumberGenerator::getRandomNumber<double>()*
 		     scattering_cross_section,
 		     energy_grid_bin,
@@ -303,15 +305,24 @@ void Photoatom::collideSurvivalBias( PhotonState& photon,
 
       photon_copy.multiplyWeight( 1.0 - survival_prob );
 
-      sampleAbsorptionReaction(
+      this->sampleAbsorptionReaction(
 		     Utility::RandomNumberGenerator::getRandomNumber<double>()*
-		     (total_cross_section - scattering_cross_section),
+		     absorption_cross_section,
 		     energy_grid_bin,
 		     photon_copy,
 		     bank );
     }
     else
+    {
+      this->sampleAbsorptionReaction(
+                     Utility::RandomNumberGenerator::getRandomNumber<double>()*
+		     absorption_cross_section,
+		     energy_grid_bin,
+		     photon,
+		     bank );
+                                     
       photon.setAsGone();
+    }
   }
 }
 

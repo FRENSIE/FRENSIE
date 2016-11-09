@@ -13,9 +13,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistributionFactory.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"

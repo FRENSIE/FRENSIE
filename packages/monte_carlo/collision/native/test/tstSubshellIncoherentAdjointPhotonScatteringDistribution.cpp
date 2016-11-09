@@ -18,6 +18,7 @@
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_StandardOccupationNumber.hpp"
+#include "MonteCarlo_AdjointPhotonProbeState.hpp"
 #include "Data_SubshellType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -446,10 +447,23 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.237508288495414555,
 			  1e-15 );
+
+  bank.pop();
+
+  // Make sure that probes do not generate more probe particles
+  MonteCarlo::AdjointPhotonProbeState adjoint_photon_probe( 0 );
+  adjoint_photon_probe.setEnergy( 0.3 );
+  adjoint_photon_probe.setDirection( 0.0, 0.0, 1.0 );
+
+  base_distribution_s5->scatterAdjointPhoton( adjoint_photon_probe,
+                                              bank,
+                                              shell_of_interaction );
+
+  TEST_EQUALITY_CONST( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main funciton
+// Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {

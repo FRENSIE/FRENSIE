@@ -23,10 +23,9 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution>&
       scattering_distribution )
-  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index ),
     d_scattering_distribution( scattering_distribution ),
     d_reaction_type()
 {
@@ -57,11 +56,10 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution>&
       scattering_distribution )
-  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index,
-						      grid_searcher ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
     d_scattering_distribution( scattering_distribution ),
     d_reaction_type()
 {

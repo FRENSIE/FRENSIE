@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_WH_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_DEF_HPP
 #define MONTE_CARLO_WH_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_DEF_HPP
 
-// Std Lib Includes
-#include <functional>
-
 // FRENSIE Includes
 #include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
@@ -58,8 +55,8 @@ double WHIncoherentAdjointPhotonScatteringDistribution::evaluate(
   return diff_kn_cross_section*scattering_function_value;
 }
 
-// Evaluate the integrated cross section (b)
-double WHIncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection(
+// Evaluate the integrated cross section (b) implementation
+double WHIncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSectionImpl(
 						 const double incoming_energy,
 						 const double max_energy,
 						 const double precision ) const

@@ -28,26 +28,37 @@ class CoherentScatteringDistributionNativeFactory : public CoherentScatteringDis
 public:
 
   //! Create a basic coherent distribution
+  template<typename NativeContainer, template<typename> class SmartPtr>
   static void createBasicCoherentDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const CoherentScatteringDistribution>&
-	 coherent_distribution );
+                                const NativeContainer& raw_photoatom_data,
+	                        SmartPtr<const CoherentScatteringDistribution>&
+                                coherent_distribution );
 
   //! Create an efficient coherent distribution
+  template<typename NativeContainer, template<typename> class SmartPtr>
   static void createEfficientCoherentDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const CoherentScatteringDistribution>&
-	 coherent_distribution );
+                                const NativeContainer& raw_photoatom_data,
+                                SmartPtr<const CoherentScatteringDistribution>&
+                                coherent_distribution );
 
 protected:
 
   //! Create the form factor squared distribution
+  template<typename NativeContainer, template<typename> class SmartPtr>
   static void createFormFactorSquared(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 std::shared_ptr<const FormFactorSquared>& form_factor );
+                              const NativeContainer& raw_photoatom_data,
+                              SmartPtr<const FormFactorSquared>& form_factor );
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_CoherentScatteringDistributionNativeFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 

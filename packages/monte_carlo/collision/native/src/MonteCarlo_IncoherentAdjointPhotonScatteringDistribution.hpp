@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ArrayRCP.hpp>
@@ -42,6 +45,9 @@ public:
   void setCriticalLineEnergies(
 	       const Teuchos::ArrayRCP<const double>& critical_line_energies );
 
+  //! Get the critical line energies
+  const Teuchos::ArrayRCP<const double>& getCriticalLineEnergies() const;
+                               
   //! Set the max energy
   void setMaxEnergy( const double max_energy );
 
@@ -66,10 +72,18 @@ public:
   double evaluatePDF( const double incoming_energy,
 		      const double scattering_angle_cosine ) const;
 
+  //! Set an external integrated cross section evaluator
+  void setExternalIntegratedCrossSectionEvaluator(
+                                    std::function<double(double,double,double)>
+                                    integrated_cs_evaluator );
+
+  //! Unset the integrated cross section evaluator
+  void unsetExternalIntegratedCrossSectionEvaluator();
+
   //! Evaluate the integrated cross section (b)
-  virtual double evaluateIntegratedCrossSection( const double incoming_energy,
-						 const double max_energy,
-						 const double precision ) const = 0;
+  double evaluateIntegratedCrossSection( const double incoming_energy,
+                                         const double max_energy,
+                                         const double precision ) const;
 
   //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSection( const double incoming_energy,
@@ -82,6 +96,12 @@ protected:
 				  const double incoming_energy,
 				  const double max_energy,
 				  const double scattering_angle_cosine ) const;
+
+  //! Evaluate the integrated cross section (b)
+  virtual double evaluateIntegratedCrossSectionImpl(
+                                            const double incoming_energy,
+                                            const double max_energy,
+                                            const double precision ) const = 0;
 
   //! Basic sampling implementation
   void sampleAndRecordTrialsAdjointKleinNishina(
@@ -126,6 +146,9 @@ private:
 
   // The critical line energies
   Teuchos::ArrayRCP<const double> d_critical_line_energies;
+
+  // The integrated cross section evaluator
+  std::function<double(double,double,double)> d_integrated_cs_evaluator;
 };
 
 } // end MonteCarlo namespace

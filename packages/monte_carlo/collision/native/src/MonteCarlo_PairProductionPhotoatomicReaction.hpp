@@ -16,14 +16,20 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardPhotoatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_PhotoatomicReaction.hpp"
 
 namespace MonteCarlo{
 
 //! The pair production photoatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = true>
-class PairProductionPhotoatomicReaction : public StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>
+class PairProductionPhotoatomicReaction : public StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
+
+private:
+
+  // Typedef for the base class type
+  typedef StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
 public:
 

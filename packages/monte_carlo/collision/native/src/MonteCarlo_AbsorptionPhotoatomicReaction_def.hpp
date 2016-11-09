@@ -13,7 +13,6 @@
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_StandardPhotoatomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -24,10 +23,9 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
 	   const Teuchos::ArrayRCP<const double>& cross_section,
 	   const unsigned threshold_energy_index,
 	   const PhotoatomicReactionType reaction )
-  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-        incoming_energy_grid,
-        cross_section,
-        threshold_energy_index ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index ),
     d_reaction( reaction )
 {
   // Make sure the incoming energy grid is valid
@@ -51,11 +49,10 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        const PhotoatomicReactionType reaction )
-  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-        incoming_energy_grid,
-        cross_section,
-        threshold_energy_index,
-        grid_searcher ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
     d_reaction( reaction )
 {
   // Make sure the incoming energy grid is valid

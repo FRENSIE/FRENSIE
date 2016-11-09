@@ -43,7 +43,7 @@ double KleinNishinaAdjointPhotonScatteringDistribution::evaluate(
 }
   
 // Evaluate the integrated cross section (b)
-double KleinNishinaAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
+double KleinNishinaAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSectionImpl( 
 					         const double incoming_energy,
 						 const double max_energy,
 					         const double precision ) const
