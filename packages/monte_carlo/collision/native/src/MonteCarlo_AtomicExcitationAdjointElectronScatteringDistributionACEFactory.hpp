@@ -20,24 +20,24 @@
 namespace MonteCarlo{
 
 //! The atomic excitation scattering distribution factory class that uses ACE data
-class AtomicExcitationAdjointElectronScatteringDistributionACEFactory //: public AtomicExcitationAdjointElectronScatteringDistributionFactory
+class AtomicExcitationAdjointElectronScatteringDistributionACEFactory
 {
 
 public:
 
   //! Create a basic atomic excitation adjoint distribution
   static void createAtomicExcitationAdjointDistribution(
-			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			Teuchos::RCP<const AtomicExcitationAdjointElectronScatteringDistribution>&
-			  energy_gain_distribution );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>&
+      energy_gain_distribution );
 
 protected:
 
   //! Create the energy gain function
   static void createEnergyGainFunction(
-      const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      AtomicExcitationAdjointElectronScatteringDistribution::AtomicDistribution&
-                                                        scattering_function );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    AtomicExcitationAdjointElectronScatteringDistribution::AtomicDistribution&
+      scattering_function );
 };
 
 } // end MonteCarlo namespace

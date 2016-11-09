@@ -33,7 +33,7 @@ public:
   { /* ... */}
 
   //! Return the reaction type
-  virtual AdjointElectroatomicReactionType getAdjointReactionType() const = 0;
+  virtual AdjointElectroatomicReactionType getReactionType() const = 0;
 
   //! Simulate the reaction
   virtual void react( AdjointElectronState& electron,

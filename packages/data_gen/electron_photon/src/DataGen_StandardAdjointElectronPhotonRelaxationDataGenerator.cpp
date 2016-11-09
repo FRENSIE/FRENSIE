@@ -20,7 +20,7 @@
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_VoidStandardElectroatomicReaction.hpp"
+#include "MonteCarlo_VoidElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_StandardOccupationNumber.hpp"
@@ -1648,7 +1648,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // Create the reaction
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> cutoff_elastic_reaction(
-    new MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
         forward_electron_energy_grid,
         forward_cutoff_elastic_cs,
         d_forward_epr_data->getCutoffElasticCrossSectionThresholdEnergyIndex(),
@@ -1675,7 +1675,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // Create the reaction
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_elastic_reaction(
-    new MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
         forward_electron_energy_grid,
         forward_total_elastic_cs,
         d_forward_epr_data->getTotalElasticCrossSectionThresholdEnergyIndex(),
@@ -1904,7 +1904,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
       d_forward_epr_data->getMomentPreservingCrossSection().end() );
 
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> moment_preserving_elastic_reaction(
-      new MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
           forward_electron_energy_grid,
           forward_moment_preserving_elastic_cs,
           d_forward_epr_data->getMomentPreservingCrossSectionThresholdEnergyIndex(),
@@ -2058,7 +2058,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
     d_forward_epr_data->getAtomicExcitationCrossSection().end() );
 
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> atomic_excitation_reaction(
-    new MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
         forward_electron_energy_grid,
         atomic_excitation_cross_section,
         d_forward_epr_data->getAtomicExcitationCrossSectionThresholdEnergyIndex(),

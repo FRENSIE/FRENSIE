@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AtomicExcitationElectroatomicReaction.hpp
+//! \file   MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The atomic excitation electroatomic reaction class decl.
 //!
@@ -13,44 +13,45 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_AdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
-#include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistribution.hpp"
+
 
 namespace MonteCarlo{
 
 //! The pair production photoatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class AtomicExcitationElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+class AtomicExcitationAdjointElectroatomicReaction : public StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
 
 private:
 
   // Typedef for the base class type
-typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+typedef StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section> 
     BaseType;
 
 public:
 
   //! Basic Constructor
-  AtomicExcitationElectroatomicReaction(
+  AtomicExcitationAdjointElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
-            energy_loss_distribution );
+    const std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>&
+            energy_gain_distribution );
 
   //! Constructor
-  AtomicExcitationElectroatomicReaction(
+  AtomicExcitationAdjointElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
-            energy_loss_distribution );
+    const std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>&
+            energy_gain_distribution );
 
   //! Destructor
-  ~AtomicExcitationElectroatomicReaction()
+  ~AtomicExcitationAdjointElectroatomicReaction()
   { /* ... */ }
 
   //! Return the number of electrons emitted from the rxn at the given energy
@@ -60,18 +61,18 @@ public:
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
   //! Return the reaction type
-  ElectroatomicReactionType getReactionType() const;
+  AdjointElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron,
+  void react( AdjointElectronState& electron,
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
 
 private:
 
-  // The atomic excitation energy loss distribution
-  std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>
-    d_energy_loss_distribution;
+  // The atomic excitation energy gain distribution
+  std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>
+    d_energy_gain_distribution;
 };
 
 } // end MonteCarlo namespace
@@ -80,12 +81,12 @@ private:
 // Template Includes.
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_AtomicExcitationElectroatomicReaction_def.hpp"
+#include "MonteCarlo_AtomicExcitationAdjointElectroatomicReaction_def.hpp"
 
 //---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ATOMIC_EXCITATION_ELECTROATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AtomicExcitationElectroatomicReaction.hpp
+// end MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp
 //---------------------------------------------------------------------------//

@@ -17,7 +17,7 @@
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_VoidStandardElectroatomicReaction.hpp"
+#include "MonteCarlo_VoidElectroatomicReaction.hpp"
 
 namespace DataGen{
 
@@ -64,7 +64,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Create the cutoff reaction
   d_cutoff_reaction.reset(
-    new MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin, false>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin, false>(
       incoming_energy_grid,
       cutoff_cross_section,
       data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
@@ -78,7 +78,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Create the Screened Rutherford reaction
   d_screened_rutherford_reaction.reset(
-    new MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin, false>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin, false>(
       incoming_energy_grid,
       screened_rutherford_cross_section,
       data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
@@ -111,7 +111,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Create the cutoff reaction
   d_cutoff_reaction.reset(
-    new MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin, false>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin, false>(
       incoming_energy_grid,
       cutoff_cross_section,
       cutoff_threshold_energy_index,
@@ -119,7 +119,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Create the cutoff reaction
   d_screened_rutherford_reaction.reset(
-    new MonteCarlo::VoidStandardElectroatomicReaction<Utility::LinLin, false>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin, false>(
       incoming_energy_grid,
       screened_rutherford_cross_section,
       screened_rutherford_threshold_energy_index,
