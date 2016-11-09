@@ -19,7 +19,7 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_ReactionHelpers.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
@@ -1716,24 +1716,18 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
     data_container.getScreenedRutherfordElasticCrossSection().begin(),
     data_container.getScreenedRutherfordElasticCrossSection().end() );
 
-  Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>> 
-    analog_reaction(
-    	new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
-            energy_grid,
-            cutoff_cross_section,
-            rutherford_cross_section,
-            data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-            data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-            grid_searcher,
-            analog_distribution ) );
-
   // Create the moment evaluator of the elastic scattering distribution
   std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
   moments_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator(
         data_container.getCutoffElasticAngles(),
+        energy_grid,
+        grid_searcher,
+        cutoff_cross_section,
+        rutherford_cross_section,
+        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         analog_distribution,
-        analog_reaction,
         data_container.getCutoffAngleCosine() ) );
 
   // Moment preserving discrete angles and weights
@@ -1771,11 +1765,13 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   std::vector<double> moment_preserving_cross_section;
   StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCrossSection(
         energy_grid,
-        analog_reaction,
+        cutoff_cross_section,
+        rutherford_cross_section,
+        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         analog_distribution,
         reduction_distribution,
         data_container.getCutoffAngleCosine(),
-        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
         moment_preserving_cross_section );
 
   data_container.setMomentPreservingCrossSection(
@@ -2445,18 +2441,19 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeig
 // Generate elastic moment preserving cross section
 void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCrossSection(
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>>
-        analog_reaction,
+    const Teuchos::ArrayRCP<const double>& cutoff_cross_sections,
+    const Teuchos::ArrayRCP<const double>& screened_rutherford_cross_sections,
+    const unsigned cutoff_threshold_energy_index,
+    const unsigned screened_rutherford_threshold_energy_index,
     const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
-    const unsigned threshold_energy_index,
     std::vector<double>& moment_preserving_cross_section )
 {
   moment_preserving_cross_section.resize( electron_energy_grid.size() );
 
-  unsigned begin = threshold_energy_index;
+  unsigned begin = cutoff_threshold_energy_index;
 
   for( unsigned i = begin; i < electron_energy_grid.size(); i++ )
   {
@@ -2467,12 +2464,17 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCros
     double cross_section_reduction =
         reduction_distribution->evaluate( electron_energy_grid[i] );
 
-    double rutherford_cross_section =
-        analog_reaction->getScreenedRutherfordCrossSection(
-            electron_energy_grid[i] );
+    double rutherford_cross_section;
+    if ( i < screened_rutherford_threshold_energy_index )
+        rutherford_cross_section = 0.0;
+    else
+    {
+      rutherford_cross_section = screened_rutherford_cross_sections[
+                                  i-screened_rutherford_threshold_energy_index];
+    }
 
     double cutoff_cross_section =
-        analog_reaction->getCutoffCrossSection( electron_energy_grid[i] );
+        cutoff_cross_sections[i-cutoff_threshold_energy_index];
 
     moment_preserving_cross_section[i] = cross_section_reduction*
         (rutherford_cross_section + (1.0 - cutoff_cdf)*cutoff_cross_section);

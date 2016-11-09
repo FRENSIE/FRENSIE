@@ -17,6 +17,7 @@
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
+#include "MonteCarlo_ReactionHelpers.hpp"
 
 namespace DataGen{
 
@@ -40,9 +41,8 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   testPrecondition( cutoff_angle_cosine <= s_rutherford_cutoff_angle_cosine || cutoff_angle_cosine == 1.0 );
 
   // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
-                      data_container.getElectronEnergyGrid().end() );
+  d_incoming_energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
+                                 data_container.getElectronEnergyGrid().end() );
 
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
@@ -50,45 +50,50 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     data_container );
 
   // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  d_grid_searcher.reset(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-						     energy_grid,
-						     100u ) );
+         d_incoming_energy_grid,
+         100u ) );
 
   // Cutoff elastic cross section
-  Teuchos::ArrayRCP<double> cutoff_cross_section;
-  cutoff_cross_section.assign(
+  d_cutoff_cross_section.assign(
     data_container.getCutoffElasticCrossSection().begin(),
-	data_container.getCutoffElasticCrossSection().end() );
+    data_container.getCutoffElasticCrossSection().end() );
+
+  // Cutoff elastic cross section threshold energy bin index
+  d_cutoff_threshold_energy_index =
+    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   // Screened Rutherford elastic cross section
-  Teuchos::ArrayRCP<double> rutherford_cross_section;
-  rutherford_cross_section.assign(
+  d_screened_rutherford_cross_section.assign(
     data_container.getScreenedRutherfordElasticCrossSection().begin(),
-	data_container.getScreenedRutherfordElasticCrossSection().end() );
+    data_container.getScreenedRutherfordElasticCrossSection().end() );
 
-  d_analog_reaction.reset(
-	new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
-        energy_grid,
-        cutoff_cross_section,
-        rutherford_cross_section,
-        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-        grid_searcher,
-        d_analog_distribution ) );
+  // Screened Rutherford elastic cross section threshold energy bin index
+  d_screened_rutherford_threshold_energy_index =
+    data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 }
 
 // Constructor (without data container)
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
+    const Teuchos::ArrayRCP<double>& incoming_energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
+    const Teuchos::ArrayRCP<double>& screened_rutherford_cross_section,
+    const unsigned cutoff_threshold_energy_index,
+    const unsigned screened_rutherford_threshold_energy_index,
     const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution,
-    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
-        analog_reaction,
     const double cutoff_angle_cosine )
   : d_cutoff_elastic_angles( cutoff_elastic_angles ),
+    d_incoming_energy_grid( incoming_energy_grid ),
+    d_grid_searcher( grid_searcher ),
+    d_cutoff_cross_section( cutoff_cross_section ),
+    d_screened_rutherford_cross_section( screened_rutherford_cross_section ),
+    d_cutoff_threshold_energy_index( cutoff_threshold_energy_index ),
+    d_screened_rutherford_threshold_energy_index( screened_rutherford_threshold_energy_index ),
     d_analog_distribution( analog_distribution ),
-    d_analog_reaction( analog_reaction ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the data is valid
@@ -97,7 +102,6 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Make sure the arrays are valid
   testPrecondition( analog_distribution.use_count() > 0 );
-  testPrecondition( !analog_reaction.is_null() );
   testPrecondition( !cutoff_elastic_angles.empty() );
 }
 
@@ -233,7 +237,12 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffMoment(
 
   // Get the cutoff cross section
   Utility::long_float cutoff_cross_section =
-        d_analog_reaction->getCutoffCrossSection( energy );
+    MonteCarlo::getCrossSection<Utility::LinLin>(
+        energy,
+        d_incoming_energy_grid,
+        d_cutoff_cross_section,
+        d_cutoff_threshold_energy_index,
+        d_grid_searcher );
 
   cutoff_moment *= cutoff_cross_section;
 }
@@ -500,7 +509,12 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
   evaluateScreenedRutherfordPDFMoment( rutherford_moment, energy, n);
 
   rutherford_moment *=
-    d_analog_reaction->getScreenedRutherfordCrossSection( energy );
+    MonteCarlo::getCrossSection<Utility::LinLin>(
+        energy,
+        d_incoming_energy_grid,
+        d_screened_rutherford_cross_section,
+        d_screened_rutherford_threshold_energy_index,
+        d_grid_searcher );
 }
 
 // Return the angular integration points

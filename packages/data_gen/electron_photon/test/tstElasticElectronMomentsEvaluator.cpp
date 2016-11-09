@@ -1123,22 +1123,16 @@ int main( int argc, char** argv )
     al_data->getScreenedRutherfordElasticCrossSection().begin(),
     al_data->getScreenedRutherfordElasticCrossSection().end() );
 
-  Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >
-    analog_reaction(
-    	new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
-            energy_grid,
-            cutoff_cross_section,
-            rutherford_cross_section,
-            al_data->getCutoffElasticCrossSectionThresholdEnergyIndex(),
-            al_data->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-            grid_searcher,
-            analog_distribution ) );
-
   // Create the moment evaluator
   al_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
         al_data->getCutoffElasticAngles(),
-        analog_distribution,
-        analog_reaction ) );
+        energy_grid,
+        grid_searcher,
+        cutoff_cross_section,
+        rutherford_cross_section,
+        al_data->getCutoffElasticCrossSectionThresholdEnergyIndex(),
+        al_data->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+        analog_distribution ) );
 
 
   // Create the test moment evaluator

@@ -43,10 +43,14 @@ public:
   //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
+    const Teuchos::ArrayRCP<double>& incoming_energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
+    const Teuchos::ArrayRCP<double>& screened_rutherford_cross_section,
+    const unsigned cutoff_threshold_energy_index,
+    const unsigned screened_rutherford_threshold_energy_index,
     const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution,
-    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
-        analog_reaction,
     const double cutoff_angle_cosine = 1.0 );
 
   //! Destructor
@@ -134,10 +138,24 @@ private:
   void getAngularIntegrationPoints(
         std::vector<double>& angular_integration_points,
         const double energy ) const;
- 
-  // The analog reaction
-  Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >
-    d_analog_reaction;
+
+  // The electron energy grid
+  Teuchos::ArrayRCP<double> d_incoming_energy_grid;
+
+  // Grid searcher for the energy grid
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+
+  // The cutoff elastic cross section
+  Teuchos::ArrayRCP<double> d_cutoff_cross_section;
+
+  // The screened rutherford elastic cross section
+  Teuchos::ArrayRCP<double> d_screened_rutherford_cross_section;
+
+  // The cutoff elastic threshold_energy_index
+  unsigned d_cutoff_threshold_energy_index;
+
+  // The screened rutherford elastic threshold_energy_index
+  unsigned d_screened_rutherford_threshold_energy_index;
 
   // The analog distribution
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
