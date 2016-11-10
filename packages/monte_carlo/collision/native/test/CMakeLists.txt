@@ -605,7 +605,8 @@ SET_PROPERTY(TEST AdjointPhotonMaterial_test PROPERTY LABELS monte_carlo_collisi
 ##      electron distribution tests
 
 ADD_EXECUTABLE(tstCutoffElasticElectronScatteringDistribution
-  tstCutoffElasticElectronScatteringDistribution.cpp)
+  tstCutoffElasticElectronScatteringDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCutoffElasticElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(CutoffElasticElectronScatteringDistribution_test tstCutoffElasticElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 SET_PROPERTY(TEST CutoffElasticElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
@@ -733,7 +734,6 @@ TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectronScatteringDistribution
 ADD_TEST(ElectroionizationSubshellElectronScatteringDistributionNativeFactory_test tstElectroionizationSubshellElectronScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
 SET_PROPERTY(TEST ElectroionizationSubshellElectronScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native)
 
-
 ADD_EXECUTABLE(tstAtomicExcitationAdjointElectronScatteringDistributionNativeFactory
   tstAtomicExcitationAdjointElectronScatteringDistributionNativeFactory.cpp)
 TARGET_LINK_LIBRARIES(tstAtomicExcitationAdjointElectronScatteringDistributionNativeFactory monte_carlo_collision_native)
@@ -756,10 +756,18 @@ SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectronScatteringDistribution
 ##      electroatomic reaction tests
 
 ADD_EXECUTABLE(tstAbsorptionElectroatomicReaction
-  tstAbsorptionElectroatomicReaction.cpp)
+  tstAbsorptionElectroatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAbsorptionElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(AbsorptionElectroatomicReaction_test tstAbsorptionElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST AbsorptionElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+
+ADD_EXECUTABLE(tstAbsorptionAdjointElectroatomicReaction
+  tstAbsorptionAdjointElectroatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAbsorptionAdjointElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(AbsorptionAdjointElectroatomicReaction_test tstAbsorptionAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
+SET_PROPERTY(TEST AbsorptionAdjointElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
 
 ADD_EXECUTABLE(tstCutoffElasticElectroatomicReaction
   tstCutoffElasticElectroatomicReaction.cpp)

@@ -33,17 +33,18 @@ public:
 
   //! Constructor
   AbsorptionElectroatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
-      const unsigned threshold_energy_index,
-      const ElectroatomicReactionType reaction );
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const ElectroatomicReactionType reaction );
 
   //! Constructor
   AbsorptionElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const ElectroatomicReactionType reaction );
 
   //! Destructor
   ~AbsorptionElectroatomicReaction()
