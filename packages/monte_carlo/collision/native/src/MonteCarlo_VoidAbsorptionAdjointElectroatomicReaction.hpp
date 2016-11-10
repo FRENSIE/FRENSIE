@@ -1,34 +1,34 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp
+//! \file   MonteCarlo_VoidAbsorptionAdjointElectroatomicReaction.hpp
 //! \author Luke Kersting
-//! \brief  The void absorption electroatomic reaction class decl.
+//! \brief  The void absorption adjoint electroatomic reaction class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
-#define MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_VOID_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION_HPP
+#define MONTE_CARLO_VOID_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_AdjointElectroatomicReaction.hpp"
 
 namespace MonteCarlo{
 
-/*! The void absorption electroatomic reaction class
+/*! The void absorption adjoint electroatomic reaction class
 * \details This class can be used to ignore absorption reactions.
 */
 
-class VoidAbsorptionElectroatomicReaction : public ElectroatomicReaction
+class VoidAbsorptionAdjointElectroatomicReaction : public AdjointElectroatomicReaction
 {
 
 public:
 
   //! Constructor
-  VoidAbsorptionElectroatomicReaction()
+  VoidAbsorptionAdjointElectroatomicReaction()
   { /* ... */ }
 
   //! Destructor
-  ~VoidAbsorptionElectroatomicReaction()
+  ~VoidAbsorptionAdjointElectroatomicReaction()
   { /* ... */ }
 
   //! Test if the energy falls within the energy grid
@@ -51,10 +51,10 @@ public:
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
   //! Return the reaction type
-  ElectroatomicReactionType getReactionType() const;
+  AdjointElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron,
+  void react( AdjointElectronState& electron,
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
 
@@ -65,21 +65,21 @@ protected:
 };
 
 // Test if the energy falls within the energy grid
-inline bool VoidAbsorptionElectroatomicReaction::isEnergyWithinEnergyGrid(
+inline bool VoidAbsorptionAdjointElectroatomicReaction::isEnergyWithinEnergyGrid(
     const double energy ) const
 {
   return true;
 }
 
 // Return the cross section at the given energy
-inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
+inline double VoidAbsorptionAdjointElectroatomicReaction::getCrossSection(
     const double energy ) const
 {
   return 0.0;
 }
 
 // Return the cross section at the given energy (efficient)
-inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
+inline double VoidAbsorptionAdjointElectroatomicReaction::getCrossSection(
     const double energy,
     const unsigned bin_index ) const
 {
@@ -87,48 +87,48 @@ inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
 }
 
 //! Return the threshold energy
-inline double VoidAbsorptionElectroatomicReaction::getThresholdEnergy() const
+inline double VoidAbsorptionAdjointElectroatomicReaction::getThresholdEnergy() const
 {
   return 1.00000e-5;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
-inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedElectrons(
+inline unsigned VoidAbsorptionAdjointElectroatomicReaction::getNumberOfEmittedElectrons(
                                                      const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of photons emitted from the rxn at the given energy
-inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedPhotons(
+inline unsigned VoidAbsorptionAdjointElectroatomicReaction::getNumberOfEmittedPhotons(
                                                      const double energy ) const
 {
   return 0u;
 }
 
 // Return reaction type
-inline ElectroatomicReactionType VoidAbsorptionElectroatomicReaction::getReactionType() const
+inline AdjointElectroatomicReactionType VoidAbsorptionAdjointElectroatomicReaction::getReactionType() const
 {
-  return TOTAL_ABSORPTION_ELECTROATOMIC_REACTION;
+  return TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction
-inline void VoidAbsorptionElectroatomicReaction::react(
-       ElectronState& electron,
+inline void VoidAbsorptionAdjointElectroatomicReaction::react(
+       AdjointElectronState& electron,
        ParticleBank& bank,
        Data::SubshellType& shell_of_interaction ) const
 { /* ... */ }
 
 // Return the head of the energy grid
-inline const double* VoidAbsorptionElectroatomicReaction::getEnergyGridHead() const
+inline const double* VoidAbsorptionAdjointElectroatomicReaction::getEnergyGridHead() const
 {
   return nullptr;
 }
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_VOID_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp
+// end MonteCarlo_VoidAbsorptionAdjointElectroatomicReaction.hpp
 //---------------------------------------------------------------------------//
