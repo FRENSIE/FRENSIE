@@ -311,11 +311,11 @@ public:
 
   //! Return the moment preserving elastic discrete angles for an incoming energy
   const std::vector<double>& getAdjointMomentPreservingElasticDiscreteAngles(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the moment preserving elastic weights for an incoming energy
   const std::vector<double>& getAdjointMomentPreservingElasticWeights(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getAdjointElectroionizationEnergyGrid(
@@ -327,12 +327,12 @@ public:
   //! Return the electroionization recoil energy for a subshell and incoming energy
   const std::vector<double>& getAdjointElectroionizationRecoilEnergy(
                            const unsigned subshell,
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the electroionization recoil energy pdf for a subshell and incoming energy
   const std::vector<double>& getAdjointElectroionizationRecoilPDF(
                            const unsigned subshell,
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the bremsstrahlung incoming electron energy grid for the scattering spectrum
   const std::vector<double>& getAdjointElectronBremsstrahlungEnergyGrid() const;

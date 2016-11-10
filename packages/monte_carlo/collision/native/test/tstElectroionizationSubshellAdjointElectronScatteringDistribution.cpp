@@ -147,10 +147,9 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                outgoing_energy,
                                scattering_angle_cosine );
 
-  // Test knock-on electron
+  // Test scattered electron
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0004842234463E-01, 1e-10 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3, 1e-12 );
-
 }
 
 //---------------------------------------------------------------------------//
@@ -177,10 +176,9 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   // Test trials
   TEST_EQUALITY_CONST( trials, 1.0 );
 
-  // Test knock-on electron
+  // Test scattered electron
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0004842234463E-01, 1e-10 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3, 1e-12 );
-
 }
 
 //---------------------------------------------------------------------------//
