@@ -1,39 +1,39 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AnalogElasticElectroatomicReaction.hpp
+//! \file   MonteCarlo_AnalogElasticAdjointElectroatomicReaction.hpp
 //! \author Luke Kersting
-//! \brief  The analog scattering elastic electroatomic reaction class decl.
+//! \brief  The analog scattering elastic adjoint electroatomic reaction class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ANALOG_ELASTIC_ELECTROATOMIC_REACTION_HPP
-#define MONTE_CARLO_ANALOG_ELASTIC_ELECTROATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_HPP
+#define MONTE_CARLO_ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_AdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
-//! The analog elastic electroatomic reaction class
+//! The analog elastic adjoint electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class AnalogElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+class AnalogElasticAdjointElectroatomicReaction : public StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
 
 private:
 
   // Typedef for the base class type
-typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+typedef StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
 
   //! Basic Constructor
-  AnalogElasticElectroatomicReaction(
+  AnalogElasticAdjointElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
@@ -41,7 +41,7 @@ public:
             scattering_distribution );
 
   //! Constructor
-  AnalogElasticElectroatomicReaction(
+  AnalogElasticAdjointElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
@@ -51,7 +51,7 @@ public:
 
 
   //! Destructor
-  ~AnalogElasticElectroatomicReaction()
+  ~AnalogElasticAdjointElectroatomicReaction()
   { /* ... */ }
 
   //! Return the number of electrons emitted from the rxn at the given energy
@@ -61,10 +61,10 @@ public:
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
   //! Return the reaction type
-  ElectroatomicReactionType getReactionType() const;
+  AdjointElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron,
+  void react( AdjointElectronState& electron,
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
 
@@ -81,12 +81,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_AnalogElasticElectroatomicReaction_def.hpp"
+#include "MonteCarlo_AnalogElasticAdjointElectroatomicReaction_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_ANALOG_ELASTIC_ELECTROATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AnalogElasticElectroatomicReaction.hpp
+// end MonteCarlo_AnalogElasticAdjointElectroatomicReaction.hpp
 //---------------------------------------------------------------------------//
