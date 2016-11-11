@@ -50,7 +50,7 @@ const std::string& AdjointElectronPhotonRelaxationDataContainer::getNotes() cons
 }
   
 //---------------------------------------------------------------------------//
-// GET TABLE DATA
+// GET BASIC TABLE DATA
 //---------------------------------------------------------------------------//
 
 // Return the atomic number
@@ -82,6 +82,30 @@ double AdjointElectronPhotonRelaxationDataContainer::getMaxElectronEnergy() cons
 {
   return d_max_electron_energy;
 }
+
+// Return the union energy grid convergence tolerance
+double
+AdjointElectronPhotonRelaxationDataContainer::getGridConvergenceTolerance() const
+{
+  return d_grid_convergence_tol;
+}
+
+// Return the union energy grid absolute difference tolerance
+double
+AdjointElectronPhotonRelaxationDataContainer::getGridAbsoluteDifferenceTolerance() const
+{
+  return d_grid_absolute_diff_tol;
+}
+
+// Return the union energy grid distance tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getGridDistanceTolerance() const
+{
+  return d_grid_distance_tol;
+}
+
+//---------------------------------------------------------------------------//
+// GET PHOTON TABLE DATA
+//---------------------------------------------------------------------------//
 
 // Return the adjoint pair production energy dist norm constant evaluation tol
 double AdjointElectronPhotonRelaxationDataContainer::getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() const
@@ -143,6 +167,10 @@ double AdjointElectronPhotonRelaxationDataContainer::getAdjointIncoherentGridDis
   return d_adjoint_incoherent_grid_distance_tol;
 }
 
+//---------------------------------------------------------------------------//
+// GET ELECTRON TABLE DATA
+//---------------------------------------------------------------------------//
+
 // Return the elastic cutoff angle
 double AdjointElectronPhotonRelaxationDataContainer::getCutoffAngleCosine() const
 {
@@ -155,25 +183,85 @@ unsigned AdjointElectronPhotonRelaxationDataContainer::getNumberOfAdjointMomentP
   return d_number_of_adjoint_moment_preserving_angles;
 }
 
-// Return the union energy grid convergence tolerance
-double
-AdjointElectronPhotonRelaxationDataContainer::getGridConvergenceTolerance() const
+// Reutrn the adjoint electron grid convergence tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectronGridConvergenceTolerance() const
 {
-  return d_grid_convergence_tol;
+  return d_adjoint_electron_grid_convergence_tol;
 }
 
-// Return the union energy grid absolute difference tolerance
-double
-AdjointElectronPhotonRelaxationDataContainer::getGridAbsoluteDifferenceTolerance() const
+// Reutrn the adjoint electron absolute diff tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectronAbsoluteDifferenceTolerance() const
 {
-  return d_grid_absolute_diff_tol;
+  return d_adjoint_electron_absolute_diff_tol;
 }
 
-// Return the union energy grid distance tolerance
-double AdjointElectronPhotonRelaxationDataContainer::getGridDistanceTolerance() const
+// Reutrn the adjoint electron distance tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectronDistanceTolerance() const
 {
-  return d_grid_distance_tol;
+  return d_adjoint_electron_distance_tol;
 }
+
+// Return the adjoint bremsstrahlung max energy nudge value
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungMaxEnergyNudgeValue() const
+{
+  return d_adjoint_bremsstrahlung_max_energy_nudge_value;
+}
+
+// Return the adjoint bremsstrahlung energy to outgoing energy nudge value
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const
+{
+  return d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value;
+}
+
+// Return the adjoint bremsstrahlung cross section evaluation tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungEvaluationTolerance() const
+{
+  return d_adjoint_bremsstrahlung_evaluation_tolerance;
+}
+
+// Return the adjoint bremsstrahlung grid convergence tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungGridConvergenceTolerance() const
+{
+  return d_adjoint_bremsstrahlung_convergence_tolerance;
+}
+
+// Reutrn the adjoint bremsstrahlung absolute difference tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungAbsoluteDifferenceTolerance() const
+{
+  return d_adjoint_bremsstrahlung_absolute_diff_tol;
+}
+
+// Reutrn the adjoint bremsstrahlung distance tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungDistanceTolerance() const
+{
+  return d_adjoint_bremsstrahlung_distance_tol;
+}
+
+// Return the adjoint electroionization cross section evaluation tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEvaluationTolerance() const
+{
+  return d_adjoint_electroionization_evaluation_tol;
+}
+
+// Return the adjoint electroionization grid convergence tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationGridConvergenceTolerance() const
+{
+  return d_adjoint_electroionization_convergence_tol;
+}
+
+// Reutrn the adjoint electroionization absolute difference tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationAbsoluteDifferenceTolerance() const
+{
+  return d_adjoint_electroionization_absolute_diff_tol;
+}
+
+// Reutrn the adjoint electroionization distance tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationDistanceTolerance() const
+{
+  return d_adjoint_electroionization_distance_tol;
+}
+
+
 
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
@@ -862,12 +950,12 @@ void AdjointElectronPhotonRelaxationDataContainer::setNotes(
 }
 
 //---------------------------------------------------------------------------//
-// SET TABLE DATA
+// SET BASIC TABLE DATA
 //---------------------------------------------------------------------------//
 
 // Set the atomic number
 void AdjointElectronPhotonRelaxationDataContainer::setAtomicNumber(
-						 const unsigned atomic_number )
+    const unsigned atomic_number )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number > 0 );
@@ -905,6 +993,50 @@ void AdjointElectronPhotonRelaxationDataContainer::setMinElectronEnergy(
 
   d_min_electron_energy = min_electron_energy;
 }
+
+// Set the maximum electron energy
+void AdjointElectronPhotonRelaxationDataContainer::setMaxElectronEnergy(
+    const double max_electron_energy )
+{
+  // Make sure the energy is valid
+  testPrecondition( max_electron_energy >= 0.0 );
+
+  d_max_electron_energy = max_electron_energy;
+}
+
+// Set the union energy grid convergence tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance(
+    const double grid_convergence_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( grid_convergence_tol >= 0.0 );
+
+  d_grid_convergence_tol = grid_convergence_tol;
+}
+
+// Set the union energy grid absolute difference tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance(
+    const double grid_absolute_diff_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( grid_absolute_diff_tol >= 0.0 );
+
+  d_grid_absolute_diff_tol = grid_absolute_diff_tol;
+}
+
+// Set the union energy grid distance tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setGridDistanceTolerance(
+    const double grid_distance_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( grid_distance_tol >= 0.0 );
+
+  d_grid_distance_tol = grid_distance_tol;
+}
+
+//---------------------------------------------------------------------------//
+// SET PHOTON TABLE DATA
+//---------------------------------------------------------------------------//
 
 // Set the adjoint pair production energy dist norm constant evaluation tol
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
@@ -1010,15 +1142,9 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentGridDista
   d_adjoint_incoherent_grid_distance_tol = distance_tol;
 }
 
-// Set the maximum electron energy
-void AdjointElectronPhotonRelaxationDataContainer::setMaxElectronEnergy(
-    const double max_electron_energy )
-{
-  // Make sure the energy is valid
-  testPrecondition( max_electron_energy >= 0.0 );
-
-  d_max_electron_energy = max_electron_energy;
-}
+//---------------------------------------------------------------------------//
+// SET ELECTRON TABLE DATA
+//---------------------------------------------------------------------------//
 
 // Set the elastic cutoff angle
 void AdjointElectronPhotonRelaxationDataContainer::setCutoffAngleCosine(
@@ -1041,40 +1167,149 @@ void AdjointElectronPhotonRelaxationDataContainer::setNumberOfAdjointMomentPrese
   d_number_of_adjoint_moment_preserving_angles = number_of_adjoint_moment_preserving_angles;
 }
 
-// Set the union energy grid convergence tolerance
-void AdjointElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance(
-    const double grid_convergence_tol )
+// Set the adjoint electron grid convergence tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronGridConvergenceTolerance(
+    const double adjoint_electron_grid_convergence_tol )
 {
-  // Make sure the tolerance is valid
-  testPrecondition( grid_convergence_tol >= 0.0 );
+  // Make sure the adjoint_electron_grid_convergence_tol is valid
+  testPrecondition( adjoint_electron_grid_convergence_tol > 0.0 );
 
-  d_grid_convergence_tol = grid_convergence_tol;
+  d_adjoint_electron_grid_convergence_tol = adjoint_electron_grid_convergence_tol;
 }
 
-// Set the union energy grid absolute difference tolerance
-void AdjointElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance(
-    const double grid_absolute_diff_tol )
+// Set the adjoint electron absolute diff tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronAbsoluteDifferenceTolerance(
+    const double adjoint_electron_absolute_diff_tol )
 {
-  // Make sure the tolerance is valid
-  testPrecondition( grid_absolute_diff_tol >= 0.0 );
+  // Make sure the adjoint_electron_absolute_diff_tol is valid
+  testPrecondition( adjoint_electron_absolute_diff_tol > 0.0 );
 
-  d_grid_absolute_diff_tol = grid_absolute_diff_tol;
+  d_adjoint_electron_absolute_diff_tol = adjoint_electron_absolute_diff_tol;
 }
 
-// Set the union energy grid distance tolerance
-void AdjointElectronPhotonRelaxationDataContainer::setGridDistanceTolerance(
-    const double grid_distance_tol )
+// Set the adjoint electron distance tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronDistanceTolerance(
+    const double adjoint_electron_distance_tol )
 {
-  // Make sure the tolerance is valid
-  testPrecondition( grid_distance_tol >= 0.0 );
+  // Make sure the adjoint_electron_distance_tol is valid
+  testPrecondition( adjoint_electron_distance_tol > 0.0 );
 
-  d_grid_distance_tol = grid_distance_tol;
+  d_adjoint_electron_distance_tol = adjoint_electron_distance_tol;
+}
+
+// Set the adjoint bremsstrahlung max energy nudge value
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungMaxEnergyNudgeValue(
+    const double adjoint_bremsstrahlung_max_energy_nudge_value )
+{
+  // Make sure the adjoint_bremsstrahlung_max_energy_nudge_value is valid
+  testPrecondition( adjoint_bremsstrahlung_max_energy_nudge_value >= 0.0 );
+
+  d_adjoint_bremsstrahlung_max_energy_nudge_value =
+    adjoint_bremsstrahlung_max_energy_nudge_value;
+}
+
+// Set the adjoint bremsstrahlung energy to outgoing energy nudge value
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
+    const double adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value )
+{
+  // Make sure the adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value is valid
+  testPrecondition( adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value >= 0.0 );
+
+  d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value =
+    adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value;
+}
+
+// Set the adjoint bremsstrahlung cross section evaluation tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungEvaluationTolerance(
+    const double adjoint_bremsstrahlung_evaluation_tolerance )
+{
+  // Make sure the adjoint_bremsstrahlung_evaluation_tolerance is valid
+  testPrecondition( adjoint_bremsstrahlung_evaluation_tolerance > 0.0 );
+
+  d_adjoint_bremsstrahlung_evaluation_tolerance =
+    adjoint_bremsstrahlung_evaluation_tolerance;
+}
+
+// Set the adjoint bremsstrahlung grid convergence tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungGridConvergenceTolerance(
+    const double adjoint_bremsstrahlung_convergence_tolerance )
+{
+  // Make sure the adjoint_bremsstrahlung_convergence_tolerance is valid
+  testPrecondition( adjoint_bremsstrahlung_convergence_tolerance > 0.0 );
+
+  d_adjoint_bremsstrahlung_convergence_tolerance =
+    adjoint_bremsstrahlung_convergence_tolerance;
+}
+
+// Set the adjoint bremsstrahlung absolute difference tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungAbsoluteDifferenceTolerance(
+    const double adjoint_bremsstrahlung_absolute_diff_tol )
+{
+  // Make sure the adjoint_bremsstrahlung_absolute_diff_tol is valid
+  testPrecondition( adjoint_bremsstrahlung_absolute_diff_tol > 0.0 );
+
+  d_adjoint_bremsstrahlung_absolute_diff_tol =
+    adjoint_bremsstrahlung_absolute_diff_tol;
+}
+
+// Set the adjoint bremsstrahlung distance tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungDistanceTolerance(
+    const double adjoint_bremsstrahlung_distance_tol )
+{
+  // Make sure the adjoint_bremsstrahlung_distance_tol is valid
+  testPrecondition( adjoint_bremsstrahlung_distance_tol > 0.0 );
+
+  d_adjoint_bremsstrahlung_distance_tol =
+    adjoint_bremsstrahlung_distance_tol;
+}
+
+// Set the adjoint electroionization cross section evaluation tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationEvaluationTolerance(
+    const double adjoint_electroionization_evaluation_tol )
+{
+  // Make sure the adjoint_electroionization_evaluation_tol is valid
+  testPrecondition( adjoint_electroionization_evaluation_tol > 0.0 );
+
+  d_adjoint_electroionization_evaluation_tol =
+    adjoint_electroionization_evaluation_tol;
+}
+
+// Set the adjoint electroionization grid convergence tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationGridConvergenceTolerance(
+    const double adjoint_electroionization_convergence_tol )
+{
+  // Make sure the adjoint_electroionization_convergence_tol is valid
+  testPrecondition( adjoint_electroionization_convergence_tol > 0.0 );
+
+  d_adjoint_electroionization_convergence_tol =
+    adjoint_electroionization_convergence_tol;
+}
+
+// Set the adjoint electroionization absolute difference tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationAbsoluteDifferenceTolerance(
+    const double adjoint_electroionization_absolute_diff_tol )
+{
+  // Make sure the adjoint_electroionization_absolute_diff_tol is valid
+  testPrecondition( adjoint_electroionization_absolute_diff_tol > 0.0 );
+
+  d_adjoint_electroionization_absolute_diff_tol =
+    adjoint_electroionization_absolute_diff_tol;
+}
+
+// Set the adjoint electroionization distance tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationDistanceTolerance(
+    const double adjoint_electroionization_distance_tol )
+{
+  // Make sure the adjoint_electroionization_distance_tol is valid
+  testPrecondition( adjoint_electroionization_distance_tol > 0.0 );
+
+  d_adjoint_electroionization_distance_tol =
+    adjoint_electroionization_distance_tol;
 }
 
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
 //---------------------------------------------------------------------------//
-
 
 // Set the atomic subshells
 void AdjointElectronPhotonRelaxationDataContainer::setSubshells(

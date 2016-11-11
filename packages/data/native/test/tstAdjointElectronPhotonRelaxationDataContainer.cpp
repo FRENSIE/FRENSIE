@@ -41,6 +41,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setNotes )
 }
 
 //---------------------------------------------------------------------------//
+// Basic Table Tests
+//---------------------------------------------------------------------------//
 // Check that the atomic number can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setAtomicNumber )
 {
@@ -89,6 +91,41 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setMaxElectronE
                        1.0e+5 );
 }
 
+//---------------------------------------------------------------------------//
+// Check that the grid convergence tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setGridConvergenceTolerance )
+{
+  epr_data_container.setGridConvergenceTolerance( 0.001 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getGridConvergenceTolerance(),
+                       0.001 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the grid absolute difference tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setGridAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setGridAbsoluteDifferenceTolerance( 1e-42 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getGridAbsoluteDifferenceTolerance(),
+                       1e-42 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the grid distance tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setGridDistanceTolerance )
+{
+  epr_data_container.setGridDistanceTolerance( 1e-15 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getGridDistanceTolerance(),
+                       1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Photon Table Tests
 //---------------------------------------------------------------------------//
 // Check that the adjoint pair production energy dist norm constant evaluation
 // tolerance can be set
@@ -207,6 +244,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Electron Table Tests
+//---------------------------------------------------------------------------//
 // Check that the Cutoff Angle can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setCutoffAngleCosine )
 {
@@ -228,36 +267,148 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid convergence tolerance can be set
+// Check that the adjoint_electron_grid_convergence_tol can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setGridConvergenceTolerance )
+                   setAdjointElectronGridConvergenceTolerance )
 {
-  epr_data_container.setGridConvergenceTolerance( 0.001 );
+  epr_data_container.setAdjointElectronGridConvergenceTolerance( 1e-3 );
 
-  TEST_EQUALITY_CONST( epr_data_container.getGridConvergenceTolerance(),
-                       0.001 );
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointElectronGridConvergenceTolerance(),
+                       1e-3 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid absolute difference tolerance can be set
+// Check that the adjoint_electron_absolute_diff_tol can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setGridAbsoluteDifferenceTolerance )
+                   setAdjointElectronAbsoluteDifferenceTolerance )
 {
-  epr_data_container.setGridAbsoluteDifferenceTolerance( 1e-42 );
+  epr_data_container.setAdjointElectronAbsoluteDifferenceTolerance( 1e-3 );
 
-  TEST_EQUALITY_CONST( epr_data_container.getGridAbsoluteDifferenceTolerance(),
-                       1e-42 );
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointElectronAbsoluteDifferenceTolerance(),
+                       1e-3 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid distance tolerance can be set
+// Check that the adjoint_electron_distance_tol can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setGridDistanceTolerance )
+                   setAdjointElectronDistanceTolerance )
 {
-  epr_data_container.setGridDistanceTolerance( 1e-15 );
+  epr_data_container.setAdjointElectronDistanceTolerance( 1e-3 );
 
-  TEST_EQUALITY_CONST( epr_data_container.getGridDistanceTolerance(),
-                       1e-15 );
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointElectronDistanceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_max_energy_nudge_value can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungMaxEnergyNudgeValue )
+{
+  epr_data_container.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
+
+  TEST_EQUALITY_CONST(
+    epr_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
+    0.2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue )
+{
+  epr_data_container.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 0.2 );
+
+  TEST_EQUALITY_CONST(
+    epr_data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
+    0.2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_evaluation_tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungEvaluationTolerance )
+{
+  epr_data_container.setAdjointBremsstrahlungEvaluationTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointBremsstrahlungEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_convergence_tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungGridConvergenceTolerance )
+{
+  epr_data_container.setAdjointBremsstrahlungGridConvergenceTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointBremsstrahlungGridConvergenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_absolute_diff_tol can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_distance_tol can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungDistanceTolerance )
+{
+  epr_data_container.setAdjointBremsstrahlungDistanceTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointBremsstrahlungDistanceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_electroionization_evaluation_tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointElectroionizationEvaluationTolerance )
+{
+  epr_data_container.setAdjointElectroionizationEvaluationTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointElectroionizationEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_electroionization_convergence_tolerance can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointElectroionizationGridConvergenceTolerance )
+{
+  epr_data_container.setAdjointElectroionizationGridConvergenceTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointElectroionizationGridConvergenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_electroionization_absolute_diff_tol can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointElectroionizationAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_electroionization_distance_tol can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointElectroionizationDistanceTolerance )
+{
+  epr_data_container.setAdjointElectroionizationDistanceTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getAdjointElectroionizationDistanceTolerance(),
+                       1e-3 );
 }
 
 //---------------------------------------------------------------------------//

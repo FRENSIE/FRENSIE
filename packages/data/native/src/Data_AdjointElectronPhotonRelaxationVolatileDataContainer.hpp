@@ -25,16 +25,23 @@ public:
 
   //! Constructor (from saved archive)
   AdjointElectronPhotonRelaxationVolatileDataContainer(
-		   const std::string& archive_name,
-		   const Utility::ArchivableObject::ArchiveType archive_type );
+           const std::string& archive_name,
+           const Utility::ArchivableObject::ArchiveType archive_type );
 
   // Add the setter member functions to the public interface
   using AdjointElectronPhotonRelaxationDataContainer::setNotes;
+
+  // Basic table functions
   using AdjointElectronPhotonRelaxationDataContainer::setAtomicNumber;
   using AdjointElectronPhotonRelaxationDataContainer::setMinPhotonEnergy;
   using AdjointElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;
   using AdjointElectronPhotonRelaxationDataContainer::setMinElectronEnergy;
   using AdjointElectronPhotonRelaxationDataContainer::setMaxElectronEnergy;
+  using AdjointElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;
+
+  // Photon table functions
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnergyDistNormConstantNudgeValue;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance;
@@ -45,11 +52,23 @@ public:
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentGridConvergenceTolerance;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentGridAbsoluteDifferenceTolerance;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointIncoherentGridDistanceTolerance;
+
+  // Electron table functions
   using AdjointElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using AdjointElectronPhotonRelaxationDataContainer::setNumberOfAdjointMomentPreservingAngles;
-  using AdjointElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
-  using AdjointElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
-  using AdjointElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronGridConvergenceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronAbsoluteDifferenceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronDistanceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungMaxEnergyNudgeValue;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungEvaluationTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungGridConvergenceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungAbsoluteDifferenceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungDistanceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationEvaluationTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationGridConvergenceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationAbsoluteDifferenceTolerance;
+  using AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationDistanceTolerance;
 
   // Relaxation functions
   using AdjointElectronPhotonRelaxationDataContainer::setSubshells;
