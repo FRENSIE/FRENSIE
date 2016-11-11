@@ -581,6 +581,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
   this->setBasicData( data_container );
   this->setDefaultConvergenceParameters( data_container );
 
+  // Set the photon table data
   data_container.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
              d_adjoint_pair_production_energy_dist_norm_const_evaluation_tol );
   data_container.setAdjointPairProductionEnergyDistNormConstantNudgeValue(
@@ -602,10 +603,37 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
   data_container.setAdjointIncoherentGridDistanceTolerance(
                                       d_adjoint_incoherent_grid_distance_tol );
 
+  // Set the electron table data
   data_container.setCutoffAngleCosine(
-                    d_forward_epr_data->getCutoffAngleCosine() );
+    d_forward_epr_data->getCutoffAngleCosine() );
   data_container.setNumberOfAdjointMomentPreservingAngles(
-                    d_forward_epr_data->getNumberOfMomentPreservingAngles() );
+    d_forward_epr_data->getNumberOfMomentPreservingAngles() );
+  data_container.setAdjointElectronGridConvergenceTolerance(
+    d_adjoint_electron_grid_convergence_tol );
+  data_container.setAdjointElectronAbsoluteDifferenceTolerance(
+    d_adjoint_electron_absolute_diff_tol );
+  data_container.setAdjointElectronDistanceTolerance(
+    d_adjoint_electron_distance_tol );
+  data_container.setAdjointBremsstrahlungMaxEnergyNudgeValue(
+    d_adjoint_bremsstrahlung_max_energy_nudge_value );
+  data_container.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
+    d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );
+  data_container.setAdjointBremsstrahlungEvaluationTolerance(
+    d_adjoint_bremsstrahlung_evaluation_tol );
+  data_container.setAdjointBremsstrahlungGridConvergenceTolerance(
+    d_adjoint_bremsstrahlung_grid_convergence_tol );
+  data_container.setAdjointBremsstrahlungAbsoluteDifferenceTolerance(
+    d_adjoint_bremsstrahlung_absolute_diff_tol );
+  data_container.setAdjointBremsstrahlungDistanceTolerance(
+    d_adjoint_bremsstrahlung_distance_tol );
+  data_container.setAdjointElectroionizationEvaluationTolerance(
+    d_adjoint_electroionization_evaluation_tol );
+  data_container.setAdjointElectroionizationGridConvergenceTolerance(
+    d_adjoint_electroionization_grid_convergence_tol );
+  data_container.setAdjointElectroionizationAbsoluteDifferenceTolerance(
+    d_adjoint_electroionization_absolute_diff_tol );
+  data_container.setAdjointElectroionizationDistanceTolerance(
+    d_adjoint_electroionization_distance_tol );
 }
 
 // Set the relaxation data

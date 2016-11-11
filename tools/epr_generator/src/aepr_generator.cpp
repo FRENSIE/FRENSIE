@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <sstream>
+#include <cstdio>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
@@ -766,6 +767,8 @@ int main( int argc, char** argv )
   int atomic_number;
   
   {
+    std::string temp_forward_file_name = "epr_native_temp.xml";
+
     // Recalculate the moment preserving data with the desired parameters
     {
       Data::ElectronPhotonRelaxationVolatileDataContainer temp_data_container(
@@ -782,13 +785,13 @@ int main( int argc, char** argv )
                                 "Error: Unable to repopulate the moment "
                                 "preserving data!" );
 
-      temp_data_container.exportData( data_file_path,
+      temp_data_container.exportData( temp_forward_file_name,
                                       Utility::ArchivableObject::XML_ARCHIVE );
     }
 
     std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
       forward_data_container( new Data::ElectronPhotonRelaxationDataContainer(
-                                                            data_file_path ) );
+                                                     temp_forward_file_name ) );
 
     atomic_number = forward_data_container->getAtomicNumber();
 
@@ -842,6 +845,10 @@ int main( int argc, char** argv )
     // Add the notes to the data container
     if( table_notes.size() > 0 )
       data_container.setNotes( table_notes );
+
+    const char *cstr = temp_forward_file_name.c_str();
+
+//    std::remove( cstr );
   }
 
   // Export the generated data to an XML file
