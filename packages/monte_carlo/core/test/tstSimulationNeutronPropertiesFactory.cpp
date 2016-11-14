@@ -44,6 +44,7 @@ TEUCHOS_UNIT_TEST( SimulationNeutronPropertiesFactory, initializeProperties )
   TEST_EQUALITY_CONST( properties.getFreeGasThreshold(), 600.0 );
   TEST_EQUALITY_CONST( properties.getMinNeutronEnergy(), 1e-2 );
   TEST_EQUALITY_CONST( properties.getMaxNeutronEnergy(), 10.0 );
+  TEST_ASSERT( !properties.isUnresolvedResonanceProbabilityTableModeOn() );
 }
 
 //---------------------------------------------------------------------------//

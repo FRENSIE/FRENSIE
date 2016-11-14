@@ -22,27 +22,9 @@ const double SimulationNeutronProperties::s_absolute_max_neutron_energy = 20.0;
 SimulationNeutronProperties::SimulationNeutronProperties()
   : d_free_gas_threshold( 400.0 ),
     d_min_neutron_energy( s_absolute_min_neutron_energy ),
-    d_max_neutron_energy( s_absolute_max_neutron_energy )
+    d_max_neutron_energy( s_absolute_max_neutron_energy ),
+    d_unresolved_resonance_probability_table_mode_on( true )
 { /* ... */ }
-
-// Set the free gas thermal treatment temperature threshold
-/*! \details The value given is the number of times above the material
- * temperature that the energy of a neutron can be before the free gas
- * thermal treatment is not used anymore.
- */
-void SimulationNeutronProperties::setFreeGasThreshold( const double threshold )
-{
-  // Make sure the threshold is valid
-  testPrecondition( threshold > 0.0 );
-
-  d_free_gas_threshold = threshold;
-}
-
-// Return the free gas thermal treatment temperature threshold
-double SimulationNeutronProperties::getFreeGasThreshold() const
-{
-  return d_free_gas_threshold;
-}
 
 // Set the minimum neutron energy (MeV)
 void SimulationNeutronProperties::setMinNeutronEnergy( const double energy )
@@ -86,6 +68,43 @@ double SimulationNeutronProperties::getMaxNeutronEnergy() const
 double SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy()
 {
   return s_absolute_max_neutron_energy;
+}
+
+// Set the free gas thermal treatment temperature threshold
+/*! \details The value given is the number of times above the material
+ * temperature that the energy of a neutron can be before the free gas
+ * thermal treatment is not used anymore.
+ */
+void SimulationNeutronProperties::setFreeGasThreshold( const double threshold )
+{
+  // Make sure the threshold is valid
+  testPrecondition( threshold > 0.0 );
+
+  d_free_gas_threshold = threshold;
+}
+
+// Return the free gas thermal treatment temperature threshold
+double SimulationNeutronProperties::getFreeGasThreshold() const
+{
+  return d_free_gas_threshold;
+}
+
+// Set unresolved resonance probability table mode to on (on by default)
+void SimulationNeutronProperties::setUnresolvedResonanceProbabilityTableModeOn()
+{
+  d_unresolved_resonance_probability_table_mode_on = true;
+}
+
+// Set unresolved resonance probability table mode to off (on by default)
+void SimulationNeutronProperties::setUnresolvedResonanceProbabilityTableModeOff()
+{
+  d_unresolved_resonance_probability_table_mode_on = false;
+}
+
+// Return if unresolved resonance probability table mode is on
+bool SimulationNeutronProperties::isUnresolvedResonanceProbabilityTableModeOn() const
+{
+  return d_unresolved_resonance_probability_table_mode_on;
 }
 
 } // end MonteCarlo namespace

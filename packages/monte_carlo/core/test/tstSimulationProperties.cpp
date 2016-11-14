@@ -38,6 +38,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST( properties.getMinNeutronEnergy(), 1e-11 );
   TEST_EQUALITY_CONST( properties.getMaxNeutronEnergy(), 20.0 );
   TEST_EQUALITY_CONST( properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
+  TEST_ASSERT( properties.isUnresolvedResonanceProbabilityTableModeOn() );
 
   // Photon properties
   TEST_EQUALITY_CONST( properties.getAbsoluteMinPhotonEnergy(), 1e-3 );

@@ -49,6 +49,7 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   TEST_EQUALITY_CONST( parsed_properties->getFreeGasThreshold(), 600.0 );
   TEST_EQUALITY_CONST( parsed_properties->getMinNeutronEnergy(), 1e-2 );
   TEST_EQUALITY_CONST( parsed_properties->getMaxNeutronEnergy(), 10.0 );
+  TEST_ASSERT( !parsed_properties->isUnresolvedResonanceProbabilityTableModeOn() );
 
   // Photon Properties
   TEST_EQUALITY_CONST( parsed_properties->getMinPhotonEnergy(), 1e-2 );

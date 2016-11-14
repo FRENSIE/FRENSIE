@@ -46,11 +46,11 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Construct the hash-based grid searcher for this atom
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-                                energy_grid,
-                                properties.getNumberOfElectronHashGridBins() );
+                              energy_grid,
+                              properties.getNumberOfElectronHashGridBins() ) );
 
   // Create the analog elastic scattering reaction (no moment preserving elastic scattering)
-  if ( cutoff_angle_cosine == 1.0 )
+  if( properties.getElasticCutoffAngleCosine() == 1.0 )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
@@ -62,7 +62,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
 					   reaction_pointer );
   }
   // Create the moment preserving elastic scattering reaction (no analog elastic scattering)
-  else if ( properties.getElasticCutoffAngleCosine() == -1.0 )
+  else if( properties.getElasticCutoffAngleCosine() == -1.0 )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];

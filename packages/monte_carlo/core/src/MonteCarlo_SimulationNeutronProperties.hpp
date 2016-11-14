@@ -30,12 +30,6 @@ public:
   virtual ~SimulationNeutronProperties()
   { /* ... */ }
 
-  //! Set the free gas thermal treatment temperature threshold
-  void setFreeGasThreshold( const double threshold );
-
-  //! Return the free gas thermal treatment temperature threshold
-  double getFreeGasThreshold() const;
-
   //! Set the minimum neutron energy (MeV)
   void setMinNeutronEnergy( const double energy );
 
@@ -54,6 +48,21 @@ public:
   //! Return the absolute maximum neutron
   static double getAbsoluteMaxNeutronEnergy();
 
+  //! Set the free gas thermal treatment temperature threshold
+  void setFreeGasThreshold( const double threshold );
+
+  //! Return the free gas thermal treatment temperature threshold
+  double getFreeGasThreshold() const;
+
+  //! Set unresolved resonance probability table mode to on (on by default)
+  void setUnresolvedResonanceProbabilityTableModeOn();
+
+  //! Set unresolved resonance probability table mode to off (on by default)
+  void setUnresolvedResonanceProbabilityTableModeOff();
+
+  //! Return if unresolved resonance probability table mode is on
+  bool isUnresolvedResonanceProbabilityTableModeOn() const;
+  
 private:
 
   // The absolute minimum neutron energy (MeV)
@@ -62,15 +71,19 @@ private:
   // The absolute maximum neutron energy (MeV)
   static const double s_absolute_max_neutron_energy;
 
-  // The free gas thermal treatment temperature threshold
-  // Note: free gas thermal treatment used when energy<threshold*kT (and A > 1)
-  double d_free_gas_threshold;
-
   // The minimum neutron energy (MeV)
   double d_min_neutron_energy;
 
   // The maximum neutron energy (MeV)
   double d_max_neutron_energy;
+
+  // The free gas thermal treatment temperature threshold
+  // Note: free gas thermal treatment used when energy<threshold*kT (and A > 1)
+  double d_free_gas_threshold;
+
+  // The unresolved resonance probability table mode
+  // (true = on - default, false = off)
+  bool d_unresolved_resonance_probability_table_mode_on;
 };
 
 } // end MonteCarlo namespace

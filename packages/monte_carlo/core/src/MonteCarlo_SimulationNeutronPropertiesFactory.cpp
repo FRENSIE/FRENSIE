@@ -19,19 +19,6 @@ void SimulationNeutronPropertiesFactory::initializeProperties(
                                SimulationNeutronProperties& neutron_properties,
                                std::ostream* os_warn )
 {
-  // Get the free gas thermal treatment temperature threshold - optional
-  if( properties.isParameter( "Free Gas Threshold" ) )
-  {
-    double threshold = properties.get<double>( "Free Gas Threshold" );
-
-    TEST_FOR_EXCEPTION( threshold < 0.0,
-			std::runtime_error,
-			"Error: The free gas thermal treatment threshold must "
-			"be a positive number!" );
-
-    neutron_properties.setFreeGasThreshold( threshold );
-  }
-
   // Get the minimum neutron energy - optional
   if( properties.isParameter( "Min Neutron Energy" ) )
   {
@@ -68,6 +55,28 @@ void SimulationNeutronPropertiesFactory::initializeProperties(
 		<< ". This value will be used instead of "
 		<< max_energy << "." << std::endl;
     }
+  }
+
+  // Get the free gas thermal treatment temperature threshold - optional
+  if( properties.isParameter( "Free Gas Threshold" ) )
+  {
+    double threshold = properties.get<double>( "Free Gas Threshold" );
+
+    TEST_FOR_EXCEPTION( threshold < 0.0,
+			std::runtime_error,
+			"Error: The free gas thermal treatment threshold must "
+			"be a positive number!" );
+
+    neutron_properties.setFreeGasThreshold( threshold );
+  }
+
+  // Get the the unresolved resonance probability table mode - optional
+  if( properties.isParameter( "Unresolved Resonance Probability Table" ) )
+  {
+    if( properties.get<bool>( "Unresolved Resonance Probability Table" ) )
+      neutron_properties.setUnresolvedResonanceProbabilityTableModeOn();
+    else
+      neutron_properties.setUnresolvedResonanceProbabilityTableModeOff();
   }
 
   properties.unused( *os_warn );

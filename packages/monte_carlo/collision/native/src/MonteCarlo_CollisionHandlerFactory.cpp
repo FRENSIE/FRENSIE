@@ -54,8 +54,7 @@ std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
     const Teuchos::ParameterList& material_rep =
       Teuchos::any_cast<Teuchos::ParameterList>( it->second.getAny() );
 
-    CollisionHandlerFactory::validateMaterialRep( material_rep,
-						  material_ids );
+    this->validateMaterialRep( material_rep, material_ids );
 
     ++it;
   }
@@ -78,18 +77,15 @@ std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
   // Create the set of all nuclides/atoms needed to construct materials
   AliasSet aliases;
 
-  CollisionHandlerFactory::createAliasSet( material_reps,
-					   alias_map_list,
-					   aliases );
+  this->createAliasSet( material_reps, alias_map_list, aliases );
 
   // Create the material id data maps
   MatIdFractionMap material_id_fraction_map;
   MatIdComponentMap material_id_component_map;
 
-  CollisionHandlerFactory::createMaterialIdDataMaps(
-						   material_reps,
-						   material_id_fraction_map,
-						   material_id_component_map );
+  this->createMaterialIdDataMaps( material_reps,
+                                  material_id_fraction_map,
+                                  material_id_component_map );
 
   // Create the cell id data maps
   CellIdMatIdMap cell_id_mat_id_map;
@@ -103,98 +99,74 @@ std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
 
   // Create the new collision handler
   std::shared_ptr<CollisionHandler> collision_handler( new CollisionHandler(
-     SimulationGeneralProperties::isImplicitCaptureModeOn() ? false : true ) );
+                       properties.isImplicitCaptureModeOn() ? false : true ) );
   
-  // Load the cross section data
-  switch( SimulationGeneralProperties::getParticleMode() )
-  {
-  case NEUTRON_MODE:
-  {
-    this->createNeutronMaterials( collision_handler,
-                                  cross_sections_table_info,
-				  cross_sections_xml_directory,
-				  material_id_fraction_map,
-				  material_id_component_map,
-				  aliases,
-				  cell_id_mat_id_map,
-				  cell_id_density_map,
-				  false,
-				  false );
-    break;
-  }
-  case PHOTON_MODE:
-  {
-    this->createPhotonMaterials(
-                     collision_handler,
-		     cross_sections_table_info,
-		     cross_sections_xml_directory,
-		     material_id_fraction_map,
-		     material_id_component_map,
-		     aliases,
-		     cell_id_mat_id_map,
-		     cell_id_density_map,
-		     atomic_relaxation_model_factory,
-		     SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationPhotonProperties::getIncoherentModelType(),
-		     SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
-		     SimulationPhotonProperties::isDetailedPairProductionModeOn(),
-		     SimulationPhotonProperties::isAtomicRelaxationModeOn(),
-		     SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
-    break;
-  }
-  case NEUTRON_PHOTON_MODE:
-  {
-    this->createNeutronMaterials( collision_handler,
-                                  cross_sections_table_info,
-				  cross_sections_xml_directory,
-				  material_id_fraction_map,
-				  material_id_component_map,
-				  aliases,
-				  cell_id_mat_id_map,
-				  cell_id_density_map,
-				  false,
-				  true );
+  ParticleModeType mode = properties.getParticleMode();
 
-    this->createPhotonMaterials(
-               collision_handler,
-	       cross_sections_table_info,
-               cross_sections_xml_directory,
-               material_id_fraction_map,
-               material_id_component_map,
-               aliases,
-               cell_id_mat_id_map,
-               cell_id_density_map,
-               atomic_relaxation_model_factory,
-               SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
-               SimulationPhotonProperties::getIncoherentModelType(),
-               SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
-               SimulationPhotonProperties::isDetailedPairProductionModeOn(),
-               SimulationPhotonProperties::isAtomicRelaxationModeOn(),
-	       SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
-    break;
-  }
-  case ELECTRON_MODE:
+  // Load the neutron cross section data
+  if( mode == NEUTRON_MODE ||
+      mode == NEUTRON_PHOTON_MODE ||
+      mode == NEUTRON_PHOTON_ELECTRON_MODE )
   {
-    this->createElectronMaterials(
-               collision_handler,
-	       cross_sections_table_info,
-               cross_sections_xml_directory,
-               material_id_fraction_map,
-               material_id_component_map,
-               aliases,
-               cell_id_mat_id_map,
-               cell_id_density_map,
-               atomic_relaxation_model_factory,
-               SimulationElectronProperties::getNumberOfElectronHashGridBins(),
-               SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-               SimulationElectronProperties::isAtomicRelaxationModeOn(),
-               SimulationElectronProperties::getElasticCutoffAngleCosine() );
-    break;
+    this->createNeutronMaterials( collision_handler,
+                                  cross_sections_table_info,
+				  cross_sections_xml_directory,
+				  material_id_fraction_map,
+				  material_id_component_map,
+				  aliases,
+				  cell_id_mat_id_map,
+				  cell_id_density_map,
+                                  properties );
   }
-  default:
-    THROW_EXCEPTION( std::logic_error,
-		     "Error: " << SimulationGeneralProperties::getParticleMode() <<
-		     " is not currently supported!" );
+
+  // Load the photon cross section data
+  if( mode == PHOTON_MODE ||
+      mode == NEUTRON_PHOTON_MODE ||
+      mode == PHOTON_ELECTRON_MODE ||
+      mode == NEUTRON_PHOTON_ELECTRON_MODE )
+  {
+    this->createPhotonMaterials( collision_handler,
+                                 cross_sections_table_info,
+                                 cross_sections_xml_directory,
+                                 material_id_fraction_map,
+                                 material_id_component_map,
+                                 aliases,
+                                 cell_id_mat_id_map,
+                                 cell_id_density_map,
+                                 atomic_relaxation_model_factory,
+                                 properties );
+  }
+
+  // Load the adjoint photon cross section data
+  if( mode == ADJOINT_PHOTON_MODE )
+  {
+    this->createAdjointPhotonMaterials( collision_handler,
+                                        cross_sections_table_info,
+                                        cross_sections_xml_directory,
+                                        material_id_fraction_map,
+                                        material_id_component_map,
+                                        aliases,
+                                        cell_id_mat_id_map,
+                                        cell_id_density_map,
+                                        atomic_relaxation_model_factory,
+                                        properties );
+  }
+
+  // Load the electron cross section data
+  if( mode == ELECTRON_MODE ||
+      mode == PHOTON_ELECTRON_MODE ||
+      mode == NEUTRON_PHOTON_ELECTRON_MODE )
+  {
+    this->createElectronMaterials( collision_handler,
+                                   cross_sections_table_info,
+                                   cross_sections_xml_directory,
+                                   material_id_fraction_map,
+                                   material_id_component_map,
+                                   aliases,
+                                   cell_id_mat_id_map,
+                                   cell_id_density_map,
+                                   atomic_relaxation_model_factory,
+                                   properties );
   }
 
   // Return the constucted collision handler
@@ -330,9 +302,8 @@ void CollisionHandlerFactory::createNeutronMaterials(
                        const MatIdComponentMap& material_id_component_map,
                        const AliasSet& nuclide_aliases,
                        const CellIdMatIdMap& cell_id_mat_id_map,
-                       const CellIdDensityMap& cell_id_density_map,
-                       const bool use_unresolved_resonance_data,
-                       const bool use_photon_production_data )
+                       const CellIdDensityMap& cell_id_density_map
+                       const SimulationProperties& properties )
 {
   // Load the nuclides of interest
   NuclideFactory nuclide_factory( cross_sections_xml_directory,

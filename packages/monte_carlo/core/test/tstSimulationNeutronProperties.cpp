@@ -23,22 +23,12 @@ TEUCHOS_UNIT_TEST( SimulationNeutronProperties, defaults )
 {
   MonteCarlo::SimulationNeutronProperties properties;
   
-  TEST_EQUALITY_CONST( properties.getFreeGasThreshold(), 400.0 );
   TEST_EQUALITY_CONST( properties.getAbsoluteMinNeutronEnergy(), 1e-11 );
   TEST_EQUALITY_CONST( properties.getMinNeutronEnergy(), 1e-11 );
   TEST_EQUALITY_CONST( properties.getMaxNeutronEnergy(), 20.0 );
   TEST_EQUALITY_CONST( properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Test that the free gas thermal treatment temp threshold can be set
-TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setFreeGasThreshold )
-{
-  MonteCarlo::SimulationNeutronProperties properties;
-  
-  properties.setFreeGasThreshold( 1000.0 );
-
-  TEST_EQUALITY_CONST( properties.getFreeGasThreshold(), 1000.0 );
+  TEST_EQUALITY_CONST( properties.getFreeGasThreshold(), 400.0 );
+  TEST_ASSERT( properties.isUnresolvedResonanceProbabilityTableModeOn() );
 }
 
 //---------------------------------------------------------------------------//
@@ -61,6 +51,33 @@ TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setMaxNeutronEnergy )
   properties.setMaxNeutronEnergy( 15.0 );
 
   TEST_EQUALITY_CONST( properties.getMaxNeutronEnergy(), 15.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the free gas thermal treatment temp threshold can be set
+TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setFreeGasThreshold )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+  
+  properties.setFreeGasThreshold( 1000.0 );
+
+  TEST_EQUALITY_CONST( properties.getFreeGasThreshold(), 1000.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the unresolved resonance probability table mode can be toggled
+TEUCHOS_UNIT_TEST( SimulationNeutronProperties,
+                   setUnresolvedResonanceProbabilityTableModeOn_Off )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+
+  properties.setUnresolvedResonanceProbabilityTableModeOff();
+
+  TEST_ASSERT( !properties.isUnresolvedResonanceProbabilityTableModeOn() );
+
+  properties.setUnresolvedResonanceProbabilityTableModeOn();
+
+  TEST_ASSERT( properties.isUnresolvedResonanceProbabilityTableModeOn() );
 }
 
 //---------------------------------------------------------------------------//

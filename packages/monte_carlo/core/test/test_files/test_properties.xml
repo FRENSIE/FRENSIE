@@ -13,6 +13,7 @@
     <Parameter name="Free Gas Threshold" type="double" value="600.0"/>
     <Parameter name="Min Neutron Energy" type="double" value="1e-2"/>
     <Parameter name="Max Neutron Energy" type="double" value="10.0"/>
+    <Parameter name="Unresolved Resonance Probability Table" type="bool" value="false"/>
   </ParameterList>
 
   <ParameterList name="Photon Properties">

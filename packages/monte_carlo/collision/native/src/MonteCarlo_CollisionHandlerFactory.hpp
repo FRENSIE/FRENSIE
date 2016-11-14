@@ -25,6 +25,7 @@
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 
 namespace MonteCarlo{
 
@@ -45,6 +46,7 @@ public:
   std::shared_ptr<CollisionHandler> createHandler(
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
+                     const SimulationProperties& properties,
 		     const std::string& cross_sections_xml_directory );
 
 protected:
@@ -62,7 +64,7 @@ protected:
   typedef std::unordered_set<ModuleTraits::InternalMaterialHandle>
   MatIdSet;
 
-//! Validate the material ids
+  //! Validate the material ids
   virtual void validateMaterialIds( const MatIdSet& material_ids ) const = 0;
 
   //! Create the cell id data maps using the GeometryHandler
@@ -117,9 +119,8 @@ private:
                        const MatIdComponentMap& material_id_component_map,
                        const AliasSet& nuclide_aliases,
                        const CellIdMatIdMap& cell_id_mat_id_map,
-                       const CellIdDensityMap& cell_id_density_map,
-                       const bool use_unresolved_resonance_data,
-                       const bool use_photon_production_data );
+                       const CellIdDensityMap& cell_id_density_map
+                       const SimulationProperties& properties );
 
   //! Create the photon materials
   void createPhotonMaterials(
@@ -133,12 +134,19 @@ private:
                        const CellIdDensityMap& cell_id_density_map,
                        const Teuchos::RCP<AtomicRelaxationModelFactory>&
                        atomic_relaxation_model_factory,
-                       const unsigned hash_grid_bins,
-                       const IncoherentModelType incoherent_model,
-                       const double kahn_sampling_cutoff_energy,
-                       const bool use_detailed_pair_production_data,
-                       const bool use_atomic_relaxation_data,
-                       const bool use_photonuclear_data );
+                       const SimulationProperties& properties );
+
+  //! Create the adjoint photon materials
+  void createAdjointPhotonMaterials(
+                       std::shared_ptr<CollisionHandler>& collision_handler,
+                       const Teuchos::ParameterList& cross_sections_table_info,
+                       const std::string& cross_sections_xml_directory,
+                       const MatIdFractionMap& material_id_fraction_map,
+                       const MatIdComponentMap& material_id_component_map,
+                       const AliasSet& nuclide_aliases,
+                       const CellIdMatIdMap& cell_id_mat_id_map,
+                       const CellIdDensityMap& cell_id_density_map,
+                       const SimulationProperties& properties );
 
   //! Create the electron materials
   void createElectronMaterials(
@@ -152,10 +160,7 @@ private:
       const CellIdDensityMap& cell_id_density_map,
       const Teuchos::RCP<AtomicRelaxationModelFactory>&
       atomic_relaxation_model_factory,
-      const unsigned hash_grid_bins,
-      const BremsstrahlungAngularDistributionType photon_distribution_function,
-      const bool use_atomic_relaxation_data,
-      const double cutoff_angle_cosine );
+      const SimulationProperties& properties );
 
 
   //! Create the material name data maps
@@ -178,8 +183,7 @@ private:
        const std::unordered_map<std::string,Teuchos::RCP<const MaterialType> >&
        material_name_pointer_map,
        const MatNameCellIdsMap& material_name_cell_ids_map );
-             
-
+  
   // Copy constructor
   CollisionHandlerFactory( const CollisionHandlerFactory& copy );
 
