@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Nuclide.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
 namespace MonteCarlo{
@@ -33,9 +34,8 @@ public:
 			 const unsigned isomer_number,
 			 const double atomic_weight_ratio,
 			 const double temperature,
-			 Teuchos::RCP<Nuclide>& nuclide,
-			 const bool use_unresolved_resonance_data,
-			 const bool use_photon_production_data );
+                         const SimulationProperties& properties,
+			 Teuchos::RCP<Nuclide>& nuclide );
 
 private:
 

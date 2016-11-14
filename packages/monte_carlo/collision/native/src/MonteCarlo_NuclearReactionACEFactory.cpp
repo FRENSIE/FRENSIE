@@ -37,6 +37,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 		 const double atomic_weight_ratio,
 		 const double temperature,
 		 const Teuchos::ArrayRCP<const double>& energy_grid,
+                 const SimulationProperties& properties,
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data )
 {
   // Create the scattering distribution factory
@@ -152,30 +153,34 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
   }
 
   // Create the nuclear reactions
-  initializeScatteringReactions( temperature,
-				 energy_grid,
-				 reaction_q_value,
-				 reaction_multiplicity,
-				 reaction_energy_dependent_multiplicity,
-				 reaction_threshold_index,
-				 reaction_cross_section,
-				 scattering_dist_factory );
-  initializeAbsorptionReactions( temperature,
-				 energy_grid,
-				 reaction_q_value,
-				 reaction_multiplicity,
-				 reaction_energy_dependent_multiplicity,
-				 reaction_threshold_index,
-				 reaction_cross_section );
-  initializeFissionReactions( temperature,
-			      energy_grid,
-			      reaction_q_value,
-			      reaction_multiplicity,
-			      reaction_threshold_index,
-			      reaction_cross_section,
-			      scattering_dist_factory,
-			      fission_neutron_multiplicity_dist,
-			      delayed_neutron_emission_dist );
+  this->initializeScatteringReactions( temperature,
+                                       energy_grid,
+                                       properties,
+                                       reaction_q_value,
+                                       reaction_multiplicity,
+                                       reaction_energy_dependent_multiplicity,
+                                       reaction_threshold_index,
+                                       reaction_cross_section,
+                                       scattering_dist_factory );
+  
+  this->initializeAbsorptionReactions( temperature,
+                                       energy_grid,
+                                       reaction_q_value,
+                                       reaction_multiplicity,
+                                       reaction_energy_dependent_multiplicity,
+                                       reaction_threshold_index,
+                                       reaction_cross_section );
+  
+  this->initializeFissionReactions( temperature,
+                                    energy_grid,
+                                    properties,
+                                    reaction_q_value,
+                                    reaction_multiplicity,
+                                    reaction_threshold_index,
+                                    reaction_cross_section,
+                                    scattering_dist_factory,
+                                    fission_neutron_multiplicity_dist,
+                                    delayed_neutron_emission_dist );
 }
 
 // Create the scattering reactions
@@ -425,6 +430,7 @@ void NuclearReactionACEFactory::getReactionFromReactionType(
 void NuclearReactionACEFactory::initializeScatteringReactions(
     const double temperature,
     const Teuchos::ArrayRCP<const double> energy_grid,
+    const SimulationProperties& properties,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
@@ -467,6 +473,7 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
 
       scattering_dist_factory.createScatteringDistribution(
 						     reaction_type,
+                                                     properties,
 						     scattering_distribution );
 
       reaction.reset( new NeutronScatteringReaction(
@@ -489,6 +496,7 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
 
       scattering_dist_factory.createScatteringDistribution(
 						   reaction_type,
+                                                   properties,
 						   scattering_distribution );
 
       const Teuchos::ArrayView<const double>& raw_multiplicity_array =
@@ -566,6 +574,7 @@ void NuclearReactionACEFactory::initializeAbsorptionReactions(
 void NuclearReactionACEFactory::initializeFissionReactions(
     const double temperature,
     const Teuchos::ArrayRCP<const double> energy_grid,
+    const SimulationProperties& properties,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
@@ -607,6 +616,7 @@ void NuclearReactionACEFactory::initializeFissionReactions(
 
       scattering_dist_factory.createScatteringDistribution(
 					reaction_type,
+                                        properties,
 					prompt_neutron_emission_distribution );
 
       Teuchos::RCP<NuclearReaction>& reaction =

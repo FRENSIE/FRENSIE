@@ -73,7 +73,8 @@ public:
   //! Create the scattering distribution
   void createScatteringDistribution(
 			  const unsigned reaction_type,
-			  Teuchos::RCP<DistributionType>& distribution ) const;
+                          const SimulationProperties& properties,
+                          Teuchos::RCP<DistributionType>& distribution ) const;
 
 protected:
 

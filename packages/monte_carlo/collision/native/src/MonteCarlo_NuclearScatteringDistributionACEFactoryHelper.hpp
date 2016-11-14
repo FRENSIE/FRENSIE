@@ -92,6 +92,7 @@ public:
 		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
+                      const double free_gas_threshold,
                       const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		      angular_distribution );
 

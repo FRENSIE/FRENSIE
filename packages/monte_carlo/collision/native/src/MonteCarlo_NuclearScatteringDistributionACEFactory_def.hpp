@@ -181,6 +181,7 @@ template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::createScatteringDistribution(
 			   const unsigned reaction_type,
+                           const SimulationProperties& properties,
 			   Teuchos::RCP<DistributionType>& distribution ) const
 {
   // Make sure the reaction type has a scattering distribution (mult > 0)
@@ -212,11 +213,12 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     if( this->isElasticScatteringImplicit() && reaction_type == 2 )
     {
       this->createElasticScatteringDistribution(
-		       distribution,
-		       d_table_name,
-		       d_reaction_cm_scattering.find( reaction_type )->second,
-		       d_atomic_weight_ratio,
-		       angular_distribution );
+		        distribution,
+                        d_table_name,
+		        d_reaction_cm_scattering.find( reaction_type )->second,
+                        d_atomic_weight_ratio,
+                        properties.getFreeGasThreshold(),
+                        angular_distribution );
 
     }
     // Create all other scattering distributions using the energy dist factory
@@ -229,8 +231,8 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
        	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
        	      d_table_name,
        	      reaction_type,
-	            energy_distribution,
-	            d_atomic_weight_ratio );
+              energy_distribution,
+              d_atomic_weight_ratio );
 
       // Test that law 3 distributions are always in the CM system
       if( energy_distribution->getLaw() == 3 )
@@ -276,24 +278,24 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     if( acelaw == 44 )
     {
       NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
-                d_atomic_weight_ratio,
-       	        d_reaction_energy_dist.find( reaction_type )->second,
-       	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
-	              d_table_name,
-       	        reaction_type,
-	              d_reaction_cm_scattering.find( reaction_type )->second,
-       	        distribution );
+              d_atomic_weight_ratio,
+              d_reaction_energy_dist.find( reaction_type )->second,
+              d_reaction_energy_dist_start_index.find( reaction_type )->second,
+              d_table_name,
+              reaction_type,
+              d_reaction_cm_scattering.find( reaction_type )->second,
+              distribution );
     }
     else if( acelaw == 61 )
     {
       NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
-                d_atomic_weight_ratio,
-       	        d_reaction_energy_dist.find( reaction_type )->second,
-       	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
-	              d_table_name,
-       	        reaction_type,
-	              d_reaction_cm_scattering.find( reaction_type )->second,
-       	        distribution );
+              d_atomic_weight_ratio,
+              d_reaction_energy_dist.find( reaction_type )->second,
+              d_reaction_energy_dist_start_index.find( reaction_type )->second,
+              d_table_name,
+              reaction_type,
+              d_reaction_cm_scattering.find( reaction_type )->second,
+              distribution );
     }
     else
     {

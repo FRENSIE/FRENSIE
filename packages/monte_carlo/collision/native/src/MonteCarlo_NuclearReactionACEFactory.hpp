@@ -18,6 +18,7 @@
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
+#include "MonteCarlo_SimulationNeutronProperties.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
 namespace MonteCarlo{
@@ -39,6 +40,7 @@ public:
 		 const double atomic_weight_ratio,
 		 const double temperature,
 		 const Teuchos::ArrayRCP<const double>& energy_grid,
+                 const SimulationProperties& properties,
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data );
 
   //! Destructor
@@ -112,6 +114,7 @@ private:
   void initializeScatteringReactions(
     const double temperature,
     const Teuchos::ArrayRCP<const double> energy_grid,
+    const SimulationProperties& properties,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
@@ -141,6 +144,7 @@ private:
   void initializeFissionReactions(
     const double temperature,
     const Teuchos::ArrayRCP<const double> energy_grid,
+    const SimulationProperties& properties,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,

@@ -26,8 +26,7 @@ NuclideFactory::NuclideFactory(
 		     const std::string& cross_sections_xml_directory,
 		     const Teuchos::ParameterList& cross_section_table_info,
 		     const std::unordered_set<std::string>& nuclide_aliases,
-		     const bool use_unresolved_resonance_data,
-		     const bool use_photon_production_data,
+                     const SimiulationProperties& properties,
 		     std::ostream* os_message )
   : d_os_message( os_message )
 {
@@ -71,8 +70,7 @@ NuclideFactory::NuclideFactory(
 				 isomer_number,
 				 atomic_weight_ratio,
 				 temperature,
-				 use_unresolved_resonance_data,
-				 use_photon_production_data );
+                                 properties );
     }
     else
     {
@@ -105,18 +103,17 @@ void NuclideFactory::createNuclideMap(
 
 // Create a nuclide from an ACE table
 void NuclideFactory::createNuclideFromACETable(
-			    const std::string& cross_sections_xml_directory,
-			    const std::string& nuclide_alias,
-			    const std::string& ace_file_path,
-			    const std::string& nuclear_table_name,
-			    const int nuclide_file_start_line,
-			    const int atomic_number,
-			    const int atomic_mass_number,
-			    const int isomer_number,
-			    const double atomic_weight_ratio,
-			    const double temperature,
-			    const bool use_unresolved_resonance_data,
-			    const bool use_photon_production_data )
+			       const std::string& cross_sections_xml_directory,
+                               const std::string& nuclide_alias,
+                               const std::string& ace_file_path,
+                               const std::string& nuclear_table_name,
+                               const int nuclide_file_start_line,
+                               const int atomic_number,
+                               const int atomic_mass_number,
+                               const int isomer_number,
+                               const double atomic_weight_ratio,
+                               const double temperature,
+                               const SimulationProperties& properties )
 {
   // Load the cross section data with the specified format
   *d_os_message << "Loading ACE cross section table "
@@ -145,9 +142,8 @@ void NuclideFactory::createNuclideFromACETable(
 				    isomer_number,
 				    atomic_weight_ratio,
 				    temperature,
-				    nuclide,
-				    use_unresolved_resonance_data,
-				    use_photon_production_data );
+                                    properties,
+				    nuclide );
 
   *d_os_message << "done." << std::endl;
 }
