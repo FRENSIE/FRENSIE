@@ -90,6 +90,14 @@ public:
   void populateEPRDataContainer(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
+  //! Repopulate the electron elastic data
+  static void repopulateElectronElasticData(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const double max_electron_energy = 20.0,
+    const double cutoff_angle_cosine = 0.9,
+    const unsigned number_of_moment_preserving_angles = 1,
+    std::ostream& os_log = std::cout );
+
   //! Repopulate the electron moment preserving data
   static void repopulateMomentPreservingData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
@@ -129,15 +137,6 @@ protected:
 
 private:
 
-  // Test if a value is greater than or equal to one
-  static bool greaterThanOrEqualToOne( const double value );
-
-  // Test if a value is greater than one
-  static bool greaterThanOne( const double value );
-
-  // The if a value is not equal to zero
-  static bool notEqualZero( const double value );
-
   // Set the transition data
   void setTransitionData( const unsigned subshell,
 			  const unsigned transitions,
@@ -163,16 +162,6 @@ private:
   // Set the electron cross section union energy grid
   void setElectronCrossSectionsData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
-
-//  // Set the screened rutherford data
-//  void setScreenedRutherfordData(
-//    const std::shared_ptr<const Utility::OneDDistribution>&
-//        cutoff_elastic_cross_section,
-//    const std::shared_ptr<const Utility::OneDDistribution>&
-//        total_elastic_cross_section,
-//    const std::vector<double>& elastic_energy_grid,
-//    const std::map<double,std::vector<double> >& elastic_pdf,
-//    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the moment preserving data
   static void setMomentPreservingData(
@@ -320,29 +309,6 @@ private:
   // The number of moment preserving angles
   unsigned d_number_of_moment_preserving_angles;
 };
-
-// Test if a value is greater than or equal to one
-inline bool
-StandardElectronPhotonRelaxationDataGenerator::greaterThanOrEqualToOne(
-							   const double value )
-{
-  return value >= 1.0;
-}
-
-// Test if a value is greater than one
-inline bool
-StandardElectronPhotonRelaxationDataGenerator::greaterThanOne(
-							   const double value )
-{
-  return value > 1.0;
-}
-
-// The if a value is not equal to zero
-inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
-							   const double value )
-{
-  return value != 0.0;
-}
 
 } // end DataGen namespace
 

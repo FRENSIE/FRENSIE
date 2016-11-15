@@ -259,12 +259,6 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffMoment(
   // Get the cutoff cross section
   Utility::long_float cutoff_cross_section =
     d_cutoff_reaction->getCrossSection( energy );
-//    MonteCarlo::getCrossSection<Utility::LinLin>(
-//        energy,
-//        d_incoming_energy_grid,
-//        d_cutoff_cross_section,
-//        d_cutoff_threshold_energy_index,
-//        d_grid_searcher );
 
   cutoff_moment *= cutoff_cross_section;
 }
@@ -531,12 +525,6 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
   evaluateScreenedRutherfordPDFMoment( rutherford_moment, energy, n);
 
   rutherford_moment *= d_screened_rutherford_reaction->getCrossSection( energy );
-//    MonteCarlo::getCrossSection<Utility::LinLin>(
-//        energy,
-//        d_incoming_energy_grid,
-//        d_screened_rutherford_cross_section,
-//        d_screened_rutherford_threshold_energy_index,
-//        d_grid_searcher );
 }
 
 // Return the angular integration points

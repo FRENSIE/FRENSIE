@@ -267,6 +267,73 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
 
 }
 
+// Repopulate the electron elastic data
+void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const double max_electron_energy,
+    const double cutoff_angle_cosine,
+    const unsigned number_of_moment_preserving_angles,
+    std::ostream& os_log )
+{
+  testPrecondition( max_electron_energy > 0.0 );
+
+  // Get the elastic angular energy grid
+  std::vector<double> angular_energy_grid(
+    data_container.getElasticAngularEnergyGrid() );
+
+  if( max_electron_energy != angular_energy_grid.back() )
+  {
+    // Get the elastic cutoff data
+    std::map<double,std::vector<double> > elastic_pdf(
+      data_container.getCutoffElasticPDF() );
+    std::map<double,std::vector<double> > elastic_angle(
+      data_container.getCutoffElasticAngles() );
+
+    // Get the upper boundary of the max energy
+    std::vector<double>::iterator energy_bin = 
+      Utility::Search::binaryUpperBound( angular_energy_grid.begin(),
+                                         angular_energy_grid.end(),
+                                         max_electron_energy );
+
+    if( *energy_bin != max_electron_energy )
+    {
+      std::vector<double> angles, pdf;
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+          angles,
+          pdf,
+          elastic_angle,
+          elastic_pdf,
+          max_electron_energy );
+
+      elastic_angle[max_electron_energy] = angles;
+      elastic_pdf[max_electron_energy] = pdf;
+    }
+
+    // Set new angular energy grid
+    std::vector<double> new_energy_grid( angular_energy_grid.begin(), energy_bin );
+    new_energy_grid.push_back( max_electron_energy );
+
+    // Erase all distributions above the max electron energy
+    for( energy_bin; energy_bin != angular_energy_grid.end(); energy_bin++ )
+    {
+      elastic_angle.erase( *energy_bin );
+      elastic_pdf.erase( *energy_bin );
+    }
+
+    // Set the elastic cutoff data
+    data_container.setElasticAngularEnergyGrid( new_energy_grid );
+    data_container.setCutoffElasticPDF( elastic_pdf );
+    data_container.setCutoffElasticAngles( elastic_angle );
+  }
+  
+  // Repopulate moment preserving data
+  StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+    data_container,
+    cutoff_angle_cosine,
+    number_of_moment_preserving_angles,
+    os_log );
+}
+
 // Repopulate the electron moment preserving data
 void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
@@ -274,6 +341,10 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
     const unsigned number_of_moment_preserving_angles,
     std::ostream& os_log )
 {
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+  testPrecondition( cutoff_angle_cosine > -1.0 );
+  testPrecondition( number_of_moment_preserving_angles >= 0 );
+
   data_container.setCutoffAngleCosine( cutoff_angle_cosine );
   data_container.setNumberOfMomentPreservingAngles( 
     number_of_moment_preserving_angles );
@@ -285,6 +356,9 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
          << Utility::Bold( "Setting the moment preserving electron data" )
          << "...";
   os_log.flush();
+
+  // Clear the old moment preservinf data
+  data_container.clearMomentPreservingData();
 
   // Check if moment preserving data can be generated
   if ( cutoff_angle_cosine > 0.999999 ||
@@ -310,15 +384,12 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
              << "        number of moment preserving angles is less "
              << "than 1." << std::endl;
     }
-
-    // Clear the old moment preservinf data
-    data_container.clearMomentPreservingData();
   }
   // Set the moment preserving data
   else
   {
-    StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData( 
-      angular_energy_grid, 
+    StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
+      angular_energy_grid,
       data_container );
     os_log << Utility::BoldGreen( "done." ) << std::endl;
   }
@@ -1183,7 +1254,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
 //---------------------------------------------------------------------------//
 // Set Electron Cross Section Data Data
 //---------------------------------------------------------------------------//
-/*! \details The cross section data is needed for caluculating the 
+/*! \details The cross section data is needed for caluculating the
  *  moment preserving data and must be set first.
  */
   (*d_os_log) << " Setting the electron cross section data:" << std::endl;
@@ -1203,15 +1274,19 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   std::vector<double> angular_energy_grid(
     d_endl_data_container->getCutoffElasticAngularEnergyGrid() );
 
-  data_container.setElasticAngularEnergyGrid( angular_energy_grid );
-
   /* ENDL gives the angular distribution in terms of the change in angle cosine
    * (delta_angle_cosine = 1 - angle_cosine). For the native format it needs to
    * be in terms of angle_cosine. This for loop flips the distribution and
    * changes the variables to angle_cosine.
    */
   std::vector<double>::iterator energy = angular_energy_grid.begin();
-  for ( energy; energy != angular_energy_grid.end(); energy++ )
+  std::vector<double>::iterator end_energy = 
+    Utility::Search::binaryUpperBound( energy,
+                                       angular_energy_grid.end(),
+                                       this->getMaxElectronEnergy() );
+  end_energy++;
+
+  for ( energy; energy != end_energy; energy++ )
   {
     calculateElasticAngleCosine(
         d_endl_data_container->getCutoffElasticAnglesAtEnergy( *energy ),
@@ -1220,6 +1295,29 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
         elastic_pdf[*energy] );
   }
 
+  end_energy--;
+  if( *end_energy != this->getMaxElectronEnergy() )
+  {
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+        elastic_angle[this->getMaxElectronEnergy()],
+        elastic_pdf[this->getMaxElectronEnergy()] ,
+        elastic_angle,
+        elastic_pdf,
+        this->getMaxElectronEnergy() );
+
+    elastic_angle.erase( *end_energy );
+    elastic_pdf.erase( *end_energy );
+  }
+
+  // Set new angular energy grid
+  while( angular_energy_grid.back() >= this->getMaxElectronEnergy() )
+  {
+    angular_energy_grid.pop_back();
+  }
+  angular_energy_grid.push_back( this->getMaxElectronEnergy() );
+
+  // Set the elastic cutoff data
+  data_container.setElasticAngularEnergyGrid( angular_energy_grid );
   data_container.setCutoffElasticPDF( elastic_pdf );
   data_container.setCutoffElasticAngles( elastic_angle );
 
@@ -1664,19 +1762,6 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   }
 }
 
-//// Set the screened rutherford data
-//void StandardElectronPhotonRelaxationDataGenerator::setScreenedRutherfordData(
-//    const std::shared_ptr<const Utility::OneDDistribution>&
-//        cutoff_elastic_cross_section,
-//    const std::shared_ptr<const Utility::OneDDistribution>&
-//        total_elastic_cross_section,
-//    const std::vector<double>& angular_energy_grid,
-//    const std::map<double,std::vector<double> >& elastic_pdf,
-//    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
-//{
-
-//}
-
 // Set the moment preserving data
 void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
     const std::vector<double>& angular_energy_grid,
@@ -1700,8 +1785,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-						     energy_grid,
-						     100u ) );
+             energy_grid,
+             100u ) );
 
   // Construct the cutoff reaction
   Teuchos::ArrayRCP<double> cutoff_cross_section;
@@ -1756,7 +1841,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   // Generate a cross section reduction distribution
   std::shared_ptr<const Utility::OneDDistribution> reduction_distribution(
-    new Utility::TabularDistribution<Utility::LinLin>(
+    new Utility::TabularDistribution<Utility::LinLog>(
         angular_energy_grid,
         cross_section_reduction ) );
 
@@ -2438,6 +2523,13 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeig
 }
 
 // Generate elastic moment preserving cross section
+/*! \details The analog elastic distributions and elastic cross sections are on
+ *  different energy grids. To evaluate the moment preserving cross sections
+ *  reduction values will have to be interpolated on the course analog energy
+ *  grid. The analog distribution may be on a smaller energy grid, in which case
+ *  the moment preserving cross section would be evaluated as zero outside the
+ *  analog energy grid range.
+ */
 void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCrossSection(
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
     const Teuchos::ArrayRCP<const double>& cutoff_cross_sections,
@@ -2450,11 +2542,14 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCros
     const double cutoff_angle_cosine,
     std::vector<double>& moment_preserving_cross_section )
 {
-  moment_preserving_cross_section.resize( electron_energy_grid.size() );
+  // Get the max energy of the distributions
+  double max_energy = reduction_distribution->getUpperBoundOfIndepVar();
+
+  moment_preserving_cross_section.resize( cutoff_cross_sections.size() );
 
   unsigned begin = cutoff_threshold_energy_index;
 
-  for( unsigned i = begin; i < electron_energy_grid.size(); i++ )
+  for( unsigned i = begin; i < cutoff_cross_sections.size(); i++ )
   {
     double cutoff_cdf = analog_distribution->evaluateCDF(
         electron_energy_grid[i],

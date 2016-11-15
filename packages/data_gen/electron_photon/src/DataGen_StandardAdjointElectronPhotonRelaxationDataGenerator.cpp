@@ -1738,8 +1738,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   // Bind the distribution
   boost::function<double (double pz)> atomic_excitation_grid_function =
     boost::bind( &Utility::OneDDistribution::evaluate,
-  		                   boost::cref( *adjoint_excitation_cross_section ),
-  		                   _1 );
+                 boost::cref( *adjoint_excitation_cross_section ),
+                 _1 );
 
   // Generate atomic excitation (don't generate new grid points above the last grid point)
   union_energy_grid_generator.refineInPlace( 

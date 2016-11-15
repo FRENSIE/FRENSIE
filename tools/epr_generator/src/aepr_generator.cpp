@@ -767,23 +767,25 @@ int main( int argc, char** argv )
   int atomic_number;
   
   {
-    std::string temp_forward_file_name = "epr_native_temp.xml";
+  // Export the temp data to an XML file
+  std::string temp_forward_file_name = "epr_native_temp.xml";
 
-    // Recalculate the moment preserving data with the desired parameters
+    // Recalculate the elastic electron data with the desired parameters
     {
       Data::ElectronPhotonRelaxationVolatileDataContainer temp_data_container(
             data_file_path,
             Utility::ArchivableObject::XML_ARCHIVE );
       
       try{
-        DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+        DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
           temp_data_container,
+          max_electron_energy,
           cutoff_angle_cosine,
           number_of_moment_preserving_angles );
       }
       EXCEPTION_CATCH_AND_EXIT( std::exception,
-                                "Error: Unable to repopulate the moment "
-                                "preserving data!" );
+                                "Error: Unable to repopulate the elastic "
+                                "electron data!" );
 
       temp_data_container.exportData( temp_forward_file_name,
                                       Utility::ArchivableObject::XML_ARCHIVE );
@@ -848,7 +850,7 @@ int main( int argc, char** argv )
 
     const char *cstr = temp_forward_file_name.c_str();
 
-//    std::remove( cstr );
+    std::remove( cstr );
   }
 
   // Export the generated data to an XML file
