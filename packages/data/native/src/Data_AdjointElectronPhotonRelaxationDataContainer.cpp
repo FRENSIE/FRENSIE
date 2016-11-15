@@ -1317,7 +1317,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setSubshells(
 {
   // Make sure the subshells are valid
   testPrecondition( subshells.size() > 0 );
-  testPreconditionValuesGreaterThanOrEqualToZero( subshells );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( subshells ) );
 
   d_subshells = subshells;
 }
@@ -1379,7 +1379,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setComptonProfile(
   // Make sure the compton_profile is valid
   testPrecondition( compton_profile.size() ==
 		    d_compton_profile_momentum_grids.find( subshell )->second.size() );
-  testPreconditionValuesGreaterThanZero( compton_profile );
+  testPrecondition( ValuesGreaterThanZero( compton_profile ) );
 
   d_compton_profiles[subshell] = compton_profile;
 }
@@ -1425,7 +1425,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFun
   testPrecondition( momentum_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( momentum_grid.begin(),
 						      momentum_grid.end() ) );
-  testPreconditionValuesGreaterThanOrEqualToZero( momentum_grid );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( momentum_grid ) );
 
   d_waller_hartree_scattering_function_momentum_grid = momentum_grid;
 }
@@ -1451,7 +1451,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFac
   testPrecondition( momentum_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( momentum_grid.begin(),
 						      momentum_grid.end() ) );
-  testPreconditionValuesGreaterThanOrEqualToZero( momentum_grid );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( momentum_grid ) );
 
   d_waller_hartree_atomic_form_factor_momentum_grid = momentum_grid;
 }
@@ -1481,7 +1481,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomic
   testPrecondition( Utility::Sort::isSortedAscending(
                                                squared_momentum_grid.begin(),
 					       squared_momentum_grid.end() ) );
-  testPreconditionValuesGreaterThanOrEqualToZero( squared_momentum_grid );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( squared_momentum_grid ) );
 
   d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid =
     squared_momentum_grid;
@@ -1510,7 +1510,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPhotonEnergyGrid(
                                        const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( energy_grid );
+  testPrecondition( EnergyGridValid( energy_grid ) );
 
   d_adjoint_photon_energy_grid = energy_grid;
 }
@@ -1606,7 +1606,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointWallerHartreeCohere
   // Make sure the coherent cross section is valid
   testPrecondition( coherent_cross_section.size() ==
 		    d_adjoint_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( coherent_cross_section );
+  testPrecondition( ValuesGreaterThanZero( coherent_cross_section ) );
 
   d_waller_hartree_coherent_cross_section = coherent_cross_section;
 }
@@ -1670,7 +1670,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSec
   // Make sure the total cross section is valid
   testPrecondition( total_cross_section.size() ==
                     d_adjoint_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( total_cross_section );
+  testPrecondition( ValuesGreaterThanZero( total_cross_section ) );
 
   d_waller_hartree_total_cross_section = total_cross_section;
 }
@@ -1682,7 +1682,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSec
   // Make sure the total cross section is valid
   testPrecondition( total_cross_section.size() ==
                     d_adjoint_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( total_cross_section );
+  testPrecondition( ValuesGreaterThanZero( total_cross_section ) );
 
   d_impulse_approx_total_cross_section = total_cross_section;
 }
@@ -1692,7 +1692,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnerg
           const std::vector<double>& adjoint_pair_production_energy_dist_grid )
 {
   // Make sure the energy distribution grid is valid
-  testPreconditionEnergyGrid( adjoint_pair_production_energy_dist_grid );
+  testPrecondition( EnergyGridValid( adjoint_pair_production_energy_dist_grid ) );
 
   d_adjoint_pair_production_energy_distribution_grid =
     adjoint_pair_production_energy_dist_grid;
@@ -1716,8 +1716,8 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPairProductionEnerg
                           adjoint_pair_production_energy_dist_norm_const_grid )
 {
   // Make sure the energy distribution grid is valid
-  testPreconditionEnergyGrid(
-                         adjoint_pair_production_energy_dist_norm_const_grid );
+  testPrecondition( EnergyGridValid(
+                         adjoint_pair_production_energy_dist_norm_const_grid ) );
   
   d_adjoint_pair_production_norm_constant_grid =
     adjoint_pair_production_energy_dist_norm_const_grid;
@@ -1744,7 +1744,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEn
        const std::vector<double>& adjoint_triplet_production_energy_dist_grid )
 {
   // Make sure the energy distribution grid is valid
-  testPreconditionEnergyGrid( adjoint_triplet_production_energy_dist_grid );
+  testPrecondition( EnergyGridValid( adjoint_triplet_production_energy_dist_grid ) );
 
   d_adjoint_triplet_production_energy_distribution_grid =
     adjoint_triplet_production_energy_dist_grid;
@@ -1769,8 +1769,8 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointTripletProductionEn
                        adjoint_triplet_production_energy_dist_norm_const_grid )
 {
   // Make sure the energy distribution grid is valid
-  testPreconditionEnergyGrid(
-                      adjoint_triplet_production_energy_dist_norm_const_grid );
+  testPrecondition( EnergyGridValid(
+                      adjoint_triplet_production_energy_dist_norm_const_grid ) );
   
   d_adjoint_triplet_production_norm_constant_grid =
     adjoint_triplet_production_energy_dist_norm_const_grid;
@@ -1797,7 +1797,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPhotonBremsstrahlun
 				       const std::vector<double>& adjoint_bremsstrahlung_energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( adjoint_bremsstrahlung_energy_grid );
+  testPrecondition( EnergyGridValid( adjoint_bremsstrahlung_energy_grid ) );
 
   d_adjoint_photon_bremsstrahlung_energy_grid = adjoint_bremsstrahlung_energy_grid;
 }
@@ -1811,7 +1811,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPhotonBremsstrahlun
   testPrecondition( incoming_adjoint_energy >= d_adjoint_photon_bremsstrahlung_energy_grid.front() );
   testPrecondition( incoming_adjoint_energy <= d_adjoint_photon_bremsstrahlung_energy_grid.back() );
   // Make sure the bremsstrahlung photon energies are valid
-  testPreconditionValuesGreaterThanZero( adjoint_photon_bremsstrahlung_energy );
+  testPrecondition( ValuesGreaterThanZero( adjoint_photon_bremsstrahlung_energy ) );
 
   d_adjoint_photon_bremsstrahlung_energy[incoming_adjoint_energy] =
     adjoint_photon_bremsstrahlung_energy;
@@ -1826,7 +1826,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPhotonBremsstrahlun
   testPrecondition( incoming_adjoint_energy >= d_adjoint_photon_bremsstrahlung_energy_grid.front() );
   testPrecondition( incoming_adjoint_energy <= d_adjoint_photon_bremsstrahlung_energy_grid.back() );
   // Make sure the pdf is valid
-  testPreconditionValuesGreaterThanZero( adjoint_photon_bremsstrahlung_pdf );
+  testPrecondition( ValuesGreaterThanZero( adjoint_photon_bremsstrahlung_pdf ) );
 
   d_adjoint_photon_bremsstrahlung_pdf[incoming_adjoint_energy] =
     adjoint_photon_bremsstrahlung_pdf;
@@ -1853,7 +1853,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungPhoto
   // Make sure the bremsstrahlung cross section is valid
   testPrecondition( adjoint_bremsstrahlung_cross_section.size() <=
                     d_adjoint_photon_energy_grid.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero( adjoint_bremsstrahlung_cross_section );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( adjoint_bremsstrahlung_cross_section ) );
 
   d_adjoint_bremsstrahlung_photon_cross_section = adjoint_bremsstrahlung_cross_section;
 }
@@ -1884,7 +1884,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElasticAngularEnerg
         Utility::Sort::isSortedAscending( adjoint_angular_energy_grid.begin(),
 			                              adjoint_angular_energy_grid.end() ) );
 
-  testPreconditionValuesGreaterThanZero( adjoint_angular_energy_grid );
+  testPrecondition( ValuesGreaterThanZero( adjoint_angular_energy_grid ) );
 
   d_adjoint_angular_energy_grid = adjoint_angular_energy_grid;
 }
@@ -1919,7 +1919,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointCutoffElasticPDFAtE
   testPrecondition( incoming_adjoint_energy >= d_adjoint_angular_energy_grid.front() );
   testPrecondition( incoming_adjoint_energy <= d_adjoint_angular_energy_grid.back() );
   // Make sure the weight is valid
-  testPreconditionValuesGreaterThanZero( adjoint_cutoff_elastic_pdf );
+  testPrecondition( ValuesGreaterThanZero( adjoint_cutoff_elastic_pdf ) );
 
   d_adjoint_cutoff_elastic_pdf[incoming_adjoint_energy] = adjoint_cutoff_elastic_pdf;
 }
@@ -1970,9 +1970,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingEla
   testPrecondition( incoming_adjoint_energy >= d_adjoint_angular_energy_grid.front() );
   testPrecondition( incoming_adjoint_energy <= d_adjoint_angular_energy_grid.back() );
   // Make sure the weight is valid
-  /*testPrecondition( adjoint_moment_preserving_elastic_weights.size() ==
-               d_adjoint_number_of_discrete_angles.find( incoming_adjoint_energy )->second );*/
-  testPreconditionValuesGreaterThanZero( adjoint_moment_preserving_elastic_weights );
+  testPrecondition( ValuesGreaterThanZero( adjoint_moment_preserving_elastic_weights ) );
   testPrecondition( std::find_if( adjoint_moment_preserving_elastic_weights.begin(),
                                   adjoint_moment_preserving_elastic_weights.end(),
                                   isValueGreaterThanOne ) ==
@@ -2004,7 +2002,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationEn
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  testPreconditionEnergyGrid( adjoint_electroionization_energy_grid );
+  testPrecondition( EnergyGridValid( adjoint_electroionization_energy_grid ) );
 
   d_adjoint_electroionization_energy_grid[subshell] =
     adjoint_electroionization_energy_grid;
@@ -2030,7 +2028,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_energy_grid.back() );
   }
   // Make sure the electroionization recoil energy is valid
-  testPreconditionValuesGreaterThanZero( adjoint_electroionization_recoil_energy );
+  testPrecondition( ValuesGreaterThanZero( adjoint_electroionization_recoil_energy ) );
 
   d_adjoint_electroionization_recoil_energy[subshell][ incoming_adjoint_energy] =
     adjoint_electroionization_recoil_energy;
@@ -2056,7 +2054,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_energy_grid.back() );
   }
   // Make sure the electroionization recoil pdf is valid
-  testPreconditionValuesGreaterThanZero( adjoint_electroionization_recoil_pdf );
+  testPrecondition( ValuesGreaterThanZero( adjoint_electroionization_recoil_pdf ) );
 
   d_adjoint_electroionization_recoil_pdf[subshell][ incoming_adjoint_energy] =
     adjoint_electroionization_recoil_pdf;
@@ -2091,7 +2089,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronBremsstrahl
 				       const std::vector<double>& adjoint_bremsstrahlung_energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( adjoint_bremsstrahlung_energy_grid );
+  testPrecondition( EnergyGridValid( adjoint_bremsstrahlung_energy_grid ) );
 
   d_adjoint_electron_bremsstrahlung_energy_grid = adjoint_bremsstrahlung_energy_grid;
 }
@@ -2113,7 +2111,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronBremsstrahl
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_energy_grid.back() );
   }
   // Make sure the bremsstrahlung photon energies are valid
-  testPreconditionValuesGreaterThanZero( adjoint_electron_bremsstrahlung_energy );
+  testPrecondition( ValuesGreaterThanZero( adjoint_electron_bremsstrahlung_energy ) );
 
   d_adjoint_electron_bremsstrahlung_energy[incoming_adjoint_energy] =
     adjoint_electron_bremsstrahlung_energy;
@@ -2136,7 +2134,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronBremsstrahl
     testPrecondition( incoming_adjoint_energy <= d_adjoint_electron_energy_grid.back() );
   }
   // Make sure the pdf is valid
-  testPreconditionValuesGreaterThanZero( adjoint_electron_bremsstrahlung_pdf );
+  testPrecondition( ValuesGreaterThanZero( adjoint_electron_bremsstrahlung_pdf ) );
 
   d_adjoint_electron_bremsstrahlung_pdf[incoming_adjoint_energy] =
     adjoint_electron_bremsstrahlung_pdf;
@@ -2161,7 +2159,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationEne
     const std::vector<double>& adjoint_atomic_excitation_energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( adjoint_atomic_excitation_energy_grid );
+  testPrecondition( EnergyGridValid( adjoint_atomic_excitation_energy_grid ) );
 
   d_adjoint_atomic_excitation_energy_grid = adjoint_atomic_excitation_energy_grid;
 }
@@ -2171,7 +2169,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationEne
     const std::vector<double>&  adjoint_atomic_excitation_energy_gain )
 {
   // Make sure the atomic excitation energy gain are valid
-  testPreconditionValuesGreaterThanZero( adjoint_atomic_excitation_energy_gain );
+  testPrecondition( ValuesGreaterThanZero( adjoint_atomic_excitation_energy_gain ) );
 
   d_adjoint_atomic_excitation_energy_gain =
     adjoint_atomic_excitation_energy_gain;
@@ -2182,7 +2180,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronEnergyGrid(
     const std::vector<double>& adjoint_energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( adjoint_energy_grid );
+  testPrecondition( EnergyGridValid( adjoint_energy_grid ) );
 
   d_adjoint_electron_energy_grid = adjoint_energy_grid;
 }
@@ -2194,7 +2192,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointCutoffElasticCrossS
   // Make sure the cutoff elastic cross section is valid
   testPrecondition( adjoint_cutoff_elastic_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( adjoint_cutoff_elastic_cross_section );
+  testPrecondition( ValuesGreaterThanZero( adjoint_cutoff_elastic_cross_section ) );
 
   d_adjoint_cutoff_elastic_cross_section = adjoint_cutoff_elastic_cross_section;
 }
@@ -2246,7 +2244,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointTotalElasticCrossSe
   // Make sure the total elastic cross section is valid
   testPrecondition( adjoint_total_elastic_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( adjoint_total_elastic_cross_section );
+  testPrecondition( ValuesGreaterThanZero( adjoint_total_elastic_cross_section ) );
 
   d_adjoint_total_elastic_cross_section = adjoint_total_elastic_cross_section;
 }
@@ -2270,8 +2268,8 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingCro
   // Make sure the moment preserving elastic cross section is valid
   testPrecondition( adjoint_moment_preserving_elastic_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero(
-    adjoint_moment_preserving_elastic_cross_section );
+  testPrecondition( ValuesGreaterThanZero(
+    adjoint_moment_preserving_elastic_cross_section ) );
 
   d_adjoint_moment_preserving_elastic_cross_section =
         adjoint_moment_preserving_elastic_cross_section;
@@ -2299,8 +2297,8 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationCr
   // Make sure the electroionization cross section is valid
   testPrecondition( adjoint_electroionization_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero(
-    adjoint_electroionization_cross_section );
+  testPrecondition( ValuesGreaterThanOrEqualToZero(
+    adjoint_electroionization_cross_section ) );
 
   d_adjoint_electroionization_subshell_cross_section[subshell] =
     adjoint_electroionization_cross_section;
@@ -2329,7 +2327,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungElect
   // Make sure the bremsstrahlung cross section is valid
   testPrecondition( adjoint_bremsstrahlung_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero( adjoint_bremsstrahlung_cross_section );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( adjoint_bremsstrahlung_cross_section ) );
 
   d_adjoint_bremsstrahlung_electron_cross_section = adjoint_bremsstrahlung_cross_section;
 }
@@ -2353,7 +2351,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationCro
   // Make sure the atomic excitation cross section is valid
   testPrecondition( adjoint_atomic_excitation_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero( adjoint_atomic_excitation_cross_section );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( adjoint_atomic_excitation_cross_section ) );
 
   d_adjoint_atomic_excitation_cross_section =
     adjoint_atomic_excitation_cross_section;

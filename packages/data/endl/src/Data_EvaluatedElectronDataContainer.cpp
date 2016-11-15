@@ -424,7 +424,7 @@ void ENDLDataContainer::setElasticEnergyGrid(
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( energy_grid );
+  testPrecondition( EnergyGridValid( energy_grid ) );
 
   d_elastic_energy_grid = energy_grid;
 }
@@ -436,7 +436,7 @@ void ENDLDataContainer::setElasticTransportCrossSection(
   // Make sure the elastic transport cross section is valid
   testPrecondition( elastic_transport_cross_section.size() <=
     d_elastic_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( elastic_transport_cross_section );
+  testPrecondition( ValuesGreaterThanZero( elastic_transport_cross_section ) );
 
   d_elastic_transport_cross_section = elastic_transport_cross_section;
 }
@@ -448,7 +448,7 @@ void ENDLDataContainer::setCutoffElasticCrossSection(
   // Make sure the cutoff elastic cross section is valid
   testPrecondition( cutoff_elastic_cross_section.size() ==
     d_elastic_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( cutoff_elastic_cross_section );
+  testPrecondition( ValuesGreaterThanZero( cutoff_elastic_cross_section ) );
 
   d_cutoff_elastic_cross_section = cutoff_elastic_cross_section;
 }
@@ -458,7 +458,7 @@ void ENDLDataContainer::setCutoffElasticResidualIncidentEnergy(
     const std::vector<double>& residual_incident_energy )
 {
   // Make sure residual incident energy grid is valid
-  testPreconditionEnergyGrid( residual_incident_energy );
+  testPrecondition( EnergyGridValid( residual_incident_energy ) );
 
   d_cutoff_elastic_residual_incident_energy = residual_incident_energy;
 }
@@ -470,7 +470,7 @@ void ENDLDataContainer::setCutoffElasticResidualEnergy(
   // Make sure the cutoff elastic average energy to the residual atom is valid
   testPrecondition( residual_energy.size() ==
                     d_cutoff_elastic_residual_incident_energy.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero( residual_energy );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( residual_energy ) );
 
   d_cutoff_elastic_residual_energy = residual_energy;
 }
@@ -480,7 +480,7 @@ void ENDLDataContainer::setCutoffElasticScatteredElectronIncidentEnergy(
     const std::vector<double>& scattered_electron_incident_energy )
 {
   // Make sure scattered electron energy grid is valid
-  testPreconditionEnergyGrid( scattered_electron_incident_energy );
+  testPrecondition( EnergyGridValid( scattered_electron_incident_energy ) );
 
   d_cutoff_elastic_scattered_electron_incident_energy =
     scattered_electron_incident_energy;
@@ -493,8 +493,8 @@ void ENDLDataContainer::setCutoffElasticScatteredElectronEnergy(
   // Make sure the cutoff elastic average energy of the residual atom is valid
   testPrecondition( scattered_electron_average_energy.size() ==
                     d_cutoff_elastic_scattered_electron_incident_energy.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero(
-    scattered_electron_average_energy );
+  testPrecondition( ValuesGreaterThanOrEqualToZero(
+    scattered_electron_average_energy ) );
 
   d_cutoff_elastic_scattered_electron_energy =
     scattered_electron_average_energy;
@@ -510,7 +510,7 @@ void ENDLDataContainer::setCutoffElasticAngularEnergyGrid(
         Utility::Sort::isSortedAscending( angular_energy_grid.begin(),
 			                              angular_energy_grid.end() ) );
 
-  testPreconditionValuesGreaterThanZero( angular_energy_grid );
+  testPrecondition( ValuesGreaterThanZero( angular_energy_grid ) );
 
   d_cutoff_elastic_angular_energy_grid = angular_energy_grid;
 }
@@ -550,7 +550,7 @@ void ENDLDataContainer::setCutoffElasticPDFAtEnergy(
                     d_cutoff_elastic_angular_energy_grid.back() );
 
   // Make sure the weight is valid
-  testPreconditionValuesGreaterThanZero( cutoff_elastic_pdf );
+  testPrecondition( ValuesGreaterThanZero( cutoff_elastic_pdf ) );
 
   d_cutoff_elastic_pdf[incident_energy] = cutoff_elastic_pdf;
 }
@@ -575,44 +575,10 @@ void ENDLDataContainer::setTotalElasticCrossSection(
   // Make sure the total elastic cross section is valid
   testPrecondition( total_elastic_cross_section.size() <=
     d_elastic_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( total_elastic_cross_section );
+  testPrecondition( ValuesGreaterThanZero( total_elastic_cross_section ) );
 
   d_total_elastic_cross_section = total_elastic_cross_section;
 }
-
-/*
-// Set the screened rutherford elastic electron cross section
-void ENDLDataContainer::setScreenedRutherfordElasticCrossSection(
-			 const std::vector<double>& screened_rutherford_elastic_cross_section )
-{
-  // Make sure the screened rutherford elastic cross section is valid
-  testPrecondition( screened_rutherford_elastic_cross_section.size() <=
-                    d_elastic_energy_grid.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero(
-    screened_rutherford_elastic_cross_section );
-
-  d_screened_rutherford_elastic_cross_section = screened_rutherford_elastic_cross_section;
-}
-
-// Set the screened Rutherford elastic normalization constant
-void ENDLDataContainer::setScreenedRutherfordNormalizationConstant(
-		     const std::vector<double>& screened_rutherford_normalization_constant )
-{
-  // Make sure the screened_rutherford_normalization_constants are valid
-  testPreconditionValuesGreaterThanOrEqualToZero(
-    screened_rutherford_normalization_constant );
-
-  d_screened_rutherford_normalization_constant =
-    screened_rutherford_normalization_constant;
-}
-
-// Set Moliere's screening constant
-void ENDLDataContainer::setMoliereScreeningConstant(
-			 const std::vector<double>& moliere_screening_constant )
-{
-  d_moliere_screening_constant = moliere_screening_constant;
-}
-*/
 
 //---------------------------------------------------------------------------//
 // SET ELECTROIONIZATION DATA
@@ -624,7 +590,7 @@ void ENDLDataContainer::setElectroionizationCrossSectionEnergyGrid(
     const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( energy_grid );
+  testPrecondition( EnergyGridValid( energy_grid ) );
 
   d_electroionization_subshell_cross_section_energy_grid[subshell] =
     energy_grid;
@@ -638,7 +604,7 @@ void ENDLDataContainer::setElectroionizationCrossSection(
   // Make sure the electroionization cross section is valid
   testPrecondition( electroionization_cross_section.size() <=
     d_electroionization_subshell_cross_section_energy_grid[subshell].size() );
-  testPreconditionValuesGreaterThanOrEqualToZero( electroionization_cross_section );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( electroionization_cross_section ) );
 
   d_electroionization_subshell_cross_section[subshell] =
     electroionization_cross_section;
@@ -650,7 +616,7 @@ void ENDLDataContainer::setElectroionizationAverageScatteredElectronIncidentEner
     const std::vector<double>& average_scattered_electron_incident_energy )
 {
   // Make sure the incident energy grid is valid
-  testPreconditionEnergyGrid( average_scattered_electron_incident_energy );
+  testPrecondition( EnergyGridValid( average_scattered_electron_incident_energy ) );
 
   d_electroionization_average_scattered_electron_incident_energy[subshell] =
     average_scattered_electron_incident_energy;
@@ -664,8 +630,8 @@ void ENDLDataContainer::setElectroionizationAverageScatteredElectronEnergy(
   // Make sure the average scattered electron energy is valid
   testPrecondition( average_scattered_electron_energy.size() ==
         d_electroionization_average_scattered_electron_incident_energy[subshell].size() );
-  testPreconditionValuesGreaterThanOrEqualToZero(
-    average_scattered_electron_energy );
+  testPrecondition( ValuesGreaterThanOrEqualToZero(
+    average_scattered_electron_energy ) );
 
   d_electroionization_average_scattered_electron_energy[subshell] =
     average_scattered_electron_energy;
@@ -677,7 +643,7 @@ void ENDLDataContainer::setElectroionizationAverageRecoilElectronIncidentEnergy(
     const std::vector<double>& average_recoil_electron_incident_energy )
 {
   // Make sure the incident energy grid is valid
-  testPreconditionEnergyGrid( average_recoil_electron_incident_energy );
+  testPrecondition( EnergyGridValid( average_recoil_electron_incident_energy ) );
 
   d_electroionization_average_recoil_electron_incident_energy[subshell] =
     average_recoil_electron_incident_energy;
@@ -691,8 +657,8 @@ void ENDLDataContainer::setElectroionizationAverageRecoilElectronEnergy(
   // Make sure the average recoil electron energy is valid
   testPrecondition( average_recoil_electron_energy.size() ==
         d_electroionization_average_recoil_electron_incident_energy[subshell].size() );
-  testPreconditionValuesGreaterThanOrEqualToZero(
-    average_recoil_electron_energy );
+  testPrecondition( ValuesGreaterThanOrEqualToZero(
+    average_recoil_electron_energy ) );
 
   d_electroionization_average_recoil_electron_energy[subshell] =
     average_recoil_electron_energy;
@@ -723,7 +689,7 @@ void ENDLDataContainer::setElectroionizationRecoilEnergyAtIncidentEnergy(
   testPrecondition( incident_energy <=
                     d_electroionization_recoil_energy_grid[subshell].back() );
   // Make sure the electroionization recoil energy is valid
-  testPreconditionValuesGreaterThanZero( electroionization_recoil_energy );
+  testPrecondition( ValuesGreaterThanZero( electroionization_recoil_energy ) );
 
   d_electroionization_recoil_energy[subshell][ incident_energy] =
     electroionization_recoil_energy;
@@ -741,7 +707,7 @@ void ENDLDataContainer::setElectroionizationRecoilPDFAtIncidentEnergy(
   testPrecondition( incident_energy <=
                     d_electroionization_recoil_energy_grid[subshell].back() );
   // Make sure the electroionization recoil pdf is valid
-  testPreconditionValuesGreaterThanZero( electroionization_recoil_pdf );
+  testPrecondition( ValuesGreaterThanZero( electroionization_recoil_pdf ) );
 
   d_electroionization_recoil_pdf[subshell][ incident_energy] =
     electroionization_recoil_pdf;
@@ -774,7 +740,7 @@ void ENDLDataContainer::setBremsstrahlungCrossSectionEnergyGrid(
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( energy_grid );
+  testPrecondition( EnergyGridValid( energy_grid ) );
 
   d_bremsstrahlung_cross_section_energy_grid = energy_grid;
 }
@@ -786,7 +752,7 @@ void ENDLDataContainer::setBremsstrahlungCrossSection(
   // Make sure the bremsstrahlung cross section is valid
   testPrecondition( bremsstrahlung_cross_section.size() <=
                     d_bremsstrahlung_cross_section_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( bremsstrahlung_cross_section );
+  testPrecondition( ValuesGreaterThanZero( bremsstrahlung_cross_section ) );
 
   d_bremsstrahlung_cross_section = bremsstrahlung_cross_section;
 }
@@ -796,7 +762,7 @@ void ENDLDataContainer::setBremsstrahlungAveragePhotonIncidentEnergy(
     const std::vector<double>& bremsstrahlung_average_photon_incident_energy )
 {
   // Make sure the incident energy grid is valid
-  testPreconditionEnergyGrid( bremsstrahlung_average_photon_incident_energy );
+  testPrecondition( EnergyGridValid( bremsstrahlung_average_photon_incident_energy ) );
 
   d_bremsstrahlung_average_photon_incident_energy =
     bremsstrahlung_average_photon_incident_energy;
@@ -809,8 +775,8 @@ void ENDLDataContainer::setBremsstrahlungAveragePhotonEnergy(
   // Make sure the average photon energy is valid
   testPrecondition( bremsstrahlung_average_photon_energy.size() ==
         d_bremsstrahlung_average_photon_incident_energy.size() );
-  testPreconditionValuesGreaterThanZero(
-    bremsstrahlung_average_photon_energy );
+  testPrecondition( ValuesGreaterThanZero(
+    bremsstrahlung_average_photon_energy ) );
 
   d_bremsstrahlung_average_photon_energy = bremsstrahlung_average_photon_energy;
 }
@@ -820,7 +786,7 @@ void ENDLDataContainer::setBremsstrahlungPhotonEnergyGrid(
 				       const std::vector<double>& photon_energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( photon_energy_grid );
+  testPrecondition( EnergyGridValid( photon_energy_grid ) );
 
   d_bremsstrahlung_photon_energy_grid = photon_energy_grid;
 }
@@ -836,7 +802,7 @@ void ENDLDataContainer::setBremsstrahlungPhotonEnergyAtIncidentEnergy(
   testPrecondition( incident_energy <=
                     d_bremsstrahlung_photon_energy_grid.back() );
   // Make sure the bremsstrahlung photon energies are valid
-  testPreconditionValuesGreaterThanZero( bremsstrahlung_photon_energy );
+  testPrecondition( ValuesGreaterThanZero( bremsstrahlung_photon_energy ) );
 
   d_bremsstrahlung_photon_energy[incident_energy] =
     bremsstrahlung_photon_energy;
@@ -853,7 +819,7 @@ void ENDLDataContainer::setBremsstrahlungPhotonPDFAtIncidentEnergy(
   testPrecondition( incident_energy <=
                     d_bremsstrahlung_photon_energy_grid.back() );
   // Make sure the pdf is valid
-  testPreconditionValuesGreaterThanZero( bremsstrahlung_photon_pdf );
+  testPrecondition( ValuesGreaterThanZero( bremsstrahlung_photon_pdf ) );
 
   d_bremsstrahlung_photon_pdf[incident_energy] = bremsstrahlung_photon_pdf;
 }
@@ -877,7 +843,7 @@ void ENDLDataContainer::setBremsstrahlungAverageElectronIncidentEnergy(
     const std::vector<double>& bremsstrahlung_average_electron_incident_energy )
 {
   // Make sure the incident energy grid is valid
-  testPreconditionEnergyGrid( bremsstrahlung_average_electron_incident_energy );
+  testPrecondition( EnergyGridValid( bremsstrahlung_average_electron_incident_energy ) );
 
   d_bremsstrahlung_average_electron_incident_energy =
     bremsstrahlung_average_electron_incident_energy;
@@ -890,8 +856,8 @@ void ENDLDataContainer::setBremsstrahlungAverageElectronEnergy(
   // Make sure the average electron energy is valid
   testPrecondition( bremsstrahlung_average_electron_energy.size() ==
         d_bremsstrahlung_average_electron_incident_energy.size() );
-  testPreconditionValuesGreaterThanZero(
-    bremsstrahlung_average_electron_energy );
+  testPrecondition( ValuesGreaterThanZero(
+    bremsstrahlung_average_electron_energy ) );
 
   d_bremsstrahlung_average_electron_energy =
     bremsstrahlung_average_electron_energy;
@@ -906,7 +872,7 @@ void ENDLDataContainer::setAtomicExcitationEnergyGrid(
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( energy_grid );
+  testPrecondition( EnergyGridValid( energy_grid ) );
 
   d_atomic_excitation_energy_grid = energy_grid;
 }
@@ -919,7 +885,7 @@ void ENDLDataContainer::setAtomicExcitationCrossSection(
   // Make sure the atomic excitation cross section is valid
   testPrecondition( atomic_excitation_cross_section.size() <=
                     d_atomic_excitation_energy_grid.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero( atomic_excitation_cross_section );
+  testPrecondition( ValuesGreaterThanOrEqualToZero( atomic_excitation_cross_section ) );
 
   d_atomic_excitation_cross_section = atomic_excitation_cross_section;
 }
@@ -931,7 +897,7 @@ void ENDLDataContainer::setAtomicExcitationEnergyLoss(
   // Make sure the atomic excitation energy loss are valid
   testPrecondition( atomic_excitation_energy_loss.size() <=
                     d_atomic_excitation_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( atomic_excitation_energy_loss );
+  testPrecondition( ValuesGreaterThanZero( atomic_excitation_energy_loss ) );
 
   d_atomic_excitation_energy_loss =
     atomic_excitation_energy_loss;

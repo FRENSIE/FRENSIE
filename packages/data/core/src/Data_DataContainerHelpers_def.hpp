@@ -14,35 +14,30 @@ namespace Data{
 
 // Test preconditions for energy grids
 template<typename Array>
-inline void testPreconditionEnergyGrid(
-    const Array& energy_grid )
+inline bool EnergyGridValid( const Array& energy_grid )
 {
-  testPrecondition( energy_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						                              energy_grid.end() ) );
-  testPrecondition( energy_grid.front() > 0.0 );
+  return( energy_grid.size() > 1 &&
+          Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                            energy_grid.end() ) &&
+          energy_grid.front() > 0.0 );
 }
 
 // Test preconditions for values in array greater than zero
 template<typename Array>
-inline void testPreconditionValuesGreaterThanZero(
-    const Array& values )
+inline bool ValuesGreaterThanZero( const Array& values )
 {
-  testPrecondition( std::find_if( values.begin(),
-                                  values.end(),
-                                  isValueLessThanOrEqualToZero ) ==
-                    values.end() );
+  return std::find_if( values.begin(),
+                       values.end(),
+                       isValueLessThanOrEqualToZero ) == values.end();
 }
 
 // Test preconditions for values in array greater than zero
 template<typename Array>
-inline void testPreconditionValuesGreaterThanOrEqualToZero(
-    const Array& values )
+inline bool ValuesGreaterThanOrEqualToZero( const Array& values )
 {
-  testPrecondition( std::find_if( values.begin(),
-                                  values.end(),
-                                  isValueLessThanZero ) ==
-                    values.end() );
+  return std::find_if( values.begin(),
+                       values.end(),
+                       isValueLessThanZero ) == values.end() );
 }
 
 // Test if a value is less than or equal to zero
