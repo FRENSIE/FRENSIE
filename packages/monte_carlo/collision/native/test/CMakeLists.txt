@@ -834,6 +834,13 @@ TARGET_LINK_LIBRARIES(tstHybridElasticElectroatomicReaction monte_carlo_collisio
 ADD_TEST(HybridElasticElectroatomicReaction_test tstHybridElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
 SET_PROPERTY(TEST HybridElasticElectroatomicReaction_test PROPERTY LABELS electron)
 
+ADD_EXECUTABLE(tstHybridElasticAdjointElectroatomicReaction
+  tstHybridElasticAdjointElectroatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHybridElasticAdjointElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(HybridElasticAdjointElectroatomicReaction_test tstHybridElasticAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
+SET_PROPERTY(TEST HybridElasticAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
+
 ADD_EXECUTABLE(tstMomentPreservingElasticElectroatomicReaction
   tstMomentPreservingElasticElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

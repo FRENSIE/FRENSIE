@@ -472,7 +472,6 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   TEST_EQUALITY_CONST( trials, 14 );
 }
 
-
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
@@ -480,7 +479,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 2.44631921528705E-01; // sample mu = 0.9
+  fake_stream[0] = 2.44631921528705E-01;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -618,10 +617,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Construct the grid searcher
   Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false> 
     grid_searcher(
-	   energy_grid,
-	   energy_grid[0],
-	   energy_grid[energy_grid.size()-1],
-	   energy_grid.size()/10+1 );
+       energy_grid,
+       energy_grid[0],
+       energy_grid[energy_grid.size()-1],
+       energy_grid.size()/10+1 );
 
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
