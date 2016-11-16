@@ -80,7 +80,7 @@ public:
     std::shared_ptr<AdjointElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization adjoint electroatomic reaction
-  static void createSubshellAdjointElectroionizationReaction(
+  static void createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -89,7 +89,7 @@ public:
     std::shared_ptr<AdjointElectroatomicReaction>& electroionization_subshell_reaction );
 
   //! Create the subshell electroionization adjoint electroatomic reactions
-  static void createSubshellAdjointElectroionizationReactions(
+  static void createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,

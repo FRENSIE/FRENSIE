@@ -36,14 +36,6 @@ std::shared_ptr<MonteCarlo::ElectroionizationSubshellAdjointElectroatomicReactio
 double max_ionization_subshell_adjoint_energy;
 
 //---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-bool notEqualZero( double value )
-{
-  return value != 0.0;
-}
-
-//---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
