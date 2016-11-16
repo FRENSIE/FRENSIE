@@ -52,7 +52,7 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getReactionType_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getReactionType(),
-		       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -68,10 +68,10 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getThresholdEnergy_ace )
 TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedElectrons_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedElectrons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -79,10 +79,10 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedElectro
 TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedPhotons_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedPhotons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -110,15 +110,15 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getCrossSection_ace )
 TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
                    getCrossSection_cutoff_ace )
 {
-  double cutoff_angle_cosine = 0.9; // cutoff_delta_mu = 0.1;
+  double cutoff_angle_cosine = 0.9;
   // Create the reaction
   elastic_scattering_distribution.reset(
-	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(
+          new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 elastic_scattering_function,
                 cutoff_angle_cosine ) );
 
   test_elastic_reaction.reset(
-	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
+    new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
                 energy_grid,
                 elastic_cross_section,
                 elastic_threshold_index,

@@ -10,13 +10,14 @@
 #define MONTE_CARLO_ELECTROATOMIC_REACTION_NATIVE_FACTORY_HPP
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
+#include <Teuchos_RCP.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
 
@@ -67,10 +68,10 @@ public:
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-	const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-	std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction );
+    std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction>
@@ -93,11 +94,11 @@ public:
   //! Create the bremsstrahlung electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction>
   static void createBremsstrahlungReaction(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-	const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-	std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
-	BremsstrahlungAngularDistributionType photon_distribution_function );
+    std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
+    BremsstrahlungAngularDistributionType photon_distribution_function );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(
@@ -105,18 +106,9 @@ public:
 
 private:
 
-  // Check if a value is not equal to zero
-  static bool notEqualZero( double value );
-
   // Constructor
   ElectroatomicReactionNativeFactory();
 };
-
-// Check if a value is not equal to zero
-inline bool ElectroatomicReactionNativeFactory::notEqualZero( double value )
-{
-  return value != 0.0;
-}
 
 } // end MonteCarlo namespace
 

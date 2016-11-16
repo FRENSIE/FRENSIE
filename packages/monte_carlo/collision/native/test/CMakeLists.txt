@@ -4,84 +4,84 @@ ADD_EXECUTABLE(tstTwoDDistributionHelpers
   tstTwoDDistributionHelpers.cpp)
 TARGET_LINK_LIBRARIES(tstTwoDDistributionHelpers monte_carlo_collision_native)
 ADD_TEST(TwoDDistributionHelpers_test tstTwoDDistributionHelpers)
-SET_PROPERTY(TEST TwoDDistributionHelpers_test PROPERTY LABELS monte_carlo_collision_native)
+SET_PROPERTY(TEST TwoDDistributionHelpers_test PROPERTY LABELS helpers)
 
 ADD_EXECUTABLE(tstAceLaw1NuclearScatteringEnergyDistribution
   tstAceLaw1NuclearScatteringEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw1NuclearScatteringEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(AceLaw1NuclearScatteringEnergyDistribution_test
 tstAceLaw1NuclearScatteringEnergyDistribution)
-SET_PROPERTY(TEST AceLaw1NuclearScatteringEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native)
+SET_PROPERTY(TEST AceLaw1NuclearScatteringEnergyDistribution_test PROPERTY LABELS helpers)
 
 ADD_EXECUTABLE(tstAceLaw2NuclearScatteringEnergyDistribution
   tstAceLaw2NuclearScatteringEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw2NuclearScatteringEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(AceLaw2NuclearScatteringEnergyDistribution_test
 tstAceLaw9NuclearScatteringEnergyDistribution)
-SET_PROPERTY(TEST AceLaw2NuclearScatteringEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native ace)
+SET_PROPERTY(TEST AceLaw2NuclearScatteringEnergyDistribution_test PROPERTY LABELS ace)
 
 ADD_EXECUTABLE(tstAceLaw4NuclearScatteringEnergyDistribution
   tstAceLaw4NuclearScatteringEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw4NuclearScatteringEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(AceLaw4NuclearScatteringEnergyDistribution_test
 tstAceLaw4NuclearScatteringEnergyDistribution)
-SET_PROPERTY(TEST AceLaw4NuclearScatteringEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native ace)
+SET_PROPERTY(TEST AceLaw4NuclearScatteringEnergyDistribution_test PROPERTY LABELS ace)
 
 ADD_EXECUTABLE(tstAceLaw5NuclearScatteringEnergyDistribution
   tstAceLaw5NuclearScatteringEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw5NuclearScatteringEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(AceLaw5NuclearScatteringEnergyDistribution_test
 tstAceLaw5NuclearScatteringEnergyDistribution)
-SET_PROPERTY(TEST AceLaw5NuclearScatteringEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native ace)
+SET_PROPERTY(TEST AceLaw5NuclearScatteringEnergyDistribution_test PROPERTY LABELS ace)
 
 ADD_EXECUTABLE(tstAceLaw7NuclearScatteringEnergyDistribution
   tstAceLaw7NuclearScatteringEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw7NuclearScatteringEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(AceLaw7NuclearScatteringEnergyDistribution_test
 tstAceLaw7NuclearScatteringEnergyDistribution)
-SET_PROPERTY(TEST AceLaw7NuclearScatteringEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native ace)
+SET_PROPERTY(TEST AceLaw7NuclearScatteringEnergyDistribution_test PROPERTY LABELS ace)
 
 ADD_EXECUTABLE(tstAceLaw9NuclearScatteringEnergyDistribution
   tstAceLaw9NuclearScatteringEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw9NuclearScatteringEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(AceLaw9NuclearScatteringEnergyDistribution_test
 tstAceLaw9NuclearScatteringEnergyDistribution)
-SET_PROPERTY(TEST AceLaw9NuclearScatteringEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native ace)
+SET_PROPERTY(TEST AceLaw9NuclearScatteringEnergyDistribution_test PROPERTY LABELS ace)
 
 ADD_EXECUTABLE(tstAceLaw11NuclearScatteringEnergyDistribution
   tstAceLaw11NuclearScatteringEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw11NuclearScatteringEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(AceLaw11NuclearScatteringEnergyDistribution_test
 tstAceLaw9NuclearScatteringEnergyDistribution)
-SET_PROPERTY(TEST AceLaw11NuclearScatteringEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native ace)
+SET_PROPERTY(TEST AceLaw11NuclearScatteringEnergyDistribution_test PROPERTY LABELS ace)
 
 ADD_EXECUTABLE(tstAceLaw44NuclearScatteringDistribution
   tstAceLaw44NuclearScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw44NuclearScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(AceLaw44NuclearScatteringDistribution_test
 tstAceLaw44NuclearScatteringDistribution)
-SET_PROPERTY(TEST AceLaw44NuclearScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native ace)
+SET_PROPERTY(TEST AceLaw44NuclearScatteringDistribution_test PROPERTY LABELS ace)
 
 ADD_EXECUTABLE(tstAceLaw61NuclearScatteringDistribution
   tstAceLaw61NuclearScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw61NuclearScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(AceLaw61NuclearScatteringDistribution_test
 tstAceLaw61NuclearScatteringDistribution)
-SET_PROPERTY(TEST AceLaw61NuclearScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native ace)
+SET_PROPERTY(TEST AceLaw61NuclearScatteringDistribution_test PROPERTY LABELS ace)
 
 ADD_EXECUTABLE(tstLabSystemConversionPolicy
   tstLabSystemConversionPolicy.cpp)
 TARGET_LINK_LIBRARIES(tstLabSystemConversionPolicy monte_carlo_collision_native)
 ADD_TEST(LabSystemConversionPolicy_test
 tstLabSystemConversionPolicy)
-SET_PROPERTY(TEST LabSystemConversionPolicy_test PROPERTY LABELS monte_carlo_collision_native)
+SET_PROPERTY(TEST LabSystemConversionPolicy_test PROPERTY LABELS)
 
 ADD_EXECUTABLE(tstMaterialHelpers
   tstMaterialHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstMaterialHelpers monte_carlo_collision_native)
 ADD_TEST(MaterialHelpers_test tstMaterialHelpers)
-SET_PROPERTY(TEST MaterialHelpers_test PROPERTY LABELS monte_carlo_collision_native)
+SET_PROPERTY(TEST MaterialHelpers_test PROPERTY LABELS helpers)
 
 ##----------------------------------------------------------------------------##
 ##      neutron class tests                                                   ##
@@ -91,19 +91,19 @@ ADD_EXECUTABLE(tstNuclearScatteringDistribution
   tstNuclearScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(NuclearScatteringDistribution_test tstNuclearScatteringDistribution)
-SET_PROPERTY(TEST NuclearScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST NuclearScatteringDistribution_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstElasticNeutronNuclearScatteringDistribution
   tstElasticNeutronNuclearScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstElasticNeutronNuclearScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(ElasticNeutronNuclearScatteringDistribution_test tstElasticNeutronNuclearScatteringDistribution)
-SET_PROPERTY(TEST ElasticNeutronNuclearScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST ElasticNeutronNuclearScatteringDistribution_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstInelasticLevelNeutronScatteringDistribution
   tstInelasticLevelNeutronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstInelasticLevelNeutronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(InelasticLevelNeutronScatteringDistribution_test tstInelasticLevelNeutronScatteringDistribution)
-SET_PROPERTY(TEST InelasticLevelNeutronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST InelasticLevelNeutronScatteringDistribution_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstNuclearScatteringDistributionFactoryHelpers
   tstNuclearScatteringDistributionFactoryHelpers.cpp)
@@ -112,7 +112,7 @@ ADD_TEST(NuclearScatteringDistributionFactoryHelpers_test
 tstNuclearScatteringDistributionFactoryHelpers
 --test_u238_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt"
 --test_u238_ace_table="92238.70c")
-SET_PROPERTY(TEST NuclearScatteringDistributionFactoryHelpers_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST NuclearScatteringDistributionFactoryHelpers_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstNeutronNuclearScatteringDistributionACEFactory
   tstNeutronNuclearScatteringDistributionACEFactory.cpp)
@@ -123,103 +123,103 @@ tstNeutronNuclearScatteringDistributionACEFactory
 --test_basic_h1_ace_table="1001.70c"
 --test_basic_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt"
 --test_basic_o16_ace_table="8016.70c")
-SET_PROPERTY(TEST NeutronNuclearScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST NeutronNuclearScatteringDistributionACEFactory_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistributionACEFactory
   tstFissionNeutronMultiplicityDistributionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(FissionNeutronMultiplicityDistributionACEFactory_test tstFissionNeutronMultiplicityDistributionACEFactory --test_u238_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
-SET_PROPERTY(TEST FissionNeutronMultiplicityDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST FissionNeutronMultiplicityDistributionACEFactory_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistribution
   tstFissionNeutronMultiplicityDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistribution monte_carlo_collision_native)
 ADD_TEST(FissionNeutronMultiplicityDistribution_test tstFissionNeutronMultiplicityDistribution --test_u238_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
-SET_PROPERTY(TEST FissionNeutronMultiplicityDistribution_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST FissionNeutronMultiplicityDistribution_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstDelayedNeutronEmissionDistributionACEFactory
   tstDelayedNeutronEmissionDistributionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstDelayedNeutronEmissionDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(DelayedNeutronEmissionDistributionACEFactory_test tstDelayedNeutronEmissionDistributionACEFactory --test_u238_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
-SET_PROPERTY(TEST DelayedNeutronEmissionDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST DelayedNeutronEmissionDistributionACEFactory_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstDelayedNeutronEmissionDistribution
   tstDelayedNeutronEmissionDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDelayedNeutronEmissionDistribution monte_carlo_collision_native)
 ADD_TEST(DelayedNeutronEmissionDistribution_test tstDelayedNeutronEmissionDistribution --test_u238_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
-SET_PROPERTY(TEST DelayedNeutronEmissionDistribution_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST DelayedNeutronEmissionDistribution_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstNuclearReaction
   tstNuclearReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearReaction monte_carlo_collision_native)
 ADD_TEST(NuclearReaction_test tstNuclearReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
-SET_PROPERTY(TEST NuclearReaction_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST NuclearReaction_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstDecoupledPhotonProductionReaction
   tstDecoupledPhotonProductionReaction.cpp)
 TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionReaction monte_carlo_collision_native)
 ADD_TEST(DecoupledPhotonProductionReaction_test tstDecoupledPhotonProductionReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
-SET_PROPERTY(TEST DecoupledPhotonProductionReaction_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST DecoupledPhotonProductionReaction_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstDecoupledYieldBasedPhotonProductionReaction
   tstDecoupledYieldBasedPhotonProductionReaction.cpp)
 TARGET_LINK_LIBRARIES(tstDecoupledYieldBasedPhotonProductionReaction monte_carlo_collision_native)
 ADD_TEST(DecoupledYieldBasedPhotonProductionReaction_test tstDecoupledYieldBasedPhotonProductionReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
-SET_PROPERTY(TEST DecoupledYieldBasedPhotonProductionReaction_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST DecoupledYieldBasedPhotonProductionReaction_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstDecoupledCrossSectionBasedPhotonProductionReaction
   tstDecoupledCrossSectionBasedPhotonProductionReaction.cpp)
 TARGET_LINK_LIBRARIES(tstDecoupledCrossSectionBasedPhotonProductionReaction monte_carlo_collision_native)
 ADD_TEST(DecoupledCrossSectionBasedPhotonProductionReaction_test tstDecoupledCrossSectionBasedPhotonProductionReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
-SET_PROPERTY(TEST DecoupledCrossSectionBasedPhotonProductionReaction_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST DecoupledCrossSectionBasedPhotonProductionReaction_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstNeutronScatteringReaction
   tstNeutronScatteringReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronScatteringReaction monte_carlo_collision_native)
 ADD_TEST(NeutronScatteringReaction_test tstNeutronScatteringReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
-SET_PROPERTY(TEST NeutronScatteringReaction_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST NeutronScatteringReaction_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstEnergyDependentNeutronMultiplicityReaction
    tstEnergyDependentNeutronMultiplicityReaction.cpp)
 TARGET_LINK_LIBRARIES(tstEnergyDependentNeutronMultiplicityReaction monte_carlo_collision_native)
 ADD_TEST(EnergyDependentNeutronMultiplicityReaction_test tstEnergyDependentNeutronMultiplicityReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_ace_table="8016.70c")
-SET_PROPERTY(TEST EnergyDependentNeutronMultiplicityReaction_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST EnergyDependentNeutronMultiplicityReaction_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstNeutronAbsorptionReaction
   tstNeutronAbsorptionReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronAbsorptionReaction monte_carlo_collision_native)
 ADD_TEST(NeutronAbsorptionReaction_test tstNeutronAbsorptionReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
-SET_PROPERTY(TEST NeutronAbsorptionReaction_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST NeutronAbsorptionReaction_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstNuclearReactionACEFactory
   tstNuclearReactionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(NuclearReactionACEFactory_test tstNuclearReactionACEFactory --test_h1_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
-SET_PROPERTY(TEST NuclearReactionACEFactory_test PROPERTY LABELS monte_carlo_collision_native neutron ace)
+SET_PROPERTY(TEST NuclearReactionACEFactory_test PROPERTY LABELS neutron ace)
 
 ADD_EXECUTABLE(tstDecoupledPhotonProductionReactionACEFactory
   tstDecoupledPhotonProductionReactionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(DecoupledPhotonProductionReactionACEFactory_test tstDecoupledPhotonProductionReactionACEFactory --test_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
-SET_PROPERTY(TEST DecoupledPhotonProductionReactionACEFactory_test PROPERTY LABELS monte_carlo_collision_native neutron ace)
+SET_PROPERTY(TEST DecoupledPhotonProductionReactionACEFactory_test PROPERTY LABELS neutron ace)
 
 ADD_EXECUTABLE(tstNuclide
   tstNuclide.cpp)
 TARGET_LINK_LIBRARIES(tstNuclide monte_carlo_collision_native)
 ADD_TEST(Nuclide_test tstNuclide --test_h1_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
-SET_PROPERTY(TEST Nuclide_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST Nuclide_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstNuclideFactory
   tstNuclideFactory.cpp)
 TARGET_LINK_LIBRARIES(tstNuclideFactory monte_carlo_collision_native)
 ADD_TEST(NuclideFactory_test tstNuclideFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST NuclideFactory_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST NuclideFactory_test PROPERTY LABELS neutron)
 
 ADD_EXECUTABLE(tstNeutronMaterial
   tstNeutronMaterial.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronMaterial monte_carlo_collision_native)
 ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS monte_carlo_collision_native neutron)
+SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS neutron)
 
 ##----------------------------------------------------------------------------##
 ##      atomic relaxation class tests                                         ##
@@ -229,19 +229,19 @@ ADD_EXECUTABLE(tstDetailedSubshellRelaxationModel
   tstDetailedSubshellRelaxationModel.cpp)
 TARGET_LINK_LIBRARIES(tstDetailedSubshellRelaxationModel monte_carlo_collision_native)
 ADD_TEST(DetailedSubshellRelaxationModel_test tstDetailedSubshellRelaxationModel --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST DetailedSubshellRelaxationModel_test PROPERTY LABELS monte_carlo_collision_native relaxation)
+SET_PROPERTY(TEST DetailedSubshellRelaxationModel_test PROPERTY LABELS relaxation)
 
 ADD_EXECUTABLE(tstDetailedAtomicRelaxationModel
   tstDetailedAtomicRelaxationModel.cpp)
 TARGET_LINK_LIBRARIES(tstDetailedAtomicRelaxationModel monte_carlo_collision_native)
 ADD_TEST(DetailedAtomicRelaxationModel_test tstDetailedAtomicRelaxationModel --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST DetailedAtomicRelaxationModel_test PROPERTY LABELS monte_carlo_collision_native relaxation)
+SET_PROPERTY(TEST DetailedAtomicRelaxationModel_test PROPERTY LABELS relaxation)
 
 ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
   tstAtomicRelaxationModelFactory.cpp)
 TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
 ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST AtomicRelaxationModelFactory_test PROPERTY LABELS monte_carlo_collision_native relaxation)
+SET_PROPERTY(TEST AtomicRelaxationModelFactory_test PROPERTY LABELS relaxation)
 
 ##----------------------------------------------------------------------------##
 ##      photon class tests                                                    ##
@@ -252,27 +252,27 @@ ADD_EXECUTABLE(tstPhotonuclearNeutronScatteringDistributionACEFactory
 TARGET_LINK_LIBRARIES(tstPhotonuclearNeutronScatteringDistributionACEFactory
  monte_carlo_collision_native)
 ADD_TEST(PhotonuclearNeutronScatteringDistributionACEFactory_test tstPhotonuclearNeutronScatteringDistributionACEFactory --test_basic_h2_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h2_photonuclear_ace_file.txt" --test_basic_h2_ace_table=1002.24u )
-SET_PROPERTY(TEST PhotonuclearNeutronScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native photon ace)
+SET_PROPERTY(TEST PhotonuclearNeutronScatteringDistributionACEFactory_test PROPERTY LABELS photon ace)
 
 ADD_EXECUTABLE(tstPhotonuclearScatteringDistributionACEFactory
 	tstPhotonuclearScatteringDistributionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstPhotonuclearScatteringDistributionACEFactory
  monte_carlo_collision_native)
 ADD_TEST(PhotonuclearScatteringDistributionACEFactory_test tstPhotonuclearScatteringDistributionACEFactory --test_basic_c12_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c12_photonuclear_ace_file.txt" --test_basic_c12_ace_table=6012.24u )
-SET_PROPERTY(TEST PhotonuclearScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native photon ace)
+SET_PROPERTY(TEST PhotonuclearScatteringDistributionACEFactory_test PROPERTY LABELS photon ace)
 
 ADD_EXECUTABLE(tstPhotonuclearReaction
                tstPhotonuclearReaction.cpp)
 TARGET_LINK_LIBRARIES(tstPhotonuclearReaction
   monte_carlo_collision_native)
 ADD_TEST(PhotonuclearReaction_test tstPhotonuclearReaction --h2_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h2_photonuclear_ace_file.txt" --h2_ace_table=1002.24u --c12_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c12_photonuclear_ace_file.txt" --c12_ace_table=6012.24u)
-SET_PROPERTY(TEST PhotonuclearReaction_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST PhotonuclearReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstStandardComptonProfile
   tstStandardComptonProfile.cpp)
 TARGET_LINK_LIBRARIES(tstStandardComptonProfile monte_carlo_collision_native)
 ADD_TEST(StandardComptonProfile_test tstStandardComptonProfile)
-SET_PROPERTY(TEST StandardComptonProfile_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST StandardComptonProfile_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstStandardOccupationNumber
   tstStandardOccupationNumber.cpp)
@@ -283,25 +283,25 @@ ADD_EXECUTABLE(tstStandardScatteringFunction
   tstStandardScatteringFunction.cpp)
 TARGET_LINK_LIBRARIES(tstStandardScatteringFunction monte_carlo_collision_native)
 ADD_TEST(StandardScatteringFunction_test tstStandardScatteringFunction)
-SET_PROPERTY(TEST StandardScatteringFunction_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST StandardScatteringFunction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstStandardFormFactor
   tstStandardFormFactor.cpp)
 TARGET_LINK_LIBRARIES(tstStandardFormFactor monte_carlo_collision_native)
 ADD_TEST(StandardFormFactor_test tstStandardFormFactor)
-SET_PROPERTY(TEST StandardFormFactor_test  PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST StandardFormFactor_test  PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstStandardFormFactorSquared
   tstStandardFormFactorSquared.cpp)
 TARGET_LINK_LIBRARIES(tstStandardFormFactorSquared monte_carlo_collision_native)
 ADD_TEST(StandardFormFactorSquared_test tstStandardFormFactorSquared)
-SET_PROPERTY(TEST StandardFormFactorSquared_test  PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST StandardFormFactorSquared_test  PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution
   tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution
   tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
@@ -312,202 +312,202 @@ ADD_EXECUTABLE(tstStandardSubshellDopplerBroadenedPhotonEnergyDistribution
   tstStandardSubshellDopplerBroadenedPhotonEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstStandardSubshellDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(StandardSubshellDopplerBroadenedPhotonEnergyDistribution_test tstStandardSubshellDopplerBroadenedPhotonEnergyDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST StandardSubshellDopplerBroadenedPhotonEnergyDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST StandardSubshellDopplerBroadenedPhotonEnergyDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstKleinNishinaPhotonScatteringDistribution
   tstKleinNishinaPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstKleinNishinaPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(KleinNishinaPhotonScatteringDistribution_test tstKleinNishinaPhotonScatteringDistribution)
-SET_PROPERTY(TEST KleinNishinaPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST KleinNishinaPhotonScatteringDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstDetailedWHIncoherentPhotonScatteringDistribution
   tstDetailedWHIncoherentPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDetailedWHIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(DetailedWHIncoherentPhotonScatteringDistribution_test tstDetailedWHIncoherentPhotonScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST DetailedWHIncoherentPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST DetailedWHIncoherentPhotonScatteringDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstDopplerBroadenedHybridIncoherentPhotonScatteringDistribution
   tstDopplerBroadenedHybridIncoherentPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDopplerBroadenedHybridIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(DopplerBroadenedHybridIncoherentPhotonScatteringDistribution_test tstDopplerBroadenedHybridIncoherentPhotonScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST DopplerBroadenedHybridIncoherentPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST DopplerBroadenedHybridIncoherentPhotonScatteringDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstSubshellIncoherentPhotonScatteringDistribution
   tstSubshellIncoherentPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstSubshellIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(SubshellIncoherentPhotonScatteringDistribution_test tstSubshellIncoherentPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST SubshellIncoherentPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST SubshellIncoherentPhotonScatteringDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution
   tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution_test tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstThompsonScatteringDistribution
   tstThompsonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstThompsonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(ThompsonScatteringDistribution_test tstThompsonScatteringDistribution)
-SET_PROPERTY(TEST ThompsonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST ThompsonScatteringDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstBasicCoherentScatteringDistribution
   tstBasicCoherentScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstBasicCoherentScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(BasicCoherentScatteringDistribution_test tstBasicCoherentScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST BasicCoherentScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST BasicCoherentScatteringDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstEfficientCoherentScatteringDistribution
   tstEfficientCoherentScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstEfficientCoherentScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(EfficientCoherentScatteringDistribution_test tstEfficientCoherentScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST EfficientCoherentScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST EfficientCoherentScatteringDistribution_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstIncoherentPhotonScatteringDistributionACEFactory
   tstIncoherentPhotonScatteringDistributionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstIncoherentPhotonScatteringDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(IncoherentPhotonScatteringDistributionACEFactory_test tstIncoherentPhotonScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST IncoherentPhotonScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native photon ace)
+SET_PROPERTY(TEST IncoherentPhotonScatteringDistributionACEFactory_test PROPERTY LABELS photon ace)
 
 ADD_EXECUTABLE(tstIncoherentPhotonScatteringDistributionNativeFactory
   tstIncoherentPhotonScatteringDistributionNativeFactory.cpp)
 TARGET_LINK_LIBRARIES(tstIncoherentPhotonScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(IncoherentPhotonScatteringDistributionNativeFactory_test tstIncoherentPhotonScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST IncoherentPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon native)
+SET_PROPERTY(TEST IncoherentPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS photon native)
 
 ADD_EXECUTABLE(tstCoherentScatteringDistributionACEFactory
   tstCoherentScatteringDistributionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstCoherentScatteringDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(CoherentScatteringDistributionACEFactory_test tstCoherentScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST CoherentScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native photon ace)
+SET_PROPERTY(TEST CoherentScatteringDistributionACEFactory_test PROPERTY LABELS photon ace)
 
 ADD_EXECUTABLE(tstCoherentScatteringDistributionNativeFactory
   tstCoherentScatteringDistributionNativeFactory.cpp)
 TARGET_LINK_LIBRARIES(tstCoherentScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(CoherentScatteringDistributionNativeFactory_test tstCoherentScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST CoherentScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST CoherentScatteringDistributionNativeFactory_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstStandardPhotoatomicReaction
   tstStandardPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstStandardPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(StandardPhotoatomicReaction_test tstStandardPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
-SET_PROPERTY(TEST StandardPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST StandardPhotoatomicReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstPairProductionPhotoatomicReaction
   tstPairProductionPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstPairProductionPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(PairProductionPhotoatomicReaction_test tstPairProductionPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
-SET_PROPERTY(TEST PairProductionPhotoatomicReaction_test  PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST PairProductionPhotoatomicReaction_test  PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstTripletProductionPhotoatomicReaction
   tstTripletProductionPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstTripletProductionPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(TripletProductionPhotoatomicReaction_test tstTripletProductionPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST TripletProductionPhotoatomicReaction_test  PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST TripletProductionPhotoatomicReaction_test  PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstIncoherentPhotoatomicReaction
   tstIncoherentPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstIncoherentPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(IncoherentPhotoatomicReaction_test tstIncoherentPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST IncoherentPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST IncoherentPhotoatomicReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstSubshellIncoherentPhotoatomicReaction
   tstSubshellIncoherentPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstSubshellIncoherentPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(SubshellIncoherentPhotoatomicReaction_test tstSubshellIncoherentPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST SubshellIncoherentPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST SubshellIncoherentPhotoatomicReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstCoherentPhotoatomicReaction
   tstCoherentPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstCoherentPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(CoherentPhotoatomicReaction_test tstCoherentPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST CoherentPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST CoherentPhotoatomicReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstPhotoelectricPhotoatomicReaction
   tstPhotoelectricPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoelectricPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(PhotoelectricPhotoatomicReaction_test tstPhotoelectricPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PhotoelectricPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST PhotoelectricPhotoatomicReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstSubshellPhotoelectricPhotoatomicReaction
   tstSubshellPhotoelectricPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstSubshellPhotoelectricPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(SubshellPhotoelectricPhotoatomicReaction_test tstSubshellPhotoelectricPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST SubshellPhotoelectricPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST SubshellPhotoelectricPhotoatomicReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstAbsorptionPhotoatomicReaction
   tstAbsorptionPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstAbsorptionPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(AbsorptionPhotoatomicReaction_test tstAbsorptionPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST AbsorptionPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST AbsorptionPhotoatomicReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstPhotoatomCore tstPhotoatomCore.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoatomCore monte_carlo_collision_native)
 ADD_TEST(PhotoatomCore_test tstPhotoatomCore --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PhotoatomCore_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST PhotoatomCore_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstPhotoatom tstPhotoatom.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoatom monte_carlo_collision_native)
 ADD_TEST(Photoatom_test tstPhotoatom --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstPhotoatomicReactionACEFactory
   tstPhotoatomicReactionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoatomicReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(PhotoatomicReactionACEFactory_test tstPhotoatomicReactionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PhotoatomicReactionACEFactory_test  PROPERTY LABELS monte_carlo_collision_native photon ace)
+SET_PROPERTY(TEST PhotoatomicReactionACEFactory_test  PROPERTY LABELS photon ace)
 
 ADD_EXECUTABLE(tstPhotoatomicReactionNativeFactory
   tstPhotoatomicReactionNativeFactory.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoatomicReactionNativeFactory monte_carlo_collision_native)
 ADD_TEST(PhotoatomicReactionNativeFactory_test tstPhotoatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST PhotoatomicReactionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon native)
+SET_PROPERTY(TEST PhotoatomicReactionNativeFactory_test PROPERTY LABELS photon native)
 
 ADD_EXECUTABLE(tstPhotoatomACEFactory
   tstPhotoatomACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoatomACEFactory monte_carlo_collision_native)
 ADD_TEST(PhotoatomACEFactory_test tstPhotoatomACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PhotoatomACEFactory_test PROPERTY LABELS monte_carlo_collision_native photon ace)
+SET_PROPERTY(TEST PhotoatomACEFactory_test PROPERTY LABELS photon ace)
 
 ADD_EXECUTABLE(tstPhotoatomFactory
   tstPhotoatomFactory.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoatomFactory monte_carlo_collision_native)
 ADD_TEST(PhotoatomFactory_test tstPhotoatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST PhotoatomFactory_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST PhotoatomFactory_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstPhotonMaterial tstPhotonMaterial.cpp)
 TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
 ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST PhotonMaterial_test PROPERTY LABELS monte_carlo_collision_native photon)
+SET_PROPERTY(TEST PhotonMaterial_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstIncoherentAdjointPhotonScatteringDistribution
   tstIncoherentAdjointPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(IncoherentAdjointPhotonScatteringDistribution_test tstIncoherentAdjointPhotonScatteringDistribution)
-SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS photon adjoint)
 
 ADD_EXECUTABLE(tstKleinNishinaAdjointPhotonScatteringDistribution
   tstKleinNishinaAdjointPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstKleinNishinaAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(KleinNishinaAdjointPhotonScatteringDistribution_test tstKleinNishinaAdjointPhotonScatteringDistribution)
-SET_PROPERTY(TEST KleinNishinaAdjointPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
+SET_PROPERTY(TEST KleinNishinaAdjointPhotonScatteringDistribution_test PROPERTY LABELS photon adjoint)
 
 ADD_EXECUTABLE(tstWHIncoherentAdjointPhotonScatteringDistribution
   tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstWHIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS photon adjoint)
 
 ADD_EXECUTABLE(tstSubshellIncoherentAdjointPhotonScatteringDistribution
   tstSubshellIncoherentAdjointPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstSubshellIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(SubshellIncoherentAdjointPhotonScatteringDistribution_test tstSubshellIncoherentAdjointPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS photon adjoint)
 
 ADD_EXECUTABLE(tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution
   tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution_test tstDopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistribution_test PROPERTY LABELS photon adjoint)
 
 ADD_EXECUTABLE(tstLineEnergyAdjointPhotonScatteringDistribution
   tstLineEnergyAdjointPhotonScatteringDistribution.cpp
@@ -520,84 +520,84 @@ ADD_EXECUTABLE(tstIncoherentAdjointPhotonScatteringDistributionNativeFactory
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstIncoherentAdjointPhotonScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(IncoherentAdjointPhotonScatteringDistributionNativeFactory_test tstIncoherentAdjointPhotonScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST IncoherentAdjointPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory
   tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(LineEnergyAdjointPhotonScatteringDistributionNativeFactory_test tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST LineEnergyAdjointPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST LineEnergyAdjointPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstCoherentAdjointPhotoatomicReaction
   tstCoherentAdjointPhotoatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCoherentAdjointPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(CoherentAdjointPhotoatomicReaction_test tstCoherentAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST CoherentAdjointPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST CoherentAdjointPhotoatomicReaction_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstIncoherentAdjointPhotoatomicReaction
   tstIncoherentAdjointPhotoatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstIncoherentAdjointPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(IncoherentAdjointPhotoatomicReaction_test tstIncoherentAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST IncoherentAdjointPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST IncoherentAdjointPhotoatomicReaction_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstSubshellIncoherentAdjointPhotoatomicReaction
   tstSubshellIncoherentAdjointPhotoatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSubshellIncoherentAdjointPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(SubshellIncoherentAdjointPhotoatomicReaction_test tstSubshellIncoherentAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST SubshellIncoherentAdjointPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST SubshellIncoherentAdjointPhotoatomicReaction_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstLineEnergyAdjointPhotoatomicReaction
   tstLineEnergyAdjointPhotoatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstLineEnergyAdjointPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(LineEnergyAdjointPhotoatomicReaction_test tstLineEnergyAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST LineEnergyAdjointPhotoatomicReaction_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST LineEnergyAdjointPhotoatomicReaction_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstAdjointPhotoatomicReactionNativeFactory
   tstAdjointPhotoatomicReactionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointPhotoatomicReactionNativeFactory monte_carlo_collision_native)
 ADD_TEST(AdjointPhotoatomicReactionNativeFactory_test tstAdjointPhotoatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST AdjointPhotoatomicReactionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST AdjointPhotoatomicReactionNativeFactory_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstAdjointPhotoatomCore
   tstAdjointPhotoatomCore.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointPhotoatomCore monte_carlo_collision_native)
 ADD_TEST(AdjointPhotoatomCore_test tstAdjointPhotoatomCore --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST AdjointPhotoatomCore_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST AdjointPhotoatomCore_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstAdjointPhotoatom
   tstAdjointPhotoatom.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointPhotoatom monte_carlo_collision_native)
 ADD_TEST(AdjointPhotoatom_test tstAdjointPhotoatom --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST AdjointPhotoatom_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST AdjointPhotoatom_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstAdjointPhotoatomNativeFactory
   tstAdjointPhotoatomNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointPhotoatomNativeFactory monte_carlo_collision_native)
 ADD_TEST(AdjointPhotoatomNativeFactory_test tstAdjointPhotoatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST AdjointPhotoatomNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST AdjointPhotoatomNativeFactory_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstAdjointPhotoatomFactory
   tstAdjointPhotoatomFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointPhotoatomFactory monte_carlo_collision_native)
 ADD_TEST(AdjointPhotoatomFactory_test tstAdjointPhotoatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST AdjointPhotoatomFactory_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST AdjointPhotoatomFactory_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstAdjointPhotonMaterial
   tstAdjointPhotonMaterial.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointPhotonMaterial monte_carlo_collision_native)
 ADD_TEST(AdjointPhotonMaterial_test tstAdjointPhotonMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST AdjointPhotonMaterial_test PROPERTY LABELS monte_carlo_collision_native photon adjoint native)
+SET_PROPERTY(TEST AdjointPhotonMaterial_test PROPERTY LABELS photon adjoint native)
 
 ##---------------------------------------------------------------------------##
 ##      electron class tests
@@ -609,77 +609,77 @@ ADD_EXECUTABLE(tstCutoffElasticElectronScatteringDistribution
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCutoffElasticElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(CutoffElasticElectronScatteringDistribution_test tstCutoffElasticElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST CutoffElasticElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST CutoffElasticElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstScreenedRutherfordElasticElectronScatteringDistribution
   tstScreenedRutherfordElasticElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstScreenedRutherfordElasticElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(ScreenedRutherfordElasticElectronScatteringDistribution_test tstScreenedRutherfordElasticElectronScatteringDistribution --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_native_al_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
-SET_PROPERTY(TEST ScreenedRutherfordElasticElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST ScreenedRutherfordElasticElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstAnalogElasticElectronScatteringDistribution
   tstAnalogElasticElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAnalogElasticElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(AnalogElasticElectronScatteringDistribution_test tstAnalogElasticElectronScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
-SET_PROPERTY(TEST AnalogElasticElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST AnalogElasticElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstMomentPreservingElasticElectronScatteringDistribution
   tstMomentPreservingElasticElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstMomentPreservingElasticElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(MomentPreservingElasticElectronScatteringDistribution_test tstMomentPreservingElasticElectronScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
-SET_PROPERTY(TEST MomentPreservingElasticElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST MomentPreservingElasticElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstHybridElasticElectronScatteringDistribution
   tstHybridElasticElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstHybridElasticElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(HybridElasticElectronScatteringDistribution_test tstHybridElasticElectronScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
-SET_PROPERTY(TEST HybridElasticElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST HybridElasticElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistribution
   tstAtomicExcitationElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAtomicExcitationElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationElectronScatteringDistribution_test tstAtomicExcitationElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST AtomicExcitationElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST AtomicExcitationElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstAtomicExcitationAdjointElectronScatteringDistribution
   tstAtomicExcitationAdjointElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAtomicExcitationAdjointElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationAdjointElectronScatteringDistribution_test tstAtomicExcitationAdjointElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST AtomicExcitationAdjointElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
+SET_PROPERTY(TEST AtomicExcitationAdjointElectronScatteringDistribution_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstBremsstrahlungElectronScatteringDistribution
   tstBremsstrahlungElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstBremsstrahlungElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(BremsstrahlungElectronScatteringDistribution_test tstBremsstrahlungElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST BremsstrahlungElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST BremsstrahlungElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstBremsstrahlungAdjointElectronScatteringDistribution
   tstBremsstrahlungAdjointElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstBremsstrahlungAdjointElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(BremsstrahlungAdjointElectronScatteringDistribution_test tstBremsstrahlungAdjointElectronScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml" )
-SET_PROPERTY(TEST BremsstrahlungAdjointElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
+SET_PROPERTY(TEST BremsstrahlungAdjointElectronScatteringDistribution_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstElectroionizationSubshellElectronScatteringDistribution
   tstElectroionizationSubshellElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(ElectroionizationSubshellElectronScatteringDistribution_test tstElectroionizationSubshellElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST ElectroionizationSubshellElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST ElectroionizationSubshellElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstElectroionizationSubshellAdjointElectronScatteringDistribution
   tstElectroionizationSubshellAdjointElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellAdjointElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(ElectroionizationSubshellAdjointElectronScatteringDistribution_test tstElectroionizationSubshellAdjointElectronScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
+SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectronScatteringDistribution_test PROPERTY LABELS electron adjoint)
 
 ##      electron distribution ace factory tests
 
@@ -688,35 +688,35 @@ ADD_EXECUTABLE(tstElasticElectronScatteringDistributionACEFactory
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElasticElectronScatteringDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(ElasticElectronScatteringDistributionACEFactory_test tstElasticElectronScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST ElasticElectronScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native electron ace)
+SET_PROPERTY(TEST ElasticElectronScatteringDistributionACEFactory_test PROPERTY LABELS electron ace)
 
 ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistributionACEFactory
   tstAtomicExcitationElectronScatteringDistributionACEFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAtomicExcitationElectronScatteringDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationElectronScatteringDistributionACEFactory_test tstAtomicExcitationElectronScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST AtomicExcitationElectronScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native electron ace)
+SET_PROPERTY(TEST AtomicExcitationElectronScatteringDistributionACEFactory_test PROPERTY LABELS electron ace)
 
 ADD_EXECUTABLE(tstAtomicExcitationAdjointElectronScatteringDistributionACEFactory
   tstAtomicExcitationAdjointElectronScatteringDistributionACEFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAtomicExcitationAdjointElectronScatteringDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationAdjointElectronScatteringDistributionACEFactory_test tstAtomicExcitationAdjointElectronScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST AtomicExcitationAdjointElectronScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native electron adjoint ace)
+SET_PROPERTY(TEST AtomicExcitationAdjointElectronScatteringDistributionACEFactory_test PROPERTY LABELS electron adjoint ace)
 
 ADD_EXECUTABLE(tstBremsstrahlungElectronScatteringDistributionACEFactory
   tstBremsstrahlungElectronScatteringDistributionACEFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstBremsstrahlungElectronScatteringDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(BremsstrahlungElectronScatteringDistributionACEFactory_test tstBremsstrahlungElectronScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST BremsstrahlungElectronScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native electron ace)
+SET_PROPERTY(TEST BremsstrahlungElectronScatteringDistributionACEFactory_test PROPERTY LABELS electron ace)
 
 ADD_EXECUTABLE(tstElectroionizationSubshellElectronScatteringDistributionACEFactory
   tstElectroionizationSubshellElectronScatteringDistributionACEFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectronScatteringDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(ElectroionizationSubshellElectronScatteringDistributionACEFactory_test tstElectroionizationSubshellElectronScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST ElectroionizationSubshellElectronScatteringDistributionACEFactory_test PROPERTY LABELS monte_carlo_collision_native electron ace)
+SET_PROPERTY(TEST ElectroionizationSubshellElectronScatteringDistributionACEFactory_test PROPERTY LABELS electron ace)
 
 ##      electron distribution native factory tests
 
@@ -725,49 +725,49 @@ ADD_EXECUTABLE(tstElasticElectronScatteringDistributionNativeFactory
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElasticElectronScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(ElasticElectronScatteringDistributionNativeFactory_test tstElasticElectronScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_adjoint_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml" )
-SET_PROPERTY(TEST ElasticElectronScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native)
+SET_PROPERTY(TEST ElasticElectronScatteringDistributionNativeFactory_test PROPERTY LABELS electron native)
 
 ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistributionNativeFactory
   tstAtomicExcitationElectronScatteringDistributionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAtomicExcitationElectronScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationElectronScatteringDistributionNativeFactory_test tstAtomicExcitationElectronScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
-SET_PROPERTY(TEST AtomicExcitationElectronScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native)
+SET_PROPERTY(TEST AtomicExcitationElectronScatteringDistributionNativeFactory_test PROPERTY LABELS electron native)
 
 ADD_EXECUTABLE(tstBremsstrahlungElectronScatteringDistributionNativeFactory
   tstBremsstrahlungElectronScatteringDistributionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstBremsstrahlungElectronScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(BremsstrahlungElectronScatteringDistributionNativeFactory_test tstBremsstrahlungElectronScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
-SET_PROPERTY(TEST BremsstrahlungElectronScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native)
+SET_PROPERTY(TEST BremsstrahlungElectronScatteringDistributionNativeFactory_test PROPERTY LABELS electron native)
 
 ADD_EXECUTABLE(tstElectroionizationSubshellElectronScatteringDistributionNativeFactory
   tstElectroionizationSubshellElectronScatteringDistributionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectronScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(ElectroionizationSubshellElectronScatteringDistributionNativeFactory_test tstElectroionizationSubshellElectronScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
-SET_PROPERTY(TEST ElectroionizationSubshellElectronScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native)
+SET_PROPERTY(TEST ElectroionizationSubshellElectronScatteringDistributionNativeFactory_test PROPERTY LABELS electron native)
 
 ADD_EXECUTABLE(tstAtomicExcitationAdjointElectronScatteringDistributionNativeFactory
   tstAtomicExcitationAdjointElectronScatteringDistributionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAtomicExcitationAdjointElectronScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationAdjointElectronScatteringDistributionNativeFactory_test tstAtomicExcitationAdjointElectronScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST AtomicExcitationAdjointElectronScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native adjoint)
+SET_PROPERTY(TEST AtomicExcitationAdjointElectronScatteringDistributionNativeFactory_test PROPERTY LABELS electron native adjoint)
 
 ADD_EXECUTABLE(tstBremsstrahlungAdjointElectronScatteringDistributionNativeFactory
   tstBremsstrahlungAdjointElectronScatteringDistributionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstBremsstrahlungAdjointElectronScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(BremsstrahlungAdjointElectronScatteringDistributionNativeFactory_test tstBremsstrahlungAdjointElectronScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml" )
-SET_PROPERTY(TEST BremsstrahlungAdjointElectronScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native adjoint)
+SET_PROPERTY(TEST BremsstrahlungAdjointElectronScatteringDistributionNativeFactory_test PROPERTY LABELS electron native adjoint)
 
 ADD_EXECUTABLE(tstElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
   tstElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory monte_carlo_collision_native)
 ADD_TEST(ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory_test tstElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml" )
-SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native adjoint)
+SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory_test PROPERTY LABELS electron native adjoint)
 
 ##      electroatomic reaction tests
 
@@ -776,119 +776,126 @@ ADD_EXECUTABLE(tstAbsorptionElectroatomicReaction
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAbsorptionElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(AbsorptionElectroatomicReaction_test tstAbsorptionElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST AbsorptionElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST AbsorptionElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstAbsorptionAdjointElectroatomicReaction
   tstAbsorptionAdjointElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAbsorptionAdjointElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(AbsorptionAdjointElectroatomicReaction_test tstAbsorptionAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST AbsorptionAdjointElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
+SET_PROPERTY(TEST AbsorptionAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstCutoffElasticElectroatomicReaction
   tstCutoffElasticElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCutoffElasticElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(CutoffElasticElectroatomicReaction_test tstCutoffElasticElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST CutoffElasticElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST CutoffElasticElectroatomicReaction_test PROPERTY LABELS electron)
+
+ADD_EXECUTABLE(tstCutoffElasticAdjointElectroatomicReaction
+  tstCutoffElasticAdjointElectroatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCutoffElasticAdjointElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(CutoffElasticAdjointElectroatomicReaction_test tstCutoffElasticAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
+SET_PROPERTY(TEST CutoffElasticAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstScreenedRutherfordElasticElectroatomicReaction
   tstScreenedRutherfordElasticElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstScreenedRutherfordElasticElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(ScreenedRutherfordElasticElectroatomicReaction_test tstScreenedRutherfordElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
-SET_PROPERTY(TEST ScreenedRutherfordElasticElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST ScreenedRutherfordElasticElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstAnalogElasticElectroatomicReaction
   tstAnalogElasticElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAnalogElasticElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(AnalogElasticElectroatomicReaction_test tstAnalogElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
-SET_PROPERTY(TEST AnalogElasticElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST AnalogElasticElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstAnalogElasticAdjointElectroatomicReaction
   tstAnalogElasticAdjointElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAnalogElasticAdjointElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(AnalogElasticAdjointElectroatomicReaction_test tstAnalogElasticAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST AnalogElasticAdjointElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
+SET_PROPERTY(TEST AnalogElasticAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstHybridElasticElectroatomicReaction
   tstHybridElasticElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstHybridElasticElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(HybridElasticElectroatomicReaction_test tstHybridElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
-SET_PROPERTY(TEST HybridElasticElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST HybridElasticElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstMomentPreservingElasticElectroatomicReaction
   tstMomentPreservingElasticElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstMomentPreservingElasticElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(MomentPreservingElasticElectroatomicReaction_test tstMomentPreservingElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
-SET_PROPERTY(TEST MomentPreservingElasticElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST MomentPreservingElasticElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstAtomicExcitationElectroatomicReaction
   tstAtomicExcitationElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAtomicExcitationElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationElectroatomicReaction_test tstAtomicExcitationElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST AtomicExcitationElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST AtomicExcitationElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstAtomicExcitationAdjointElectroatomicReaction
   tstAtomicExcitationAdjointElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAtomicExcitationAdjointElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationAdjointElectroatomicReaction_test tstAtomicExcitationAdjointElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST AtomicExcitationAdjointElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
+SET_PROPERTY(TEST AtomicExcitationAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstBremsstrahlungElectroatomicReaction
   tstBremsstrahlungElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstBremsstrahlungElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(BremsstrahlungElectroatomicReaction_test tstBremsstrahlungElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST BremsstrahlungElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST BremsstrahlungElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstBremsstrahlungAdjointElectroatomicReaction
   tstBremsstrahlungAdjointElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstBremsstrahlungAdjointElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(BremsstrahlungAdjointElectroatomicReaction_test tstBremsstrahlungAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST BremsstrahlungAdjointElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
+SET_PROPERTY(TEST BremsstrahlungAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstElectroionizationSubshellElectroatomicReaction
   tstElectroionizationSubshellElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(ElectroionizationSubshellElectroatomicReaction_test tstElectroionizationSubshellElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_6_native.xml")
-SET_PROPERTY(TEST ElectroionizationSubshellElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST ElectroionizationSubshellElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstElectroionizationSubshellAdjointElectroatomicReaction
   tstElectroionizationSubshellAdjointElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellAdjointElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(ElectroionizationSubshellAdjointElectroatomicReaction_test tstElectroionizationSubshellAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_6_native.xml")
-SET_PROPERTY(TEST ElectroionizationSubshellElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron adjoint)
+SET_PROPERTY(TEST ElectroionizationSubshellElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstVoidElectroatomicReaction
   tstVoidElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstVoidElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(VoidElectroatomicReaction_test tstVoidElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST VoidElectroatomicReaction_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST VoidElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
   tstElectroatomicReactionACEFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST ElectroatomicReactionACEFactory_test PROPERTY LABELS monte_carlo_collision_native electron ace)
+SET_PROPERTY(TEST ElectroatomicReactionACEFactory_test PROPERTY LABELS electron ace)
 
 ADD_EXECUTABLE(tstElectroatomicReactionNativeFactory
   tstElectroatomicReactionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionNativeFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomicReactionNativeFactory_test tstElectroatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
-SET_PROPERTY(TEST ElectroatomicReactionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native)
+SET_PROPERTY(TEST ElectroatomicReactionNativeFactory_test PROPERTY LABELS electron native)
 
 ##      electroatom tests
 
@@ -897,42 +904,42 @@ ADD_EXECUTABLE(tstElectroatomCore
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroatomCore monte_carlo_collision_native)
 ADD_TEST(ElectroatomCore_test tstElectroatomCore --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST ElectroatomCore_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST ElectroatomCore_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstElectroatom
   tstElectroatom.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroatom monte_carlo_collision_native)
 ADD_TEST(Electroatom_test tstElectroatom --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST Electroatom_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST Electroatom_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstElectroatomACEFactory
   tstElectroatomACEFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroatomACEFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomACEFactory_test tstElectroatomACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST ElectroatomACEFactory_test PROPERTY LABELS monte_carlo_collision_native electron ace)
+SET_PROPERTY(TEST ElectroatomACEFactory_test PROPERTY LABELS electron ace)
 
 ADD_EXECUTABLE(tstElectroatomNativeFactory
   tstElectroatomNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroatomNativeFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomNativeFactory_test tstElectroatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST ElectroatomNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native)
+SET_PROPERTY(TEST ElectroatomNativeFactory_test PROPERTY LABELS electron native)
 
 ADD_EXECUTABLE(tstElectroatomFactory
   tstElectroatomFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroatomFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST ElectroatomFactory_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST ElectroatomFactory_test PROPERTY LABELS electron)
 
 ##      electron materials tests
 ADD_EXECUTABLE(tstElectronMaterial tstElectronMaterial.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectronMaterial monte_carlo_collision_native)
 ADD_TEST(ElectronMaterial_test tstElectronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST ElectronMaterial_test PROPERTY LABELS monte_carlo_collision_native electron)
+SET_PROPERTY(TEST ElectronMaterial_test PROPERTY LABELS electron)
 
 ##----------------------------------------------------------------------------##
 ##      collision handler class tests                                         ##
@@ -942,14 +949,14 @@ ADD_EXECUTABLE(tstCollisionHandler
   tstCollisionHandler.cpp)
 TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)
 ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST CollisionHandler_test PROPERTY LABELS monte_carlo_collision_native)
+SET_PROPERTY(TEST CollisionHandler_test PROPERTY LABELS handler)
 
 IF(FRENSIE_ENABLE_DAGMC)
   ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode_DagMC
     tstCollisionHandlerFactoryNeutronMode_DagMC.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode_DagMC monte_carlo_collision_native)
   ADD_TEST(CollisionHandlerFactoryNeutronMode_DagMC_test tstCollisionHandlerFactoryNeutronMode_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-  SET_PROPERTY(TEST CollisionHandlerFactoryNeutronMode_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc neutron)
+  SET_PROPERTY(TEST CollisionHandlerFactoryNeutronMode_DagMC_test PROPERTY LABELS dagmc neutron)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
@@ -957,7 +964,7 @@ IF(FRENSIE_ENABLE_DAGMC)
     tstCollisionHandlerFactoryPhotonMode_DagMC.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode_DagMC monte_carlo_collision_native)
   ADD_TEST(CollisionHandlerFactoryPhotonMode_DagMC_test tstCollisionHandlerFactoryPhotonMode_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-  SET_PROPERTY(TEST CollisionHandlerFactoryPhotonMode_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc photon)
+  SET_PROPERTY(TEST CollisionHandlerFactoryPhotonMode_DagMC_test PROPERTY LABELS dagmc photon)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
@@ -965,7 +972,7 @@ IF(FRENSIE_ENABLE_DAGMC)
     tstCollisionHandlerFactoryNeutronPhotonMode_DagMC.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode_DagMC monte_carlo_collision_native)
   ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_DagMC_test tstCollisionHandlerFactoryNeutronPhotonMode_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-  SET_PROPERTY(TEST CollisionHandlerFactoryNeutronPhotonMode_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc neutron photon)
+  SET_PROPERTY(TEST CollisionHandlerFactoryNeutronPhotonMode_DagMC_test PROPERTY LABELS dagmc neutron photon)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
@@ -973,7 +980,7 @@ IF(FRENSIE_ENABLE_DAGMC)
     tstCollisionHandlerFactoryElectronMode_DagMC.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode_DagMC monte_carlo_collision_native)
   ADD_TEST(CollisionHandlerFactoryElectronMode_DagMC_test tstCollisionHandlerFactoryElectronMode_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-  SET_PROPERTY(TEST CollisionHandlerFactoryElectronMode_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc electron)
+  SET_PROPERTY(TEST CollisionHandlerFactoryElectronMode_DagMC_test PROPERTY LABELS dagmc electron)
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
@@ -981,7 +988,7 @@ IF(FRENSIE_ENABLE_ROOT)
     tstCollisionHandlerFactoryNeutronMode_Root.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode_Root monte_carlo_collision_native geometry_root)
   ADD_TEST(CollisionHandlerFactoryNeutronMode_Root_test tstCollisionHandlerFactoryNeutronMode_Root --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
-  SET_PROPERTY(TEST CollisionHandlerFactoryNeutronMode_Root_test PROPERTY LABELS monte_carlo_collision_native root neutron)
+  SET_PROPERTY(TEST CollisionHandlerFactoryNeutronMode_Root_test PROPERTY LABELS root neutron)
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
@@ -989,7 +996,7 @@ IF(FRENSIE_ENABLE_ROOT)
     tstCollisionHandlerFactoryPhotonMode_Root.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode_Root monte_carlo_collision_native geometry_root)
   ADD_TEST(CollisionHandlerFactoryPhotonMode_Root_test tstCollisionHandlerFactoryPhotonMode_Root --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
-  SET_PROPERTY(TEST CollisionHandlerFactoryPhotonMode_Root_test PROPERTY LABELS monte_carlo_collision_native root)
+  SET_PROPERTY(TEST CollisionHandlerFactoryPhotonMode_Root_test PROPERTY LABELS root)
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
@@ -997,7 +1004,7 @@ IF(FRENSIE_ENABLE_ROOT)
     tstCollisionHandlerFactoryNeutronPhotonMode_Root.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode_Root monte_carlo_collision_native geometry_root)
   ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_Root_test tstCollisionHandlerFactoryNeutronPhotonMode_Root --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
-  SET_PROPERTY(TEST CollisionHandlerFactoryNeutronPhotonMode_Root_test PROPERTY LABELS monte_carlo_collision_native root neutron)
+  SET_PROPERTY(TEST CollisionHandlerFactoryNeutronPhotonMode_Root_test PROPERTY LABELS root neutron)
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
@@ -1005,7 +1012,7 @@ IF(FRENSIE_ENABLE_ROOT)
     tstCollisionHandlerFactoryElectronMode_Root.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode_Root monte_carlo_collision_native geometry_root)
   ADD_TEST(CollisionHandlerFactoryElectronMode_Root_test tstCollisionHandlerFactoryElectronMode_Root --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
-  SET_PROPERTY(TEST CollisionHandlerFactoryElectronMode_Root_test PROPERTY LABELS monte_carlo_collision_native root electron)
+  SET_PROPERTY(TEST CollisionHandlerFactoryElectronMode_Root_test PROPERTY LABELS root electron)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
@@ -1013,7 +1020,7 @@ IF(FRENSIE_ENABLE_DAGMC)
     tstModuleInterface_DagMC.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native_DagMC monte_carlo_collision_native)
   ADD_TEST(CollisionModuleInterface_Native_DagMC_test tstCollisionModuleInterface_Native_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-  SET_PROPERTY(TEST CollisionModuleInterface_Native_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc native)
+  SET_PROPERTY(TEST CollisionModuleInterface_Native_DagMC_test PROPERTY LABELS dagmc native)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
@@ -1021,6 +1028,6 @@ IF(FRENSIE_ENABLE_DAGMC)
     tstModuleInterface_ElectronMode_DagMC.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_NativeElectronMode_DagMC monte_carlo_collision_native)
   ADD_TEST(CollisionModuleInterface_NativeElectronMode_DagMC_test tstCollisionModuleInterface_NativeElectronMode_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-  SET_PROPERTY(TEST CollisionModuleInterface_NativeElectronMode_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc native electron)
+  SET_PROPERTY(TEST CollisionModuleInterface_NativeElectronMode_DagMC_test PROPERTY LABELS dagmc native electron)
 ENDIF()
 

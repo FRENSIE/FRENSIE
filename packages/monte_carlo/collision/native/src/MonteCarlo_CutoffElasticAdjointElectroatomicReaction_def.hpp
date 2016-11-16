@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CutoffElasticElectroatomicReaction_def.hpp
+//! \file   MonteCarlo_CutoffElasticAdjointElectroatomicReaction_def.hpp
 //! \author Luke Kersting
 //! \brief  The cutoff scattering elastic electroatomic reaction class def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_CUTOFF_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
-#define MONTE_CARLO_CUTOFF_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
+#ifndef MONTE_CARLO_CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_DEF_HPP
+#define MONTE_CARLO_CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
@@ -17,7 +17,7 @@ namespace MonteCarlo{
 
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::CutoffElasticElectroatomicReaction(
+CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::CutoffElasticAdjointElectroatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
@@ -45,7 +45,7 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
 
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::CutoffElasticElectroatomicReaction(
+CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::CutoffElasticAdjointElectroatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
@@ -79,35 +79,35 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
 /*! \details This does not include photons from atomic relaxation.
  */
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+unsigned CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
-ElectroatomicReactionType CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+AdjointElectroatomicReactionType CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return CUTOFF_ELASTIC_ELECTROATOMIC_REACTION;
+  return CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+void CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+         AdjointElectronState& electron,
+         ParticleBank& bank,
+         Data::SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution->scatterElectron( electron,
-                                              bank,
-                                              shell_of_interaction);
+  d_scattering_distribution->scatterAdjointElectron( electron,
+                                                     bank,
+                                                     shell_of_interaction);
 
   electron.incrementCollisionNumber();
 
@@ -118,7 +118,7 @@ void CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::r
 
 // Return the cross section at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
     const double energy ) const
 {
   // Make sure the energy is valid
@@ -131,7 +131,7 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
   double cross_section;
 
   cross_section =
-    StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
+    StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
     energy );
 
   // Make sure the cross section ratio is valid
@@ -143,7 +143,7 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 
 // Return the cross section at the given energy (efficient)
 template<typename InterpPolicy, bool processed_cross_section>
-double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
     const double energy,
     const unsigned bin_index ) const
 {
@@ -154,7 +154,7 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
   double cross_section;
 
   cross_section =
-    StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
+    StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
     energy,
     bin_index );
 
@@ -167,8 +167,8 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_CUTOFF_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
+#endif // end MONTE_CARLO_CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_CutoffElasticElectroatomicReaction_def.hpp
+// end MonteCarlo_CutoffElasticAdjointElectroatomicReaction_def.hpp
 //---------------------------------------------------------------------------//

@@ -77,7 +77,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
   unsigned cutoff_threshold_diff =
     cutoff_threshold_energy_index - analog_threshold_energy_index;
 
-  Teuchos::Array<double> combined_cross_section(
+  std::vector<double> combined_cross_section(
                            energy_grid.size() - analog_threshold_energy_index );
 
   for (unsigned i = 0; i < combined_cross_section.size(); ++i )
@@ -168,7 +168,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
   unsigned cutoff_threshold_diff =
     cutoff_threshold_energy_index - hybrid_threshold_energy_index;
 
-  Teuchos::Array<double> combined_cross_section(
+  std::vector<double> combined_cross_section(
                            energy_grid.size() - hybrid_threshold_energy_index );
 
   for (unsigned i = 0; i < combined_cross_section.size(); ++i )
