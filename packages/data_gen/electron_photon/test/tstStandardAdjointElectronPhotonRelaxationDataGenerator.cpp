@@ -919,7 +919,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   std::vector<double> energy_grid = h_data_container.getAdjointElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( energy_grid.back(), 20 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 20.0 );
   TEST_EQUALITY_CONST( energy_grid.size(), 24 );
 
    std::vector<double> cross_section;
@@ -953,7 +953,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
      h_data_container.getAdjointElasticAngularEnergyGrid();
 
    TEST_EQUALITY_CONST( angular_grid.front(), 1.0e-5 );
-   TEST_EQUALITY_CONST( angular_grid.back(), 20.0 );
+   TEST_EQUALITY_CONST( angular_grid.back(), 1e5 );
    TEST_EQUALITY_CONST( angular_grid.size(), 16 );
 
    std::vector<double> elastic_angles =
@@ -964,25 +964,25 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    TEST_EQUALITY_CONST( elastic_angles.size(), 2 );
 
    elastic_angles =
-     h_data_container.getAdjointCutoffElasticAngles(20.0);
+     h_data_container.getAdjointCutoffElasticAngles(1e5);
 
    TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
    TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
-   TEST_EQUALITY_CONST( elastic_angles.size(), 95 );
+   TEST_EQUALITY_CONST( elastic_angles.size(), 96 );
 
    std::vector<double> elastic_pdf =
-     h_data_container.getAdjointCutoffElasticPDF(1.0e-5);
+     h_data_container.getAdjointCutoffElasticPDF( 1e-5 );
 
    TEST_EQUALITY_CONST( elastic_pdf.front(), 0.5 );
    TEST_EQUALITY_CONST( elastic_pdf.back(), 0.5 );
    TEST_EQUALITY_CONST( elastic_pdf.size(), 2 );
 
    elastic_pdf =
-     h_data_container.getAdjointCutoffElasticPDF(20.0);
+     h_data_container.getAdjointCutoffElasticPDF( 1e5 );
 
    TEST_EQUALITY_CONST( elastic_pdf.front(), 6.25670e-13 );
    TEST_EQUALITY_CONST( elastic_pdf.back(), 9.86945e+5 );
-   TEST_EQUALITY_CONST( elastic_pdf.size(), 95 );
+   TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
 
    TEST_ASSERT( h_data_container.hasAdjointMomentPreservingData() );
 
@@ -994,7 +994,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    TEST_EQUALITY_CONST( discrete_angles.size(), 1 );
 
    discrete_angles =
-     h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 20.0 );
+     h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 1e5 );
 
    TEST_EQUALITY_CONST( discrete_angles.front(), 9.96847743255378838e-01 );
    TEST_EQUALITY_CONST( discrete_angles.back(), 9.96847743255378838e-01 );
@@ -1008,7 +1008,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    TEST_EQUALITY_CONST( discrete_weights.size(), 1 );
 
    discrete_weights =
-     h_data_container.getAdjointMomentPreservingElasticWeights( 20.0 );
+     h_data_container.getAdjointMomentPreservingElasticWeights( 1e5 );
 
    TEST_EQUALITY_CONST( discrete_weights.front(), 1.0 );
    TEST_EQUALITY_CONST( discrete_weights.back(), 1.0 );

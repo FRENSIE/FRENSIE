@@ -137,6 +137,9 @@ protected:
 
 private:
 
+  // The if a value is not equal to zero
+  static bool notEqualZero( const double value );
+
   // Set the transition data
   void setTransitionData( const unsigned subshell,
 			  const unsigned transitions,
@@ -309,6 +312,13 @@ private:
   // The number of moment preserving angles
   unsigned d_number_of_moment_preserving_angles;
 };
+
+// The if a value is not equal to zero
+inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
+							   const double value )
+{
+  return value != 0.0;
+}
 
 } // end DataGen namespace
 

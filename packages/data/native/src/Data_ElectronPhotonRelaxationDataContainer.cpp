@@ -1822,7 +1822,7 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSection(
   // Make sure the moment preserving elastic cross section is valid
   testPrecondition( moment_preserving_elastic_cross_section.size() <=
                     d_electron_energy_grid.size() );
-  testPrecondition( ValuesGreaterThanZero(
+  testPrecondition( ValuesGreaterThanOrEqualToZero(
     moment_preserving_elastic_cross_section ) );
 
   d_moment_preserving_elastic_cross_section =

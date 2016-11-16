@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="11">
 <N4Data52AdjointElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Tue Nov 15 12:41:19 CST 2016. It is for testing only!</notes>
+	<notes>This table was generated on Tue Nov 15 15:08:15 CST 2016. It is for testing only!</notes>
 	<atomic_number>1</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -82919,7 +82919,7 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</adjoint_bremsstrahlung_photon_cross_section>
-	<adjoint_bremsstrahlung_photon_cross_section_threshold_index>429153152</adjoint_bremsstrahlung_photon_cross_section_threshold_index>
+	<adjoint_bremsstrahlung_photon_cross_section_threshold_index>2240386080</adjoint_bremsstrahlung_photon_cross_section_threshold_index>
 	<adjoint_angular_energy_grid>
 		<count>12</count>
 		<item_version>0</item_version>

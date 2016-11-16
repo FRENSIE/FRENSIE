@@ -37,7 +37,7 @@ inline bool ValuesGreaterThanOrEqualToZero( const Array& values )
 {
   return std::find_if( values.begin(),
                        values.end(),
-                       isValueLessThanZero ) == values.end() );
+                       isValueLessThanZero ) == values.end();
 }
 
 // Test if a value is less than or equal to zero
