@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstMomentPreservingElasticElectroatomicReaction.cpp
+//! \file   tstMomentPreservingElasticAdjointElectroatomicReaction.cpp
 //! \author Luke Kersting
-//! \brief  Moment preserving Elastic electroatomic reaction unit tests
+//! \brief  Moment preserving Elastic adjoint electroatomic reaction unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,25 +16,23 @@
 #include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
-#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
+#include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
+#include "MonteCarlo_MomentPreservingElasticAdjointElectroatomicReaction.hpp"
+#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 
-typedef Utility::FullyTabularTwoDDistribution TwoDDist;
+typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
+    NativeFactory;
 
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
-    mp_elastic_reaction;
-std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
-    discrete_elastic_distribution;
-double cutoff_angle_cosine = 0.9;
+Teuchos::RCP<MonteCarlo::AdjointElectroatomicReaction> mp_elastic_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -48,70 +46,74 @@ bool notEqualZero( double value )
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getReactionType )
+TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
+                   getReactionType )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getReactionType(),
-		       MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+		       MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getThresholdEnergy )
+TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
+                   getThresholdEnergy )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getThresholdEnergy(),
-                       1.000000000000E-05 );
+                       1e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getNumberOfEmittedElectrons )
+TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
+                   getNumberOfEmittedElectrons )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedElectrons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getNumberOfEmittedPhotons )
+TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
+                   getNumberOfEmittedPhotons )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedPhotons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the moment preserving cross section can be returned
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction,
+TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
                    getCrossSection )
 {
 
   double cross_section =
     mp_elastic_reaction->getCrossSection( 1.0E-05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.611494138359350E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.22176061033364E+07, 1e-12 );
 
   cross_section =
     mp_elastic_reaction->getCrossSection( 1.0E-03 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.730253976136980E+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.66923499195181E+06, 1e-12 );
 
   cross_section =
-    mp_elastic_reaction->getCrossSection( 1.0E+05 );
+    mp_elastic_reaction->getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.808061009771560E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.05315286670457, 1e-12 );
 }
 
 
 //---------------------------------------------------------------------------//
 // Check that the elastic reaction can be simulated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, react )
+TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction, react )
 {
-  MonteCarlo::ElectronState electron( 0 );
+  MonteCarlo::AdjointElectronState electron( 0 );
   electron.setEnergy( 20.0 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
@@ -144,74 +146,42 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  // Create reaction
-  {
-    // Get native data container
-    Data::ElectronPhotonRelaxationDataContainer data_container =
-        Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
+  // Get native data container
+  Data::AdjointElectronPhotonRelaxationDataContainer data_container =
+        Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-    // Get the energy grid
-    std::vector<double> angular_energy_grid =
-        data_container.getElasticAngularEnergyGrid();
+  // Extract the energy grid and cross section
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign(
+        data_container.getAdjointElectronEnergyGrid().begin(),
+        data_container.getAdjointElectronEnergyGrid().end() );
 
-    // Get size of paramters
-    int size = angular_energy_grid.size();
+  Teuchos::ArrayRCP<double> cross_section;
+  cross_section.assign(
+        data_container.getAdjointMomentPreservingCrossSection().begin(),
+        data_container.getAdjointMomentPreservingCrossSection().end() );
 
-    // Create the scattering function
-    TwoDDist::DistributionType function_data(size);
+  unsigned threshold_index(
+    data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex() );
 
-    for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
-    {
-    function_data[n].first = angular_energy_grid[n];
+  double cutoff_angle_cosine = 0.9;
 
-    // Get the moment preserving elastic scattering angle cosines at the energy
-    std::vector<double> discrete_angles(
-        data_container.getMomentPreservingElasticDiscreteAngles(
-            angular_energy_grid[n] ) );
+  // Create the distribution
+  std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
+        discrete_elastic_distribution;
 
-    // Get the cutoff elastic scatering pdf at the energy
-    std::vector<double> weights(
-        data_container.getMomentPreservingElasticWeights(
-            angular_energy_grid[n] ) );
+  NativeFactory::createMomentPreservingElasticDistribution(
+        discrete_elastic_distribution,
+        data_container,
+        cutoff_angle_cosine );
 
-    function_data[n].second.reset(
-      new const Utility::DiscreteDistribution(
-        discrete_angles,
-        weights,
-        false,
-        true ) );
-    }
-
-    std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
-        function_data ) );
-
-    discrete_elastic_distribution.reset(
-        new MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
-                scattering_function,
-                cutoff_angle_cosine ) );
-
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.assign(
-        data_container.getElectronEnergyGrid().begin(),
-        data_container.getElectronEnergyGrid().end() );
-
-    Teuchos::ArrayRCP<double> cross_section;
-    cross_section.assign(
-        data_container.getMomentPreservingCrossSection().begin(),
-        data_container.getMomentPreservingCrossSection().end() );
-
-    unsigned threshold_index(
-        data_container.getMomentPreservingCrossSectionThresholdEnergyIndex() );
-
-    // Create the reaction
-    mp_elastic_reaction.reset(
-      new MonteCarlo::MomentPreservingElasticElectroatomicReaction<Utility::LinLin>(
+  // Create the reaction
+  mp_elastic_reaction.reset(
+      new MonteCarlo::MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLin>(
                 energy_grid,
                 cross_section,
                 threshold_index,
                 discrete_elastic_distribution ) );
-  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
@@ -220,5 +190,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstCutoffElasticElectroatomicReaction.cpp
+// end tstCutoffElasticAdjointElectroatomicReaction.cpp
 //---------------------------------------------------------------------------//
