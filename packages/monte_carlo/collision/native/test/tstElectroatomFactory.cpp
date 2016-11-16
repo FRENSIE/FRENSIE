@@ -21,12 +21,13 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronState.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
+
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -1635,60 +1636,37 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  clp().setOption( "test_cross_sections_xml_directory",
+                   &cross_sections_xml_directory,
+                   "Test cross_sections.xml file name" );
+}
 
-  clp.setOption( "test_cross_sections_xml_directory",
-                 &cross_sections_xml_directory,
-                 "Test cross_sections.xml file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   {
     std::string cross_sections_xml_file = cross_sections_xml_directory;
     cross_sections_xml_file += "/cross_sections.xml";
 
     // Read in the xml file storing the cross section table info
     Teuchos::updateParametersFromXmlFile(
-			       cross_sections_xml_file,
-			       Teuchos::inoutArg( cross_section_table_info ) );
+           cross_sections_xml_file,
+           Teuchos::inoutArg( cross_section_table_info ) );
 
     // Create the atomic relaxation model factory
     atomic_relaxation_model_factory.reset(
-				new MonteCarlo::AtomicRelaxationModelFactory );
+        new MonteCarlo::AtomicRelaxationModelFactory );
   }
 
   hash_grid_bins = 100;
-
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 
 //---------------------------------------------------------------------------//

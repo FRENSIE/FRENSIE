@@ -30,6 +30,7 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -314,35 +315,27 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getAtomicRelaxationModel_native )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name, test_native_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name, test_native_file_name;
+  clp().setOption( "test_ace_file",
+                   &test_ace_file_name,
+                   "Test ACE file name" );
+  clp().setOption( "test_ace_table",
+                   &test_ace_table_name,
+                   "Test ACE table name" );
+  clp().setOption( "test_native_file",
+                   &test_native_file_name,
+                   "Test Native file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test Native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create the Ace electroatom core
   {
     // Create a file handler and data extractor
@@ -484,7 +477,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
     Teuchos::ArrayRCP<double> ae_cross_section;
     ae_cross_section.assign(
       data_container.getAtomicExcitationCrossSection().begin(),
-	  data_container.getAtomicExcitationCrossSection().end() );
+      data_container.getAtomicExcitationCrossSection().end() );
 
     unsigned ae_threshold_index =
         data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex();
@@ -502,7 +495,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
                       ae_energy_loss_function ) );
 
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> ae_reaction(
-	    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+        new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             ae_cross_section,
             ae_threshold_index,
@@ -514,7 +507,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
     Teuchos::ArrayRCP<double> b_cross_section;
     b_cross_section.assign(
       data_container.getBremsstrahlungCrossSection().begin(),
-	  data_container.getBremsstrahlungCrossSection().end() );
+      data_container.getBremsstrahlungCrossSection().end() );
 
     unsigned b_threshold_index =
         data_container.getBremsstrahlungCrossSectionThresholdEnergyIndex();
@@ -585,22 +578,9 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 							 false,
 							 Utility::LinLin() ) );
   }
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
 
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElectroatomCore.cpp

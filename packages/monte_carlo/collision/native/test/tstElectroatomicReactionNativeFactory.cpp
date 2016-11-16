@@ -18,8 +18,7 @@
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_InterpolationPolicy.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -36,7 +35,7 @@ std::shared_ptr<MonteCarlo::ElectroatomicReaction> reaction;
 //---------------------------------------------------------------------------//
 // Check that an analog elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-		           createAnalogElasticReaction )
+                   createAnalogElasticReaction )
 {
   MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
                 *data_container,
@@ -46,7 +45,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
 
   // Test that the stored cross section is correct
@@ -407,62 +406,37 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_file_name;
-
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test Native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  {
-    // Create the native data file container
-    data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
-						     test_native_file_name ) );
-
-    // Extract the common energy grid
-    energy_grid.deepCopy( data_container->getElectronEnergyGrid() );
-
-    // Create the hash-based grid searcher
-    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-					     energy_grid,
-					     energy_grid[0],
-					     energy_grid[energy_grid.size()-1],
-					     100 ) );
-  }
-
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
+  clp().setOption( "test_native_file",
+                   &test_native_file_name,
+                   "Test Native file name" );
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  // Create the native data file container
+  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
+                             test_native_file_name ) );
+
+  // Extract the common energy grid
+  energy_grid.deepCopy( data_container->getElectronEnergyGrid() );
+
+  // Create the hash-based grid searcher
+  grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+                 energy_grid,
+                 energy_grid[0],
+                 energy_grid[energy_grid.size()-1],
+                 100 ) );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElectroatomicReactionNativeFactory.cpp
