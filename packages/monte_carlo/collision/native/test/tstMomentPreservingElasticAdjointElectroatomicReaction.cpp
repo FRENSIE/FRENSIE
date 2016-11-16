@@ -19,7 +19,6 @@
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_MomentPreservingElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DiscreteDistribution.hpp"
