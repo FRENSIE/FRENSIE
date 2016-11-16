@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
@@ -27,12 +28,14 @@ class HybridElasticElectronScatteringDistribution : public ElectronScatteringDis
 
 public:
 
+  //! Typedef for the elastic discrete function
+  typedef Utility::Quad<double,
+                        std::shared_ptr<const Utility::TabularOneDDistribution>,
+                        std::shared_ptr<const Utility::TabularOneDDistribution>,
+                        double> HybridFunction;
+
   //! Typedef for the elastic discrete distribution
-  typedef std::vector<Utility::Quad< double,
-                        std::shared_ptr<const Utility::TabularOneDDistribution>,
-                        std::shared_ptr<const Utility::TabularOneDDistribution>,
-                        double > >
-    HybridDistribution;
+  typedef std::vector<HybridFunction> HybridDistribution;
 
   //! Constructor
   HybridElasticElectronScatteringDistribution(
@@ -113,7 +116,7 @@ private:
   /* Hybrid distribution ( first = energy, second = 1D cutoff distribution,
    * third = 1D Moment preserving discrete distribution,
    * fourth = sampling ratio bewteen the distributions )
-  */
+   */
   std::shared_ptr<HybridDistribution> d_hybrid_distribution;
 };
 

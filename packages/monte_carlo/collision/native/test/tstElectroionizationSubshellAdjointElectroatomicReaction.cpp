@@ -107,23 +107,23 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCro
 {
   // First Subshell
   double cross_section = first_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.58057471118539E+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.52229939949541E+09, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.07777304103843E+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.235699251648680E+04, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.01386550694160E+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.79285477601906E+03, 1e-12 );
 
   // Last Subshell
   cross_section = last_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.38122058501939E+11, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.7406999406310E+11, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.15856238134358E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.703371879337520E+05, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.20330712777701E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.35948448287087E+05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

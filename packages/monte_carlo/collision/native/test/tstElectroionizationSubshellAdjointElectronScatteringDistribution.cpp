@@ -53,23 +53,23 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   double pdf;
 
   // Check below the first bin
-  pdf = native_distribution->evaluate( 1e-6, 2.3711E-5 );
+  pdf = native_distribution->evaluate( 9.99e-6, 2.3711E-5 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
   // Check the first bin
   pdf = native_distribution->evaluate( 1e-5, 2.3711E-5 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.51360045307012E+03, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.44562644318924E+03, 1e-12 );
 
   // Check between two bins
-  pdf = native_distribution->evaluate( 1.1e-5, 1e-3 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.24197871504572, 1e-12 );
+  pdf = native_distribution->evaluate( 1.1e-5, 0.2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 9.92149101162272E-02, 1e-12 );
 
   // Check the last bin
   pdf = native_distribution->evaluate( 20.0, 20.00002722 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.23186158924304E+04, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.55811601864989E+04, 1e-12 );
 
   // Check above the last bin
-  pdf = native_distribution->evaluate( 21.0, 22.1 );
+  pdf = native_distribution->evaluate( 20.01, 22.1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 }
 
@@ -81,23 +81,23 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   double pdf;
 
   // Check below the first bin
-  pdf = native_distribution->evaluatePDF( 1e-6, 2.3711E-5 );
+  pdf = native_distribution->evaluatePDF( 9.99e-6, 2.3711E-5 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
   // Check the first bin
   pdf = native_distribution->evaluatePDF( 1e-5, 2.3711E-5 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.49893939125706E+03, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.45350634274832E+03, 1e-12 );
 
   // Check between two bins
-  pdf = native_distribution->evaluatePDF( 1.1e-5, 1e-3 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.20545711833511, 1e-12 );
+  pdf = native_distribution->evaluatePDF( 1.1e-5, 0.2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 9.93806465491136E-02, 1e-12 );
 
   // Check the last bin
   pdf = native_distribution->evaluatePDF( 20.0, 20.00002722 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.88771105446117E+04, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.78817593701474E+04, 1e-12 );
 
   // Check above the last bin
-  pdf = native_distribution->evaluatePDF( 21.0, 22.1 );
+  pdf = native_distribution->evaluatePDF( 20.01, 22.1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 }
 
@@ -109,23 +109,23 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   double cdf;
 
   // Check below the first bin
-  cdf = native_distribution->evaluateCDF( 1e-5, 1.361e-5 );
+  cdf = native_distribution->evaluateCDF( 9.99e-6, 1.361e-5 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.0, 1e-12 );
 
   // Check the first bin
-  cdf = native_distribution->evaluateCDF( 1e-5, 2.3711E-5 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.0, 1e-12 );
+  cdf = native_distribution->evaluateCDF( 1e-5, 0.2 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.08687970465794E-01, 1e-12 );
 
   // Check between two bins
-  cdf = native_distribution->evaluateCDF( 1.1e-5, 1e-3 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.33873139177471E-02, 1e-12 );
+  cdf = native_distribution->evaluateCDF( 1.1e-5, 0.2 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.12681875927748E-01, 1e-12 );
 
   // Check the last bin
   cdf = native_distribution->evaluateCDF( 20.0, 20.00002722 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
 
   // Check above the last bin
-  cdf = native_distribution->evaluateCDF( 21.0, 22.1 );
+  cdf = native_distribution->evaluateCDF( 20.01, 22.1 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.0, 1e-12 );
 }
 
@@ -136,7 +136,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 1.3137507341127E-02;
+  fake_stream[0] = 1.08687970465794E-01;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -146,10 +146,10 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   native_distribution->sample( incoming_energy,
                                outgoing_energy,
                                scattering_angle_cosine );
-
+std::cout << std::setprecision(20) << "scattering_angle_cosine = " << scattering_angle_cosine << std::endl;
   // Test scattered electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0004842234463E-01, 1e-10 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 7.7320224849430829E-03, 1e-10 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 0.2, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -159,7 +159,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 1.3137507341127E-02;
+  fake_stream[0] = 1.08687970465794E-01;
 
   unsigned trials = 0.0;
 
@@ -177,8 +177,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   TEST_EQUALITY_CONST( trials, 1.0 );
 
   // Test scattered electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0004842234463E-01, 1e-10 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 7.7320224849430829E-03, 1e-10 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 0.2, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -188,7 +188,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 1.3137507341127E-02;
+  fake_stream[0] = 1.08687970465794E-01;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -205,8 +205,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                                shell_of_interaction );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0004842234463E-01, 1e-10 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1e-3, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 7.7320224849430829E-03, 1e-10 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 0.2, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

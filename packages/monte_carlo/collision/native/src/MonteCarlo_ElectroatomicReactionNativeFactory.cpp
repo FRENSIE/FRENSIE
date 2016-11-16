@@ -30,10 +30,10 @@ namespace MonteCarlo{
 
 // Create the analog elastic scattering electroatomic reactions
 void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
-			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
+            const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+            const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-			std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
+            std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -285,7 +285,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
   ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
     distribution,
     cutoff_distribution,
-    raw_electroatom_data );
+    raw_electroatom_data.getAtomicNumber() );
 
   // Screened Rutherford elastic cross section
   Teuchos::ArrayRCP<double> elastic_cross_section;
