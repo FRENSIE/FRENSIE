@@ -340,14 +340,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
     // Create a file handler and data extractor
     Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+                                 new Data::ACEFileHandler( test_ace_file_name,
+                                                           test_ace_table_name,
+                                                           1u ) );
     Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+                                      ace_file_handler->getTableNXSArray(),
+                                      ace_file_handler->getTableJXSArray(),
+                                      ace_file_handler->getTableXSSArray() ) );
 
     // Create the atomic excitation, bremsstrahlung cross sections
     Teuchos::ArrayRCP<double> energy_grid;
@@ -358,8 +358,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     Teuchos::ArrayView<const double>::iterator start =
       std::find_if( raw_ae_cross_section.begin(),
-		    raw_ae_cross_section.end(),
-		    notEqualZero );
+                    raw_ae_cross_section.end(),
+                    notEqualZero );
 
     Teuchos::ArrayRCP<double> ae_cross_section;
     ae_cross_section.assign( start, raw_ae_cross_section.end() );
@@ -369,7 +369,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Extract the atomic excitation information data block (EXCIT)
     Teuchos::ArrayView<const double> excit_block(
-				      xss_data_extractor->extractEXCITBlock() );
+                                      xss_data_extractor->extractEXCITBlock() );
 
     // Extract the number of tabulated energies
     int size = excit_block.size()/2;
@@ -396,10 +396,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                       ae_energy_loss_function ) );
 
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> ae_reaction(
-	    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-			    energy_grid,
-			    ae_cross_section,
-			    ae_threshold_index,
+            new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+                            energy_grid,
+                            ae_cross_section,
+                            ae_threshold_index,
                 ae_energy_loss_distribution ) );
 
     // Bremsstrahlung
@@ -407,8 +407,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       xss_data_extractor->extractBremsstrahlungCrossSection();
 
     start = std::find_if( raw_b_cross_section.begin(),
-		    raw_b_cross_section.end(),
-		    notEqualZero );
+                    raw_b_cross_section.end(),
+                    notEqualZero );
 
     Teuchos::ArrayRCP<double> b_cross_section;
     b_cross_section.assign( start, raw_b_cross_section.end() );
@@ -416,7 +416,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     unsigned b_threshold_index =
       energy_grid.size() - b_cross_section.size();
 
-	std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+        std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution;
 
 
@@ -427,7 +427,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
-	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+            new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             b_cross_section,
             b_threshold_index,
@@ -443,16 +443,16 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 
     // Create a void atomic relaxation model
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
-				   new MonteCarlo::VoidAtomicRelaxationModel );
+                                   new MonteCarlo::VoidAtomicRelaxationModel );
 
     // Create a test electroatom core
     ace_electroatom_core.reset(
-			  new MonteCarlo::ElectroatomCore( energy_grid,
-							 scattering_reactions,
-							 absorption_reactions,
-							 relaxation_model,
-							 false,
-							 Utility::LinLin() ) );
+                          new MonteCarlo::ElectroatomCore( energy_grid,
+                                                         scattering_reactions,
+                                                         absorption_reactions,
+                                                         relaxation_model,
+                                                         false,
+                                                         Utility::LinLin() ) );
   }
 
   // Create the Native electroatom core
@@ -468,10 +468,10 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
     // Create the hash-based grid searcher
     Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
         new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-					     energy_grid,
-					     energy_grid[0],
-					     energy_grid[energy_grid.size()-1],
-					     100 ) );
+                                             energy_grid,
+                                             energy_grid[0],
+                                             energy_grid[energy_grid.size()-1],
+                                             100 ) );
 
     // Atomic Excitation cross section
     Teuchos::ArrayRCP<double> ae_cross_section;
@@ -533,7 +533,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
         data_container.getBremsstrahlungPhotonPDF( b_energy_grid[n] ) );
 
       function_data[n].second.reset(
-	    new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
+            new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
                                                                  pdf ) );
     }
 
@@ -551,7 +551,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
-	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+            new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             b_cross_section,
             b_threshold_index,
@@ -567,16 +567,16 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 
     // Create a void atomic relaxation model
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
-				   new MonteCarlo::VoidAtomicRelaxationModel );
+                                   new MonteCarlo::VoidAtomicRelaxationModel );
 
     // Create a test electroatom core
     native_electroatom_core.reset(
-			  new MonteCarlo::ElectroatomCore( energy_grid,
-							 scattering_reactions,
-							 absorption_reactions,
-							 relaxation_model,
-							 false,
-							 Utility::LinLin() ) );
+                          new MonteCarlo::ElectroatomCore( energy_grid,
+                                                         scattering_reactions,
+                                                         absorption_reactions,
+                                                         relaxation_model,
+                                                         false,
+                                                         Utility::LinLin() ) );
   }
 }
 

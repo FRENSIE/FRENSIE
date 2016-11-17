@@ -1,18 +1,18 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectroatomCore_def.hpp
+//! \file   MonteCarlo_AdjointElectroatomCore_def.hpp
 //! \author Luke Kersting
-//! \brief  The electroatom core class template definitions
+//! \brief  The adjoint electroatom core class template definitions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELECTROATOM_CORE_DEF_HPP
-#define MONTE_CARLO_ELECTROATOM_CORE_DEF_HPP
+#ifndef MONTE_CARLO_ADJOINT_ELECTROATOM_CORE_DEF_HPP
+#define MONTE_CARLO_ADJOINT_ELECTROATOM_CORE_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
-#include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
+#include "MonteCarlo_AbsorptionAdjointElectroatomicReaction.hpp"
+#include "MonteCarlo_VoidAbsorptionAdjointElectroatomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -25,7 +25,7 @@ namespace MonteCarlo{
  * TotalAbsorptionReaction
  */
 template<typename InterpPolicy>
-ElectroatomCore::ElectroatomCore(
+AdjointElectroatomCore::AdjointElectroatomCore(
           const Teuchos::ArrayRCP<double>& energy_grid,
           const ReactionMap& standard_scattering_reactions,
           const ReactionMap& standard_absorption_reactions,
@@ -56,7 +56,7 @@ ElectroatomCore::ElectroatomCore(
 
   while( rxn_type_pointer != standard_absorption_reactions.end() )
   {
-    if( ElectroatomCore::scattering_reaction_types.count( rxn_type_pointer->first ) )
+    if( AdjointElectroatomCore::scattering_reaction_types.count( rxn_type_pointer->first ) )
       d_scattering_reactions.insert( *rxn_type_pointer );
     else
       d_absorption_reactions.insert( *rxn_type_pointer );
@@ -68,7 +68,7 @@ ElectroatomCore::ElectroatomCore(
 
   while( rxn_type_pointer != standard_scattering_reactions.end() )
   {
-    if( ElectroatomCore::scattering_reaction_types.count( rxn_type_pointer->first ) )
+    if( AdjointElectroatomCore::scattering_reaction_types.count( rxn_type_pointer->first ) )
       d_scattering_reactions.insert( *rxn_type_pointer );
     else
       d_miscellaneous_reactions.insert( *rxn_type_pointer );
@@ -76,14 +76,14 @@ ElectroatomCore::ElectroatomCore(
     ++rxn_type_pointer;
   }
   // Create the total absorption and total reactions
-  std::shared_ptr<ElectroatomicReaction> total_absorption_reaction;
-  std::shared_ptr<ElectroatomicReaction> total_reaction;
+  std::shared_ptr<AdjointElectroatomicReaction> total_absorption_reaction;
+  std::shared_ptr<AdjointElectroatomicReaction> total_reaction;
 
   if( processed_atomic_cross_sections )
   {
     if( d_absorption_reactions.size() > 0 )
     {
-      ElectroatomCore::createProcessedTotalAbsorptionReaction<InterpPolicy>(
+      AdjointElectroatomCore::createProcessedTotalAbsorptionReaction<InterpPolicy>(
                                                  energy_grid,
                                                  d_absorption_reactions,
                                                  total_absorption_reaction );
@@ -92,12 +92,12 @@ ElectroatomCore::ElectroatomCore(
     {
        // Create void absorption reaction
        total_absorption_reaction.reset(
-         new VoidAbsorptionElectroatomicReaction() );
+         new VoidAbsorptionAdjointElectroatomicReaction() );
     }
 
     d_total_absorption_reaction = total_absorption_reaction;
 
-    ElectroatomCore::createProcessedTotalReaction<InterpPolicy>(
+    AdjointElectroatomCore::createProcessedTotalReaction<InterpPolicy>(
                                                    energy_grid,
                                                    d_scattering_reactions,
                                                    d_total_absorption_reaction,
@@ -109,7 +109,7 @@ ElectroatomCore::ElectroatomCore(
   {
     if( d_absorption_reactions.size() > 0 )
     {
-      ElectroatomCore::createTotalAbsorptionReaction<InterpPolicy>(
+      AdjointElectroatomCore::createTotalAbsorptionReaction<InterpPolicy>(
                                                  energy_grid,
                                                  d_absorption_reactions,
                                                  total_absorption_reaction );
@@ -118,12 +118,12 @@ ElectroatomCore::ElectroatomCore(
     {
        // Create void absorption reaction
        total_absorption_reaction.reset(
-         new VoidAbsorptionElectroatomicReaction() );
+         new VoidAbsorptionAdjointElectroatomicReaction() );
     }
 
     d_total_absorption_reaction = total_absorption_reaction;
 
-    ElectroatomCore::createTotalReaction<InterpPolicy>(
+    AdjointElectroatomCore::createTotalReaction<InterpPolicy>(
                                                   energy_grid,
                                                   d_scattering_reactions,
                                                   d_total_absorption_reaction,
@@ -138,10 +138,10 @@ ElectroatomCore::ElectroatomCore(
 
 // Create the total absorption reaction
 template<typename InterpPolicy>
-void ElectroatomCore::createTotalAbsorptionReaction(
+void AdjointElectroatomCore::createTotalAbsorptionReaction(
              const Teuchos::ArrayRCP<double>& energy_grid,
              const ConstReactionMap& absorption_reactions,
-             std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction )
+             std::shared_ptr<AdjointElectroatomicReaction>& total_absorption_reaction )
 {
   // Make sure the absorption cross section is sized correctly
   testPrecondition( energy_grid.size() > 1 );
@@ -194,19 +194,19 @@ void ElectroatomCore::createTotalAbsorptionReaction(
   absorption_cross_section_copy.deepCopy( absorption_cross_section() );
 
   total_absorption_reaction.reset(
-      new AbsorptionElectroatomicReaction<InterpPolicy,false>(
+      new AbsorptionAdjointElectroatomicReaction<InterpPolicy,false>(
                                     energy_grid,
                                     absorption_cross_section_copy,
                                     absorption_threshold_energy_index,
-                                    TOTAL_ABSORPTION_ELECTROATOMIC_REACTION ) );
+                                    TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION ) );
 }
 
 // Create the processed total absorption reaction
 template<typename InterpPolicy>
-void ElectroatomCore::createProcessedTotalAbsorptionReaction(
+void AdjointElectroatomCore::createProcessedTotalAbsorptionReaction(
              const Teuchos::ArrayRCP<double>& energy_grid,
              const ConstReactionMap& absorption_reactions,
-             std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction )
+             std::shared_ptr<AdjointElectroatomicReaction>& total_absorption_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -262,20 +262,20 @@ void ElectroatomCore::createProcessedTotalAbsorptionReaction(
   absorption_cross_section_copy.deepCopy( absorption_cross_section() );
 
   total_absorption_reaction.reset(
-      new AbsorptionElectroatomicReaction<InterpPolicy,true>(
+      new AbsorptionAdjointElectroatomicReaction<InterpPolicy,true>(
                                      energy_grid,
                                      absorption_cross_section_copy,
                                      absorption_threshold_energy_index,
-                                     TOTAL_ABSORPTION_ELECTROATOMIC_REACTION ) );
+                                     TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION ) );
 }
 
 // Create the total reaction
 template<typename InterpPolicy>
-void ElectroatomCore::createTotalReaction(
+void AdjointElectroatomCore::createTotalReaction(
       const Teuchos::ArrayRCP<double>& energy_grid,
       const ConstReactionMap& scattering_reactions,
-      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<ElectroatomicReaction>& total_reaction )
+      const std::shared_ptr<const AdjointElectroatomicReaction>& total_absorption_reaction,
+      std::shared_ptr<AdjointElectroatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -330,20 +330,20 @@ void ElectroatomCore::createTotalReaction(
   total_cross_section_copy.deepCopy( total_cross_section() );
 
   total_reaction.reset(
-      new AbsorptionElectroatomicReaction<InterpPolicy,false>(
+      new AbsorptionAdjointElectroatomicReaction<InterpPolicy,false>(
                                                 energy_grid,
                                                 total_cross_section_copy,
                                                 total_threshold_energy_index,
-                                                TOTAL_ELECTROATOMIC_REACTION ) );
+                                                TOTAL_ADJOINT_ELECTROATOMIC_REACTION ) );
 }
 
 // Calculate the processed total absorption cross section
 template<typename InterpPolicy>
-void ElectroatomCore::createProcessedTotalReaction(
+void AdjointElectroatomCore::createProcessedTotalReaction(
       const Teuchos::ArrayRCP<double>& energy_grid,
       const ConstReactionMap& scattering_reactions,
-      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<ElectroatomicReaction>& total_reaction )
+      const std::shared_ptr<const AdjointElectroatomicReaction>& total_absorption_reaction,
+      std::shared_ptr<AdjointElectroatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -402,18 +402,18 @@ void ElectroatomCore::createProcessedTotalReaction(
   total_cross_section_copy.deepCopy( total_cross_section() );
 
   total_reaction.reset(
-      new AbsorptionElectroatomicReaction<InterpPolicy,true>(
+      new AbsorptionAdjointElectroatomicReaction<InterpPolicy,true>(
                                                energy_grid,
                                                total_cross_section_copy,
                                                total_threshold_energy_index,
-                                               TOTAL_ELECTROATOMIC_REACTION ) );
+                                               TOTAL_ADJOINT_ELECTROATOMIC_REACTION ) );
 }
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ELECTROATOM_CORE_DEF_HPP
+#endif // end MONTE_CARLO_ADJOINT_ELECTROATOM_CORE_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectroatomCore_def.hpp
+// end MonteCarlo_AdjointElectroatomCore_def.hpp
 //---------------------------------------------------------------------------//
 

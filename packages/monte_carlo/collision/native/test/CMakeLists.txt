@@ -934,6 +934,13 @@ TARGET_LINK_LIBRARIES(tstElectroatomCore monte_carlo_collision_native)
 ADD_TEST(ElectroatomCore_test tstElectroatomCore --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 SET_PROPERTY(TEST ElectroatomCore_test PROPERTY LABELS electron)
 
+ADD_EXECUTABLE(tstAdjointElectroatomCore
+  tstAdjointElectroatomCore.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointElectroatomCore monte_carlo_collision_native)
+ADD_TEST(AdjointElectroatomCore_test tstAdjointElectroatomCore --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
+SET_PROPERTY(TEST AdjointElectroatomCore_test PROPERTY LABELS electron adjoint)
+
 ADD_EXECUTABLE(tstElectroatom
   tstElectroatom.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

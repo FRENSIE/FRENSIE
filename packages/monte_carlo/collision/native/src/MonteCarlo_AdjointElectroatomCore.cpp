@@ -1,127 +1,127 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectroatomCore.cpp
+//! \file   MonteCarlo_AdjointElectroatomCore.cpp
 //! \author Luke Kersting
-//! \brief  The electroatom core class definition.
+//! \brief  The adjoint electroatom core class definition.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomCore.hpp"
+#include "MonteCarlo_AdjointElectroatomCore.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Initialize the static member data
-const boost::unordered_set<ElectroatomicReactionType>
-ElectroatomCore::scattering_reaction_types =
-  ElectroatomCore::setDefaultScatteringReactionTypes();
+const boost::unordered_set<AdjointElectroatomicReactionType>
+AdjointElectroatomCore::scattering_reaction_types =
+  AdjointElectroatomCore::setDefaultScatteringReactionTypes();
 
 // Set the default scattering reaction types
-boost::unordered_set<ElectroatomicReactionType>
-ElectroatomCore::setDefaultScatteringReactionTypes()
+boost::unordered_set<AdjointElectroatomicReactionType>
+AdjointElectroatomCore::setDefaultScatteringReactionTypes()
 {
-  boost::unordered_set<ElectroatomicReactionType> tmp_scattering_reaction_types;
+  boost::unordered_set<AdjointElectroatomicReactionType> tmp_scattering_reaction_types;
   tmp_scattering_reaction_types.insert(
-                  ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                  ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+                  HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+                  CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+                  SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+                  MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+                  BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
+                  ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  L1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  L2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  L2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  L3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  L3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  M1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  M1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  M2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  M2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  M3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  M3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  M4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  M4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  M5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  M5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  N1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  N1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  N2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  N2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  N3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  N3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  N4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  N4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  N5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  N5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  N6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  N6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  N7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  N7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  O1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  O1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  O2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  O2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  O3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  O3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  O4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  O4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  O5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  O5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  O6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  O6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  O7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  O7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  O8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  O8_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  O9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  O9_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  P1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  P1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  P2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  P2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  P3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  P4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  P4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  P5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  P5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  P6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  P6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  P7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  P7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  P8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  P8_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  P9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  P9_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                 P10_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                 P10_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                 P11_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                 P11_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  Q1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  Q1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  Q2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  Q2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(
-                  Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  Q3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
   return tmp_scattering_reaction_types;
 }
 
 // Default constructor
-ElectroatomCore::ElectroatomCore()
+AdjointElectroatomCore::AdjointElectroatomCore()
   : d_total_reaction(),
     d_total_absorption_reaction(),
     d_scattering_reactions(),
@@ -136,9 +136,9 @@ ElectroatomCore::ElectroatomCore()
  * absorption cross sections should have been created from the scattering
  * and absorption reactions.
  */
-ElectroatomCore::ElectroatomCore(
-      const std::shared_ptr<const ElectroatomicReaction>& total_reaction,
-      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
+AdjointElectroatomCore::AdjointElectroatomCore(
+      const std::shared_ptr<const AdjointElectroatomicReaction>& total_reaction,
+      const std::shared_ptr<const AdjointElectroatomicReaction>& total_absorption_reaction,
       const ConstReactionMap& scattering_reactions,
       const ConstReactionMap& absorption_reactions,
       const ConstReactionMap& miscellaneous_reactions,
@@ -163,7 +163,7 @@ ElectroatomCore::ElectroatomCore(
 }
 
 //! Copy constructor
-ElectroatomCore::ElectroatomCore( const ElectroatomCore& instance )
+AdjointElectroatomCore::AdjointElectroatomCore( const AdjointElectroatomCore& instance )
   : d_total_reaction( instance.d_total_reaction ),
     d_total_absorption_reaction( instance.d_total_absorption_reaction ),
     d_scattering_reactions( instance.d_scattering_reactions ),
@@ -183,7 +183,7 @@ ElectroatomCore::ElectroatomCore( const ElectroatomCore& instance )
 }
 
 //! Assignment Operator
-ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
+AdjointElectroatomCore& AdjointElectroatomCore::operator=( const AdjointElectroatomCore& instance )
 {
   // Make sure the total reaction is valid
   testPrecondition( instance.d_total_reaction.use_count() > 0 );
@@ -211,6 +211,6 @@ ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectroatomCore.cpp
+// end MonteCarlo_AdjointElectroatomCore.cpp
 //---------------------------------------------------------------------------//
 
