@@ -969,6 +969,13 @@ TARGET_LINK_LIBRARIES(tstElectroatomNativeFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomNativeFactory_test tstElectroatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 SET_PROPERTY(TEST ElectroatomNativeFactory_test PROPERTY LABELS electron native)
 
+ADD_EXECUTABLE(tstAdjointElectroatomNativeFactory
+  tstAdjointElectroatomNativeFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointElectroatomNativeFactory monte_carlo_collision_native)
+ADD_TEST(AdjointElectroatomNativeFactory_test tstAdjointElectroatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
+SET_PROPERTY(TEST AdjointElectroatomNativeFactory_test PROPERTY LABELS electron native adjoint)
+
 ADD_EXECUTABLE(tstElectroatomFactory
   tstElectroatomFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

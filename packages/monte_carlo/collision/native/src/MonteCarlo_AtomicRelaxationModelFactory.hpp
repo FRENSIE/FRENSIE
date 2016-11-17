@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_SubshellRelaxationModel.hpp"
+#include "MonteCarlo_VoidAtomicRelaxationModel.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_ENDLDataContainer.hpp"
