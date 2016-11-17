@@ -493,8 +493,7 @@ void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction,
-        BremsstrahlungAngularDistributionType photon_distribution_function )
+        std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==

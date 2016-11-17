@@ -103,8 +103,7 @@ public:
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction,
-    BremsstrahlungAngularDistributionType photon_distribution_function );
+    std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction );
 
   //! Create a void absorption adjoint electroatomic reaction
   static void createVoidAbsorptionReaction(
