@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_Electroatom.cpp
+//! \file   MonteCarlo_AdjointElectroatom.cpp
 //! \author Luke Kersting
-//! \brief  The electroatom base class definition
+//! \brief  The adjoint electroatom base class definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_Electroatom.hpp"
+#include "MonteCarlo_AdjointElectroatom.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -15,17 +15,17 @@
 namespace MonteCarlo{
 
 // Return the reactions that are treated as scattering
-const boost::unordered_set<ElectroatomicReactionType>&
-Electroatom::getScatteringReactionTypes()
+const boost::unordered_set<AdjointElectroatomicReactionType>&
+AdjointElectroatom::getScatteringReactionTypes()
 {
-  return ElectroatomCore::scattering_reaction_types;
+  return AdjointElectroatomCore::scattering_reaction_types;
 }
 
 //! Constructor (from a core)
-Electroatom::Electroatom( const std::string& name,
-                          const unsigned atomic_number,
-                          const double atomic_weight,
-                          const ElectroatomCore& core )
+AdjointElectroatom::AdjointElectroatom( const std::string& name,
+                                        const unsigned atomic_number,
+                                        const double atomic_weight,
+                                        const AdjointElectroatomCore& core )
   : d_name( name ),
     d_atomic_number( atomic_number ),
     d_atomic_weight( atomic_weight ),
@@ -39,25 +39,25 @@ Electroatom::Electroatom( const std::string& name,
 }
 
 // Return the atom name
-const std::string& Electroatom::getAtomName() const
+const std::string& AdjointElectroatom::getAtomName() const
 {
   return d_name;
 }
 
 // Return the atomic number
-unsigned Electroatom::getAtomicNumber() const
+unsigned AdjointElectroatom::getAtomicNumber() const
 {
   return d_atomic_number;
 }
 
 // Return the atomic weight
-double Electroatom::getAtomicWeight() const
+double AdjointElectroatom::getAtomicWeight() const
 {
   return d_atomic_weight;
 }
 
 // Return the total cross section
-double Electroatom::getTotalCrossSection( const double energy ) const
+double AdjointElectroatom::getTotalCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -67,7 +67,7 @@ double Electroatom::getTotalCrossSection( const double energy ) const
 }
 
 // Return the total cross section
-double Electroatom::getAbsorptionCrossSection( const double energy ) const
+double AdjointElectroatom::getAbsorptionCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -77,7 +77,7 @@ double Electroatom::getAbsorptionCrossSection( const double energy ) const
 }
 
 // Return the survival probability at the desired energy
-double Electroatom::getSurvivalProbability( const double energy ) const
+double AdjointElectroatom::getSurvivalProbability( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -102,16 +102,16 @@ double Electroatom::getSurvivalProbability( const double energy ) const
   return survival_prob;
 }
 
-// Return the cross section for a specific electroatomic reaction
-double Electroatom::getReactionCrossSection(
+// Return the cross section for a specific adjoint electroatomic reaction
+double AdjointElectroatom::getReactionCrossSection(
                     const double energy,
-                    const ElectroatomicReactionType reaction ) const
+                    const AdjointElectroatomicReactionType reaction ) const
 {
   switch( reaction )
   {
-  case TOTAL_ELECTROATOMIC_REACTION:
+  case TOTAL_ADJOINT_ELECTROATOMIC_REACTION:
     return this->getTotalCrossSection( energy );
-  case TOTAL_ABSORPTION_ELECTROATOMIC_REACTION:
+  case TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION:
     return this->getAbsorptionCrossSection( energy );
   default:
     ConstReactionMap::const_iterator electroatomic_reaction =
@@ -135,7 +135,7 @@ double Electroatom::getReactionCrossSection(
 }
 
 // Collide with a electron
-void Electroatom::collideAnalogue( ElectronState& electron,
+void AdjointElectroatom::collideAnalogue( AdjointElectronState& electron,
                                    ParticleBank& bank ) const
 {
   double total_cross_section =
@@ -165,7 +165,7 @@ void Electroatom::collideAnalogue( ElectronState& electron,
 }
 
 // Collide with a electron and survival bias
-void Electroatom::collideSurvivalBias( ElectronState& electron,
+void AdjointElectroatom::collideSurvivalBias( AdjointElectronState& electron,
                                        ParticleBank& bank ) const
 {
   double total_cross_section =
@@ -189,7 +189,7 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
     {
 
       // Create a copy of the electron for sampling the absorption reaction
-      ElectronState electron_copy( electron, false, false );
+      AdjointElectronState electron_copy( electron, false, false );
 
       electron.multiplyWeight( survival_prob );
 
@@ -213,8 +213,8 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
 }
 
 // Sample an absorption reaction
-void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
-                                            ElectronState& electron,
+void AdjointElectroatom::sampleAbsorptionReaction( const double scaled_random_number,
+                                            AdjointElectronState& electron,
                                             ParticleBank& bank ) const
 {
   // Make sure there is at least one absorption reaction
@@ -265,8 +265,8 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
 }
 
 // Sample a scattering reaction
-void Electroatom::sampleScatteringReaction( const double scaled_random_number,
-                                            ElectronState& electron,
+void AdjointElectroatom::sampleScatteringReaction( const double scaled_random_number,
+                                            AdjointElectronState& electron,
                                             ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
@@ -316,7 +316,7 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_Electroatom.cpp
+// end MonteCarlo_AdjointElectroatom.cpp
 //---------------------------------------------------------------------------//
 
 

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_Electroatom_def.hpp
+//! \file   MonteCarlo_AdjointElectroatom_def.hpp
 //! \author Alex Robinson
-//! \brief  The electroatom base class template definitions
+//! \brief  The adjoint electroatom base class template definitions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELECTROATOM_DEF_HPP
-#define MONTE_CARLO_ELECTROATOM_DEF_HPP
+#ifndef MONTE_CARLO_ADJOINT_ELECTROATOM_DEF_HPP
+#define MONTE_CARLO_ADJOINT_ELECTROATOM_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
@@ -16,13 +16,13 @@ namespace MonteCarlo{
 
 // Constructor
 template<typename InterpPolicy>
-Electroatom::Electroatom(
+AdjointElectroatom::AdjointElectroatom(
       const std::string& name,
       const unsigned atomic_number,
       const double atomic_weight,
       const Teuchos::ArrayRCP<double>& energy_grid,
-      const Electroatom::ReactionMap& standard_scattering_reactions,
-      const Electroatom::ReactionMap& standard_absorption_reactions,
+      const AdjointElectroatom::ReactionMap& standard_scattering_reactions,
+      const AdjointElectroatom::ReactionMap& standard_absorption_reactions,
       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
       const bool processed_cross_sections,
       const InterpPolicy policy )
@@ -44,7 +44,7 @@ Electroatom::Electroatom(
   testPrecondition( !atomic_relaxation_model.is_null() );
 
   // Populate the core
-  d_core = ElectroatomCore( energy_grid,
+  d_core = AdjointElectroatomCore( energy_grid,
                             standard_scattering_reactions,
                             standard_absorption_reactions,
                             atomic_relaxation_model,
@@ -54,9 +54,9 @@ Electroatom::Electroatom(
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ELECTROATOM_DEF_HPP
+#endif // end MONTE_CARLO_ADJOINT_ELECTROATOM_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_Electroatom_def.hpp
+// end MonteCarlo_AdjointElectroatom_def.hpp
 //---------------------------------------------------------------------------//
 

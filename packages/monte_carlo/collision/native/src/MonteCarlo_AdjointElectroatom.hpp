@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_Electroatom.hpp
+//! \file   MonteCarlo_AdjointElectroatom.hpp
 //! \author Luke Kersting
-//! \brief  The electroatom base class declaration
+//! \brief  The adjoint electroatom base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELECTROATOM_HPP
-#define MONTE_CARLO_ELECTROATOM_HPP
+#ifndef MONTE_CARLO_ADJOINT_ELECTROATOM_HPP
+#define MONTE_CARLO_ADJOINT_ELECTROATOM_HPP
 
 // Std Lib Includes
 #include <string>
@@ -21,15 +21,15 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomicReactionType.hpp"
-#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_AdjointElectroatomicReactionType.hpp"
+#include "MonteCarlo_AdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
-#include "MonteCarlo_ElectroatomCore.hpp"
+#include "MonteCarlo_AdjointElectroatomCore.hpp"
 
 namespace MonteCarlo{
 
-//! The atom class for electroatomic reactions
-class Electroatom
+//! The atom class for adjoint electroatomic reactions
+class AdjointElectroatom
 {
 
 private:
@@ -40,18 +40,18 @@ private:
 public:
 
   //! Typedef for the reaction map
-  typedef ElectroatomCore::ReactionMap ReactionMap;
+  typedef AdjointElectroatomCore::ReactionMap ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef ElectroatomCore::ConstReactionMap ConstReactionMap;
+  typedef AdjointElectroatomCore::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as scattering
-  static const boost::unordered_set<ElectroatomicReactionType>&
+  static const boost::unordered_set<AdjointElectroatomicReactionType>&
   getScatteringReactionTypes();
 
   //! Constructor
   template<typename InterpPolicy>
-  Electroatom(
+  AdjointElectroatom(
       const std::string& name,
       const unsigned atomic_number,
       const double atomic_weight,
@@ -63,13 +63,13 @@ public:
       const InterpPolicy policy );
 
   //! Constructor (from a core)
-  Electroatom( const std::string& name,
-         const unsigned atomic_number,
-         const double atomic_weight,
-         const ElectroatomCore& core );
+  AdjointElectroatom( const std::string& name,
+                      const unsigned atomic_number,
+                      const double atomic_weight,
+                      const AdjointElectroatomCore& core );
 
   //! Destructor
-  virtual ~Electroatom()
+  virtual ~AdjointElectroatom()
   { /* ... */ }
 
   //! Return the atom name
@@ -102,32 +102,32 @@ public:
   //! Return the survival probability at the desired energy
   double getSurvivalProbability( const double energy ) const;
 
-  //! Return the cross section for a specific electroatomic reaction
+  //! Return the cross section for a specific adjoint electroatomic reaction
   double getReactionCrossSection(
                     const double energy,
-                    const ElectroatomicReactionType reaction ) const;
+                    const AdjointElectroatomicReactionType reaction ) const;
 
   //! Collide with a electron
-  virtual void collideAnalogue( ElectronState& electron,
+  virtual void collideAnalogue( AdjointElectronState& electron,
                                 ParticleBank& bank ) const;
 
   //! Collide with a electron and survival bias
-  virtual void collideSurvivalBias( ElectronState& electron,
+  virtual void collideSurvivalBias( AdjointElectronState& electron,
                                     ParticleBank& bank ) const;
 
   //! Return the core
-  const ElectroatomCore& getCore() const;
+  const AdjointElectroatomCore& getCore() const;
 
 private:
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
-                                 ElectronState& electron,
+                                 AdjointElectronState& electron,
                                  ParticleBank& bank ) const;
 
   // Sample a scattering reaction
   void sampleScatteringReaction( const double scaled_random_number,
-                                 ElectronState& electron,
+                                 AdjointElectronState& electron,
                                  ParticleBank& bank ) const;
 
   // The atom name
@@ -139,40 +139,40 @@ private:
   // The atomic weight of the atom
   double d_atomic_weight;
 
-  // The electroatom core (storing all reactions, relaxation model)
-  ElectroatomCore d_core;
+  // The adjoint electroatom core (storing all reactions, relaxation model)
+  AdjointElectroatomCore d_core;
 };
 
 // Return the nuclide name
-inline const std::string& Electroatom::getNuclideName() const
+inline const std::string& AdjointElectroatom::getNuclideName() const
 {
   return this->getAtomName();
 }
 
 // Return the atomic mass number
-inline unsigned Electroatom::getAtomicMassNumber() const
+inline unsigned AdjointElectroatom::getAtomicMassNumber() const
 {
   return 0u;
 }
 
 // Return the nuclear isomer number
-inline unsigned Electroatom::getIsomerNumber() const
+inline unsigned AdjointElectroatom::getIsomerNumber() const
 {
   return 0u;
 }
 
 // Return the temperature of the atom
-/*! \details This information is irrelevant for electroatomic reactions. However,
+/*! \details This information is irrelevant for adjoint electroatomic reactions. However,
  * it my be important for photonuclear reactions where Doppler broadening of
  * cross sections may be necessary.
  */
-inline double Electroatom::getTemperature() const
+inline double AdjointElectroatom::getTemperature() const
 {
   return 0.0;
 }
 
 // Return the core
-inline const ElectroatomCore& Electroatom::getCore() const
+inline const AdjointElectroatomCore& AdjointElectroatom::getCore() const
 {
   return d_core;
 }
@@ -183,13 +183,13 @@ inline const ElectroatomCore& Electroatom::getCore() const
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_Electroatom_def.hpp"
+#include "MonteCarlo_AdjointElectroatom_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_ELECTROATOM_HPP
+#endif // end MONTE_CARLO_ADJOINT_ELECTROATOM_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_Electroatom.hpp
+// end MonteCarlo_AdjointElectroatom.hpp
 //---------------------------------------------------------------------------//
 

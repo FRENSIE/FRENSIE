@@ -35,6 +35,7 @@ typedef MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionNativeF
             AtomicNativeFactory;
 typedef MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory
             BremsstrahlungNativeFactory;
+
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
@@ -43,7 +44,7 @@ std::shared_ptr<MonteCarlo::AdjointElectroatomCore> electroatom_core;
 
 //---------------------------------------------------------------------------//
 // Check that the total reaction can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalReaction_native )
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalReaction     )
 {
   const MonteCarlo::AdjointElectroatomicReaction& total_reaction =
     electroatom_core->getTotalReaction();
@@ -72,7 +73,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalReaction_native )
 
 //---------------------------------------------------------------------------//
 // Check that the absorption reaction can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalAbsorptionReaction_native )
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalAbsorptionReaction     )
 {
   const MonteCarlo::AdjointElectroatomicReaction& absorption_reaction =
     electroatom_core->getTotalAbsorptionReaction();
@@ -96,7 +97,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalAbsorptionReaction_native )
 
 //---------------------------------------------------------------------------//
 // Check that the scattering reactions can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions_native )
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions     )
 {
   const MonteCarlo::AdjointElectroatomCore::ConstReactionMap& scattering_reactions =
     electroatom_core->getScatteringReactions();
@@ -134,7 +135,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions_native )
 
 //---------------------------------------------------------------------------//
 // Check that the absorption reactions can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions_native )
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions     )
 {
   const MonteCarlo::AdjointElectroatomCore::ConstReactionMap& absorption_reactions =
     electroatom_core->getAbsorptionReactions();
@@ -145,7 +146,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions_native )
 
 //---------------------------------------------------------------------------//
 // Check that miscellaneous reactions can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getMiscReactions_native )
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getMiscReactions     )
 {
   const MonteCarlo::AdjointElectroatomCore::ConstReactionMap& misc_reactions =
     electroatom_core->getMiscReactions();
@@ -155,7 +156,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getMiscReactions_native )
 
 //---------------------------------------------------------------------------//
 // Check that the atomic relaxation model can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAtomicRelaxationModel_native )
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAtomicRelaxationModel     )
 {
   Data::SubshellType vacancy = Data::K_SUBSHELL;
 
