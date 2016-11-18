@@ -445,6 +445,12 @@ public:
   //! Return the atomic excitation cross section threshold energy bin index
   unsigned getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex() const;
 
+  //! Return the forward inelastic electron cross section
+  const std::vector<double>& getForwardInelasticElectronCrossSection() const;
+
+  //! Return the forward inelastic electron cross section threshold energy bin index
+  unsigned getForwardInelasticElectronCrossSectionThresholdEnergyIndex() const;
+
 protected:
 
   //! Default constructor
@@ -946,10 +952,18 @@ protected:
 
   //! Set the atomic excitation electron cross section
   void setAdjointAtomicExcitationCrossSection(
-			 const std::vector<double>& adjoint_atomic_excitation_cross_section );
+           const std::vector<double>& adjoint_atomic_excitation_cross_section );
 
   //! Set the atomic excitation cross section threshold energy bin index
   void setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(
+                                const unsigned index );
+
+  //! Set the forward inelastic electron cross section
+  void setForwardInelasticElectronCrossSection(
+           const std::vector<double>& forward_inelastic_electron_cross_section );
+
+  //! Set the forward inelastic electron cross section threshold energy bin index
+  void setForwardInelasticElectronCrossSectionThresholdEnergyIndex(
                                 const unsigned index );
 
 private:
@@ -1316,6 +1330,13 @@ private:
 
   // The atomic excitation electron cross section threshold energy index
   unsigned d_adjoint_atomic_excitation_cross_section_threshold_index;
+
+  // The forward inelastic electron cross section (b)
+  std::vector<double> d_forward_inelastic_electron_cross_section;
+
+  // The forward inelastic electron cross section threshold energy index
+  unsigned d_forward_inelastic_electron_cross_section_threshold_index;
+
 };
 
 } // end Data namespace

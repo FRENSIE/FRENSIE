@@ -1875,12 +1875,41 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation cs threshold index can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-		        setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex )
+                   setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex( 0 );
 
   TEST_EQUALITY_CONST( epr_data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(),
                        0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic excitation electron cross section can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setForwardInelasticElectronCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setForwardInelasticElectronCrossSection(  cross_section );
+
+  TEST_COMPARE_ARRAYS(
+            epr_data_container.getForwardInelasticElectronCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic excitation cs threshold index can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setForwardInelasticElectronCrossSectionThresholdEnergyIndex )
+{
+  epr_data_container.setForwardInelasticElectronCrossSectionThresholdEnergyIndex( 0 );
+
+  TEST_EQUALITY_CONST(
+    epr_data_container.getForwardInelasticElectronCrossSectionThresholdEnergyIndex(),
+    0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2009,7 +2038,12 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointBremsstrahlungElectronCrossSection().size(), 3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(), 0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointAtomicExcitationCrossSection().size(), 3u );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(), 0 );
+  TEST_EQUALITY_CONST(
+    epr_data_container_copy.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(), 0 );
+  TEST_EQUALITY_CONST(
+    epr_data_container_copy.getForwardInelasticElectronCrossSection().size(), 3u );
+  TEST_EQUALITY_CONST(
+    epr_data_container_copy.getForwardInelasticElectronCrossSectionThresholdEnergyIndex(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2139,6 +2173,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(), 0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointAtomicExcitationCrossSection().size(), 3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(), 0 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getForwardInelasticElectronCrossSection().size(), 3u );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getForwardInelasticElectronCrossSectionThresholdEnergyIndex(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2262,6 +2298,8 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(), 0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointAtomicExcitationCrossSection().size(), 3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(), 0 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getForwardInelasticElectronCrossSection().size(), 3u );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getForwardInelasticElectronCrossSectionThresholdEnergyIndex(), 0 );
 }
 
 //---------------------------------------------------------------------------//

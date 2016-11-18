@@ -938,6 +938,20 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointAtomicExcitationCrossSec
   return d_adjoint_atomic_excitation_cross_section_threshold_index;
 }
 
+// Return the forward inelastic electron cross section
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getForwardInelasticElectronCrossSection() const
+{
+  return d_forward_inelastic_electron_cross_section;
+}
+
+// Return the forward inelastic electron cross section threshold energy bin index
+unsigned
+AdjointElectronPhotonRelaxationDataContainer::getForwardInelasticElectronCrossSectionThresholdEnergyIndex() const
+{
+  return d_forward_inelastic_electron_cross_section_threshold_index;
+}
+
 //---------------------------------------------------------------------------//
 // SET NOTES
 //---------------------------------------------------------------------------//
@@ -2351,7 +2365,8 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationCro
   // Make sure the atomic excitation cross section is valid
   testPrecondition( adjoint_atomic_excitation_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPrecondition( ValuesGreaterThanOrEqualToZero( adjoint_atomic_excitation_cross_section ) );
+  testPrecondition( ValuesGreaterThanOrEqualToZero(
+    adjoint_atomic_excitation_cross_section ) );
 
   d_adjoint_atomic_excitation_cross_section =
     adjoint_atomic_excitation_cross_section;
@@ -2366,7 +2381,32 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationCro
         d_adjoint_atomic_excitation_cross_section.size() + index ==
         d_adjoint_electron_energy_grid.size() );
 
- d_adjoint_atomic_excitation_cross_section_threshold_index = index;
+  d_adjoint_atomic_excitation_cross_section_threshold_index = index;
+}
+
+// Set the forward inelastic electron cross section
+void AdjointElectronPhotonRelaxationDataContainer::setForwardInelasticElectronCrossSection(
+           const std::vector<double>& forward_inelastic_electron_cross_section )
+{
+  // Make sure the forward inelastic electron cross section is valid
+  testPrecondition( forward_inelastic_electron_cross_section.size() <=
+                    d_adjoint_electron_energy_grid.size() );
+  testPrecondition( ValuesGreaterThanZero(
+    forward_inelastic_electron_cross_section ) );
+
+  d_forward_inelastic_electron_cross_section =
+    forward_inelastic_electron_cross_section;
+}
+
+// Set the forward inelastic electron cross section threshold energy bin index
+void AdjointElectronPhotonRelaxationDataContainer::setForwardInelasticElectronCrossSectionThresholdEnergyIndex(
+                                const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_forward_inelastic_electron_cross_section.size() + index ==
+                    d_adjoint_electron_energy_grid.size() );
+
+  d_forward_inelastic_electron_cross_section_threshold_index = index;
 }
 
 

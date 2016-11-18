@@ -153,6 +153,8 @@ public:
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationCrossSection;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex;
+  using AdjointElectronPhotonRelaxationDataContainer::setForwardInelasticElectronCrossSection;
+  using AdjointElectronPhotonRelaxationDataContainer::setForwardInelasticElectronCrossSectionThresholdEnergyIndex;
 
   // Add the export member function to the public interface
   using AdjointElectronPhotonRelaxationDataContainer::exportData;
