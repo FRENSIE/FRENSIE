@@ -35,13 +35,10 @@ CollisionHandlerFactory::CollisionHandlerFactory( std::ostream* os_warn )
 }
 
 // Create the collision handler
-/*! \details Make sure the simulation properties have been set
- * (in MonteCarlo::SimulationGeneralProperties etc) before running this factory
- * method. The properties can influence how this factory method behaves.
- */
 std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
+                     const SimulationProperties& properties,
 		     const std::string& cross_sections_xml_directory )
 {
   // Validate the materials
@@ -148,7 +145,6 @@ std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
                                         aliases,
                                         cell_id_mat_id_map,
                                         cell_id_density_map,
-                                        atomic_relaxation_model_factory,
                                         properties );
   }
 
@@ -302,7 +298,7 @@ void CollisionHandlerFactory::createNeutronMaterials(
                        const MatIdComponentMap& material_id_component_map,
                        const AliasSet& nuclide_aliases,
                        const CellIdMatIdMap& cell_id_mat_id_map,
-                       const CellIdDensityMap& cell_id_density_map
+                       const CellIdDensityMap& cell_id_density_map,
                        const SimulationProperties& properties )
 {
   // Load the nuclides of interest

@@ -119,7 +119,7 @@ private:
                        const MatIdComponentMap& material_id_component_map,
                        const AliasSet& nuclide_aliases,
                        const CellIdMatIdMap& cell_id_mat_id_map,
-                       const CellIdDensityMap& cell_id_density_map
+                       const CellIdDensityMap& cell_id_density_map,
                        const SimulationProperties& properties );
 
   //! Create the photon materials
