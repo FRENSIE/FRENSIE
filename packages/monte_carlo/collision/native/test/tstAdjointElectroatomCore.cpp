@@ -22,7 +22,7 @@
 #include "MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_VoidAbsorptionAdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_VoidAtomicRelaxationModel.hpp"
+#include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AdjointElectronState.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -43,61 +43,31 @@ typedef MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFac
 std::shared_ptr<MonteCarlo::AdjointElectroatomCore> electroatom_core;
 
 //---------------------------------------------------------------------------//
-// Check that the total reaction can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalReaction     )
+// Check that the total forward reaction can be returned
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
 {
-  const MonteCarlo::AdjointElectroatomicReaction& total_reaction =
-    electroatom_core->getTotalReaction();
+  const MonteCarlo::ElectroatomicReaction& total_forward_reaction =
+    electroatom_core->getTotalForwardReaction();
 
-  double cross_section =
-    total_reaction.getCrossSection( 1e-5 );
+  TEST_EQUALITY_CONST( total_forward_reaction.getReactionType(),
+                       MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
+  TEST_FLOATING_EQUALITY( total_forward_reaction.getThresholdEnergy(),
+                          1e-5,
+                          1e-15 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          6.48761655529424E+01 + 6.12229969785753563e+07,
-                          1e-12 );
+  double cross_section = total_forward_reaction.getCrossSection( 1e-5 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
 
-  cross_section =
-    total_reaction.getCrossSection( 1e-3 );
+  cross_section = total_forward_reaction.getCrossSection( 1e-3 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0373590927063245326E+07, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          2.84695186338680E+01 + 1.05374826494071E+07,
-                          1e-12 );
-
-  cross_section =
-    total_reaction.getCrossSection( 20.0 );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          1.52732920066756 + 8.18292998537648382e+04,
-                          1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the absorption reaction can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalAbsorptionReaction     )
-{
-  const MonteCarlo::AdjointElectroatomicReaction& absorption_reaction =
-    electroatom_core->getTotalAbsorptionReaction();
-
-  double cross_section = absorption_reaction.getCrossSection( 1.000000000E-02 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-
-  cross_section = absorption_reaction.getCrossSection( 2.000000000000E-03 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-
-  cross_section = absorption_reaction.getCrossSection( 4.000000000000E-04 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-
-  cross_section = absorption_reaction.getCrossSection( 9.000000000000E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
+  cross_section = total_forward_reaction.getCrossSection( 20.0 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.64663279900629E+05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the scattering reactions can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions     )
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
 {
   const MonteCarlo::AdjointElectroatomCore::ConstReactionMap& scattering_reactions =
     electroatom_core->getScatteringReactions();
@@ -110,9 +80,8 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions     )
   const MonteCarlo::AdjointElectroatomicReaction& b_reaction =
     *(scattering_reactions.find(MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION)->second);
 
-  double cross_section =
-    ae_reaction.getCrossSection( 1e-5 ) +
-     b_reaction.getCrossSection( 1e-5 );
+  double cross_section = ae_reaction.getCrossSection( 1e-5 ) +
+                          b_reaction.getCrossSection( 1e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
                           6.48761655529424E+01 + 6.12229969785753563e+07,
@@ -135,7 +104,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions     )
 
 //---------------------------------------------------------------------------//
 // Check that the absorption reactions can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions     )
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions )
 {
   const MonteCarlo::AdjointElectroatomCore::ConstReactionMap& absorption_reactions =
     electroatom_core->getAbsorptionReactions();
@@ -145,34 +114,27 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions     )
 }
 
 //---------------------------------------------------------------------------//
-// Check that miscellaneous reactions can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getMiscReactions     )
+// Check that the grid searcher can be returned
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
 {
-  const MonteCarlo::AdjointElectroatomCore::ConstReactionMap& misc_reactions =
-    electroatom_core->getMiscReactions();
+  const Utility::HashBasedGridSearcher& grid_searcher =
+    electroatom_core->getGridSearcher();
 
-  TEST_EQUALITY_CONST( misc_reactions.size(), 0 );
+  unsigned grid_index = grid_searcher.findLowerBinIndex( 1e-5 );
+  TEST_EQUALITY_CONST( grid_index, 0u );
+
+  grid_index = grid_searcher.findLowerBinIndex( 1e-3 );
+  TEST_EQUALITY_CONST( grid_index, 42 );
+
+  grid_index = grid_searcher.findLowerBinIndex( 20.0 );
+  TEST_EQUALITY_CONST( grid_index, 155 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the atomic relaxation model can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAtomicRelaxationModel     )
+// Check if all of the reactions share a common energy grid
+TEUCHOS_UNIT_TEST( AdjointElectroatomCore, hasSharedEnergyGrid )
 {
-  Data::SubshellType vacancy = Data::K_SUBSHELL;
-
-  MonteCarlo::AdjointElectronState electron( 0u );
-  electron.setEnergy( 1.0 );
-  electron.setDirection( 0.0, 0.0, 1.0 );
-  electron.setPosition( 0.0, 0.0, 0.0 );
-
-  MonteCarlo::ParticleBank bank;
-
-  const MonteCarlo::AtomicRelaxationModel& relaxation_model =
-    electroatom_core->getAtomicRelaxationModel();
-
-  relaxation_model.relaxAtom( vacancy, electron, bank );
-
-  TEST_EQUALITY_CONST( bank.size(), 0u );
+  TEST_ASSERT( electroatom_core->hasSharedEnergyGrid() );
 }
 
 //---------------------------------------------------------------------------//
@@ -203,11 +165,22 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the hash-based grid searcher
     Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
                                              energy_grid,
-                                             energy_grid[0],
-                                             energy_grid[energy_grid.size()-1],
                                              100 ) );
+
+    // Create the total forward reaction
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_forward_reaction;
+
+    std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> void_reaction(
+        new MonteCarlo::VoidAbsorptionAdjointElectroatomicReaction() );
+
+    MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
+                                       data_container,
+                                       energy_grid,
+                                       grid_searcher,
+                                       void_reaction,
+                                       total_forward_reaction );
 
     // Atomic Excitation cross section
     Teuchos::ArrayRCP<double> ae_cross_section;
@@ -270,18 +243,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     scattering_reactions[b_reaction->getReactionType()] = b_reaction;
 
-    // Create a void atomic relaxation model
-    Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
-                                   new MonteCarlo::VoidAtomicRelaxationModel );
-
     // Create a test  adjoint electroatom core
-    electroatom_core.reset(
-                          new MonteCarlo::AdjointElectroatomCore( energy_grid,
-                                                         scattering_reactions,
-                                                         absorption_reactions,
-                                                         relaxation_model,
-                                                         false,
-                                                         Utility::LinLin() ) );
+    electroatom_core.reset( new MonteCarlo::AdjointElectroatomCore(
+        grid_searcher,
+        total_forward_reaction,
+        scattering_reactions,
+        absorption_reactions ) );
   }
 }
 

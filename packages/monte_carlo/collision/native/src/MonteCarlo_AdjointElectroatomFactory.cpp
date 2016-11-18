@@ -122,11 +122,9 @@ void AdjointElectroatomFactory::createAdjointElectroatomFromNativeTable(
     AdjointElectroatomNativeFactory::createAdjointElectroatom( data_container,
                                                  native_file_path,
                                                  atomic_weight,
-                                                 hash_grid_bins,
-                                                 atomic_relaxation_model,
                                                  electroatom,
-                                                 use_atomic_relaxation_data,
-                                                 cutoff_angle_cosine );
+                                                 cutoff_angle_cosine,
+                                                 hash_grid_bins );
 
     // Cache the new adjoint electroatom in the table name map
     d_electroatomic_table_name_map[native_file_path] = electroatom;

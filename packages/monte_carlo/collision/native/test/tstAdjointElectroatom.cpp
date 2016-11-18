@@ -21,8 +21,8 @@
 #include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_VoidAbsorptionAdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_VoidAtomicRelaxationModel.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -39,110 +39,6 @@ std::shared_ptr<MonteCarlo::AdjointElectroatom> electroatom;
 
 //---------------------------------------------------------------------------//
 // Tests.
-//---------------------------------------------------------------------------//
-// Check that the scattering reaction types can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getScatteringReactionTypes )
-{
-  const boost::unordered_set<MonteCarlo::AdjointElectroatomicReactionType>&
-    scattering_types = MonteCarlo::AdjointElectroatom::getScatteringReactionTypes();
-
-  TEST_ASSERT( scattering_types.count(
-               MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::L2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::L3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::M1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::M2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::M4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::M5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::N1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::N2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::N3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::N4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::N5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::N6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::N7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::O1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::O2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::O3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::O4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::O5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::O6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::O7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::O8_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::O9_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P8_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P9_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P10_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::P11_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::Q1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::Q2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-        MonteCarlo::Q3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-
-  TEST_ASSERT( scattering_types.count(
-               MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-               MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-               MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-               MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-               MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-               MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION ) );
-  TEST_ASSERT( scattering_types.count(
-               MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION ) );
-}
-
 //---------------------------------------------------------------------------//
 // Check that the adjoint electroatom atom name can be returned
 TEUCHOS_UNIT_TEST( AdjointElectroatom, getAtomName )
@@ -507,11 +403,22 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the hash-based grid searcher
     Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
                          energy_grid,
-                         energy_grid[0],
-                         energy_grid[energy_grid.size()-1],
                          100 ) );
+
+  // Create the total forward reaction
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_forward_reaction;
+
+    std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> void_reaction(
+        new MonteCarlo::VoidAbsorptionAdjointElectroatomicReaction() );
+
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
+                                       data_container,
+                                       energy_grid,
+                                       grid_searcher,
+                                       void_reaction,
+                                       total_forward_reaction );
 
     // Atomic Excitation cross section
     Teuchos::ArrayRCP<double> ae_cross_section;
@@ -574,22 +481,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     scattering_reactions[b_reaction->getReactionType()] = b_reaction;
 
-    // Create a void atomic relaxation model
-    Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
-                   new MonteCarlo::VoidAtomicRelaxationModel );
-
     // Create a test electroatom
     electroatom.reset(
            new MonteCarlo::AdjointElectroatom(
                     "H",
                     data_container.getAtomicNumber(),
                     1.00794,
-                    energy_grid,
+                    grid_searcher,
+                    total_forward_reaction,
                     scattering_reactions,
-                    absorption_reactions,
-                    relaxation_model,
-                    false,
-                    Utility::LinLin() ) );
+                    absorption_reactions ) );
   }
 
   // Initialize the random number generator

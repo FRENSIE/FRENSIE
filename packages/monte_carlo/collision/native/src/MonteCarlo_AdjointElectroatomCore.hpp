@@ -9,9 +9,12 @@
 #ifndef MONTE_CARLO_ADJOINT_ELECTROATOM_CORE_HPP
 #define MONTE_CARLO_ADJOINT_ELECTROATOM_CORE_HPP
 
+// Std Lib Includes
+#include <unordered_map>
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -21,7 +24,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReactionType.hpp"
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_AtomicRelaxationModel.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
 
@@ -43,43 +47,23 @@ public:
 
   //! Typedef for the reaction map
   typedef boost::unordered_map<AdjointElectroatomicReactionType,
-                   std::shared_ptr<AdjointElectroatomicReaction> >
+                               std::shared_ptr<AdjointElectroatomicReaction> >
   ReactionMap;
 
   //! Typedef for the const reaction map
   typedef boost::unordered_map<AdjointElectroatomicReactionType,
-                   std::shared_ptr<const AdjointElectroatomicReaction> >
+                           std::shared_ptr<const AdjointElectroatomicReaction> >
   ConstReactionMap;
-
-  // Reactions that should be treated as scattering
-  static const boost::unordered_set<AdjointElectroatomicReactionType>
-  scattering_reaction_types;
-
-  // Reactions that should be treated as void
-  static const boost::unordered_set<AdjointElectroatomicReactionType>
-  void_reaction_types;
 
   //! Default constructor
   AdjointElectroatomCore();
 
-  //! Basic constructor
-  template<typename InterpPolicy>
+  //! Constructor
   AdjointElectroatomCore(
-      const Teuchos::ArrayRCP<double>& energy_grid,
-      const ReactionMap& standard_scattering_reactions,
-      const ReactionMap& standard_absorption_reactions,
-      const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
-      const bool processed_atomic_cross_sections,
-      const InterpPolicy policy );
-
-  //! Advanced constructor
-  AdjointElectroatomCore(
-      const std::shared_ptr<const AdjointElectroatomicReaction>& total_reaction,
-      const std::shared_ptr<const AdjointElectroatomicReaction>& total_absorption_reaction,
-      const ConstReactionMap& scattering_reactions,
-      const ConstReactionMap& absorption_reactions,
-      const ConstReactionMap& miscellaneous_reactions,
-      const Teuchos::RCP<const AtomicRelaxationModel> relaxation_model );
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
+      const ReactionMap& scattering_reactions,
+      const ReactionMap& absorption_reactions );
 
   //! Copy constructor
   AdjointElectroatomCore( const AdjointElectroatomCore& instance );
@@ -91,11 +75,8 @@ public:
   ~AdjointElectroatomCore()
   { /* ... */ }
 
-  //! Return the total reaction
-  const AdjointElectroatomicReaction& getTotalReaction() const;
-
-  //! Return the total absorption reaction
-  const AdjointElectroatomicReaction& getTotalAbsorptionReaction() const;
+  //! Return the total forward reaction
+  const ElectroatomicReaction& getTotalForwardReaction() const;
 
   //! Return the scattering reactions
   const ConstReactionMap& getScatteringReactions() const;
@@ -103,53 +84,16 @@ public:
   //! Return the absorption reactions
   const ConstReactionMap& getAbsorptionReactions() const;
 
-  //! Return the miscellaneous non scattering reactions
-  const ConstReactionMap& getMiscReactions() const;
+  //! Return the hash-based grid searcher
+  const Utility::HashBasedGridSearcher& getGridSearcher() const;
 
-  //! Return the atomic relaxation model
-  const AtomicRelaxationModel& getAtomicRelaxationModel() const;
+  //! Test if all of the reactions share a common energy grid
+  bool hasSharedEnergyGrid() const;
 
 private:
 
-  // Set the default scattering reaction types
-  static boost::unordered_set<AdjointElectroatomicReactionType>
-  setDefaultScatteringReactionTypes();
-
-  // Create the total absorption reaction
-  template<typename InterpPolicy>
-  static void createTotalAbsorptionReaction(
-        const Teuchos::ArrayRCP<double>& energy_grid,
-        const ConstReactionMap& absorption_reactions,
-        std::shared_ptr<AdjointElectroatomicReaction>& total_absorption_reaction );
-
-  // Create the processed total absorption reaction
-  template<typename InterpPolicy>
-  static void createProcessedTotalAbsorptionReaction(
-        const Teuchos::ArrayRCP<double>& energy_grid,
-        const ConstReactionMap& absorption_reactions,
-        std::shared_ptr<AdjointElectroatomicReaction>& total_absorption_reaction );
-
-  // Create the total reaction
-  template<typename InterpPolicy>
-  static void createTotalReaction(
-      const Teuchos::ArrayRCP<double>& energy_grid,
-      const ConstReactionMap& scattering_reactions,
-      const std::shared_ptr<const AdjointElectroatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<AdjointElectroatomicReaction>& total_reaction );
-
-  // Calculate the processed total absorption cross section
-  template<typename InterpPolicy>
-  static void createProcessedTotalReaction(
-      const Teuchos::ArrayRCP<double>& energy_grid,
-      const ConstReactionMap& scattering_reactions,
-      const std::shared_ptr<const AdjointElectroatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<AdjointElectroatomicReaction>& total_reaction );
-
-  // The total reaction
-  std::shared_ptr<const AdjointElectroatomicReaction> d_total_reaction;
-
-  // The total absorption reaction
-  std::shared_ptr<const AdjointElectroatomicReaction> d_total_absorption_reaction;
+  // The total forward reactions
+  std::shared_ptr<const ElectroatomicReaction> d_total_forward_reaction;
 
   // The scattering reactions
   ConstReactionMap d_scattering_reactions;
@@ -157,63 +101,35 @@ private:
   // The absorption reactions
   ConstReactionMap d_absorption_reactions;
 
-  // The miscellaneous reactions
-  ConstReactionMap d_miscellaneous_reactions;
-
-  // The atomic relaxation model
-  Teuchos::RCP<const AtomicRelaxationModel> d_relaxation_model;
+  // The hash-based grid searcher
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
-// Return the total reaction
-inline const AdjointElectroatomicReaction& AdjointElectroatomCore::getTotalReaction() const
+// Return the total forward reaction
+inline auto AdjointElectroatomCore::getTotalForwardReaction() const -> const ElectroatomicReaction&
 {
-  return *d_total_reaction;
-}
-
-// Return the total absorption reaction
-inline const AdjointElectroatomicReaction&
-AdjointElectroatomCore::getTotalAbsorptionReaction() const
-{
-  return *d_total_absorption_reaction;
+  return *d_total_forward_reaction;
 }
 
 // Return the scattering reactions
-inline const AdjointElectroatomCore::ConstReactionMap&
-AdjointElectroatomCore::getScatteringReactions() const
+inline auto AdjointElectroatomCore::getScatteringReactions() const -> const ConstReactionMap& 
 {
   return d_scattering_reactions;
 }
 
 // Return the absorption reactions
-inline const AdjointElectroatomCore::ConstReactionMap&
-AdjointElectroatomCore::getAbsorptionReactions() const
+inline auto AdjointElectroatomCore::getAbsorptionReactions() const -> const ConstReactionMap&
 {
   return d_absorption_reactions;
 }
 
-// Return the miscellaneous reactions
-inline const AdjointElectroatomCore::ConstReactionMap&
-AdjointElectroatomCore::getMiscReactions() const
+// Return the hash-based grid searcher
+inline const Utility::HashBasedGridSearcher& AdjointElectroatomCore::getGridSearcher() const
 {
-  return d_miscellaneous_reactions;
-}
-
-// Return the atomic relaxation model
-inline const AtomicRelaxationModel&
-AdjointElectroatomCore::getAtomicRelaxationModel() const
-{
-  return *d_relaxation_model;
+  return *d_grid_searcher;
 }
 
 } // end MonteCarlo namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_AdjointElectroatomCore_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTROATOM_CORE_HPP
 

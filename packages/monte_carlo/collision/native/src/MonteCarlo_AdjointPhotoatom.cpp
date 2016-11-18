@@ -477,7 +477,7 @@ void AdjointPhotoatom::collideSurvivalBias( AdjointPhotonState& adjoint_photon,
   double survival_prob = scattering_cross_section/
     (scattering_cross_section+absorption_cross_section);
   
-  // Multiply the adjoint photon's weigth by the survival probabilty
+  // Multiply the adjoint photon's weight by the survival probabilty
   if( survival_prob > 0.0 )
   {
     // Create a copy of the photon for sampling the absorption reaction

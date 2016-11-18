@@ -118,67 +118,67 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
 {
   // Test that the atomic excitation cross section can be returned
   double cross_section = material->getMacroscopicReactionCrossSection(
-				 1.00000e-05,
-				 MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
+        1.00000e-05,
+        MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.545329003693E+04, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-				 1.00000e+05,
-				 MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
+        1.00000e+05,
+        MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 4.588134602166E+03, 1e-12 );
 
   // Test that the bremsstrahlung cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
-				   1.00000e-05,
-				   MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+        1.00000e-05,
+        MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.415377951846E+01, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-				   1.00000e+05,
-				   MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+        1.00000e+05,
+        MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 5.679677054824E+00, 1e-12 );
 
   // Test that the K subshell electroionization cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
-		   1.00000e-05,
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+        1.00000e-05,
+        MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-		   8.97540E-02,
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+        8.97540E-02,
+        MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 3.6350071826026E-04, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-		   1.00000e+05,
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+        1.00000e+05,
+        MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.060615028974E-01, 1e-12 );
 
   // Test that the P3 subshell electroionization cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
-		  1.00000e-05,
-		  MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+        1.00000e-05,
+        MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 3.096230095899E+05, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-		  1.00000e+05,
-		  MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+        1.00000e+05,
+        MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
 
   // Test that the cutoff elastic cross section can be returned
   double energy = 1.00000e-05;
   cross_section = material->getMacroscopicReactionCrossSection(
-			    energy,
-			    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+        energy,
+        MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
                           7.234825686582E+06,
@@ -186,8 +186,8 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
 
   energy = 1.00000e+05;
   cross_section = material->getMacroscopicReactionCrossSection(
-			    energy,
-			    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+        energy,
+        MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
                           2.566534386946E-04,
@@ -272,8 +272,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Read in the xml file storing the cross section table info
     Teuchos::updateParametersFromXmlFile(
-				 cross_section_xml_file,
-				 Teuchos::inoutArg(cross_section_table_info) );
+                 cross_section_xml_file,
+                 Teuchos::inoutArg(cross_section_table_info) );
 
     std::unordered_set<std::string> atom_aliases;
     atom_aliases.insert( "Pb" );
@@ -281,7 +281,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the factories
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory>
       atomic_relaxation_model_factory(
-				new MonteCarlo::AtomicRelaxationModelFactory );
+                new MonteCarlo::AtomicRelaxationModelFactory );
 
 
     double upper_cutoff_angle_cosine = 1.0;
@@ -348,15 +348,15 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the ACEFileHandler
   Data::ACEFileHandler ace_file_handler( ace_file_path,
-					   electroatomic_table_name,
-					   electroatomic_file_start_line,
-					   1u );
+                     electroatomic_table_name,
+                     electroatomic_file_start_line,
+                     1u );
 
   // Create the XSS data extractor
   xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
-					 ace_file_handler.getTableNXSArray(),
-					 ace_file_handler.getTableJXSArray(),
-					 ace_file_handler.getTableXSSArray() ) );
+                     ace_file_handler.getTableNXSArray(),
+                     ace_file_handler.getTableJXSArray(),
+                     ace_file_handler.getTableXSSArray() ) );
 
 
   // Initialize the random number generator

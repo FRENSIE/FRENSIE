@@ -34,7 +34,6 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::AdjointElectronPhotonRelaxationDataContainer> data_container;
-Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 std::string electroatom_name;
 double atomic_weight;
 double cutoff_angle_cosine;
@@ -52,11 +51,9 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
         *data_container,
         electroatom_name,
         atomic_weight,
-        hash_grid_bins,
-        relaxation_model,
         atom,
-        false,
-        cutoff_angle_cosine );
+        cutoff_angle_cosine,
+        hash_grid_bins );
 
 
   // Test the adjoint electroatom properties
@@ -225,11 +222,9 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
         *data_container,
         electroatom_name,
         atomic_weight,
-        hash_grid_bins,
-        relaxation_model,
         atom,
-        false,
-        new_cutoff_angle_cosine );
+        new_cutoff_angle_cosine,
+        hash_grid_bins );
 
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
@@ -435,10 +430,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the native data file container
     data_container.reset( new Data::AdjointElectronPhotonRelaxationDataContainer(
                              test_native_file_name ) );
-
-
-    // Create void relaxation model
-    relaxation_model.reset( new MonteCarlo::VoidAtomicRelaxationModel );
   }
 }
 

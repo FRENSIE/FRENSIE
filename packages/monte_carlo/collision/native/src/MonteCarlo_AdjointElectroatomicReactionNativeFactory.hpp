@@ -9,14 +9,19 @@
 #ifndef MONTE_CARLO_ADJOINT_ELECTROATOMIC_REACTION_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_ADJOINT_ELECTROATOMIC_REACTION_NATIVE_FACTORY_HPP
 
+// Std Lib Includes
+#include <memory>
+#include <vector>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_FullyTabularTwoDDistribution.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
@@ -24,6 +29,11 @@ namespace MonteCarlo{
 //! The adjoint electroatomic reaction factory class that uses Native data
 class AdjointElectroatomicReactionNativeFactory
 {
+
+private:
+
+  // Typedef for this type
+  typedef AdjointElectroatomicReactionNativeFactory ThisType;
 
 public:
 
@@ -105,9 +115,14 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction );
 
-  //! Create a void absorption adjoint electroatomic reaction
-  static void createVoidAbsorptionReaction(
-    std::shared_ptr<AdjointElectroatomicReaction>& void_absorption_reaction );
+  //! Create the forward total reaction (only used to get the cross section)
+  static void createTotalForwardReaction(
+      const Data::AdjointElectronPhotonRelaxationDataContainer&
+        raw_adjoint_electroatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+      std::shared_ptr<ElectroatomicReaction>& total_forward_reaction );
 };
 
 } // end MonteCarlo namespace

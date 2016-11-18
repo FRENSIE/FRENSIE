@@ -11,6 +11,8 @@
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_ArrayRCP.hpp>
+#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatom.hpp"
@@ -25,33 +27,30 @@ namespace MonteCarlo{
 class AdjointElectroatomNativeFactory
 {
 
+private:
+
+  // Typedef for this type
+  typedef AdjointElectroatomNativeFactory ThisType;
+
 public:
 
-  //! Create a adjoint electroatom core (using the provided atomic relaxation model)
+  //! Create an adjoint electroatom core
   static void createAdjointElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
-        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
         Teuchos::RCP<AdjointElectroatomCore>& adjoint_electroatom_core,
-        const unsigned hash_grid_bins,
-        const bool use_atomic_relaxation_data = false,
-        const double cutoff_angle_cosine = 1.0 );
+        const double cutoff_angle_cosine,
+        const unsigned hash_grid_bins );
 
-  //! Create a electroatom (using the provided atomic relaxation model)
+  //! Create an adjoint  electroatom
   static void createAdjointElectroatom(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
-        const std::string& electroatom_name,
+        const std::string& adjoint_electroatom_name,
         const double atomic_weight,
-        const unsigned hash_grid_bins,
-        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-        Teuchos::RCP<AdjointElectroatom>& electroatom,
-        const bool use_atomic_relaxation_data = false,
-        const double cutoff_angle_cosine = 1.0 );
-private:
-
-  // Constructor
-  AdjointElectroatomNativeFactory();
+        Teuchos::RCP<AdjointElectroatom>& adjoint_electroatom,
+        const double cutoff_angle_cosine,
+        const unsigned hash_grid_bins );
 };
 
 } // end MonteCarlo

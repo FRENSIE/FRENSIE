@@ -288,41 +288,6 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 }
 
 //---------------------------------------------------------------------------//
-// Check that a void absorption reaction can be created
-TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
-                   createVoidAbsorptionReaction )
-{
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createVoidAbsorptionReaction(
-                                                reaction );
-
-  // Test reaction properties
-  TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1e-5 );
-
-  // Test that the stored cross section is correct
-  double cross_section =
-    reaction->getCrossSection( reaction->getThresholdEnergy() );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0);
-
-  cross_section = reaction->getCrossSection( 1e-4 );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0);
-
-  cross_section = reaction->getCrossSection( 1.79008e-4 );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0);
-
-  cross_section = reaction->getCrossSection( 20.0 );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0);
-
-  // Clear the reaction
-  reaction.reset();
-}
-
-//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
@@ -346,10 +311,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   energy_grid.deepCopy( data_container->getAdjointElectronEnergyGrid() );
 
   // Create the hash-based grid searcher
-  grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+  grid_searcher.reset(
+    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
                  energy_grid,
-                 energy_grid[0],
-                 energy_grid[energy_grid.size()-1],
                  100 ) );
 }
 

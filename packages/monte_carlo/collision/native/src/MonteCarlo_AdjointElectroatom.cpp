@@ -8,17 +8,40 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatom.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Return the reactions that are treated as scattering
-const boost::unordered_set<AdjointElectroatomicReactionType>&
-AdjointElectroatom::getScatteringReactionTypes()
+// Constructor
+AdjointElectroatom::AdjointElectroatom(
+      const std::string& name,
+      const unsigned atomic_number,
+      const double atomic_weight,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
+      const ReactionMap& scattering_reactions,
+      const ReactionMap& absorption_reactions )
+  : d_name( name ),
+    d_atomic_number( atomic_number ),
+    d_atomic_weight( atomic_weight ),
+    d_core()
 {
-  return AdjointElectroatomCore::scattering_reaction_types;
+  // Make sure the atomic weight is valid
+  testPrecondition( atomic_weight > 0.0 );
+  // There must be at least one reaction specified
+  testPrecondition( scattering_reactions.size() +
+                    absorption_reactions.size() > 0 );
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
+
+  // Populate the core
+  d_core = AdjointElectroatomCore( grid_searcher,
+                                   total_forward_reaction,
+                                   scattering_reactions,
+                                   absorption_reactions );
+
+  // Make sure the reactions have a shared energy grid
+  testPostcondition( d_core.hasSharedEnergyGrid() );
 }
 
 //! Constructor (from a core)
@@ -36,6 +59,8 @@ AdjointElectroatom::AdjointElectroatom( const std::string& name,
   // There must be at least one reaction specified
   testPrecondition( core.getScatteringReactions().size() +
                     core.getAbsorptionReactions().size() > 0 );
+  // Make sure all reactions have a shared energy grid
+  testPrecondition( core.hasSharedEnergyGrid() );
 }
 
 // Return the atom name
@@ -63,7 +88,50 @@ double AdjointElectroatom::getTotalCrossSection( const double energy ) const
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  return d_core.getTotalReaction().getCrossSection( energy );
+  unsigned energy_grid_bin =
+    d_core.getGridSearcher().findLowerBinIndex( energy );
+
+  return this->getScatteringCrossSection( energy, energy_grid_bin );
+}
+
+// Return the total forward cross section
+double AdjointElectroatom::getTotalForwardCrossSection(
+                                                    const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+  
+  return d_core.getTotalForwardReaction().getCrossSection( energy );
+}
+
+// Return the adjoint weight factor at the desired energy
+/*! \details Generally, we do not use the weight factor for an individual atom.
+ * The weight factor of an entire material is more commonly used.
+ */
+double AdjointElectroatom::getAdjointWeightFactor( const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+
+  double weight_factor;
+  
+  double total_forward_cross_section =
+    this->getTotalForwardCrossSection( energy );
+
+  if( total_forward_cross_section > 0.0 )
+  {
+    weight_factor = this->getTotalCrossSection( energy )/
+      total_forward_cross_section;
+  }
+  else
+    weight_factor = 1.0;
+
+  // Make sure the weight factor is valid
+  testPrecondition( weight_factor > 0.0 );
+
+  return weight_factor;
 }
 
 // Return the total cross section
@@ -73,7 +141,10 @@ double AdjointElectroatom::getAbsorptionCrossSection( const double energy ) cons
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  return d_core.getTotalAbsorptionReaction().getCrossSection( energy );
+  unsigned energy_grid_bin =
+    d_core.getGridSearcher().findLowerBinIndex( energy );
+
+  return this->getAbsorptionCrossSection( energy, energy_grid_bin );
 }
 
 // Return the survival probability at the desired energy
@@ -114,203 +185,203 @@ double AdjointElectroatom::getReactionCrossSection(
   case TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION:
     return this->getAbsorptionCrossSection( energy );
   default:
-    ConstReactionMap::const_iterator electroatomic_reaction =
+    ConstReactionMap::const_iterator adjoint_electroatomic_reaction =
       d_core.getScatteringReactions().find( reaction );
 
-    if( electroatomic_reaction != d_core.getScatteringReactions().end() )
-      return electroatomic_reaction->second->getCrossSection( energy );
+    if( adjoint_electroatomic_reaction != d_core.getScatteringReactions().end() )
+      return adjoint_electroatomic_reaction->second->getCrossSection( energy );
 
-    electroatomic_reaction = d_core.getAbsorptionReactions().find( reaction );
+    adjoint_electroatomic_reaction =
+        d_core.getAbsorptionReactions().find( reaction );
 
-    if( electroatomic_reaction != d_core.getAbsorptionReactions().end() )
-      return electroatomic_reaction->second->getCrossSection( energy );
-
-    electroatomic_reaction = d_core.getMiscReactions().find( reaction );
-
-    if( electroatomic_reaction != d_core.getMiscReactions().end() )
-      return electroatomic_reaction->second->getCrossSection( energy );
+    if( adjoint_electroatomic_reaction != d_core.getAbsorptionReactions().end() )
+      return adjoint_electroatomic_reaction->second->getCrossSection( energy );
     else // If the reaction does not exist for an atom, return 0
       return 0.0;
   }
 }
 
-// Collide with a electron
-void AdjointElectroatom::collideAnalogue( AdjointElectronState& electron,
-                                   ParticleBank& bank ) const
+// Collide with an adjoint electron
+void AdjointElectroatom::collideAnalogue( AdjointElectronState& adjoint_electron,
+                                          ParticleBank& bank ) const
 {
-  double total_cross_section =
-    this->getTotalCrossSection( electron.getEnergy() );
+  // Make sure the particle energy is valid
+  testPrecondition( d_core.getTotalForwardReaction().isEnergyWithinEnergyGrid( adjoint_electron.getEnergy() ) );
+
+  unsigned energy_grid_bin =
+    d_core.getGridSearcher().findLowerBinIndex( adjoint_electron.getEnergy() );
+
+  double scattering_cross_section =
+    this->getScatteringCrossSection( adjoint_electron.getEnergy(),
+                                     energy_grid_bin );
+  
+  double absorption_cross_section =
+    this->getAbsorptionCrossSection( adjoint_electron.getEnergy(),
+                                     energy_grid_bin );
 
   double scaled_random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
-      total_cross_section;
-
-  double absorption_cross_section =
-    this->getAbsorptionCrossSection( electron.getEnergy() );
+      (scattering_cross_section+absorption_cross_section);
 
   // Check if absorption occurs
   if( scaled_random_number < absorption_cross_section )
   {
-    sampleAbsorptionReaction( scaled_random_number, electron, bank );
+    this->sampleAbsorptionReaction( scaled_random_number,
+                                    energy_grid_bin,
+                                    adjoint_electron,
+                                    bank );
 
-    // Set the electron as gone regardless of the reaction that occurred
-    electron.setAsGone();
+    // Set the adjoint electron as gone regardless of the reaction that occurred
+    adjoint_electron.setAsGone();
   }
   else
   {
-    sampleScatteringReaction( scaled_random_number - absorption_cross_section,
-                              electron,
-                              bank );
+    this->sampleScatteringReaction(
+            scaled_random_number - absorption_cross_section,
+            energy_grid_bin,
+            adjoint_electron,
+            bank );
   }
 }
 
-// Collide with a electron and survival bias
-void AdjointElectroatom::collideSurvivalBias( AdjointElectronState& electron,
-                                       ParticleBank& bank ) const
+// Collide with an adjoint electron and survival bias
+void AdjointElectroatom::collideSurvivalBias(
+        AdjointElectronState& adjoint_electron,
+        ParticleBank& bank ) const
 {
-  double total_cross_section =
-    this->getTotalCrossSection( electron.getEnergy() );
+  // Make sure the particle energy is valid
+  testPrecondition( d_core.getTotalForwardReaction().isEnergyWithinEnergyGrid( adjoint_electron.getEnergy() ) );
 
-  double scattering_cross_section = total_cross_section -
-    this->getAbsorptionCrossSection( electron.getEnergy() );
+  unsigned energy_grid_bin =
+    d_core.getGridSearcher().findLowerBinIndex( adjoint_electron.getEnergy() );
 
-  double survival_prob = scattering_cross_section/total_cross_section;
+  double scattering_cross_section =
+    this->getScatteringCrossSection( adjoint_electron.getEnergy(),
+                                     energy_grid_bin );
+  
+  double absorption_cross_section =
+    this->getAbsorptionCrossSection( adjoint_electron.getEnergy(),
+                                     energy_grid_bin );
 
-  sampleScatteringReaction(
-             Utility::RandomNumberGenerator::getRandomNumber<double>()*
-             scattering_cross_section,
-             electron,
-             bank );
+  double survival_prob = scattering_cross_section/
+    (scattering_cross_section+absorption_cross_section);
 
-  if( survival_prob < 1.0 )
+  // Multiply the adjoint electron's weight by the survival probabilty
+  if( survival_prob > 0.0 )
   {
-    // Multiply the electron's weight by the survival probabilty
-    if( survival_prob > 0.0 )
-    {
+    // Create a copy of the electron for sampling the absorption reaction
+    AdjointElectronState adjoint_electron_copy( adjoint_electron, false, false );
+    
+    adjoint_electron.multiplyWeight( survival_prob );
 
-      // Create a copy of the electron for sampling the absorption reaction
-      AdjointElectronState electron_copy( electron, false, false );
-
-      electron.multiplyWeight( survival_prob );
-
-      sampleScatteringReaction(
+    this->sampleScatteringReaction(
              Utility::RandomNumberGenerator::getRandomNumber<double>()*
-             scattering_cross_section,
-             electron,
+                scattering_cross_section,
+             energy_grid_bin,
+             adjoint_electron,
              bank );
 
-      electron_copy.multiplyWeight( 1.0 - survival_prob );
+    adjoint_electron_copy.multiplyWeight( 1.0 - survival_prob );
 
-      sampleAbsorptionReaction(
-                      Utility::RandomNumberGenerator::getRandomNumber<double>()*
-                      (total_cross_section - scattering_cross_section),
-                      electron_copy,
-                      bank );
+    if( absorption_cross_section > 0.0 )
+    {
+      this->sampleAbsorptionReaction(
+              Utility::RandomNumberGenerator::getRandomNumber<double>()*
+                absorption_cross_section,
+              energy_grid_bin,
+              adjoint_electron_copy,
+              bank );
     }
-    else
-      electron.setAsGone();
+  }
+  else
+  {
+    this->sampleAbsorptionReaction(
+            Utility::RandomNumberGenerator::getRandomNumber<double>()*
+                absorption_cross_section,
+            energy_grid_bin,
+            adjoint_electron,
+            bank );
+    
+    adjoint_electron.setAsGone();
   }
 }
 
 // Sample an absorption reaction
-void AdjointElectroatom::sampleAbsorptionReaction( const double scaled_random_number,
-                                            AdjointElectronState& electron,
-                                            ParticleBank& bank ) const
+void AdjointElectroatom::sampleAbsorptionReaction(
+        const double scaled_random_number,
+        const unsigned energy_grid_bin,
+        AdjointElectronState& adjoint_electron,
+        ParticleBank& bank ) const
 {
-  // Make sure there is at least one absorption reaction
-  testPrecondition( d_core.getAbsorptionReactions().size() > 0 );
-
   double partial_cross_section = 0.0;
 
-  ConstReactionMap::const_iterator electroatomic_reaction =
+  ConstReactionMap::const_iterator adjoint_electroatomic_reaction =
     d_core.getAbsorptionReactions().begin();
 
-  while( electroatomic_reaction != d_core.getAbsorptionReactions().end() )
+  while( adjoint_electroatomic_reaction != d_core.getAbsorptionReactions().end() )
   {
     partial_cross_section +=
-      electroatomic_reaction->second->getCrossSection( electron.getEnergy() );
+      adjoint_electroatomic_reaction->second->getCrossSection(
+                                                   adjoint_electron.getEnergy(),
+                                                   energy_grid_bin );
 
     if( scaled_random_number < partial_cross_section )
       break;
 
-    ++electroatomic_reaction;
-  }
-
-  // Note: the absorption cross section is calculated at run time. However,
-  // it's possible that roundoff from interpolation can cause a small
-  // difference between the calculated absorption cross section and
-  // the sum of the stored cross sections. This test ensures that a valid
-  // reaction is always sampled.
-  if( electroatomic_reaction == d_core.getAbsorptionReactions().end() )
-  {
-    electroatomic_reaction = d_core.getAbsorptionReactions().begin();
-
-    std::advance( electroatomic_reaction,
-                  d_core.getAbsorptionReactions().size()-1 );
+    ++adjoint_electroatomic_reaction;
   }
 
   // Make sure a reaction was selected
-  testPostcondition( electroatomic_reaction !=
-                       d_core.getAbsorptionReactions().end() );
+  testPostcondition( adjoint_electroatomic_reaction !=
+                     d_core.getAbsorptionReactions().end() );
 
-  // Undergo reaction selected
+  // Undergo the selected reaction
   Data::SubshellType subshell_vacancy;
 
-  electroatomic_reaction->second->react( electron, bank, subshell_vacancy );
+  adjoint_electroatomic_reaction->second->react( adjoint_electron,
+                                                 bank,
+                                                 subshell_vacancy );
 
-  // Relax the atom
-  d_core.getAtomicRelaxationModel().relaxAtom( subshell_vacancy,
-                                               electron,
-                                               bank );
+  // Note: The subshell is currently unused with adjoint reactions
 }
 
 // Sample a scattering reaction
-void AdjointElectroatom::sampleScatteringReaction( const double scaled_random_number,
-                                            AdjointElectronState& electron,
-                                            ParticleBank& bank ) const
+void AdjointElectroatom::sampleScatteringReaction(
+        const double scaled_random_number,
+        const unsigned energy_grid_bin,
+        AdjointElectronState& adjoint_electron,
+        ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
 
-  ConstReactionMap::const_iterator electroatomic_reaction =
+  ConstReactionMap::const_iterator adjoint_electroatomic_reaction =
     d_core.getScatteringReactions().begin();
 
-  while( electroatomic_reaction != d_core.getScatteringReactions().end() )
+  while( adjoint_electroatomic_reaction != d_core.getScatteringReactions().end() )
   {
     partial_cross_section +=
-      electroatomic_reaction->second->getCrossSection( electron.getEnergy() );
-
+      adjoint_electroatomic_reaction->second->getCrossSection(
+                                                   adjoint_electron.getEnergy(),
+                                                   energy_grid_bin );
+    
     if( scaled_random_number < partial_cross_section )
       break;
-
-    ++electroatomic_reaction;
-  }
-
-  // Note: the total cross section is calculated at run time. However,
-  // it's possible that roundoff from interpolation can cause a small
-  // difference between the calculated total cross section and
-  // the sum of the stored cross sections. This test ensures that a valid
-  // reaction is always sampled.
-  if( electroatomic_reaction == d_core.getScatteringReactions().end() )
-  {
-    electroatomic_reaction = d_core.getScatteringReactions().begin();
-
-    std::advance( electroatomic_reaction,
-                  d_core.getScatteringReactions().size()-1 );
+    
+    ++adjoint_electroatomic_reaction;
   }
 
   // Make sure the reaction was found
-  testPostcondition( electroatomic_reaction !=
+  testPostcondition( adjoint_electroatomic_reaction !=
                      d_core.getScatteringReactions().end() );
 
-  // Undergo reaction selected
+  // Undergo the selected reaction
   Data::SubshellType subshell_vacancy;
 
-  electroatomic_reaction->second->react( electron, bank, subshell_vacancy );
-
-  // Relax the atom
-  d_core.getAtomicRelaxationModel().relaxAtom( subshell_vacancy,
-                                               electron,
-                                               bank );
+  adjoint_electroatomic_reaction->second->react( adjoint_electron,
+                                                 bank,
+                                                 subshell_vacancy );
+  
+  // Note: The subshell is currently unused with adjoint reactions
 }
 
 } // end MonteCarlo namespace

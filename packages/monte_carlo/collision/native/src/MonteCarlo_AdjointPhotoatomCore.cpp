@@ -183,7 +183,7 @@ bool AdjointPhotoatomCore::hasSharedEnergyGrid() const
 
   return true;
 }
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

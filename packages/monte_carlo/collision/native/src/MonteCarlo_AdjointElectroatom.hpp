@@ -10,21 +10,18 @@
 #define MONTE_CARLO_ADJOINT_ELECTROATOM_HPP
 
 // Std Lib Includes
-#include <string>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <string> 
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_ScalarTraits.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_AdjointElectroatomicReactionType.hpp"
-#include "MonteCarlo_AdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_AdjointElectroatomCore.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 namespace MonteCarlo{
 
@@ -45,22 +42,15 @@ public:
   //! Typedef for the const reaction map
   typedef AdjointElectroatomCore::ConstReactionMap ConstReactionMap;
 
-  //! Return the reactions that are treated as scattering
-  static const boost::unordered_set<AdjointElectroatomicReactionType>&
-  getScatteringReactionTypes();
-
   //! Constructor
-  template<typename InterpPolicy>
   AdjointElectroatom(
-      const std::string& name,
-      const unsigned atomic_number,
-      const double atomic_weight,
-      const Teuchos::ArrayRCP<double>& energy_grid,
-      const ReactionMap& standard_scattering_reactions,
-      const ReactionMap& standard_absorption_reactions,
-      const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-      const bool processed_cross_sections,
-      const InterpPolicy policy );
+    const std::string& name,
+    const unsigned atomic_number,
+    const double atomic_weight,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
+    const ReactionMap& scattering_reactions,
+    const ReactionMap& absorption_reactions );
 
   //! Constructor (from a core)
   AdjointElectroatom( const std::string& name,
@@ -96,6 +86,12 @@ public:
   //! Return the total cross section at the desired energy
   double getTotalCrossSection( const double energy ) const;
 
+  //! Return the total forward cross section at the desired energy
+  double getTotalForwardCrossSection( const double energy ) const;
+
+  //! Return the adjoint weight factor at the desired energy
+  double getAdjointWeightFactor( const double energy ) const;
+
   //! Return the total absorption cross section at the desired energy
   double getAbsorptionCrossSection( const double energy ) const;
 
@@ -120,13 +116,23 @@ public:
 
 private:
 
+  // Return the scatt. cross section with a bin index
+  double getScatteringCrossSection( const double energy,
+                                    const unsigned energy_grid_bin ) const;
+
+  // Return the abs. cross section with a bin index
+  double getAbsorptionCrossSection( const double energy,
+                                    const unsigned energy_grid_bin ) const;
+
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
+                                 const unsigned energy_grid_bin,
                                  AdjointElectronState& electron,
                                  ParticleBank& bank ) const;
 
   // Sample a scattering reaction
   void sampleScatteringReaction( const double scaled_random_number,
+                                 const unsigned energy_grid_bin,
                                  AdjointElectronState& electron,
                                  ParticleBank& bank ) const;
 
@@ -177,15 +183,51 @@ inline const AdjointElectroatomCore& AdjointElectroatom::getCore() const
   return d_core;
 }
 
+// Return the scatt. cross section with a bin index
+inline double AdjointElectroatom::getScatteringCrossSection(
+                                         const double energy,
+                                         const unsigned energy_grid_bin ) const
+{
+  double cross_section = 0.0;
+
+  ConstReactionMap::const_iterator adjoint_electroatomic_reaction =
+    d_core.getScatteringReactions().begin();
+
+  while( adjoint_electroatomic_reaction != d_core.getScatteringReactions().end() )
+  {
+    cross_section +=
+      adjoint_electroatomic_reaction->second->getCrossSection( energy,
+                                                               energy_grid_bin );
+
+    ++adjoint_electroatomic_reaction;
+  }
+
+  return cross_section;
+}
+
+// Return the abs. cross section with a bin index
+inline double AdjointElectroatom::getAbsorptionCrossSection(
+                                         const double energy,
+                                         const unsigned energy_grid_bin ) const
+{
+  double cross_section = 0.0;
+
+  ConstReactionMap::const_iterator adjoint_electroatomic_reaction =
+    d_core.getAbsorptionReactions().begin();
+
+  while( adjoint_electroatomic_reaction != d_core.getAbsorptionReactions().end() )
+  {
+    cross_section +=
+      adjoint_electroatomic_reaction->second->getCrossSection( energy,
+                                                               energy_grid_bin );
+
+    ++adjoint_electroatomic_reaction;
+  }
+
+  return cross_section;
+}
+
 } // end MonteCarlo namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_AdjointElectroatom_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTROATOM_HPP
 
