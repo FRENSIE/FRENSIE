@@ -409,7 +409,13 @@ private:
   void initializeAdjointElectronUnionEnergyGrid(
      const Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
- 
+
+  // Create the inelastic cross section distribution
+  void createForwardInelasticElectronCrossSectionDistribution(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    std::shared_ptr<const Utility::OneDDistribution>&
+        forward_inelastic_electron_cross_section_distribution ) const;
+
   // Create the adjoint atomic excitation cross section distribution
   void createAdjointAtomicExcitationCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,

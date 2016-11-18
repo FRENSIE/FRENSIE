@@ -1724,6 +1724,24 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   d_os_log->flush();
 
   //---------------------------------------------------------------------------//
+  // Generate Grid Points For The Forward Inelastic Electron Cross Section Data
+  //---------------------------------------------------------------------------//
+
+  // Create the inelastic cross section distribution
+  std::shared_ptr<const Utility::OneDDistribution>
+    forward_inelastic_electron_cross_section;
+
+  this->createForwardInelasticElectronCrossSectionDistribution(
+            data_container,
+            forward_inelastic_electron_cross_section );
+
+  // Bind the distribution
+  boost::function<double (double pz)> forward_inelastic_grid_function =
+    boost::bind( &Utility::OneDDistribution::evaluate,
+                 boost::cref( *forward_inelastic_electron_cross_section ),
+                 _1 );
+
+  //---------------------------------------------------------------------------//
   // Generate Grid Points For The Adjoint Atomic Excitation Cross Section Data
   //---------------------------------------------------------------------------//
 
@@ -1962,6 +1980,27 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   }
 
 //---------------------------------------------------------------------------//
+// Set The Forward Inelastic Cross Section Data
+//---------------------------------------------------------------------------//
+  (*d_os_log) << "   Setting the "
+              << Utility::Italicized( "forward inelastic electron" )
+              << " cross section...";
+  d_os_log->flush();
+
+  std::vector<double> forward_inelastic_cross_section;
+  this->createCrossSectionOnUnionEnergyGrid(
+      union_energy_grid,
+      forward_inelastic_grid_function,
+      forward_inelastic_cross_section,
+      threshold );
+
+  data_container.setForwardInelasticElectronCrossSection(
+    forward_inelastic_cross_section );
+  data_container.setForwardInelasticElectronCrossSectionThresholdEnergyIndex(
+    threshold );
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+
+//---------------------------------------------------------------------------//
 // Set Atomic Excitation Data
 //---------------------------------------------------------------------------//
   (*d_os_log) << "   Setting the "
@@ -2071,6 +2110,80 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 }
 
+// Create the inelastic cross section distribution
+void
+StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElectronCrossSectionDistribution(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    std::shared_ptr<const Utility::OneDDistribution>&
+        forward_inelastic_electron_cross_section_distribution ) const
+{
+  // Extract the atomic excitation cross section data
+  std::vector<double> ae_cross_section =
+    d_forward_epr_data->getAtomicExcitationCrossSection();
+  unsigned ae_threshold_index =
+    d_forward_epr_data->getAtomicExcitationCrossSectionThresholdEnergyIndex();
+
+  // Extract the bremsstrahlung cross section data
+  std::vector<double> brem_cross_section =
+    d_forward_epr_data->getBremsstrahlungCrossSection();
+  unsigned brem_threshold_index =
+    d_forward_epr_data->getBremsstrahlungCrossSectionThresholdEnergyIndex();
+
+  // Extract the total elastic cross section data
+  std::map<unsigned,std::vector<double> > i_cross_sections;
+  std::map<unsigned,unsigned> i_threshold_index;
+
+  // Loop through the electroionization subshells
+    std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
+
+  for ( shell; shell != data_container.getSubshells().end(); shell++ )
+  {
+    i_cross_sections[*shell] =
+      d_forward_epr_data->getElectroionizationCrossSection( *shell );
+
+    i_threshold_index[*shell] =
+      d_forward_epr_data->getElectroionizationCrossSectionThresholdEnergyIndex( *shell );
+  }
+
+  // Calculate the forward inelastic electron cross section
+  std::vector<double> forward_inelastic_electron_cross_section(
+    d_forward_epr_data->getElectronEnergyGrid().size() );
+
+  for( size_t i = 0; i < forward_inelastic_electron_cross_section.size(); ++i )
+  {
+    // Add atomic excitation cross section if above threshold
+    if ( i >= ae_threshold_index )
+    {
+      forward_inelastic_electron_cross_section[i] +=
+        ae_cross_section[i-ae_threshold_index];
+    }
+
+    // Add bremsstrahlung cross section if above threshold
+    if ( i >= brem_threshold_index )
+    {
+      forward_inelastic_electron_cross_section[i] +=
+        brem_cross_section[i-brem_threshold_index];
+    }
+
+    shell = data_container.getSubshells().begin();
+    for ( shell; shell != data_container.getSubshells().end(); shell++ )
+    {
+      // Add electroionization subshell cross section if above threshold
+      if ( i >= i_threshold_index[*shell] )
+      {
+        forward_inelastic_electron_cross_section[i] +=
+            i_cross_sections[*shell].at( i - i_threshold_index[*shell]);
+      }
+    }
+  }
+
+  // Set the distribution
+  forward_inelastic_electron_cross_section_distribution.reset(
+    new Utility::TabularDistribution<Utility::LinLin>(
+      d_forward_epr_data->getElectronEnergyGrid(),
+      forward_inelastic_electron_cross_section ) );
+}
+
 // Create the adjoint atomic excitation cross section reaction
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicExcitationCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
@@ -2079,7 +2192,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
     std::shared_ptr<const Utility::OneDDistribution>&
       adjoint_excitation_cross_section_distribution ) const
 {
-  // Extract the total elastic cross section data
+  // Extract the atomic excitation cross section data
   Teuchos::ArrayRCP<double> atomic_excitation_cross_section;
   atomic_excitation_cross_section.assign(
     d_forward_epr_data->getAtomicExcitationCrossSection().begin(),

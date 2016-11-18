@@ -1026,6 +1026,21 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    TEST_EQUALITY_CONST( cross_section.back(), 0.73821976945064415876 );
    TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
 
+
+   // Check the forward inelastic cross section data
+   threshold =
+     h_data_container.getForwardInelasticElectronCrossSectionThresholdEnergyIndex();
+
+   TEST_EQUALITY_CONST( threshold, 0 );
+
+   cross_section =
+     h_data_container.getForwardInelasticElectronCrossSection();
+
+   TEST_EQUALITY_CONST( cross_section.front(), 2.97832e+01 );
+   TEST_EQUALITY_CONST( cross_section.back(), 1.64663279900628550e+05 );
+   TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
+
+
    // Check the atomic excitation data
    threshold =
      h_data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex();
@@ -1052,6 +1067,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    TEST_EQUALITY_CONST( atomic_excitation_energy_gain.front(), 1.57054e-05 );
    TEST_EQUALITY_CONST( atomic_excitation_energy_gain.back(), 2.10108e-5 );
    TEST_EQUALITY_CONST( atomic_excitation_energy_gain.size(), 99 );
+
 
    // Check the bremsstrahlung data
    threshold =
@@ -1318,6 +1334,19 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    TEST_EQUALITY_CONST( elastic_pdf.front(), 1.693970E-11 );
    TEST_EQUALITY_CONST( elastic_pdf.back(), 9.868670E+05 );
    TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
+
+   // Check the forward inelastic cross section data
+   threshold =
+     c_data_container.getForwardInelasticElectronCrossSectionThresholdEnergyIndex();
+
+   TEST_EQUALITY_CONST( threshold, 0 );
+
+   cross_section =
+     c_data_container.getForwardInelasticElectronCrossSection();
+
+   TEST_EQUALITY_CONST( cross_section.front(), 3.46182331279999986e+07 );
+   TEST_EQUALITY_CONST( cross_section.back(), 5.26917872011385742e+05 );
+   TEST_EQUALITY_CONST( cross_section.size(), 26-threshold );
 
    // Check the atomic excitation data
    threshold =
