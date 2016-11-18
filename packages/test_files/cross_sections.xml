@@ -273,6 +273,26 @@
     <Parameter docString="" id="215" isDefault="false" isUsed="true" name="atomic_number" type="int" value="6"/>
     <Parameter docString="" id="216" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="1.19077999999999999e+01"/>
   </ParameterList>
+  <ParameterList id="228" name="H-1-Native">
+    <Parameter docString="" id="218" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="native/test_epr_1_native.xml"/>
+    <Parameter docString="" id="219" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="220" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="221" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" name="adjoint_photoatomic_file_path" type="string" value="native/test_aepr_1_native.xml"/>
+    <Parameter docString="" name="adjoint_photoatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" name="adjoint_photoatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" name="adjoint_photoatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="222" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_epr_1_native.xml"/>
+    <Parameter docString="" id="223" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="224" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="225" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" name="adjoint_electroatomic_file_path" type="string" value="native/test_aepr_1_native.xml"/>
+    <Parameter docString="" name="adjoint_electroatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" name="adjoint_electroatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" name="adjoint_electroatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="226" isDefault="false" isUsed="true" name="atomic_number" type="int" value="1"/>
+    <Parameter docString="" id="227" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="9.99241999999999964e-01"/>
+  </ParameterList>
   <Validators/>
 </ParameterList>
 

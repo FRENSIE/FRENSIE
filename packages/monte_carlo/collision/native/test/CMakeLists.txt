@@ -983,6 +983,13 @@ TARGET_LINK_LIBRARIES(tstElectroatomFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST ElectroatomFactory_test PROPERTY LABELS electron)
 
+ADD_EXECUTABLE(tstAdjointElectroatomFactory
+  tstAdjointElectroatomFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointElectroatomFactory monte_carlo_collision_native)
+ADD_TEST(AdjointElectroatomFactory_test tstAdjointElectroatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
+SET_PROPERTY(TEST AdjointElectroatomFactory_test PROPERTY LABELS electron adjoint)
+
 ##      electron materials tests
 ADD_EXECUTABLE(tstElectronMaterial tstElectronMaterial.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

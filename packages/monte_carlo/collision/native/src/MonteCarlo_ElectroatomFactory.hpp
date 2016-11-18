@@ -52,21 +52,21 @@ public:
 
   //! Create the map of electroatoms
   void createElectroatomMap(
-		    std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
-		    electroatom_map ) const;
+            std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
+            electroatom_map ) const;
 
 private:
 
   // Create a electroatom from an ACE table
   void createElectroatomFromACETable(
-			  const std::string& electroatom_alias,
-			  const std::string& ace_file_path,
-			  const std::string& electroatomic_table_name,
-			  const int electroatomic_file_start_line,
-			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
-			    atomic_relaxation_model_factory,
-			  const unsigned hash_grid_bins,
+              const std::string& electroatom_alias,
+              const std::string& ace_file_path,
+              const std::string& electroatomic_table_name,
+              const int electroatomic_file_start_line,
+              const double atomic_weight,
+              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                atomic_relaxation_model_factory,
+              const unsigned hash_grid_bins,
               const BremsstrahlungAngularDistributionType
                 photon_distribution_function,
               const bool use_atomic_relaxation_data,
@@ -74,12 +74,12 @@ private:
 
   // Create a electroatom from a Native table
   void createElectroatomFromNativeTable(
-			  const std::string& electroatom_alias,
-			  const std::string& ace_file_path,
-			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
-			    atomic_relaxation_model_factory,
-			  const unsigned hash_grid_bins,
+              const std::string& electroatom_alias,
+              const std::string& ace_file_path,
+              const double atomic_weight,
+              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                atomic_relaxation_model_factory,
+              const unsigned hash_grid_bins,
               const BremsstrahlungAngularDistributionType
                 photon_distribution_function,
               const bool use_atomic_relaxation_data,
