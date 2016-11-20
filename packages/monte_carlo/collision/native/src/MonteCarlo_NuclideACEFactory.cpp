@@ -48,7 +48,7 @@ void NuclideACEFactory::createNuclide(
 
   reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
 
-  if( use_unresolved_resonance_data )
+  if( properties.isUnresolvedResonanceProbabilityTableModeOn() )
   {
     std::cerr << std::endl
 	      << "Warning: Unresolved resonance data has been requested. "
@@ -65,6 +65,7 @@ void NuclideACEFactory::createNuclide(
                                                         atomic_weight_ratio,
                                                         temperature,
                                                         energy_grid.getConst(),
+                                                        properties,
                                                         raw_nuclide_data );
 
     // Create the photon production reactions

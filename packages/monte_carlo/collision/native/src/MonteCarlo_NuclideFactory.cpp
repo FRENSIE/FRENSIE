@@ -26,7 +26,7 @@ NuclideFactory::NuclideFactory(
 		     const std::string& cross_sections_xml_directory,
 		     const Teuchos::ParameterList& cross_section_table_info,
 		     const std::unordered_set<std::string>& nuclide_aliases,
-                     const SimiulationProperties& properties,
+                     const SimulationProperties& properties,
 		     std::ostream* os_message )
   : d_os_message( os_message )
 {
