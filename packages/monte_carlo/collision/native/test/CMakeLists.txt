@@ -213,7 +213,8 @@ ADD_TEST(Nuclide_test tstNuclide --test_h1_ace_file="${GLOBAL_ACE_TEST_DATA_SOUR
 SET_PROPERTY(TEST Nuclide_test PROPERTY LABELS monte_carlo_collision_native neutron)
 
 ADD_EXECUTABLE(tstNuclideFactory
-  tstNuclideFactory.cpp)
+  tstNuclideFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstNuclideFactory monte_carlo_collision_native)
 ADD_TEST(NuclideFactory_test tstNuclideFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
 SET_PROPERTY(TEST NuclideFactory_test PROPERTY LABELS monte_carlo_collision_native neutron)
