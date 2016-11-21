@@ -193,7 +193,8 @@ ADD_TEST(NeutronAbsorptionReaction_test tstNeutronAbsorptionReaction --test_basi
 SET_PROPERTY(TEST NeutronAbsorptionReaction_test PROPERTY LABELS monte_carlo_collision_native neutron)
 
 ADD_EXECUTABLE(tstNuclearReactionACEFactory
-  tstNuclearReactionACEFactory.cpp)
+  tstNuclearReactionACEFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstNuclearReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(NuclearReactionACEFactory_test tstNuclearReactionACEFactory --test_h1_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 SET_PROPERTY(TEST NuclearReactionACEFactory_test PROPERTY LABELS monte_carlo_collision_native neutron ace)
