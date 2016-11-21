@@ -474,7 +474,8 @@ ADD_TEST(PhotoatomicReactionNativeFactory_test tstPhotoatomicReactionNativeFacto
 SET_PROPERTY(TEST PhotoatomicReactionNativeFactory_test PROPERTY LABELS monte_carlo_collision_native photon native)
 
 ADD_EXECUTABLE(tstPhotoatomACEFactory
-  tstPhotoatomACEFactory.cpp)
+  tstPhotoatomACEFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPhotoatomACEFactory monte_carlo_collision_native)
 ADD_TEST(PhotoatomACEFactory_test tstPhotoatomACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST PhotoatomACEFactory_test PROPERTY LABELS monte_carlo_collision_native photon ace)

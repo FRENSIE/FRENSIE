@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -17,21 +18,22 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
+std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 std::string photoatom_name;
 double atomic_weight;
-Teuchos::RCP<MonteCarlo::Photoatom> atom;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -39,18 +41,22 @@ Teuchos::RCP<MonteCarlo::Photoatom> atom;
 // Check that a basic photoatom can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom(
-					       *xss_data_extractor,
-					       photoatom_name,
-					       atomic_weight,
-					       relaxation_model,
-					       atom,
-					       100,
-					       MonteCarlo::WH_INCOHERENT_MODEL,
-					       3.0,
-					       false,
-					       false );
+  Teuchos::RCP<MonteCarlo::Photoatom> atom;
 
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::WH_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+  
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
+                                                    photoatom_name,
+                                                    atomic_weight,
+                                                    relaxation_model,
+                                                    properties, 
+                                                    atom );
+  
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
@@ -226,17 +232,21 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 // Check that a photoatom with Doppler broadening data can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom(
-		 *xss_data_extractor,
-		 photoatom_name,
-		 atomic_weight,
-		 relaxation_model,
-		 atom,
-		 100,
-		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
-		 3.0,
-		 false,
-		 false );
+  Teuchos::RCP<MonteCarlo::Photoatom> atom;
+  
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+  
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
+                                                    photoatom_name,
+                                                    atomic_weight,
+                                                    relaxation_model,
+                                                    properties,
+                                                    atom );
 
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -426,17 +436,21 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 // Check that a photoatom with subshell photoelectric data can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom(
-					       *xss_data_extractor,
-					       photoatom_name,
-					       atomic_weight,
-					       relaxation_model,
-					       atom,
-					       100,
-					       MonteCarlo::WH_INCOHERENT_MODEL,
-					       3.0,
-					       false,
-					       true );
+  Teuchos::RCP<MonteCarlo::Photoatom> atom;
+  
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::WH_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+  
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
+                                                    photoatom_name,
+                                                    atomic_weight,
+                                                    relaxation_model,
+                                                    properties,
+                                                    atom );
 
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -591,70 +605,51 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name;
+std::string test_ace_table_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  clp().setOption( "test_ace_file",
+                   &test_ace_file_name,
+                   "Test ACE file name" );
+  clp().setOption( "test_ace_table",
+                   &test_ace_table_name,
+                   "Test ACE table name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  {
-    // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  // Create a file handler and data extractor
+  std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-    xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
+  xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-    MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
+  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 							   *xss_data_extractor,
 							   relaxation_model,
+                                                           1e-3,
+                                                           1e-5,
 							   true );
 
-    photoatom_name = test_ace_table_name;
-    atomic_weight = ace_file_handler->getTableAtomicWeightRatio()*
-      Utility::PhysicalConstants::neutron_rest_mass_amu;
-  }
+  photoatom_name = test_ace_table_name;
+  atomic_weight = ace_file_handler->getTableAtomicWeightRatio()*
+    Utility::PhysicalConstants::neutron_rest_mass_amu;
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstPhotoatomACEFactory.cpp
