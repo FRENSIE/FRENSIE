@@ -28,9 +28,9 @@ CollisionHandler::master_electron_map;
 
 // Add a material to the collision handler
 void CollisionHandler::addMaterial(
-	      const Teuchos::RCP<NeutronMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material )
+          const Teuchos::RCP<NeutronMaterial>& material,
+          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          cells_containing_material )
 {
   // Make sure the material pointer is valid
   testPrecondition( !material.is_null() );
@@ -41,7 +41,7 @@ void CollisionHandler::addMaterial(
   {
     TEST_FOR_EXCEPTION(
       CollisionHandler::master_neutron_map.find(cells_containing_material[i])!=
-				    CollisionHandler::master_neutron_map.end(),
+                                    CollisionHandler::master_neutron_map.end(),
       std::logic_error,
       "Error: cell " << cells_containing_material[i] << " already has a "
       "material assigned!" );
@@ -53,9 +53,9 @@ void CollisionHandler::addMaterial(
 
 // Add a material to the collision handler
 void CollisionHandler::addMaterial(
-	      const Teuchos::RCP<PhotonMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material )
+          const Teuchos::RCP<PhotonMaterial>& material,
+          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          cells_containing_material )
 {
   // Make sure the material pointer is valid
   testPrecondition( !material.is_null() );
@@ -78,10 +78,10 @@ void CollisionHandler::addMaterial(
 
 // Add a material to the collision handler
 void CollisionHandler::addMaterial(
-	      const Teuchos::RCP<NeutronMaterial>& neutron_material,
-	      const Teuchos::RCP<PhotonMaterial>& photon_material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material )
+          const Teuchos::RCP<NeutronMaterial>& neutron_material,
+          const Teuchos::RCP<PhotonMaterial>& photon_material,
+          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          cells_containing_material )
 {
   // Make sure the material pointers are valid
   testPrecondition( !neutron_material.is_null() );
@@ -96,9 +96,9 @@ void CollisionHandler::addMaterial(
 
 // Add a material to the collision handler
 void CollisionHandler::addMaterial(
-	      const Teuchos::RCP<ElectronMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material )
+          const Teuchos::RCP<ElectronMaterial>& material,
+          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          cells_containing_material )
 {
   // Make sure the material pointer is valid
   testPrecondition( !material.is_null() );
@@ -121,8 +121,8 @@ void CollisionHandler::addMaterial(
 
 // Check if a cell is void
 bool CollisionHandler::isCellVoid(
-			 const Geometry::ModuleTraits::InternalCellHandle cell,
-			 const ParticleType particle_type )
+             const Geometry::ModuleTraits::InternalCellHandle cell,
+             const ParticleType particle_type )
 {
   switch( particle_type )
   {
@@ -134,27 +134,27 @@ bool CollisionHandler::isCellVoid(
       return false;
   case PHOTON:
     if( CollisionHandler::master_photon_map.find( cell ) ==
-	CollisionHandler::master_photon_map.end() )
+        CollisionHandler::master_photon_map.end() )
       return true;
     else
       return false;
   case ELECTRON:
     if( CollisionHandler::master_electron_map.find( cell ) ==
-	CollisionHandler::master_electron_map.end() )
+        CollisionHandler::master_electron_map.end() )
       return true;
     else
       return false;
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: particle type " << particle_type <<
-		     " is not recognized by the collision handler!" );
+                     "Error: particle type " << particle_type <<
+                     " is not recognized by the collision handler!" );
   }
 }
 
 // Get the neutron material contained in a cell
 const Teuchos::RCP<NeutronMaterial>&
 CollisionHandler::getCellNeutronMaterial(
-			const Geometry::ModuleTraits::InternalCellHandle cell )
+            const Geometry::ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( cell, NEUTRON ) );
@@ -165,7 +165,7 @@ CollisionHandler::getCellNeutronMaterial(
 // Get the photon material contained in a cell
 const Teuchos::RCP<PhotonMaterial>&
 CollisionHandler::getCellPhotonMaterial(
-			const Geometry::ModuleTraits::InternalCellHandle cell )
+            const Geometry::ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( cell, PHOTON ) );
@@ -176,7 +176,7 @@ CollisionHandler::getCellPhotonMaterial(
 // Get the electron material contained in a cell
 const Teuchos::RCP<ElectronMaterial>&
 CollisionHandler::getCellElectronMaterial(
-			const Geometry::ModuleTraits::InternalCellHandle cell )
+            const Geometry::ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( cell, ELECTRON ) );
@@ -186,11 +186,11 @@ CollisionHandler::getCellElectronMaterial(
 
 // Get the total macroscopic cross section of a material
 double CollisionHandler::getMacroscopicTotalCrossSection(
-						const NeutronState& particle )
+                        const NeutronState& particle )
 {
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
-						   NEUTRON ) );
+                           NEUTRON ) );
 
   Teuchos::RCP<NeutronMaterial>& material =
     CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
@@ -200,11 +200,11 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
 
 // Get the total macroscopic cross section of a material
 double CollisionHandler::getMacroscopicTotalCrossSection(
-						  const PhotonState& particle )
+                          const PhotonState& particle )
 {
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
-						   PHOTON ) );
+                           PHOTON ) );
 
   Teuchos::RCP<PhotonMaterial>& material =
       CollisionHandler::master_photon_map.find( particle.getCell() )->second;
@@ -214,11 +214,11 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
 
 // Get the total macroscopic cross section of a material
 double CollisionHandler::getMacroscopicTotalCrossSection(
-						  const ElectronState& particle )
+                          const ElectronState& particle )
 {
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
-						   ELECTRON ) );
+                           ELECTRON ) );
 
   Teuchos::RCP<ElectronMaterial>& material =
       CollisionHandler::master_electron_map.find( particle.getCell() )->second;
@@ -228,8 +228,8 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
 
 // Get the macroscopic cross section for a specific reaction
 double CollisionHandler::getMacroscopicReactionCrossSection(
-					   const NeutronState& particle,
-					   const NuclearReactionType reaction )
+                       const NeutronState& particle,
+                       const NuclearReactionType reaction )
 {
   CellIdNeutronMaterialMap::const_iterator it =
     CollisionHandler::master_neutron_map.find( particle.getCell() );
@@ -237,7 +237,7 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
   if( it != CollisionHandler::master_neutron_map.end() )
   {
     return it->second->getMacroscopicReactionCrossSection(particle.getEnergy(),
-							  reaction );
+                              reaction );
   }
   else
     return 0.0;
@@ -245,8 +245,8 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 
 // Get the macroscopic cross section for a specific reaction
 double CollisionHandler::getMacroscopicReactionCrossSection(
-				      const PhotonState& particle,
-				      const PhotoatomicReactionType reaction )
+                      const PhotonState& particle,
+                      const PhotoatomicReactionType reaction )
 {
   CellIdPhotonMaterialMap::const_iterator it =
     CollisionHandler::master_photon_map.find( particle.getCell() );
@@ -254,7 +254,7 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
   if( it != CollisionHandler::master_photon_map.end() )
   {
     return it->second->getMacroscopicReactionCrossSection(particle.getEnergy(),
-							  reaction );
+                              reaction );
   }
   else
     return 0.0;
@@ -262,8 +262,8 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 
 // Get the macroscopic cross section for a specific reaction
 double CollisionHandler::getMacroscopicReactionCrossSection(
-				      const PhotonState& particle,
-				      const PhotonuclearReactionType reaction )
+                      const PhotonState& particle,
+                      const PhotonuclearReactionType reaction )
 {
   CellIdPhotonMaterialMap::const_iterator it =
     CollisionHandler::master_photon_map.find( particle.getCell() );
@@ -271,7 +271,7 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
   if( it != CollisionHandler::master_photon_map.end() )
   {
     return it->second->getMacroscopicReactionCrossSection(particle.getEnergy(),
-							  reaction );
+                              reaction );
   }
   else
     return 0.0;
@@ -279,8 +279,8 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 
 // Get the macroscopic cross section for a specific reaction
 double CollisionHandler::getMacroscopicReactionCrossSection(
-				      const ElectronState& particle,
-				      const ElectroatomicReactionType reaction )
+                      const ElectronState& particle,
+                      const ElectroatomicReactionType reaction )
 {
   CellIdElectronMaterialMap::const_iterator it =
     CollisionHandler::master_electron_map.find( particle.getCell() );
@@ -288,7 +288,7 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
   if( it != CollisionHandler::master_electron_map.end() )
   {
     return it->second->getMacroscopicReactionCrossSection(particle.getEnergy(),
-							  reaction );
+                              reaction );
   }
   else
     return 0.0;
@@ -296,12 +296,12 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 
 // Collide with the material in a cell
 void CollisionHandler::collideWithCellMaterial( NeutronState& particle,
-						ParticleBank& bank,
-						const bool analogue )
+                        ParticleBank& bank,
+                        const bool analogue )
 {
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
-						   NEUTRON ) );
+                           NEUTRON ) );
 
   const Teuchos::RCP<NeutronMaterial>& material =
     CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
@@ -314,12 +314,12 @@ void CollisionHandler::collideWithCellMaterial( NeutronState& particle,
 
 // Collide with the material in a cell
 void CollisionHandler::collideWithCellMaterial( PhotonState& particle,
-						ParticleBank& bank,
-						const bool analogue )
+                        ParticleBank& bank,
+                        const bool analogue )
 {
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
-						   PHOTON ) );
+                           PHOTON ) );
 
   const Teuchos::RCP<PhotonMaterial>& material =
     CollisionHandler::master_photon_map.find( particle.getCell() )->second;
@@ -332,12 +332,12 @@ void CollisionHandler::collideWithCellMaterial( PhotonState& particle,
 
 // Collide with the material in a cell
 void CollisionHandler::collideWithCellMaterial( ElectronState& particle,
-						ParticleBank& bank,
-						const bool analogue )
+                        ParticleBank& bank,
+                        const bool analogue )
 {
   // Make sure the cell is not void
   testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
-						   ELECTRON ) );
+                           ELECTRON ) );
 
   const Teuchos::RCP<ElectronMaterial>& material =
     CollisionHandler::master_electron_map.find( particle.getCell() )->second;

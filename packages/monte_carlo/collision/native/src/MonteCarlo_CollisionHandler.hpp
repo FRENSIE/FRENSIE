@@ -31,64 +31,64 @@ private:
 
   // Typedef for cell id neutron material map
   typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-			       Teuchos::RCP<NeutronMaterial> >
+                   Teuchos::RCP<NeutronMaterial> >
   CellIdNeutronMaterialMap;
 
   // Typedef for cell id photon material map
   typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-			       Teuchos::RCP<PhotonMaterial> >
+                   Teuchos::RCP<PhotonMaterial> >
   CellIdPhotonMaterialMap;
 
   // Typedef for cell id electron material map
   typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-			       Teuchos::RCP<ElectronMaterial> >
+                   Teuchos::RCP<ElectronMaterial> >
   CellIdElectronMaterialMap;
 
 public:
 
   //! Add a material to the collision handler
   static void addMaterial(
-	      const Teuchos::RCP<NeutronMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material );
+          const Teuchos::RCP<NeutronMaterial>& material,
+          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          cells_containing_material );
 
   //! Add a material to the collision handler
   static void addMaterial(
-	      const Teuchos::RCP<PhotonMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material );
+          const Teuchos::RCP<PhotonMaterial>& material,
+          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          cells_containing_material );
 
   //! Add a material to the collision handler
   static void addMaterial(
-	      const Teuchos::RCP<NeutronMaterial>& neutron_material,
-	      const Teuchos::RCP<PhotonMaterial>& photon_material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material );
+          const Teuchos::RCP<NeutronMaterial>& neutron_material,
+          const Teuchos::RCP<PhotonMaterial>& photon_material,
+          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          cells_containing_material );
 
   //! Add a material to the collision handler
   static void addMaterial(
-	      const Teuchos::RCP<ElectronMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material );
+          const Teuchos::RCP<ElectronMaterial>& material,
+          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          cells_containing_material );
 
   //! Check if a cell is void
   static bool isCellVoid(const Geometry::ModuleTraits::InternalCellHandle cell,
-			 const ParticleType particle_type );
+             const ParticleType particle_type );
 
   //! Get the neutron material contained in a cell
   static const Teuchos::RCP<NeutronMaterial>&
   getCellNeutronMaterial(
-		       const Geometry::ModuleTraits::InternalCellHandle cell );
+               const Geometry::ModuleTraits::InternalCellHandle cell );
 
   //! Get the photon material contained in a cell
   static const Teuchos::RCP<PhotonMaterial>&
   getCellPhotonMaterial(
-		       const Geometry::ModuleTraits::InternalCellHandle cell );
+               const Geometry::ModuleTraits::InternalCellHandle cell );
 
   //! Get the electron material contained in a cell
   static const Teuchos::RCP<ElectronMaterial>&
   getCellElectronMaterial(
-		       const Geometry::ModuleTraits::InternalCellHandle cell );
+               const Geometry::ModuleTraits::InternalCellHandle cell );
 
   //! Get the total macroscopic cross section of a material
   static double getMacroscopicTotalCrossSection( const NeutronState& particle);
@@ -101,38 +101,38 @@ public:
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
-					  const NeutronState& particle,
-					  const NuclearReactionType reaction );
+                      const NeutronState& particle,
+                      const NuclearReactionType reaction );
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
-				      const PhotonState& particle,
-				      const PhotoatomicReactionType reaction );
+                      const PhotonState& particle,
+                      const PhotoatomicReactionType reaction );
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
-				     const PhotonState& particle,
-				     const PhotonuclearReactionType reaction );
+                     const PhotonState& particle,
+                     const PhotonuclearReactionType reaction );
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
-				      const ElectronState& particle,
-				      const ElectroatomicReactionType reaction );
+                      const ElectronState& particle,
+                      const ElectroatomicReactionType reaction );
 
   //! Collide with the material in a cell
   static void collideWithCellMaterial( PhotonState& particle,
-				       ParticleBank& bank,
-				       const bool analogue );
+                       ParticleBank& bank,
+                       const bool analogue );
 
   //! Collide with the material in a cell
   static void collideWithCellMaterial( NeutronState& particle,
-				       ParticleBank& bank,
-				       const bool analogue );
+                       ParticleBank& bank,
+                       const bool analogue );
 
   //! Collide with the material in a cell
   static void collideWithCellMaterial( ElectronState& particle,
-				       ParticleBank& bank,
-				       const bool analogue );
+                       ParticleBank& bank,
+                       const bool analogue );
 
 private:
 

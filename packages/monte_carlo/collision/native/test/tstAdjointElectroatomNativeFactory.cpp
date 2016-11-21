@@ -254,14 +254,6 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
         new_cutoff_angle_cosine,
         hash_grid_bins );
 
-  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-    cutoff_elastic_distribution;
-
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
-        cutoff_elastic_distribution,
-        *data_container,
-        new_cutoff_angle_cosine );
-
   // Test the adjoint electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "H-Native" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 1 );
