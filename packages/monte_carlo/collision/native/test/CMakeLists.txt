@@ -481,7 +481,8 @@ ADD_TEST(PhotoatomACEFactory_test tstPhotoatomACEFactory --test_ace_file="${GLOB
 SET_PROPERTY(TEST PhotoatomACEFactory_test PROPERTY LABELS monte_carlo_collision_native photon ace)
 
 ADD_EXECUTABLE(tstPhotoatomFactory
-  tstPhotoatomFactory.cpp)
+  tstPhotoatomFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPhotoatomFactory monte_carlo_collision_native)
 ADD_TEST(PhotoatomFactory_test tstPhotoatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST PhotoatomFactory_test PROPERTY LABELS monte_carlo_collision_native photon)
