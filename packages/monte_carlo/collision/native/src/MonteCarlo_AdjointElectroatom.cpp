@@ -363,7 +363,7 @@ void AdjointElectroatom::sampleScatteringReaction(
       adjoint_electroatomic_reaction->second->getCrossSection(
                                                    adjoint_electron.getEnergy(),
                                                    energy_grid_bin );
-    
+
     if( scaled_random_number < partial_cross_section )
       break;
     

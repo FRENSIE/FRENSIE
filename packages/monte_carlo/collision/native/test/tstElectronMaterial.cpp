@@ -31,8 +31,6 @@ Teuchos::RCP<MonteCarlo::ElectronMaterial> material;
 
 std::string test_cross_sections_xml_directory;
 Teuchos::ParameterList cross_section_table_info;
-boost::unordered_set<std::string> electroatom_aliases;
-Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -315,49 +313,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                       atom_fractions,
                                                       atom_names ) );
   }
-
-  // Create the set of electroatom aliases
-  electroatom_aliases.insert( "Pb" );
-
-  // Create each electroatom in the set
-  boost::unordered_set<std::string>::const_iterator electroatom_name =
-    electroatom_aliases.begin();
-
-  Teuchos::ParameterList table_info;
-
-  table_info = cross_section_table_info.sublist( *electroatom_name );
-
-
-  // Set the abs. path to the ace library file containing the desired table
-  std::string ace_file_path = test_cross_sections_xml_directory + "/";
-
-  ace_file_path +=
-      table_info.get<std::string>("electroatomic_file_path");
-
-  // Get the start line
-  int electroatomic_file_start_line;
-
-  electroatomic_file_start_line =
-      table_info.get<int>( "electroatomic_file_start_line" );
-
-  // Get the table name
-  std::string electroatomic_table_name;
-
-  electroatomic_table_name =
-      table_info.get<std::string>( "electroatomic_table_name" );
-
-  // Create the ACEFileHandler
-  Data::ACEFileHandler ace_file_handler( ace_file_path,
-                     electroatomic_table_name,
-                     electroatomic_file_start_line,
-                     1u );
-
-  // Create the XSS data extractor
-  xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
-                     ace_file_handler.getTableNXSArray(),
-                     ace_file_handler.getTableJXSArray(),
-                     ace_file_handler.getTableXSSArray() ) );
-
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
