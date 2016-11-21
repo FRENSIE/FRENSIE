@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -19,54 +20,55 @@
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-std::string test_o16_ace_file_name;
-std::string test_o16_ace_table_name;
 
-Teuchos::RCP<MonteCarlo::DecoupledPhotonProductionReactionACEFactory> o16_reaction_factory;
+std::shared_ptr<const Data::ACEFileHandler> o16_ace_file_handler;
+std::shared_ptr<const Data::XSSNeutronDataExtractor> o16_xss_data_extractor;
+Teuchos::ArrayRCP<double> o16_energy_grid;
 
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-void initializeReactionFactory(
-		  Teuchos::RCP<MonteCarlo::DecoupledPhotonProductionReactionACEFactory>& factory,
-		  const std::string& ace_file_name,
-		  const std::string& ace_table_name )
-{
-  Teuchos::RCP<Data::ACEFileHandler>
-    ace_file_handler( new Data::ACEFileHandler( ace_file_name,
-						ace_table_name,
-						1u ) );
-
-  Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor(
-   new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray()));
-
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
-
-  factory.reset( new MonteCarlo::DecoupledPhotonProductionReactionACEFactory(
-			      ace_table_name,
-			      ace_file_handler->getTableAtomicWeightRatio(),
-			      ace_file_handler->getTableTemperature(),
-			      energy_grid,
-			      *xss_data_extractor ) );
-}
+std::shared_ptr<const MonteCarlo::SimulationProperties> properties;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the photon production reactions can be created
-TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createScatteringReactions )
+// Check that the factory can be constructed
+TEUCHOS_UNIT_TEST( DecoupledPhotonProductionReactionACEFactory, constructor )
 {
-  boost::unordered_map<unsigned,
-		   Teuchos::RCP<MonteCarlo::DecoupledPhotonProductionReaction> > reactions;
+  std::shared_ptr<MonteCarlo::DecoupledPhotonProductionReactionACEFactory>
+    factory;
+  
+  TEST_NOTHROW( factory.reset(
+                   new MonteCarlo::DecoupledPhotonProductionReactionACEFactory(
+                             "o16_test_table",
+                             o16_ace_file_handler->getTableAtomicWeightRatio(),
+                             o16_ace_file_handler->getTableTemperature(),
+                             o16_energy_grid,
+                             *properties,
+                             *o16_xss_data_extractor ) ) );
+}
 
-  o16_reaction_factory->createPhotonProductionReactions( reactions );
+//---------------------------------------------------------------------------//
+// Check that the photon production reactions can be created
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen,
+                   createPhotonProductionReactions)
+{
+  std::shared_ptr<MonteCarlo::DecoupledPhotonProductionReactionACEFactory>
+    factory( new MonteCarlo::DecoupledPhotonProductionReactionACEFactory(
+                             "o16_test_table",
+                             o16_ace_file_handler->getTableAtomicWeightRatio(),
+                             o16_ace_file_handler->getTableTemperature(),
+                             o16_energy_grid,
+                             *properties,
+                             *o16_xss_data_extractor ) );
+
+  boost::unordered_map<unsigned,
+                     Teuchos::RCP<MonteCarlo::DecoupledPhotonProductionReaction> > reactions;
+
+  factory->createPhotonProductionReactions( reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 131 );
 
@@ -76,67 +78,60 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createScatteringReactions
 
   TEST_EQUALITY_CONST( yield_based_reaction_102001->getBaseReactionType(),
 		       MonteCarlo::N__GAMMA_REACTION );
-	TEST_EQUALITY_CONST( yield_based_reaction_102001->getPhotonProductionReactionId(),
+  TEST_EQUALITY_CONST( yield_based_reaction_102001->getPhotonProductionReactionId(),
 		       102001u );
   TEST_EQUALITY_CONST( yield_based_reaction_102001->getCrossSection( 1.0e-11 ),
 		       0.146*9.55754000000E-03 );
 
-	// Test the XS based reaction (4001)
-	Teuchos::RCP<MonteCarlo::DecoupledPhotonProductionReaction>& xs_based_reaction_4001 =
+  // Test the XS based reaction (4001)
+  Teuchos::RCP<MonteCarlo::DecoupledPhotonProductionReaction>& xs_based_reaction_4001 =
     reactions.find( 4001u )->second;
 
   TEST_EQUALITY_CONST( xs_based_reaction_4001->getBaseReactionType(),
 		       MonteCarlo::N__N_INELASTIC_REACTION );
-	TEST_EQUALITY_CONST( xs_based_reaction_4001->getPhotonProductionReactionId(),
+  TEST_EQUALITY_CONST( xs_based_reaction_4001->getPhotonProductionReactionId(),
 		       4001u );
   TEST_EQUALITY_CONST( xs_based_reaction_4001->getCrossSection( 9.43140000000E+00 ),
 		       1.85882800000E-12 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_o16_ace_file_name;
+std::string test_o16_ace_table_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_o16_ace_file",
-		 &test_o16_ace_file_name,
-		 "Test o16 ACE file name" );
-  clp.setOption( "test_o16_ace_table",
-		 &test_o16_ace_table_name,
-		 "Test ACE table name in o16 ACE file" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  // Initialize nuclear reaction factories
-  initializeReactionFactory( o16_reaction_factory,
-			     test_o16_ace_file_name,
-			     test_o16_ace_table_name );
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
+  clp().setOption( "test_o16_ace_file",
+                   &test_o16_ace_file_name,
+                   "Test o16 ACE file name" );
+  clp().setOption( "test_o16_ace_table",
+                   &test_o16_ace_table_name,
+                   "Test ACE table name in o16 ACE file" );
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  // Create the O-16 file handler, data extractor and energy grid
+  o16_ace_file_handler.reset( new Data::ACEFileHandler(test_o16_ace_file_name,
+                                                       test_o16_ace_table_name,
+                                                       1u ) );
+
+  o16_xss_data_extractor.reset( new Data::XSSNeutronDataExtractor(
+                                  o16_ace_file_handler->getTableNXSArray(),
+                                  o16_ace_file_handler->getTableJXSArray(),
+                                  o16_ace_file_handler->getTableXSSArray() ) );
+
+  o16_energy_grid.deepCopy( o16_xss_data_extractor->extractEnergyGrid() );
+
+  // Initialize the simulation properties
+  properties.reset( new MonteCarlo::SimulationProperties );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNuclearReactionACEFactory.cpp

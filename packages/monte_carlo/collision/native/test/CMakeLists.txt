@@ -200,7 +200,8 @@ ADD_TEST(NuclearReactionACEFactory_test tstNuclearReactionACEFactory --test_h1_a
 SET_PROPERTY(TEST NuclearReactionACEFactory_test PROPERTY LABELS monte_carlo_collision_native neutron ace)
 
 ADD_EXECUTABLE(tstDecoupledPhotonProductionReactionACEFactory
-  tstDecoupledPhotonProductionReactionACEFactory.cpp)
+  tstDecoupledPhotonProductionReactionACEFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(DecoupledPhotonProductionReactionACEFactory_test tstDecoupledPhotonProductionReactionACEFactory --test_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 SET_PROPERTY(TEST DecoupledPhotonProductionReactionACEFactory_test PROPERTY LABELS monte_carlo_collision_native neutron ace)
