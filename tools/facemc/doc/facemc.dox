@@ -953,9 +953,9 @@
  *      <ul>
  *       <li>\code
  *           <ParameterList name="Spatial Distribution">
- *             <Parameter name="X Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
- *             <Parameter name="Y Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
- *             <Parameter name="Z Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
+ *             <Parameter name="X Distribution" type="Uniform Distribution" value="{-10,10}"/>
+ *             <Parameter name="Y Distribution" type="Uniform Distribution" value="{-10,10}"/>
+ *             <Parameter name="Z Distribution" type="Uniform Distribution" value="{-10,10}"/>
  *           </ParameterList>
  *           \endcode</li>
  *       <li>Three parameters are required for this distribution: the "X
