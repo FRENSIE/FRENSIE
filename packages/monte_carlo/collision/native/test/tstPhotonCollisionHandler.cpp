@@ -386,17 +386,20 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     atomic_relaxation_model_factory(
                                 new MonteCarlo::AtomicRelaxationModelFactory );
 
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 1000 );
+  properties.setIncoherentModelType( MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+  
   // Create the photoatom factory
   MonteCarlo::PhotoatomFactory photoatom_factory(
-		 test_cross_sections_xml_directory,
-		 cross_section_table_info,
-		 atom_aliases,
-		 atomic_relaxation_model_factory,
-		 1000,
-		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
-		 3.0,
-		 false,
-		 true );
+                                             test_cross_sections_xml_directory,
+                                             cross_section_table_info,
+                                             atom_aliases,
+                                             atomic_relaxation_model_factory,
+                                             properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
