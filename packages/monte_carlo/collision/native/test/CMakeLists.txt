@@ -207,7 +207,8 @@ ADD_TEST(DecoupledPhotonProductionReactionACEFactory_test tstDecoupledPhotonProd
 SET_PROPERTY(TEST DecoupledPhotonProductionReactionACEFactory_test PROPERTY LABELS monte_carlo_collision_native neutron ace)
 
 ADD_EXECUTABLE(tstNuclide
-  tstNuclide.cpp)
+  tstNuclide.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstNuclide monte_carlo_collision_native)
 ADD_TEST(Nuclide_test tstNuclide --test_h1_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 SET_PROPERTY(TEST Nuclide_test PROPERTY LABELS monte_carlo_collision_native neutron)

@@ -18,11 +18,13 @@
 #include "MonteCarlo_ElectroatomACEFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -32,8 +34,8 @@ Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 std::string electroatom_name;
 double atomic_weight;
-Teuchos::RCP<MonteCarlo::Electroatom> atom;
-MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
+
+
 unsigned hash_grid_bins = 100;
 double cutoff_angle_cosine = 1.0;
 
@@ -43,17 +45,20 @@ double cutoff_angle_cosine = 1.0;
 // Check that a basic electroatom can be created
 TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
 {
-  photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
+  MonteCarlo::SimulationProperties properties;
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
+  properties.setElasticCutoffAngleCosine( 1.0 );
+  properties.setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
+  properties.setNumberOfElectronHashGridBins( 100 );
+
+  Teuchos::RCP<MonteCarlo::Electroatom> atom;
 
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
                                                         atomic_weight,
-                                                        hash_grid_bins,
                                                         relaxation_model,
-                                                        atom,
-                                                        photon_distribution_function,
-                                                        false,
-                                                        cutoff_angle_cosine );
+                                                        properties,
+                                                        atom );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -233,17 +238,20 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
  */
 TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
 {
-  photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
+  MonteCarlo::SimulationProperties properties;
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::TWOBS_DISTRIBUTION );
+  properties.setElasticCutoffAngleCosine( 1.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
+  properties.setNumberOfElectronHashGridBins( 100 );
+
+  Teuchos::RCP<MonteCarlo::Electroatom> atom;
 
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
                                                         atomic_weight,
-                                                        hash_grid_bins,
                                                         relaxation_model,
-                                                        atom,
-                                                        photon_distribution_function,
-                                                        true,
-                                                        cutoff_angle_cosine );
+                                                        properties, 
+                                                        atom );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -418,17 +426,20 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
 // Check that a electroatom with electroionization subshell data can be created
 TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells )
 {
-  photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
+  MonteCarlo::SimulationProperties properties;
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
+  properties.setElasticCutoffAngleCosine( 1.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
+  properties.setNumberOfElectronHashGridBins( 100 );
 
+  Teuchos::RCP<MonteCarlo::Electroatom> atom;
+ 
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
                                                         atomic_weight,
-                                                        hash_grid_bins,
                                                         relaxation_model,
-                                                        atom,
-                                                        photon_distribution_function,
-                                                        true,
-                                                        cutoff_angle_cosine );
+                                                        properties,
+                                                        atom );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -640,6 +651,8 @@ int main( int argc, char** argv )
     MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 							   *xss_data_extractor,
 							   relaxation_model,
+                                                           1e-3,
+                                                           1e-5,
 							   true );
 
     electroatom_name = test_ace_table_name;
