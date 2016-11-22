@@ -18,6 +18,7 @@
 #include "MonteCarlo_AdjointPhotoatomFactory.hpp"
 #include "MonteCarlo_AdjointPhotonMaterial.hpp"
 #include "MonteCarlo_AdjointPhotonProbeState.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -440,16 +441,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   atom_aliases.insert( "Si-Native" );
 
   // Create the atom factory
-  Teuchos::Array<double> user_critical_line_energies;
+  MonteCarlo::SimulationProperties properties;
+  properties.setMaxAdjointPhotonEnergy( 20.0 );
+  properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+  properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
   
   MonteCarlo::AdjointPhotoatomFactory factory(
-                                       test_cross_sections_xml_directory,
-                                       cross_section_table_info,
-                                       atom_aliases,
-                                       20.0,
-                                       100,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       user_critical_line_energies );
+                                             test_cross_sections_xml_directory,
+                                             cross_section_table_info,
+                                             atom_aliases,
+                                             properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointPhotoatom> >
     atom_map;
