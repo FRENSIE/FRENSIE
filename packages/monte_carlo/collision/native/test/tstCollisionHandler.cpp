@@ -451,14 +451,27 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   std::unordered_set<std::string> nuclide_aliases;
   nuclide_aliases.insert( "H-1_293.6K" );
+
+  // Create the properties
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 1000 );
+  properties.setIncoherentModelType( MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+  properties.setNumberOfElectronHashGridBins( 1000 );
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::TWOBS_DISTRIBUTION );
+  properties.setElasticCutoffAngleCosine( 1.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
+  properties.setMaxAdjointPhotonEnergy( 20.0 );
+  properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+  properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
   
   // Create the nuclide factory
-  MonteCarlo::NuclideFactory nuclide_factory(
-					     test_cross_sections_xml_directory,
+  MonteCarlo::NuclideFactory nuclide_factory(test_cross_sections_xml_directory,
 					     cross_section_table_info,
 					     nuclide_aliases,
-					     false,
-					     false );
+                                             properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> >
     nuclide_map;
@@ -485,15 +498,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the photoatom factory
   MonteCarlo::PhotoatomFactory photoatom_factory(
-		 test_cross_sections_xml_directory,
-		 cross_section_table_info,
-		 nuclide_aliases,
-		 atomic_relaxation_model_factory,
-		 1000,
-		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
-		 3.0,
-		 false,
-		 true );
+                                             test_cross_sections_xml_directory,
+                                             cross_section_table_info,
+                                             nuclide_aliases,
+                                             atomic_relaxation_model_factory,
+                                             properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -507,19 +516,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                          nuclide_fractions,
                                                          nuclide_names ) );
 
-  double upper_cutoff_angle_cosine = 1.0;
-  unsigned hash_grid_bins = 1000;
-
   // Create the electroatom factory
   MonteCarlo::ElectroatomFactory electroatom_factory(
                                              test_cross_sections_xml_directory,
                                              cross_section_table_info,
                                              nuclide_aliases,
                                              atomic_relaxation_model_factory,
-                                             hash_grid_bins,
-                                             MonteCarlo::TWOBS_DISTRIBUTION,
-                                             true,
-                                             upper_cutoff_angle_cosine );
+                                             properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
     electroatom_map;
@@ -534,16 +537,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                              nuclide_names ) );
 
   // Create the atom factory
-  Teuchos::Array<double> user_critical_line_energies;
-  
   MonteCarlo::AdjointPhotoatomFactory factory(
-                                       test_cross_sections_xml_directory,
-                                       cross_section_table_info,
-                                       nuclide_aliases,
-                                       20.0,
-                                       100,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       user_critical_line_energies );
+                                             test_cross_sections_xml_directory,
+                                             cross_section_table_info,
+                                             nuclide_aliases,
+                                             properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointPhotoatom> >
     adjoint_photoatom_map;

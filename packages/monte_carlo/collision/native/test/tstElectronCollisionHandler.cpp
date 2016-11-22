@@ -418,15 +418,18 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                 new MonteCarlo::AtomicRelaxationModelFactory );
 
   // Create the electroatom factory
+  MonteCarlo::SimulationProperties properties;
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::TWOBS_DISTRIBUTION );
+  properties.setElasticCutoffAngleCosine( 1.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
+  properties.setNumberOfElectronHashGridBins( 1000 );
+  
   MonteCarlo::ElectroatomFactory electroatom_factory(
                                              test_cross_sections_xml_directory,
                                              cross_section_table_info,
                                              atom_aliases,
                                              atomic_relaxation_model_factory,
-                                             1000,
-                                             MonteCarlo::TWOBS_DISTRIBUTION,
-                                             true,
-                                             1.0 );
+                                             properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
     electroatom_map;
