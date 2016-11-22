@@ -18,6 +18,7 @@
 #include "MonteCarlo_AdjointPhotoatomFactory.hpp"
 #include "MonteCarlo_LineEnergyAdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotoatomicReaction.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -36,18 +37,23 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomFactory,
   adjoint_photoatom_aliases.insert( "Si-Native" );
   adjoint_photoatom_aliases.insert( "Al-Native" );
 
-  Teuchos::Array<double> user_critical_line_energies( 1, 20.0 );
+  MonteCarlo::SimulationProperties properties;
 
-  MonteCarlo::AdjointPhotoatomFactory factory(
-                                       cross_sections_xml_directory,
-                                       cross_section_table_info,
-                                       adjoint_photoatom_aliases,
-                                       20.0,
-                                       100,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       user_critical_line_energies,
-                                       &out );
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1, 20.0 );
 
+    properties.setMaxAdjointPhotonEnergy( 20.0 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
+
+  MonteCarlo::AdjointPhotoatomFactory factory( cross_sections_xml_directory,
+                                               cross_section_table_info,
+                                               adjoint_photoatom_aliases,
+                                               properties,
+                                               &out );
+  
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointPhotoatom> >
     adjoint_photoatom_map;
 
@@ -166,17 +172,22 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomFactory,
   adjoint_photoatom_aliases.insert( "Si-Native" );
   adjoint_photoatom_aliases.insert( "Al-Native" );
 
-  Teuchos::Array<double> user_critical_line_energies( 1, 20.0 );
+  MonteCarlo::SimulationProperties properties;
 
-  MonteCarlo::AdjointPhotoatomFactory factory(
-                                  cross_sections_xml_directory,
-                                  cross_section_table_info,
-                                  adjoint_photoatom_aliases,
-                                  20.0,
-                                  100,
-                                  MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                                  user_critical_line_energies,
-                                  &out );
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1, 20.0 );
+
+    properties.setMaxAdjointPhotonEnergy( 20.0 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
+
+  MonteCarlo::AdjointPhotoatomFactory factory( cross_sections_xml_directory,
+                                               cross_section_table_info,
+                                               adjoint_photoatom_aliases,
+                                               properties,
+                                               &out );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointPhotoatom> >
     adjoint_photoatom_map;
@@ -314,17 +325,22 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomFactory,
   adjoint_photoatom_aliases.insert( "Si-Native" );
   adjoint_photoatom_aliases.insert( "Al-Native" );
 
-  Teuchos::Array<double> user_critical_line_energies( 1, 1.5 );
+  MonteCarlo::SimulationProperties properties;
 
-  MonteCarlo::AdjointPhotoatomFactory factory(
-                                       cross_sections_xml_directory,
-                                       cross_section_table_info,
-                                       adjoint_photoatom_aliases,
-                                       1.5,
-                                       100,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       user_critical_line_energies,
-                                       &out );
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1, 1.5 );
+
+    properties.setMaxAdjointPhotonEnergy( 1.5 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
+  
+  MonteCarlo::AdjointPhotoatomFactory factory( cross_sections_xml_directory,
+                                               cross_section_table_info,
+                                               adjoint_photoatom_aliases,
+                                               properties,
+                                               &out );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointPhotoatom> >
     adjoint_photoatom_map;
@@ -436,17 +452,19 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomFactory,
   adjoint_photoatom_aliases.insert( "Si-Native" );
   adjoint_photoatom_aliases.insert( "Al-Native" );
 
-  Teuchos::Array<double> user_critical_line_energies;
+  MonteCarlo::SimulationProperties properties;
 
-  MonteCarlo::AdjointPhotoatomFactory factory(
-                                       cross_sections_xml_directory,
-                                       cross_section_table_info,
-                                       adjoint_photoatom_aliases,
-                                       1.0,
-                                       100,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       user_critical_line_energies,
-                                       &out );
+  {
+    properties.setMaxAdjointPhotonEnergy( 1.0 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
+  }
+
+  MonteCarlo::AdjointPhotoatomFactory factory( cross_sections_xml_directory,
+                                               cross_section_table_info,
+                                               adjoint_photoatom_aliases,
+                                               properties,
+                                               &out );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointPhotoatom> >
     adjoint_photoatom_map;
