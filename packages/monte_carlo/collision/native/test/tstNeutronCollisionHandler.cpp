@@ -406,13 +406,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   nuclide_aliases.insert( "H-1_293.6K" );
   nuclide_aliases.insert( "H-1_900K" );
 
+  MonteCarlo::SimulationProperties properties;
+
   // Create the nuclide factory
   MonteCarlo::NuclideFactory nuclide_factory(
 					     test_cross_sections_xml_directory,
 					     cross_section_table_info,
 					     nuclide_aliases,
-					     false,
-					     false );
+                                             properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> >
     nuclide_map;
