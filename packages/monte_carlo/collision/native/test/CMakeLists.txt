@@ -873,7 +873,8 @@ ADD_TEST(ElectroatomACEFactory_test tstElectroatomACEFactory --test_ace_file="${
 SET_PROPERTY(TEST ElectroatomACEFactory_test PROPERTY LABELS monte_carlo_collision_native electron ace)
 
 ADD_EXECUTABLE(tstElectroatomNativeFactory
-  tstElectroatomNativeFactory.cpp)
+  tstElectroatomNativeFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroatomNativeFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomNativeFactory_test tstElectroatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 SET_PROPERTY(TEST ElectroatomNativeFactory_test PROPERTY LABELS monte_carlo_collision_native electron native)
