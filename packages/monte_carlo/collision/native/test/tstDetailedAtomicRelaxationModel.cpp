@@ -202,8 +202,8 @@ int main( int argc, char** argv )
   }
 
   detailed_atomic_relaxation_model.reset(
-				 new MonteCarlo::DetailedAtomicRelaxationModel(
-						subshell_relaxation_models ) );
+			      new MonteCarlo::DetailedAtomicRelaxationModel(
+                                    subshell_relaxation_models, 1e-3, 1e-5 ) );
 
   // Clear setup data
   ace_file_handler.reset();
