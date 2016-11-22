@@ -50,6 +50,8 @@ TEUCHOS_UNIT_TEST( DetailedSubshellRelaxationModel, relaxSubshell )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   detailed_subshell_relaxation_model->relaxSubshell( photon,
+                                                     1e-3,
+                                                     1e-5,
 						     bank,
 						     primary_vacancy,
 						     secondary_vacancy );
