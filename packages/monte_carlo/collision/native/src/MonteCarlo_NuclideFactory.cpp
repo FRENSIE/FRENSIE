@@ -143,7 +143,8 @@ void NuclideFactory::createNuclideFromACETable(
 				    atomic_weight_ratio,
 				    temperature,
                                     properties,
-				    nuclide );
+				    nuclide,
+                                    d_os_message );
 
   *d_os_message << "done." << std::endl;
 }

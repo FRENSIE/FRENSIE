@@ -13,6 +13,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
+#include "MonteCarlo_AdjointPhotoatomFactory.hpp"
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
@@ -394,12 +395,42 @@ void CollisionHandlerFactory::createAdjointPhotonMaterials(
                        const std::string& cross_sections_xml_directory,
                        const MatIdFractionMap& material_id_fraction_map,
                        const MatIdComponentMap& material_id_component_map,
-                       const AliasSet& nuclide_aliases,
+                       const AliasSet& adjoint_photoatom_aliases,
                        const CellIdMatIdMap& cell_id_mat_id_map,
                        const CellIdDensityMap& cell_id_density_map,
                        const SimulationProperties& properties )
 {
-  
+  std::unordered_map<std::string,Teuchos::RCP<AdjointPhotoatom> >
+    adjoint_photoatom_map;
+
+  // Load the adjoint photoatoms of interest
+  AdjointPhotoatomFactory adjoint_photoatom_factory(
+                                               cross_sections_xml_directory,
+                                               cross_sections_table_info,
+                                               adjoint_photoatom_aliases,
+                                               properties,
+                                               d_os_warn );
+
+  adjoint_photoatom_factory.createAdjointPhotoatomMap( adjoint_photoatom_map );
+
+  // Create the material name data maps
+  std::unordered_map<std::string,Teuchos::RCP<const AdjointPhotonMaterial> >
+    material_name_pointer_map;
+
+  MatNameCellIdsMap material_name_cell_ids_map;
+
+  this->createMaterialNameDataMaps( material_id_fraction_map,
+                                    material_id_component_map,
+                                    adjoint_photoatom_map,
+                                    cell_id_mat_id_map,
+                                    cell_id_density_map,
+                                    material_name_pointer_map,
+                                    material_name_cell_ids_map );
+
+  // Register materials with the collision handler
+  this->registerMaterials( collision_handler,
+                           material_name_pointer_map,
+                           material_name_cell_ids_map );
 }
 
 // Create the electron materials

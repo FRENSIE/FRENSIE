@@ -23,7 +23,8 @@ void NuclideACEFactory::createNuclide(
 			 const double atomic_weight_ratio,
 			 const double temperature,
                          const SimulationProperties& properties,
-			 Teuchos::RCP<Nuclide>& nuclide )
+			 Teuchos::RCP<Nuclide>& nuclide,
+                         std::ostream* os_message )
 {
   // Extract the common energy grid used for this nuclide
   Teuchos::ArrayRCP<double> energy_grid;
@@ -50,10 +51,10 @@ void NuclideACEFactory::createNuclide(
 
   if( properties.isUnresolvedResonanceProbabilityTableModeOn() )
   {
-    std::cerr << std::endl
-	      << "Warning: Unresolved resonance data has been requested. "
-	      << "This feature is not currently supported!"
-	      << std::endl;
+    *os_message << std::endl
+                << "Warning: Unresolved resonance data has been requested. "
+                << "This feature is not currently supported!"
+                << std::endl;
   }
 
   if( properties.getParticleMode() == NEUTRON_PHOTON_MODE ||

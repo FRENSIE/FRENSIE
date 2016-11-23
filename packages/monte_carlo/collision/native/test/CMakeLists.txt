@@ -920,30 +920,6 @@ IF(FRENSIE_ENABLE_DAGMC)
   SET_PROPERTY(TEST CollisionHandlerFactory_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc neutron)
 ENDIF()
 
-# IF(FRENSIE_ENABLE_DAGMC)
-#   ADD_EXECUTABLE(tstCollisionHandlerFactoryPhotonMode_DagMC
-#     tstCollisionHandlerFactoryPhotonMode_DagMC.cpp)
-#   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode_DagMC monte_carlo_collision_native)
-#   ADD_TEST(CollisionHandlerFactoryPhotonMode_DagMC_test tstCollisionHandlerFactoryPhotonMode_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-#   SET_PROPERTY(TEST CollisionHandlerFactoryPhotonMode_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc photon)
-# ENDIF()
-
-# IF(FRENSIE_ENABLE_DAGMC)
-#   ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronPhotonMode_DagMC
-#     tstCollisionHandlerFactoryNeutronPhotonMode_DagMC.cpp)
-#   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode_DagMC monte_carlo_collision_native)
-#   ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_DagMC_test tstCollisionHandlerFactoryNeutronPhotonMode_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-#   SET_PROPERTY(TEST CollisionHandlerFactoryNeutronPhotonMode_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc neutron photon)
-# ENDIF()
-
-# IF(FRENSIE_ENABLE_DAGMC)
-#   ADD_EXECUTABLE(tstCollisionHandlerFactoryElectronMode_DagMC
-#     tstCollisionHandlerFactoryElectronMode_DagMC.cpp)
-#   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode_DagMC monte_carlo_collision_native)
-#   ADD_TEST(CollisionHandlerFactoryElectronMode_DagMC_test tstCollisionHandlerFactoryElectronMode_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-#   SET_PROPERTY(TEST CollisionHandlerFactoryElectronMode_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc electron)
-# ENDIF()
-
 # IF(FRENSIE_ENABLE_ROOT)
 #   ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode_Root
 #     tstCollisionHandlerFactoryNeutronMode_Root.cpp)

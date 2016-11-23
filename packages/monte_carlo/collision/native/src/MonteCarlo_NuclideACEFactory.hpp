@@ -35,7 +35,8 @@ public:
 			 const double atomic_weight_ratio,
 			 const double temperature,
                          const SimulationProperties& properties,
-			 Teuchos::RCP<Nuclide>& nuclide );
+			 Teuchos::RCP<Nuclide>& nuclide,
+                         std::ostream* os_message = &std::cerr );
 
 private:
 
