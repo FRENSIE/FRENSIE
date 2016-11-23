@@ -917,40 +917,17 @@ IF(FRENSIE_ENABLE_DAGMC)
     ${FRENSIE_STD_UNIT_TEST_MAIN})
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactory_DagMC monte_carlo_collision_native)
   ADD_TEST(CollisionHandlerFactory_DagMC_test tstCollisionHandlerFactory_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_forward_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_forward.xml" --test_adjoint_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_adjoint.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-  SET_PROPERTY(TEST CollisionHandlerFactory_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc neutron)
+  SET_PROPERTY(TEST CollisionHandlerFactory_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc)
 ENDIF()
 
-# IF(FRENSIE_ENABLE_ROOT)
-#   ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode_Root
-#     tstCollisionHandlerFactoryNeutronMode_Root.cpp)
-#   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode_Root monte_carlo_collision_native geometry_root)
-#   ADD_TEST(CollisionHandlerFactoryNeutronMode_Root_test tstCollisionHandlerFactoryNeutronMode_Root --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
-#   SET_PROPERTY(TEST CollisionHandlerFactoryNeutronMode_Root_test PROPERTY LABELS monte_carlo_collision_native root neutron)
-# ENDIF()
-
-# IF(FRENSIE_ENABLE_ROOT)
-#   ADD_EXECUTABLE(tstCollisionHandlerFactoryPhotonMode_Root
-#     tstCollisionHandlerFactoryPhotonMode_Root.cpp)
-#   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode_Root monte_carlo_collision_native geometry_root)
-#   ADD_TEST(CollisionHandlerFactoryPhotonMode_Root_test tstCollisionHandlerFactoryPhotonMode_Root --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
-#   SET_PROPERTY(TEST CollisionHandlerFactoryPhotonMode_Root_test PROPERTY LABELS monte_carlo_collision_native root)
-# ENDIF()
-
-# IF(FRENSIE_ENABLE_ROOT)
-#   ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronPhotonMode_Root
-#     tstCollisionHandlerFactoryNeutronPhotonMode_Root.cpp)
-#   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode_Root monte_carlo_collision_native geometry_root)
-#   ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_Root_test tstCollisionHandlerFactoryNeutronPhotonMode_Root --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
-#   SET_PROPERTY(TEST CollisionHandlerFactoryNeutronPhotonMode_Root_test PROPERTY LABELS monte_carlo_collision_native root neutron)
-# ENDIF()
-
-# IF(FRENSIE_ENABLE_ROOT)
-#   ADD_EXECUTABLE(tstCollisionHandlerFactoryElectronMode_Root
-#     tstCollisionHandlerFactoryElectronMode_Root.cpp)
-#   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode_Root monte_carlo_collision_native geometry_root)
-#   ADD_TEST(CollisionHandlerFactoryElectronMode_Root_test tstCollisionHandlerFactoryElectronMode_Root --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
-#   SET_PROPERTY(TEST CollisionHandlerFactoryElectronMode_Root_test PROPERTY LABELS monte_carlo_collision_native root electron)
-# ENDIF()
+IF(FRENSIE_ENABLE_ROOT)
+  ADD_EXECUTABLE(tstCollisionHandlerFactory_Root
+    tstCollisionHandlerFactory_Root.cpp
+    ${FRENSIE_STD_UNIT_TEST_MAIN})
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactory_Root monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactory_Root_test tstCollisionHandlerFactory_Root --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_forward_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_forward.xml" --test_adjoint_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_adjoint.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
+  SET_PROPERTY(TEST CollisionHandlerFactory_Root_test PROPERTY LABELS monte_carlo_collision_native root)
+ENDIF()
 
 # IF(FRENSIE_ENABLE_DAGMC)
 #   ADD_EXECUTABLE(tstCollisionModuleInterface_Native_DagMC
