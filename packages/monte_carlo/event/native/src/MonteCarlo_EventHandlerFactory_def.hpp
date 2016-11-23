@@ -26,6 +26,7 @@ EventHandlerFactory<GeometryHandler>::createHandler(
        const Teuchos::ParameterList& observer_reps,
        const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
        response_function_id_map,
+       const std::shared_ptr<const SimulationGeneralProperties>& properties,
        std::ostream* os_warn )
 {
   // Create a new event handler
@@ -38,6 +39,7 @@ EventHandlerFactory<GeometryHandler>::createHandler(
     estimator_factory =
       getEstimatorFactoryInstance<GeometryHandler>( event_handler,
                                                     response_function_id_map,
+                                                    properties,
                                                     os_warn );
   }
   EXCEPTION_CATCH_RETHROW_AS( std::exception,

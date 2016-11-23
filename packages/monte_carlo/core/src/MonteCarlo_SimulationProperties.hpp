@@ -41,11 +41,11 @@ public:
 
   //! Return the min particle energy
   template<typename ParticleType>
-  double getMinParticleEnergy();
+  double getMinParticleEnergy() const;
 
   //! Return the max particle energy
   template<typename ParticleType>
-  double getMaxParticleEnergy();
+  double getMaxParticleEnergy() const;
 
   //! Set atomic relaxation mode to off
   void setAtomicRelaxationModeOff( const ParticleType particle );

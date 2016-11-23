@@ -45,10 +45,14 @@ std::shared_ptr<MonteCarlo::EstimatorFactory> estimator_factory;
 // Check that the factory can be constructed
 TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, constructor )
 {
+  std::shared_ptr<MonteCarlo::SimulationGeneralProperties> properties(
+                                 new MonteCarlo::SimulationGeneralProperties );
+  
   TEST_NOTHROW( estimator_factory =
                 MonteCarlo::getEstimatorFactoryInstance<Geometry::Root>(
                                                   event_handler,
-                                                  response_function_id_map ) );
+                                                  response_function_id_map,
+                                                  properties ) );
 }
 
 //---------------------------------------------------------------------------//

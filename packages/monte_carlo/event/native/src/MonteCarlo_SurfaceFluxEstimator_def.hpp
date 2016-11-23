@@ -26,8 +26,10 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
     const Estimator::idType id,
     const double multiplier,
     const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas )
-  : StandardSurfaceEstimator( id, multiplier, surface_ids, surface_areas )
+    const Teuchos::Array<double>& surface_areas,
+    const double cosine_cutoff )
+  : StandardSurfaceEstimator( id, multiplier, surface_ids, surface_areas ),
+    d_cosine_cutoff( cosine_cutoff )
 { /* ... */ }
 
 // Add estimator contribution from a portion of the current history
@@ -56,14 +58,10 @@ void SurfaceFluxEstimator<
 
     // If the angle cosine is very close to zero, set it to eps/2 to
     // prevent large contributions to the estimator
-    if( ST::magnitude( angle_cosine ) >
-        SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff() )
+    if( ST::magnitude( angle_cosine ) > d_cosine_cutoff )
       contribution = 1.0/ST::magnitude( angle_cosine );
     else
-    {
-      contribution =
-	2.0/SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
-    }
+      contribution = 2.0/d_cosine_cutoff;
 
     contribution *= ContributionMultiplierPolicy::multiplier( particle );
 

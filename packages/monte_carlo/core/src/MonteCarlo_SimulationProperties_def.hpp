@@ -20,7 +20,7 @@ namespace MonteCarlo{
 
 // Return the min particle energy
 template<typename ParticleType>
-double SimulationProperties::getMinParticleEnergy()
+double SimulationProperties::getMinParticleEnergy() const
 {
   THROW_EXCEPTION( std::logic_error,
 		   "Error: the particle type is not supported!" );
@@ -28,35 +28,35 @@ double SimulationProperties::getMinParticleEnergy()
 
 //! Return the min neutron energy
 template<>
-inline double SimulationProperties::getMinParticleEnergy<NeutronState>()
+inline double SimulationProperties::getMinParticleEnergy<NeutronState>() const
 {
   return this->getMinNeutronEnergy();
 }
 
 //! Return the min photon energy
 template<>
-inline double SimulationProperties::getMinParticleEnergy<PhotonState>()
+inline double SimulationProperties::getMinParticleEnergy<PhotonState>() const
 {
   return this->getMinPhotonEnergy();
 }
 
 //! Return the min adjoint photon energy
 template<>
-inline double SimulationProperties::getMinParticleEnergy<AdjointPhotonState>()
+inline double SimulationProperties::getMinParticleEnergy<AdjointPhotonState>() const
 {
   return this->getMinAdjointPhotonEnergy();
 }
 
 //! Return the min electron energy
 template<>
-inline double SimulationProperties::getMinParticleEnergy<ElectronState>()
+inline double SimulationProperties::getMinParticleEnergy<ElectronState>() const
 {
   return this->getMinElectronEnergy();
 }
 
 // Return the max particle energy
 template<typename ParticleType>
-double SimulationProperties::getMaxParticleEnergy()
+double SimulationProperties::getMaxParticleEnergy() const
 {
   THROW_EXCEPTION( std::logic_error,
 		   "Error: the particle type is not supported!" );
@@ -64,28 +64,28 @@ double SimulationProperties::getMaxParticleEnergy()
 
 //! Return the max neutron energy
 template<>
-inline double SimulationProperties::getMaxParticleEnergy<NeutronState>()
+inline double SimulationProperties::getMaxParticleEnergy<NeutronState>() const
 {
   return this->getMaxNeutronEnergy();
 }
 
 //! Return the max photon energy
 template<>
-inline double SimulationProperties::getMaxParticleEnergy<PhotonState>()
+inline double SimulationProperties::getMaxParticleEnergy<PhotonState>() const
 {
   return this->getMaxPhotonEnergy();
 }
 
 //! Return the max adjoint photon energy
 template<>
-inline double SimulationProperties::getMaxParticleEnergy<AdjointPhotonState>()
+inline double SimulationProperties::getMaxParticleEnergy<AdjointPhotonState>() const
 {
   return this->getMaxAdjointPhotonEnergy();
 }
 
-//! Return the max photon energy
+//! Return the max electron energy
 template<>
-inline double SimulationProperties::getMaxParticleEnergy<ElectronState>()
+inline double SimulationProperties::getMaxParticleEnergy<ElectronState>() const
 {
   return this->getMaxElectronEnergy();
 }

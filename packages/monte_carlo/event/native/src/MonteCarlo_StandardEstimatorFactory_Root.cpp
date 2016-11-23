@@ -21,8 +21,9 @@ StandardEstimatorFactory<Geometry::Root>::StandardEstimatorFactory(
        const std::shared_ptr<EventHandler>& event_handler,
        const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
        response_function_id_map,
+       const std::shared_ptr<const SimulationGeneralProperties>& properties,
        std::ostream* os_warn )
-  : EstimatorFactory( event_handler, response_function_id_map, os_warn ),
+  : EstimatorFactory( event_handler, response_function_id_map, properties, os_warn ),
     d_cell_volume_map(),
     d_surface_area_map()
 { /* ... */ }
