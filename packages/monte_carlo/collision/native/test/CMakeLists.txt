@@ -929,19 +929,12 @@ IF(FRENSIE_ENABLE_ROOT)
   SET_PROPERTY(TEST CollisionHandlerFactory_Root_test PROPERTY LABELS monte_carlo_collision_native root)
 ENDIF()
 
-# IF(FRENSIE_ENABLE_DAGMC)
-#   ADD_EXECUTABLE(tstCollisionModuleInterface_Native_DagMC
-#     tstModuleInterface_DagMC.cpp)
-#   TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native_DagMC monte_carlo_collision_native)
-#   ADD_TEST(CollisionModuleInterface_Native_DagMC_test tstCollisionModuleInterface_Native_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-#   SET_PROPERTY(TEST CollisionModuleInterface_Native_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc native)
-# ENDIF()
-
-# IF(FRENSIE_ENABLE_DAGMC)
-#   ADD_EXECUTABLE(tstCollisionModuleInterface_NativeElectronMode_DagMC
-#     tstModuleInterface_ElectronMode_DagMC.cpp)
-#   TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_NativeElectronMode_DagMC monte_carlo_collision_native)
-#   ADD_TEST(CollisionModuleInterface_NativeElectronMode_DagMC_test tstCollisionModuleInterface_NativeElectronMode_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-#   SET_PROPERTY(TEST CollisionModuleInterface_NativeElectronMode_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc native electron)
-# ENDIF()
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionModuleInterface_Native_DagMC
+    tstModuleInterface_DagMC.cpp
+    ${FRENSIE_STD_UNIT_TEST_MAIN})
+  TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native_DagMC monte_carlo_collision_native)
+  ADD_TEST(CollisionModuleInterface_Native_DagMC_test tstCollisionModuleInterface_Native_DagMC --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_forward.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+  SET_PROPERTY(TEST CollisionModuleInterface_Native_DagMC_test PROPERTY LABELS monte_carlo_collision_native dagmc native)
+ENDIF()
 
