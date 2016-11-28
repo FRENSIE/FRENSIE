@@ -333,7 +333,9 @@
  *      then no more work is required. If binning cannot be done in a
  *      standard way then a specialization of the
  *      MonteCarlo::GeneralEstimatorDimensionDiscretization class must
- *      be made for the new phase space dimension.</li>
+ *      be made for the new phase space dimension. Update/add unit tests
+ *      for the MonteCarlo::GeneralEstimatorDimensionDiscretization class
+ *      with the new dimension.</li>
  *  <li>Determine if binning is supported by each estimator type. For example,
  *      time binning is currently supported in all estimator types except for
  *      the track-length flux estimator (all time bins that are passed through
@@ -341,6 +343,15 @@
  *      cannot be done yet). In the assignBinBoundaries method of the 
  *      particular estimator that does not support binning on the new 
  *      dimension, ensure that bins on the new dimension are ignored.
+ *  <li>Update the (private) assignBinsToEstimator method of the 
+ *      MonteCarlo::EstimatorFactory. This method is used to construct and
+ *      assign the estimator bins to the estimator described in the 
+ *      input ParameterList. A new conditional statement must be created for
+ *      the new phase space dimension. Note that the string that appears in
+ *      the conditional will be the name that must appear in the ParameterList
+ *      when creating bins on the new dimension. Update the EstimatorFactory
+ *      unit tests to ensure that bins on the new dimension can be assigned
+ *      to estimators.
  * </ol>
  *
  * \subsubsection exporting_estimator_data_hdf5 Exporting Estimator Data to HDF5
