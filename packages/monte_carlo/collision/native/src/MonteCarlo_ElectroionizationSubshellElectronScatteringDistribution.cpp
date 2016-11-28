@@ -198,7 +198,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTri
 // Randomly scatter the electron
 void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
                                 ElectronState& electron,
-			                    ParticleBank& bank,
+                                ParticleBank& bank,
                                 Data::SubshellType& shell_of_interaction ) const
 {
   // The energy of the outgoing and knock-on electron
@@ -224,7 +224,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
 
   // Set the direction of the knock-on electron
   knock_on_electron->rotateDirection( knock_on_angle_cosine,
-			                          this->sampleAzimuthalAngle() );
+                                      this->sampleAzimuthalAngle() );
 
   // Bank the knock-on electron
   bank.push( knock_on_electron );
@@ -246,6 +246,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
                                             const double incoming_energy,
                                             const double outgoing_energy ) const
 {
+  testPrecondition( incoming_energy > outgoing_energy )
+
   // The normalized incoming electron energy
   double normalized_incoming_energy =
           incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
@@ -254,8 +256,13 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
   double energy_ratio = outgoing_energy/incoming_energy;
 
   // Randomly select the plane of scattering
-  return sqrt( energy_ratio*( normalized_incoming_energy + 2.0 )/
+  double angle_cosine =
+         sqrt( energy_ratio*( normalized_incoming_energy + 2.0 )/
              ( energy_ratio*normalized_incoming_energy + 2.0 ) );
+
+  testPostcondition( angle_cosine <= 1.0 );
+
+  return angle_cosine;
 }
 
 } // end MonteCarlo namespace

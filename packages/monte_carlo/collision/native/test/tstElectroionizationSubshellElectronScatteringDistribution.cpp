@@ -295,14 +295,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+     new Data::ACEFileHandler( test_ace_file_name,
+                               test_ace_table_name,
+                               1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+        new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
+                                       ace_file_handler->getTableJXSArray(),
+                                       ace_file_handler->getTableXSSArray() ) );
 
   // Extract the cross sections energy grid
   Teuchos::ArrayView<const double> energy_grid =
