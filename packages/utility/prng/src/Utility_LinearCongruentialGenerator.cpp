@@ -76,10 +76,6 @@ void LinearCongruentialGenerator::changeHistory(
     else
       d_state = d_initial_history_seed;
   }
-
-  std::cerr << "History #: " << d_history
-	        << " History Seed: " << d_initial_history_seed
-	        << std::endl;
 }
 
 // Initialize the generator for the next history
