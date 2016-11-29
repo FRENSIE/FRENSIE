@@ -20,7 +20,7 @@
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_Array.hpp>
 
-// MONTE_CARLO Includes
+// FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
