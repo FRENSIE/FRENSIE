@@ -412,9 +412,8 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   }
   else if( photon_distribution_function = TABULAR_DISTRIBUTION )
   {
-    //! \todo Find detailed bremsstrahlung data and implement
   THROW_EXCEPTION( std::logic_error,
-          "Error! The detailed bremsstrahlung reaction has not been implemented");
+        "Error! The detailed bremsstrahlung reaction has not been implemented");
   }
   else if( photon_distribution_function = TWOBS_DISTRIBUTION )
   {
@@ -423,6 +422,13 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
     raw_electroatom_data,
     bremsstrahlung_distribution,
     raw_electroatom_data.extractAtomicNumber() );
+  }
+  else
+  {
+    THROW_EXCEPTION( std::logic_error,
+        "Error! The photon distribution function: " <<
+        photon_distribution_function <<
+        " is not recognized");
   }
 
   // Create the bremsstrahlung reaction

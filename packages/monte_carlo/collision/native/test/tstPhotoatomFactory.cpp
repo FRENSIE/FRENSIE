@@ -20,6 +20,7 @@
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
@@ -29,10 +30,8 @@
 
 std::string cross_sections_xml_directory;
 Teuchos::ParameterList cross_section_table_info;
-std::unordered_set<std::string> photoatom_aliases;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory>
 atomic_relaxation_model_factory;
-Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -41,19 +40,23 @@ Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory;
 TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
 {
   // Create the set of photoatom aliases
-  photoatom_aliases.clear();
+  std::unordered_set<std::string> photoatom_aliases;
   photoatom_aliases.insert( "Pb" );
 
-  photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::WH_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+
+  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+                                     new MonteCarlo::PhotoatomFactory(
 					       cross_sections_xml_directory,
 					       cross_section_table_info,
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
-					       100,
-					       MonteCarlo::WH_INCOHERENT_MODEL,
-					       3.0,
-					       false,
-					       false ) );
+                                               properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -238,21 +241,24 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
 // Check that a photoatom map can be created (only basic data)
 TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
 {
-
   // Create the set of photoatom aliases
-  photoatom_aliases.clear();
+  std::unordered_set<std::string> photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
-  photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::WH_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+
+  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+                                       new MonteCarlo::PhotoatomFactory(
 					       cross_sections_xml_directory,
 					       cross_section_table_info,
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
-					       100,
-					       MonteCarlo::WH_INCOHERENT_MODEL,
-					       3.0,
-					       false,
-					       false ) );
+                                               properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -415,19 +421,23 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
 TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
 {
   // Create the set of photoatom aliases
-  photoatom_aliases.clear();
+  std::unordered_set<std::string> photoatom_aliases;
   photoatom_aliases.insert( "Pb" );
 
-  photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
-		 cross_sections_xml_directory,
-		 cross_section_table_info,
-		 photoatom_aliases,
-		 atomic_relaxation_model_factory,
-		 100,
-		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
-		 3.0,
-		 false,
-		 false ) );
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+
+  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+                                        new MonteCarlo::PhotoatomFactory(
+                                               cross_sections_xml_directory,
+                                               cross_section_table_info,
+                                               photoatom_aliases,
+		                               atomic_relaxation_model_factory,
+                                               properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -612,19 +622,23 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
 TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
 {
   // Create the set of photoatom aliases
-  photoatom_aliases.clear();
+  std::unordered_set<std::string> photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
-  photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
-		   cross_sections_xml_directory,
-		   cross_section_table_info,
-		   photoatom_aliases,
-		   atomic_relaxation_model_factory,
-		   100,
-		   MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
-		   3.0,
-		   false,
-		   false ) );
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+
+  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+                               new MonteCarlo::PhotoatomFactory(
+                                               cross_sections_xml_directory,
+                                               cross_section_table_info,
+                                               photoatom_aliases,
+                                               atomic_relaxation_model_factory,
+                                               properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -789,19 +803,23 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 		   createPhotoatomMap_native_impulse_approx_basic )
 {
   // Create the set of photoatom aliases
-  photoatom_aliases.clear();
+  std::unordered_set<std::string> photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
-  photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
-					  cross_sections_xml_directory,
-					  cross_section_table_info,
-					  photoatom_aliases,
-					  atomic_relaxation_model_factory,
-					  100,
-					  MonteCarlo::IMPULSE_INCOHERENT_MODEL,
-					  3.0,
-					  false,
-					  false ) );
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::IMPULSE_INCOHERENT_MODEL ),
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+
+  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+                                   new MonteCarlo::PhotoatomFactory(
+					       cross_sections_xml_directory,
+                                               cross_section_table_info,
+                                               photoatom_aliases,
+					       atomic_relaxation_model_factory,
+                                               properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -977,19 +995,23 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 		   createPhotoatomMap_native_impulse_approx_doppler )
 {
   // Create the set of photoatom aliases
-  photoatom_aliases.clear();
+  std::unordered_set<std::string> photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
-  photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+
+  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+                                     new MonteCarlo::PhotoatomFactory(
 					       cross_sections_xml_directory,
 					       cross_section_table_info,
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
-					       100,
-					       MonteCarlo::FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL,
-					       3.0,
-					       false,
-					       false ) );
+                                               properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -1191,19 +1213,23 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_pe_subshells )
 {
   // Create the set of photoatom aliases
-  photoatom_aliases.clear();
+  std::unordered_set<std::string> photoatom_aliases;
   photoatom_aliases.insert( "Pb" );
 
-  photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::WH_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+
+  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+                                     new MonteCarlo::PhotoatomFactory(
 					       cross_sections_xml_directory,
 					       cross_section_table_info,
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
-					       100,
-					       MonteCarlo::WH_INCOHERENT_MODEL,
-					       3.0,
-					       false,
-					       true ) );
+                                               properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -1373,19 +1399,23 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_pe_subshells )
 TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
 {
   // Create the set of photoatom aliases
-  photoatom_aliases.clear();
+  std::unordered_set<std::string> photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
-  photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::WH_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+
+  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+                                     new MonteCarlo::PhotoatomFactory(
 					       cross_sections_xml_directory,
 					       cross_section_table_info,
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
-					       100,
-					       MonteCarlo::WH_INCOHERENT_MODEL,
-					       3.0,
-					       false,
-					       true ) );
+                                               properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -1541,20 +1571,24 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
 TEUCHOS_UNIT_TEST( PhotoatomFactory, no_duplicate_tables )
 {
   // Create the set of photoatom aliases
-  photoatom_aliases.clear();
+  std::unordered_set<std::string> photoatom_aliases;
   photoatom_aliases.insert( "H-1_293.6K" );
   photoatom_aliases.insert( "H-1_300K" );
 
-  photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
+  MonteCarlo::SimulationProperties properties;
+  properties.setNumberOfPhotonHashGridBins( 100 );
+  properties.setIncoherentModelType( MonteCarlo::WH_INCOHERENT_MODEL );
+  properties.setKahnSamplingCutoffEnergy( 3.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
+  properties.setDetailedPairProductionModeOff();
+
+  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+                                          new MonteCarlo::PhotoatomFactory(
 					       cross_sections_xml_directory,
 					       cross_section_table_info,
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
-					       100,
-					       MonteCarlo::WH_INCOHERENT_MODEL,
-					       3.0,
-					       false,
-					       true ) );
+                                               properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
     photoatom_map;
@@ -1573,59 +1607,36 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, no_duplicate_tables )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  clp().setOption( "test_cross_sections_xml_directory",
+                   &cross_sections_xml_directory,
+                   "Test cross_sections.xml file name" );
+}
 
-  clp.setOption( "test_cross_sections_xml_directory",
-		 &cross_sections_xml_directory,
-		 "Test cross_sections.xml file name" );
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  std::string cross_sections_xml_file = cross_sections_xml_directory;
+  cross_sections_xml_file += "/cross_sections.xml";
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  {
-    std::string cross_sections_xml_file = cross_sections_xml_directory;
-    cross_sections_xml_file += "/cross_sections.xml";
-
-    // Read in the xml file storing the cross section table info
-    Teuchos::updateParametersFromXmlFile(
+  // Read in the xml file storing the cross section table info
+  Teuchos::updateParametersFromXmlFile(
 			       cross_sections_xml_file,
 			       Teuchos::inoutArg( cross_section_table_info ) );
 
-    // Create the atomic relaxation model factory
-    atomic_relaxation_model_factory.reset(
+  // Create the atomic relaxation model factory
+  atomic_relaxation_model_factory.reset(
 				new MonteCarlo::AtomicRelaxationModelFactory );
-  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
 
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstPhotoatomFactory.cpp

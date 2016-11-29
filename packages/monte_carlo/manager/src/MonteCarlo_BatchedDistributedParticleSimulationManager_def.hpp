@@ -25,18 +25,17 @@ template<typename GeometryHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
 BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::BatchedDistributedParticleSimulationManager(
-      const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const std::shared_ptr<const SimulationProperties>& properties,
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process,
-	    const unsigned long long number_of_histories,
-	    const unsigned number_of_batches_per_processor,
-	    const unsigned long long start_history,
+            const unsigned long long start_history,
 	    const unsigned long long previously_completed_histories,
 	    const double previous_run_time )
-  : ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>( number_of_histories, start_history, 0ull, previous_run_time ),
+  : ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>( properties, start_history, 0ull, previous_run_time ),
     d_comm( comm ),
     d_root_process( root_process ),
     d_initial_histories_completed( previously_completed_histories ),
-    d_number_of_batches_per_processor( number_of_batches_per_processor )
+    d_number_of_batches_per_processor( properties->getNumberOfBatchesPerProcessor() )
 {
   // Make sure the communicator is valid
   testPrecondition( !comm.is_null() );

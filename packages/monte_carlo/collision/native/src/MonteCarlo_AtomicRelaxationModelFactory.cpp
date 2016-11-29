@@ -29,6 +29,8 @@ AtomicRelaxationModelFactory::default_void_model(
 void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+                  const double min_photon_energy,
+                  const double min_electron_energy,
 		  const bool use_atomic_relaxation_data )
 {
   if( use_atomic_relaxation_data )
@@ -70,7 +72,9 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 						  subshell_relaxation_models );
 
       atomic_relaxation_model.reset( new DetailedAtomicRelaxationModel(
-						subshell_relaxation_models ) );
+                                                    subshell_relaxation_models,
+                                                    min_photon_energy,
+                                                    min_electron_energy ) );
     }
     // No atomic relaxation date is available
     else
@@ -96,6 +100,8 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+         const double min_photon_energy,
+         const double min_electron_energy,
 	 const bool use_atomic_relaxation_data )
 {
   if( use_atomic_relaxation_data )
@@ -153,7 +159,9 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
       }
 
       atomic_relaxation_model.reset( new DetailedAtomicRelaxationModel(
-						subshell_relaxation_models ) );
+                                                    subshell_relaxation_models,
+                                                    min_photon_energy,
+                                                    min_electron_energy ) );
     }
     // No atomic relaxation data is available
     else
@@ -180,6 +188,8 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	 const Data::ENDLDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+         const double min_photon_energy,
+         const double min_electron_energy,
 	 const bool use_atomic_relaxation_data )
 {
 //! \todo Implement atomic relaxation using ENDL tables
@@ -239,7 +249,9 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
       }
 
       atomic_relaxation_model.reset( new DetailedAtomicRelaxationModel(
-						subshell_relaxation_models ) );
+						    subshell_relaxation_models,
+                                                    min_photon_energy,
+                                                    min_electron_energy ) );
     }
     // No atomic relaxation data is available
     else
@@ -268,6 +280,8 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
                   const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+                  const double min_photon_energy,
+                  const double min_electron_energy,
 		  const bool use_atomic_relaxation_data )
 {
   // Check if the model for this atom has already been created
@@ -282,6 +296,8 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
     AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 						  raw_photoatom_data,
 						  atomic_relaxation_model,
+                                                  min_photon_energy,
+                                                  min_electron_energy,
 						  use_atomic_relaxation_data );
 
     // Cache the relaxation model
@@ -305,6 +321,8 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
 void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
          const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+         const double min_photon_energy,
+         const double min_electron_energy,
 	 const bool use_atomic_relaxation_data )
 {
   // Check if the model for this atom has already been created
@@ -319,6 +337,8 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
     AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 						  raw_photoatom_data,
 						  atomic_relaxation_model,
+                                                  min_photon_energy,
+                                                  min_electron_energy,
 						  use_atomic_relaxation_data );
 
     // Cache the relaxation model
@@ -343,6 +363,8 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
 void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
          const Data::ENDLDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+         const double min_photon_energy,
+         const double min_electron_energy,
 	 const bool use_atomic_relaxation_data )
 {/*
   // Check if the model for this atom has already been created
@@ -357,6 +379,8 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
     AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 						  raw_photoatom_data,
 						  atomic_relaxation_model,
+                                                  min_photon_energy,
+                                                  min_electron_energy,
 						  use_atomic_relaxation_data );
 
     // Cache the relaxation model

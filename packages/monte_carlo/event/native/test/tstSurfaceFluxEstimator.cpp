@@ -671,7 +671,8 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 							     0u,
 							     10.0,
 							     surface_ids,
-							     surface_areas ) );
+							     surface_areas,
+                                                             0.1 ) );
     estimator_1_base = estimator_1;
 
     estimator_2.reset(
@@ -679,7 +680,8 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 							     1u,
 							     10.0,
 							     surface_ids,
-							     surface_areas ) );
+							     surface_areas,
+                                                             0.1 ) );
     estimator_2_base = estimator_2;
 
     // Set the cosine bins
@@ -699,10 +701,6 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
 
     estimator_1_base->setParticleTypes( particle_types );
     estimator_2_base->setParticleTypes( particle_types );
-
-    // Set the angle cosine cutoff
-    MonteCarlo::SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
-									 0.1 );
   }
 
   TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );

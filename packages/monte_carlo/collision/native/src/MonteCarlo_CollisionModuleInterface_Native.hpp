@@ -46,51 +46,25 @@ public:
 			 const ParticleType particle_type );
 
   //! Get the total macroscopic cross section of a material
-  static double getMacroscopicTotalCrossSection( const NeutronState& particle);
+  template<typename ParticleStateType>
+  static double getMacroscopicTotalCrossSection( const ParticleStateType& particle );
 
-  //! Get the total macroscopic cross section of a material
-  static double getMacroscopicTotalCrossSection( const PhotonState& particle);
-
-  //! Get the total macroscopic cross section of a material
-  static double getMacroscopicTotalCrossSection( const ElectronState& particle);
-
-  //! Get the macroscopic cross section for a specific reaction
-  static double getMacroscopicReactionCrossSection(
-					  const NeutronState& particle,
-					  const NuclearReactionType reaction );
-
-  //! Get the macroscopic cross section for a specific reaction
-  static double getMacroscopicReactionCrossSection(
-				      const PhotonState& particle,
-				      const PhotoatomicReactionType reaction );
-
-  //! Get the macroscopic cross section for a specific reaction
-  static double getMacroscopicReactionCrossSection(
-				     const PhotonState& particle,
-				     const PhotonuclearReactionType reaction );
-
-  //! Get the macroscopic cross section for a specific reaction
-  static double getMacroscopicReactionCrossSection(
-				      const ElectronState& particle,
-				      const ElectroatomicReactionType reaction );
+   //! Get the total forward macroscopic cross section of a material
+  template<typename ParticleStateType>
+  static double getMacroscopicTotalForwardCrossSection( const ParticleStateType& particle );
 
   //! Sample the optical path length traveled by a particle before a collision
   static double sampleOpticalPathLength();
 
   //! Collide with the material in a cell
-  static void collideWithCellMaterial( NeutronState& particle,
-				       ParticleBank& bank,
-				       const bool analogue );
+  template<typename ParticleStateType>
+  static void collideWithCellMaterial( ParticleStateType& particle,
+				       ParticleBank& bank );
 
-  //! Collide with the material in a cell
-  static void collideWithCellMaterial( PhotonState& particle,
-				       ParticleBank& bank,
-				       const bool analogue );
+private:
 
-  //! Collide with the material in a cell
-  static void collideWithCellMaterial( ElectronState& particle,
-				       ParticleBank& bank,
-				       const bool analogue );
+  // The collision handler instance
+  static std::shared_ptr<CollisionHandler> s_collision_handler;
 };
 
 // Set the collision handler instance
@@ -99,78 +73,37 @@ public:
 inline void
 CollisionModuleInterface<CollisionHandler>::setHandlerInstance(
                    const std::shared_ptr<CollisionHandler>& collision_handler )
-{ /* ... */ }
+{
+  // Make sure the collision handler is valid
+  testPrecondition( collision_handler.get() );
+  
+  s_collision_handler = collision_handler;
+}
 
 // Check if a cell is void
 inline bool CollisionModuleInterface<CollisionHandler>::isCellVoid(
 			 const Geometry::ModuleTraits::InternalCellHandle cell,
 			 const ParticleType particle_type )
 {
-  return CollisionHandler::isCellVoid( cell, particle_type );
+  return s_collision_handler->isCellVoid( cell, particle_type );
 }
 
 // Get the total macroscopic cross section of a material
+template<typename ParticleStateType>
 inline double
 CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
-					        const NeutronState& particle )
+                                            const ParticleStateType& particle )
 {
-  return CollisionHandler::getMacroscopicTotalCrossSection( particle );
+  return s_collision_handler->getMacroscopicTotalCrossSection( particle );
 }
 
-// Get the total macroscopic cross section of a material
+// Get the total forward macroscopic cross section of a material
+template<typename ParticleStateType>
 inline double
-CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
-					   const PhotonState& particle )
+CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalForwardCrossSection(
+                                            const ParticleStateType& particle )
 {
-  return CollisionHandler::getMacroscopicTotalCrossSection( particle );
-}
-
-// Get the total macroscopic cross section of a material
-inline double
-CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
-					   const ElectronState& particle )
-{
-  return CollisionHandler::getMacroscopicTotalCrossSection( particle );
-}
-
-// Get the macroscopic cross section for a specific reaction
-inline double
-CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
-					   const NeutronState& particle,
-					   const NuclearReactionType reaction )
-{
-  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
-                                                               reaction );
-}
-
-// Get the macroscopic cross section for a specific reaction
-inline double
-CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
-				       const PhotonState& particle,
-				       const PhotoatomicReactionType reaction )
-{
-  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
-							       reaction );
-}
-
-// Get the macroscopic cross section for a specific reaction
-inline double
-CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
-				      const PhotonState& particle,
-				      const PhotonuclearReactionType reaction )
-{
-  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
-							       reaction );
-}
-
-// Get the macroscopic cross section for a specific reaction
-inline double
-CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
-				       const ElectronState& particle,
-				       const ElectroatomicReactionType reaction )
-{
-  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
-							       reaction );
+  return s_collision_handler->getMacroscopicTotalForwardCrossSection( particle );
 }
 
 // Sample the optical path length traveled by a particle before a collision
@@ -181,39 +114,13 @@ CollisionModuleInterface<CollisionHandler>::sampleOpticalPathLength()
 }
 
 // Collide with the material in a cell
+template<typename ParticleStateType>
 inline void
 CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
-						       NeutronState& particle,
-						       ParticleBank& bank,
-						       const bool analogue )
+                                                   ParticleStateType& particle,
+                                                   ParticleBank& bank )
 {
-  CollisionHandler::collideWithCellMaterial( particle,
-					     bank,
-					     analogue );
-}
-
-// Collide with the material in a cell
-inline void
-CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
-						       PhotonState& particle,
-						       ParticleBank& bank,
-						       const bool analogue )
-{
-  CollisionHandler::collideWithCellMaterial( particle,
-                                             bank,
-                                             analogue );
-}
-
-// Collide with the material in a cell
-inline void
-CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
-						       ElectronState& particle,
-						       ParticleBank& bank,
-						       const bool analogue )
-{
-  CollisionHandler::collideWithCellMaterial( particle,
-                                             bank,
-                                             analogue );
+  s_collision_handler->collideWithCellMaterial( particle, bank );
 }
 
 } // end MonteCarlo namespace

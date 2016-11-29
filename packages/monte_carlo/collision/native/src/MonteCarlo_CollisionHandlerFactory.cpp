@@ -13,6 +13,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
+#include "MonteCarlo_AdjointPhotoatomFactory.hpp"
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
@@ -34,14 +35,11 @@ CollisionHandlerFactory::CollisionHandlerFactory( std::ostream* os_warn )
   testPrecondition( os_warn != NULL );
 }
 
-// Initialize the collision handler
-/*! \details Make sure the simulation properties have been set
- * (in MonteCarlo::SimulationGeneralProperties etc) before running this factory
- * method. The properties can influence how this factory method behaves.
- */
-void CollisionHandlerFactory::initializeHandler(
+// Create the collision handler
+std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
+                     const SimulationProperties& properties,
 		     const std::string& cross_sections_xml_directory )
 {
   // Validate the materials
@@ -54,8 +52,7 @@ void CollisionHandlerFactory::initializeHandler(
     const Teuchos::ParameterList& material_rep =
       Teuchos::any_cast<Teuchos::ParameterList>( it->second.getAny() );
 
-    CollisionHandlerFactory::validateMaterialRep( material_rep,
-						  material_ids );
+    this->validateMaterialRep( material_rep, material_ids );
 
     ++it;
   }
@@ -78,18 +75,15 @@ void CollisionHandlerFactory::initializeHandler(
   // Create the set of all nuclides/atoms needed to construct materials
   AliasSet aliases;
 
-  CollisionHandlerFactory::createAliasSet( material_reps,
-					   alias_map_list,
-					   aliases );
+  this->createAliasSet( material_reps, alias_map_list, aliases );
 
   // Create the material id data maps
   MatIdFractionMap material_id_fraction_map;
   MatIdComponentMap material_id_component_map;
 
-  CollisionHandlerFactory::createMaterialIdDataMaps(
-						   material_reps,
-						   material_id_fraction_map,
-						   material_id_component_map );
+  this->createMaterialIdDataMaps( material_reps,
+                                  material_id_fraction_map,
+                                  material_id_component_map );
 
   // Create the cell id data maps
   CellIdMatIdMap cell_id_mat_id_map;
@@ -101,92 +95,79 @@ void CollisionHandlerFactory::initializeHandler(
   Teuchos::RCP<AtomicRelaxationModelFactory> atomic_relaxation_model_factory(
 					    new AtomicRelaxationModelFactory );
 
-  // Load the cross section data
-  switch( SimulationGeneralProperties::getParticleMode() )
-  {
-  case NEUTRON_MODE:
-  {
-    this->createNeutronMaterials( cross_sections_table_info,
-				  cross_sections_xml_directory,
-				  material_id_fraction_map,
-				  material_id_component_map,
-				  aliases,
-				  cell_id_mat_id_map,
-				  cell_id_density_map,
-				  false,
-				  false );
-    break;
-  }
-  case PHOTON_MODE:
-  {
-    this->createPhotonMaterials(
-		     cross_sections_table_info,
-		     cross_sections_xml_directory,
-		     material_id_fraction_map,
-		     material_id_component_map,
-		     aliases,
-		     cell_id_mat_id_map,
-		     cell_id_density_map,
-		     atomic_relaxation_model_factory,
-		     SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationPhotonProperties::getIncoherentModelType(),
-		     SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
-		     SimulationPhotonProperties::isDetailedPairProductionModeOn(),
-		     SimulationPhotonProperties::isAtomicRelaxationModeOn(),
-		     SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
-    break;
-  }
-  case NEUTRON_PHOTON_MODE:
-  {
-    this->createNeutronMaterials( cross_sections_table_info,
-				  cross_sections_xml_directory,
-				  material_id_fraction_map,
-				  material_id_component_map,
-				  aliases,
-				  cell_id_mat_id_map,
-				  cell_id_density_map,
-				  false,
-				  true );
+  // Create the new collision handler
+  std::shared_ptr<CollisionHandler> collision_handler( new CollisionHandler(
+                       properties.isImplicitCaptureModeOn() ? false : true ) );
+  
+  ParticleModeType mode = properties.getParticleMode();
 
-    this->createPhotonMaterials(
-		     cross_sections_table_info,
-		     cross_sections_xml_directory,
-		     material_id_fraction_map,
-		     material_id_component_map,
-		     aliases,
-		     cell_id_mat_id_map,
-		     cell_id_density_map,
-		     atomic_relaxation_model_factory,
-		     SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationPhotonProperties::getIncoherentModelType(),
-		     SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
-		     SimulationPhotonProperties::isDetailedPairProductionModeOn(),
-		     SimulationPhotonProperties::isAtomicRelaxationModeOn(),
-		     SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
-    break;
-  }
-  case ELECTRON_MODE:
+  // Load the neutron cross section data
+  if( mode == NEUTRON_MODE ||
+      mode == NEUTRON_PHOTON_MODE ||
+      mode == NEUTRON_PHOTON_ELECTRON_MODE )
   {
-    this->createElectronMaterials(
-		     cross_sections_table_info,
-		     cross_sections_xml_directory,
-		     material_id_fraction_map,
-		     material_id_component_map,
-		     aliases,
-		     cell_id_mat_id_map,
-		     cell_id_density_map,
-		     atomic_relaxation_model_factory,
-		     SimulationElectronProperties::getNumberOfElectronHashGridBins(),
-		     SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-		     SimulationElectronProperties::isAtomicRelaxationModeOn(),
-		     SimulationElectronProperties::getElasticCutoffAngleCosine() );
-    break;
+    this->createNeutronMaterials( collision_handler,
+                                  cross_sections_table_info,
+				  cross_sections_xml_directory,
+				  material_id_fraction_map,
+				  material_id_component_map,
+				  aliases,
+				  cell_id_mat_id_map,
+				  cell_id_density_map,
+                                  properties );
   }
-  default:
-    THROW_EXCEPTION( std::logic_error,
-		     "Error: " << SimulationGeneralProperties::getParticleMode() <<
-		     " is not currently supported!" );
+
+  // Load the photon cross section data
+  if( mode == PHOTON_MODE ||
+      mode == NEUTRON_PHOTON_MODE ||
+      mode == PHOTON_ELECTRON_MODE ||
+      mode == NEUTRON_PHOTON_ELECTRON_MODE )
+  {
+    this->createPhotonMaterials( collision_handler,
+                                 cross_sections_table_info,
+                                 cross_sections_xml_directory,
+                                 material_id_fraction_map,
+                                 material_id_component_map,
+                                 aliases,
+                                 cell_id_mat_id_map,
+                                 cell_id_density_map,
+                                 atomic_relaxation_model_factory,
+                                 properties );
   }
+
+  // Load the adjoint photon cross section data
+  if( mode == ADJOINT_PHOTON_MODE )
+  {
+    this->createAdjointPhotonMaterials( collision_handler,
+                                        cross_sections_table_info,
+                                        cross_sections_xml_directory,
+                                        material_id_fraction_map,
+                                        material_id_component_map,
+                                        aliases,
+                                        cell_id_mat_id_map,
+                                        cell_id_density_map,
+                                        properties );
+  }
+
+  // Load the electron cross section data
+  if( mode == ELECTRON_MODE ||
+      mode == PHOTON_ELECTRON_MODE ||
+      mode == NEUTRON_PHOTON_ELECTRON_MODE )
+  {
+    this->createElectronMaterials( collision_handler,
+                                   cross_sections_table_info,
+                                   cross_sections_xml_directory,
+                                   material_id_fraction_map,
+                                   material_id_component_map,
+                                   aliases,
+                                   cell_id_mat_id_map,
+                                   cell_id_density_map,
+                                   atomic_relaxation_model_factory,
+                                   properties );
+  }
+
+  // Return the constucted collision handler
+  return collision_handler;
 }
 
 // Validate a material representation
@@ -206,7 +187,7 @@ void CollisionHandlerFactory::validateMaterialRep(
 		      "Error: a materials id must be unique (material id "
 		      << material_rep.get<unsigned>( "Id" ) <<
 		      " appears more than once)!" );
-
+  
   material_ids.insert( material_rep.get<unsigned>( "Id" ) );
 
   // Make sure the isotopes that make up the material are specified
@@ -311,6 +292,7 @@ void CollisionHandlerFactory::createMaterialIdDataMaps(
 
 // Create the neutron materials
 void CollisionHandlerFactory::createNeutronMaterials(
+                       std::shared_ptr<CollisionHandler>& collision_handler,
                        const Teuchos::ParameterList& cross_sections_table_info,
                        const std::string& cross_sections_xml_directory,
                        const MatIdFractionMap& material_id_fraction_map,
@@ -318,15 +300,13 @@ void CollisionHandlerFactory::createNeutronMaterials(
                        const AliasSet& nuclide_aliases,
                        const CellIdMatIdMap& cell_id_mat_id_map,
                        const CellIdDensityMap& cell_id_density_map,
-                       const bool use_unresolved_resonance_data,
-                       const bool use_photon_production_data )
+                       const SimulationProperties& properties )
 {
   // Load the nuclides of interest
   NuclideFactory nuclide_factory( cross_sections_xml_directory,
 				  cross_sections_table_info,
 				  nuclide_aliases,
-				  use_unresolved_resonance_data,
-				  use_photon_production_data,
+                                  properties,
 				  d_os_warn );
 
   std::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;
@@ -334,27 +314,28 @@ void CollisionHandlerFactory::createNeutronMaterials(
   nuclide_factory.createNuclideMap( nuclide_map );
 
   // Create the material name data maps
-  std::unordered_map<std::string,Teuchos::RCP<NeutronMaterial> >
+  std::unordered_map<std::string,Teuchos::RCP<const NeutronMaterial> >
     material_name_pointer_map;
 
   MatNameCellIdsMap material_name_cell_ids_map;
 
-  CollisionHandlerFactory::createMaterialNameDataMaps(
-						  material_id_fraction_map,
-						  material_id_component_map,
-						  nuclide_map,
-						  cell_id_mat_id_map,
-						  cell_id_density_map,
-						  material_name_pointer_map,
-						  material_name_cell_ids_map );
+  this->createMaterialNameDataMaps( material_id_fraction_map,
+                                    material_id_component_map,
+                                    nuclide_map,
+                                    cell_id_mat_id_map,
+                                    cell_id_density_map,
+                                    material_name_pointer_map,
+                                    material_name_cell_ids_map );
 
   // Register materials with the collision handler
-  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
-					      material_name_cell_ids_map );
+  this->registerMaterials( collision_handler,
+                           material_name_pointer_map,
+                           material_name_cell_ids_map );
 }
 
 // Create the photon materials
 void CollisionHandlerFactory::createPhotonMaterials(
+                       std::shared_ptr<CollisionHandler>& collision_handler,
                        const Teuchos::ParameterList& cross_sections_table_info,
                        const std::string& cross_sections_xml_directory,
                        const MatIdFractionMap& material_id_fraction_map,
@@ -364,17 +345,12 @@ void CollisionHandlerFactory::createPhotonMaterials(
                        const CellIdDensityMap& cell_id_density_map,
                        const Teuchos::RCP<AtomicRelaxationModelFactory>&
                        atomic_relaxation_model_factory,
-                       const unsigned hash_grid_bins,
-                       const IncoherentModelType incoherent_model,
-                       const double kahn_sampling_cutoff_energy,
-                       const bool use_detailed_pair_production_data,
-                       const bool use_atomic_relaxation_data,
-                       const bool use_photonuclear_data )
+                       const SimulationProperties& properties )
 {
   std::unordered_map<std::string,Teuchos::RCP<Photoatom> > photoatom_map;
 
   // Load the photonuclides of interest
-  if( use_photonuclear_data )
+  if( properties.isPhotonuclearInteractionModeOn() )
   {
     THROW_EXCEPTION( std::logic_error,
 		     "Error: Photonuclear data is not currently supported!" );
@@ -386,51 +362,90 @@ void CollisionHandlerFactory::createPhotonMaterials(
 					cross_sections_table_info,
 					photoatom_aliases,
 					atomic_relaxation_model_factory,
-					hash_grid_bins,
-					incoherent_model,
-					kahn_sampling_cutoff_energy,
-					use_detailed_pair_production_data,
-					use_atomic_relaxation_data,
+                                        properties,
 					d_os_warn );
 
     photoatom_factory.createPhotoatomMap( photoatom_map );
   }
 
   // Create the material name data maps
-  std::unordered_map<std::string,Teuchos::RCP<PhotonMaterial> >
+  std::unordered_map<std::string,Teuchos::RCP<const PhotonMaterial> >
     material_name_pointer_map;
 
   MatNameCellIdsMap material_name_cell_ids_map;
 
-  CollisionHandlerFactory::createMaterialNameDataMaps(
-						  material_id_fraction_map,
-						  material_id_component_map,
-						  photoatom_map,
-						  cell_id_mat_id_map,
-						  cell_id_density_map,
-						  material_name_pointer_map,
-						  material_name_cell_ids_map );
+  this->createMaterialNameDataMaps( material_id_fraction_map,
+                                    material_id_component_map,
+                                    photoatom_map,
+                                    cell_id_mat_id_map,
+                                    cell_id_density_map,
+                                    material_name_pointer_map,
+                                    material_name_cell_ids_map );
 
   // Register materials with the collision handler
-  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
-					      material_name_cell_ids_map );
+  this->registerMaterials( collision_handler,
+                           material_name_pointer_map,
+                           material_name_cell_ids_map );
+}
+
+// Create the adjoint photon materials
+void CollisionHandlerFactory::createAdjointPhotonMaterials(
+                       std::shared_ptr<CollisionHandler>& collision_handler,
+                       const Teuchos::ParameterList& cross_sections_table_info,
+                       const std::string& cross_sections_xml_directory,
+                       const MatIdFractionMap& material_id_fraction_map,
+                       const MatIdComponentMap& material_id_component_map,
+                       const AliasSet& adjoint_photoatom_aliases,
+                       const CellIdMatIdMap& cell_id_mat_id_map,
+                       const CellIdDensityMap& cell_id_density_map,
+                       const SimulationProperties& properties )
+{
+  std::unordered_map<std::string,Teuchos::RCP<AdjointPhotoatom> >
+    adjoint_photoatom_map;
+
+  // Load the adjoint photoatoms of interest
+  AdjointPhotoatomFactory adjoint_photoatom_factory(
+                                               cross_sections_xml_directory,
+                                               cross_sections_table_info,
+                                               adjoint_photoatom_aliases,
+                                               properties,
+                                               d_os_warn );
+
+  adjoint_photoatom_factory.createAdjointPhotoatomMap( adjoint_photoatom_map );
+
+  // Create the material name data maps
+  std::unordered_map<std::string,Teuchos::RCP<const AdjointPhotonMaterial> >
+    material_name_pointer_map;
+
+  MatNameCellIdsMap material_name_cell_ids_map;
+
+  this->createMaterialNameDataMaps( material_id_fraction_map,
+                                    material_id_component_map,
+                                    adjoint_photoatom_map,
+                                    cell_id_mat_id_map,
+                                    cell_id_density_map,
+                                    material_name_pointer_map,
+                                    material_name_cell_ids_map );
+
+  // Register materials with the collision handler
+  this->registerMaterials( collision_handler,
+                           material_name_pointer_map,
+                           material_name_cell_ids_map );
 }
 
 // Create the electron materials
 void CollisionHandlerFactory::createElectronMaterials(
-    const Teuchos::ParameterList& cross_sections_table_info,
-    const std::string& cross_sections_xml_directory,
-    const MatIdFractionMap& material_id_fraction_map,
-    const MatIdComponentMap& material_id_component_map,
-    const AliasSet& electroatom_aliases,
-    const CellIdMatIdMap& cell_id_mat_id_map,
-    const CellIdDensityMap& cell_id_density_map,
-    const Teuchos::RCP<AtomicRelaxationModelFactory>&
-        atomic_relaxation_model_factory,
-    const unsigned hash_grid_bins,
-    const BremsstrahlungAngularDistributionType photon_distribution_function,
-    const bool use_atomic_relaxation_data,
-    const double cutoff_angle_cosine )
+      std::shared_ptr<CollisionHandler>& collision_handler,
+      const Teuchos::ParameterList& cross_sections_table_info,
+      const std::string& cross_sections_xml_directory,
+      const MatIdFractionMap& material_id_fraction_map,
+      const MatIdComponentMap& material_id_component_map,
+      const AliasSet& electroatom_aliases,
+      const CellIdMatIdMap& cell_id_mat_id_map,
+      const CellIdDensityMap& cell_id_density_map,
+      const Teuchos::RCP<AtomicRelaxationModelFactory>&
+      atomic_relaxation_model_factory,
+      const SimulationProperties& properties )
 {
   std::unordered_map<std::string,Teuchos::RCP<Electroatom> > electroatom_map;
 
@@ -438,32 +453,29 @@ void CollisionHandlerFactory::createElectronMaterials(
                                           cross_sections_table_info,
                                           electroatom_aliases,
                                           atomic_relaxation_model_factory,
-                                          hash_grid_bins,
-                                          photon_distribution_function,
-                                          use_atomic_relaxation_data,
-                                          cutoff_angle_cosine,
+                                          properties,
                                           d_os_warn );
 
   electroatom_factory.createElectroatomMap( electroatom_map );
 
   // Create the material name data maps
-  std::unordered_map<std::string,Teuchos::RCP<ElectronMaterial> >
+  std::unordered_map<std::string,Teuchos::RCP<const ElectronMaterial> >
     material_name_pointer_map;
 
   MatNameCellIdsMap material_name_cell_ids_map;
 
-  CollisionHandlerFactory::createMaterialNameDataMaps(
-    material_id_fraction_map,
-    material_id_component_map,
-    electroatom_map,
-    cell_id_mat_id_map,
-    cell_id_density_map,
-    material_name_pointer_map,
-    material_name_cell_ids_map );
-
+  this->createMaterialNameDataMaps( material_id_fraction_map,
+                                    material_id_component_map,
+                                    electroatom_map,
+                                    cell_id_mat_id_map,
+                                    cell_id_density_map,
+                                    material_name_pointer_map,
+                                    material_name_cell_ids_map );
+  
   // Register materials with the collision handler
-  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
-                                              material_name_cell_ids_map );
+  this->registerMaterials( collision_handler,
+                           material_name_pointer_map,
+                           material_name_cell_ids_map );
 }
 
 // Get the warning output stream

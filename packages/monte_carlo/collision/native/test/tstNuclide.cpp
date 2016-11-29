@@ -19,17 +19,11 @@
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-std::string test_h1_ace_file_name;
-std::string test_h1_ace_table_name;
-std::string test_o16_ace_file_name;
-std::string test_o16_ace_table_name;
-// std::string test_fission_ace_file_name;
-// std::string test_ptable_ace_file_name;
-// std::string test_fission_ptable_ace_file_name;
 
 Teuchos::RCP<MonteCarlo::Nuclide> h1_nuclide;
 Teuchos::RCP<MonteCarlo::Nuclide> o16_nuclide;
@@ -41,45 +35,7 @@ void initializeNuclide( Teuchos::RCP<MonteCarlo::Nuclide>& nuclide,
 			const std::string& ace_file_name,
 			const std::string& ace_table_name )
 {
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
-  ace_file_handler.reset(new Data::ACEFileHandler( ace_file_name,
-						   ace_table_name,
-						   1u ) );
-
-  Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-
-  xss_data_extractor.reset(
-   new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray()));
-
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
-
-  MonteCarlo::NuclearReactionACEFactory reaction_factory(
-				 ace_table_name,
-				 ace_file_handler->getTableAtomicWeightRatio(),
-				 ace_file_handler->getTableTemperature(),
-				 energy_grid,
-				 *xss_data_extractor );
-
-  MonteCarlo::Nuclide::ReactionMap standard_scattering_reactions;
-  reaction_factory.createScatteringReactions( standard_scattering_reactions );
-  reaction_factory.createFissionReactions( standard_scattering_reactions );
-
-  MonteCarlo::Nuclide::ReactionMap standard_absorption_reactions;
-  reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
-
-  nuclide.reset( new MonteCarlo::Nuclide(
-				 ace_table_name,
-				 1u,
-				 1u,
-				 0u,
-				 ace_file_handler->getTableAtomicWeightRatio(),
-				 ace_file_handler->getTableTemperature(),
-				 energy_grid,
-				 standard_scattering_reactions,
-				 standard_absorption_reactions ) );
+  
 }
 
 //---------------------------------------------------------------------------//
@@ -352,9 +308,9 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, collideSurvivalBias)
 
 //---------------------------------------------------------------------------//
 // Check that a neutron can collide with a nuclide
-TEUCHOS_UNIT_TEST( Nuclide_oxygen, collideSurvivalBias)
-{
-  double energy;
+// TEUCHOS_UNIT_TEST( Nuclide_oxygen, collideSurvivalBias)
+// {
+  // double energy;
   // for( unsigned i = 0; i < 1e6; ++i )
   // {
   //   energy = exp(log(1.01e-11) + ((log(7.0)-log(1.01e-11))/1e6)*i);
@@ -399,66 +355,128 @@ TEUCHOS_UNIT_TEST( Nuclide_oxygen, collideSurvivalBias)
   // std::cout << o16_nuclide->getTotalCrossSection( 0.24 ) << std::endl;
   // std::cout << o16_nuclide->getTotalCrossSection( 0.450 ) << std::endl;
   // std::cout << o16_nuclide->getTotalCrossSection( 0.658 ) << std::endl;
+// }
+
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_h1_ace_file_name;
+std::string test_h1_ace_table_name;
+std::string test_o16_ace_file_name;
+std::string test_o16_ace_table_name;
+// std::string test_fission_ace_file_name;
+// std::string test_ptable_ace_file_name;
+// std::string test_fission_ptable_ace_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_h1_ace_file",
+                   &test_h1_ace_file_name,
+                   "Test h1 ACE file name" );
+  clp().setOption( "test_h1_ace_table",
+                   &test_h1_ace_table_name,
+                   "Test h1 ACE table name in h1 ACE file" );
+
+  clp().setOption( "test_o16_ace_file",
+                   &test_o16_ace_file_name,
+                   "Test o16 ACE file name" );
+  clp().setOption( "test_o16_ace_table",
+                   &test_o16_ace_table_name,
+                   "Test o16 ACE table name in o16 ACE file" );
 }
 
-//---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  // Initialize H-1
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
+  ace_file_handler.reset( new Data::ACEFileHandler( test_h1_ace_file_name,
+                                                    test_h1_ace_table_name,
+                                                    1u ) );
 
-  clp.setOption( "test_h1_ace_file",
-		 &test_h1_ace_file_name,
-		 "Test h1 ACE file name" );
-  clp.setOption( "test_h1_ace_table",
-		 &test_h1_ace_table_name,
-		 "Test h1 ACE table name in h1 ACE file" );
+  Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
 
-  clp.setOption( "test_o16_ace_file",
-		 &test_o16_ace_file_name,
-		 "Test o16 ACE file name" );
-  clp.setOption( "test_o16_ace_table",
-		 &test_o16_ace_table_name,
-		 "Test o16 ACE table name in o16 ACE file" );
+  xss_data_extractor.reset(
+   new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
+				      ace_file_handler->getTableJXSArray(),
+				      ace_file_handler->getTableXSSArray()));
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
+  MonteCarlo::SimulationProperties properties;
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
+  Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> reaction_factory(
+                          new MonteCarlo::NuclearReactionACEFactory(
+				 test_h1_ace_table_name,
+				 ace_file_handler->getTableAtomicWeightRatio(),
+				 ace_file_handler->getTableTemperature(),
+				 energy_grid,
+                                 properties,
+				 *xss_data_extractor ) );
 
+  MonteCarlo::Nuclide::ReactionMap standard_scattering_reactions;
+  reaction_factory->createScatteringReactions( standard_scattering_reactions );
+  reaction_factory->createFissionReactions( standard_scattering_reactions );
+
+  MonteCarlo::Nuclide::ReactionMap standard_absorption_reactions;
+  reaction_factory->createAbsorptionReactions( standard_absorption_reactions );
+
+  h1_nuclide.reset( new MonteCarlo::Nuclide(
+				 test_h1_ace_table_name,
+				 1u,
+				 1u,
+				 0u,
+				 ace_file_handler->getTableAtomicWeightRatio(),
+				 ace_file_handler->getTableTemperature(),
+				 energy_grid,
+				 standard_scattering_reactions,
+				 standard_absorption_reactions ) );
+
+  // Initialize O-16
+  ace_file_handler.reset(new Data::ACEFileHandler( test_o16_ace_file_name,
+						   test_o16_ace_table_name,
+						   1u ) );
+
+  xss_data_extractor.reset(
+   new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
+				      ace_file_handler->getTableJXSArray(),
+				      ace_file_handler->getTableXSSArray()));
+
+  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
+
+  reaction_factory.reset( new MonteCarlo::NuclearReactionACEFactory(
+				 test_o16_ace_table_name,
+				 ace_file_handler->getTableAtomicWeightRatio(),
+				 ace_file_handler->getTableTemperature(),
+				 energy_grid,
+                                 properties,
+				 *xss_data_extractor ) );
+
+  standard_scattering_reactions.clear();;
+  reaction_factory->createScatteringReactions( standard_scattering_reactions );
+  reaction_factory->createFissionReactions( standard_scattering_reactions );
+
+  standard_absorption_reactions.clear();
+  reaction_factory->createAbsorptionReactions( standard_absorption_reactions );
+
+  o16_nuclide.reset( new MonteCarlo::Nuclide(
+				 test_o16_ace_table_name,
+				 1u,
+				 1u,
+				 0u,
+				 ace_file_handler->getTableAtomicWeightRatio(),
+				 ace_file_handler->getTableTemperature(),
+				 energy_grid,
+				 standard_scattering_reactions,
+				 standard_absorption_reactions ) );
+  
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Initialize nuclear reaction factories
-  initializeNuclide( h1_nuclide,
-		     test_h1_ace_file_name,
-		     test_h1_ace_table_name );
-
-  initializeNuclide( o16_nuclide,
-		     test_o16_ace_file_name,
-		     test_o16_ace_table_name );
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNuclide.cpp

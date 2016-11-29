@@ -22,12 +22,8 @@ namespace MonteCarlo{
 void PhotoatomNativeFactory::createPhotoatomCore(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	 Teuchos::RCP<PhotoatomCore>& photoatom_core,
-	 const unsigned hash_grid_bins,
-	 const IncoherentModelType incoherent_model,
-	 const double kahn_sampling_cutoff_energy,
-	 const bool use_detailed_pair_production_data,
-	 const bool use_atomic_relaxation_data )
+         const SimulationPhotonProperties& properties,
+	 Teuchos::RCP<PhotoatomCore>& photoatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -44,20 +40,21 @@ void PhotoatomNativeFactory::createPhotoatomCore(
   // Construct the hash-based grid searcher for this atom
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-						     energy_grid,
-						     hash_grid_bins ) );
+                                energy_grid,
+                                properties.getNumberOfPhotonHashGridBins() ) );
 
   // Create the incoherent scattering reaction(s)
   {
     Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> > reaction_pointers;
 
     PhotoatomicReactionNativeFactory::createIncoherentReactions(
-						 raw_photoatom_data,
-						 energy_grid,
-						 grid_searcher,
-						 reaction_pointers,
-						 incoherent_model,
-						 kahn_sampling_cutoff_energy );
+                                    raw_photoatom_data,
+                                    energy_grid,
+                                    grid_searcher,
+                                    reaction_pointers,
+                                    properties.getIncoherentModelType(),
+                                    properties.getKahnSamplingCutoffEnergy() );
+    
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {
@@ -84,11 +81,11 @@ void PhotoatomNativeFactory::createPhotoatomCore(
       scattering_reactions[PAIR_PRODUCTION_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionNativeFactory::createPairProductionReaction(
-					   raw_photoatom_data,
-					   energy_grid,
-					   grid_searcher,
-					   reaction_pointer,
-					   use_detailed_pair_production_data );
+                                 raw_photoatom_data,
+                                 energy_grid,
+                                 grid_searcher,
+                                 reaction_pointer,
+                                 properties.isDetailedPairProductionModeOn() );
   }
 
   // Create the triplet production reaction
@@ -97,15 +94,15 @@ void PhotoatomNativeFactory::createPhotoatomCore(
       scattering_reactions[TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionNativeFactory::createTripletProductionReaction(
-                                           raw_photoatom_data,
-                                           energy_grid,
-                                           grid_searcher,
-                                           reaction_pointer,
-                                           use_detailed_pair_production_data );
+                                 raw_photoatom_data,
+                                 energy_grid,
+                                 grid_searcher,
+                                 reaction_pointer,
+                                 properties.isDetailedPairProductionModeOn() );
   }
 
   // Create the photoelectric reaction(s)
-  if( use_atomic_relaxation_data )
+  if( properties.isAtomicRelaxationModeOn() )
   {
     Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> > reaction_pointers;
 
@@ -168,12 +165,8 @@ void PhotoatomNativeFactory::createPhotoatom(
 	 const std::string& photoatom_name,
 	 const double atomic_weight,
 	 const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	 Teuchos::RCP<Photoatom>& photoatom,
-	 const unsigned hash_grid_bins,
-	 const IncoherentModelType incoherent_model,
-	 const double kahn_sampling_cutoff_energy,
-	 const bool use_detailed_pair_production_data,
-	 const bool use_atomic_relaxation_data )
+         const SimulationPhotonProperties& properties,
+	 Teuchos::RCP<Photoatom>& photoatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -182,15 +175,10 @@ void PhotoatomNativeFactory::createPhotoatom(
 
   Teuchos::RCP<PhotoatomCore> core;
 
-  PhotoatomNativeFactory::createPhotoatomCore(
-					     raw_photoatom_data,
-					     atomic_relaxation_model,
-					     core,
-					     hash_grid_bins,
-					     incoherent_model,
-					     kahn_sampling_cutoff_energy,
-					     use_detailed_pair_production_data,
-					     use_atomic_relaxation_data );
+  PhotoatomNativeFactory::createPhotoatomCore( raw_photoatom_data,
+                                               atomic_relaxation_model,
+                                               properties,
+                                               core );
 
   // Create the photoatom
   photoatom.reset( new Photoatom( photoatom_name,

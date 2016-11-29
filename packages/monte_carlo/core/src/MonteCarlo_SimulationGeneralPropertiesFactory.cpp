@@ -8,19 +8,16 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationGeneralPropertiesFactory.hpp"
-#include "MonteCarlo_SimulationNeutronPropertiesFactory.hpp"
-#include "MonteCarlo_SimulationPhotonPropertiesFactory.hpp"
-#include "MonteCarlo_SimulationElectronPropertiesFactory.hpp"
-#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 //! Initialize the simulation properties
-void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
-				      const Teuchos::ParameterList& properties,
-				      std::ostream* os_warn )
+void SimulationGeneralPropertiesFactory::initializeProperties(
+			       const Teuchos::ParameterList& properties,
+                               SimulationGeneralProperties& general_properties,
+                               std::ostream* os_warn )
 {
   // Get the particle mode - required
   TEST_FOR_EXCEPTION( !properties.isParameter( "Mode" ),
@@ -30,13 +27,19 @@ void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
     std::string raw_mode = properties.get<std::string>( "Mode" );
 
     if( raw_mode == "N" || raw_mode == "n" || raw_mode == "Neutron" )
-      SimulationGeneralProperties::setParticleMode( NEUTRON_MODE );
+      general_properties.setParticleMode( NEUTRON_MODE );
     else if( raw_mode == "P" || raw_mode == "p" || raw_mode == "Photon" )
-      SimulationGeneralProperties::setParticleMode( PHOTON_MODE );
+      general_properties.setParticleMode( PHOTON_MODE );
     else if( raw_mode == "NP" || raw_mode == "np" || raw_mode == "Neutron-Photon" )
-      SimulationGeneralProperties::setParticleMode( NEUTRON_PHOTON_MODE );
+      general_properties.setParticleMode( NEUTRON_PHOTON_MODE );
+    else if( raw_mode == "PE" || raw_mode == "pe" || raw_mode == "Photon-Electron" )
+      general_properties.setParticleMode( PHOTON_ELECTRON_MODE );
     else if( raw_mode == "E" || raw_mode == "e" || raw_mode == "Electron" )
-      SimulationGeneralProperties::setParticleMode( ELECTRON_MODE );
+      general_properties.setParticleMode( ELECTRON_MODE );
+    else if( raw_mode == "NPE" || raw_mode == "npe" || raw_mode == "Neutron-Photon-Electron" )
+      general_properties.setParticleMode( NEUTRON_PHOTON_ELECTRON_MODE );
+    else if( raw_mode == "AP" || raw_mode == "ap" || raw_mode == "Adjoint-Photon" )
+      general_properties.setParticleMode( ADJOINT_PHOTON_MODE );
     else
     {
       THROW_EXCEPTION( std::runtime_error,
@@ -50,7 +53,7 @@ void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
 		      std::runtime_error,
 		      "Error: the number of histories must be specified!" );
 
-  SimulationGeneralProperties::setNumberOfHistories(
+  general_properties.setNumberOfHistories(
 				 properties.get<unsigned int>( "Histories" ) );
 
   // Get the number of batches per processor - optional
@@ -59,7 +62,12 @@ void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
     unsigned int number_of_batches_per_processor =
       properties.get<unsigned int>( "Ideal Batches Per Processor" );
 
-    SimulationGeneralProperties::setNumberOfBatchesPerProcessor(
+    TEST_FOR_EXCEPTION( number_of_batches_per_processor == 0,
+                        std::runtime_error,
+                        "Error: The number of batchers per processor must be "
+                        "greater than zero!" );
+
+    general_properties.setNumberOfBatchesPerProcessor(
 					     number_of_batches_per_processor );
   }
 
@@ -79,21 +87,25 @@ void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
 			"Error: The surface flux angle cosine cutoff must "
 			"be less than 1.0!" );
 
-    SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff( cutoff );
+    general_properties.setSurfaceFluxEstimatorAngleCosineCutoff( cutoff );
   }
 
   // Get the warnings mode - optional
   if( properties.isParameter( "Warnings" ) )
   {
-    if( !properties.get<bool>( "Warnings" ) )
-      SimulationGeneralProperties::setWarningsOff();
+    if( properties.get<bool>( "Warnings" ) )
+      general_properties.setWarningsOn();
+    else
+      general_properties.setWarningsOff();
   }
 
   // Get the capture mode - optional
   if( properties.isParameter( "Implicit Capture" ) )
   {
     if( properties.get<bool>( "Implicit Capture" ) )
-      SimulationGeneralProperties::setImplicitCaptureModeOn();
+      general_properties.setImplicitCaptureModeOn();
+    else
+      general_properties.setAnalogueCaptureModeOn();
   }
 
   properties.unused( *os_warn );

@@ -16,6 +16,9 @@
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
 
+// FRENSIE Includes
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
+
 namespace MonteCarlo{
 
 //! The simulation photon properties factory
@@ -25,9 +28,10 @@ class SimulationPhotonPropertiesFactory
 public:
 
   //! Initialize the simulation photon properties
-  static void initializeSimulationPhotonProperties(
-				      const Teuchos::ParameterList& properties,
-				      std::ostream* os_warn = &std::cerr );
+  static void initializeProperties(
+				 const Teuchos::ParameterList& properties,
+                                 SimulationPhotonProperties& photon_properties,
+                                 std::ostream* os_warn = &std::cerr );
 };
 
 } // end MonteCarlo namespace

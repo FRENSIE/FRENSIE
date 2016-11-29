@@ -21,6 +21,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Nuclide.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 
 namespace MonteCarlo{
 
@@ -33,8 +34,7 @@ public:
   NuclideFactory( const std::string& cross_sections_xml_directory,
 		  const Teuchos::ParameterList& cross_section_table_info,
 		  const std::unordered_set<std::string>& nuclide_aliases,
-		  const bool use_unresolved_resonance_data,
-		  const bool use_photon_production_data,
+                  const SimulationProperties& properties,
 		  std::ostream* os_message = &std::cout );
 
   //! Destructor
@@ -60,8 +60,7 @@ private:
 			      const int isomer_number,
 			      const double atomic_weight_ratio,
 			      const double temperature,
-			      const bool use_unresolved_resonance_data,
-			      const bool use_photon_production_data );
+                              const SimulationProperties& properties );
 
   // The nuclide id map
   std::unordered_map<std::string,Teuchos::RCP<Nuclide> > d_nuclide_name_map;

@@ -22,7 +22,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
-#include "MonteCarlo_IncoherentModelType.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 
 namespace MonteCarlo{
 
@@ -38,11 +38,7 @@ public:
                     const std::unordered_set<std::string>& photoatom_aliases,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>&
 		    atomic_relaxation_model_factory,
-		    const unsigned hash_grid_bins,
-		    const IncoherentModelType incoherent_model,
-		    const double kahn_sampling_cutoff_energy,
-		    const bool use_detailed_pair_production_data,
-		    const bool use_atomic_relaxation_data,
+		    const SimulationProperties& properties,
 		    std::ostream* os_message = &std::cout );
 
   //! Destructor
@@ -66,11 +62,7 @@ private:
 			  const double atomic_weight,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
 			  atomic_relaxation_model_factory,
-			  const unsigned hash_grid_bins,
-			  const IncoherentModelType incoherent_model,
-			  const double kahn_sampling_cutoff_energy,
-			  const bool use_detailed_pair_production_data,
-			  const bool use_atomic_relaxation_data );
+			  const SimulationProperties& properties );
 
   // Create a photoatom from a Native table
   void createPhotoatomFromNativeTable(
@@ -80,11 +72,7 @@ private:
 			  const double atomic_weight,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
 			  atomic_relaxation_model_factory,
-			  const unsigned hash_grid_bins,
-			  const IncoherentModelType incoherent_model,
-			  const double kahn_sampling_cutoff_energy,
-			  const bool use_detailed_pair_production_data,
-			  const bool use_atomic_relaxation_data );
+			  const SimulationProperties& properties );
 
   // The photoatom map
   std::unordered_map<std::string,Teuchos::RCP<Photoatom> >

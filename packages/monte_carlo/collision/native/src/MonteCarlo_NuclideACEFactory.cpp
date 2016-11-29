@@ -22,9 +22,9 @@ void NuclideACEFactory::createNuclide(
 			 const unsigned isomer_number,
 			 const double atomic_weight_ratio,
 			 const double temperature,
+                         const SimulationProperties& properties,
 			 Teuchos::RCP<Nuclide>& nuclide,
-			 const bool use_unresolved_resonance_data,
-			 const bool use_photon_production_data )
+                         std::ostream* os_message )
 {
   // Extract the common energy grid used for this nuclide
   Teuchos::ArrayRCP<double> energy_grid;
@@ -35,6 +35,7 @@ void NuclideACEFactory::createNuclide(
 					      atomic_weight_ratio,
 					      temperature,
 					      energy_grid.getConst(),
+                                              properties,
 					      raw_nuclide_data );
 
   // Create the standard scattering reactions
@@ -48,41 +49,44 @@ void NuclideACEFactory::createNuclide(
 
   reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
 
-  if( use_unresolved_resonance_data )
+  if( properties.isUnresolvedResonanceProbabilityTableModeOn() )
   {
-    std::cerr << std::endl
-	      << "Warning: Unresolved resonance data has been requested. "
-	      << "This feature is not currently supported!"
-	      << std::endl;
+    *os_message << std::endl
+                << "Warning: Unresolved resonance data has been requested. "
+                << "This feature is not currently supported!"
+                << std::endl;
   }
 
-  if( use_photon_production_data )
+  if( properties.getParticleMode() == NEUTRON_PHOTON_MODE ||
+      properties.getParticleMode() == NEUTRON_PHOTON_ELECTRON_MODE )
   {
     // Create the photon production reaction factory
     DecoupledPhotonProductionReactionACEFactory photon_production_reaction_factory(
-                  nuclide_alias,
-					        atomic_weight_ratio,
-					        temperature,
-					        energy_grid.getConst(),
-					        raw_nuclide_data );
+                                                        nuclide_alias,
+                                                        atomic_weight_ratio,
+                                                        temperature,
+                                                        energy_grid.getConst(),
+                                                        properties,
+                                                        raw_nuclide_data );
 
-		// Create the photon production reactions
-		DecoupledPhotonProductionNuclide::PhotonProductionReactionMap
-		                                               photon_production_reactions;
+    // Create the photon production reactions
+    DecoupledPhotonProductionNuclide::PhotonProductionReactionMap
+      photon_production_reactions;
 
-		photon_production_reaction_factory.createPhotonProductionReactions(
-		                                             photon_production_reactions );
+    photon_production_reaction_factory.createPhotonProductionReactions(
+                                                 photon_production_reactions );
 
-    nuclide.reset( new DecoupledPhotonProductionNuclide( nuclide_alias,
-			        atomic_number,
-			        atomic_mass_number,
-			        isomer_number,
-			        atomic_weight_ratio,
-			        temperature,
-			        energy_grid,
-			        standard_scattering_reactions,
-			        standard_absorption_reactions,
-			        photon_production_reactions ) );
+    nuclide.reset( new DecoupledPhotonProductionNuclide(
+                                               nuclide_alias,
+                                               atomic_number,
+                                               atomic_mass_number,
+                                               isomer_number,
+                                               atomic_weight_ratio,
+                                               temperature,
+                                               energy_grid,
+                                               standard_scattering_reactions,
+                                               standard_absorption_reactions,
+                                               photon_production_reactions ) );
   }
   else
   {

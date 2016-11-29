@@ -21,24 +21,17 @@
 // Test the simulation properties defaults
 TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties, defaults )
 {
-  TEST_EQUALITY_CONST(
-            MonteCarlo::SimulationAdjointPhotonProperties::getAbsoluteMinAdjointPhotonEnergy(),
-            1e-3 );
-  TEST_EQUALITY_CONST(
-            MonteCarlo::SimulationAdjointPhotonProperties::getMinAdjointPhotonEnergy(),
-            1e-3 );
-  TEST_EQUALITY_CONST(
-            MonteCarlo::SimulationAdjointPhotonProperties::getMaxAdjointPhotonEnergy(),
-            20.0 );
-  TEST_EQUALITY_CONST(
-            MonteCarlo::SimulationAdjointPhotonProperties::getAbsoluteMaxAdjointPhotonEnergy(),
-            20.0 );
-  TEST_EQUALITY_CONST(
-	    MonteCarlo::SimulationAdjointPhotonProperties::getNumberOfAdjointPhotonHashGridBins(),
-            500 );
-  TEST_EQUALITY_CONST(
-            MonteCarlo::SimulationAdjointPhotonProperties::getIncoherentAdjointModelType(),
-            MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
+  
+  TEST_EQUALITY_CONST( properties.getAbsoluteMinAdjointPhotonEnergy(), 1e-3 );
+  TEST_EQUALITY_CONST( properties.getMinAdjointPhotonEnergy(), 1e-3 );
+  TEST_EQUALITY_CONST( properties.getMaxAdjointPhotonEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( properties.getAbsoluteMaxAdjointPhotonEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( properties.getNumberOfAdjointPhotonHashGridBins(),
+                       500 );
+  TEST_EQUALITY_CONST( properties.getIncoherentAdjointModelType(),
+                       MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
+  TEST_EQUALITY_CONST( properties.getCriticalAdjointPhotonLineEnergies().size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -46,17 +39,11 @@ TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties, defaults )
 TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
                    setMinAdjointPhotonEnergy )
 {
-  double default_value =
-    MonteCarlo::SimulationAdjointPhotonProperties::getMinAdjointPhotonEnergy();
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
+  
+  properties.setMinAdjointPhotonEnergy( 1e-2 );
 
-  MonteCarlo::SimulationAdjointPhotonProperties::setMinAdjointPhotonEnergy( 1e-2 );
-
-  TEST_ASSERT( MonteCarlo::SimulationAdjointPhotonProperties::getMinAdjointPhotonEnergy() != default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationAdjointPhotonProperties::getMinAdjointPhotonEnergy(),
-                       1e-2 );
-
-  // Reset the default value
-  MonteCarlo::SimulationAdjointPhotonProperties::setMinAdjointPhotonEnergy( default_value );
+  TEST_EQUALITY_CONST( properties.getMinAdjointPhotonEnergy(), 1e-2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -64,17 +51,11 @@ TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
 TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
                    setMaxAdjointPhotonEnergy )
 {
-  double default_value =
-    MonteCarlo::SimulationAdjointPhotonProperties::getMaxAdjointPhotonEnergy();
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
+  
+  properties.setMaxAdjointPhotonEnergy( 15.0 );
 
-  MonteCarlo::SimulationAdjointPhotonProperties::setMaxAdjointPhotonEnergy( 15.0 );
-
-  TEST_ASSERT( MonteCarlo::SimulationAdjointPhotonProperties::getMaxAdjointPhotonEnergy() != default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationAdjointPhotonProperties::getMaxAdjointPhotonEnergy(),
-                       15.0 );
-
-  // Reset the default value
-  MonteCarlo::SimulationAdjointPhotonProperties::setMaxAdjointPhotonEnergy( default_value );
+  TEST_EQUALITY_CONST( properties.getMaxAdjointPhotonEnergy(), 15.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -82,20 +63,12 @@ TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
 TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
                    setNumberOfAdjointPhotonHashGridBins )
 {
-  unsigned default_value =
-    MonteCarlo::SimulationAdjointPhotonProperties::getNumberOfAdjointPhotonHashGridBins();
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
+  
+  properties.setNumberOfAdjointPhotonHashGridBins( 750 );
 
-  MonteCarlo::SimulationAdjointPhotonProperties::setNumberOfAdjointPhotonHashGridBins( 750 );
-
-  TEST_ASSERT(
-	  MonteCarlo::SimulationAdjointPhotonProperties::getNumberOfAdjointPhotonHashGridBins() !=
-	  default_value );
-  TEST_EQUALITY_CONST(
-	     MonteCarlo::SimulationAdjointPhotonProperties::getNumberOfAdjointPhotonHashGridBins(),
-	     750 );
-
-  // Reset the default value
-  MonteCarlo::SimulationAdjointPhotonProperties::setNumberOfAdjointPhotonHashGridBins( default_value );
+  TEST_EQUALITY_CONST( properties.getNumberOfAdjointPhotonHashGridBins(),
+                       750 );
 }
 
 //---------------------------------------------------------------------------//
@@ -103,20 +76,30 @@ TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
 TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
                    setIncoherentAdjointModelType )
 {
-  MonteCarlo::IncoherentAdjointModelType default_model =
-    MonteCarlo::SimulationAdjointPhotonProperties::getIncoherentAdjointModelType();
-
-  MonteCarlo::SimulationAdjointPhotonProperties::setIncoherentAdjointModelType(
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
+  
+  properties.setIncoherentAdjointModelType(
                                      MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
 
-  TEST_ASSERT( MonteCarlo::SimulationAdjointPhotonProperties::getIncoherentAdjointModelType() !=
-	       default_model );
-  TEST_EQUALITY_CONST(
-		    MonteCarlo::SimulationAdjointPhotonProperties::getIncoherentAdjointModelType(),
-		    MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
+  TEST_EQUALITY_CONST( properties.getIncoherentAdjointModelType(),
+                       MonteCarlo::KN_INCOHERENT_ADJOINT_MODEL );
+}
 
-  // Reset the default model
-  MonteCarlo::SimulationAdjointPhotonProperties::setIncoherentAdjointModelType( default_model );
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+TEUCHOS_UNIT_TEST( SimulationAdjointPhotonProperties,
+                   getCriticalAdjointPhotonLineEnergies )
+{
+  MonteCarlo::SimulationAdjointPhotonProperties properties;
+
+  Teuchos::Array<double> critical_line_energies( 2 );
+  critical_line_energies[0] = 1.0;
+  critical_line_energies[1] = 10.0;
+  
+  properties.setCriticalAdjointPhotonLineEnergies( critical_line_energies );
+
+  TEST_COMPARE_ARRAYS( properties.getCriticalAdjointPhotonLineEnergies(),
+                       critical_line_energies );
 }
 
 //---------------------------------------------------------------------------//

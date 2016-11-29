@@ -17,7 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatom.hpp"
 #include "MonteCarlo_AdjointPhotoatomCore.hpp"
-#include "MonteCarlo_IncoherentAdjointModelType.hpp"
+#include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 
 namespace MonteCarlo{
@@ -37,11 +37,8 @@ public:
   static void createAdjointPhotoatomCore(
                 const Data::AdjointElectronPhotonRelaxationDataContainer&
                 raw_adjoint_photoatom_data,
-                Teuchos::RCP<AdjointPhotoatomCore>& adjoint_photoatom_core,
-                const double max_energy,
-                const unsigned hash_grid_bins,
-                const IncoherentAdjointModelType incoherent_adjoint_model,
-                const Teuchos::Array<double>& user_critical_line_energies );
+                const SimulationAdjointPhotonProperties& properties,
+                Teuchos::RCP<AdjointPhotoatomCore>& adjoint_photoatom_core );
 
   //! Create an adjoint photoatom
   static void createAdjointPhotoatom(
@@ -49,11 +46,8 @@ public:
                 raw_adjoint_photoatom_data,
                 const std::string& adjoint_photoatom_name,
                 const double atomic_weight,
-                Teuchos::RCP<AdjointPhotoatom>& adjoint_photoatom,
-                const double max_energy,
-                const unsigned hash_grid_bins,
-                const IncoherentAdjointModelType incoherent_adjoint_model,
-                const Teuchos::Array<double>& user_critical_line_energies );
+                const SimulationAdjointPhotonProperties& properties,
+                Teuchos::RCP<AdjointPhotoatom>& adjoint_photoatom );
 
 protected:
 

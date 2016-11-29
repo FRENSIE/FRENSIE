@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Boost Includes
 #include <boost/unordered_set.hpp>
@@ -24,23 +25,21 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
+std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 std::string electroatom_name;
 double atomic_weight;
-double cutoff_angle_cosine;
-Teuchos::RCP<MonteCarlo::Electroatom> atom;
-MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
-unsigned hash_grid_bins = 100;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -50,19 +49,20 @@ unsigned hash_grid_bins = 100;
  */
 TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_detailed_brem )
 {
-  photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
+  MonteCarlo::SimulationProperties properties;
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::TWOBS_DISTRIBUTION );
+  properties.setElasticCutoffAngleCosine( 1.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
+  properties.setNumberOfElectronHashGridBins( 100 );
 
-  MonteCarlo::ElectroatomNativeFactory::createElectroatom(
-        *data_container,
-        electroatom_name,
-        atomic_weight,
-        hash_grid_bins,
-        relaxation_model,
-        atom,
-        photon_distribution_function,
-        true,
-        cutoff_angle_cosine );
-
+  Teuchos::RCP<MonteCarlo::Electroatom> atom;
+  
+  MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
+                                                           electroatom_name,
+                                                           atomic_weight,
+                                                           relaxation_model,
+                                                           properties,
+                                                           atom );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "Pb-Native" );
@@ -248,18 +248,20 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_detailed_brem )
 // Check that a electroatom with electroionization subshell data can be created
 TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_ionization_subshells )
 {
-  photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
+  MonteCarlo::SimulationProperties properties;
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
+  properties.setElasticCutoffAngleCosine( 1.0 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
+  properties.setNumberOfElectronHashGridBins( 100 );
 
-  MonteCarlo::ElectroatomNativeFactory::createElectroatom(
-        *data_container,
-        electroatom_name,
-        atomic_weight,
-        hash_grid_bins,
-        relaxation_model,
-        atom,
-        photon_distribution_function,
-        true,
-        cutoff_angle_cosine );
+  Teuchos::RCP<MonteCarlo::Electroatom> atom;
+  
+  MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
+                                                           electroatom_name,
+                                                           atomic_weight,
+                                                           relaxation_model,
+                                                           properties,
+                                                           atom );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "Pb-Native" );
@@ -469,20 +471,20 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_ionization_subshe
 // Check that a electroatom with a higher cutoff angle can be created
 TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
 {
-  photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
+  MonteCarlo::SimulationProperties properties;
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
+  properties.setElasticCutoffAngleCosine( 0.9 );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
+  properties.setNumberOfElectronHashGridBins( 100 );
 
-  double new_cutoff_angle_cosine = 0.9;
+  Teuchos::RCP<MonteCarlo::Electroatom> atom;
 
-  MonteCarlo::ElectroatomNativeFactory::createElectroatom(
-        *data_container,
-        electroatom_name,
-        atomic_weight,
-        hash_grid_bins,
-        relaxation_model,
-        atom,
-        photon_distribution_function,
-        true,
-        new_cutoff_angle_cosine );
+  MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
+                                                           electroatom_name,
+                                                           atomic_weight,
+                                                           relaxation_model,
+                                                           properties,
+                                                           atom );
 
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
@@ -490,7 +492,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
         cutoff_elastic_distribution,
         *data_container,
-        new_cutoff_angle_cosine );
+        properties.getElasticCutoffAngleCosine() );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "Pb-Native" );
@@ -499,38 +501,33 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
 
   // Test that the total cross section can be returned
   double energy = 1e-5;
-  double cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
+  double cross_section_ratio = cutoff_elastic_distribution->evaluateCDF(
+                                     energy,
+                                     properties.getElasticCutoffAngleCosine() );
   double inelastic = 1.398201198E+08;
   double elastic = 2.48924E+09*cross_section_ratio + 1.106329441558590E+08;
-
   double cross_section = atom->getTotalCrossSection( energy );
-
   TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
 
+
   energy = 2e-1;
-  cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
+  cross_section_ratio = cutoff_elastic_distribution->evaluateCDF(
+                                     energy,
+                                     properties.getElasticCutoffAngleCosine() );
   inelastic = 6.411260911064270E+06;
   elastic = 1.61118815071382E+07*cross_section_ratio + 1.89168413638812E+06;
-  
   cross_section = atom->getTotalCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          inelastic + elastic,
-                          1e-12 );
 
   energy = 1e5;
-  cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
+  cross_section_ratio = cutoff_elastic_distribution->evaluateCDF(
+                                     energy,
+                                     properties.getElasticCutoffAngleCosine() );
   inelastic = 2.845403047900000E+06;
   elastic = 8.83051E-02*cross_section_ratio + 2.203770304996720E-03;
-  
   cross_section = atom->getTotalCrossSection( energy );
-  
-  TEST_FLOATING_EQUALITY( cross_section,
-                          inelastic + elastic,
-                          1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -590,7 +587,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
                     MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCDF( 1e5, new_cutoff_angle_cosine );
+    cutoff_elastic_distribution->evaluateCDF( 1e5, properties.getElasticCutoffAngleCosine() );
 
   TEST_FLOATING_EQUALITY( cross_section,
                           8.83051e-2*cross_section_ratio + 2.20377030499672E-03,
@@ -601,8 +598,8 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
                     MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCDF( 1e-3, new_cutoff_angle_cosine );
-  
+    cutoff_elastic_distribution->evaluateCDF( 1e-3, properties.getElasticCutoffAngleCosine() );
+
   TEST_FLOATING_EQUALITY( cross_section,
                           2.90281E+8*cross_section_ratio + 1.2584013774057174E+8,
                           1e-12 );
@@ -612,7 +609,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
                     MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCDF( 1.99526E-04, new_cutoff_angle_cosine );
+    cutoff_elastic_distribution->evaluateCDF( 1.99526E-04, properties.getElasticCutoffAngleCosine() );
   
   TEST_FLOATING_EQUALITY( cross_section,
                           6.1309E+8*cross_section_ratio + 2.13360933138207E+08,
@@ -623,7 +620,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
                     MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCDF( 1.E-05, new_cutoff_angle_cosine );
+    cutoff_elastic_distribution->evaluateCDF( 1.E-05, properties.getElasticCutoffAngleCosine() );
 
   TEST_FLOATING_EQUALITY( cross_section,
                           2.489240E+09*cross_section_ratio + 1.106329441558590E+08,
@@ -756,26 +753,29 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   clp().setOption( "test_native_file",
                    &test_native_file_name,
-                   "Test Native file name" );
+                   "Test native file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  electroatom_name = "Pb-Native";
-  atomic_weight = 207.1999470456033;
-  cutoff_angle_cosine = 1.0;
-
-  {
-    // Create the native data file container
-    data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
+  // Create the native data file container
+  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
                              test_native_file_name ) );
 
+  // Create the atomic relaxation model
+  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
+                               *data_container,
+                               relaxation_model,
+                               1e-3,
+                               1e-5,
+                               true );
 
-    MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
-           *data_container,
-           relaxation_model,
-           true );
-  }
+  // Initialize the remaining electroatom data
+  electroatom_name = "Pb-Native";
+  atomic_weight = 207.1999470456033;
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();

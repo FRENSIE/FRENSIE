@@ -48,25 +48,28 @@ ParticleSimulationManager<GeometryHandler,
 			  SourceHandler,
 			  EstimatorHandler,
 			  CollisionHandler>::ParticleSimulationManager(
-		       const unsigned long long number_of_histories,
-		       const unsigned long long start_history,
-		       const unsigned long long previously_completed_histories,
-		       const double previous_run_time )
-  : d_start_history( start_history ),
-    d_history_number_wall( start_history + number_of_histories ),
+                  const std::shared_ptr<const SimulationProperties> properties,
+                  const unsigned long long start_history,
+                  const unsigned long long previously_completed_histories,
+                  const double previous_run_time )
+  : d_properties( properties ),
+    d_history_number_wall( start_history ),
     d_histories_completed( previously_completed_histories ),
     d_end_simulation( false ),
     d_previous_run_time( previous_run_time ),
     d_start_time( 0.0 ),
     d_end_time( 0.0 )
 {
+  // The properties must be valid
+  testPrecondition( properties.get() );
   // At least one history must be simulated
-  testPrecondition( number_of_histories > 0 );
+  testPrecondition( properties->getNumberOfHistories() > 0 );
+
+  // Increment the history number wall
+  d_history_number_wall += properties->getNumberOfHistories();
 
   // Assign the functions based on the mode
-  ParticleModeType mode = SimulationGeneralProperties::getParticleMode();
-
-  switch( mode )
+  switch( d_properties->getParticleMode() )
   {
   case NEUTRON_MODE:
   {
@@ -134,7 +137,8 @@ ParticleSimulationManager<GeometryHandler,
   }
   default:
     THROW_EXCEPTION( std::runtime_error,
-   		     "Error: particle mode " << mode << " is not currently "
+   		     "Error: particle mode "
+                     << d_properties->getParticleMode() << " is not currently "
    		     << "supported by the particle simulation manager." );
   }
 }
@@ -316,7 +320,8 @@ void ParticleSimulationManager<GeometryHandler,
   double cell_total_macro_cross_section;
 
   // Check if the particle energy is below the cutoff
-  if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
+  if( particle.getEnergy() <
+      d_properties->getMinParticleEnergy<ParticleStateType>() )
     particle.setAsGone();
 
   // Set the ray
@@ -498,7 +503,7 @@ void ParticleSimulationManager<GeometryHandler,
                                                       particle.getPosition() );
 
         // Undergo a collision with the material in the cell
-        CMI::collideWithCellMaterial( particle, bank, true );
+        CMI::collideWithCellMaterial( particle, bank );
 
         if( !particle.isGone() )
         {
@@ -511,7 +516,8 @@ void ParticleSimulationManager<GeometryHandler,
         }
 
         // Make sure the energy is above the cutoff
-        if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
+        if( particle.getEnergy() <
+            d_properties->getMinParticleEnergy<ParticleStateType>() )
           particle.setAsGone();
 
         // This subtrack is finished

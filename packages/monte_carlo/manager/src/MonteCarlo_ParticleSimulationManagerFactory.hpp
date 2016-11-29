@@ -20,6 +20,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationManager.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 
 namespace MonteCarlo{
 
@@ -56,6 +57,7 @@ private:
             const Teuchos::ParameterList& cross_sections_table_info,
             const std::string& cross_sections_xml_directory,
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const std::shared_ptr<const SimulationProperties>& properties,
             std::ostream* os_warn );
 
   // Initialize the modules with Root
@@ -68,18 +70,20 @@ private:
             const Teuchos::ParameterList& cross_sections_table_info,
             const std::string& cross_sections_xml_directory,
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const std::shared_ptr<const SimulationProperties>& properties,
             std::ostream* os_warn );
 
   // Initialize the non-geometry modules
   template<typename GeometryHandler>
   static void initializeNonGeometryModules(
-                       const Teuchos::ParameterList& source_def,
-                       const Teuchos::ParameterList& response_def,
-                       const Teuchos::ParameterList& observer_def,
-                       const Teuchos::ParameterList& material_def,
-	               const Teuchos::ParameterList& cross_sections_table_info,
-                       const std::string& cross_sections_xml_directory,
-                       std::ostream* os_warn );
+                 const Teuchos::ParameterList& source_def,
+                 const Teuchos::ParameterList& response_def,
+                 const Teuchos::ParameterList& observer_def,
+                 const Teuchos::ParameterList& material_def,
+                 const Teuchos::ParameterList& cross_sections_table_info,
+                 const std::string& cross_sections_xml_directory,
+                 const std::shared_ptr<const SimulationProperties>& properties,
+                 std::ostream* os_warn );
 
   // Create the manager
   template<typename GeometryHandler,
@@ -87,6 +91,7 @@ private:
            typename EventHandler,
            typename CollisionHandler>
   static std::shared_ptr<SimulationManager> createManager(
+            const std::shared_ptr<const SimulationProperties>& properties,
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process );
 };

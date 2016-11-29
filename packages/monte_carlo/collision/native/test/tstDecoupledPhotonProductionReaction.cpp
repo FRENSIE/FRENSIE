@@ -145,11 +145,15 @@ int main( int argc, char** argv )
                                  ace_file_handler->getTableAtomicWeightRatio(),
                                  *xss_data_extractor );
 
+    // Create the simulation properties
+    MonteCarlo::SimulationProperties properties;
+
     // Create the photon production nuclear scattering distribution
     Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >
       photon_production_distribution;
     photon_production_dist_factory.createScatteringDistribution(
 					      reaction_type,
+                                              properties,
 					      photon_production_distribution );
 
     Teuchos::ArrayRCP<double> energy_grid;

@@ -37,10 +37,14 @@ boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> >
 // Check that the estimator handler can be initialized
 TEUCHOS_UNIT_TEST( EventHandlerFactoryDagMC, initializeHandlerUsingDagMC )
 {
+  std::shared_ptr<MonteCarlo::SimulationGeneralProperties> properties(
+                                 new MonteCarlo::SimulationGeneralProperties );
+  
   std::shared_ptr<MonteCarlo::EventHandler> event_handler =
     MonteCarlo::EventHandlerFactory<Geometry::DagMC>::createHandler(
                                                     *observer_reps,
-                                                    response_function_id_map );
+                                                    response_function_id_map,
+                                                    properties );
                                                     
   TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 19 );
 }

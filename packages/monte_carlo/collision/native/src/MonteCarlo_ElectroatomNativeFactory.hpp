@@ -17,6 +17,7 @@
 #include "MonteCarlo_ElectroatomCore.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
+#include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
 namespace MonteCarlo{
@@ -29,27 +30,20 @@ public:
 
   //! Create a electroatom core (using the provided atomic relaxation model)
   static void createElectroatomCore(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-        Teuchos::RCP<ElectroatomCore>& electroatom_core,
-        const unsigned hash_grid_bins,
-        const BremsstrahlungAngularDistributionType
-                photon_distribution_function,
-        const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine = 1.0 );
-
+       const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+       const SimulationElectronProperties& properties,
+       Teuchos::RCP<ElectroatomCore>& electroatom_core );
+       
   //! Create a electroatom (using the provided atomic relaxation model)
   static void createElectroatom(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const std::string& electroatom_name,
-        const double atomic_weight,
-        const unsigned hash_grid_bins,
-        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-        Teuchos::RCP<Electroatom>& electroatom,
-        const BremsstrahlungAngularDistributionType
-                photon_distribution_function,
-        const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine = 1.0 );
+       const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+       const std::string& electroatom_name,
+       const double atomic_weight,
+       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+       const SimulationElectronProperties& properties,
+       Teuchos::RCP<Electroatom>& electroatom );
+
 private:
 
   // Constructor

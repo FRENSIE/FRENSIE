@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "MonteCarlo_SimulationElectronPropertiesFactory.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -29,71 +30,48 @@ Teuchos::ParameterList properties;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the properties can be parsed and set
-TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory,
-		   initializeSimulationElectronProperties )
+TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory, initializeProperties )
 {
   Teuchos::ParameterList electron_properties =
       properties.get<Teuchos::ParameterList>( "Electron Properties" );
 
-  MonteCarlo::SimulationElectronPropertiesFactory::initializeSimulationElectronProperties(
-						electron_properties );
+  MonteCarlo::SimulationElectronProperties properties;
 
+  MonteCarlo::SimulationElectronPropertiesFactory::initializeProperties(
+                                                           electron_properties,
+                                                           properties );
 
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationElectronProperties::getMinElectronEnergy(),
-		      1e-2 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy(),
-		       10.0 );
-  TEST_ASSERT( !MonteCarlo::SimulationElectronProperties::isAtomicRelaxationModeOn() );
+  TEST_EQUALITY_CONST( properties.getMinElectronEnergy(), 1e-2 );
+  TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 10.0 );
+  TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
   TEST_EQUALITY_CONST(
-    MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-	MonteCarlo::DIPOLE_DISTRIBUTION );
-  TEST_EQUALITY_CONST(
-    MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
-	0.9 );
+                     properties.getBremsstrahlungAngularDistributionFunction(),
+                     MonteCarlo::DIPOLE_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 0.9 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_properties_xml_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_properties_xml_file_name;
+  clp().setOption( "test_properties_xml_file",
+                   &test_properties_xml_file_name,
+                   "Test properties.xml file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_properties_xml_file",
-		 &test_properties_xml_file_name,
-		 "Test properties.xml file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Read in the xml file storing the simulation properties
   Teuchos::updateParametersFromXmlFile( test_properties_xml_file_name,
-				       Teuchos::inoutArg( properties ) );
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
+                                        Teuchos::inoutArg( properties ) );
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstSimulationElectronPropertiesFactory.cpp

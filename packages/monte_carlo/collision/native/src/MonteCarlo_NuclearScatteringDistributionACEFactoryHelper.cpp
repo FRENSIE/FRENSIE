@@ -19,6 +19,7 @@ void NuclearScatteringDistributionACEFactoryHelper<NeutronState,NeutronState>::c
 		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
+                      const double free_gas_threshold,
                       const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		      angular_distribution )
 {
@@ -32,6 +33,7 @@ void NuclearScatteringDistributionACEFactoryHelper<NeutronState,NeutronState>::c
 
   distribution.reset(
 	new ElasticNeutronNuclearScatteringDistribution( atomic_weight_ratio,
+                                                         free_gas_threshold,
 							 angular_distribution ) );
 }
 

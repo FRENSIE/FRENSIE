@@ -43,11 +43,12 @@ void initializeSolidHydrogen()
   std::unordered_set<std::string> nuclide_aliases;
   nuclide_aliases.insert( "H-1_293.6K" );
 
+  MonteCarlo::SimulationProperties properties;
+
   MonteCarlo::NuclideFactory nuclide_factory(test_cross_sections_xml_directory,
 					     cross_section_table_info,
 					     nuclide_aliases,
-					     false,
-					     false );
+                                             properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> >
     nuclide_map;

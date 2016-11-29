@@ -31,13 +31,14 @@ namespace MonteCarlo{
 // Initialize the non-geometry modules
 template<typename GeometryHandler>
 void ParticleSimulationManagerFactory::initializeNonGeometryModules(
-                       const Teuchos::ParameterList& source_def,
-                       const Teuchos::ParameterList& response_def,
-                       const Teuchos::ParameterList& observer_def,
-                       const Teuchos::ParameterList& material_def,
-	               const Teuchos::ParameterList& cross_sections_table_info,
-                       const std::string& cross_sections_xml_directory,
-                       std::ostream* os_warn)
+                 const Teuchos::ParameterList& source_def,
+                 const Teuchos::ParameterList& response_def,
+                 const Teuchos::ParameterList& observer_def,
+                 const Teuchos::ParameterList& material_def,
+                 const Teuchos::ParameterList& cross_sections_table_info,
+                 const std::string& cross_sections_xml_directory,
+                 const std::shared_ptr<const SimulationProperties>& properties,
+                 std::ostream* os_warn)
 {
   // Make sure the warning output stream is valid
   testPrecondition( os_warn );
@@ -49,7 +50,7 @@ void ParticleSimulationManagerFactory::initializeNonGeometryModules(
 
     std::shared_ptr<ParticleSource> source = source_factory->createSource(
                               source_def,
-                              SimulationGeneralProperties::getParticleMode(),
+                              properties->getParticleMode(),
                               *os_warn );
 
     setSourceHandlerInstance( source );
@@ -60,10 +61,13 @@ void ParticleSimulationManagerFactory::initializeNonGeometryModules(
     std::shared_ptr<CollisionHandlerFactory> collision_handler_factory =
       getCollisionHandlerFactoryInstance<GeometryHandler>( os_warn );
 
-    collision_handler_factory->initializeHandler(
-                                                material_def,
+    std::shared_ptr<CollisionHandler> collision_handler =
+      collision_handler_factory->createHandler( material_def,
                                                 cross_sections_table_info,
+                                                *properties,
                                                 cross_sections_xml_directory );
+
+    setCollisionHandlerInstance( collision_handler );
   }
 
   // Initialize the event handler and interface
@@ -80,6 +84,7 @@ void ParticleSimulationManagerFactory::initializeNonGeometryModules(
       EventHandlerFactory<GeometryHandler>::createHandler(
                                                       observer_def,
                                                       response_function_id_map,
+                                                      properties,
                                                       os_warn );
 
     setEventHandlerInstance( event_handler );
@@ -93,6 +98,7 @@ template<typename GeometryHandler,
          typename CollisionHandler>
 std::shared_ptr<SimulationManager>
 ParticleSimulationManagerFactory::createManager(
+            const std::shared_ptr<const SimulationProperties>& properties,
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process )
 {
@@ -101,17 +107,13 @@ ParticleSimulationManagerFactory::createManager(
   {
     return std::shared_ptr<SimulationManager>(
              new BatchedDistributedParticleSimulationManager<GeometryHandler,ParticleSource,EventHandler,CollisionHandler>(
-	     comm,
-             0,
-             SimulationGeneralProperties::getNumberOfHistories(),
-             SimulationGeneralProperties::getNumberOfBatchesPerProcessor() ) );
+                                                       properties, comm, 0 ) );
   }
   // Create a local simulation manager
   else
   {
     return std::shared_ptr<SimulationManager>(
-            new ParticleSimulationManager<GeometryHandler,ParticleSource,EventHandler,CollisionHandler>(
-                       SimulationGeneralProperties::getNumberOfHistories() ) );
+             new ParticleSimulationManager<GeometryHandler,ParticleSource,EventHandler,CollisionHandler>( properties ) );
   }
 }
 

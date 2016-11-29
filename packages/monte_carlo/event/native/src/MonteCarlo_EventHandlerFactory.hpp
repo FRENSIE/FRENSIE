@@ -23,9 +23,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_ResponseFunction.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 
 namespace MonteCarlo{
-//
+
 //! The event handler factory
 template<typename GeometryHandler>
 class EventHandlerFactory
@@ -38,6 +39,7 @@ public:
        const Teuchos::ParameterList& observer_reps,
        const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
        response_function_id_map,
+       const std::shared_ptr<const SimulationGeneralProperties>& properties,
        std::ostream* os_warn = &std::cerr );
 
 private:

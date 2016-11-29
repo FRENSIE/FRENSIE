@@ -24,164 +24,114 @@ class SimulationPhotonProperties
 
 public:
 
+  //! Constructor
+  SimulationPhotonProperties();
+
+  //! Destructor
+  virtual ~SimulationPhotonProperties()
+  { /* ... */ }
+
   //! Set the minimum photon energy (MeV)
-  static void setMinPhotonEnergy( const double energy );
+  void setMinPhotonEnergy( const double energy );
 
   //! Return the minimum photon energy (MeV)
-  static double getMinPhotonEnergy();
+  double getMinPhotonEnergy() const;
 
   //! Return the absolute minimum photon energy (MeV)
   static double getAbsoluteMinPhotonEnergy();
 
   //! Set the maximum photon energy (MeV)
-  static void setMaxPhotonEnergy( const double energy );
+  void setMaxPhotonEnergy( const double energy );
 
   //! Return the maximum photon energy (MeV)
-  static double getMaxPhotonEnergy();
+  double getMaxPhotonEnergy() const;
 
   //! Return the absolute maximum photon energy (MeV)
   static double getAbsoluteMaxPhotonEnergy();
 
   //! Set the Kahn sampling cutoff energy (MeV)
-  static void setKahnSamplingCutoffEnergy( const double energy );
+  void setKahnSamplingCutoffEnergy( const double energy );
 
   //! Return the Kahn sampling cutoff energy (MeV)
-  static double getKahnSamplingCutoffEnergy();
+  double getKahnSamplingCutoffEnergy() const;
 
   //! Return the absolute min Kahn sampling cutoff energy (MeV)
   static double getAbsoluteMinKahnSamplingCutoffEnergy();
 
   //! Set the number of photon hash grid bins
-  static void setNumberOfPhotonHashGridBins( const unsigned bins );
+  void setNumberOfPhotonHashGridBins( const unsigned bins );
 
   //! Get the number of photon hash grid bins
-  static unsigned getNumberOfPhotonHashGridBins();
+  unsigned getNumberOfPhotonHashGridBins() const;
 
   //! Set the incoherent model type
-  static void setIncoherentModelType( const IncoherentModelType model );
+  void setIncoherentModelType( const IncoherentModelType model );
 
   //! Return the incohernt model
-  static IncoherentModelType getIncoherentModelType();
+  IncoherentModelType getIncoherentModelType() const;
 
   //! Set atomic relaxation mode to off (on by default)
-  static void setAtomicRelaxationModeOff();
+  void setAtomicRelaxationModeOff();
+
+  //! Set atomic relaxation mode to on (on by default)
+  void setAtomicRelaxationModeOn();
 
   //! Return if atomic relaxation mode is on
-  static bool isAtomicRelaxationModeOn();
+  bool isAtomicRelaxationModeOn() const;
 
+  //! Set detailed pair production mode to off (off by default)
+  void setDetailedPairProductionModeOff();
+  
   //! Set detailed pair production mode to on (off by default)
-  static void setDetailedPairProductionModeOn();
+  void setDetailedPairProductionModeOn();
 
   //! Return if detailed pair production mode is on
-  static bool isDetailedPairProductionModeOn();
+  bool isDetailedPairProductionModeOn() const;
 
+  //! Set photonuclear interaction mode to off (off by default)
+  void setPhotonuclearInteractionModeOff();
+  
   //! Set photonuclear interaction mode to on (off by default)
-  static void setPhotonuclearInteractionModeOn();
+  void setPhotonuclearInteractionModeOn();
 
   //! Return if photonuclear interaction mode is on
-  static bool isPhotonuclearInteractionModeOn();
+  bool isPhotonuclearInteractionModeOn() const;
 
 private:
 
   // The absolute minimum photon energy (MeV)
-  static const double absolute_min_photon_energy;
-
-  // The minimum photon energy (MeV)
-  static double min_photon_energy;
-
-  // The maximum photon energy (MeV)
-  static double max_photon_energy;
+  static const double s_absolute_min_photon_energy;
 
   // The absolute maximum photon energy
-  static const double absolute_max_photon_energy;
-
-  // The Kahn sampling cutoff energy (MeV)
-  static double kahn_sampling_cutoff_energy;
+  static const double s_absolute_max_photon_energy;
 
   // The absolute min Kahn sampling cutoff energy (MeV)
-  static const double absolute_min_kahn_sampling_cutoff_energy;
+  static const double s_absolute_min_kahn_sampling_cutoff_energy;
+
+  // The minimum photon energy (MeV)
+  double d_min_photon_energy;
+
+  // The maximum photon energy (MeV)
+  double d_max_photon_energy;
+
+  // The Kahn sampling cutoff energy (MeV)
+  double d_kahn_sampling_cutoff_energy;
 
   // The number of photon hash grid bins
-  static unsigned num_photon_hash_grid_bins;
+  unsigned d_num_photon_hash_grid_bins;
 
   // The incoherent model
-  static IncoherentModelType incoherent_model_type;
+  IncoherentModelType d_incoherent_model_type;
 
   // The atomic relaxation mode (true = on - default, false = off)
-  static bool atomic_relaxation_mode_on;
+  bool d_atomic_relaxation_mode_on;
 
   // The detailed pair production mode (true = on, false = off - default)
-  static bool detailed_pair_production_mode_on;
+  bool d_detailed_pair_production_mode_on;
 
   // The photonuclear interaction mode (true = on, false = off - default)
-  static bool photonuclear_interaction_mode_on;
+  bool d_photonuclear_interaction_mode_on;
 };
-
-// Return the minimum photon energy (MeV)
-inline double SimulationPhotonProperties::getMinPhotonEnergy()
-{
-  return SimulationPhotonProperties::min_photon_energy;
-}
-
-// Return the absolute minimum photon energy (MeV)
-inline double SimulationPhotonProperties::getAbsoluteMinPhotonEnergy()
-{
-  return SimulationPhotonProperties::absolute_min_photon_energy;
-}
-
-// Return the maximum photon energy (MeV) - cannot be set at runtime
-inline double SimulationPhotonProperties::getMaxPhotonEnergy()
-{
-  return SimulationPhotonProperties::max_photon_energy;
-}
-
-// Return the absolute maximum photon energy (MeV)
-inline double SimulationPhotonProperties::getAbsoluteMaxPhotonEnergy()
-{
-  return SimulationPhotonProperties::absolute_max_photon_energy;
-}
-
-// Return the Kahn sampling cutoff energy (MeV)
-inline double SimulationPhotonProperties::getKahnSamplingCutoffEnergy()
-{
-  return SimulationPhotonProperties::kahn_sampling_cutoff_energy;
-}
-
-// Return the absolute min Kahn sampling cutoff energy (MeV)
-inline double SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
-{
-  return SimulationPhotonProperties::absolute_min_kahn_sampling_cutoff_energy;
-}
-
-// Get the number of photon hash grid bins
-inline unsigned SimulationPhotonProperties::getNumberOfPhotonHashGridBins()
-{
-  return SimulationPhotonProperties::num_photon_hash_grid_bins;
-}
-
-// Return the incohernt model
-inline IncoherentModelType SimulationPhotonProperties::getIncoherentModelType()
-{
-  return SimulationPhotonProperties::incoherent_model_type;
-}
-
-// Return if atomic relaxation mode is on
-inline bool SimulationPhotonProperties::isAtomicRelaxationModeOn()
-{
-  return SimulationPhotonProperties::atomic_relaxation_mode_on;
-}
-
-// Return if detailed pair production mode is on
-inline bool SimulationPhotonProperties::isDetailedPairProductionModeOn()
-{
-  return SimulationPhotonProperties::detailed_pair_production_mode_on;
-}
-
-// Return if photonuclear interaction mode is on
-inline bool SimulationPhotonProperties::isPhotonuclearInteractionModeOn()
-{
-  return SimulationPhotonProperties::photonuclear_interaction_mode_on;
-}
 
 } // end MonteCarlo namespace
 

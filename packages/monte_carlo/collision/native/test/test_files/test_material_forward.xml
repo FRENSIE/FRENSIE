@@ -1,0 +1,27 @@
+<ParameterList name="Materials">
+
+  <ParameterList name="Hydrogen">
+    <Parameter name="Id" type="unsigned int" value="1"/>
+    <Parameter name="Fractions" type="Array" value="{1.0}"/>
+    <Parameter name="Isotopes" type="Array(string)" value="{H-1_293.6K}"/>
+  </ParameterList>
+
+  <ParameterList name="Water">
+    <Parameter name="Id" type="unsigned int" value="2"/>
+    <Parameter name="Fractions" type="Array" value="{2.0, 1.0}"/>
+    <Parameter name="Isotopes" type="Array(string)" value="{H-1_293.6K, O-16_293.6K}"/>
+  </ParameterList>
+
+  <ParameterList name="Lead">
+    <Parameter name="Id" type="unsigned int" value="3"/>
+    <Parameter name="Fractions" type="Array" value="{1.0}"/>
+    <Parameter name="Isotopes" type="Array(string)" value="{Pb-208_293.6K}"/>
+  </ParameterList>
+
+  <ParameterList name="Uranium">
+    <Parameter name="Id" type="unsigned int" value="4"/>
+    <Parameter name="Fractions" type="Array" value="{1.0}"/>
+    <Parameter name="Isotopes" type="Array(string)" value="{U-238_293.6K}"/>
+  </ParameterList>
+  
+</ParameterList>

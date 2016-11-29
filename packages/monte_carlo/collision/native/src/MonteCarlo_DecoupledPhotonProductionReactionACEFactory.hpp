@@ -42,6 +42,7 @@ public:
 		 const double atomic_weight_ratio,
 		 const double temperature,
 		 const Teuchos::ArrayRCP<const double>& energy_grid,
+                 const SimulationProperties& properties,
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data );
 
   //! Destructor
@@ -98,19 +99,21 @@ private:
   // Initialize the yield based photon production reactions
   void initializeYieldBasedPhotonProductionReactions(
        const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-	     const double temperature,
-	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
-	     const boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
-	     PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory );
+       const double temperature,
+       const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
+       const boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
+       const SimulationProperties& properties,
+       PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory );
 
   // Initialize the yield based photon production reactions
   void initializeCrossSectionBasedPhotonProductionReactions(
        const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-	     const double temperature,
-	     const boost::unordered_map<unsigned,unsigned>& threshold_energy_map,
-	     const boost::unordered_map<unsigned,Teuchos::ArrayRCP<double> >& xs_based_map,
-	     const Teuchos::ArrayRCP<const double>& energy_grid,
-	     PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory );
+       const double temperature,
+       const boost::unordered_map<unsigned,unsigned>& threshold_energy_map,
+       const boost::unordered_map<unsigned,Teuchos::ArrayRCP<double> >& xs_based_map,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const SimulationProperties& properties,
+       PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory );
 
   // A map of the photon production reactions
   boost::unordered_map<unsigned,Teuchos::RCP<DecoupledPhotonProductionReaction> >

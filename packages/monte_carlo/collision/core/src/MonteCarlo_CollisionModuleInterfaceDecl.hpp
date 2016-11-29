@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_COLLISION_MODULE_INTERFACE_DECL_HPP
 #define MONTE_CARLO_COLLISION_MODULE_INTERFACE_DECL_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_PhotonState.hpp"
@@ -54,7 +57,7 @@ public:
 
   //! Set the collision handler instance
   static inline void setHandlerInstance(
-		      const Teuchos::RCP<CollisionHandler>& collision_handler )
+                   const std::shared_ptr<CollisionHandler>& collision_handler )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
   //! Check if a cell is void
@@ -64,73 +67,35 @@ public:
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
 
   //! Get the total macroscopic cross section of a material
+  template<typename ParticleStateType>
   static inline double getMacroscopicTotalCrossSection(
-						 const NeutronState& particle )
+                                            const ParticleStateType& particle )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
 
-  //! Get the total macroscopic cross section of a material
-  static inline double getMacroscopicTotalCrossSection(
-						 const PhotonState& particle )
+  //! Get the total forward macroscopic cross section of a material
+  template<typename ParticleStateType>
+  static inline double getMacroscopicTotalForwardCrossSection(
+                                            const ParticleStateType& particle )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
-
-  //! Get the total macroscopic cross section of a material
-  static inline double getMacroscopicTotalCrossSection(
-						 const ElectronState& particle )
-  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
-
-  //! Get the macroscopic cross section for a specific reaction
-  static inline double getMacroscopicReactionCrossSection(
-					   const NeutronState& particle,
-					   const NuclearReactionType reaction )
-  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
-
-  //! Get the macroscopic cross section for a specific reaction
-  static inline double getMacroscopicReactionCrossSection(
-				       const PhotonState& particle,
-				       const PhotoatomicReactionType reaction )
-  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
-
-  //! Get the macroscopic cross section for a specific reaction
-  static inline double getMacroscopicReactionCrossSection(
-				      const PhotonState& particle,
-				      const PhotonuclearReactionType reaction )
-  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
-
-  //! Get the macroscopic cross section for a specific reaction
-  static inline double getMacroscopicReactionCrossSection(
-				       const ElectronState& particle,
-				       const ElectroatomicReactionType reaction )
-  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
   //! Sample the optical path length traveled by a particle before a collision
   static inline double sampleOpticalPathLength()
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
   //! Collide with the material in a cell
-  static inline void collideWithCellMaterial( NeutronState& particle,
-					      ParticleBank& bank,
-					      const bool analogue )
+  template<typename ParticleStateType>
+  static inline void collideWithCellMaterial( ParticleStateType& particle,
+					      ParticleBank& bank )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
-  //! Collide with the material in a cell
-  static inline void collideWithCellMaterial( PhotonState& particle,
-					      ParticleBank& bank,
-					      const bool analogue )
-  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
-
-  //! Collide with the material in a cell
-  static inline void collideWithCellMaterial( ElectronState& particle,
-                                              ParticleBank& bank,
-                                              const bool analogue )
-  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 };
 
 //! Set the collision handler instance
 template<typename CollisionHandler>
 inline void setCollisionHandlerInstance(
-	     const Teuchos::RCP<CollisionHandler>& collision_handler_instance )
+          const std::shared_ptr<CollisionHandler>& collision_handler_instance )
 {
-  CollisionModuleInterface<CollisionHandler>::setHHandlerInstance(
+  CollisionModuleInterface<CollisionHandler>::setHandlerInstance(
 						  collision_handler_instance );
 }
 

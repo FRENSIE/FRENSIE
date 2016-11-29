@@ -23,7 +23,7 @@ void CollisionHandlerFactory::createMaterialNameDataMaps(
    scattering_center_map,
    const CellIdMatIdMap& cell_id_mat_id_map,
    const CellIdDensityMap& cell_id_density_map,
-   std::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
+   std::unordered_map<std::string,Teuchos::RCP<const MaterialType> >&
    material_name_pointer_map,
    MatNameCellIdsMap& material_name_cell_ids_map )
 {
@@ -53,7 +53,7 @@ void CollisionHandlerFactory::createMaterialNameDataMaps(
     if( material_name_pointer_map.find( material_name ) ==
 	material_name_pointer_map.end() )
     {
-      Teuchos::RCP<MaterialType>& new_material=
+      Teuchos::RCP<const MaterialType>& new_material=
 	material_name_pointer_map[material_name];
 
       new_material.reset( new MaterialType(
@@ -73,12 +73,13 @@ void CollisionHandlerFactory::createMaterialNameDataMaps(
 // Register materials with cells
 template<typename MaterialType>
 void CollisionHandlerFactory::registerMaterials(
-   const std::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
+   std::shared_ptr<CollisionHandler>& collision_handler,
+   const std::unordered_map<std::string,Teuchos::RCP<const MaterialType> >&
    material_name_pointer_map,
    const MatNameCellIdsMap& material_name_cell_ids_map )
 {
   typename std::unordered_map<std::string,
-                              Teuchos::RCP<MaterialType> >::const_iterator
+                              Teuchos::RCP<const MaterialType> >::const_iterator
     material_name_pointer_it = material_name_pointer_map.begin();
 
   while( material_name_pointer_it != material_name_pointer_map.end() )
@@ -87,8 +88,8 @@ void CollisionHandlerFactory::registerMaterials(
       material_name_cell_ids_map.find(
                                      material_name_pointer_it->first )->second;
 
-    CollisionHandler::addMaterial( material_name_pointer_it->second,
-                                   cells_containing_material );
+    collision_handler->addMaterial( material_name_pointer_it->second,
+                                    cells_containing_material );
 
     ++material_name_pointer_it;
   }

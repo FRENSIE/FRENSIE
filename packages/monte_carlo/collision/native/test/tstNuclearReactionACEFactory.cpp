@@ -19,59 +19,71 @@
 #include "MonteCarlo_NuclearReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-std::string test_h1_ace_file_name;
-std::string test_h1_ace_table_name;
-std::string test_o16_ace_file_name;
-std::string test_o16_ace_table_name;
-// std::string test_fission_ace_file_name;
-// std::string test_ptable_ace_file_name;
-// std::string test_fission_ptable_ace_file_name;
 
-Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> h1_reaction_factory;
-Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> o16_reaction_factory;
+std::shared_ptr<const Data::ACEFileHandler> h1_ace_file_handler;
+std::shared_ptr<const Data::XSSNeutronDataExtractor> h1_xss_data_extractor;
+Teuchos::ArrayRCP<double> h1_energy_grid;
 
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-void initializeReactionFactory(
-		  Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory>& factory,
-		  const std::string& ace_file_name,
-		  const std::string& ace_table_name )
-{
-  Teuchos::RCP<Data::ACEFileHandler>
-    ace_file_handler( new Data::ACEFileHandler( ace_file_name,
-						ace_table_name,
-						1u ) );
-  Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor(
-   new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray()));
+std::shared_ptr<const Data::ACEFileHandler> o16_ace_file_handler;
+std::shared_ptr<const Data::XSSNeutronDataExtractor> o16_xss_data_extractor;
+Teuchos::ArrayRCP<double> o16_energy_grid;
 
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
-
-  factory.reset( new MonteCarlo::NuclearReactionACEFactory(
-			      ace_table_name,
-			      ace_file_handler->getTableAtomicWeightRatio(),
-			      ace_file_handler->getTableTemperature(),
-			      energy_grid,
-			      *xss_data_extractor ) );
-}
+std::shared_ptr<const MonteCarlo::SimulationProperties> properties;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the scattering reaction can be created
-TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createScatteringReactions )
+// Check that the factory can be constructed
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_h1, constructor )
 {
+  std::shared_ptr<MonteCarlo::NuclearReactionACEFactory> factory;
+  
+  TEST_NOTHROW( factory.reset( new MonteCarlo::NuclearReactionACEFactory(
+                              "h1_test_table",
+			      h1_ace_file_handler->getTableAtomicWeightRatio(),
+			      h1_ace_file_handler->getTableTemperature(),
+			      h1_energy_grid,
+                              *properties,
+			      *h1_xss_data_extractor ) ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the factory can be constructed
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_o16, constructor )
+{
+  std::shared_ptr<MonteCarlo::NuclearReactionACEFactory> factory;
+
+  TEST_NOTHROW( factory.reset( new MonteCarlo::NuclearReactionACEFactory(
+                             "o16_test_table",
+                             o16_ace_file_handler->getTableAtomicWeightRatio(),
+                             o16_ace_file_handler->getTableTemperature(),
+                             o16_energy_grid,
+                             *properties,
+                             *o16_xss_data_extractor ) ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction can be created
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_h1, createScatteringReactions )
+{
+  std::shared_ptr<MonteCarlo::NuclearReactionACEFactory> factory(
+                           new MonteCarlo::NuclearReactionACEFactory(
+                              "h1_test_table",
+			      h1_ace_file_handler->getTableAtomicWeightRatio(),
+			      h1_ace_file_handler->getTableTemperature(),
+			      h1_energy_grid,
+                              *properties,
+			      *h1_xss_data_extractor ) );
+  
   boost::unordered_map<MonteCarlo::NuclearReactionType,
 		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
 
-  h1_reaction_factory->createScatteringReactions( reactions );
+  factory->createScatteringReactions( reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 1 );
 
@@ -90,71 +102,25 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createScatteringReactions
 }
 
 //---------------------------------------------------------------------------//
-// Check that the absorption reactions can be created
-TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createAbsorptionReactions )
-{
-  boost::unordered_map<MonteCarlo::NuclearReactionType,
-		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
-
-  h1_reaction_factory->createAbsorptionReactions( reactions );
-
-  TEST_EQUALITY_CONST( reactions.size(), 3 );
-
-  Teuchos::RCP<MonteCarlo::NuclearReaction>& n_gamma_reaction =
-    reactions.find( MonteCarlo::N__GAMMA_REACTION )->second;
-
-  TEST_EQUALITY_CONST( n_gamma_reaction->getReactionType(),
-		       MonteCarlo::N__GAMMA_REACTION );
-  TEST_EQUALITY_CONST( n_gamma_reaction->getQValue(), 2.224631 );
-  TEST_EQUALITY_CONST( n_gamma_reaction->getNumberOfEmittedNeutrons( 0.0 ), 0);
-  TEST_EQUALITY_CONST( n_gamma_reaction->getThresholdEnergy(), 1.0e-11 );
-  TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 1.0e-11 ),
-		       1.670111e1 );
-  TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 2.0e1 ),
-		       2.722354e-5 );
-
-  Teuchos::RCP<MonteCarlo::NuclearReaction>& d_production_reaction =
-    reactions.find( MonteCarlo::N__TOTAL_D_PRODUCTION )->second;
-
-  TEST_EQUALITY_CONST( d_production_reaction->getReactionType(),
-		       MonteCarlo::N__TOTAL_D_PRODUCTION );
-  TEST_EQUALITY_CONST( d_production_reaction->getQValue(), 0.0 );
-  TEST_EQUALITY_CONST( d_production_reaction->getNumberOfEmittedNeutrons(0.0),
-		       0 );
-  TEST_EQUALITY_CONST( d_production_reaction->getThresholdEnergy(), 1.0e-11 );
-  TEST_EQUALITY_CONST( d_production_reaction->getCrossSection( 1.0e-11 ),
-		       1.670111e1 );
-  TEST_EQUALITY_CONST( d_production_reaction->getCrossSection( 2.0e1 ),
-		       2.722354e-5 );
-
-  Teuchos::RCP<MonteCarlo::NuclearReaction>& dpa_reaction =
-    reactions.find( MonteCarlo::N__DPA )->second;
-
-  TEST_EQUALITY_CONST( dpa_reaction->getReactionType(),
-		       MonteCarlo::N__DPA );
-  TEST_EQUALITY_CONST( dpa_reaction->getQValue(), 0.0 );
-  TEST_EQUALITY_CONST( dpa_reaction->getNumberOfEmittedNeutrons( 0.0 ), 0 );
-  TEST_EQUALITY_CONST( dpa_reaction->getThresholdEnergy(), 2.375e-05);
-  TEST_EQUALITY_CONST( dpa_reaction->getCrossSection( 2.375e-05 ), 0.0 );
-  TEST_EQUALITY_CONST( dpa_reaction->getCrossSection( 2.0e1 ), 3.067696e-04 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the scattering reaction can be created
-TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, createScatteringReactions )
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_o16, createScatteringReactions )
 {
+  std::shared_ptr<MonteCarlo::NuclearReactionACEFactory> factory(
+                           new MonteCarlo::NuclearReactionACEFactory(
+                             "o16_test_table",
+			     o16_ace_file_handler->getTableAtomicWeightRatio(),
+                             o16_ace_file_handler->getTableTemperature(),
+                             o16_energy_grid,
+                             *properties,
+                             *o16_xss_data_extractor ) );
+  
   boost::unordered_map<MonteCarlo::NuclearReactionType,
 		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
 
-  o16_reaction_factory->createScatteringReactions( reactions );
+  factory->createScatteringReactions( reactions );
 
   typedef boost::unordered_map<MonteCarlo::NuclearReactionType,
     Teuchos::RCP<MonteCarlo::NuclearReaction> >::const_iterator Reaction;
-
-  for( Reaction reaction = reactions.begin(); reaction != reactions.end(); ++reaction )
-  {
-    std::cout << reaction->first << " " << reaction->second->getThresholdEnergy() << std::endl;
-  }
 
   TEST_EQUALITY_CONST( reactions.size(), 18 );
 
@@ -206,24 +172,83 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, createScatteringReactions )
 
 //---------------------------------------------------------------------------//
 // Check that the absorption reactions can be created
-TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen,
-		   createAbsorptionReactions )
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_h1, createAbsorptionReactions )
 {
+  std::shared_ptr<MonteCarlo::NuclearReactionACEFactory> factory(
+                           new MonteCarlo::NuclearReactionACEFactory(
+                              "h1_test_table",
+			      h1_ace_file_handler->getTableAtomicWeightRatio(),
+			      h1_ace_file_handler->getTableTemperature(),
+			      h1_energy_grid,
+                              *properties,
+			      *h1_xss_data_extractor ) );
+  
   boost::unordered_map<MonteCarlo::NuclearReactionType,
 		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
 
-  o16_reaction_factory->createAbsorptionReactions( reactions );
+  factory->createAbsorptionReactions( reactions );
+
+  TEST_EQUALITY_CONST( reactions.size(), 3 );
+
+  Teuchos::RCP<MonteCarlo::NuclearReaction>& n_gamma_reaction =
+    reactions.find( MonteCarlo::N__GAMMA_REACTION )->second;
+
+  TEST_EQUALITY_CONST( n_gamma_reaction->getReactionType(),
+		       MonteCarlo::N__GAMMA_REACTION );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getQValue(), 2.224631 );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getNumberOfEmittedNeutrons( 0.0 ), 0);
+  TEST_EQUALITY_CONST( n_gamma_reaction->getThresholdEnergy(), 1.0e-11 );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 1.0e-11 ),
+		       1.670111e1 );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 2.0e1 ),
+		       2.722354e-5 );
+
+  Teuchos::RCP<MonteCarlo::NuclearReaction>& d_production_reaction =
+    reactions.find( MonteCarlo::N__TOTAL_D_PRODUCTION )->second;
+
+  TEST_EQUALITY_CONST( d_production_reaction->getReactionType(),
+		       MonteCarlo::N__TOTAL_D_PRODUCTION );
+  TEST_EQUALITY_CONST( d_production_reaction->getQValue(), 0.0 );
+  TEST_EQUALITY_CONST( d_production_reaction->getNumberOfEmittedNeutrons(0.0),
+		       0 );
+  TEST_EQUALITY_CONST( d_production_reaction->getThresholdEnergy(), 1.0e-11 );
+  TEST_EQUALITY_CONST( d_production_reaction->getCrossSection( 1.0e-11 ),
+		       1.670111e1 );
+  TEST_EQUALITY_CONST( d_production_reaction->getCrossSection( 2.0e1 ),
+		       2.722354e-5 );
+
+  Teuchos::RCP<MonteCarlo::NuclearReaction>& dpa_reaction =
+    reactions.find( MonteCarlo::N__DPA )->second;
+
+  TEST_EQUALITY_CONST( dpa_reaction->getReactionType(),
+		       MonteCarlo::N__DPA );
+  TEST_EQUALITY_CONST( dpa_reaction->getQValue(), 0.0 );
+  TEST_EQUALITY_CONST( dpa_reaction->getNumberOfEmittedNeutrons( 0.0 ), 0 );
+  TEST_EQUALITY_CONST( dpa_reaction->getThresholdEnergy(), 2.375e-05);
+  TEST_EQUALITY_CONST( dpa_reaction->getCrossSection( 2.375e-05 ), 0.0 );
+  TEST_EQUALITY_CONST( dpa_reaction->getCrossSection( 2.0e1 ), 3.067696e-04 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reactions can be created
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_o16, createAbsorptionReactions )
+{
+  std::shared_ptr<MonteCarlo::NuclearReactionACEFactory> factory(
+                           new MonteCarlo::NuclearReactionACEFactory(
+                             "o16_test_table",
+			     o16_ace_file_handler->getTableAtomicWeightRatio(),
+                             o16_ace_file_handler->getTableTemperature(),
+                             o16_energy_grid,
+                             *properties,
+                             *o16_xss_data_extractor ) );
+  
+  boost::unordered_map<MonteCarlo::NuclearReactionType,
+		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
+
+  factory->createAbsorptionReactions( reactions );
 
   typedef boost::unordered_map<MonteCarlo::NuclearReactionType,
     Teuchos::RCP<MonteCarlo::NuclearReaction> >::const_iterator Reaction;
-
-  for( Reaction reaction = reactions.begin(); reaction != reactions.end(); ++reaction )
-  {
-    if( reaction->first < 117 )
-    {
-      std::cout << reaction->first << " " << reaction->second->getThresholdEnergy() << std::endl;
-    }
-  }
 
   TEST_EQUALITY_CONST( reactions.size(), 51 );
 
@@ -256,60 +281,66 @@ TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen,
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-  clp.setOption( "test_h1_ace_file",
+std::string test_h1_ace_file_name;
+std::string test_h1_ace_table_name;
+std::string test_o16_ace_file_name;
+std::string test_o16_ace_table_name;
+// std::string test_fission_ace_file_name;
+// std::string test_ptable_ace_file_name;
+// std::string test_fission_ptable_ace_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_h1_ace_file",
 		 &test_h1_ace_file_name,
 		 "Test h1 ACE file name" );
-  clp.setOption( "test_h1_ace_table",
+  clp().setOption( "test_h1_ace_table",
 		 &test_h1_ace_table_name,
 		 "Test ACE table name in h1 ACE file" );
 
-  clp.setOption( "test_o16_ace_file",
+  clp().setOption( "test_o16_ace_file",
 		 &test_o16_ace_file_name,
 		 "Test o16 ACE file name" );
-  clp.setOption( "test_o16_ace_table",
+  clp().setOption( "test_o16_ace_table",
 		 &test_o16_ace_table_name,
 		 "Test ACE table name in o16 ACE file" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  // Initialize nuclear reaction factories
-  initializeReactionFactory( h1_reaction_factory,
-			     test_h1_ace_file_name,
-			     test_h1_ace_table_name );
-
-  initializeReactionFactory( o16_reaction_factory,
-			     test_o16_ace_file_name,
-			     test_o16_ace_table_name );
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  // Create the H-1 file handler, data extractor and energy grid
+  h1_ace_file_handler.reset( new Data::ACEFileHandler( test_h1_ace_file_name,
+                                                       test_h1_ace_table_name,
+                                                       1u ) );
+
+  h1_xss_data_extractor.reset( new Data::XSSNeutronDataExtractor(
+                                   h1_ace_file_handler->getTableNXSArray(),
+                                   h1_ace_file_handler->getTableJXSArray(),
+				   h1_ace_file_handler->getTableXSSArray() ) );
+
+  h1_energy_grid.deepCopy( h1_xss_data_extractor->extractEnergyGrid() );
+  
+  // Create the O-16 file handler, data extractor and energy grid
+  o16_ace_file_handler.reset( new Data::ACEFileHandler(test_o16_ace_file_name,
+                                                       test_o16_ace_table_name,
+                                                       1u ) );
+
+  o16_xss_data_extractor.reset( new Data::XSSNeutronDataExtractor(
+                                  o16_ace_file_handler->getTableNXSArray(),
+                                  o16_ace_file_handler->getTableJXSArray(),
+                                  o16_ace_file_handler->getTableXSSArray() ) );
+
+  o16_energy_grid.deepCopy( o16_xss_data_extractor->extractEnergyGrid() );
+
+  // Initialize the simulation properties
+  properties.reset( new MonteCarlo::SimulationProperties );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNuclearReactionACEFactory.cpp

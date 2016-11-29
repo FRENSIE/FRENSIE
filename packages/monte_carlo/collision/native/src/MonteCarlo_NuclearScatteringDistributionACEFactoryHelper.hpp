@@ -33,7 +33,8 @@ public:
 		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
-          const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+                      const double free_gas_threshold,
+                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		      angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,
@@ -63,10 +64,11 @@ public:
   static void createElasticScatteringDistribution(
           Teuchos::RCP<NuclearScatteringDistribution<ParticleType,ParticleType> >& distribution,
           const std::string ace_table_name,
-		      const bool defined_in_cm_system,
-		      const double atomic_weight_ratio,
+          const bool defined_in_cm_system,
+          const double atomic_weight_ratio,
+          const double free_gas_threshold,
           const Teuchos::RCP<NuclearScatteringAngularDistribution>&
-		      angular_distribution )
+          angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,
 		     "Error: elastic scattering is not defined for "
@@ -92,6 +94,7 @@ public:
 		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
+                      const double free_gas_threshold,
                       const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		      angular_distribution );
 

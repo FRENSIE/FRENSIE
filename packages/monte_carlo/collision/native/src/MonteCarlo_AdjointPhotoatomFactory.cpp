@@ -24,24 +24,10 @@ AdjointPhotoatomFactory::AdjointPhotoatomFactory(
               const std::string& cross_sections_xml_directory,
               const Teuchos::ParameterList& cross_section_table_info,
               const std::unordered_set<std::string>& adjoint_photoatom_aliases,
-              const double max_energy,
-              const unsigned hash_grid_bins,
-              const IncoherentAdjointModelType incoherent_adjoint_model,
-              const Teuchos::Array<double>& user_critical_line_energies,
+              const SimulationAdjointPhotonProperties& properties,
               std::ostream* os_message )
   : d_os_message( os_message )
 {
-  // Make sure the user critical line energies are valid
-  testPrecondition( (user_critical_line_energies.size() > 0 ?
-                     Utility::Sort::isSortedAscending(
-                                         user_critical_line_energies.begin(),
-                                         user_critical_line_energies.end() ):
-                     true) );
-  // Make sure the max energy is valid
-  testPrecondition( max_energy > 0.0 );
-  testPrecondition( (user_critical_line_energies.size() > 0 ? max_energy >= user_critical_line_energies.back(): true) );
-  // Make sure the hash grid bins are valid
-  testPrecondition( hash_grid_bins > 0u );
   // Make sure the message output stream is valid
   testPrecondition( os_message != NULL );
 
@@ -67,15 +53,11 @@ AdjointPhotoatomFactory::AdjointPhotoatomFactory(
 
     if( file_type == Data::CrossSectionsXMLProperties::native_file )
     {
-      this->createAdjointPhotoatomFromNativeTable(
-                                                 cross_sections_xml_directory,
-                                                 *adjoint_photoatom_name,
-                                                 file_path,
-                                                 atomic_weight,
-                                                 max_energy,
-                                                 hash_grid_bins,
-                                                 incoherent_adjoint_model,
-                                                 user_critical_line_energies );
+      this->createAdjointPhotoatomFromNativeTable(cross_sections_xml_directory,
+                                                  *adjoint_photoatom_name,
+                                                  file_path,
+                                                  atomic_weight,
+                                                  properties );
     }
     else
     {
@@ -107,14 +89,11 @@ void AdjointPhotoatomFactory::createAdjointPhotoatomMap(
 
 // Create an adjoint photoatom from a Native table
 void AdjointPhotoatomFactory::createAdjointPhotoatomFromNativeTable(
-                   const std::string& cross_sections_xml_directory,
-                   const std::string& adjoint_photoatom_alias,
-                   const std::string& native_file_path,
-                   const double atomic_weight,
-                   const double max_energy,
-                   const unsigned hash_grid_bins,
-                   const IncoherentAdjointModelType incoherent_adjoint_model,
-                   const Teuchos::Array<double>& user_critical_line_energies )
+                          const std::string& cross_sections_xml_directory,
+                          const std::string& adjoint_photoatom_alias,
+                          const std::string& native_file_path,
+                          const double atomic_weight,
+                          const SimulationAdjointPhotonProperties& properties )
 {
   *d_os_message << "Loading native adjoint photoatomic cross section table "
                 << adjoint_photoatom_alias << " ... " << std::flush;
@@ -133,15 +112,12 @@ void AdjointPhotoatomFactory::createAdjointPhotoatomFromNativeTable(
 
     // Create the new adjoint photoatom
     AdjointPhotoatomNativeFactory::createAdjointPhotoatom(
-                                                 data_container,
-                                                 native_file_path,
-                                                 atomic_weight,
-                                                 adjoint_photoatom,
-                                                 max_energy,
-                                                 hash_grid_bins,
-                                                 incoherent_adjoint_model,
-                                                 user_critical_line_energies );
-
+                                        data_container,
+                                        native_file_path,
+                                        atomic_weight,
+                                        properties,
+                                        adjoint_photoatom );
+    
     // Cache the new adjoint photoatom in the table name map
     d_adjoint_photoatomic_table_name_map[native_file_path] = adjoint_photoatom;
   }

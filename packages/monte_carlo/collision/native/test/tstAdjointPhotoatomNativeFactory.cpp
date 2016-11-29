@@ -18,6 +18,7 @@
 #include "MonteCarlo_AdjointPhotoatomNativeFactory.hpp"
 #include "MonteCarlo_LineEnergyAdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotoatomicReaction.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -38,16 +39,22 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomNativeFactory,
 {
   Teuchos::RCP<MonteCarlo::AdjointPhotoatomCore> adjoint_photoatom_core;
 
-  Teuchos::Array<double> user_critical_line_energies( 1 );
-  user_critical_line_energies[0] = 20.0;
+  MonteCarlo::SimulationProperties properties;
+
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1 );
+    user_critical_line_energies[0] = 20.0;
+
+    properties.setMaxAdjointPhotonEnergy( 20.0 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
   
   MonteCarlo::AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
-                                     *data_container,
-                                     adjoint_photoatom_core,
-                                     20.0,
-                                     100,
-                                     MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                     user_critical_line_energies );
+                                                      *data_container,
+                                                      properties,
+                                                      adjoint_photoatom_core );
 
   // Check that the grid searcher was constructed correctly
   TEST_ASSERT( !adjoint_photoatom_core->getGridSearcher().isValueWithinGridBounds( 9.9e-4 ) );
@@ -138,16 +145,22 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomNativeFactory,
 {
   Teuchos::RCP<MonteCarlo::AdjointPhotoatomCore> adjoint_photoatom_core;
 
-  Teuchos::Array<double> user_critical_line_energies( 1 );
-  user_critical_line_energies[0] = 20.0;
+  MonteCarlo::SimulationProperties properties;
+
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1 );
+    user_critical_line_energies[0] = 20.0;
+
+    properties.setMaxAdjointPhotonEnergy( 20.0 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
   
   MonteCarlo::AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
-                                  *data_container,
-                                  adjoint_photoatom_core,
-                                  20.0,
-                                  100,
-                                  MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                                  user_critical_line_energies );
+                                                      *data_container,
+                                                      properties,
+                                                      adjoint_photoatom_core );
 
   // Check that the grid searcher was constructed correctly
   TEST_ASSERT( !adjoint_photoatom_core->getGridSearcher().isValueWithinGridBounds( 9.9e-4 ) );
@@ -256,16 +269,22 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomNativeFactory,
 {
   Teuchos::RCP<MonteCarlo::AdjointPhotoatomCore> adjoint_photoatom_core;
 
-  Teuchos::Array<double> user_critical_line_energies( 1 );
-  user_critical_line_energies[0] = 1.5;
+  MonteCarlo::SimulationProperties properties;
+
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1 );
+    user_critical_line_energies[0] = 1.5;
+
+    properties.setMaxAdjointPhotonEnergy( 1.5 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
   
   MonteCarlo::AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
-                                     *data_container,
-                                     adjoint_photoatom_core,
-                                     1.5,
-                                     100,
-                                     MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                     user_critical_line_energies );
+                                                      *data_container,
+                                                      properties,
+                                                      adjoint_photoatom_core );
 
   // Check that the grid searcher was constructed correctly
   TEST_ASSERT( !adjoint_photoatom_core->getGridSearcher().isValueWithinGridBounds( 9.9e-4 ) );
@@ -348,16 +367,22 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomNativeFactory,
 {
   Teuchos::RCP<MonteCarlo::AdjointPhotoatomCore> adjoint_photoatom_core;
 
-  Teuchos::Array<double> user_critical_line_energies( 1 );
-  user_critical_line_energies[0] = 1.0;
+  MonteCarlo::SimulationProperties properties;
+
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1 );
+    user_critical_line_energies[0] = 1.0;
+
+    properties.setMaxAdjointPhotonEnergy( 1.0 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
   
   MonteCarlo::AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
-                                     *data_container,
-                                     adjoint_photoatom_core,
-                                     1.0,
-                                     100,
-                                     MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                     user_critical_line_energies );
+                                                      *data_container,
+                                                      properties,
+                                                      adjoint_photoatom_core );
 
   // Check that the grid searcher was constructed correctly
   TEST_ASSERT( !adjoint_photoatom_core->getGridSearcher().isValueWithinGridBounds( 9.9e-4 ) );
@@ -420,18 +445,24 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomNativeFactory, createAdjointPhotoatom )
 {
   Teuchos::RCP<MonteCarlo::AdjointPhotoatom> adjoint_photoatom;
 
-  Teuchos::Array<double> user_critical_line_energies( 1 );
-  user_critical_line_energies[0] = 10.0;
+  MonteCarlo::SimulationProperties properties;
+
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1 );
+    user_critical_line_energies[0] = 10.0;
+
+    properties.setMaxAdjointPhotonEnergy( 10.0 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
 
   MonteCarlo::AdjointPhotoatomNativeFactory::createAdjointPhotoatom(
                                        *data_container,
                                        "test_aepr_14",
                                        14.0,
-                                       adjoint_photoatom,
-                                       10.0,
-                                       100,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       user_critical_line_energies );
+                                       properties,
+                                       adjoint_photoatom );
 
   // Check that the name is correct
   TEST_EQUALITY_CONST( adjoint_photoatom->getAtomName(), "test_aepr_14" );
@@ -534,18 +565,24 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomNativeFactory,
 {
   Teuchos::RCP<MonteCarlo::AdjointPhotoatom> adjoint_photoatom;
 
-  Teuchos::Array<double> user_critical_line_energies( 1 );
-  user_critical_line_energies[0] = 10.0;
+  MonteCarlo::SimulationProperties properties;
+
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1 );
+    user_critical_line_energies[0] = 10.0;
+
+    properties.setMaxAdjointPhotonEnergy( 10.0 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
 
   MonteCarlo::AdjointPhotoatomNativeFactory::createAdjointPhotoatom(
                                *data_container,
                                "test_aepr_14",
                                14.0,
-                               adjoint_photoatom,
-                               10.0,
-                               100,
-                               MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL,
-                               user_critical_line_energies );
+                               properties,
+                               adjoint_photoatom );
 
   // Check that the name is correct
   TEST_EQUALITY_CONST( adjoint_photoatom->getAtomName(), "test_aepr_14" );
@@ -666,18 +703,24 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomNativeFactory,
 {
   Teuchos::RCP<MonteCarlo::AdjointPhotoatom> adjoint_photoatom;
 
-  Teuchos::Array<double> user_critical_line_energies( 1 );
-  user_critical_line_energies[0] = 1.5;
+  MonteCarlo::SimulationProperties properties;
+
+  {
+    Teuchos::Array<double> user_critical_line_energies( 1 );
+    user_critical_line_energies[0] = 1.5;
+
+    properties.setMaxAdjointPhotonEnergy( 1.5 );
+    properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+    properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
+    properties.setCriticalAdjointPhotonLineEnergies( user_critical_line_energies );
+  }
 
   MonteCarlo::AdjointPhotoatomNativeFactory::createAdjointPhotoatom(
-                                       *data_container,
-                                       "test_aepr_14",
-                                       14.0,
-                                       adjoint_photoatom,
-                                       1.5,
-                                       100,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       user_critical_line_energies );
+                                                           *data_container,
+                                                           "test_aepr_14",
+                                                           14.0,
+                                                           properties,
+                                                           adjoint_photoatom );
 
   // Check that the name is correct
   TEST_EQUALITY_CONST( adjoint_photoatom->getAtomName(), "test_aepr_14" );
@@ -772,17 +815,18 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatomNativeFactory,
 {
   Teuchos::RCP<MonteCarlo::AdjointPhotoatom> adjoint_photoatom;
 
-  Teuchos::Array<double> user_critical_line_energies;
+  MonteCarlo::SimulationProperties properties;
+
+  properties.setMaxAdjointPhotonEnergy( 1.0 );
+  properties.setNumberOfAdjointPhotonHashGridBins( 100 );
+  properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
 
   MonteCarlo::AdjointPhotoatomNativeFactory::createAdjointPhotoatom(
-                                       *data_container,
-                                       "test_aepr_14",
-                                       14.0,
-                                       adjoint_photoatom,
-                                       1.0,
-                                       100,
-                                       MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL,
-                                       user_critical_line_energies );
+                                                           *data_container,
+                                                           "test_aepr_14",
+                                                           14.0,
+                                                           properties,
+                                                           adjoint_photoatom );
 
   // Check that the name is correct
   TEST_EQUALITY_CONST( adjoint_photoatom->getAtomName(), "test_aepr_14" );

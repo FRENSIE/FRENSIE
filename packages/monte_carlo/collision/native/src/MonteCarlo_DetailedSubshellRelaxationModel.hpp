@@ -47,6 +47,8 @@ public:
 
   //! Relax the shell
   void relaxSubshell( const ParticleState& particle,
+                      const double min_photon_energy,
+                      const double min_electron_energy,
 		      ParticleBank& bank,
 		      Data::SubshellType& new_primary_vacancy_shell,
 		      Data::SubshellType& new_secondary_vacancy_shell ) const;
@@ -54,10 +56,9 @@ public:
 private:
 
   // Generate a fluorescence photon
-  void generateFluorescencePhoton(
-			       const ParticleState& particle,
-			       const double new_photon_energy,
-			       ParticleBank& bank ) const;
+  void generateFluorescencePhoton( const ParticleState& particle,
+                                   const double new_photon_energy,
+                                   ParticleBank& bank ) const;
 
   // Generate an Auger electron
   void generateAugerElectron( const ParticleState& particle,
