@@ -206,12 +206,6 @@ void ParticleSimulationManager<GeometryHandler,
     {
       double history_start_time =
         Utility::GlobalOpenMPSession::getTime(); - d_start_time;
-      #pragma omp critical( ostream_update )
-      {
-        std::cerr << "Start History #: " << history
-	      << " Start Time: " << history_start_time
-	      << std::endl;
-      }
 
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
@@ -272,13 +266,6 @@ void ParticleSimulationManager<GeometryHandler,
     // Increment the number of histories completed
         #pragma omp atomic
     ++d_histories_completed;
-      }
-
-      #pragma omp critical( ostream_update )
-      {
-        std::cerr << "End History #: " << history
-                  << " Run Time: " << Utility::GlobalOpenMPSession::getTime() - history_start_time
-                  << std::endl;
       }
     }
   }
