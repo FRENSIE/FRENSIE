@@ -498,23 +498,21 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
-  double energy = 1.000000000000E-05;
+  double energy = 1e-5;
   double cross_section_ratio =
     cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
-  double inelastic = 1.398201198000000E+08;
+  double inelastic = 1.398201198E+08;
   double elastic = 2.48924E+09*cross_section_ratio + 1.106329441558590E+08;
 
   double cross_section = atom->getTotalCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          inelastic + elastic,
-                          1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
 
-  energy = 2.000000000000E-01;
+  energy = 2e-1;
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
-  inelastic = 6.41057988372776E+06;
-  elastic = 1.611188150713820E+07*cross_section_ratio + 1.950992057434620E+06;
+  inelastic = 6.411260911064270E+06;
+  elastic = 1.61118815071382E+07*cross_section_ratio + 1.89168413638812E+06;
   
   cross_section = atom->getTotalCrossSection( energy );
 
@@ -522,7 +520,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
                           inelastic + elastic,
                           1e-12 );
 
-  energy = 1.000000000000E+05;
+  energy = 1e5;
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
   inelastic = 2.845403047900000E+06;
@@ -606,7 +604,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
     cutoff_elastic_distribution->evaluateCDF( 1e-3, new_cutoff_angle_cosine );
   
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.902810E+08*cross_section_ratio + 1.2584013774057174E+08,
+                          2.90281E+8*cross_section_ratio + 1.2584013774057174E+8,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
@@ -617,11 +615,11 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
     cutoff_elastic_distribution->evaluateCDF( 1.99526E-04, new_cutoff_angle_cosine );
   
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.130900E+08*cross_section_ratio + 2.5849727567112732E+08,
+                          6.1309E+8*cross_section_ratio + 2.13360933138207E+08,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
-                    1.000000000000E-05,
+                    1e-5,
                     MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio =
@@ -633,7 +631,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
 
   // Test that there is no cutoff elastic cross section
   cross_section = atom->getReactionCrossSection(
-                    1.00E-03,
+                    1e-3,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,

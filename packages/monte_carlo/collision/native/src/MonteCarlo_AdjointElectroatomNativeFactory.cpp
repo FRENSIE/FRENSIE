@@ -70,8 +70,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                        raw_adjoint_electroatom_data,
                        energy_grid,
                        grid_searcher,
-                       reaction_pointer,
+                       elastic_reaction,
                        cutoff_angle_cosine );
+    reaction_pointer = elastic_reaction;
   }
   // Create the hybrid elastic scattering reaction (if cutoff is within range)
   else
@@ -83,8 +84,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                        raw_adjoint_electroatom_data,
                        energy_grid,
                        grid_searcher,
-                       reaction_pointer,
+                       elastic_reaction,
                        cutoff_angle_cosine );
+    reaction_pointer = elastic_reaction;
   }
 
 

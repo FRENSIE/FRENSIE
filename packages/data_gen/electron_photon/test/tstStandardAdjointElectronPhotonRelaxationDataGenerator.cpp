@@ -1023,7 +1023,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
      h_data_container.getAdjointMomentPreservingCrossSection();
 
    TEST_EQUALITY_CONST( cross_section.front(), 1.0308605152240909636E+07 );
-   TEST_EQUALITY_CONST( cross_section.back(), 0.73821976945064415876 );
+   TEST_EQUALITY_CONST( cross_section.back(), 6.94769517429430272e-01 );
    TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
 
 
@@ -1165,14 +1165,14 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 2 );
 
   h_data_container.exportData( "test_h_aepr.xml",
-			     Utility::ArchivableObject::XML_ARCHIVE );
+                               Utility::ArchivableObject::XML_ARCHIVE );
 }
 
 
 //---------------------------------------------------------------------------//
 // Check that the table data can be set
 TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
-		           setTableData_c )
+                   setTableData_c )
 {
   generator_c.reset(
        new TestStandardAdjointElectronPhotonRelaxationDataGenerator(
