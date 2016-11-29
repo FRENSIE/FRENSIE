@@ -19,6 +19,54 @@
 
 namespace MonteCarlo{
 
+/*! The specialization of the PhaseSpaceDimensionTraits for COSINE_DIMENSION
+ * \ingroup phase_space_dim_traits
+ */
+template<>
+struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
+{
+  typedef double dimensionType;
+
+  static inline std::string name()
+  { return "Cosine"; }
+
+  static inline dimensionType lowerBound()
+  { return -1.0; }
+
+  static inline dimensionType upperBound()
+  { return 1.0; }
+
+  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  { return particle_wrapper.getAngleCosine(); }
+
+  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
+  { return Teuchos::any_cast<dimensionType>( any_value ); }
+};
+
+/*! The specialization of the PhaseSpaceDimensionTraits for SOURCE_ENERGY_DIMENSION
+ * \ingroup phase_space_dim_traits
+ */
+template<>
+struct PhaseSpaceDimensionTraits<SOURCE_ENERGY_DIMENSION>
+{
+  typedef ParticleState::energyType dimensionType;
+
+  static inline std::string name()
+  { return "Source Energy"; }
+
+  static inline dimensionType lowerBound()
+  { return 0.0; }
+
+  static inline dimensionType upperBound()
+  { return std::numeric_limits<dimensionType>::infinity(); }
+
+  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  { return particle_wrapper.getParticleState().getSourceEnergy(); }
+
+  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
+  { return Teuchos::any_cast<dimensionType>( any_value ); }
+};
+
 /*! The specialization of the PhaseSpaceDimensionTraits for ENERGY_DIMENSION
  * \ingroup phase_space_dim_traits
  */
@@ -43,25 +91,25 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
-/*! The specialization of the PhaseSpaceDimensionTraits for COSINE_DIMENSION
+/*! The specialization of the PhaseSpaceDimensionTraits for SOURCE_TIME_DIMENSION
  * \ingroup phase_space_dim_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
+struct PhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
 {
-  typedef double dimensionType;
+  typedef ParticleState::timeType dimensionType;
 
   static inline std::string name()
-  { return "Cosine"; }
+  { return "Source Time"; }
 
   static inline dimensionType lowerBound()
-  { return -1.0; }
+  { return 0.0; }
 
   static inline dimensionType upperBound()
-  { return 1.0; }
+  { return std::numeric_limits<dimensionType>::infinity(); }
 
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
-  { return particle_wrapper.getAngleCosine(); }
+  { return particle_wrapper.getParticleState().getSourceTime(); }
 
   static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
   { return Teuchos::any_cast<dimensionType>( any_value ); }

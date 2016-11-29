@@ -1337,7 +1337,33 @@ void EstimatorFactory::assignBinsToEstimator(
 
   while( it != bins.end() )
   {
-    if( bins.name( it ) == "Energy Bins" )
+    if( bins.name( it ) == "Source Energy Bins" )
+    {
+      const Utility::ArrayString& array_string =
+        Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+
+      Teuchos::Array<double> source_energy_bins;
+
+      try{
+        source_energy_bins = array_string.getConcreteArray<double>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the source energy bins requested "
+                                  "for estimator " << estimator->getId() <<
+				  " are not valid!" );
+
+      TEST_FOR_EXCEPTION(!Utility::Sort::isSortedAscending(source_energy_bins.begin(),
+							   source_energy_bins.end() ),
+                         InvalidEstimatorRepresentation,
+                         "Error: the source energy bins requested for "
+                         "estimator " << estimator->getId() << " are not "
+                         "sorted from lowest to highest!" );
+
+      estimator->setBinBoundaries<SOURCE_ENERGY_DIMENSION>( source_energy_bins );
+    }
+    
+    else if( bins.name( it ) == "Energy Bins" )
     {
       const Utility::ArrayString& array_string =
 	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
@@ -1363,6 +1389,32 @@ void EstimatorFactory::assignBinsToEstimator(
       estimator->setBinBoundaries<ENERGY_DIMENSION>( energy_bins );
     }
 
+    else if( bins.name( it ) == "Source Time Bins" )
+    {
+      const Utility::ArrayString& array_string =
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+
+      Teuchos::Array<double> source_time_bins;
+
+      try{
+	source_time_bins = array_string.getConcreteArray<double>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the source time bins requested for "
+				  "estimator " << estimator->getId() <<
+				  " are not valid!" );
+
+      TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( source_time_bins.begin(),
+							     source_time_bins.end() ),
+			  InvalidEstimatorRepresentation,
+			  "Error: the source time bins requested for "
+                          "estimator " << estimator->getId() << " are not "
+                          "sorted from lowest to highest!" );
+
+      estimator->setBinBoundaries<SOURCE_TIME_DIMENSION>( source_time_bins );
+    }
+    
     else if( bins.name( it ) == "Time Bins" )
     {
       const Utility::ArrayString& array_string =

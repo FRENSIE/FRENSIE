@@ -99,6 +99,12 @@ public:
   //! Return the particle type
   ParticleType getParticleType() const;
 
+  //! Return the cell handle for the cell where the particle (history) started
+  Geometry::ModuleTraits::InternalCellHandle getSourceCell() const;
+
+  //! Set the cell where the particle (history) started
+  void setSourceCell( const Geometry::ModuleTraits::InternalCellHandle cell );
+
   //! Return the cell handle for the cell containing the particle
   Geometry::ModuleTraits::InternalCellHandle getCell() const;
 
@@ -152,6 +158,12 @@ public:
   //! Advance the particle along its direction by the requested distance
   void advance( const double distance );
 
+  //! Return the source (starting) energy of the particle (history) (MeV)
+  energyType getSourceEnergy() const;
+
+  //! Set the source (starting) energy of the particle (history) (MeV)
+  void setSourceEnergy( const energyType energy );
+
   //! Return the energy of the particle (MeV)
   energyType getEnergy() const;
 
@@ -160,6 +172,12 @@ public:
 
   //! Return the speed of the particle (cm/s)
   virtual double getSpeed() const = 0;
+
+  //! Return the source (starting) time of the particle (history) (s)
+  timeType getSourceTime() const;
+
+  //! Set the source (starting) time of the particle (history) (s)
+  void setSourceTime( const timeType time );
 
   //! Return the time state of the particle (s)
   timeType getTime() const;
@@ -182,11 +200,17 @@ public:
   //! Increment the generation number of the particle
   void incrementGenerationNumber();
 
+  //! Return the source (starting) weight of the particle (history)
+  double getSourceWeight() const;
+
+  //! Set the source (starting) weight of the particle (history)
+  void setSourceWeight( const double weight );
+
   //! Return the weight of the particle
-  double getWeight() const;
+  weightType getWeight() const;
 
   //! Set the weight of the particle
-  void setWeight( const double weight );
+  void setWeight( const weightType weight );
 
   //! Multiply the weight of the particle by a factor
   void multiplyWeight( const double weight_factor );
@@ -248,8 +272,14 @@ private:
   // Direction of the particle
   directionType d_direction[3];
 
+  // Source (starting) energy of the particle (history) (MeV)
+  energyType d_source_energy;
+
   // Energy of the particle (MeV)
   energyType d_energy;
+
+  // Source (starting) time of the particle (history) (s)
+  timeType d_source_time;
 
   // Time of the particle (s)
   timeType d_time;
@@ -260,8 +290,14 @@ private:
   // The generation number of the particle
   generationNumberType d_generation_number;
 
+  // The source (starting) weight of the particle (history)
+  weightType d_source_weight;
+
   // The weight of the particle
   weightType d_weight;
+
+  // The source (starting) cell of the particle (history)
+  Geometry::ModuleTraits::InternalCellHandle d_source_cell;
 
   // The current cell handle
   Geometry::ModuleTraits::InternalCellHandle d_cell;
@@ -286,6 +322,12 @@ inline void ParticleState::setPosition( const double position[3] )
 inline void ParticleState::setDirection( const double direction[3] )
 {
   setDirection( direction[0], direction[1], direction[2] );
+}
+
+// Return the source (starting) energy of the particle (history) (MeV)
+inline ParticleState::energyType ParticleState::getSourceEnergy() const
+{
+  return d_source_energy;
 }
 
 // Return the energy of the particle

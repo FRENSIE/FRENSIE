@@ -82,6 +82,9 @@
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Cells" type="Array" value="{1}"/>
     <Parameter name="Response Functions" type="Array" value="{0}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Source Energy Bins" type="Array" value="{1e-3,2l,1.0,8i,10.0,20.0}"/>
+    </ParameterList>
   </ParameterList>
 
   <ParameterList name="Cell Collision Flux Estimator 2">
@@ -91,6 +94,9 @@
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Cells" type="Array" value="{1}"/>
     <Parameter name="Response Functions" type="Array" value="{0}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Source Time Bins" type="Array" value="{0.0, 1e-9, 1e-8, 1e-7, 1.0}"/>
+    </ParameterList>
   </ParameterList>
 
   <ParameterList name="Pulse Height Estimator 2">
