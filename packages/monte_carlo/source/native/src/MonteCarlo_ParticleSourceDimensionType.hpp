@@ -20,29 +20,33 @@ namespace MonteCarlo{
 
 enum ParticleSourceDimensionType
 {
-  X_DIMENSION = 0,
-  Y_DIMENSION,
-  Z_DIMENSION,
-  R_DIMENSION,
-  AXIS_DIMENSION,
-  SPATIAL_POLAR_ANGLE_DIMENSION,
-  SPATIAL_AZIMUTHAL_ANGLE_DIMENSION,
-  DIRECTIONAL_POLAR_ANGLE_DIMENSION,
-  DIRECTIONAL_AZIMUTHAL_ANGLE_DIMENSION,
-  ENERGY_DIMENSION_CLASS,
-  TIME_DIMENSION_CLASS,
-  WEIGHT_DIMENSION_CLASS
+  X_PS_DIMENSION = 0,
+  Y_PS_DIMENSION,
+  Z_PS_DIMENSION,
+  R_PS_DIMENSION,
+  AXIS_PS_DIMENSION,
+  SPATIAL_POLAR_ANGLE_PS_DIMENSION,
+  SPATIAL_AZIMUTHAL_ANGLE_PS_DIMENSION,
+  DIRECTIONAL_POLAR_ANGLE_PS_DIMENSION,
+  DIRECTIONAL_AZIMUTHAL_ANGLE_PS_DIMENSION,
+  ENERGY_PS_DIMENSION,
+  TIME_PS_DIMENSION,
+  WEIGHT_PS_DIMENSION
 };
 
 //! Test if the dimension name is valid
 bool isValidParticleSourceDimensionName( const std::string& dimension_name );
 
-//! Get the dimension class associated with a dimension
-ParticleSourceDimensionClassType getClassOfParticleSourceDimensionType(
-                                 const ParticleSourceDimensionType dimension );
+//! Convert the dimension name to a dimension type enum
+ParticleSourceDimensionType convertParticleSourceDimensionNameToEnum(
+                                           const std::string& dimension_name );
 
 //! Convert the dimension type enum to a string
 std::string convertParticleSourceDimensionTypeEnumToString(
+                                 const ParticleSourceDimensionType dimension );
+
+//! Get the dimension class associated with a dimension
+ParticleSourceDimensionClassType getClassOfParticleSourceDimensionType(
                                  const ParticleSourceDimensionType dimension );
 
 //! Stream operator for printing dimension type enums

@@ -14,11 +14,11 @@ namespace MonteCarlo{
 //! The particle source dimension type enumeration
 enum ParticleSourceDimensionClassType
 {
-  SPATIAL_DIMENSION_CLASS = 0,
-  DIRECTIONAL_DIMENSION_CLASS,
-  ENERGY_DIMENSION_CLASS,
-  TIME_DIMENSION_CLASS,
-  WEIGHT_DIMENSION_CLASS
+  SPATIAL_PS_DIMENSION_CLASS = 0,
+  DIRECTIONAL_PS_DIMENSION_CLASS,
+  ENERGY_PS_DIMENSION_CLASS,
+  TIME_PS_DIMENSION_CLASS,
+  WEIGHT_PS_DIMENSION_CLASS
 };
 
 //! Convert the dimension type enum to a string
