@@ -290,7 +290,10 @@ void ParticleSimulationManager<GeometryHandler,
   ray_start_point[0] = particle.getXPosition();
   ray_start_point[1] = particle.getYPosition();
   ray_start_point[2] = particle.getZPosition();
-
+  std::cout << std::endl;
+  std::cout << "History Number: " << particle.getHistoryNumber() << std::endl;
+  std::cout << "Start point: " << ray_start_point[0] << ", " << ray_start_point[1] << ", " << ray_start_point[2] << std::endl;
+  std::cout << std::endl;
   // Surface information
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
   Teuchos::Array<double> surface_normal( 3 );
@@ -336,12 +339,15 @@ void ParticleSimulationManager<GeometryHandler,
 
       // Get the start time of this subtrack
       subtrack_start_time = particle.getTime();
-
+    
       if( op_to_surface_hit < remaining_subtrack_op )
       {
   	    // Advance the particle to the cell boundary
   	    particle.advance( distance_to_surface_hit );
-
+  	    std::cout << std::endl;
+  	    std::cout << " Surface end" << std::endl;
+        std::cout << "Position: " << particle.getXPosition() << ", " << particle.getYPosition() << ", " << particle.getZPosition() << std::endl;
+        std::cout << std::endl;
         // Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
                                                        particle,
@@ -411,7 +417,10 @@ void ParticleSimulationManager<GeometryHandler,
           remaining_subtrack_op/cell_total_macro_cross_section;
 
   	particle.advance( distance_to_collision );
-
+  	std::cout << std::endl;
+  	std::cout << " Collision end" << std::endl;
+    std::cout << "Position: " << particle.getXPosition() << ", " << particle.getYPosition() << ", " << particle.getZPosition() << std::endl;
+    std::cout << std::endl;
         GMI::advanceInternalRayBySubstep( distance_to_collision );
 
 	      // Update the observers: particle subtrack ending in cell event
@@ -435,15 +444,13 @@ void ParticleSimulationManager<GeometryHandler,
         // Undergo a collision with the material in the cell
         CMI::collideWithCellMaterial( particle, bank, true );
         
-        if( !particle.isGone() )
-        {
-          GMI::changeInternalRayDirection( particle.getDirection() );
 
-          // Cache the current position of the new ray
-          ray_start_point[0] = particle.getXPosition();
-          ray_start_point[1] = particle.getYPosition();
-          ray_start_point[2] = particle.getZPosition();
-        }
+        GMI::changeInternalRayDirection( particle.getDirection() );
+
+        // Cache the current position of the new ray
+        ray_start_point[0] = particle.getXPosition();
+        ray_start_point[1] = particle.getYPosition();
+        ray_start_point[2] = particle.getZPosition();
 
         // Make sure the energy is above the cutoff
         if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )

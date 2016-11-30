@@ -472,6 +472,7 @@ double StructuredHexMesh::findDistanceToInteractionPlane( const double interacti
 std::pair<StructuredHexMesh::Dimension, double> 
   StructuredHexMesh::findShortestDistance( const Teuchos::Array<std::pair<Dimension, double>>& distance_array ) const
 {
+  testPrecondition( distance_array.size() > 0);
   unsigned j = 0;
   double shortest_distance = distance_array[0].second;
   for(unsigned i = 0; i < distance_array.size(); ++i)

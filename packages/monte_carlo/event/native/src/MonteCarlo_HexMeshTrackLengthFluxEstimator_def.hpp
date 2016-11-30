@@ -92,8 +92,8 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 
   // Make sure end point isn't the same as start point
   testPrecondition( !( start_point[0] == end_point[0] &&
-                         start_point[1] == end_point[1] &&
-                         start_point[2] == end_point[2] ) );
+                       start_point[1] == end_point[1] &&
+                       start_point[2] == end_point[2] ) );
 
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
