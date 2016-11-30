@@ -188,7 +188,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                         const T indep_var_x_1,
                         const T indep_var_x,
                         const T indep_var_y,
-                                    YIterator start_indep_y_grid_0,
+                        YIterator start_indep_y_grid_0,
                         YIterator end_indep_y_grid_0,
                         ZIterator start_dep_grid_0,
                         ZIterator end_dep_grid_0,
@@ -283,7 +283,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                         const T indep_var_x_1,
                         const T indep_var_x,
                         const T indep_var_y,
-                                    Iterator start_grid_0,
+                        Iterator start_grid_0,
                         Iterator end_grid_0,
                         Iterator start_grid_1,
                         Iterator end_grid_1 )
@@ -1077,9 +1077,9 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
     (processed_indep_var_x_1 - processed_indep_var_x_0);
 
   return ZXInterpPolicy::interpolate( processed_indep_var_x_0,
-                      processed_indep_var_x,
-                      processed_dep_var_0,
-                      processed_slope );
+                                      processed_indep_var_x,
+                                      processed_dep_var_0,
+                                      processed_slope );
 }
 
 // Conduct the interpolation between two processed grids
@@ -1367,11 +1367,11 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolateProcessedUnitBase<FIRST,FIRST>(
-                            processed_indep_var_x_0,
+                        processed_indep_var_x_0,
                         processed_indep_var_x_1,
                         processed_indep_var_x,
                         processed_indep_var_y,
-                            start_processed_indep_y_grid_0,
+                        start_processed_indep_y_grid_0,
                         end_processed_indep_y_grid_0,
                         start_processed_dep_grid_0,
                         end_processed_dep_grid_0,
@@ -1407,9 +1407,9 @@ template<typename IndepType, typename LengthType>
 inline LengthType
 TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIntermediateGridLength(
                            const IndepType indep_var_x_0,
-                                               const IndepType indep_var_x_1,
-                                               const IndepType indep_var_x,
-                                               const LengthType grid_0_length,
+                           const IndepType indep_var_x_1,
+                           const IndepType indep_var_x,
+                           const LengthType grid_0_length,
                            const LengthType grid_1_length )
 {
   // Make sure the first independent variables are valid
@@ -1429,10 +1429,10 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIntermediat
                     QuantityTraits<LengthType>::zero() );
 
   return LXInterpPolicy::interpolate( indep_var_x_0,
-                      indep_var_x_1,
-                      indep_var_x,
-                      grid_0_length,
-                      grid_1_length );
+                                      indep_var_x_1,
+                                      indep_var_x,
+                                      grid_0_length,
+                                      grid_1_length );
 }
 
 // Calculate the min value of an intermediate grid
@@ -1459,10 +1459,10 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIntermediat
   testPrecondition( ThisType::isSecondIndepVarInValidRange( grid_1_y_limit ) );
 
   return YMinXInterpPolicy::interpolate( indep_var_x_0,
-                     indep_var_x_1,
-                     indep_var_x,
-                     grid_0_y_limit,
-                     grid_1_y_limit );
+                                         indep_var_x_1,
+                                         indep_var_x,
+                                         grid_0_y_limit,
+                                         grid_1_y_limit );
 }
 
 // Calculate the length of an intermediate grid

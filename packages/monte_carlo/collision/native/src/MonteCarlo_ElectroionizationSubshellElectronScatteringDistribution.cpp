@@ -154,14 +154,19 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
                double& knock_on_energy,
                double& knock_on_angle_cosine ) const
 {
+  testPrecondition( incoming_energy > d_binding_energy );
+
   // Sample knock-on electron energy
   knock_on_energy =
-    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalExact(
-      incoming_energy );
+    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalWeighted(
+      incoming_energy,
+      this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy )  );
 
   // Calculate the outgoing angle cosine for the knock on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
                                          knock_on_energy );
+
+  testPostcondition( incoming_energy > knock_on_energy );
 }
 
 // Sample an knock on energy and direction from the distribution
