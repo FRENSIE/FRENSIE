@@ -25,14 +25,33 @@ namespace MonteCarlo{
 ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double& binding_energy )
+    const double& binding_energy,
+    const bool& use_weighted_sampling )
   : d_electroionization_subshell_scattering_distribution(
       electroionization_subshell_scattering_distribution ),
-    d_binding_energy( binding_energy )
+    d_binding_energy( binding_energy ),
+    d_use_weighted_sampling( use_weighted_sampling )
 {
   // Make sure the arraies are valid
   testPrecondition( d_electroionization_subshell_scattering_distribution.use_count() > 0 );
   testPrecondition( binding_energy > 0.0 );
+
+  if( d_use_weighted_sampling )
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &ElectroionizationSubshellElectronScatteringDistribution::sampleWeighted,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
+  else
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &ElectroionizationSubshellElectronScatteringDistribution::sampleExact,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
 }
 
 // Return the binding energy
@@ -147,7 +166,6 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
             knock_on_energy_ratio );
 }
 
-
 // Sample an knock on energy and direction from the distribution
 void ElectroionizationSubshellElectronScatteringDistribution::sample(
                const double incoming_energy,
@@ -157,16 +175,38 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   testPrecondition( incoming_energy > d_binding_energy );
 
   // Sample knock-on electron energy
-  knock_on_energy =
-    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalWeighted(
-      incoming_energy,
-      this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy )  );
+  knock_on_energy = d_sample_func( incoming_energy );
 
   // Calculate the outgoing angle cosine for the knock on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
                                          knock_on_energy );
 
   testPostcondition( incoming_energy > knock_on_energy );
+}
+
+// Sample an knock on energy and direction from the distribution
+double ElectroionizationSubshellElectronScatteringDistribution::sampleWeighted(
+               const double incoming_energy ) const
+{
+  testPrecondition( incoming_energy > d_binding_energy );
+
+  // Sample knock-on electron energy
+  return
+    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalWeighted(
+      incoming_energy,
+      this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy )  );
+}
+
+// Sample an knock on energy and direction from the distribution
+double ElectroionizationSubshellElectronScatteringDistribution::sampleExact(
+               const double incoming_energy ) const
+{
+  testPrecondition( incoming_energy > d_binding_energy );
+
+  // Sample knock-on electron energy
+  return
+    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalExact(
+      incoming_energy );
 }
 
 // Sample an knock on energy and direction from the distribution
@@ -178,7 +218,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
                double& knock_on_angle_cosine ) const
 {
   // Sample knock-on electron energy and outgoing angle
-  sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
+  this->sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
   outgoing_energy =
         std::max( 1e-15, incoming_energy - knock_on_energy - d_binding_energy );

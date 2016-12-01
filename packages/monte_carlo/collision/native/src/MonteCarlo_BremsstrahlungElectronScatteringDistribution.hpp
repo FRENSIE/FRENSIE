@@ -124,7 +124,7 @@ private:
                                 const double parameter1,
                                 const double x ) const;
 
-  // The doppler broadening function pointer
+  // The outgoing angle function pointer
   boost::function<double ( const double, const double )>
                                         d_angular_distribution_func;
 

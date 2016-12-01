@@ -23,9 +23,9 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
         const unsigned table_location,
         const unsigned number_of_tables,
         const double binding_energy,
-	const Teuchos::ArrayView<const double>& raw_electroionization_data,
-	std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
-	  electroionization_subshell_distribution )
+        const Teuchos::ArrayView<const double>& raw_electroionization_data,
+        std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
+          electroionization_subshell_distribution )
 {
   // Subshell distribution
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
@@ -34,13 +34,14 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
   createSubshellDistribution( table_info_location,
                               table_location,
                               number_of_tables,
-	                      raw_electroionization_data,
-	                      subshell_distribution );
+                              raw_electroionization_data,
+                              subshell_distribution );
 
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
         subshell_distribution,
-        binding_energy ) );
+        binding_energy,
+        false ) );
 }
 
 // Create the scattering function

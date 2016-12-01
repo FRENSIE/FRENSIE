@@ -200,6 +200,14 @@ protected:
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleExactDetailedImpl(
+                  const PrimaryIndepQuantity primary_indep_var_value,
+                  SampleFunctor sample_functor,
+                  SecondaryIndepQuantity& raw_sample,
+                  unsigned& primary_bin_index ) const;
+
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
   SecondaryIndepQuantity sampleWeightedDetailedImpl(
                   const PrimaryIndepQuantity primary_indep_var_value,
                   const SecondaryIndepQuantity secondary_indep_weighting_factor,
@@ -210,6 +218,12 @@ protected:
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
   SecondaryIndepQuantity sampleImpl(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SampleFunctor sample_functor ) const;
+
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleExactImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const;
 
@@ -241,7 +255,7 @@ private:
 
   double d_fuzzy_boundary_tol;
 };
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

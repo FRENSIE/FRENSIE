@@ -439,13 +439,16 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                                             &BaseOneDDistributionType::sample,
-                                             std::placeholders::_1 );
+                             &BaseOneDDistributionType::sampleWithRandomNumber,
+                             std::placeholders::_1,
+                             random_number );
 
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
+  return this->sampleExactImpl( primary_indep_var_value, sampling_functor );
 }
 
 
@@ -567,6 +570,74 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
                                       eta, y_x_min, intermediate_grid_length );
 }
 
+// Sample from the distribution using the desired sampling functor and a correlated routine
+template<typename TwoDInterpPolicy, typename Distribution>
+template<typename SampleFunctor>
+inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleExactDetailedImpl(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                SampleFunctor sample_functor,
+                SecondaryIndepQuantity& raw_sample,
+                unsigned& primary_bin_index ) const
+  -> SecondaryIndepQuantity
+{
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  // Check for a primary value outside of the primary grid limits
+  if( lower_bin_boundary == upper_bin_boundary )
+  {
+    if( this->arePrimaryLimitsExtended() )
+    {
+      // Create the raw sample
+      raw_sample = sample_functor( *lower_bin_boundary->second );
+
+      return raw_sample;
+    }
+    else
+    {
+      THROW_EXCEPTION( std::logic_error,
+                       "Error: Sampling beyond the primary grid boundaries "
+                       "cannot be done unless the grid has been extended ("
+                       << primary_indep_var_value << " not in ["
+                       << this->getLowerBoundOfPrimaryIndepVar() << ","
+                       << this->getUpperBoundOfPrimaryIndepVar() << "])!" );
+    }
+  }
+  else
+  {
+    // Check for a primary value at the primary grid upper limit
+    if( primary_indep_var_value == upper_bin_boundary->first )
+    {
+      // Create the raw sample
+      raw_sample = sample_functor( *upper_bin_boundary->second );
+
+      return raw_sample;
+    }
+    else if( primary_indep_var_value == lower_bin_boundary->first )
+    {
+      // Create the raw sample
+      raw_sample = sample_functor( *lower_bin_boundary->second );
+
+      return raw_sample;
+    }
+    else
+    {
+      raw_sample = TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                           lower_bin_boundary->first,
+                           upper_bin_boundary->first,
+                           primary_indep_var_value,
+                           sample_functor( *lower_bin_boundary->second ),
+                           sample_functor( *upper_bin_boundary->second ) );
+
+      return raw_sample;
+    }
+  }
+}
+
 // Sample from the distribution using the desired sampling functor and a weighted interpolation
 /*! \details This function uses a weighted interpolation and returns the sampled
  * value weighted by the given secondary independent weighting factor.
@@ -665,6 +736,24 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
                                    sample_functor,
                                    dummy_raw_sample,
                                    dummy_primary_bin_index );
+}
+
+// Sample from the distribution using the desired sampling functor
+template<typename TwoDInterpPolicy, typename Distribution>
+template<typename SampleFunctor>
+inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleExactImpl(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SampleFunctor sample_functor ) const
+  -> SecondaryIndepQuantity
+{
+  // Dummy variables
+  SecondaryIndepQuantity dummy_raw_sample;
+  unsigned dummy_primary_bin_index;
+
+  return this->sampleExactDetailedImpl( primary_indep_var_value,
+                                        sample_functor,
+                                        dummy_raw_sample,
+                                        dummy_primary_bin_index );
 }
 
   //! Sample from the distribution using the desired sampling functor and a weighted interpolation

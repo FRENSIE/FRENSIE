@@ -156,8 +156,9 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    sample_knock_on )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
+  std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
+  fake_stream[1] = 0.0;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -173,6 +174,17 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   // Test knock-on electron
   TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
   TEST_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
+
+
+  incoming_energy = 1.1;
+  // sample the electron
+  ace_electroionization_distribution->sample( incoming_energy,
+                                              knock_on_energy,
+                                              knock_on_angle_cosine );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 4.34461320777921E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 1e-7, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -424,7 +436,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   ace_electroionization_distribution.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
-                            binding_energies[subshell] ) );
+                            binding_energies[subshell],
+                            false ) );
 
   // Clear setup data
   ace_file_handler.reset();
