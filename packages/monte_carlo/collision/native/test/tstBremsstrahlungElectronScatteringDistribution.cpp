@@ -699,7 +699,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the scattering distributions
   ace_dipole_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-      scattering_distribution ) );
+      scattering_distribution,
+      false ) );
 
 
   double upper_cutoff_energy = 1000;
@@ -710,12 +711,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       scattering_distribution,
       angular_distribution,
       lower_cutoff_energy,
-      upper_cutoff_energy ) );
+      upper_cutoff_energy,
+      false ) );
 
   twobs_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
       scattering_distribution,
-      xss_data_extractor->extractAtomicNumber() ) );
+      xss_data_extractor->extractAtomicNumber(),
+      false ) );
 
   // Clear setup data
   ace_file_handler.reset();

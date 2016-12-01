@@ -86,10 +86,10 @@ public:
 
 private:
 
-  //! Sample an outgoing energy and direction from the distribution
+  //! Sample a secondary energy from the distribution
   double sampleWeighted( const double incoming_energy ) const;
 
-  //! Sample an outgoing energy and direction from the distribution
+  //! Sample a secondary energy from the distribution
   double sampleExact( const double incoming_energy ) const;
 
   // Calculate the outgoing angle cosine
@@ -102,10 +102,10 @@ private:
   // Subshell binding energy
   double d_binding_energy;
 
-  // The sample function pointer
+  // Bool to use a weighted interpolation routine to sample the distribution
   bool d_use_weighted_sampling;
 
-  // The outgoing angle function pointer
+  // The secondary energy function pointer
   std::function<double ( const double )> d_sample_func;
 };
 

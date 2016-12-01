@@ -226,6 +226,14 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   // Calculate the outgoing angle cosine for the primary electron
   scattering_angle_cosine = outgoingAngle( incoming_energy,
                                            outgoing_energy );
+
+  testPostcondition( incoming_energy > knock_on_energy + d_binding_energy );
+  testPostcondition( knock_on_energy > 0.0 );
+  testPostcondition( outgoing_energy > 0.0 );
+  testPostcondition( knock_on_angle_cosine <= 1.0 );
+  testPostcondition( knock_on_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
+  testPostcondition( scattering_angle_cosine >= -1.0 );
 }
 
 // Sample an knock on energy and direction and record the number of trials

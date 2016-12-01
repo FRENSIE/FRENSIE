@@ -29,7 +29,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
         energy_loss_function );
 
   scattering_distribution.reset(
-   new BremsstrahlungElectronScatteringDistribution( energy_loss_function ) );
+   new BremsstrahlungElectronScatteringDistribution( energy_loss_function,
+                                                     true ) );
 }
 
 // Create a simple dipole bremsstrahlung distribution
@@ -66,7 +67,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( energy_loss_function,
-                                                     atomic_number ) );
+                                                     atomic_number,
+                                                     true ) );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
