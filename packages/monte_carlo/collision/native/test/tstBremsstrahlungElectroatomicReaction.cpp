@@ -53,13 +53,13 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getReactionType_ace )
 {
   TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getReactionType(),
-		       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+               MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getReactionType(),
-		       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+               MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getReactionType(),
-		       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+               MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -350,14 +350,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+                 new Data::ACEFileHandler( test_ace_file_name,
+                               test_ace_table_name,
+                               1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+                      ace_file_handler->getTableNXSArray(),
+                      ace_file_handler->getTableJXSArray(),
+                      ace_file_handler->getTableXSSArray() ) );
 
   // Extract the energy grid and cross section
   Teuchos::ArrayRCP<double> energy_grid;
@@ -390,13 +390,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   angular_distribution_values[2] =  1.0;
 
   std::shared_ptr<Utility::OneDDistribution> angular_distribution(
-			    new Utility::TabularDistribution<Utility::LinLin>(
-						energy_bins,
-						angular_distribution_values ) );
+                new Utility::TabularDistribution<Utility::LinLin>(
+                        energy_bins,
+                        angular_distribution_values ) );
 
   // Extract the elastic scattering information data block (BREMI)
   Teuchos::ArrayView<const double> bremi_block(
-				      xss_data_extractor->extractBREMIBlock() );
+                      xss_data_extractor->extractBREMIBlock() );
 
   // Extract the number of tabulated distributions
   int N = bremi_block.size()/3;
@@ -422,9 +422,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     function_data[n].first = bremsstrahlung_energy_grid[n];
 
     function_data[n].second.reset(
-	  new Utility::HistogramDistribution(
-		 breme_block( offset[n], table_length[n] ),
-		 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
+      new Utility::HistogramDistribution(
+         breme_block( offset[n], table_length[n] ),
+         breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
   }
 
@@ -443,42 +443,45 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the distributions
   dipole_scattering_distribution.reset(
    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-        scattering_function ) );
+        scattering_function,
+        false ) );
 
   tabular_scattering_distribution.reset(
    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
         scattering_function,
         angular_distribution,
         lower_cutoff_energy,
-        upper_cutoff_energy ) );
+        upper_cutoff_energy,
+        false ) );
 
   twobs_scattering_distribution.reset(
    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
         scattering_function,
-        xss_data_extractor->extractAtomicNumber() ) );
+        xss_data_extractor->extractAtomicNumber(),
+        false ) );
 
 
   // Create the reactions
   ace_dipole_bremsstrahlung_reaction.reset(
     new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      bremsstrahlung_cross_section,
-						      bremsstrahlung_threshold_index,
-						      dipole_scattering_distribution ) );
+                              energy_grid,
+                              bremsstrahlung_cross_section,
+                              bremsstrahlung_threshold_index,
+                              dipole_scattering_distribution ) );
 
   ace_tabular_bremsstrahlung_reaction.reset(
     new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      bremsstrahlung_cross_section,
-						      bremsstrahlung_threshold_index,
-						      tabular_scattering_distribution ) );
+                              energy_grid,
+                              bremsstrahlung_cross_section,
+                              bremsstrahlung_threshold_index,
+                              tabular_scattering_distribution ) );
 
   ace_twobs_bremsstrahlung_reaction.reset(
-		new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      bremsstrahlung_cross_section,
-						      bremsstrahlung_threshold_index,
-						      twobs_scattering_distribution ) );
+        new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+                              energy_grid,
+                              bremsstrahlung_cross_section,
+                              bremsstrahlung_threshold_index,
+                              twobs_scattering_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();

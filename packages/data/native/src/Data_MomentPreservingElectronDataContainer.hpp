@@ -62,18 +62,7 @@ public:
   //! Return the moment preserving weights for an angular energy bin
   const std::vector<double>& getMomentPreservingWeights(
 					       const unsigned angular_energy_bin ) const;
-/*
-  //! Return the electron energy grid
-  const std::vector<double>& getElectronEnergyGrid() const;
 
-  //! Return the Moment Preserving (MP) moment preserving electron cross section
-  const std::vector<double>&
-  getMomentPreservingMomentPreservingCrossSection() const;
-
-  //! Return the MP moment preserving cross section threshold energy bin index
-  unsigned
-  getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex() const;
-*/
 protected:
 
   //! Default constructor
@@ -104,32 +93,8 @@ protected:
   void setMomentPreservingWeights(
 			 const unsigned angular_energy_bin,
 			 const std::vector<double>& moment_preserving_elastic_weights );
-  /*
-  //! Set the electron energy grid
-  void setElectronEnergyGrid( const std::vector<double>& energy_grid );
-
-  //! Set the moment preserving electron cross section using Moment Preserving (MP) theory
-  void setMomentPreservingMomentPreservingCrossSection(
-			 const std::vector<double>& moment_preserving_elastic_cross_section );
-
-  //! Set the MP moment preserving cross section threshold energy bin index
-  void setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(
-						        const unsigned index );
-*/
 
 private:
-
-  // Test if a value is less than or equal to zero
-  static bool isValueLessThanOrEqualToZero( const double value );
-
-  // Test if a value is less than zero
-  static bool isValueLessThanZero( const double value );
-
-  // Test if a value is greater than one
-  static bool isValueGreaterThanOne( const double value );
-
-  // Test if a value is less than minus one
-  static bool isValueLessThanMinusOne( const double value );
 
   // Save the data to an archive
   template<typename Archive>
@@ -161,16 +126,6 @@ private:
 
   // The moment preserving weights
   std::map<unsigned,std::vector<double> > d_moment_preserving_elastic_weights;
-/*
-  // The electron energy grid (MeV)
-  std::vector<double> d_electron_energy_grid;
-
-  // The Moment Preserving moment preserving electron cross section (b)
-  std::vector<double> d_moment_preserving_moment_preserving_elastic_cross_section;
-
-  // The Moment Preserving moment preserving electron cross section threshold energy index
-  unsigned d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index;
-*/
 };
 
 } // end Data namespace

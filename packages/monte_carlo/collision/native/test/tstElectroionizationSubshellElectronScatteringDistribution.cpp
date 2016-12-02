@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -27,7 +28,7 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
-  ace_electroionization_distribution;
+  ace_electroionization_distribution, native_electroionization_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -157,7 +158,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
-  fake_stream[1] = 0.5;
+  fake_stream[1] = 0.0;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -174,6 +175,53 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
   TEST_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
 
+
+  incoming_energy = 1.1;
+  // sample the electron
+  ace_electroionization_distribution->sample( incoming_energy,
+                                              knock_on_energy,
+                                              knock_on_angle_cosine );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 4.34461320777921E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 1e-7, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+/* Note: This tests a bug that caused electroionization to return non-realistic
+ * knock-on energies. A weighted sampling routine was used to fix the problem.
+ */
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   sample_knock_on_native )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0-1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 6.041e-05;
+  double knock_on_energy, knock_on_angle_cosine;
+
+  // sample the electron at the min random number
+  native_electroionization_distribution->sample( incoming_energy,
+                                                 knock_on_energy,
+                                                 knock_on_angle_cosine );
+
+  // Test knock-on electron at the min random number
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.0477903309458948, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 1.37963213024213E-07, 1e-12 );
+
+  // sample the electron at the max random number
+  native_electroionization_distribution->sample( incoming_energy,
+                                                 knock_on_energy,
+                                                 knock_on_angle_cosine );
+
+  // Test knock-on electron at the max random number
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.677955763159096, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 2.776500E-05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -182,9 +230,10 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    sample )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 1 );
   fake_stream[0] = 0.5;
-  fake_stream[1] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0;
 
@@ -214,9 +263,10 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    sampleAndRecordTrials )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 1 );
   fake_stream[0] = 0.5;
-  fake_stream[1] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   unsigned trials = 0.0;
 
@@ -246,9 +296,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    scatterElectron )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 1 );
   fake_stream[0] = 0.5;
-  fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -279,7 +328,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_ace_file_name, test_ace_table_name;
+std::string test_ace_file_name, test_ace_table_name, test_native_file_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
@@ -289,20 +338,24 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
   clp().setOption( "test_ace_table",
                    &test_ace_table_name,
                    "Test ACE table name" );
+  clp().setOption( "test_native_file",
+                   &test_native_file_name,
+                   "Test Native file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
+  // Create ACE distribution
+  {
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+     new Data::ACEFileHandler( test_ace_file_name,
+                               test_ace_table_name,
+                               1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+        new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
+                                       ace_file_handler->getTableJXSArray(),
+                                       ace_file_handler->getTableXSSArray() ) );
 
   // Extract the cross sections energy grid
   Teuchos::ArrayView<const double> energy_grid =
@@ -383,11 +436,66 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   ace_electroionization_distribution.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
-                            binding_energies[subshell] ) );
+                            binding_energies[subshell],
+                            false ) );
 
   // Clear setup data
   ace_file_handler.reset();
   xss_data_extractor.reset();
+  }
+
+  // Create ACE distribution
+  {
+  // Create the native data file container
+  Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container(
+    new Data::ElectronPhotonRelaxationDataContainer( test_native_file_name ) );
+
+  std::set<unsigned> subshells = data_container->getSubshells();
+
+  unsigned subshell = *subshells.find(6);
+  double binding_energy =
+    data_container->getSubshellBindingEnergy( subshell );
+
+  // Get the energies for which knock-on sampling tables are given
+  std::vector<double> energy_grid =
+    data_container->getElectroionizationEnergyGrid( subshell );
+
+  // Create the scattering function
+  Utility::FullyTabularTwoDDistribution::DistributionType
+     function_data( energy_grid.size() );
+
+  for( unsigned n = 0; n < energy_grid.size(); ++n )
+  {
+    function_data[n].first = energy_grid[n];
+
+    // Get the recoil energy distribution at the incoming energy
+    Teuchos::Array<double> recoil_energy(
+        data_container->getElectroionizationRecoilEnergy(
+            subshell,
+            energy_grid[n] ) );
+
+    // Get the recoil energy pdf at the incoming energy
+    Teuchos::Array<double> pdf(
+        data_container->getElectroionizationRecoilPDF(
+            subshell,
+            energy_grid[n] ) );
+
+    function_data[n].second.reset(
+      new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy,
+                                                               pdf ) );
+  }
+
+  // Create the scattering function
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+            function_data ) );
+
+  // Create the distributions
+  native_electroionization_distribution.reset(
+        new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
+                            subshell_distribution,
+                            binding_energy ) );
+  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

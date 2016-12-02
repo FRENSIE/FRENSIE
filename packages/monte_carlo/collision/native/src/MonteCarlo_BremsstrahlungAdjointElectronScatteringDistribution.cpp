@@ -57,8 +57,9 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluatePDF(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the pdf
-  return d_brem_distribution->evaluateSecondaryConditionalPDFExact( incoming_energy,
-                                                               outgoing_energy );
+  return d_brem_distribution->evaluateSecondaryConditionalPDFExact(
+            incoming_energy,
+            outgoing_energy );
 }
 
 // Evaluate the PDF
@@ -71,8 +72,9 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluateCDF(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the cdf
-  return d_brem_distribution->evaluateSecondaryConditionalCDFExact( incoming_energy,
-                                                               outgoing_energy );
+  return d_brem_distribution->evaluateSecondaryConditionalCDFExact(
+            incoming_energy,
+            outgoing_energy );
 }
 
 // Sample an outgoing energy and direction from the distribution

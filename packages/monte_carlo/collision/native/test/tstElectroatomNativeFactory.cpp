@@ -516,6 +516,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
                                      properties.getElasticCutoffAngleCosine() );
   inelastic = 6.411260911064270E+06;
   elastic = 1.61118815071382E+07*cross_section_ratio + 1.89168413638812E+06;
+
   cross_section = atom->getTotalCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
 

@@ -124,6 +124,11 @@ public:
   SecondaryIndepQuantity sampleSecondaryConditional(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
 
+  //! Return a random sample from the secondary conditional PDF using a weighted interpolation
+  SecondaryIndepQuantity sampleSecondaryConditionalWeighted(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const SecondaryIndepQuantity secondary_indep_weighting_factor ) const;
+
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,

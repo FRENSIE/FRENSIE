@@ -34,7 +34,8 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 							  scattering_function );
 
   scattering_distribution.reset(
-   new BremsstrahlungElectronScatteringDistribution( scattering_function ) );
+   new BremsstrahlungElectronScatteringDistribution( scattering_function,
+                                                     false ) );
 }
 
 // Create a detailed tabular bremsstrahlung distribution
@@ -60,7 +61,8 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
    new BremsstrahlungElectronScatteringDistribution( scattering_function,
                                                      angular_distribution,
                                                      lower_cutoff_energy,
-                                                     upper_cutoff_energy  ) );
+                                                     upper_cutoff_energy,
+                                                     false  ) );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
@@ -82,7 +84,8 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( scattering_function,
-                                                     atomic_number ) );
+                                                     atomic_number,
+                                                     false ) );
 }
 
 // Create the energy loss function

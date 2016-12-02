@@ -199,13 +199,7 @@ std::cout << "angle 2 =\t" << moment_preserving_elastic_discrete_angles[1] << st
 void MomentPreservingElectronDataContainer::setMomentPreservingWeights(
 			 const unsigned angular_energy_bin,
 			 const std::vector<double>& moment_preserving_elastic_weights )
-{/*
-std::cout << "angular_energy_bin =\t" << angular_energy_bin << std::endl;
-std::cout << "angular_energy =\t" << d_angular_energy_grid[angular_energy_bin] << std::endl;
-std::cout << "# of weights =\t" << moment_preserving_elastic_weights.size() << std::endl;
-std::cout << std::setprecision(20) << "weight 1 =\t" << moment_preserving_elastic_weights[0] << std::endl;
-std::cout << std::setprecision(20) << "weight 2 =\t" << moment_preserving_elastic_weights[1] << std::endl;*/
-
+{
   // Make sure the angular_energy_bin is valid
   testPrecondition( angular_energy_bin >= 0 );
   testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
@@ -222,74 +216,6 @@ std::cout << std::setprecision(20) << "weight 2 =\t" << moment_preserving_elasti
                     moment_preserving_elastic_weights.end() );
 
   d_moment_preserving_elastic_weights[angular_energy_bin] = moment_preserving_elastic_weights;
-}
-/*
-// Set the electron energy grid
-void MomentPreservingElectronDataContainer::setElectronEnergyGrid(
-				       const std::vector<double>& energy_grid )
-{
-  // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						                              energy_grid.end() ) );
-  testPrecondition( energy_grid.front() > 0.0 );
-
-  d_electron_energy_grid = energy_grid;
-}
-
-// Set the moment preserving electron cross section using Moment Preserving (MP) theory
-void MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingCrossSection(
-			 const std::vector<double>& moment_preserving_elastic_cross_section )
-{
-  // Make sure the moment preserving cross section is valid
-  testPrecondition( moment_preserving_elastic_cross_section.size() <=
-                    d_electron_energy_grid.size() );
-  testPrecondition( std::find_if( moment_preserving_elastic_cross_section.begin(),
-                                  moment_preserving_elastic_cross_section.end(),
-                                  isValueLessThanOrEqualToZero ) ==
-                    moment_preserving_elastic_cross_section.end() );
-
-  d_moment_preserving_moment_preserving_elastic_cross_section = moment_preserving_elastic_cross_section;
-}
-
-// Set the MP moment preserving cross section threshold energy bin index
-void MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(
-						        const unsigned index )
-{
-  // Make sure the threshold index is valid
-  testPrecondition(
-        d_moment_preserving_moment_preserving_elastic_cross_section.size() + index ==
-        d_electron_energy_grid.size() );
-
- d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index= index;
-}
-*/
-// Test if a value is less than or equal to zero
-bool MomentPreservingElectronDataContainer::isValueLessThanOrEqualToZero(
-							   const double value )
-{
-  return value <= 0.0;
-}
-
-// Test if a value is less than zero
-bool MomentPreservingElectronDataContainer::isValueLessThanZero(
-							   const double value )
-{
-  return value < 0.0;
-}
-
-// Test if a value is greater than one
-bool MomentPreservingElectronDataContainer::isValueGreaterThanOne(
-							   const double value )
-{
-  return value > 1.0;
-}
-
-// Test if a value is less than the angle cosine cutoff
-bool MomentPreservingElectronDataContainer::isValueLessThanMinusOne(
-							   const double value )
-{
-  return value < -1.0;
 }
 
 

@@ -128,6 +128,15 @@ public:
   SecondaryIndepQuantity sampleSecondaryConditional(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
 
+  //! Return a random sample from the secondary conditional PDF
+  SecondaryIndepQuantity sampleSecondaryConditionalExact(
+                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF using a weighted interpolation
+  SecondaryIndepQuantity sampleSecondaryConditionalWeighted(
+          const PrimaryIndepQuantity primary_indep_var_value,
+          const SecondaryIndepQuantity secondary_indep_weighting_factor ) const;
+
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
@@ -172,7 +181,7 @@ protected:
                         const SecondaryIndepQuantity secondary_indep_var_value,
                         EvaluationMethod evaluate ) const;
 
-  //! Evaluate the distribution using the desired evaluation method and the ratio of the secondary indep variable
+  //! Evaluate the distribution using the desired evaluation method and a weighted interpolation
   template<typename LocalTwoDInterpPolicy,
            typename ReturnType,
            typename EvaluationMethod>
@@ -184,16 +193,46 @@ protected:
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
   SecondaryIndepQuantity sampleDetailedImpl(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            SampleFunctor sample_functor,
-                            SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index ) const;
+                  const PrimaryIndepQuantity primary_indep_var_value,
+                  SampleFunctor sample_functor,
+                  SecondaryIndepQuantity& raw_sample,
+                  unsigned& primary_bin_index ) const;
+
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleExactDetailedImpl(
+                  const PrimaryIndepQuantity primary_indep_var_value,
+                  SampleFunctor sample_functor,
+                  SecondaryIndepQuantity& raw_sample,
+                  unsigned& primary_bin_index ) const;
+
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleWeightedDetailedImpl(
+                  const PrimaryIndepQuantity primary_indep_var_value,
+                  const SecondaryIndepQuantity secondary_indep_weighting_factor,
+                  SampleFunctor sample_functor,
+                  SecondaryIndepQuantity& raw_sample,
+                  unsigned& primary_bin_index ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
   SecondaryIndepQuantity sampleImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const;
+
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleExactImpl(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SampleFunctor sample_functor ) const;
+
+  //! Sample from the distribution using the desired sampling functor and a weighted interpolation
+  template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleWeightedImpl(
+                  const PrimaryIndepQuantity primary_indep_var_value,
+                  const SecondaryIndepQuantity secondary_indep_weighting_factor,
+                  SampleFunctor sample_functor ) const;
 
   //! Sample the bin boundary that will be used for stochastic sampling
   typename DistributionType::const_iterator
@@ -216,7 +255,7 @@ private:
 
   double d_fuzzy_boundary_tol;
 };
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

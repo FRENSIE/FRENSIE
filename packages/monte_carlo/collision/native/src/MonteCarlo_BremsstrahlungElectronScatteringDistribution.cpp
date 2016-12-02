@@ -21,18 +21,37 @@ namespace MonteCarlo{
 
 // Constructor with simple analytical photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution )
-  : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution )
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const bool use_weighted_sampling )
+  : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
+    d_use_weighted_sampling( use_weighted_sampling )
 {
   // Make sure the array is valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
 
   // Use simple analytical photon angular distribution
-  d_angular_distribution_func = boost::bind<double>(
+  d_angular_distribution_func = std::bind<double>(
            &BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle,
-           boost::cref( *this ),
-           _1,
-           _2 );
+           std::cref( *this ),
+           std::placeholders::_1,
+           std::placeholders::_2 );
+
+  if( d_use_weighted_sampling )
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &BremsstrahlungElectronScatteringDistribution::sampleWeighted,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
+  else
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &BremsstrahlungElectronScatteringDistribution::sampleExact,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
 }
 
 // Constructor with detailed tabular photon angular distribution
@@ -40,40 +59,78 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
     const std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
     const double lower_cutoff_energy,
-    const double upper_cutoff_energy )
+    const double upper_cutoff_energy,
+    const bool use_weighted_sampling )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
     d_angular_distribution( angular_distribution ),
     d_lower_cutoff_energy( lower_cutoff_energy ),
-    d_upper_cutoff_energy( upper_cutoff_energy )
+    d_upper_cutoff_energy( upper_cutoff_energy ),
+    d_use_weighted_sampling( use_weighted_sampling )
 {
   // Make sure the arraies are valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
   testPrecondition( d_angular_distribution.use_count() > 0 );
 
   // Use detailed photon angular distribution
-  d_angular_distribution_func = boost::bind<double>(
+  d_angular_distribution_func = std::bind<double>(
             &BremsstrahlungElectronScatteringDistribution::SampleTabularAngle,
-            boost::cref( *this ),
-            _1,
-            _2 );
+            std::cref( *this ),
+            std::placeholders::_1,
+            std::placeholders::_2 );
+
+  if( d_use_weighted_sampling )
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &BremsstrahlungElectronScatteringDistribution::sampleWeighted,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
+  else
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &BremsstrahlungElectronScatteringDistribution::sampleExact,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
 }
 
 // Constructor with detailed 2BS photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
   const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-  const int atomic_number )
+  const int atomic_number,
+  const bool use_weighted_sampling )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
-    d_atomic_number( atomic_number )
+    d_atomic_number( atomic_number ),
+    d_use_weighted_sampling( use_weighted_sampling )
 {
   // Make sure the arraies are valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
 
   // Use detailed photon angular distribution
-  d_angular_distribution_func = boost::bind<double>(
-		    &BremsstrahlungElectronScatteringDistribution::Sample2BSAngle,
-		    boost::cref( *this ),
-                   _1,
-                   _2 );
+  d_angular_distribution_func = std::bind<double>(
+            &BremsstrahlungElectronScatteringDistribution::Sample2BSAngle,
+            std::cref( *this ),
+            std::placeholders::_1,
+            std::placeholders::_2 );
+
+  if( d_use_weighted_sampling )
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &BremsstrahlungElectronScatteringDistribution::sampleWeighted,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
+  else
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &BremsstrahlungElectronScatteringDistribution::sampleExact,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
 }
 
 // Return the min incoming energy
@@ -144,13 +201,16 @@ void BremsstrahlungElectronScatteringDistribution::sample(
              double& photon_angle_cosine ) const
 {
   // Sample the photon energy
-  photon_energy =
-    d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalExact(
-      incoming_energy );
+  photon_energy = d_sample_func( incoming_energy );
 
   // Sample the photon outgoing angle cosine
   photon_angle_cosine = d_angular_distribution_func( incoming_energy,
                                                      photon_energy );
+
+  testPostcondition( incoming_energy > photon_energy );
+  testPostcondition( photon_energy > 0.0 );
+  testPostcondition( photon_angle_cosine <= 1.0 );
+  testPostcondition( photon_angle_cosine >= -1.0 );
 }
 
 // Sample an outgoing energy and direction and record the number of trials
@@ -202,6 +262,25 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );
+}
+
+// Sample a secondary energy from the distribution
+double BremsstrahlungElectronScatteringDistribution::sampleWeighted(
+             const double incoming_energy ) const
+{
+  // Sample the photon energy
+  return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalWeighted(
+            incoming_energy,
+            incoming_energy );
+}
+
+// Sample a secondary energy from the distribution
+double BremsstrahlungElectronScatteringDistribution::sampleExact(
+             const double incoming_energy ) const
+{
+  // Sample the photon energy
+  return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalExact(
+            incoming_energy );
 }
 
 // Sample the outgoing photon direction from the analytical function

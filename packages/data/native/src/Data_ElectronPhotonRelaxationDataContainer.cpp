@@ -30,8 +30,8 @@ namespace Data{
 
 // Constructor (from saved archive)
 ElectronPhotonRelaxationDataContainer::ElectronPhotonRelaxationDataContainer(
-		    const std::string& archive_name,
-		    const Utility::ArchivableObject::ArchiveType archive_type )
+            const std::string& archive_name,
+            const Utility::ArchivableObject::ArchiveType archive_type )
 {
   // Import the data in the archive - no way to use initializer list :(
   this->importData( archive_name, archive_type );

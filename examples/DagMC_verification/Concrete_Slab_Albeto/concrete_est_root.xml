@@ -1,0 +1,13 @@
+<ParameterList name="Estimators">
+
+    <ParameterList name="Cell Track Length Flux Estimator">
+        <Parameter name="Id" type="unsigned int" value="4"/>
+        <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
+        <Parameter name="Particle Type" type="string" value="Neutron"/>
+        <Parameter name="Cells" type="Array" value="{1}"/>
+        <ParameterList name="Bins">
+            <Parameter name="Energy Bins" type="Array" value="{1e-6, 99l, 2.45}"/>
+        </ParameterList>
+    </ParameterList>
+
+</ParameterList>

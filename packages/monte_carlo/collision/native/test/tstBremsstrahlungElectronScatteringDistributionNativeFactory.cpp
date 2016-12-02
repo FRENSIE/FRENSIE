@@ -66,7 +66,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.61140375902222E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.62322147675252E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
 }
 
@@ -97,7 +97,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.61140375902222E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.62322147675252E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
 }
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.92424327190399E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 2.07182666246894E-04, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
 }
 
@@ -168,7 +168,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.92424327190399E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 2.07182666246894E-04, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
   TEST_EQUALITY_CONST( trials, 1.0 );
 }

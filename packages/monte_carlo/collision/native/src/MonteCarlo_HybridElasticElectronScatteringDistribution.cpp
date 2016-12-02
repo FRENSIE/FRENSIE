@@ -93,9 +93,9 @@ double HybridElasticElectronScatteringDistribution::evaluateCDF(
 
 // Sample an outgoing energy and direction from the distribution
 void HybridElasticElectronScatteringDistribution::sample(
-				     const double incoming_energy,
-				     double& outgoing_energy,
-				     double& scattering_angle_cosine ) const
+                     const double incoming_energy,
+                     double& outgoing_energy,
+                     double& scattering_angle_cosine ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -110,10 +110,10 @@ void HybridElasticElectronScatteringDistribution::sample(
 
 // Sample an outgoing energy and direction and record the number of trials
 void HybridElasticElectronScatteringDistribution::sampleAndRecordTrials(
-					    const double incoming_energy,
-					    double& outgoing_energy,
-					    double& scattering_angle_cosine,
-					    unsigned& trials ) const
+                        const double incoming_energy,
+                        double& outgoing_energy,
+                        double& scattering_angle_cosine,
+                        unsigned& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -126,9 +126,9 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the electron
 void HybridElasticElectronScatteringDistribution::scatterElectron(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+                     ElectronState& electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -136,21 +136,21 @@ void HybridElasticElectronScatteringDistribution::scatterElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   electron.rotateDirection( scattering_angle_cosine,
-			  this->sampleAzimuthalAngle() );
+              this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron
 void HybridElasticElectronScatteringDistribution::scatterAdjointElectron(
-				     AdjointElectronState& adjoint_electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+                     AdjointElectronState& adjoint_electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -158,14 +158,14 @@ void HybridElasticElectronScatteringDistribution::scatterAdjointElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   adjoint_electron.rotateDirection( scattering_angle_cosine,
-				                    this->sampleAzimuthalAngle() );
+                                    this->sampleAzimuthalAngle() );
 }
 
 // Sample an outgoing direction from the given distribution
@@ -224,9 +224,9 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
     // Find the distribution bin with E_i <= E_in
     lower_bin = Utility::Search::binaryLowerBound<Utility::FIRST>(
-							d_hybrid_distribution->begin(),
-							d_hybrid_distribution->end(),
-							incoming_energy );
+                            d_hybrid_distribution->begin(),
+                            d_hybrid_distribution->end(),
+                            incoming_energy );
 
     // Sampling the lower bin if E_i = E_in
     if ( lower_bin->first == incoming_energy )

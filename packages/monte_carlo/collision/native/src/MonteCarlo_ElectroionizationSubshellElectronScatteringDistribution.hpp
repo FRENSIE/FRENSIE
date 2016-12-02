@@ -36,7 +36,8 @@ public:
   ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double& binding_energy );
+    const double& binding_energy,
+    const bool& use_weighted_sampling = true );
 
   //! Destructor
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
@@ -80,10 +81,20 @@ public:
 
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
-	                    ParticleBank& bank,
+                        ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
 private:
+
+  //! Sample a secondary energy from the distribution
+  double sampleWeighted( const double incoming_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double sampleExact( const double incoming_energy ) const;
+
+  // Calculate the outgoing angle cosine
+  double outgoingAngle( const double incoming_energy,
+                        const double outgoing_energy ) const;
 
   // electroionization subshell scattering cross sections
   std::shared_ptr<TwoDDist> d_electroionization_subshell_scattering_distribution;
@@ -91,10 +102,11 @@ private:
   // Subshell binding energy
   double d_binding_energy;
 
-  // Calculate the outgoing angle cosine
-  double outgoingAngle( const double incoming_energy,
-                        const double outgoing_energy ) const;
+  // Bool to use a weighted interpolation routine to sample the distribution
+  bool d_use_weighted_sampling;
 
+  // The secondary energy function pointer
+  std::function<double ( const double )> d_sample_func;
 };
 
 } // end MonteCarlo namespace

@@ -25,14 +25,33 @@ namespace MonteCarlo{
 ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double& binding_energy )
+    const double& binding_energy,
+    const bool& use_weighted_sampling )
   : d_electroionization_subshell_scattering_distribution(
       electroionization_subshell_scattering_distribution ),
-    d_binding_energy( binding_energy )
+    d_binding_energy( binding_energy ),
+    d_use_weighted_sampling( use_weighted_sampling )
 {
   // Make sure the arraies are valid
   testPrecondition( d_electroionization_subshell_scattering_distribution.use_count() > 0 );
   testPrecondition( binding_energy > 0.0 );
+
+  if( d_use_weighted_sampling )
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &ElectroionizationSubshellElectronScatteringDistribution::sampleWeighted,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
+  else
+  {
+    // Use simple analytical photon angular distribution
+    d_sample_func = std::bind<double>(
+           &ElectroionizationSubshellElectronScatteringDistribution::sampleExact,
+           std::cref( *this ),
+           std::placeholders::_1 );
+  }
 }
 
 // Return the binding energy
@@ -147,21 +166,47 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
             knock_on_energy_ratio );
 }
 
-
 // Sample an knock on energy and direction from the distribution
 void ElectroionizationSubshellElectronScatteringDistribution::sample(
                const double incoming_energy,
                double& knock_on_energy,
                double& knock_on_angle_cosine ) const
 {
+  testPrecondition( incoming_energy > d_binding_energy );
+
   // Sample knock-on electron energy
-  knock_on_energy =
-    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalExact(
-      incoming_energy );
+  knock_on_energy = d_sample_func( incoming_energy );
 
   // Calculate the outgoing angle cosine for the knock on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
                                          knock_on_energy );
+
+  testPostcondition( incoming_energy > knock_on_energy );
+}
+
+// Sample an knock on energy and direction from the distribution
+double ElectroionizationSubshellElectronScatteringDistribution::sampleWeighted(
+               const double incoming_energy ) const
+{
+  testPrecondition( incoming_energy > d_binding_energy );
+
+  // Sample knock-on electron energy
+  return
+    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalWeighted(
+      incoming_energy,
+      this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy )  );
+}
+
+// Sample an knock on energy and direction from the distribution
+double ElectroionizationSubshellElectronScatteringDistribution::sampleExact(
+               const double incoming_energy ) const
+{
+  testPrecondition( incoming_energy > d_binding_energy );
+
+  // Sample knock-on electron energy
+  return
+    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalExact(
+      incoming_energy );
 }
 
 // Sample an knock on energy and direction from the distribution
@@ -173,7 +218,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
                double& knock_on_angle_cosine ) const
 {
   // Sample knock-on electron energy and outgoing angle
-  sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
+  this->sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
   outgoing_energy =
         std::max( 1e-15, incoming_energy - knock_on_energy - d_binding_energy );
@@ -181,6 +226,14 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   // Calculate the outgoing angle cosine for the primary electron
   scattering_angle_cosine = outgoingAngle( incoming_energy,
                                            outgoing_energy );
+
+  testPostcondition( incoming_energy > knock_on_energy + d_binding_energy );
+  testPostcondition( knock_on_energy > 0.0 );
+  testPostcondition( outgoing_energy > 0.0 );
+  testPostcondition( knock_on_angle_cosine <= 1.0 );
+  testPostcondition( knock_on_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
+  testPostcondition( scattering_angle_cosine >= -1.0 );
 }
 
 // Sample an knock on energy and direction and record the number of trials
@@ -198,7 +251,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTri
 // Randomly scatter the electron
 void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
                                 ElectronState& electron,
-			                    ParticleBank& bank,
+                                ParticleBank& bank,
                                 Data::SubshellType& shell_of_interaction ) const
 {
   // The energy of the outgoing and knock-on electron
@@ -224,7 +277,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
 
   // Set the direction of the knock-on electron
   knock_on_electron->rotateDirection( knock_on_angle_cosine,
-			                          this->sampleAzimuthalAngle() );
+                                      this->sampleAzimuthalAngle() );
 
   // Bank the knock-on electron
   bank.push( knock_on_electron );
@@ -246,6 +299,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
                                             const double incoming_energy,
                                             const double outgoing_energy ) const
 {
+  testPrecondition( incoming_energy > outgoing_energy )
+
   // The normalized incoming electron energy
   double normalized_incoming_energy =
           incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
@@ -254,8 +309,13 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
   double energy_ratio = outgoing_energy/incoming_energy;
 
   // Randomly select the plane of scattering
-  return sqrt( energy_ratio*( normalized_incoming_energy + 2.0 )/
+  double angle_cosine =
+         sqrt( energy_ratio*( normalized_incoming_energy + 2.0 )/
              ( energy_ratio*normalized_incoming_energy + 2.0 ) );
+
+  testPostcondition( angle_cosine <= 1.0 );
+
+  return angle_cosine;
 }
 
 } // end MonteCarlo namespace
