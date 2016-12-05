@@ -82,7 +82,7 @@ energy will also have units of MeV.
 MonteCarlo::calculateScatteringAngleCosineAdjoint
 "
 The initial and final energies must have units of MeV. If the final energy
-is not energetically possible and Design-by-Contract is turned on an 
+is not energetically possible and Design-by-Contract is turned on an
 exception will be thrown. It it best to verify that the final energy is
 energetically possible before using this function.
 "
