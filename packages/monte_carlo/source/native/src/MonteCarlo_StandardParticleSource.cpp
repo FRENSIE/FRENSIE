@@ -12,6 +12,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardParticleSource.hpp"
+#include "MonteCarlo_ParticleSourcePhaseSpacePoint.hpp"
 #include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "MonteCarlo_ParticleStateFactory.hpp"
 #include "Utility_CommHelpers.hpp"
@@ -20,42 +21,27 @@
 namespace MonteCarlo{
 
 // Constructor
-/*! \details The distributions set in the constructor will be used for
- * sampling the initial state of a particle unless an importance (or bias)
- * distribution is set for the particular portion of phase space. If an
- * importance distribution is set the distribution in the constructor will be
- * used to calculate the necessary starting particle weight to keep the
- * estimators unbiased.
- */
 StandardParticleSource::StandardParticleSource(
-     const unsigned id,
-     const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
-     const std::shared_ptr<Utility::DirectionalDistribution>&
-     directional_distribution,
-     const std::shared_ptr<Utility::OneDDistribution>&
-     energy_distribution,
-     const std::shared_ptr<Utility::OneDDistribution>&
-     time_distribution,
-     const ParticleType particle_type )
+   const unsigned id,
+   const ParticleType particle_type,
+   const std::vector<std::shared_ptr<const ParticleSourceDimension> >&
+   independent_dimensions,
+   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+   spatial_coord_conversion_policy,
+   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+   directional_coord_conversion_policy)
   : d_id( id ),
-    d_spatial_distribution( spatial_distribution ),
-    d_spatial_importance_distribution( NULL ),
-    d_directional_distribution( directional_distribution ),
-    d_directional_importance_distribution( NULL ),
-    d_energy_distribution( energy_distribution ),
-    d_energy_importance_distribution( NULL ),
-    d_time_distribution( time_distribution ),
-    d_time_importance_distribution( NULL ),
     d_particle_type( particle_type ),
+    d_independent_dimensions( independent_dimensions ),
+    d_spatial_coord_conversion_policy( spatial_coord_conversion_policy ),
+    d_directional_coord_conversion_policy( directional_coord_conversion_policy ),
     d_cell_rejection_functions(),
     d_number_of_trials( 1, 0ull ),
     d_number_of_samples( 1, 0ull )
-{
-  // Make sure that the distributions have been set
-  testPrecondition( spatial_distribution.get() );
-  testPrecondition( directional_distribution.get() );
-  testPrecondition( energy_distribution.get() );
-  testPrecondition( time_distribution.get() );
+{ 
+  // Make sure the conversion policies are valid
+  testPrecondition( spatial_coord_conversion_policy.get() );
+  testPrecondition( directional_coord_conversion_policyt.get() );
 }
 
 // Enable thread support
@@ -175,75 +161,6 @@ void StandardParticleSource::printSummary( std::ostream& os ) const
                               os );
 }
 
-// Set the spatial importance distribution
-/*! \details The spatial importance distribution will be used to sample
- * particle positions. The spatial distribution will only be used to determine
- * the necessary weight of the particle to prevent biasing the estimators.
- * Only the master thread should call this method.
- */
-void StandardParticleSource::setSpatialImportanceDistribution(
-    const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution )
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure that the distribution has been set
-  testPrecondition( spatial_distribution.get() );
-
-  d_spatial_importance_distribution = spatial_distribution;
-}
-
-// Set the directional importance distribution
-/*! \details The directional importance distribution will be used to sample
- * particle positions. The directional distribution will only be used to
- * determine the necessary weight of the particle to prevent biasing the
- * estimators. Only the master thread should call this method.
- */
-void StandardParticleSource::setDirectionalImportanceDistribution(
-                       const std::shared_ptr<Utility::DirectionalDistribution>&
-		       directional_distribution )
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure that the distribution has been set
-  testPrecondition( directional_distribution.get() );
-
-  d_directional_importance_distribution = directional_distribution;
-}
-
-// Set the energy importance distribution
-/*! \details The energy importance distribution will be used to sample
- * particle positions. The energy distribution will only be used to determine
- * the necessary weight of the particle to prevent biasing the estimators.
- * Only the master thread should call this method.
- */
-void StandardParticleSource::setEnergyImportanceDistribution(
-	const std::shared_ptr<Utility::OneDDistribution>& energy_distribution )
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure that the distribution has been set
-  testPrecondition( energy_distribution.get() );
-
-  d_energy_importance_distribution = energy_distribution;
-}
-
-// Set the time importance distribution
-/*! \details The time importance distribution will be used to sample
- * particle start times. The time distribution will only be used to determine
- * the necessary weight of the particle to prevent biasing the estimators.
- * Only the master thread should call this method.
- */
-void StandardParticleSource::setTimeImportanceDistribution(
-	  const std::shared_ptr<Utility::OneDDistribution>& time_distribution )
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure that the distribution has been set
-  testPrecondition( time_distribution.get() );
-
-  d_time_importance_distribution = time_distribution;
-}
-
 // Sample the particle state from the source
 /*! \details If enableThreadSupport has been called, this method is
  * thread-safe. The cell that contains the sampled particle state will
@@ -259,25 +176,31 @@ void StandardParticleSource::sampleParticleState(
 
   // Initialize the particle
   std::shared_ptr<ParticleState> particle;
-
+    
   ParticleStateFactory::createState( particle, d_particle_type, history );
 
-  // Initialize the particle weight
-  particle->setWeight( 1.0 );
+  // Initialize a source phase space point
+  ParticleSourcePhaseSpacePoint phase_space_sample;
+  
+  // Sample the particle state
+  while( true )
+  {
+    // Increment the trials counter
+    ++d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
 
-  // Sample the particle direction
-  sampleParticleDirection( *particle );
+    for( unsigned i = 0; i < d_independent_dimension.size(); ++i )
+      d_independent_dimensions[i]->sample( phase_space_sample );
+    
+    phase_space_sample.setParticleState(*d_spatial_coord_conversion_policy,
+                                        *d_directional_coord_conversion_policy,
+                                        *particle );
 
-  // Sample the particle position
-  // NOTE: The particle direction must be sampled first in case cell rejection
-  // sampling is done (which requires the particle direction)
-  sampleParticlePosition( *particle );
+    if( this->isSampledParticlePositionValid( *particle ) )
+      break;
+  }
 
-  // Sample the particle energy
-  sampleParticleEnergy( *particle );
-
-  // Sample the particle start time
-  sampleParticleTime( *particle );
+  // Increment the samples counter
+  ++d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
 
   // Add the particle to the bank
   bank.push( *particle );
@@ -331,210 +254,32 @@ unsigned StandardParticleSource::getId() const
   return d_id;
 }
 
-// Sample the particle position
-/*! \details The particle position will be sampled from the spatial
- * spatial distribution that was specified. If a spatial importance function
- * has been set, the particle position will instead be sampled from the
- * importance function with the weight of the particle multiplied by the
- * PDF value of the original function divided by the importance PDF value
- * corresponding to the sampled point. If a rejection cell has been set, the
- * sampled position will only be kept if it lies within the rejection cell.
- * The efficiency of the rejection sampling is also recorded.
- * \note The particle direction must be sampled first in case cell rejection
- * sampling is done (which requires a particle direction to work effectively).
- */
-void StandardParticleSource::sampleParticlePosition( ParticleState& particle )
+// Check if the sampled particle position is valid
+bool StandardParticleSource::isSampledParticlePositionValid(
+                                          const ParticleState& particle ) const
 {
-  // Make sure thread support has been set up correctly
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
-                    d_number_of_trials.size() );
-
-  double position[3];
-  double position_weight = 1.0;
-
-  while( true )
+  bool valid_position = false;
+  
+  // Check if the position is acceptable
+  if( d_cell_rejection_functions.size() > 0 )
   {
-    if( !d_spatial_importance_distribution.get() )
-      d_spatial_distribution->sample( position );
-    else
+    for( unsigned i = 0; i < d_cell_rejection_functions.size(); ++i )
     {
-      d_spatial_importance_distribution->sample( position );
+      Geometry::PointLocation location =
+        d_cell_rejection_functions[i]( particle.ray() );
 
-      double spatial_weight_numerator =
-	d_spatial_distribution->evaluatePDF( position );
-
-      double spatial_weight_denominator =
-	d_spatial_importance_distribution->evaluatePDF( position );
-
-      // If both evaluate to 0, a weight of 1 is desired but nan will result
-      if( spatial_weight_numerator > 0.0 || spatial_weight_denominator > 0.0 )
-	position_weight = spatial_weight_numerator/spatial_weight_denominator;
-    }
-
-    // Assign the position to the particle
-    particle.setPosition( position );
-
-    // Check if the position is acceptable
-    if( d_cell_rejection_functions.size() > 0 )
-    {
-      bool valid_position = false;
-
-      for( unsigned i = 0; i < d_cell_rejection_functions.size(); ++i )
+      if( location == Geometry::POINT_INSIDE_CELL )
       {
-        Geometry::PointLocation location =
-          d_cell_rejection_functions[i]( particle.ray() );
-
-        if( location == Geometry::POINT_INSIDE_CELL )
-        {
-          valid_position = true;
-
-          break;
-        }
-      }
-
-      if( valid_position )
+        valid_position = true;
+        
         break;
-      else // Position rejected - sample a new one
-      {
-	position_weight = 1.0;
-
-        ++d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
       }
     }
-    // No rejection cells to test
-    else
-      break;
   }
-
-  // Increment the number of trials and samples
-  ++d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
-
-  ++d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
-
-  // Make sure the weight is valid
-  testPostcondition( !ST::isnaninf( position_weight ) );
-  testPostcondition( position_weight > 0.0 );
-
-  particle.multiplyWeight( position_weight );
-}
-
-// Sample the particle direction
-/*! \details The particle direction will be sampled from the directional
- * distribution that was specified. If a directional importance function
- * has been set, the particle direction will instead be sampled from the
- * importance function with the weight of the particle multiplied by the
- * PDF value of the original function divided by the importance PDF value
- * corresponding to the sampled point.
- */
-void StandardParticleSource::sampleParticleDirection( ParticleState& particle )
-{
-  double direction[3];
-  double direction_weight = 1.0;
-
-  if( !d_directional_importance_distribution.get() )
-    d_directional_distribution->sample( direction );
   else
-  {
-    d_directional_importance_distribution->sample( direction );
+    valid_position = true;
 
-    double directional_weight_numerator =
-      d_directional_distribution->evaluatePDF( direction );
-
-    double directional_weight_denominator =
-      d_directional_importance_distribution->evaluatePDF( direction );
-
-    // If both evaluate to 0, a weight of 1 is desired but nan will result
-    if( directional_weight_numerator > 0.0 ||
-	directional_weight_denominator > 0.0 )
-    {
-      direction_weight = directional_weight_numerator/
-	directional_weight_denominator;
-    }
-  }
-
-  // Make sure the weight is valid
-  testPostcondition( !ST::isnaninf( direction_weight ) );
-  testPostcondition( direction_weight > 0.0 );
-
-  particle.setDirection( direction );
-  particle.multiplyWeight( direction_weight );
-}
-
-// Sample the particle energy
-/*! \details The particle energy will be sampled from the energy
- * distribution that was specified. If an energy importance function
- * has been set, the particle energy will instead be sampled from the
- * importance function with the weight of the particle multiplied by the
- * PDF value of the original function divided by the importance PDF value
- * corresponding to the sampled point.
- */
-void StandardParticleSource::sampleParticleEnergy( ParticleState& particle )
-{
-  double energy;
-  double energy_weight = 1.0;
-
-  if( !d_energy_importance_distribution.get() )
-    energy = d_energy_distribution->sample();
-  else
-  {
-    energy = d_energy_importance_distribution->sample();
-
-    double energy_weight_numerator =
-      d_energy_distribution->evaluatePDF( energy );
-
-    double energy_weight_denominator =
-      d_energy_importance_distribution->evaluatePDF( energy );
-
-    // If both evaluate to 0, a weight of 1 is desired but nan will result
-    if( energy_weight_numerator > 0.0 || energy_weight_denominator > 0.0 )
-      energy_weight = energy_weight_numerator/energy_weight_denominator;
-  }
-
-  // Make sure the weight is valid
-  testPostcondition( !ST::isnaninf( energy_weight ) );
-  testPostcondition( energy_weight > 0.0 );
-
-  particle.setEnergy( energy );
-  particle.multiplyWeight( energy_weight );
-}
-
-// Sample the particle time
-/*! \details The particle time will be sampled from the time
- * distribution that was specified. If a time importance function
- * has been set, the particle time will instead be sampled from the
- * importance function with the weight of the particle multiplied by the
- * PDF value of the original function divided by the importance PDF value
- * corresponding to the sampled point.
- */
-void StandardParticleSource::sampleParticleTime( ParticleState& particle )
-{
-
-  double time;
-  double time_weight = 1.0;
-
-  if( !d_time_importance_distribution.get() )
-    time = d_time_distribution->sample();
-  else
-  {
-    time = d_time_importance_distribution->sample();
-
-    double time_weight_numerator =
-      d_time_distribution->evaluatePDF( time );
-
-    double time_weight_denominator =
-      d_time_importance_distribution->evaluatePDF( time );
-
-    // If both evaluate to 0, a weight of 1 is desired but nan will result
-    if( time_weight_numerator > 0.0 || time_weight_denominator > 0.0 )
-      time_weight = time_weight_numerator/time_weight_denominator;
-  }
-
-  // Make sure the weight is valid
-  testPostcondition( !ST::isnaninf( time_weight ) );
-  testPostcondition( time_weight > 0.0 );
-
-  particle.setTime( time );
-  particle.multiplyWeight( time_weight );
+  return valid_position;
 }
 
 // Reduce the local samples counters

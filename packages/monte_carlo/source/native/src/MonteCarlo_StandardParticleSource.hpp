@@ -11,10 +11,8 @@
 
 // Std Lib Includes
 #include <memory>
-
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
+#include <functional>
+#include <vector>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -22,12 +20,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
+#include "MonteCarlo_ParticleSourceDimension.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_SpatialDistribution.hpp"
-#include "Utility_DirectionalDistribution.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_SpatialCoordinateConversionPolicy.hpp"
+#include "Utility_DirectionalCoordinateConversionPolicy.hpp"
 
 namespace MonteCarlo{
 
@@ -45,15 +43,14 @@ public:
 
   //! Constructor
   StandardParticleSource(
-     const ModuleTraits::InternalSourceHandle id,
-     const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
-     const std::shared_ptr<Utility::DirectionalDistribution>&
-     directional_distribution,
-     const std::shared_ptr<Utility::OneDDistribution>&
-     energy_distribution,
-     const std::shared_ptr<Utility::OneDDistribution>&
-     time_distribution,
-     const ParticleType particle_type );
+   const ModuleTraits::InternalSourceHandle id,
+   const ParticleType particle_type,
+   const std::vector<std::shared_ptr<const ParticleSourceDimension> >&
+   independent_dimensions,
+   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+   spatial_coord_conversion_policy,
+   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+   directional_coord_conversion_policy );
 
   //! Destructor
   ~StandardParticleSource()
@@ -76,23 +73,6 @@ public:
 
   //! Print a summary of the source data
   void printSummary( std::ostream& os ) const;
-
-  //! Set the spatial importance distribution
-  void setSpatialImportanceDistribution(
-   const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution );
-
-  //! Set the directional importance distribution
-  void setDirectionalImportanceDistribution(
-                       const std::shared_ptr<Utility::DirectionalDistribution>&
-                       directional_distribution );
-
-  //! Set the energy importance distribution
-  void setEnergyImportanceDistribution(
-       const std::shared_ptr<Utility::OneDDistribution>& energy_distribution );
-
-  //! Set the time importance distribution
-  void setTimeImportanceDistribution(
-	 const std::shared_ptr<Utility::OneDDistribution>& time_distribution );
 
   //! Set the rejection cell
   template<typename PointLocationFunction>
@@ -117,17 +97,8 @@ public:
 
 private:
 
-  // Sample the particle position
-  void sampleParticlePosition( ParticleState& particle );
-
-  // Sample the particle direction
-  void sampleParticleDirection( ParticleState& particle );
-
-  // Sample the particle energy
-  void sampleParticleEnergy( ParticleState& particle );
-
-  // Sample the particle time
-  void sampleParticleTime( ParticleState& particle );
+  // Check if the sampled particle position is valid
+  bool isSampledParticlePositionValid( const ParticleState& particle ) const;
 
   // Reduce the local samples counters
   unsigned long long reduceLocalSamplesCounters() const;
@@ -135,37 +106,23 @@ private:
   // Reduce the local trials counters
   unsigned long long reduceLocalTrialsCounters() const;
 
-  // The spatial distribution of the source
-  std::shared_ptr<Utility::SpatialDistribution> d_spatial_distribution;
-
-  // The true spatial distribution of the source
-  std::shared_ptr<Utility::SpatialDistribution>
-  d_spatial_importance_distribution;
-
-  // The directional distribution
-  std::shared_ptr<Utility::DirectionalDistribution> d_directional_distribution;
-
-  // The true directional distribution of the source
-  std::shared_ptr<Utility::DirectionalDistribution>
-  d_directional_importance_distribution;
-
-  // The energy distribution
-  std::shared_ptr<Utility::OneDDistribution> d_energy_distribution;
-
-  // The true energy distribution of the source
-  std::shared_ptr<Utility::OneDDistribution> d_energy_importance_distribution;
-
-  // The time distribution
-  std::shared_ptr<Utility::OneDDistribution> d_time_distribution;
-
-  // The true time distribution of the source
-  std::shared_ptr<Utility::OneDDistribution> d_time_importance_distribution;
-
   // The source id
   unsigned d_id;
 
   // The type of particle emitted
   ParticleType d_particle_type;
+
+  // The independent particle source dimensions
+  std::vector<std::shared_ptr<const ParticleSourceDimension> >
+  d_independent_dimension;
+
+  // The spatial coordinate conversion policy
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+  d_spatial_coord_conversion_policy;
+
+  // The directional coordinate conversion policy
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+  d_directional_coord_conversion_policy;
 
   // The cell rejection functions
   typedef boost::function<Geometry::PointLocation (const Geometry::Ray&)> CellRejectionFunction;

@@ -9,8 +9,11 @@
 #ifndef MONTE_CARLO_PARTICLE_SOURCE_PHASE_SPACE_POINT_HPP
 #define MONTE_CARLO_PARTICLE_SOURCE_PHASE_SPACE_POINT_HPP
 
-// Std Lib Includes
-#include <memory>
+// FRENSIE Includes
+#include "MonteCarlo_ParticleSourceDimensionType.hpp"
+#include "MonteCarlo_ParticleState.hpp"
+#include "Utility_SpatialCoordinateConversionPolicy.hpp"
+#include "Utility_DirectionalCoordinateConversionPolicy.hpp"
 
 namespace MonteCarlo{
 
@@ -21,11 +24,7 @@ class ParticleSourcePhaseSpacePoint
 public:
 
   //! Constructor
-  ParticleSourcePhaseSpacePoint(
-            const std::shared_ptr<const SpatialCoordinateConversionPolicy>&
-            spatial_coord_conversion_policy,
-            const std::shared_ptr<const DirectionalCoordinateConversionPolicy>&
-            directional_coord_conversion_policy );
+  ParticleSourcePhaseSpacePoint();
 
   //! Destructor
   ~ParticleSourcePhaseSpacePoint()
@@ -69,12 +68,14 @@ public:
 
   //! Convert spatial coordinates to cartesian coordinates
   void convertSpatialCoordinatesToCartesianCoordinates(
-                                               double& x_spatial_coord,
-                                               double& y_spatial_coord,
-                                               double& z_spatial_coord ) const;
+                                       const SpatialCoordinateConversionPolicy&
+                                       spatial_coord_conversion_policy,
+                                       double& x_spatial_coord,
+                                       double& y_spatial_coord,
+                                       double& z_spatial_coord ) const;
 
   //! Return the weight of all spatial coordinates
-  void getWeightOfSpatialCoordinates() const;
+  double getWeightOfSpatialCoordinates() const;
 
   //! Return the polar angle directional coordinate of the phase space point
   double getPolarAngleDirectionalCoordinate() const;
@@ -104,9 +105,11 @@ public:
 
   //! Convert directional coordinates to cartesian coordinates
   void convertDirectionalCoordinatesToCartesianCoordinates(
-                                           double& x_directional_coord,
-                                           double& y_directional_coord,
-                                           double& z_directional_coord ) const;
+                                   const DirectionalCoordinateConversionPolicy&
+                                   directional_coord_conversion_policy,
+                                   double& x_directional_coord,
+                                   double& y_directional_coord,
+                                   double& z_directional_coord ) const;
 
   //! Return the weight of all directional coordinates
   double getWeightOfDirectionalCoordinates() const;
@@ -144,15 +147,30 @@ public:
   //! Return the weight of all coordinates
   void getWeightOfCoordinates() const;
 
+  //! Set a particle state
+  void setParticleState( const Utility::SpatialCoordinateConversionPolicy&
+                         spatial_coord_conversion_policy,
+                         const Utility::DirectionalCoordinateConversionPolicy&
+                         directional_coord_conversion_policy,
+                         ParticleState& particle ) const;
+
+  //! Return the dimension value
+  template<ParticleSourceDimensionType dimension>
+  double getCoordinate() const;
+
+  //! Set the dimension value
+  template<ParticleSourceDimensionType dimension>
+  void setCoordinate( const double coord_value );
+
+  //! Get the dimension weight
+  template<ParticleSourceDimensionType dimension>
+  double getCoordinateWeight() const;
+
+  //! Set the dimension weight
+  template<ParticleSourceDimensionType dimension>
+  void setCoordinateWeight( const double coord_weight );
+
 private:
-
-  // The spatial coordinate conversion policy
-  std::shared_ptr<const SpatialCoordinateConversionPolicy>
-  d_spatial_coord_conversion_policy;
-
-  // The directional coordinate conversion policy
-  std::shared_ptr<const DirectionalCoordinateConversionPolicy>
-  d_directional_coord_conversion_policy;
 
   // The primary spatial coordinate
   double d_primary_spatial_coord;
@@ -173,16 +191,16 @@ private:
   double d_tertiary_spatial_coord_weight;
 
   // The polar angle directional coordinate
-  double d_polar_angle_directional_coordinate;
+  double d_polar_angle_directional_coord;
 
   // The polar angle directional coordinate weight
-  double d_polar_angle_directional_coordinate_weight;
+  double d_polar_angle_directional_coord_weight;
 
   // The azimuthal angle directional coordinate
-  double d_azimuthal_angle_directional_coordinate;
+  double d_azimuthal_angle_directional_coord;
 
   // The azimuthal angle directional coordinate weight
-  double d_azimuthal_angle_directional_coordinate_weight;
+  double d_azimuthal_angle_directional_coord_weight;
 
   // The energy coordinate
   double d_energy_coord;
@@ -201,6 +219,14 @@ private:
 };
   
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ParticleSourcePhaseSpacePoint_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_PARTICLE_SOURCE_PHASE_SPACE_POINT_HPP
 
