@@ -16,6 +16,7 @@
 #include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "MonteCarlo_ParticleStateFactory.hpp"
 #include "Utility_CommHelpers.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -24,8 +25,8 @@ namespace MonteCarlo{
 StandardParticleSource::StandardParticleSource(
    const unsigned id,
    const ParticleType particle_type,
-   const std::vector<std::shared_ptr<const ParticleSourceDimension> >&
-   independent_dimensions,
+   const std::set<ParticleSourceDimensionType>& independent_dimensions
+   const std::map<ParticleSourceDimensionType,std::shared_ptr<const ParticleSourceDimension> >& dimensions,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
@@ -33,8 +34,10 @@ StandardParticleSource::StandardParticleSource(
   : d_id( id ),
     d_particle_type( particle_type ),
     d_independent_dimensions( independent_dimensions ),
+    d_dimensions( dimensions ),
     d_spatial_coord_conversion_policy( spatial_coord_conversion_policy ),
     d_directional_coord_conversion_policy( directional_coord_conversion_policy ),
+    d_critical_line_energies(),
     d_cell_rejection_functions(),
     d_number_of_trials( 1, 0ull ),
     d_number_of_samples( 1, 0ull )
@@ -189,7 +192,10 @@ void StandardParticleSource::sampleParticleState(
     ++d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
 
     for( unsigned i = 0; i < d_independent_dimension.size(); ++i )
-      d_independent_dimensions[i]->sample( phase_space_sample );
+    {
+      d_dimensions.find( d_independent_dimensions[i] )->second->sample(
+                                                          phase_space_sample );
+    }
     
     phase_space_sample.setParticleState(*d_spatial_coord_conversion_policy,
                                         *d_directional_coord_conversion_policy,
@@ -198,6 +204,9 @@ void StandardParticleSource::sampleParticleState(
     if( this->isSampledParticlePositionValid( *particle ) )
       break;
   }
+
+  // Generate probe particles with the critical line energies
+  this->generateProbeParticles( phase_space_sample, bank );
 
   // Increment the samples counter
   ++d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
@@ -280,6 +289,57 @@ bool StandardParticleSource::isSampledParticlePositionValid(
     valid_position = true;
 
   return valid_position;
+}
+
+// Generate probe particles
+/* Note: If a spatial dimension is dependent on the energy dimension then
+ * it is possible for the position of a generated probe particle to be 
+ * outside of a rejection cell even if the original sampled particle state
+ * was inside of a rejection cell. The position of the generated probe 
+ * particles will always be checked against the rejection cells. Rejected 
+ * probe particles will not affect the sampling efficiency of the source.
+ */
+void StandardParticleSource::generateProbeParticles(
+                       const ParticleSourcePhaseSpacePoint& phase_space_sample,
+                       ParticleBank& bank ) const
+{
+  // Get the energy dimension
+  const ParticleSourceDimension& energy_dimension =
+    *d_dimensions.find( ENERGY_PS_DIMENSION )->second;
+  
+  for( size_t i = 0; i < d_critical_line_energies.size(); ++i )
+  {
+    // Initialize the particle (probe)
+    std::shared_ptr<ParticleState> particle;
+
+    try{
+      ParticleStateFactory::createState(
+                                    particle, d_particle_type, history, true );
+    }
+    EXCEPTION_CATCH_RETHROW( std::logic_error,
+                             "Error: The probe particles with the desired "
+                             "critical line energies could not be created!" );
+
+    // If the position is dependent on the energy, the position of the probe
+    // must be checked
+    while( true )
+    {
+      // Set the phase space sample energy to the critical line energy
+      energy_dimension.setDimensionValueAndSample(
+                             phase_space_sample, d_critical_line_energies[i] );
+
+      phase_space_sample.setParticleState(
+                                        *d_spatial_coord_conversion_policy,
+                                        *d_directional_coord_conversion_policy,
+                                        *particle );
+
+      if( this->isSampledParticlePositionValid( *particle ) )
+        break;
+    }
+
+    // Add the particle to the bank
+    bank.push( *particle );
+  }  
 }
 
 // Reduce the local samples counters

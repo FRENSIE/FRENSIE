@@ -32,7 +32,8 @@ public:
             dimension_distribution );
 
   //! Destructor
-  ~DependentParticleSourceDimension();
+  ~DependentParticleSourceDimension()
+  { /* ... */ }
 
   //! Return the dependent dimension type
   ParticleSourceDimensionType getDimensionType() const override;
@@ -56,6 +57,10 @@ protected:
   //! Sample a value for this dimension only
   void sampleDimension( ParticleSourcePhaseSpacePoint& phase_space_sample ) const override;
 
+  //! Set the value for this dimension only
+  void setDimensionValue( ParticleSourcePhasePoint& phase_space_sample,
+                          const double dimension_value ) const override;
+
 private:
 
   // The dimension distribution
@@ -68,6 +73,14 @@ private:
 };
   
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_DependentParticleSourceDimension_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_DEPENDENT_PARTICLE_SOURCE_DIMENSION_HPP
 

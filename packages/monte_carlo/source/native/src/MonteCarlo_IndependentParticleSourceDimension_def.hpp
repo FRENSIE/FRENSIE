@@ -100,6 +100,21 @@ void IndependentParticleSourceDimension<dimension>::sampleDimension( ParticleSou
   phase_space_sample.setCoordinate<dimension>( sample );
   phase_space_sample.setCoordinateWeight<dimension>( weight );
 }
+
+// Set the value for this dimension only
+template<ParticleSourceDimensionType dimension>
+void IndependentParticleSourceDimension<dimension>::setDimensionValue(
+                                  ParticleSourcePhasePoint& phase_space_sample,
+                                  const double dimension_value ) const override
+{
+  double weight = d_dimension_distribution->evaluatePDF( dimension_value );
+
+  // Make sure that the weight is valid
+  testPostcondition( weight > 0.0 );
+
+  phase_space_sample.setCoordinate<dimension>( dimension_value );
+  phase_space_sample.setCoordinateWeight<dimension>( weight );
+}
   
 } // end MonteCarlo namespace
 

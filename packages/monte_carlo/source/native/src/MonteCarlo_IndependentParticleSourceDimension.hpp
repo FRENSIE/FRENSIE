@@ -53,6 +53,10 @@ protected:
   //! Sample a value for this dimension only
   void sampleDimension( ParticleSourcePhaseSpacePoint& phase_space_sample ) const override;
 
+  //! Set the value for this dimension only
+  void setDimensionValue( ParticleSourcePhasePoint& phase_space_sample,
+                          const double dimension_value ) const override;
+
 private:
 
   // The dimension distribution

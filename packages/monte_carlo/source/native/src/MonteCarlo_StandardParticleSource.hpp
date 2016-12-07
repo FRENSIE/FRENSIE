@@ -13,10 +13,13 @@
 #include <memory>
 #include <functional>
 #include <vector>
+#include <map>
+#include <set>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
@@ -45,8 +48,8 @@ public:
   StandardParticleSource(
    const ModuleTraits::InternalSourceHandle id,
    const ParticleType particle_type,
-   const std::vector<std::shared_ptr<const ParticleSourceDimension> >&
-   independent_dimensions,
+   const std::set<ParticleSourceDimensionType>& independent_dimensions
+   const std::map<ParticleSourceDimensionType,std::shared_ptr<const ParticleSourceDimension> >& dimensions,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
@@ -74,6 +77,10 @@ public:
   //! Print a summary of the source data
   void printSummary( std::ostream& os ) const;
 
+  //! Set the critical line energies
+  void setCriticalLineEnergies(
+               const Teuchos::ArrayRCP<const double>& critical_line_energies );
+
   //! Set the rejection cell
   template<typename PointLocationFunction>
   void setRejectionCell(const Geometry::ModuleTraits::InternalCellHandle& cell,
@@ -100,6 +107,11 @@ private:
   // Check if the sampled particle position is valid
   bool isSampledParticlePositionValid( const ParticleState& particle ) const;
 
+  // Generate probe particles
+  void generateProbeParticles(
+                       const ParticleSourcePhaseSpacePoint& phase_space_sample,
+                       ParticleBank& bank ) const;
+
   // Reduce the local samples counters
   unsigned long long reduceLocalSamplesCounters() const;
 
@@ -113,16 +125,21 @@ private:
   ParticleType d_particle_type;
 
   // The independent particle source dimensions
-  std::vector<std::shared_ptr<const ParticleSourceDimension> >
-  d_independent_dimension;
+  std::set<ParticleSourceDimensionType> d_independent_dimensions;
+
+  // The particle source dimensions
+  std::map<ParticleSourceDimensionType,std::shared_ptr<const ParticleSourceDimension> > d_dimensions;
 
   // The spatial coordinate conversion policy
-  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
   d_spatial_coord_conversion_policy;
 
   // The directional coordinate conversion policy
-  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
   d_directional_coord_conversion_policy;
+
+  // The critical line energies
+  Teuchos::ArrayRCP<const double> d_critical_line_energies;
 
   // The cell rejection functions
   typedef boost::function<Geometry::PointLocation (const Geometry::Ray&)> CellRejectionFunction;

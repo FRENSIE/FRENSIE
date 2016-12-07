@@ -43,6 +43,17 @@ void ParticleSourceDimension::sampleDependentDimensions(
     d_dependent_dimensions[i]->sampleDimension( phase_space_sample );
 }
 
+// Set the dimension value and weight appropriately (then sample dep. dists)
+void setDimensionValueAndSample( ParticleSourcePhasePoint& phase_space_sample,
+                                 const double dimension_value ) const
+{
+  // Set the dimension value
+  this->setDimensionValue( phase_space_sample, dimension_value );
+
+  // Sample values for all dependent dimensions
+  this->sampleDependentDimensions( phase_space_sample );
+}
+
 // Add a dependent dimension
 void ParticleSourceDimension::addDependentDimension(
                           const std::shared_ptr<const ParticleSourceDimension>&
