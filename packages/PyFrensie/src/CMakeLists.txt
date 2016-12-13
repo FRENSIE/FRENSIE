@@ -74,7 +74,9 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Geometry_Config.i.in
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} MonteCarlo)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Collision)
-SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} monte_carlo_collision_native ${TEUCHOS_CORE} ${PYTRILINOS})
+SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_native ${TEUCHOS_CORE} ${PYTRILINOS})
+
+#TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_COMM} ${TEUCHOS_PARAMETER_LIST} ${ROOT} utility_dist utility_integrator data_endl data_ace data_native monte_carlo_core monte_carlo_collision_core)
 
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)
