@@ -173,7 +173,7 @@ inline void ParticleSourcePhaseSpacePoint::setCoordinateWeight<R_PS_DIMENSION>(
 template<>
 inline double ParticleSourcePhaseSpacePoint::getCoordinate<AXIS_PS_DIMENSION> const
 {
-  return this->getSecondarySpatialCoordinate();
+  return this->getTertiarySpatialCoordinate();
 }
 
 //! Set the axis dimension value
@@ -181,14 +181,14 @@ template<>
 inline void ParticleSourcePhaseSpacePoint::setCoordinate<AXIS_PS_DIMENSION>(
                                                      const double coord_value )
 {
-  this->setSecondarySpatialCoordinate( coord_value );
+  this->setTertiarySpatialCoordinate( coord_value );
 }
 
 //! Return the axis dimension weight
 template<>
 inline double ParticleSourcePhaseSpacePoint::getCoordinateWeight<AXIS_PS_DIMENSION> const
 {
-  return this->getSecondarySpatialCoordinateWeight();
+  return this->getTertiarySpatialCoordinateWeight();
 }
 
 //! Set the axis dimension weight
@@ -196,14 +196,14 @@ template<>
 inline void ParticleSourcePhaseSpacePoint::setCoordinateWeight<AXIS_PS_DIMENSION>(
                                                     const double coord_weight )
 {
-  this->setSecondarySpatialCoordinateWeight( coord_weight );
+  this->setTertiarySpatialCoordinateWeight( coord_weight );
 }
 
 //! Return the spatial polar angle dimension value
 template<>
 inline double ParticleSourcePhaseSpacePoint::getCoordinate<SPATIAL_POLAR_ANGLE_PS_DIMENSION> const
 {
-  return this->getSecondarySpatialCoordinate();
+  return this->getTertiarySpatialCoordinate();
 }
 
 //! Set the spatial polar angle dimension value
@@ -211,14 +211,14 @@ template<>
 inline void ParticleSourcePhaseSpacePoint::setCoordinate<SPATIAL_POLAR_ANGLE_PS_DIMENSION>(
                                                      const double coord_value )
 {
-  this->setSecondarySpatialCoordinate( coord_value );
+  this->setTertiarySpatialCoordinate( coord_value );
 }
 
 //! Return the spatial polar angle dimension weight
 template<>
 inline double ParticleSourcePhaseSpacePoint::getCoordinateWeight<SPATIAL_POLAR_ANGLE_PS_DIMENSION> const
 {
-  return this->getSecondarySpatialCoordinateWeight();
+  return this->getTertiarySpatialCoordinateWeight();
 }
 
 //! Set the spatial polar angle dimension weight
@@ -226,13 +226,13 @@ template<>
 inline void ParticleSourcePhaseSpacePoint::setCoordinateWeight<SPATIAL_POLAR_ANGLE_PS_DIMENSION>(
                                                     const double coord_weight )
 {
-  this->setSecondarySpatialCoordinateWeight( coord_weight );
+  this->setTertiarySpatialCoordinateWeight( coord_weight );
 }
 
 //! Return the spatial azimuthal angle dimension value
 inline double ParticleSourcePhaseSpacePoint::getCoordinate<SPATIAL_AZIMUTHAL_ANGLE_DIMENSION> const
 {
-  return this->getTertiarySpatialCoordinate();
+  return this->getSecondarySpatialCoordinate();
 }
 
 //! Set the spatial azimuthal angle value
@@ -240,14 +240,14 @@ template<>
 inline void ParticleSourcePhaseSpacePoint::setCoordinate<SPATIAL_AZIMUTHAL_ANGLE_PS_DIMENSION>(
                                                      const double coord_value )
 {
-  this->setTertiarySpatialCoordinate( coord_value );
+  this->setSecondarySpatialCoordinate( coord_value );
 }
 
 //! Return the spatial azimuthal angle weight
 template<>
 inline double ParticleSourcePhaseSpacePoint::getCoordinateWeight<SPATIAL_AZIMUTHAL_ANGLE_PS_DIMENSION> const
 {
-  return this->getTertiarySpatialCoordinateWeight();
+  return this->getSecondarySpatialCoordinateWeight();
 }
 
 //! Set the spatial azimuthal angle weight
@@ -255,7 +255,7 @@ template<>
 inline void ParticleSourcePhaseSpacePoint::setCoordinateWeight<SPATIAL_AZIMUTHAL_ANGLE_PS_DIMENSION>(
                                                     const double coord_weight )
 {
-  this->setTertiarySpatialCoordinateWeight( coord_weight );
+  this->setSecondarySpatialCoordinateWeight( coord_weight );
 }
 
 //! Return the directional polar angle dimension value

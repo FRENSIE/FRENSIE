@@ -26,7 +26,7 @@ public:
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
-  virtual void convertToCartesianCoordinates(
+  virtual void convertToCartesianSpatialCoordinates(
                                           const double primary_spatial_coord,
                                           const double secondary_spatial_coord,
                                           const double tertiary_spatial_coord,
@@ -35,11 +35,12 @@ public:
                                           double& z_spatial_coord ) const = 0;
 
   //! Convert the spatial coordinates to cartesian coordinates
-  void convertToCartesianCoordinates( const double coordinates[3],
-                                      double cartesian_coordinates[3] ) const;
+  void convertToCartesianSpatialCoordinates(
+                                       const double coordinates[3],
+                                       double cartesian_coordinates[3] ) const;
 
   //! Convert the cartesian coordinates to the spatial coordinate system
-  virtual void convertFromCartesianCoordinates(
+  virtual void convertFromCartesianSpatialCoordinates(
                                     const double x_spatial_coord,
                                     const double y_spatial_coord,
                                     const double z_spatial_coord,
@@ -48,34 +49,35 @@ public:
                                     double& tertiary_spatial_coord ) const = 0;
 
   //! Convert the cartesian coordinates to the spatial coordinate system
-  void convertFromCartesianCoordinates( const double cartesian_coordinates[3],
-                                        double coordinates[3] ) const;
+  void convertFromCartesianSpatialCoordinates(
+                                         const double cartesian_coordinates[3],
+                                         double coordinates[3] ) const;
 };
 
 // Convert the spatial coordinates to cartesian coordinates
-inline void SpatialCoordinateConversionPolicy::convertToCartesianCoordinates(
+inline void SpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
                                         const double coordinates[3],
                                         double cartesian_coordinates[3] ) const
 {
-  this->convertToCartesianCoordinates( coordinates[0],
-                                       coordinates[1],
-                                       coordinates[2],
-                                       cartesian_coordinates[0],
-                                       cartesian_coordinates[1],
-                                       cartesian_coordinates[2] );
+  this->convertToCartesianSpatialCoordinates( coordinates[0],
+                                              coordinates[1],
+                                              coordinates[2],
+                                              cartesian_coordinates[0],
+                                              cartesian_coordinates[1],
+                                              cartesian_coordinates[2] );
 }
 
 // Convert the cartesian coordinates to the spatial coordinate system
-inline void SpatialCoordinateConversionPolicy::convertFromCartesianCoordinates(
+inline void SpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
                                          const double cartesian_coordinates[3],
                                          double coordinates[3] ) const
 {
-  this->convertFromCartesianCoordinates( cartesian_coordinates[0],
-                                         cartesian_coordinates[1],
-                                         cartesian_coordinates[2],
-                                         coordinates[0],
-                                         coordinates[1],
-                                         coordinates[2] );
+  this->convertFromCartesianSpatialCoordinates( cartesian_coordinates[0],
+                                                cartesian_coordinates[1],
+                                                cartesian_coordinates[2],
+                                                coordinates[0],
+                                                coordinates[1],
+                                                coordinates[2] );
 }
   
 } // end Utility namespace
