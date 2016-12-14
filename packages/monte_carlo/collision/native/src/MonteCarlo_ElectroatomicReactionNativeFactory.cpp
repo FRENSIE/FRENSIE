@@ -137,6 +137,10 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
   unsigned cutoff_threshold_energy_index =
     raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
+  // Reduced cutoff elastic cross section ratio
+  std::vector<double> reduced_cutoff_ratio =
+    raw_electroatom_data.getReducedCutoffCrossSectionRatios();
+
   // Moment preserving elastic cross section
   Teuchos::ArrayRCP<double> mp_cross_section;
   mp_cross_section.assign(
@@ -177,10 +181,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
 
     if ( i < mp_threshold_diff )
     {
-      double cutoff_cdf =
-        distribution->evaluateCDF( energy, cutoff_angle_cosine );
-
-      combined_cross_section[i] = cutoff_cross_section[i]*cutoff_cdf;
+      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio[i];
     }
     else if ( i < cutoff_threshold_diff )
     {
@@ -188,11 +189,8 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     }
     else
     {
-      double cutoff_cdf =
-        distribution->evaluateCDF( energy, cutoff_angle_cosine );
-
       combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff]*cutoff_cdf + 
+        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio[i] +
         mp_cross_section[i-mp_threshold_diff];
     }
   }

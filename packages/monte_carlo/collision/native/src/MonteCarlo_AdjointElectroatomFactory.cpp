@@ -39,7 +39,7 @@ AdjointElectroatomFactory::AdjointElectroatomFactory(
   std::string electroatom_file_path, electroatom_file_type, electroatom_table_name;
   int electroatom_file_start_line;
   double atomic_weight;
-
+std::cout << "***electroatom_file_path = " << electroatom_file_path << std::endl;
   while( electroatom_name != electroatom_aliases.end() )
   {
     Data::CrossSectionsXMLProperties::extractInfoFromAdjointElectroatomTableInfoParameterList(
@@ -51,6 +51,8 @@ AdjointElectroatomFactory::AdjointElectroatomFactory(
                           electroatom_table_name,
                           electroatom_file_start_line,
                           atomic_weight );
+
+std::cout << "***electroatom_file_path = " << electroatom_file_path << std::endl;
 
     if( electroatom_file_type == Data::CrossSectionsXMLProperties::native_file )
     {
@@ -107,17 +109,18 @@ void AdjointElectroatomFactory::createAdjointElectroatomFromNativeTable(
   if( d_electroatomic_table_name_map.find( native_file_path ) ==
       d_electroatomic_table_name_map.end() )
   {
-    // Create the eedl data container
+std::cout << "start " << std::endl;
+    // Create the native data container
     Data::AdjointElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
-
+std::cout << "table loaded " << std::endl;
     // Create the atomic relaxation model
     Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model(
         new MonteCarlo::VoidAtomicRelaxationModel );;
-
+std::cout << "relaxation done " << std::endl;
     // Initialize the new adjoint electroatom
     Teuchos::RCP<AdjointElectroatom>& electroatom = d_electroatom_name_map[electroatom_alias];
-
+std::cout << "electroatom initialized " << std::endl;
     // Create the new adjoint electroatom
     AdjointElectroatomNativeFactory::createAdjointElectroatom( data_container,
                                                  native_file_path,
@@ -125,13 +128,14 @@ void AdjointElectroatomFactory::createAdjointElectroatomFromNativeTable(
                                                  electroatom,
                                                  cutoff_angle_cosine,
                                                  hash_grid_bins );
-
+std::cout << "electroatom done " << std::endl;
     // Cache the new adjoint electroatom in the table name map
     d_electroatomic_table_name_map[native_file_path] = electroatom;
   }
   // The table has already been loaded
   else
   {
+std::cout << "wrong start " << std::endl;
     d_electroatom_name_map[electroatom_alias] =
       d_electroatomic_table_name_map[native_file_path];
   }

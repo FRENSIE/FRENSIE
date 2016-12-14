@@ -311,8 +311,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         test_cross_sections_xml_directory,
         cross_section_table_info,
         atom_aliases,
-        upper_cutoff_angle_cosine,
-        hash_grid_bins );
+        hash_grid_bins,
+        false,
+        upper_cutoff_angle_cosine );
 
     std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointElectroatom> >
       atom_map;

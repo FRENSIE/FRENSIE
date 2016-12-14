@@ -48,11 +48,6 @@
 
 // Ignore scatter electron
 %ignore *::scatterElectron( ElectronState&, ParticleBank&, Data::SubshellType& ) const;
-/*%ignore ElectronState;*/
-/*%ignore ParticleBank;*/
-
-/*%apply MonteCarlo::ElectronState& INOUT { ElectronState& electron };*/
-/*%apply MonteCarlo::ParticleBank& INOUT { ParticleBank& bank };*/
 
 //---------------------------------------------------------------------------//
 // Add support for the electron scattering distribution native factory helpers

@@ -1976,6 +1976,38 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     data_container.setAdjointMomentPreservingElasticWeights(
         d_forward_epr_data->getMomentPreservingElasticWeights() );
 
+    // Calcualte the reduced cutoff elastic cross section ratio
+    std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+        analog_distribution;
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+    analog_distribution,
+    d_forward_epr_data->getCutoffElasticAngles(),
+    d_forward_epr_data->getCutoffElasticPDF(),
+    d_forward_epr_data->getElasticAngularEnergyGrid(),
+    d_forward_epr_data->getAtomicNumber() );
+
+    std::vector<double> reduced_cutoff_cross_section_ratio( energy_grid.size() );
+    for( unsigned i = 0; i < energy_grid.size(); i++ )
+    {
+      reduced_cutoff_cross_section_ratio[i] =
+        analog_distribution->evaluateCDF(
+            energy_grid[i],
+            d_forward_epr_data->getCutoffAngleCosine() );
+    }
+//    boost::function<double (double pz)> reduced_cutoff_cs_ratio_grid_function =
+//      boost::bind( &MonteCarlo::ElectronScatteringDistribution::evaluateCDF,
+//                   boost::cref( *analog_distribution ),
+//                   _1,
+//                   d_forward_epr_data->getCutoffAngleCosine() );
+
+//    std::vector<double> reduced_cutoff_cross_section_ratio;
+//    this->createCrossSectionOnUnionEnergyGrid(
+//        union_energy_grid,
+//        reduced_cutoff_cs_ratio_grid_function,
+//        reduced_cutoff_cross_section_ratio,
+//        threshold );
+    data_container.setReducedCutoffCrossSectionRatios( reduced_cutoff_cross_section_ratio );
+
     (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
   }
 

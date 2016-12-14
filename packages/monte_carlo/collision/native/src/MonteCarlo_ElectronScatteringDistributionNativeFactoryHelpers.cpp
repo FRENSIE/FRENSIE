@@ -28,6 +28,19 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
   return distribution;
 }
 
+// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container )
+{
+  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+    distribution, data_container );
+
+  return distribution;
+}
+
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
@@ -80,6 +93,58 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   return distribution;
 }
 
+//! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine )
+{
+  // Extract the common energy grid used for this atom
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign( data_container.getAdjointElectronEnergyGrid().begin(),
+                      data_container.getAdjointElectronEnergyGrid().end() );
+
+  // Construct the hash-based grid searcher for this atom
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+                             energy_grid,
+                             100 ) );
+
+  // Cutoff elastic cross section
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
+    data_container.getAdjointCutoffElasticCrossSection().begin(),
+    data_container.getAdjointCutoffElasticCrossSection().end() );
+
+  // Cutoff elastic cross section threshold energy bin index
+  unsigned cutoff_threshold_energy_index =
+    data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
+
+  // Moment preserving elastic cross section
+  Teuchos::ArrayRCP<double> mp_cross_section;
+  mp_cross_section.assign(
+    data_container.getAdjointMomentPreservingCrossSection().begin(),
+    data_container.getAdjointMomentPreservingCrossSection().end() );
+
+  // Moment preserving elastic cross section threshold energy bin index
+  unsigned mp_threshold_energy_index =
+    data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex();
+
+  // Create the hybrid elastic scattering distribution
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution>
+    distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+    distribution,
+    grid_searcher,
+    energy_grid,
+    cutoff_cross_section,
+    mp_cross_section,
+    data_container,
+    cutoff_angle_cosine );
+
+  return distribution;
+}
+
 //! Create a cutoff elastic distribution
 std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
@@ -94,9 +159,37 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
   return distribution;
 }
 
+//! Create a cutoff elastic distribution
+std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine )
+{
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
+    distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+    distribution, data_container, cutoff_angle_cosine );
+
+  return distribution;
+}
+
 //! Create a moment preserving elastic distribution
 std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine )
+{
+  std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
+    distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
+    distribution, data_container, cutoff_angle_cosine );
+
+  return distribution;
+}
+
+//! Create a moment preserving elastic distribution
+std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine )
 {
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>

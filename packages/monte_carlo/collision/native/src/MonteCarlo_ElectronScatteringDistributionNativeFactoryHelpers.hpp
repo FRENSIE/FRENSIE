@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
@@ -26,19 +27,41 @@ namespace MonteCarlo{
 std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container );
 
+//! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container );
+
+
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine );
+
+//! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine );
+
 
 //! Create a cutoff elastic distribution
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine = 1.0 );
 
+//! Create a cutoff elastic distribution
+std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine = 1.0 );
+
+
 //! Create a moment preserving elastic distribution
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine = 0.9 );
+
+//! Create a moment preserving elastic distribution
+std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine = 0.9 );
 
 //----------------------------------------------------------------------------//

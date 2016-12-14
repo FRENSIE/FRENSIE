@@ -213,6 +213,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getCutoffElasticCrossSection().begin(),
         data_container.getCutoffElasticCrossSection().end() );
 
+  // Reduced cutoff elastic cross section ratio
+  std::vector<double> reduced_cutoff_ratio =
+    data_container.getReducedCutoffCrossSectionRatios();
+
     Teuchos::ArrayRCP<double> mp_cross_section;
     mp_cross_section.assign(
         data_container.getMomentPreservingCrossSection().begin(),
@@ -227,7 +231,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     data_container.getMomentPreservingCrossSectionThresholdEnergyIndex() -
     hybrid_threshold_energy_index;
   unsigned cutoff_threshold_diff =
-    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() - 
+    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() -
     hybrid_threshold_energy_index;
 
   Teuchos::Array<double> combined_cross_section(
@@ -239,10 +243,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     if ( i < mp_threshold_diff )
     {
-      double cutoff_cdf =
-        hybrid_elastic_distribution->evaluateCDF( energy, cutoff_angle_cosine );
-
-      combined_cross_section[i] = cutoff_cross_section[i]*cutoff_cdf;
+      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio[i];
     }
     else if ( i < cutoff_threshold_diff )
     {
@@ -250,11 +251,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     }
     else
     {
-      double cutoff_cdf =
-        hybrid_elastic_distribution->evaluateCDF( energy, cutoff_angle_cosine );
-
       combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff]*cutoff_cdf + 
+        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio[i] +
         mp_cross_section[i-mp_threshold_diff];
     }
   }
