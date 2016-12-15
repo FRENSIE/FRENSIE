@@ -424,7 +424,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     evaluated_pdf.resize( angular_grid.size() );
     for ( unsigned i = 0; i < angular_grid.size(); i++ )
     {
-      evaluated_pdf[i] = Utility::LinLin::interpolate(
+      evaluated_pdf[i] = Utility::LinLog::interpolate(
                             lower_bin->first,
                             upper_bin->first,
                             energy,

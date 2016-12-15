@@ -1648,8 +1648,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32882721344370114e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.97993139707599841e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32883207226057110e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.97994412153097255e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   std::vector<double> discrete_weights =
@@ -1662,8 +1662,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   discrete_weights =
     data_container.getMomentPreservingElasticWeights( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 2.42406163683951334e-03 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97575938363160386e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 2.42115415404845803e-03 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97578845845951467e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   unsigned threshold =
@@ -1735,8 +1735,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   elastic_pdf =
     data_container.getCutoffElasticPDF(20.0);
 
-  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.94742666666666698e-10 );
-  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.59262777777777752e+5 );
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.79500114938497566e-10 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.61179008300966816e+05 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 95 );
 
   // Check the electroionization data
@@ -1869,7 +1869,6 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   data_container.exportData( "test_h_epr.xml",
                              Utility::ArchivableObject::XML_ARCHIVE );
 }
-
 
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
