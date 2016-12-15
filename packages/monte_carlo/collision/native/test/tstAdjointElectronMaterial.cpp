@@ -264,7 +264,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideSurvivalBias )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   material->collideSurvivalBias( electron, bank );
-std::cout << std::setprecision(20) << "electron.getZDirection() = "<< electron.getZDirection() << std::endl;
+
   TEST_EQUALITY_CONST( electron.getEnergy(), 1e-3 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.90000623580299476956, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getWeight(), 1.0, 1e-12 );
