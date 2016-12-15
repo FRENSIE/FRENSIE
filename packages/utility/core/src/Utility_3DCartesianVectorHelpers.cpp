@@ -117,9 +117,9 @@ void reflectUnitVector( const double unit_vector[3],
  * coordinates of the local z-axis w.r.t. the global coordinate system are
  * measure w.r.t. the y-axis. For this special case R_lg has the following
  * form:
- * R_lg_special = [u*v/sqrt(1-v*v), w/sqrt(1-v*v) , u;
- *                 -sqrt(1-v*v)   , 0             , v;
- *                 v*w/sqrt(1-v*v), -u/sqrt(1-v*v), w]
+ * R_lg_special = [w/sqrt(1-v*v) , -u*v/sqrt(1-v*v), u;
+ *                 0             , sqrt(1-v*v)     , v;
+ *                 -u/sqrt(1-v*v), -v*w/sqrt(1-v*v) , w]
  * If the origin of the local coordinate system is different than the origin
  * of the global coordinate system, the local origin's coordinates must be
  * added to the global coordinates returned from this method 
@@ -165,13 +165,13 @@ void convertLocalVectorToGlobalVector(
     polar_angle_sine = sqrt( std::max(0.0, 1.0 - v*v) );
     
     global_x_coordinate = u*local_z_coordinate +
-      (u*v*local_x_coordinate + w*local_y_coordinate)/polar_angle_sine;
+      (w*local_x_coordinate - u*v*local_y_coordinate)/polar_angle_sine;
 
-    global_y_coordinate = v*local_z_coordinate -
-      polar_angle_sine*local_x_coordinate;
+    global_y_coordinate = v*local_z_coordinate +
+      polar_angle_sine*local_y_coordinate;
 
-    global_z_coordinate = w*local_z_coordinate +
-      (v*w*local_x_coordinate - u*local_y_coordinate)/polar_angle_sine;
+    global_z_coordinate = w*local_z_coordinate -
+      (u*local_x_coordinate + w*v*local_y_coordinate)/polar_angle_sine;
   }
 }
 
@@ -189,9 +189,9 @@ void convertLocalVectorToGlobalVector(
  * coordinates of the local z-axis w.r.t. the global coordinate system are
  * measured w.r.t. the y-axis. For this special case R_gl has the following
  * form:
- * R_gl_special = [u*v/sqrt(1-v*v), -sqrt(1-v*v), v*w/sqrt(1-v*v);
- *                 w/sqrt(1-v*v)  , 0           , -u/sqrt(1-v*v);
- *                 u              , v           , w]
+ * R_gl_special = [w/sqrt(1-v*v)   , 0           , -u/sqrt(1-v*v);
+ *                 -u*v/sqrt(1-v*v), sqrt(1-v*v) , -v*w/sqrt(1-v*v);
+ *                 u               , v           , w]
  * If the origin of the local coordinate system is different than the origin
  * of the global coordinate system, the shifted coordinates must be passed
  * into this method (e.g. global_x_coordinate = x - x_O). 
@@ -235,14 +235,14 @@ void convertGlobalVectorToLocalVector(
     // Recompute the polar angle sine
     polar_angle_sine = sqrt( std::max(0.0, 1.0 - v*v) );
 
-    local_x_coordinate = -polar_angle_sine*global_y_coordinate +
-      (u*v*global_x_coordinate + v*w*global_z_coordinate)/polar_angle_sine;
-
-    local_y_coordinate =
+    local_x_coordinate =
       (w*global_x_coordinate - u*global_z_coordinate)/polar_angle_sine;
 
-    local_z_coordinate =
-      u*global_x_coordinate + v*global_y_coordinate + w*global_z_coordinate;
+    local_y_coordinate = polar_angle_sine*global_y_coordinate -
+      (u*v*global_x_coordinate + w*v*global_z_coordinate)/polar_angle_sine;
+
+    local_z_coordinate = u*global_x_coordinate + v*global_y_coordinate +
+      w*global_z_coordinate;      
   }
 }
   

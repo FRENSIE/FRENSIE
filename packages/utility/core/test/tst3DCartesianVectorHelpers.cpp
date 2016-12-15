@@ -806,15 +806,128 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
   local_vector[1] = -2.0;
   local_vector[2] = 0.0;
 
-  // Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
-  //                                            local_z_axis_wrt_gcs.getRawPtr(),
-  //                                            global_vector.getRawPtr() );
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
 
-  // ref_global_vector[0] = 0.0;
-  // ref_global_vector[1] = -2.0;
-  // ref_global_vector[2] = 0.0;
+  ref_global_vector[0] = 0.0;
+  ref_global_vector[1] = -2.0;
+  ref_global_vector[2] = 0.0;
 
-  // TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local x-axis ==> global x-axis
+  local_vector[0] = 2.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = 2.0;
+  ref_global_vector[1] = 0.0;
+  ref_global_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+  
+  // Local neg. x-axis ==> global neg. x-axis
+  local_vector[0] = -2.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -2.0;
+  ref_global_vector[1] = 0.0;
+  ref_global_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Off global axis local z-axis
+  local_z_axis_wrt_gcs[0] = 1.0/sqrt(3.0);
+  local_z_axis_wrt_gcs[1] = 1.0/sqrt(3.0);
+  local_z_axis_wrt_gcs[2] = 1.0/sqrt(3.0);
+
+  // Local z-axis
+  Utility::convertLocalVectorToGlobalVector( 0.0, 0.0, 2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = 2.0/sqrt(3.0);
+  ref_global_vector[1] = 2.0/sqrt(3.0);
+  ref_global_vector[2] = 2.0/sqrt(3.0);
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. z-axis
+  Utility::convertLocalVectorToGlobalVector( 0.0, 0.0, -2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = -2.0/sqrt(3.0);
+  ref_global_vector[1] = -2.0/sqrt(3.0);
+  ref_global_vector[2] = -2.0/sqrt(3.0);
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local y-axis
+  Utility::convertLocalVectorToGlobalVector( 0.0, 2.0, 0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = -sqrt(2.0);
+  ref_global_vector[1] = sqrt(2.0);
+  ref_global_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. y-axis
+  Utility::convertLocalVectorToGlobalVector( 0.0, -2.0, 0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+  
+  ref_global_vector[0] = sqrt(2.0);
+  ref_global_vector[1] = -sqrt(2.0);
+  ref_global_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local x-axis
+  Utility::convertLocalVectorToGlobalVector( 2.0, 0.0, 0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = 2.0/sqrt(6.0);
+  ref_global_vector[1] = 2.0/sqrt(6.0);
+  ref_global_vector[2] = -sqrt(8.0/3.0);
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. x-axis
+  Utility::convertLocalVectorToGlobalVector( -2.0, 0.0, 0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = -2.0/sqrt(6.0);
+  ref_global_vector[1] = -2.0/sqrt(6.0);
+  ref_global_vector[2] = sqrt(8.0/3.0);
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -822,7 +935,408 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
 TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
                    convertLocalVectorToGlobalVector_diff_origin )
 {
+  // Global x-axis aligned local z-axis
+  Teuchos::Array<double> local_z_axis_wrt_gcs( 3 );
+  local_z_axis_wrt_gcs[0] = 1.0;
+  local_z_axis_wrt_gcs[1] = 0.0;
+  local_z_axis_wrt_gcs[2] = 0.0;
 
+  // Origin of local coordinate system w.r.t. global coordinate system
+  Teuchos::Array<double> local_origin_wrt_gcs( 3 );
+  local_origin_wrt_gcs[0] = -1.0;
+  local_origin_wrt_gcs[1] = 1.0;
+  local_origin_wrt_gcs[2] = 2.0;
+
+  // Local z-axis ==> global x-axis
+  Teuchos::Array<double> local_vector( 3 );
+  local_vector[0] = 0.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 2.0;
+
+  Teuchos::Array<double> global_vector( 3 );
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  Teuchos::Array<double> ref_global_vector( 3 );
+  ref_global_vector[0] = 1.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. z-axis ==> global neg. x-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = -2.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -3.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local y-axis ==> global y-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = 2.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = 3.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. y-axis ==> global neg. y-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = -2.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = -1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local x-axis ==> global neg. z-axis (before translation)
+  local_vector[0] = 2.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+  
+  // Local neg. x-axis ==> global z-axis (before translation)
+  local_vector[0] = -2.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 4.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Global y-axis aligned local z-axis
+  local_z_axis_wrt_gcs[0] = 0.0;
+  local_z_axis_wrt_gcs[1] = 1.0;
+  local_z_axis_wrt_gcs[2] = 0.0;
+
+  // Local z-axis ==> global y-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 2.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = 3.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. z-axis ==> global neg. y-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = -2.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = -1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local y-axis ==> global neg. x-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = 2.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -3.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. y-axis ==> global x-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = -2.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = 1.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local x-axis ==> global neg. z-axis (before translation)
+  local_vector[0] = 2.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+  
+  // Local neg. x-axis ==> global z-axis (before translation)
+  local_vector[0] = -2.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 4.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Global z-axis aligned local z-axis
+  local_z_axis_wrt_gcs[0] = 0.0;
+  local_z_axis_wrt_gcs[1] = 0.0;
+  local_z_axis_wrt_gcs[2] = 1.0;
+
+  // Local z-axis ==> global z-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 2.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 4.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. z-axis ==> global neg. z-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = -2.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local y-axis ==> global y-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = 2.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = 3.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. y-axis ==> global neg. y-axis (before translation)
+  local_vector[0] = 0.0;
+  local_vector[1] = -2.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -1.0;
+  ref_global_vector[1] = -1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local x-axis ==> global x-axis (before translation)
+  local_vector[0] = 2.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = 1.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+  
+  // Local neg. x-axis ==> global neg. x-axis (before translation)
+  local_vector[0] = -2.0;
+  local_vector[1] = 0.0;
+  local_vector[2] = 0.0;
+
+  Utility::convertLocalVectorToGlobalVector( local_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector.getRawPtr() );
+
+  ref_global_vector[0] = -3.0;
+  ref_global_vector[1] = 1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Off global axis local z-axis 
+  local_z_axis_wrt_gcs[0] = 1.0/sqrt(3.0);
+  local_z_axis_wrt_gcs[1] = 1.0/sqrt(3.0);
+  local_z_axis_wrt_gcs[2] = 1.0/sqrt(3.0);
+
+  // Local z-axis
+  Utility::convertLocalVectorToGlobalVector( 0.0, 0.0, 2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = 2.0/sqrt(3.0)-1.0;
+  ref_global_vector[1] = 2.0/sqrt(3.0)+1.0;
+  ref_global_vector[2] = 2.0/sqrt(3.0)+2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. z-axis
+  Utility::convertLocalVectorToGlobalVector( 0.0, 0.0, -2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = -2.0/sqrt(3.0)-1.0;
+  ref_global_vector[1] = -2.0/sqrt(3.0)+1.0;
+  ref_global_vector[2] = -2.0/sqrt(3.0)+2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local y-axis
+  Utility::convertLocalVectorToGlobalVector( 0.0, 2.0, 0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = -sqrt(2.0)-1.0;
+  ref_global_vector[1] = sqrt(2.0)+1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local neg. y-axis
+  Utility::convertLocalVectorToGlobalVector( 0.0, -2.0, 0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = sqrt(2.0)-1.0;
+  ref_global_vector[1] = -sqrt(2.0)+1.0;
+  ref_global_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-15 );
+
+  // Local x-axis
+  Utility::convertLocalVectorToGlobalVector( 2.0, 0.0, 0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = 2.0/sqrt(6.0)-1.0;
+  ref_global_vector[1] = 2.0/sqrt(6.0)+1.0;
+  ref_global_vector[2] = -sqrt(8.0/3.0)+2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-14 );
+
+  // Local neg. x-axis
+  Utility::convertLocalVectorToGlobalVector( -2.0, 0.0, 0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             global_vector[0],
+                                             global_vector[1],
+                                             global_vector[2] );
+
+  ref_global_vector[0] = -2.0/sqrt(6.0)-1.0;
+  ref_global_vector[1] = -2.0/sqrt(6.0)+1.0;
+  ref_global_vector[2] = sqrt(8.0/3.0)+2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( global_vector, ref_global_vector, 1e-14 );
 }
 
 //---------------------------------------------------------------------------//
@@ -830,7 +1344,390 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
 TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
                    convertGlobalVectorToLocalVector_same_origin )
 {
+  // Global x-axis aligned local z-axis
+  Teuchos::Array<double> local_z_axis_wrt_gcs( 3 );
+  local_z_axis_wrt_gcs[0] = 1.0;
+  local_z_axis_wrt_gcs[1] = 0.0;
+  local_z_axis_wrt_gcs[2] = 0.0;
 
+  // Global x-axis ==> local z-axis
+  Teuchos::Array<double> global_vector( 3 );
+  global_vector[0] = 2.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = 0.0;
+
+  Teuchos::Array<double> local_vector( 3 );
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  Teuchos::Array<double> ref_local_vector( 3 );
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. x-axis ==> local neg. z-axis
+  global_vector[0] = -2.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = -2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global y-axis ==> local y-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = 2.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. y-axis ==> local neg. y-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = -2.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = -2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global z-axis ==> local neg. x-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = -2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. z-axis ==> local x-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = -2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global y-axis aligned local z-axis
+  local_z_axis_wrt_gcs[0] = 0.0;
+  local_z_axis_wrt_gcs[1] = 1.0;
+  local_z_axis_wrt_gcs[2] = 0.0;
+
+  // Global x-axis ==> local neg. y-axis
+  global_vector[0] = 2.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = -2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. x-axis ==> local y-axis
+  global_vector[0] = -2.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global y-axis ==> local z-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = 2.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );  
+
+  // Global neg. y-axis ==> local neg. z-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = -2.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = -2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global z-axis ==> local neg. x-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = -2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. z-axis ==> local x-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = -2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global z-axis aligned local z-axis
+  local_z_axis_wrt_gcs[0] = 0.0;
+  local_z_axis_wrt_gcs[1] = 0.0;
+  local_z_axis_wrt_gcs[2] = 1.0;
+
+  // Global x-axis ==> local x-axis
+  global_vector[0] = 2.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. x-axis ==> local neg. x-axis
+  global_vector[0] = -2.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = -2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global y-axis ==> local y-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = 2.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. y-axis ==> local neg. y-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = -2.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = -2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global z-axis ==> local z-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. z-axis ==> local neg. z-axis
+  global_vector[0] = 0.0;
+  global_vector[1] = 0.0;
+  global_vector[2] = -2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = -2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Off global axis local z-axis
+  local_z_axis_wrt_gcs[0] = 1.0/sqrt(3.0);
+  local_z_axis_wrt_gcs[1] = 1.0/sqrt(3.0);
+  local_z_axis_wrt_gcs[2] = 1.0/sqrt(3.0);
+
+  // Local x-axis
+  Utility::convertGlobalVectorToLocalVector( 2.0/sqrt(6.0),
+                                             2.0/sqrt(6.0),
+                                             -sqrt(8.0/3.0),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Local neg. x-axis
+  Utility::convertGlobalVectorToLocalVector( -2.0/sqrt(6.0),
+                                             -2.0/sqrt(6.0),
+                                             sqrt(8.0/3.0),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = -2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Local y-axis
+  Utility::convertGlobalVectorToLocalVector( -sqrt(2.0),
+                                             sqrt(2.0),
+                                             0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 2.0;
+  ref_local_vector[2] = 0.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Local neg. y-axis
+  Utility::convertGlobalVectorToLocalVector( sqrt(2.0),
+                                             -sqrt(2.0),
+                                             0.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = -2.0;
+  ref_local_vector[2] = 0.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+  
+  // Local z-axis
+  Utility::convertGlobalVectorToLocalVector( 2.0/sqrt(3.0),
+                                             2.0/sqrt(3.0),
+                                             2.0/sqrt(3.0),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 2.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Local neg. z-axis
+  Utility::convertGlobalVectorToLocalVector( -2.0/sqrt(3.0),
+                                             -2.0/sqrt(3.0),
+                                             -2.0/sqrt(3.0),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = -2.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -838,7 +1735,420 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
 TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
                    convertGlobalVectorToLocalVector_diff_origin )
 {
+  // Global x-axis aligned local z-axis
+  Teuchos::Array<double> local_z_axis_wrt_gcs( 3 );
+  local_z_axis_wrt_gcs[0] = 1.0;
+  local_z_axis_wrt_gcs[1] = 0.0;
+  local_z_axis_wrt_gcs[2] = 0.0;
 
+  // Origin of local coordinate system w.r.t. global coordinate system
+  Teuchos::Array<double> local_origin_wrt_gcs( 3 );
+  local_origin_wrt_gcs[0] = -1.0;
+  local_origin_wrt_gcs[1] = 1.0;
+  local_origin_wrt_gcs[2] = 2.0;
+
+  // Global x-axis (after translation) ==> local z-axis
+  Teuchos::Array<double> global_vector( 3 );
+  global_vector[0] = 1.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 2.0;
+
+  Teuchos::Array<double> local_vector( 3 );
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  Teuchos::Array<double> ref_local_vector( 3 );
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. x-axis (after translation) ==> local neg. z-axis
+  global_vector[0] = -3.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = -2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global y-axis (after translation) ==> local y-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = 3.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. y-axis (after translation) ==> local neg. y-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = -1.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = -2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global z-axis (after translation) ==> local neg. x-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 4.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = -2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg z-axis (after translation) ==> local x-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global y-axis aligned local z-axis
+  local_z_axis_wrt_gcs[0] = 0.0;
+  local_z_axis_wrt_gcs[1] = 1.0;
+  local_z_axis_wrt_gcs[2] = 0.0;
+
+  // Global x-axis (after translation) ==> local neg. y-axis
+  global_vector[0] = 1.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = -2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+  
+  // Global neg. x-axis (after translation) ==> local y-axis
+  global_vector[0] = -3.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global y-axis (after translation) ==> local z-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = 3.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. y-axis (after translation) ==> local neg. z-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = -1.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = -2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global z-axis (after translation) ==> local neg. x-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 4.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = -2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. z-axis (after translation) ==> local x-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global z-axis aligned local z-axis
+  local_z_axis_wrt_gcs[0] = 0.0;
+  local_z_axis_wrt_gcs[1] = 0.0;
+  local_z_axis_wrt_gcs[2] = 1.0;
+
+  // Global x-axis (after translation) ==> local x-axis
+  global_vector[0] = 1.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. x-axis (after translation) ==> local neg. x-axis
+  global_vector[0] = -3.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = -2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global y-axis (after translation) ==> local y-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = 3.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. y-axis (after translation) ==> local neg. y-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = -1.0;
+  global_vector[2] = 2.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = -2.0;
+  ref_local_vector[2] = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global z-axis (after translation) ==> local z-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 4.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Global neg. z-axis (after translation) ==> local neg. z-axis
+  global_vector[0] = -1.0;
+  global_vector[1] = 1.0;
+  global_vector[2] = 0.0;
+
+  Utility::convertGlobalVectorToLocalVector( global_vector.getRawPtr(),
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector.getRawPtr() );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = -2.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Off global axis local z-axis
+  local_z_axis_wrt_gcs[0] = 1.0/sqrt(3.0);
+  local_z_axis_wrt_gcs[1] = 1.0/sqrt(3.0);
+  local_z_axis_wrt_gcs[2] = 1.0/sqrt(3.0);
+
+  // Local z-axis
+  Utility::convertGlobalVectorToLocalVector( 2.0/sqrt(3.0)-1.0,
+                                             2.0/sqrt(3.0)+1.0,
+                                             2.0/sqrt(3.0)+2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 2.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Local neg. z-axis
+  Utility::convertGlobalVectorToLocalVector( -2.0/sqrt(3.0)-1.0,
+                                             -2.0/sqrt(3.0)+1.0,
+                                             -2.0/sqrt(3.0)+2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = -2.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Local y-axis
+  Utility::convertGlobalVectorToLocalVector( -sqrt(2.0)-1.0,
+                                             sqrt(2.0)+1.0,
+                                             2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = 2.0;
+  ref_local_vector[2] = 0.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Local neg. y-axis
+  Utility::convertGlobalVectorToLocalVector( sqrt(2.0)-1.0,
+                                             -sqrt(2.0)+1.0,
+                                             2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 0.0;
+  ref_local_vector[1] = -2.0;
+  ref_local_vector[2] = 0.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Local x-axis
+  Utility::convertGlobalVectorToLocalVector( 2.0/sqrt(6.0)-1.0,
+                                             2.0/sqrt(6.0)+1.0,
+                                             -sqrt(8.0/3.0)+2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = 2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
+
+  // Local neg. x-axis
+  Utility::convertGlobalVectorToLocalVector( -2.0/sqrt(6.0)-1.0,
+                                             -2.0/sqrt(6.0)+1.0,
+                                             sqrt(8.0/3.0)+2.0,
+                                             local_z_axis_wrt_gcs.getRawPtr(),
+                                             local_origin_wrt_gcs.getRawPtr(),
+                                             local_vector[0],
+                                             local_vector[1],
+                                             local_vector[2] );
+
+  ref_local_vector[0] = -2.0;
+  ref_local_vector[1] = 0.0;
+  ref_local_vector[2] = 0.0;
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( local_vector, ref_local_vector, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1021,7 +2331,7 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
   ref_rotated_unit_vector[0] = 0.0;
   ref_rotated_unit_vector[1] = 0.0;
   ref_rotated_unit_vector[2] = -1.0;
-
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( rotated_unit_vector,
 					ref_rotated_unit_vector,
 					1e-15 );
@@ -1029,24 +2339,24 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
   // Rotate the z-axis to x-axis
   Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle(
 					     0.0,
-                                             Utility::PhysicalConstants::pi/2,
+                                             0.0,
                                              unit_vector.getRawPtr(),
 					     rotated_unit_vector.getRawPtr() );
 
   ref_rotated_unit_vector[0] = 1.0;
   ref_rotated_unit_vector[1] = 0.0;
   ref_rotated_unit_vector[2] = 0.0;
-
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( rotated_unit_vector,
 					ref_rotated_unit_vector,
 					1e-15 );
 
   // Rotate the z-axis to neg. x-axis
   Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle(
-					    0.0,
-					    3*Utility::PhysicalConstants::pi/2,
-					    unit_vector.getRawPtr(),
-					    rotated_unit_vector.getRawPtr() );
+					     0.0,
+                                             Utility::PhysicalConstants::pi,
+                                             unit_vector.getRawPtr(),
+					     rotated_unit_vector.getRawPtr() );
 
   ref_rotated_unit_vector[0] = -1.0;
   ref_rotated_unit_vector[1] = 0.0;
@@ -1055,11 +2365,11 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( rotated_unit_vector,
 					ref_rotated_unit_vector,
 					1e-15 );
-
+  
   // Rotate the z-axis to y-axis
   Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle(
 					     0.0,
-					     Utility::PhysicalConstants::pi,
+					     Utility::PhysicalConstants::pi/2,
 					     unit_vector.getRawPtr(),
 					     rotated_unit_vector.getRawPtr() );
 
@@ -1070,13 +2380,12 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( rotated_unit_vector,
 					ref_rotated_unit_vector,
 					1e-15 );
-
   // Rotate the z-axis to neg. y-axis
   Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle(
-					     0.0,
-                                             0.0,
-                                             unit_vector.getRawPtr(),
-					     rotated_unit_vector.getRawPtr() );
+					    0.0,
+                                            3*Utility::PhysicalConstants::pi/2,
+                                            unit_vector.getRawPtr(),
+                                            rotated_unit_vector.getRawPtr() );
 
   ref_rotated_unit_vector[0] = 0.0;
   ref_rotated_unit_vector[1] = -1.0;
@@ -1274,10 +2583,10 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
 
   // Rotate the z-axis to x-axis
   Utility::rotateVectorThroughPolarAndAzimuthalAngle(
-					     0.0,
-                                             Utility::PhysicalConstants::pi/2,
-                                             vector.getRawPtr(),
-					     rotated_vector.getRawPtr() );
+					          0.0,
+                                                  0.0,
+                                                  vector.getRawPtr(),
+					          rotated_vector.getRawPtr() );
 
   ref_rotated_vector[0] = 2.0;
   ref_rotated_vector[1] = 0.0;
@@ -1289,11 +2598,11 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
 
   // Rotate the z-axis to neg. x-axis
   Utility::rotateVectorThroughPolarAndAzimuthalAngle(
-					    0.0,
-					    3*Utility::PhysicalConstants::pi/2,
-					    vector.getRawPtr(),
-					    rotated_vector.getRawPtr() );
-
+					        0.0,
+					        Utility::PhysicalConstants::pi,
+                                                vector.getRawPtr(),
+                                                rotated_vector.getRawPtr() );
+  
   ref_rotated_vector[0] = -2.0;
   ref_rotated_vector[1] = 0.0;
   ref_rotated_vector[2] = 0.0;
@@ -1304,10 +2613,10 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
 
   // Rotate the z-axis to y-axis
   Utility::rotateVectorThroughPolarAndAzimuthalAngle(
-					     0.0,
-					     Utility::PhysicalConstants::pi,
-					     vector.getRawPtr(),
-					     rotated_vector.getRawPtr() );
+					      0.0,
+					      Utility::PhysicalConstants::pi/2,
+                                              vector.getRawPtr(),
+                                              rotated_vector.getRawPtr() );
 
   ref_rotated_vector[0] = 0.0;
   ref_rotated_vector[1] = 2.0;
@@ -1319,10 +2628,10 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers,
 
   // Rotate the z-axis to neg. y-axis
   Utility::rotateVectorThroughPolarAndAzimuthalAngle(
-					     0.0,
-                                             0.0,
-                                             vector.getRawPtr(),
-					     rotated_vector.getRawPtr() );
+					    0.0,
+                                            3*Utility::PhysicalConstants::pi/2,
+                                            vector.getRawPtr(),
+                                            rotated_vector.getRawPtr() );
 
   ref_rotated_vector[0] = 0.0;
   ref_rotated_vector[1] = -2.0;
