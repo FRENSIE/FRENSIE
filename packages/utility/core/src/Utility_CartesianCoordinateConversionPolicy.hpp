@@ -18,7 +18,7 @@
 namespace Utility{
 
 //! The Cartesian coordinate conversion policy
-class CartesianCoordinateConversionPolicy : public CoordinateConversionPolicy,
+class CartesianCoordinateConversionPolicy : public SpatialCoordinateConversionPolicy,
                                             public DirectionalCoordinateConversionPolicy
 {
 
@@ -146,9 +146,9 @@ inline void CartesianCoordinateConversionPolicy::convertToCartesianPosition(
                                           double& output_y_spatial_coord,
                                           double& output_z_spatial_coord )
 {
-  output_x_spatial_coords = input_x_spatial_coords;
-  output_y_spatial_coords = input_y_spatial_coords;
-  output_z_spatial_coords = input_z_spatial_coords;
+  output_x_spatial_coord = input_x_spatial_coord;
+  output_y_spatial_coord = input_y_spatial_coord;
+  output_z_spatial_coord = input_z_spatial_coord;
 }
 
 // Convert the Cartesian direction to Cartesian direction
@@ -178,7 +178,7 @@ inline void CartesianCoordinateConversionPolicy::convertFromCartesianDirection(
                                                 const double input_y_direction,
                                                 const double input_z_direction,
                                                 double& output_x_direction,
-                                                double& outout_y_direction,
+                                                double& output_y_direction,
                                                 double& output_z_direction )
 {
   // Make sure that the input direction is valid
@@ -216,7 +216,7 @@ inline void CartesianCoordinateConversionPolicy::convertToCartesianDirection(
                                                 const double input_y_direction,
                                                 const double input_z_direction,
                                                 double& output_x_direction,
-                                                double& outout_y_direction,
+                                                double& output_y_direction,
                                                 double& output_z_direction )
 {
   // Make sure that the input direction is valid

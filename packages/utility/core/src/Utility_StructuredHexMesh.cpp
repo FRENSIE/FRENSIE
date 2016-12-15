@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_StructuredHexMesh.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -152,7 +152,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
                                                   direction[Y_DIMENSION],
                                                   direction[Z_DIMENSION] );
                                                   
-  Utility::normalizeDirection( direction );
+  Utility::normalizeVector( direction );
   
   // Initialize contribution array
   Teuchos::Array<std::pair<HexIndex,double>> contribution_array;

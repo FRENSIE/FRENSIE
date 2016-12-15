@@ -17,8 +17,8 @@ namespace Utility{
 GeneralCartesianCoordinateConversionPolicy::GeneralCartesianCoordinateConversionPolicy(
                                                         const double origin[3],
                                                         const double axis[3] )
-  : d_origin( {origin[0], origin[1], origin[2]} ),
-    d_axis( {axis[0], axis[1], axis[2]} )
+  : d_origin{origin[0], origin[1], origin[2]},
+    d_axis{axis[0], axis[1], axis[2]}
 {
   // Normalize the axis vector
   normalizeVector( d_axis );
@@ -27,8 +27,8 @@ GeneralCartesianCoordinateConversionPolicy::GeneralCartesianCoordinateConversion
 // Constructor (global origin)
 GeneralCartesianCoordinateConversionPolicy::GeneralCartesianCoordinateConversionPolicy(
                                                          const double axis[3] )
-  : d_origin( {0.0, 0.0, 0.0} ),
-    d_axis( {axis[0], axis[1], axis[2]} )
+  : d_origin{0.0, 0.0, 0.0},
+    d_axis{axis[0], axis[1], axis[2]}
 {
   // Normalize the axis vector
   normalizeVector( d_axis );
@@ -40,12 +40,12 @@ GeneralCartesianCoordinateConversionPolicy::GeneralCartesianCoordinateConversion
  * These will be converted to the global coordinate system.
  */
 void GeneralCartesianCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
-                                       const double primary_spatial_coord,
-                                       const double secondary_spatial_coord,
-                                       const double tertiary_spatial_coord,
-                                       double& x_spatial_coord,
-                                       double& y_spatial_coord,
-                                       double& z_spatial_coord ) const override
+                                          const double primary_spatial_coord,
+                                          const double secondary_spatial_coord,
+                                          const double tertiary_spatial_coord,
+                                          double& x_spatial_coord,
+                                          double& y_spatial_coord,
+                                          double& z_spatial_coord ) const
 {
   convertLocalVectorToGlobalVector( primary_spatial_coord,
                                     secondary_spatial_coord,
@@ -63,12 +63,12 @@ void GeneralCartesianCoordinateConversionPolicy::convertToCartesianSpatialCoordi
  * The global coordinates will be converted to the local coordinate system.
  */
 void GeneralCartesianCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
-                                const double x_spatial_coord,
-                                const double y_spatial_coord,
-                                const double z_spatial_coord,
-                                double& primary_spatial_coord,
-                                double& secondary_spatial_coord,
-                                double& tertiary_spatial_coord ) const override
+                                         const double x_spatial_coord,
+                                         const double y_spatial_coord,
+                                         const double z_spatial_coord,
+                                         double& primary_spatial_coord,
+                                         double& secondary_spatial_coord,
+                                         double& tertiary_spatial_coord ) const
 {
   convertGlobalVectorToLocalVector( x_spatial_coord,
                                     y_spatial_coord,
@@ -88,12 +88,12 @@ void GeneralCartesianCoordinateConversionPolicy::convertFromCartesianSpatialCoor
  * coordinate system.
  */
 void GeneralCartesianCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
-                                   const double primary_directional_coord,
-                                   const double secondary_directional_coord,
-                                   const double tertiary_directional_coord,
-                                   double& x_directional_coord,
-                                   double& y_directional_coord,
-                                   double& z_directional_coord ) const override
+                                      const double primary_directional_coord,
+                                      const double secondary_directional_coord,
+                                      const double tertiary_directional_coord,
+                                      double& x_directional_coord,
+                                      double& y_directional_coord,
+                                      double& z_directional_coord ) const
 {
   // Make sure that the input directional coordinates are valid
   testPrecondition( isUnitVector( primary_directional_coord, secondary_directional_coord, tertiary_directional_coord ) );
@@ -115,12 +115,12 @@ void GeneralCartesianCoordinateConversionPolicy::convertToCartesianDirectionalCo
  * coordinate system.
  */
 void GeneralCartesianCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
-                            const double x_directional_coord,
-                            const double y_directional_coord,
-                            const double z_directional_coord,
-                            double& primary_directional_coord,
-                            double& secondary_directional_coord,
-                            double& tertiary_directional_coord ) const override
+                                     const double x_directional_coord,
+                                     const double y_directional_coord,
+                                     const double z_directional_coord,
+                                     double& primary_directional_coord,
+                                     double& secondary_directional_coord,
+                                     double& tertiary_directional_coord ) const
 {
   // Make sure that the input directional coordinates are valid
   testPrecondition( isUnitVector( x_directional_coord, y_directional_coord, z_directional_coord ) );

@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_BasicCylindricalCoordinateConversionPolicy.hpp"
+#include "Utility_BasicCylindricalSpatialCoordinateConversionPolicy.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -16,12 +16,12 @@ namespace Utility{
 /*! \details The original spatial coordinates are (r,theta,z).
  */
 void BasicCylindricalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
-                                       const double primary_spatial_coord,
-                                       const double secondary_spatial_coord,
-                                       const double tertiary_spatial_coord,
-                                       double& x_spatial_coord,
-                                       double& y_spatial_coord,
-                                       double& z_spatial_coord ) const override
+                                          const double primary_spatial_coord,
+                                          const double secondary_spatial_coord,
+                                          const double tertiary_spatial_coord,
+                                          double& x_spatial_coord,
+                                          double& y_spatial_coord,
+                                          double& z_spatial_coord ) const
 {
   this->convertToCartesianPosition( primary_spatial_coord,
                                     secondary_spatial_coord,
@@ -36,12 +36,12 @@ void BasicCylindricalSpatialCoordinateConversionPolicy::convertToCartesianSpatia
 /*! \details The final spatial coordinates are (r,theta,z)
  */
 void BasicCylindricalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
-                                const double x_spatial_coord,
-                                const double y_spatial_coord,
-                                const double z_spatial_coord,
-                                double& primary_spatial_coord,
-                                double& secondary_spatial_coord,
-                                double& tertiary_spatial_coord ) const override
+                                         const double x_spatial_coord,
+                                         const double y_spatial_coord,
+                                         const double z_spatial_coord,
+                                         double& primary_spatial_coord,
+                                         double& secondary_spatial_coord,
+                                         double& tertiary_spatial_coord ) const
 {
   this->convertFromCartesianPosition( x_spatial_coord,
                                       y_spatial_coord,

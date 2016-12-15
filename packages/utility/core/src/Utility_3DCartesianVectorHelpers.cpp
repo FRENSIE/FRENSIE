@@ -18,9 +18,9 @@ bool isUnitVector( const double x_component,
 {
   // Make sure that the coordinates are valid
   remember( typedef Teuchos::ScalarTraits<double> ST );
-  testPrecondition( !ST::isnaninf( x_direction ) );
-  testPrecondition( !ST::isnaninf( y_direction ) );
-  testPrecondition( !ST::isnaninf( z_direction ) );
+  testPrecondition( !ST::isnaninf( x_component ) );
+  testPrecondition( !ST::isnaninf( y_component ) );
+  testPrecondition( !ST::isnaninf( z_component ) );
 
   double argument =
     vectorMagnitude( x_component, y_component, z_component ) - 1.0;
@@ -30,22 +30,31 @@ bool isUnitVector( const double x_component,
 }
 
 // Normalize the vector and return the magnitude
-double normalizeVectorAndReturnMagnitude( double vector[3] )
+double normalizeVectorAndReturnMagnitude( double& x_component,
+                                          double& y_component,
+                                          double& z_component )
 {
   // Make sure that the coordinates are valid
   remember( typedef Teuchos::ScalarTraits<double> ST );
-  testPrecondition( !ST::isnaninf( direction[0] ) );
-  testPrecondition( !ST::isnaninf( direction[0] ) );
-  testPrecondition( !ST::isnaninf( direction[0] ) );
+  testPrecondition( !ST::isnaninf( x_component ) );
+  testPrecondition( !ST::isnaninf( y_component ) );
+  testPrecondition( !ST::isnaninf( z_component ) );
 
-  double magnitude = vectorMagnitude( vector );
+  double magnitude = vectorMagnitude( x_component, y_component, z_component );
 
-  vector[0] /= magnitude;
-  vector[1] /= magnitude;
-  vector[2] /= magnitude;
+  x_component /= magnitude;
+  y_component /= magnitude;
+  z_component /= magnitude;
+
+  return magnitude;
 }
 
 // Calculate the cosine of the angle between two unit vectors
+/*! \details This method will be more efficient than the
+ * calculateCosineOfAngleBetweenUnitVectors method when dealing with
+ * unit vectors (vector magnitudes will not be calculated since it is assumed
+ * that they are 1.0). Only unit vectors can be used with this method.
+ */
 double calculateCosineOfAngleBetweenUnitVectors(
                                                 const double unit_vector_a[3],
                                                 const double unit_vector_b[3] )
@@ -69,6 +78,11 @@ double calculateCosineOfAngleBetweenUnitVectors(
 }
 
 // Reflect a unit vector about the given unit normal
+/*! \details This method will be more efficient than the reflectVector method
+ * when dealing with a unit vector (the vector magnitude will not be
+ * calculated since it is assumed to be 1.0). Only a unit vector can be used
+ * with this method.
+ */
 void reflectUnitVector( const double unit_vector[3],
                         const double unit_normal[3],
                         double reflected_unit_vector[3] )

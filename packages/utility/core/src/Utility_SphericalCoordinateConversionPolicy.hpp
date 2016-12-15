@@ -100,7 +100,7 @@ inline void SphericalCoordinateConversionPolicy::convertFromCartesianPosition(
                                               const double cartesian_coords[3],
                                               double spherical_coords[3] )
 {
-  SphericalCoordinateConversionPolicy::convertFromCartesian(
+  SphericalCoordinateConversionPolicy::convertFromCartesianPosition(
                                                          cartesian_coords[0],
                                                          cartesian_coords[1],
                                                          cartesian_coords[2],
@@ -112,7 +112,7 @@ inline void SphericalCoordinateConversionPolicy::convertFromCartesianPosition(
 // Convert the Cartesian coordinates to spherical coordinates
 /*! \details Mu is the polar angle cosine. Theta is the azimuthal angle.
  */
-void SphericalCoordinateConversionPolicy::convertFromCartesianPosition(
+inline void SphericalCoordinateConversionPolicy::convertFromCartesianPosition(
                                                   const double x_spatial_coord,
                                                   const double y_spatial_coord,
                                                   const double z_spatial_coord,
@@ -148,11 +148,11 @@ void SphericalCoordinateConversionPolicy::convertFromCartesianPosition(
 // Convert the spherical coordinates to Cartesian coordinates
 /*! \details Mu is the polar angle cosine. Theta is the azimuthal angle.
  */
-void SphericalCoordinateConversionPolicy::convertToCartesianPosition(
+inline void SphericalCoordinateConversionPolicy::convertToCartesianPosition(
                                               const double spherical_coords[3],
                                               double cartesian_coords[3] )
 {
-  SphericalCoordinateConversionPolicy::convertToCartesian(
+  SphericalCoordinateConversionPolicy::convertToCartesianPosition(
                                                          spherical_coords[0],
                                                          spherical_coords[1],
                                                          spherical_coords[2],
@@ -164,7 +164,7 @@ void SphericalCoordinateConversionPolicy::convertToCartesianPosition(
 // Convert the spherical coordinates to Cartesian coordinates
 /*! \details Mu is the polar angle cosine. Theta is the azimuthal angle.
  */
-void SphericalCoordinateConversionPolicy::convertToCartesianPosition(
+inline void SphericalCoordinateConversionPolicy::convertToCartesianPosition(
                                               const double r_spatial_coord,
                                               const double theta_spatial_coord,
                                               const double mu_spatial_coord,
@@ -197,7 +197,7 @@ inline void SphericalCoordinateConversionPolicy::convertFromCartesianDirection(
                                            double spherical_coords[3] )
 {
   // Make sure that the direction is valid
-  testPrecondition( isUnitNormal( cartesian_direction ) );
+  testPrecondition( isUnitVector( cartesian_direction ) );
 
   SphericalCoordinateConversionPolicy::convertFromCartesianDirection(
                                                         cartesian_direction[0],
@@ -220,7 +220,7 @@ inline void SphericalCoordinateConversionPolicy::convertFromCartesianDirection(
                                                double& mu_directional_coord )
 {
   // Make sure that the direction is valid
-  testPrecondition( isUnitNormal( x_direction, y_direction, z_direction ) );
+  testPrecondition( isUnitVector( x_direction, y_direction, z_direction ) );
 
   SphericalCoordinateConversionPolicy::convertFromCartesianPosition(
                                                        x_direction,
@@ -243,12 +243,12 @@ inline void SphericalCoordinateConversionPolicy::convertToCartesianDirection(
                                               double cartesian_direction[3] )
 {
   SphericalCoordinateConversionPolicy::convertToCartesianDirection(
-                                                         spherical_coords[0],
-                                                         spherical_coords[1],
-                                                         spherical_coords[2],
-                                                         cartesian_coords[0],
-                                                         cartesian_coords[1],
-                                                         cartesian_coords[2] );
+                                                      spherical_coords[0],
+                                                      spherical_coords[1],
+                                                      spherical_coords[2],
+                                                      cartesian_direction[0],
+                                                      cartesian_direction[1],
+                                                      cartesian_direction[2] );
 }
 
 // Convert the spherical coords (on unit sphere) to a Cartesian direction
@@ -269,6 +269,9 @@ inline void SphericalCoordinateConversionPolicy::convertToCartesianDirection(
                                                        x_spatial_coord,
                                                        y_spatial_coord,
                                                        z_spatial_coord );
+
+  // Normalize the Cartesian direction to eliminate rounding errors
+  normalizeVector( x_spatial_coord, y_spatial_coord, z_spatial_coord );
   
   // Make sure that the direction is a unit vector
   testPostcondition( isUnitVector( x_spatial_coord, y_spatial_coord, z_spatial_coord ) );

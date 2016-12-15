@@ -15,7 +15,7 @@
 namespace Utility{
 
 //! The basic cylindrical coordinate conversion policy class
-class BasicCylindricalCoordinateConversionPolicy : public CylindricalCoordinateConversionPolicy
+class BasicCylindricalSpatialCoordinateConversionPolicy : public CylindricalSpatialCoordinateConversionPolicy
 {
 
 public:

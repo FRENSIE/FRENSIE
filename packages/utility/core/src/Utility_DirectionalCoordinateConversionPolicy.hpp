@@ -79,7 +79,6 @@ inline void DirectionalCoordinateConversionPolicy::convertFromCartesianDirection
                                                     coordinates[1],
                                                     coordinates[2] );
 }
-};
   
 } // end Utility namespace
 

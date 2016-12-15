@@ -37,8 +37,18 @@ bool isUnitVector( const double x_component,
 //! Normalize the vector (create a unit vector)
 void normalizeVector( double vector[3] );
 
+//! Normalize the vector (create a unit vector)
+void normalizeVector( double& x_component,
+                      double& y_component,
+                      double& z_component );
+
 //! Normalize the vector and return the magnitude
 double normalizeVectorAndReturnMagnitude( double vector[3] );
+
+//! Normalize the vector and return the magnitude
+double normalizeVectorAndReturnMagnitude( double& x_component,
+                                          double& y_component,
+                                          double& z_component );
 
 //! Calculate the cosine of the angle between two vectors
 double calculateCosineOfAngleBetweenVectors( const double vector_a[3],
@@ -175,7 +185,23 @@ inline bool isUnitVector( const double vector[3] )
 // Normalize the vector (create a unit vector)
 inline void normalizeVector( double vector[3] )
 {
-  double magnitude = normalizeVectorAndReturnMagnitude( vector );
+  const double magnitude = normalizeVectorAndReturnMagnitude( vector );
+}
+
+// Normalize the vector (create a unit vector)
+inline void normalizeVector( double& x_component,
+                             double& y_component,
+                             double& z_component )
+{
+  const double magnitude = normalizeVectorAndReturnMagnitude( x_component,
+                                                              y_component,
+                                                              z_component );
+}
+
+// Normalize the vector and return the magnitude
+inline double normalizeVectorAndReturnMagnitude( double vector[3] )
+{
+  return normalizeVectorAndReturnMagnitude( vector[0], vector[1], vector[2] );
 }
 
 // Calculate the cosine of the angle between two vectors
@@ -191,8 +217,8 @@ inline double calculateCosineOfAngleBetweenVectors( const double vector_a[3],
 
   normalizeVector( unit_vector_b );
 
-  return calculateCosineOfAnglesBetweenUnitVectors( unit_vector_a,
-                                                    unit_vector_b );
+  return calculateCosineOfAngleBetweenUnitVectors( unit_vector_a,
+                                                   unit_vector_b );
 }
 
 // Reflect a vector about the given unit normal
@@ -253,9 +279,9 @@ inline void convertLocalVectorToGlobalVector(
                               global_z_coordinate );
 
   // Shift the origin
-  global_x_coordinate[0] += local_origin_wrt_global_coord_system[0];
-  global_y_coordinate[1] += local_origin_wrt_global_coord_system[1];
-  global_z_coordinate[2] += local_origin_wrt_global_coord_system[2];
+  global_x_coordinate += local_origin_wrt_global_coord_system[0];
+  global_y_coordinate += local_origin_wrt_global_coord_system[1];
+  global_z_coordinate += local_origin_wrt_global_coord_system[2];
 }
 
 // Convert the local vector to a global vector (coordinate transform)
@@ -353,9 +379,9 @@ inline void rotateVectorThroughPolarAndAzimuthalAngle(
   testPrecondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
 
   // Calculate a unit vector from the input vector
-  double unit_vector = {vector[0], vector[1], vector[2]};
+  double unit_vector[3] = {vector[0], vector[1], vector[2]};
 
-  normalizeVector( unit_vector );
+  double magnitude = normalizeVectorAndReturnMagnitude( unit_vector );
 
   // Rotate the unit vector
   rotateUnitVectorThroughPolarAndAzimuthalAngle( polar_angle_cosine,
@@ -376,7 +402,11 @@ inline void rotateVectorThroughPolarAndAzimuthalAngle(
  * polar angle is commonly sampled and used much more often than the
  * polar angle. The azimuthal angle should be passed as the second argument
  * and not the cosine of the azimuthal angle. This is because the
- * azimuthal angle is often directly sampled.
+ * azimuthal angle is often directly sampled. 
+ * Note: This method will be more efficient that the 
+ * rotateVectorThroughPolarAndAzimuthalAngle method when dealing with a unit
+ * vector (the vector magnitude will not be calculated since it is assumed
+ * to be 1.0). Only a unit vector can be used with this method.
  */
 inline void rotateUnitVectorThroughPolarAndAzimuthalAngle(
                                                const double polar_angle_cosine,
@@ -401,7 +431,7 @@ inline void rotateUnitVectorThroughPolarAndAzimuthalAngle(
   
   const double local_rotated_unit_vector[3] =
     {polar_angle_sine*cos(azimuthal_angle),
-     polar_angle_sine*sin(asimuthal_angle),
+     polar_angle_sine*sin(azimuthal_angle),
      polar_angle_cosine};
 
   // Transform the local rotated unit vector to the global coordinate system

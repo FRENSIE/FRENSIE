@@ -17,17 +17,17 @@ namespace Utility{
 GeneralSphericalCoordinateConversionPolicy::GeneralSphericalCoordinateConversionPolicy(
                                                         const double origin[3],
                                                         const double axis[3] )
-  : d_origin( {origin[0], origin[1], origin[2]} ),
-    d_axis( {axis[0], axis[1], axis[2]} )
+  : d_origin{origin[0], origin[1], origin[2]},
+    d_axis{axis[0], axis[1], axis[2]}
 {
   // Normalize the axis vector
-  normalizeDirection( d_axis );
+  normalizeVector( d_axis );
 }
 
 // Constructor (global origin)
 GeneralSphericalCoordinateConversionPolicy::GeneralSphericalCoordinateConversionPolicy( const double axis[3] )
-  : d_origin( {0.0, 0.0, 0.0} ),
-    d_axis( {axis[0], axis[1], axis[2]} )
+  : d_origin{0.0, 0.0, 0.0},
+    d_axis{axis[0], axis[1], axis[2]}
 {
   // Normalize the axis vector
   normalizeVector( d_axis );
@@ -39,12 +39,12 @@ GeneralSphericalCoordinateConversionPolicy::GeneralSphericalCoordinateConversion
  * w.r.t. the axis vector.
  */
 void GeneralSphericalCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
-                                       const double primary_spatial_coord,
-                                       const double secondary_spatial_coord,
-                                       const double tertiary_spatial_coord,
-                                       double& x_spatial_coord,
-                                       double& y_spatial_coord,
-                                       double& z_spatial_coord ) const override
+                                          const double primary_spatial_coord,
+                                          const double secondary_spatial_coord,
+                                          const double tertiary_spatial_coord,
+                                          double& x_spatial_coord,
+                                          double& y_spatial_coord,
+                                          double& z_spatial_coord ) const
 {
   // Make sure that the radial spatial coordinate is valid
   testPrecondition( primary_spatial_coord >= 0.0 );
@@ -53,8 +53,7 @@ void GeneralSphericalCoordinateConversionPolicy::convertToCartesianSpatialCoordi
   testPrecondition( tertiary_spatial_coord <= 1.0 );
 
   // Convert the spherical coordinates to local cartesian coordinates
-  const double local_x_spatial_coord, local_y_spatial_coord,
-    local_z_spatial_coord;
+  double local_x_spatial_coord, local_y_spatial_coord, local_z_spatial_coord;
 
   this->convertToCartesianPosition( primary_spatial_coord,
                                     secondary_spatial_coord,
@@ -79,17 +78,16 @@ void GeneralSphericalCoordinateConversionPolicy::convertToCartesianSpatialCoordi
  * angle cosine w.r.t. the axis vector while theta is the azimuthal angle 
  * w.r.t. the axis vector.
  */
-void GeneralSphericalCoordinateConversionPolicy::convertFromCartesianCoordinates(
-                                const double x_spatial_coord,
-                                const double y_spatial_coord,
-                                const double z_spatial_coord,
-                                double& primary_spatial_coord,
-                                double& secondary_spatial_coord,
-                                double& tertiary_spatial_coord ) const override
+void GeneralSphericalCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
+                                         const double x_spatial_coord,
+                                         const double y_spatial_coord,
+                                         const double z_spatial_coord,
+                                         double& primary_spatial_coord,
+                                         double& secondary_spatial_coord,
+                                         double& tertiary_spatial_coord ) const
 {
   // Convert the global cartesian coordinates to local cartesian coordinates
-  const double local_x_spatial_coord, local_y_spatial_coord,
-    local_z_spatial_coord;
+  double local_x_spatial_coord, local_y_spatial_coord, local_z_spatial_coord;
 
   convertGlobalVectorToLocalVector( x_spatial_coord,
                                     y_spatial_coord,
@@ -118,19 +116,19 @@ void GeneralSphericalCoordinateConversionPolicy::convertFromCartesianCoordinates
  * directional coordinates.
  */
 void GeneralSphericalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
-                                   const double primary_directional_coord,
-                                   const double secondary_directional_coord,
-                                   const double tertiary_directional_coord,
-                                   double& x_directional_coord,
-                                   double& y_directional_coord,
-                                   double& z_directional_coord ) const override
+                                      const double primary_directional_coord,
+                                      const double secondary_directional_coord,
+                                      const double tertiary_directional_coord,
+                                      double& x_directional_coord,
+                                      double& y_directional_coord,
+                                      double& z_directional_coord ) const
 {
   // Make sure that the mu directional coordinate is valid
   testPrecondition( tertiary_directional_coord >= -1.0 );
   testPrecondition( tertiary_directional_coord <= 1.0 );
 
   // Convert the spherical coordinates to local cartesian coordinates
-  const double local_x_directional_coord, local_y_directional_coord,
+  double local_x_directional_coord, local_y_directional_coord,
     local_z_directional_coord;
 
   this->convertToCartesianDirection( 1.0,
@@ -159,18 +157,18 @@ void GeneralSphericalCoordinateConversionPolicy::convertToCartesianDirectionalCo
  * transforming directional coordinates.
  */
 void GeneralSphericalCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
-                            const double x_directional_coord,
-                            const double y_directional_coord,
-                            const double z_directional_coord,
-                            double& primary_directional_coord,
-                            double& secondary_directional_coord,
-                            double& tertiary_directional_coord ) const override
+                                     const double x_directional_coord,
+                                     const double y_directional_coord,
+                                     const double z_directional_coord,
+                                     double& primary_directional_coord,
+                                     double& secondary_directional_coord,
+                                     double& tertiary_directional_coord ) const
 {
   // Make sure that the Cartesian directional coordinates are valid
   testPrecondition( isUnitVector( x_directional_coord, y_directional_coord, z_directional_coord ) );
 
   // Convert the global cartesian coordinates to local cartesian coordinates
-  const double local_x_directional_coord, local_y_directional_coord,
+  double local_x_directional_coord, local_y_directional_coord,
     local_z_directional_coord;
 
   convertGlobalVectorToLocalVector( x_directional_coord,

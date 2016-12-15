@@ -65,7 +65,7 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianPo
                                               const double cartesian_coords[3],
                                               double cylindrical_coords[3] )
 {
-  CylindricalSpatialCoordinateConversionPolicy::convertFromCartesian(
+  CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianPosition(
                                                        cartesian_coords[0],
                                                        cartesian_coords[1],
                                                        cartesian_coords[2],
@@ -99,7 +99,7 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertToCartesianPosi
                                             const double cylindrical_coords[3],
                                             double cartesian_coords[3] )
 {
-  CylindricalSpatialCoordinateConversionPolicy::convertToCartesian(
+  CylindricalSpatialCoordinateConversionPolicy::convertToCartesianPosition(
                                                          cylindrical_coords[0],
                                                          cylindrical_coords[1],
                                                          cylindrical_coords[2],
@@ -118,10 +118,10 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertToCartesianPosi
                                               double& z_spatial_coord_out )
 {
   // Compute the x coordinate
-  x_spatial_coordinate = r_spatial_coordinate*cos(theta_spatial_coord);
+  x_spatial_coord = r_spatial_coord*cos(theta_spatial_coord);
 
   // Compute the y coordinate
-  y_spatial_coordinate = r_spatial_coordinate*sin(theta_spatial_coord);
+  y_spatial_coord = r_spatial_coord*sin(theta_spatial_coord);
 
   // The z coordinate is the same
   z_spatial_coord_out = z_spatial_coord_in;

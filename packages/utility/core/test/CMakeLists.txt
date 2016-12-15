@@ -209,19 +209,12 @@ TARGET_LINK_LIBRARIES(tstDirectionHelpers utility_core)
 ADD_TEST(DirectionHelpers_test tstDirectionHelpers)
 SET_PROPERTY(TEST DirectionHelpers_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstCylindricalCoordinateHelpers
-  tstCylindricalCoordinateHelpers.cpp
+ADD_EXECUTABLE(tst3DCartesianVectorHelpers
+  tst3DCartesianVectorHelpers.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstCylindricalCoordinateHelpers utility_core)
-ADD_TEST(CylindricalCoordinateHelpers_test tstCylindricalCoordinateHelpers)
-SET_PROPERTY(TEST CylindricalCoordinateHelpers_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstSphericalCoordinateHelpers
-  tstSphericalCoordinateHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSphericalCoordinateHelpers utility_core)
-ADD_TEST(SphericalCoordinateHelpers_test tstSphericalCoordinateHelpers)
-SET_PROPERTY(TEST SphericalCoordinateHelpers_test PROPERTY LABELS utility_core)
+TARGET_LINK_LIBRARIES(tst3DCartesianVectorHelpers utility_core)
+ADD_TEST(3DCartesianVectorHelpers_test tst3DCartesianVectorHelpers)
+SET_PROPERTY(TEST 3DCartesianVectorHelpers_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstDataProcessor
   tstDataProcessor.cpp

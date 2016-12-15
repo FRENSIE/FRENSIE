@@ -18,12 +18,12 @@ namespace Utility{
  * angle cosine while theta is the azimuthal angle.
  */
 void BasicSphericalCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
-                                       const double primary_spatial_coord,
-                                       const double secondary_spatial_coord,
-                                       const double tertiary_spatial_coord,
-                                       double& x_spatial_coord,
-                                       double& y_spatial_coord,
-                                       double& z_spatial_coord ) const override
+                                          const double primary_spatial_coord,
+                                          const double secondary_spatial_coord,
+                                          const double tertiary_spatial_coord,
+                                          double& x_spatial_coord,
+                                          double& y_spatial_coord,
+                                          double& z_spatial_coord ) const
 {
   // Make sure that the radial spatial coordinate is valid
   testPrecondition( primary_spatial_coord >= 0.0 );
@@ -41,12 +41,12 @@ void BasicSphericalCoordinateConversionPolicy::convertToCartesianSpatialCoordina
 
 // Convert the cartesian coordinates to the spatial coordinate system
 void BasicSphericalCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
-                                const double x_spatial_coord,
-                                const double y_spatial_coord,
-                                const double z_spatial_coord,
-                                double& primary_spatial_coord,
-                                double& secondary_spatial_coord,
-                                double& tertiary_spatial_coord ) const override
+                                         const double x_spatial_coord,
+                                         const double y_spatial_coord,
+                                         const double z_spatial_coord,
+                                         double& primary_spatial_coord,
+                                         double& secondary_spatial_coord,
+                                         double& tertiary_spatial_coord ) const
 {
   this->convertFromCartesianPosition( x_spatial_coord,
                                       y_spatial_coord,
@@ -63,16 +63,16 @@ void BasicSphericalCoordinateConversionPolicy::convertFromCartesianSpatialCoordi
  * azimuthal angle.
  */
 void BasicSphericalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
-                                   const double primary_directional_coord,
-                                   const double secondary_directional_coord,
-                                   const double tertiary_directional_coord,
-                                   double& x_directional_coord,
-                                   double& y_directional_coord,
-                                   double& z_directional_coord ) const override
+                                      const double primary_directional_coord,
+                                      const double secondary_directional_coord,
+                                      const double tertiary_directional_coord,
+                                      double& x_directional_coord,
+                                      double& y_directional_coord,
+                                      double& z_directional_coord ) const
 {
   // Make sure that the mu spatial coordinate is valid
-  testPrecondition( tertiary_spatial_coord >= -1.0 );
-  testPrecondition( tertiary_spatial_coord <= 1.0 );
+  testPrecondition( tertiary_directional_coord >= -1.0 );
+  testPrecondition( tertiary_directional_coord <= 1.0 );
 
   this->convertToCartesianDirection( 1.0,
                                      secondary_directional_coord,
@@ -89,12 +89,12 @@ void BasicSphericalCoordinateConversionPolicy::convertToCartesianDirectionalCoor
  * is the azimuthal angle.
  */
 void BasicSphericalCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
-                            const double x_directional_coord,
-                            const double y_directional_coord,
-                            const double z_directional_coord,
-                            double& primary_directional_coord,
-                            double& secondary_directional_coord,
-                            double& tertiary_directional_coord ) const override
+                                     const double x_directional_coord,
+                                     const double y_directional_coord,
+                                     const double z_directional_coord,
+                                     double& primary_directional_coord,
+                                     double& secondary_directional_coord,
+                                     double& tertiary_directional_coord ) const
 {
   // Make sure that the Cartesian coordinates are valid
   testPrecondition( isUnitVector( x_directional_coord, y_directional_coord, z_directional_coord ) );

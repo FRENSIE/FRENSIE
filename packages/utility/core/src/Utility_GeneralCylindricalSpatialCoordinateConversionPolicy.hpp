@@ -54,12 +54,12 @@ private:
   // The default constructor should not be used - if the axis and origin
   // correspond to the global coordinate system use the basic conversion
   // policy
-  GeneralCylindricalCoordinateConversionPolicy();
+  GeneralCylindricalSpatialCoordinateConversionPolicy();
 
   // We have C-arrays as members - hide the copy constructor and assignment
   // operator
-  GeneralCylindricalCoordinateConversionPolicy( const GeneralCylindricalCoordinateConversionPolicy& that );
-  GeneralCylindricalCoordinateConversionPolicy& operator=( const GeneralCylindricalCoordinateConversionPolicy& that );
+  GeneralCylindricalSpatialCoordinateConversionPolicy( const GeneralCylindricalSpatialCoordinateConversionPolicy& that );
+  GeneralCylindricalSpatialCoordinateConversionPolicy& operator=( const GeneralCylindricalSpatialCoordinateConversionPolicy& that );
 
   // The origin of the cylindrical coordinate system w.r.t. the Cartesian
   // coordinate system
