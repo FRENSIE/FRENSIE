@@ -223,6 +223,13 @@ TARGET_LINK_LIBRARIES(tstCartesianCoordinateConversionPolicy utility_core)
 ADD_TEST(CartesianCoordinateConversionPolicy_test tstCartesianCoordinateConversionPolicy)
 SET_PROPERTY(TEST CartesianCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstBasicCartesianCoordinateConversionPolicy
+  tstBasicCartesianCoordinateConversionPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstBasicCartesianCoordinateConversionPolicy utility_core)
+ADD_TEST(BasicCartesianCoordinateConversionPolicy_test tstBasicCartesianCoordinateConversionPolicy)
+SET_PROPERTY(TEST BasicCartesianCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstDataProcessor
   tstDataProcessor.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
