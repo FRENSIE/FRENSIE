@@ -216,6 +216,13 @@ TARGET_LINK_LIBRARIES(tst3DCartesianVectorHelpers utility_core)
 ADD_TEST(3DCartesianVectorHelpers_test tst3DCartesianVectorHelpers)
 SET_PROPERTY(TEST 3DCartesianVectorHelpers_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstCartesianCoordinateConversionPolicy
+  tstCartesianCoordinateConversionPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCartesianCoordinateConversionPolicy utility_core)
+ADD_TEST(CartesianCoordinateConversionPolicy_test tstCartesianCoordinateConversionPolicy)
+SET_PROPERTY(TEST CartesianCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstDataProcessor
   tstDataProcessor.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
