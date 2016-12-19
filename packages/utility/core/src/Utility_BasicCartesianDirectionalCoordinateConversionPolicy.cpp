@@ -1,63 +1,23 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_BasicCartesianCoordinateConversionPolicy.cpp
+//! \file   Utility_BasicCartesianDirectionalCoordinateConversionPolicy.cpp
 //! \author Alex Robinson
-//! \brief  Basic Cartesian coordinate conversion policy definition
+//! \brief  Basic Cartesian directional coordinate conversion policy definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_BasicCartesianCoordinateConversionPolicy.hpp"
+#include "Utility_BasicCartesianDirectionalCoordinateConversionPolicy.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
-// Convert the spatial coordinates to cartesian coordinates
-/*! \details This method will simply copy the input coordinates to the output
- * coordinates.
- */
-void BasicCartesianCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
-                                          const double primary_spatial_coord,
-                                          const double secondary_spatial_coord,
-                                          const double tertiary_spatial_coord,
-                                          double& x_spatial_coord,
-                                          double& y_spatial_coord,
-                                          double& z_spatial_coord ) const
-{
-  this->convertToCartesianPosition( primary_spatial_coord,
-                                    secondary_spatial_coord,
-                                    tertiary_spatial_coord,
-                                    x_spatial_coord,
-                                    y_spatial_coord,
-                                    z_spatial_coord );
-}
-
-// Convert the cartesian coordinates to the spatial coordinate system
-/*! \details This method will simply copy the input coordinates to the output
- * coordinates.
- */
-void BasicCartesianCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
-                                         const double x_spatial_coord,
-                                         const double y_spatial_coord,
-                                         const double z_spatial_coord,
-                                         double& primary_spatial_coord,
-                                         double& secondary_spatial_coord,
-                                         double& tertiary_spatial_coord ) const
-{
-  this->convertFromCartesianPosition( x_spatial_coord,
-                                      y_spatial_coord,
-                                      z_spatial_coord,
-                                      primary_spatial_coord,
-                                      secondary_spatial_coord,
-                                      tertiary_spatial_coord );
-}
-
 // Convert the directional coordinates to cartesian coordinates
 /*! \details This method will simply copy the input direction to the output
  * direction.
  */
-void BasicCartesianCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
+void BasicCartesianDirectionalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
                                       const double primary_directional_coord,
                                       const double secondary_directional_coord,
                                       const double tertiary_directional_coord,
@@ -80,7 +40,7 @@ void BasicCartesianCoordinateConversionPolicy::convertToCartesianDirectionalCoor
 /*! \details This method will simply copy the input direction to the output
  * direction.
  */
-void BasicCartesianCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
+void BasicCartesianDirectionalCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
                                      const double x_directional_coord,
                                      const double y_directional_coord,
                                      const double z_directional_coord,

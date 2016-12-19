@@ -52,7 +52,33 @@ public:
   void convertFromCartesianSpatialCoordinates(
                                          const double cartesian_coordinates[3],
                                          double coordinates[3] ) const;
+
+protected:
+
+  //! Translate a global Cartesian position to a local Cartesian position
+  static void translateGlobalCartesianPositionToLocalCartesianPosition(
+                          const double global_x_position,
+                          const double global_y_position,
+                          const double global_z_position,
+                          const double local_origin_wrt_global_coord_system[3],
+                          double& local_x_position,
+                          double& local_y_position,
+                          double& local_z_position );
+  
+  //! Translate a local Cartesian position to a global Cartesian position
+  static void translateLocalCartesianPositionToGlobalCartesianPosition(
+                          const double local_x_position,
+                          const double local_y_position,
+                          const double local_z_position,
+                          const double local_origin_wrt_global_coord_system[3],
+                          double& global_x_position,
+                          double& global_y_position,
+                          double& global_z_position );
 };
+
+//---------------------------------------------------------------------------//
+// Inline Definitions
+//---------------------------------------------------------------------------//
 
 // Convert the spatial coordinates to cartesian coordinates
 inline void SpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
@@ -78,6 +104,46 @@ inline void SpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordi
                                                 coordinates[0],
                                                 coordinates[1],
                                                 coordinates[2] );
+}
+
+// Translate a global Cartesian position to a local Cartesian position
+inline void SpatialCoordinateConversionPolicy::translateGlobalCartesianPositionToLocalCartesianPosition(
+                          const double global_x_position,
+                          const double global_y_position,
+                          const double global_z_position,
+                          const double local_origin_wrt_global_coord_system[3],
+                          double& local_x_position,
+                          double& local_y_position,
+                          double& local_z_position )
+{
+  local_x_position =
+    global_x_position - local_origin_wrt_global_coord_system[0];
+
+  local_y_position =
+    global_y_position - local_origin_wrt_global_coord_system[1];
+
+  local_z_position =
+    global_z_position - local_origin_wrt_global_coord_system[2];
+}
+  
+// Translate a local Cartesian position to a global Cartesian position
+inline void SpatialCoordinateConversionPolicy::translateLocalCartesianPositionToGlobalCartesianPosition(
+                          const double local_x_position,
+                          const double local_y_position,
+                          const double local_z_position,
+                          const double local_origin_wrt_global_coord_system[3],
+                          double& global_x_position,
+                          double& global_y_position,
+                          double& global_z_position )
+{
+  global_x_position =
+    local_x_position + local_origin_wrt_global_coord_system[0];
+
+  global_y_position =
+    local_y_position + local_origin_wrt_global_coord_system[1];
+
+  global_z_position =
+    local_z_position + local_origin_wrt_global_coord_system[2];
 }
   
 } // end Utility namespace

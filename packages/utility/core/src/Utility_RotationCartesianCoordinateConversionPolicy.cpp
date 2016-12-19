@@ -1,45 +1,37 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GeneralCartesianCoordinateConversionPolicy.cpp
+//! \file   Utility_RotationCartesianCoordinateConversionPolicy.cpp
 //! \author Alex Robinson
-//! \brief  General Cartesian coordinate conversion policy definition
+//! \brief  Rotation Cartesian coordinate conversion policy definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_GeneralCartesianCoordinateConversionPolicy.hpp"
+#include "Utility_RotationCartesianCoordinateConversionPolicy.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 // Constructor
-GeneralCartesianCoordinateConversionPolicy::GeneralCartesianCoordinateConversionPolicy(
-                                                        const double origin[3],
-                                                        const double axis[3] )
-  : d_origin{origin[0], origin[1], origin[2]},
-    d_axis{axis[0], axis[1], axis[2]}
-{
-  // Normalize the axis vector
-  normalizeVector( d_axis );
-}
-
-// Constructor (global origin)
-GeneralCartesianCoordinateConversionPolicy::GeneralCartesianCoordinateConversionPolicy(
-                                                         const double axis[3] )
-  : d_origin{0.0, 0.0, 0.0},
-    d_axis{axis[0], axis[1], axis[2]}
+/*! \details The axis parameter is the z-axis of the local coordinate system
+ * w.r.t. the global coordinate system. It does not need to be a unit vector
+ * as it will be normalized by the constructor. 
+ */ 
+RotationCartesianCoordinateConversionPolicy::RotationCartesianCoordinateConversionPolicy( const double axis[3] )
+  : d_axis{ axis[0], axis[1], axis[2] }
 {
   // Normalize the axis vector
   normalizeVector( d_axis );
 }
 
 // Convert the spatial coordinates to cartesian coordinates
-/*! \details The original spatial coordinates are (x',y',z'), which are the
- * coordinates in the local coordinate system (defined by origin and axis).
- * These will be converted to the global coordinate system.
+/*! \details The primary, secondary and tertiary spatial coordinates are the
+ * Cartesian coordinates in the local coordinate system. They will be converted
+ * to coordinates in the global coordinate system by using a rotation matrix
+ * created from the axis vector.
  */
-void GeneralCartesianCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
+void RotationCartesianCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
                                           const double primary_spatial_coord,
                                           const double secondary_spatial_coord,
                                           const double tertiary_spatial_coord,
@@ -51,18 +43,18 @@ void GeneralCartesianCoordinateConversionPolicy::convertToCartesianSpatialCoordi
                                     secondary_spatial_coord,
                                     tertiary_spatial_coord,
                                     d_axis,
-                                    d_origin,
                                     x_spatial_coord,
                                     y_spatial_coord,
                                     z_spatial_coord );
 }
 
 // Convert the cartesian coordinates to the spatial coordinate system
-/*! \details The final spatial coordinates are (x',y',z'), which are the 
- * coordinates in the local coordinate system (defined by origin and axis).
- * The global coordinates will be converted to the local coordinate system.
+/*! \details The x, y and z spatial coordinates are the Cartesian coordinates
+ * in the global coordinate system. They will be converted to coordinates in
+ * the local coordinate system by using a rotation matric created from the
+ * axis vector.
  */
-void GeneralCartesianCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
+void RotationCartesianCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
                                          const double x_spatial_coord,
                                          const double y_spatial_coord,
                                          const double z_spatial_coord,
@@ -74,20 +66,18 @@ void GeneralCartesianCoordinateConversionPolicy::convertFromCartesianSpatialCoor
                                     y_spatial_coord,
                                     z_spatial_coord,
                                     d_axis,
-                                    d_origin,
                                     primary_spatial_coord,
                                     secondary_spatial_coord,
                                     tertiary_spatial_coord );
 }
 
 // Convert the directional coordinates to cartesian coordinates
-/*! \details The original directional coordinates are (u',v',w'), which are the
- * directional coordinates in the local coordinate system (defined only by
- * the axis - the origin is ignored with directional coordinate transforms).
- * The local directional coordinates will be converted to the global
- * coordinate system.
+/*! \details The primary, secondary and tertiary directional coordinates are 
+ * the Cartesian coordinates in the local coordinate system. They will be 
+ * converted to coordinates in the global coordinate system by using a rotation
+ * matrix created from the axis vector
  */
-void GeneralCartesianCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
+void RotationCartesianCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
                                       const double primary_directional_coord,
                                       const double secondary_directional_coord,
                                       const double tertiary_directional_coord,
@@ -105,16 +95,15 @@ void GeneralCartesianCoordinateConversionPolicy::convertToCartesianDirectionalCo
                                     x_directional_coord,
                                     y_directional_coord,
                                     z_directional_coord );
-}
+}  
 
 // Convert the cartesian coordinates to the directional coordinate system
-/*! \details The final directional coordinates are (u',v',w'), which are the
- * directional coordinates in the local coordinate system (defined only the the
- * axis - the origin is ignored with directional coordinate transforms). The
- * glboal directional coordinates will be converted to the local 
- * coordinate system.
+/*! \details The x, y and z directional coordinates are the Cartesian 
+ * coordinates in the global coordinate system. They will be converted to 
+ * coordinates in the local coordinate system by using a rotation matric 
+ * created from the axis vector.
  */
-void GeneralCartesianCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
+void RotationCartesianCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
                                      const double x_directional_coord,
                                      const double y_directional_coord,
                                      const double z_directional_coord,
@@ -137,5 +126,5 @@ void GeneralCartesianCoordinateConversionPolicy::convertFromCartesianDirectional
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_GeneralCartesianCoordinateConversionPolicy.cpp
+// end Utility_RotationCartesianCoordinateConversionPolicy.cpp
 //---------------------------------------------------------------------------//

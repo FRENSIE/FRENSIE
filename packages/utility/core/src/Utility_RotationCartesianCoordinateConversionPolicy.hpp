@@ -1,31 +1,32 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_BasicCartesianCoordinateConversionPolicy.hpp
+//! \file   Utility_RotationCartesianCoordinateConversionPolicy.hpp
 //! \author Alex Robinson
-//! \brief  Basic Cartesian coordinate conversion policy declaration
+//! \brief  Rotation Cartesian coordinate conversion policy declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_BASIC_CARTESIAN_COORDINATE_CONVERSION_POLICY_HPP
-#define UTILITY_BASIC_CARTESIAN_COORDINATE_CONVERSION_POLICY_HPP
+#ifndef UTILITY_ROTATION_CARTESIAN_COORDINATE_CONVERSION_POLICY_HPP
+#define UTILITY_ROTATION_CARTESIAN_COORDINATE_CONVERSION_POLICY_HPP
 
 // FRENSIE Includes
-#include "Utility_CartesianCoordinateConversionPolicy.hpp"
+#include "Utility_CartesianSpatialCoordinateConversionPolicy.hpp"
+#include "Utility_CartesianDirectionalCoordinateConversionPolicy.hpp"
 
 namespace Utility{
 
-//! The basic Cartesian coordinate conversion policy class
-class BasicCartesianCoordinateConversionPolicy : public CartesianCoordinateConversionPolicy
+//! The rotation Cartesian coordinate conversion policy class
+class RotationCartesianCoordinateConversionPolicy : public CartesianSpatialCoordinateConversionPolicy,
+                                                    public CartesianDirectionalCoordinateConversionPolicy
 {
 
 public:
 
   //! Constructor
-  BasicCartesianCoordinateConversionPolicy()
-  { /* ... */ }
+  RotationCartesianCoordinateConversionPolicy( const double axis[3] );
 
   //! Destructor
-  ~BasicCartesianCoordinateConversionPolicy()
+  ~RotationCartesianCoordinateConversionPolicy()
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
@@ -63,12 +64,28 @@ public:
                            double& primary_directional_coord,
                            double& secondary_directional_coord,
                            double& tertiary_directional_coord ) const override;
-};
 
+private:
+
+  // The default constructor should not be used - if the z-axis of the local
+  // coordinate system w.r.t. the global coordinate system aligns with the
+  // z-axis of the global coordinate system use the basic conversion policy
+  RotationCartesianCoordinateConversionPolicy();
+
+  // We have C-arrays as members - hide the copy constructor and assignment
+  // operator
+  RotationCartesianCoordinateConversionPolicy( const RotationCartesianCoordinateConversionPolicy& that );
+  RotationCartesianCoordinateConversionPolicy& operator=( const RotationCartesianCoordinateConversionPolicy& that );
+
+  // The z-axis (unit vector) of the local Cartesian coordinate system w.r.t.
+  // the global Cartesian coordinate system
+  double d_axis[3];
+};
+  
 } // end Utility namespace
 
-#endif // end UTILITY_BASIC_CARTESIAN_COORDINATE_CONVERSION_POLICY_HPP
+#endif // end UTILITY_ROTATION_CARTESIAN_COORDINATE_CONVERSION_POLICY_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_BasicCartesianCoordinateConversionPolicy.hpp
+// end Utility_RotationCartesianCoordinateConversionPolicy.hpp
 //---------------------------------------------------------------------------//

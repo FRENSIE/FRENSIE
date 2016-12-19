@@ -54,6 +54,10 @@ public:
                                          double coordinates[3] ) const;
 };
 
+//---------------------------------------------------------------------------//
+// Inline Definitions
+//---------------------------------------------------------------------------//
+
 // Convert the directional coordinates to cartesian coordinates
 inline void DirectionalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
                                         const double coordinates[3],
@@ -85,5 +89,5 @@ inline void DirectionalCoordinateConversionPolicy::convertFromCartesianDirection
 #endif // end UTILITY_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP
 
 //---------------------------------------------------------------------------//
-// end Uitlity_DirectionalCoordinateConversionPolicy.hpp
+// end Utility_DirectionalCoordinateConversionPolicy.hpp
 //---------------------------------------------------------------------------//
