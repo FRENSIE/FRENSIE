@@ -1,5 +1,5 @@
-# This test cannot use the FRENSIE_STD_UNIT_TEST_MAIN because it is one
-# of the dependencies
+# This test cannot use the FRENSIE_STD_UNIT_TEST_MAIN because the
+# StaticOutputFormatter is used by the main function
 ADD_EXECUTABLE(tstStaticOutputFormatter
   tstStaticOutputFormatter.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -7,8 +7,8 @@ TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core)
 ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter)
 SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
 
-# This test cannout use the FRENSIE_STD_UNIT_TEST_MAIN because it is one
-# of the dependencies
+# This test cannot use the FRENSIE_STD_UNIT_TEST_MAIN because the
+# DynamicOutputFormatter is used by the main function.
 ADD_EXECUTABLE(tstDynamicOutputFormatter
   tstDynamicOutputFormatter.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -230,12 +230,33 @@ TARGET_LINK_LIBRARIES(tstCartesianDirectionalCoordinateConversionPolicy utility_
 ADD_TEST(CartesianDirectionalCoordinateConversionPolicy_test tstCartesianDirectionalCoordinateConversionPolicy)
 SET_PROPERTY(TEST CartesianDirectionalCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
 
-# ADD_EXECUTABLE(tstBasicCartesianCoordinateConversionPolicy
-#   tstBasicCartesianCoordinateConversionPolicy.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstBasicCartesianCoordinateConversionPolicy utility_core)
-# ADD_TEST(BasicCartesianCoordinateConversionPolicy_test tstBasicCartesianCoordinateConversionPolicy)
-# SET_PROPERTY(TEST BasicCartesianCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
+ADD_EXECUTABLE(tstBasicCartesianCoordinateConversionPolicy
+  tstBasicCartesianCoordinateConversionPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstBasicCartesianCoordinateConversionPolicy utility_core)
+ADD_TEST(BasicCartesianCoordinateConversionPolicy_test tstBasicCartesianCoordinateConversionPolicy)
+SET_PROPERTY(TEST BasicCartesianCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstTranslationCartesianSpatialCoordinateConversionPolicy
+  tstTranslationCartesianSpatialCoordinateConversionPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTranslationCartesianSpatialCoordinateConversionPolicy utility_core)
+ADD_TEST(TranslationCartesianSpatialCoordinateConversionPolicy_test tstTranslationCartesianSpatialCoordinateConversionPolicy)
+SET_PROPERTY(TEST TranslationCartesianSpatialCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstRotationCartesianCoordinateConversionPolicy
+  tstRotationCartesianCoordinateConversionPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstRotationCartesianCoordinateConversionPolicy utility_core)
+ADD_TEST(RotationCartesianCoordinateConversionPolicy_test tstRotationCartesianCoordinateConversionPolicy)
+SET_PROPERTY(TEST RotationCartesianCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstGeneralCartesianSpatialCoordinateConversionPolicy
+  tstGeneralCartesianSpatialCoordinateConversionPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstGeneralCartesianSpatialCoordinateConversionPolicy utility_core)
+ADD_TEST(GeneralCartesianSpatialCoordinateConversionPolicy_test tstGeneralCartesianSpatialCoordinateConversionPolicy)
+SET_PROPERTY(TEST GeneralCartesianSpatialCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstDataProcessor
   tstDataProcessor.cpp
