@@ -267,7 +267,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 1.59681326393514E+08, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.4710547898900E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4710547792854498e+05, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -341,7 +341,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   cross_section = atom->getReactionCrossSection(
                     20.0,
                     MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 2.0556774693960, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0546170120025198, 1e-12 );
 
 
   // Test that there is no cutoff elastic cross section
