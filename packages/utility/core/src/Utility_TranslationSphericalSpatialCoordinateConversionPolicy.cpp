@@ -52,9 +52,9 @@ void TranslationSphericalSpatialCoordinateConversionPolicy::convertToCartesianSp
 
   // Convert the local Cartesian coordinates to global Cartesian coordinates
   this->translateLocalCartesianPositionToGlobalCartesianPosition(
-                                                       primary_spatial_coord,
-                                                       secondary_spatial_coord,
-                                                       tertiary_spatial_coord,
+                                                       local_x_spatial_coord,
+                                                       local_y_spatial_coord,
+                                                       local_z_spatial_coord,
                                                        d_origin,
                                                        x_spatial_coord,
                                                        y_spatial_coord,
@@ -79,13 +79,13 @@ void TranslationSphericalSpatialCoordinateConversionPolicy::convertFromCartesian
   double local_x_spatial_coord, local_y_spatial_coord, local_z_spatial_coord;
 
   this->translateGlobalCartesianPositionToLocalCartesianPosition(
-                                                      x_spatial_coord,
-                                                      y_spatial_coord,
-                                                      z_spatial_coord,
-                                                      d_origin,
-                                                      primary_spatial_coord,
-                                                      secondary_spatial_coord,
-                                                      tertiary_spatial_coord );
+                                                       x_spatial_coord,
+                                                       y_spatial_coord,
+                                                       z_spatial_coord,
+                                                       d_origin,
+                                                       local_x_spatial_coord,
+                                                       local_y_spatial_coord,
+                                                       local_z_spatial_coord );
 
   // Convert the local cartesian coordinates to spherical coordinates
   this->convertFromCartesianPosition( local_x_spatial_coord,
