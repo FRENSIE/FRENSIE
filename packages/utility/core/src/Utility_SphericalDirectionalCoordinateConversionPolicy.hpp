@@ -1,0 +1,193 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   Utility_SphericalDirectionalCoordinateConversionPolicy.hpp
+//! \author Alex Robinson
+//! \brief  Spherical directional coordinate conversion policy declaration
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef UTILITY_SPHERICAL_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP
+#define UTILITY_SPHERICAL_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP
+
+// Std Lib Includes
+#include <cmath>
+
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
+// FRENSIE Includes
+#include "Utility_DirectionalCoordinateConversionPolicy.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_ContractException.hpp"
+
+namespace Utility{
+
+//! The spherical directional coordinate conversion policy class
+class SphericalDirectionalCoordinateConversionPolicy : public DirectionalCoordinateConversionPolicy
+{
+  
+public:
+
+  //! Convert the Cartesian direction to spherical coords (on unit sphere)
+  static void convertFromCartesianDirection(
+                                           const double cartesian_direction[3],
+                                           double spherical_coords[3] );
+
+  //! Convert the Cartesian direction to spherical coords (on unit sphere)
+  static void convertFromCartesianDirection( const double x_direction,
+                                             const double y_direction,
+                                             const double z_direction,
+                                             double& r_directional_coord,
+                                             double& theta_directional_coord,
+                                             double& mu_directional_coord );
+
+  //! Convert the spherical coords (on unit sphere) to a Cartesian direction
+  static void convertToCartesianDirection( const double spherical_coords[3],
+                                           double cartesian_direction[3] );
+
+  //! Convert the spherical coords (on unit sphere) to a Cartesian direction
+  static void convertToCartesianDirection(
+                                          const double,
+                                          const double theta_directional_coord,
+                                          const double mu_directional_coord,
+                                          double& x_direction,
+                                          double& y_direction,
+                                          double& z_direction );
+
+  //! Constructor
+  SphericalDirectionalCoordinateConversionPolicy()
+  { /* ... */ }
+
+  //! Destructor
+  virtual ~SphericalDirectionalCoordinateConversionPolicy()
+  { /* ... */ }
+};
+
+//---------------------------------------------------------------------------//
+// Inline Definitions
+//---------------------------------------------------------------------------//
+
+// Convert the Cartesian direction to spherical coords (on unit sphere)
+/*! \details The spherical coordinates are (r,theta,mu) where theta is 
+ * the azimuthal angle and mu is the polar angle cosine.
+ */
+inline void SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
+                                           const double cartesian_direction[3],
+                                           double spherical_coords[3] )
+{
+  // Make sure that the direction is valid
+  testPrecondition( isUnitVector( cartesian_direction ) );
+
+  SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
+                                                        cartesian_direction[0],
+                                                        cartesian_direction[1],
+                                                        cartesian_direction[2],
+                                                        spherical_coords[0],
+                                                        spherical_coords[1],
+                                                        spherical_coords[2] );
+
+  
+}
+
+// Convert the Cartesian direction to spherical coords (on unit sphere)
+/*! \details The spherical coordinates are (1.0,theta,mu) where theta is 
+ * the azimuthal angle and mu is the polar angle cosine.
+ */
+inline void SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
+                                               const double x_direction,
+                                               const double y_direction,
+                                               const double z_direction,
+                                               double& r_directional_coord,
+                                               double& theta_directional_coord,
+                                               double& mu_directional_coord )
+{
+  // Make sure that the direction is valid
+  testPrecondition( isUnitVector( x_direction, y_direction, z_direction ) );
+
+  // Compute the azimuthal angle
+  theta_directional_coord = atan2( y_direction, x_direction );
+
+  // Shift the azimuthal angle to the range [0.0, 2*Pi]
+  if( theta_directional_coord < 0.0 )
+    theta_directional_coord += 2*Utility::PhysicalConstants::pi;
+
+  // Compute the polar angle cosine
+  mu_directional_coord = z_direction;
+
+  // Check for round-off error
+  if( Teuchos::ScalarTraits<double>::magnitude( mu_directional_coord ) > 1.0 )
+    mu_directional_coord = copysign( 1.0, mu_directional_coord );
+
+  // The radial component should always be 1.0 (set this to avoid rounding
+  // errors).
+  r_directional_coord = 1.0;
+
+  // Make sure that the azimuthal angle is valid
+  testPostcondition( theta_directional_coord >= 0.0 );
+  testPostcondition( theta_directional_coord <= 2*Utility::PhysicalConstants::pi );
+  // Make sure that the polar angle cosine is valid
+  testPostcondition( mu_directional_coord >= -1.0 );
+  testPostcondition( mu_directional_coord <= 1.0 );
+}
+
+// Convert the spherical coords (on unit sphere) to a Cartesian direction
+/*! \details The spherical coordinates are (1.0,theta,mu) where theta is 
+ * the azimuthal angle and mu is the polar angle cosine. The radial component 
+ * (spherical_coords[0]) will be ignored.
+ */
+inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
+                                              const double spherical_coords[3],
+                                              double cartesian_direction[3] )
+{
+  SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
+                                                      spherical_coords[0],
+                                                      spherical_coords[1],
+                                                      spherical_coords[2],
+                                                      cartesian_direction[0],
+                                                      cartesian_direction[1],
+                                                      cartesian_direction[2] );
+}
+
+// Convert the spherical coords (on unit sphere) to a Cartesian direction
+/*! \details The spherical coordinates are (1.0,theta,mu) where theta is 
+ * the azimuthal angle and mu is the polar angle cosine. The radial component 
+ * will be ignored since it must always be 1.0.
+ */
+inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
+                                          const double,
+                                          const double theta_directional_coord,
+                                          const double mu_directional_coord,
+                                          double& x_direction,
+                                          double& y_direction,
+                                          double& z_direction )
+{
+  // Make sure that the polar angle cosine is valid
+  testPrecondition( mu_directional_coord >= -1.0 );
+  testPrecondition( mu_directional_coord <= 1.0 );
+
+  const double polar_angle_sine =
+    sqrt( std::max(0.0, 1.0-mu_directional_coord*mu_directional_coord) );
+
+  // Compute the x direction
+  x_direction = cos(theta_directional_coord)*polar_angle_sine;
+
+  // Compute the y direction
+  y_direction = sin(theta_directional_coord)*polar_angle_sine;
+
+  // Compute the z direction
+  z_direction = mu_directional_coord;
+
+  // Normalize the Cartesian direction to eliminate rounding errors
+  normalizeVector( x_direction, y_direction, z_direction );
+  
+  // Make sure that the direction is a unit vector
+  testPostcondition( isUnitVector( x_direction, y_direction, z_direction ) );
+}
+  
+} // end Utility namespace
+
+#endif // end UTILITY_SPHERICAL_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP
+
+//---------------------------------------------------------------------------//
+// end Utility_SphericalDirectionalCoordinateConversionPolicy.hpp
+//---------------------------------------------------------------------------//

@@ -10,12 +10,14 @@
 #define UTILITY_BASIC_SPHERICAL_COORDINATE_CONVERSION_POLICY_HPP
 
 // FRENSIE Includes
-#include "Utility_SphericalCoordinateConversionPolicy.hpp"
+#include "Utility_SphericalSpatialCoordinateConversionPolicy.hpp"
+#include "Utility_SphericalDirectionalCoordinateConversionPolicy.hpp"
 
 namespace Utility{
 
 //! The basic spherical coordinate conversion policy class
-class BasicSphericalCoordinateConversionPolicy : public SphericalCoordinateConversionPolicy
+class BasicSphericalCoordinateConversionPolicy : public SphericalSpatialCoordinateConversionPolicy,
+                                                 public SphericalDirectionalCoordinateConversionPolicy
 {
 
 public:

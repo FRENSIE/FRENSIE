@@ -1,44 +1,37 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GeneralSphericalCoordinateConversionPolicy.cpp
+//! \file   Utility_RotationSphericalCoordinateConversionPolicy.cpp
 //! \author Alex Robinson
-//! \brief  General spherical coordinate conversion policy definition
+//! \brief  Rotation spherical coordinate conversion policy definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_GeneralSphericalCoordinateConversionPolicy.hpp"
+#include "Utility_RotationSphericalCoordinateConversionPolicy.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 // Constructor
-GeneralSphericalCoordinateConversionPolicy::GeneralSphericalCoordinateConversionPolicy(
-                                                        const double origin[3],
-                                                        const double axis[3] )
-  : d_origin{origin[0], origin[1], origin[2]},
-    d_axis{axis[0], axis[1], axis[2]}
-{
-  // Normalize the axis vector
-  normalizeVector( d_axis );
-}
-
-// Constructor (global origin)
-GeneralSphericalCoordinateConversionPolicy::GeneralSphericalCoordinateConversionPolicy( const double axis[3] )
-  : d_origin{0.0, 0.0, 0.0},
-    d_axis{axis[0], axis[1], axis[2]}
+/*! \details The axis parameter is the z-axis of the local coordinate system
+ * w.r.t. the global Cartesian coordinate system. It does not need to be a 
+ * unit vector as it will be normalized by the constructor. 
+ */ 
+RotationSphericalCoordinateConversionPolicy::RotationSphericalCoordinateConversionPolicy( const double axis[3] )
+  : d_axis{ axis[0], axis[1], axis[2] }
 {
   // Normalize the axis vector
   normalizeVector( d_axis );
 }
 
 // Convert the spatial coordinates to cartesian coordinates
-/*! \details The original spatial coordinates are (r,theta,mu). Mu is the polar
- * angle cosine w.r.t. the axis vector while theta is the azimuthal angle 
- * w.r.t. the axis vector.
+/*! \details The primary coordinate is the local r coordinate. The secondary
+ * coordinate is the local theta (azimuthal) coordinate. The tertiary
+ * coordinate is the local mu (polar angle cosine) coordinate. They will be
+ * converted to coordinates in the global Cartesian coordinate system.
  */
-void GeneralSphericalCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
+void RotationSphericalCoordinateConversionPolicy::convertToCartesianSpatialCoordinates(
                                           const double primary_spatial_coord,
                                           const double secondary_spatial_coord,
                                           const double tertiary_spatial_coord,
@@ -62,23 +55,23 @@ void GeneralSphericalCoordinateConversionPolicy::convertToCartesianSpatialCoordi
                                     local_y_spatial_coord,
                                     local_z_spatial_coord );
   
-  // Convert the local cartesian coordinates to global cartesian coordinates
+  // Convert the local Cartesian coordinates to global Cartesian coordinates
   convertLocalVectorToGlobalVector( local_x_spatial_coord,
                                     local_y_spatial_coord,
                                     local_z_spatial_coord,
                                     d_axis,
-                                    d_origin,
                                     x_spatial_coord,
                                     y_spatial_coord,
                                     z_spatial_coord );
 }
 
 // Convert the cartesian coordinates to the spatial coordinate system
-/*! \details The final spatial coordinates are (r,theta,mu). Mu is the polar
- * angle cosine w.r.t. the axis vector while theta is the azimuthal angle 
- * w.r.t. the axis vector.
+/*! \details The primary coordinate is the local r coordinate. The secondary
+ * coordinate is the local theta (azimuthal) coordinate. The tertiary
+ * coordinate is the local mu (polar angle cosine) coordinate. The global
+ * Cartesian coordinates will be converted to these local coordinates.
  */
-void GeneralSphericalCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
+void RotationSphericalCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
                                          const double x_spatial_coord,
                                          const double y_spatial_coord,
                                          const double z_spatial_coord,
@@ -93,7 +86,6 @@ void GeneralSphericalCoordinateConversionPolicy::convertFromCartesianSpatialCoor
                                     y_spatial_coord,
                                     z_spatial_coord,
                                     d_axis,
-                                    d_origin,
                                     local_x_spatial_coord,
                                     local_y_spatial_coord,
                                     local_z_spatial_coord );
@@ -108,15 +100,13 @@ void GeneralSphericalCoordinateConversionPolicy::convertFromCartesianSpatialCoor
 }
 
 // Convert the directional coordinates to cartesian coordinates
-/*! \details The original directional coordinates are (1.0,theta,mu). The
- * primary directional coordinate will be ignored since a direction will always
- * lie on the unit sphere. Mu is the polar angle cosine w.r.t. the axis vector 
- * while theta is the azimuthal angle w.r.t. the axis vector. Note that the
- * origin of the local coordinate system is not used when transforming 
- * directional coordinates.
+/*! \details The local directional coordinates are (1.0,theta,mu). The
+ * primary directional coordinate will be ignored since the direction will
+ * always lie on the unit sphere. Mu is the polar angle cosine and theta is
+ * the azimuthal angle.
  */
-void GeneralSphericalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
-                                      const double primary_directional_coord,
+void RotationSphericalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
+                                      const double,
                                       const double secondary_directional_coord,
                                       const double tertiary_directional_coord,
                                       double& x_directional_coord,
@@ -151,12 +141,10 @@ void GeneralSphericalCoordinateConversionPolicy::convertToCartesianDirectionalCo
 // Convert the cartesian coordinates to the directional coordinate system
 /*! \details The final directional coordinates are (1.0,theta,mu). The
  * primary directional coordinate will will always be 1.0 since a direction 
- * will always lie on the unit sphere. Mu is the polar angle cosine w.r.t. the 
- * axis vector while theta is the azimuthal angle w.r.t. the axis vector.
- * Note that the origin of the local coordinate system is not used when 
- * transforming directional coordinates.
+ * will always lie on the unit sphere. Mu is the polar angle cosine while theta
+ * is the azimuthal angle.
  */
-void GeneralSphericalCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
+void RotationSphericalCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
                                      const double x_directional_coord,
                                      const double y_directional_coord,
                                      const double z_directional_coord,
@@ -187,9 +175,9 @@ void GeneralSphericalCoordinateConversionPolicy::convertFromCartesianDirectional
                                        secondary_directional_coord,
                                        tertiary_directional_coord );
 }
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_GeneralSphericalCoordinateConversionPolicy.cpp
+// end Utility_RotationSphericalCoordinateConversionPolicy.cpp
 //---------------------------------------------------------------------------//

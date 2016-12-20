@@ -63,7 +63,7 @@ void BasicSphericalCoordinateConversionPolicy::convertFromCartesianSpatialCoordi
  * azimuthal angle.
  */
 void BasicSphericalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
-                                      const double primary_directional_coord,
+                                      const double,
                                       const double secondary_directional_coord,
                                       const double tertiary_directional_coord,
                                       double& x_directional_coord,
