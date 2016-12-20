@@ -195,8 +195,12 @@ TEUCHOS_UNIT_TEST( SphericalSpatialCoordinateConversionPolicy,
   ref_cartesian_position = Teuchos::tuple( 1.0, 1.0, 1.0 );
 
   Utility::SphericalSpatialCoordinateConversionPolicy::convertToCartesianPosition(
-                                              spherical_position.getRawPtr(),
-                                              cartesian_position.getRawPtr() );
+                                                       spherical_position[0],
+                                                       spherical_position[1],
+                                                       spherical_position[2],
+                                                       cartesian_position[0],
+                                                       cartesian_position[1],
+                                                       cartesian_position[2] );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( cartesian_position(), ref_cartesian_position(), 1e-15 );
 }
