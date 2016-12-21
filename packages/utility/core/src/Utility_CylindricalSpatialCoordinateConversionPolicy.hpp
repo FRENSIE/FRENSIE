@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_SpatialCoordinateConversionPolicy.hpp"
+#include "Utility_PhysicalConstants.hpp"
 
 namespace Utility{
 
@@ -89,6 +90,10 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianPo
 
   // Compute the azimuthal angle
   theta_spatial_coord = atan2( y_spatial_coord, x_spatial_coord );
+
+  // Shift the azimuthal angle to the range [0.0, 2*Pi]
+  if( theta_spatial_coord < 0.0 )
+    theta_spatial_coord += 2*Utility::PhysicalConstants::pi;
 
   // The z coordinate is the same
   z_spatial_coord_out = z_spatial_coord_in;

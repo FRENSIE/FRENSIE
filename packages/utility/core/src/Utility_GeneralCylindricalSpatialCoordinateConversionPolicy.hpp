@@ -24,9 +24,6 @@ public:
   GeneralCylindricalSpatialCoordinateConversionPolicy( const double origin[3],
                                                        const double axis[3] );
 
-  //! Constructor (global origin)
-  GeneralCylindricalSpatialCoordinateConversionPolicy( const double axis[3] );
-
   //! Destructor
   ~GeneralCylindricalSpatialCoordinateConversionPolicy()
   { /* ... */ }

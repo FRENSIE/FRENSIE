@@ -24,16 +24,6 @@ GeneralCylindricalSpatialCoordinateConversionPolicy::GeneralCylindricalSpatialCo
   normalizeVector( d_axis );
 }
 
-// Constructor (global origin)
-GeneralCylindricalSpatialCoordinateConversionPolicy::GeneralCylindricalSpatialCoordinateConversionPolicy(
-                                                         const double axis[3] )
-  : d_origin{0.0, 0.0, 0.0},
-    d_axis{axis[0], axis[1], axis[2]}
-{
-  // Normalize the axis vector
-  normalizeVector( d_axis );
-}
-
 // Convert the spatial coordinates to cartesian coordinates
 /*! \details The original spatial coordinates are (r,theta,z').
  */
