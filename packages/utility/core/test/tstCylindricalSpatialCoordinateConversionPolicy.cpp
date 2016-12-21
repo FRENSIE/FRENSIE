@@ -100,8 +100,12 @@ TEUCHOS_UNIT_TEST( CylindricalSpatialCoordinateConversionPolicy,
     Teuchos::tuple( sqrt(2.0), Utility::PhysicalConstants::pi/4, 1.0 );
 
   Utility::CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianPosition(
-                                            cartesian_position.getRawPtr(),
-                                            cylindrical_position.getRawPtr() );
+                                                     cartesian_position[0],
+                                                     cartesian_position[1],
+                                                     cartesian_position[2],
+                                                     cylindrical_position[0],
+                                                     cylindrical_position[1],
+                                                     cylindrical_position[2] );
 
   TEST_COMPARE_FLOATING_ARRAYS( cylindrical_position, ref_cylindrical_position, 1e-15 );
 }
@@ -182,6 +186,22 @@ TEUCHOS_UNIT_TEST( CylindricalSpatialCoordinateConversionPolicy,
   Utility::CylindricalSpatialCoordinateConversionPolicy::convertToCartesianPosition(
                                               cylindrical_position.getRawPtr(),
                                               cartesian_position.getRawPtr() );
+                                            
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( cartesian_position(), ref_cartesian_position(), 1e-15 );
+
+  // Off axis
+  cylindrical_position =
+    Teuchos::tuple( sqrt(2.0), Utility::PhysicalConstants::pi/4, 1.0 );
+  ref_cartesian_position = Teuchos::tuple( 1.0, 1.0, 1.0 );
+
+  Utility::CylindricalSpatialCoordinateConversionPolicy::convertToCartesianPosition(
+                                                       cylindrical_position[0],
+                                                       cylindrical_position[1],
+                                                       cylindrical_position[2],
+                                                       cartesian_position[0],
+                                                       cartesian_position[1],
+                                                       cartesian_position[2] );
                                             
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( cartesian_position(), ref_cartesian_position(), 1e-15 );
