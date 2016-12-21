@@ -54,6 +54,12 @@ void GeneralCylindricalSpatialCoordinateConversionPolicy::convertToCartesianSpat
                                     x_spatial_coord,
                                     y_spatial_coord,
                                     z_spatial_coord );
+
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( x_spatial_coord,
+                               y_spatial_coord,
+                               z_spatial_coord,
+                               1e-15 );
 }
 
 // Convert the cartesian coordinates to the spatial coordinate system
@@ -79,6 +85,12 @@ void GeneralCylindricalSpatialCoordinateConversionPolicy::convertFromCartesianSp
                                     local_x_spatial_coord,
                                     local_y_spatial_coord,
                                     tertiary_spatial_coord );
+
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( local_x_spatial_coord,
+                               local_y_spatial_coord,
+                               tertiary_spatial_coord,
+                               1e-15 );
 
   // Convert the local cartesian coordinates to cylindrical coordinates
   this->convertFromCartesianPosition( local_x_spatial_coord,
