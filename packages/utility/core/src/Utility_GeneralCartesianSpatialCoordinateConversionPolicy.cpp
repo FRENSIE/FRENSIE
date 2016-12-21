@@ -51,6 +51,12 @@ void GeneralCartesianSpatialCoordinateConversionPolicy::convertToCartesianSpatia
                                     x_spatial_coord,
                                     y_spatial_coord,
                                     z_spatial_coord );
+
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( x_spatial_coord,
+                               y_spatial_coord,
+                               z_spatial_coord,
+                               1e-15 );
 }
 
 // Convert the cartesian coordinates to the spatial coordinate system
@@ -75,6 +81,12 @@ void GeneralCartesianSpatialCoordinateConversionPolicy::convertFromCartesianSpat
                                     primary_spatial_coord,
                                     secondary_spatial_coord,
                                     tertiary_spatial_coord );
+
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( primary_spatial_coord,
+                               primary_spatial_coord,
+                               primary_spatial_coord,
+                               1e-15 );
 }
   
 } // end Utility namespace

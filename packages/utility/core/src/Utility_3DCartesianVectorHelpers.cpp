@@ -49,6 +49,62 @@ double normalizeVectorAndReturnMagnitude( double& x_component,
   return magnitude;
 }
 
+// Clear the vector of rounding errors
+/*! \details This method will check if any components are within 
+ * +/- tol*magnitude of 0.0. If so, they will be set to zero. These types
+ * of rounding errors typically occur after rotations.
+ */
+void clearVectorOfRoundingErrors( double& x_component,
+                                  double& y_component,
+                                  double& z_component,
+                                  const double tol )
+{
+  // Calculate the vector magnitude
+  const double magnitude =
+    vectorMagnitude( x_component, y_component, z_component );
+
+  // Check the x-component
+  if( fabs( x_component ) < tol*magnitude )
+    x_component = 0.0;
+
+  // Check the y-component
+  if( fabs( y_component ) < tol*magnitude )
+    y_component = 0.0;
+
+  // Check the z-component
+  if( fabs( z_component ) < tol*magnitude )
+    z_component = 0.0;
+}
+
+// Clear the unit vector of rounding errors
+/*! \details This method will check if any components are within 
+ * +/- tol of 0.0. If so, they will be set to zero. These types
+ * of rounding errors typically occur after rotations.
+ */
+void clearUnitVectorOfRoundingErrors( double& x_component,
+                                      double& y_component,
+                                      double& z_component,
+                                      const double tol )
+{
+  // Make sure that the unit vectors is valid
+  testPrecondition( isUnitVector( x_component, y_component, z_component ) );
+  
+  // Check the x-component
+  if( fabs( x_component ) < tol )
+    x_component = 0.0;
+
+  // Check the y-component
+  if( fabs( y_component ) < tol )
+    y_component = 0.0;
+
+  // Check the z-component
+  if( fabs( z_component ) < tol )
+    z_component = 0.0;
+
+  // Re-normalize the unit vector
+  normalizeVector( x_component, y_component, z_component );
+}
+
 // Calculate the cosine of the angle between two unit vectors
 /*! \details This method will be more efficient than the
  * calculateCosineOfAngleBetweenUnitVectors method when dealing with

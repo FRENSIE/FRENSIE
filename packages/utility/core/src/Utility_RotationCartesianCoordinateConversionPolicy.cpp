@@ -46,6 +46,12 @@ void RotationCartesianCoordinateConversionPolicy::convertToCartesianSpatialCoord
                                     x_spatial_coord,
                                     y_spatial_coord,
                                     z_spatial_coord );
+
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( x_spatial_coord,
+                               y_spatial_coord,
+                               z_spatial_coord,
+                               1e-15 );
 }
 
 // Convert the cartesian coordinates to the spatial coordinate system
@@ -69,6 +75,12 @@ void RotationCartesianCoordinateConversionPolicy::convertFromCartesianSpatialCoo
                                     primary_spatial_coord,
                                     secondary_spatial_coord,
                                     tertiary_spatial_coord );
+
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( primary_spatial_coord,
+                               secondary_spatial_coord,
+                               tertiary_spatial_coord,
+                               1e-15 );
 }
 
 // Convert the directional coordinates to cartesian coordinates
@@ -95,6 +107,12 @@ void RotationCartesianCoordinateConversionPolicy::convertToCartesianDirectionalC
                                     x_directional_coord,
                                     y_directional_coord,
                                     z_directional_coord );
+
+  // Clear rounding errors
+  clearUnitVectorOfRoundingErrors( x_directional_coord,
+                                   y_directional_coord,
+                                   z_directional_coord,
+                                   1e-15 );
 }  
 
 // Convert the cartesian coordinates to the directional coordinate system
@@ -121,6 +139,12 @@ void RotationCartesianCoordinateConversionPolicy::convertFromCartesianDirectiona
                                     primary_directional_coord,
                                     secondary_directional_coord,
                                     tertiary_directional_coord );
+
+  // Clear rounding errors
+  clearUnitVectorOfRoundingErrors( primary_directional_coord,
+                                   secondary_directional_coord,
+                                   tertiary_directional_coord,
+                                   1e-15 );
 }
   
 } // end Utility namespace

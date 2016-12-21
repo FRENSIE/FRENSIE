@@ -63,6 +63,12 @@ void RotationSphericalCoordinateConversionPolicy::convertToCartesianSpatialCoord
                                     x_spatial_coord,
                                     y_spatial_coord,
                                     z_spatial_coord );
+
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( x_spatial_coord,
+                               y_spatial_coord,
+                               z_spatial_coord,
+                               1e-15 );
 }
 
 // Convert the cartesian coordinates to the spatial coordinate system
@@ -89,6 +95,12 @@ void RotationSphericalCoordinateConversionPolicy::convertFromCartesianSpatialCoo
                                     local_x_spatial_coord,
                                     local_y_spatial_coord,
                                     local_z_spatial_coord );
+
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( local_x_spatial_coord,
+                               local_y_spatial_coord,
+                               local_z_spatial_coord,
+                               1e-15 );
 
   // Convert the local cartesian coordinates to spherical coordinates
   this->convertFromCartesianPosition( local_x_spatial_coord,
@@ -136,6 +148,12 @@ void RotationSphericalCoordinateConversionPolicy::convertToCartesianDirectionalC
                                     x_directional_coord,
                                     y_directional_coord,
                                     z_directional_coord );
+
+  // Clear rounding errors
+  clearUnitVectorOfRoundingErrors( x_directional_coord,
+                                   y_directional_coord,
+                                   z_directional_coord,
+                                   1e-15 );
 }
 
 // Convert the cartesian coordinates to the directional coordinate system
@@ -166,6 +184,12 @@ void RotationSphericalCoordinateConversionPolicy::convertFromCartesianDirectiona
                                     local_x_directional_coord,
                                     local_y_directional_coord,
                                     local_z_directional_coord );
+
+  // Clear rounding errors
+  clearUnitVectorOfRoundingErrors( local_x_directional_coord,
+                                   local_y_directional_coord,
+                                   local_z_directional_coord,
+                                   1e-15 );
 
   // Convert the local cartesian coordinates to spherical coordinates
   this->convertFromCartesianDirection( local_x_directional_coord,

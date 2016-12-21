@@ -62,6 +62,12 @@ void GeneralSphericalSpatialCoordinateConversionPolicy::convertToCartesianSpatia
                                     x_spatial_coord,
                                     y_spatial_coord,
                                     z_spatial_coord );
+
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( x_spatial_coord,
+                               y_spatial_coord,
+                               z_spatial_coord,
+                               1e-15 );
 }
 
 // Convert the cartesian coordinates to the spatial coordinate system
@@ -89,6 +95,12 @@ void GeneralSphericalSpatialCoordinateConversionPolicy::convertFromCartesianSpat
                                     local_y_spatial_coord,
                                     local_z_spatial_coord );
 
+  // Clear rounding errors
+  clearVectorOfRoundingErrors( local_x_spatial_coord,
+                               local_y_spatial_coord,
+                               local_z_spatial_coord,
+                               1e-15 );
+  
   // Convert the local cartesian coordinates to spherical coordinates
   this->convertFromCartesianPosition( local_x_spatial_coord,
                                       local_y_spatial_coord,

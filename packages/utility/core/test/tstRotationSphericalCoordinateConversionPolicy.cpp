@@ -145,7 +145,7 @@ TEUCHOS_UNIT_TEST( RotationSphericalCoordinateConversionPolicy,
   global_cartesian_position =
     Teuchos::tuple( -2.0/sqrt(3.0), -2.0/sqrt(3.0), -2.0/sqrt(3.0) );
   ref_local_spherical_position =
-    Teuchos::tuple( 2.0, Utility::PhysicalConstants::pi, -1.0 );
+    Teuchos::tuple( 2.0, 0.0, -1.0 );
 
   policy->convertFromCartesianSpatialCoordinates(
                                         global_cartesian_position.getRawPtr(),
@@ -339,7 +339,7 @@ TEUCHOS_UNIT_TEST( RotationSphericalCoordinateConversionPolicy,
   global_cartesian_direction =
     Teuchos::tuple( -1.0/sqrt(3.0), -1.0/sqrt(3.0), -1.0/sqrt(3.0) );
   ref_local_spherical_direction =
-    Teuchos::tuple( 1.0, Utility::PhysicalConstants::pi, -1.0 );
+    Teuchos::tuple( 1.0, 0.0, -1.0 );
 
   policy->convertFromCartesianDirectionalCoordinates(
                                        global_cartesian_direction.getRawPtr(),

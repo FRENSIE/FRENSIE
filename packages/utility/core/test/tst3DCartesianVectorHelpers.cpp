@@ -12,6 +12,7 @@
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_Tuple.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -95,6 +96,137 @@ TEUCHOS_UNIT_TEST( CartesianVectorHelpers, normalizeVectorAndReturnMagnitude )
 
   TEST_EQUALITY( magnitude, sqrt(2.0) );
   TEST_ASSERT( Utility::isUnitVector( vector ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a vector can be cleared of rounding errors
+TEUCHOS_UNIT_TEST( CartesianVectorHelpers, clearVectorOfRoundingErrors )
+{
+  Teuchos::Tuple<double,3> vector = Teuchos::tuple( 1.0, 1.0, 1.0 );
+  Teuchos::Tuple<double,3> ref_vector = vector;
+  
+  Utility::clearVectorOfRoundingErrors( vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( vector(), ref_vector() );
+
+  vector = Teuchos::tuple( -1.0, -1.0, -1.0 );
+  ref_vector = vector;
+
+  Utility::clearVectorOfRoundingErrors( vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( vector(), ref_vector() );
+
+  vector = Teuchos::tuple( 1e-15, 1.0, 1.0 );
+  ref_vector = Teuchos::tuple( 0.0, 1.0, 1.0 );
+
+  Utility::clearVectorOfRoundingErrors( vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( vector(), ref_vector() );
+
+  vector = Teuchos::tuple( -1e-15, 1.0, 1.0 );
+  ref_vector = Teuchos::tuple( 0.0, 1.0, 1.0 );
+
+  Utility::clearVectorOfRoundingErrors( vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( vector(), ref_vector() );
+
+  vector = Teuchos::tuple( 1e-14, 1e-14, 2.0 );
+  ref_vector = Teuchos::tuple( 0.0, 0.0, 2.0 );
+
+  Utility::clearVectorOfRoundingErrors( vector.getRawPtr(), 1e-14 );
+
+  TEST_COMPARE_ARRAYS( vector(), ref_vector() );
+
+  vector = Teuchos::tuple( 1e-14, -1e-14, 2.0 );
+  ref_vector = Teuchos::tuple( 0.0, 0.0, 2.0 );
+
+  Utility::clearVectorOfRoundingErrors( vector.getRawPtr(), 1e-14 );
+
+  TEST_COMPARE_ARRAYS( vector(), ref_vector() );
+
+  vector = Teuchos::tuple( -1e-15, -2.0, 1e-15 );
+  ref_vector = Teuchos::tuple( 0.0, -2.0, 0.0 );
+
+  Utility::clearVectorOfRoundingErrors( vector[0], vector[1], vector[2] );
+
+  TEST_COMPARE_ARRAYS( vector(), ref_vector() );
+
+  vector = Teuchos::tuple( 1e-14, -2.0, -1e-14 );
+  ref_vector = Teuchos::tuple( 0.0, -2.0, 0.0 );
+
+  Utility::clearVectorOfRoundingErrors(
+                                      vector[0], vector[1], vector[2], 1e-14 );
+
+  TEST_COMPARE_ARRAYS( vector(), ref_vector() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit vector can be cleared of rounding errors
+TEUCHOS_UNIT_TEST( CartesianVectorHelpers, clearUnitVectorOfRoundingErrors )
+{
+  Teuchos::Tuple<double,3> unit_vector =
+    Teuchos::tuple( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) );
+  Teuchos::Tuple<double,3> ref_unit_vector = unit_vector;
+  
+  Utility::clearUnitVectorOfRoundingErrors( unit_vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( unit_vector(), ref_unit_vector() );
+
+  unit_vector=
+    Teuchos::tuple( -1.0/sqrt(3.0), -1.0/sqrt(3.0), -1.0/sqrt(3.0) );
+  ref_unit_vector = unit_vector;
+
+  Utility::clearUnitVectorOfRoundingErrors( unit_vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( unit_vector(), ref_unit_vector() );
+
+  unit_vector = Teuchos::tuple( 1e-16, sqrt(2.0)/2, sqrt(2.0)/2 );
+  ref_unit_vector = Teuchos::tuple( 0.0, sqrt(2.0)/2, sqrt(2.0)/2 );
+
+  Utility::clearUnitVectorOfRoundingErrors( unit_vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( unit_vector(), ref_unit_vector() );
+
+  unit_vector = Teuchos::tuple( -1e-16, sqrt(2.0)/2, sqrt(2.0)/2 );
+  ref_unit_vector = Teuchos::tuple( 0.0, sqrt(2.0)/2, sqrt(2.0)/2 );
+
+  Utility::clearUnitVectorOfRoundingErrors( unit_vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( unit_vector(), ref_unit_vector() );
+
+  unit_vector = Teuchos::tuple( 1e-16, 2e-16, 1.0 );
+  ref_unit_vector = Teuchos::tuple( 0.0, 0.0, 1.0 );
+
+  Utility::clearUnitVectorOfRoundingErrors( unit_vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( unit_vector(), ref_unit_vector() );
+
+  unit_vector = Teuchos::tuple( 1e-16, -2e-16, 1.0 );
+  ref_unit_vector = Teuchos::tuple( 0.0, 0.0, 1.0 );
+
+  Utility::clearUnitVectorOfRoundingErrors( unit_vector.getRawPtr() );
+
+  TEST_COMPARE_ARRAYS( unit_vector(), ref_unit_vector() );
+
+  unit_vector = Teuchos::tuple( 1e-15, -1.0, 1e-15 );
+  ref_unit_vector = Teuchos::tuple( 0.0, -1.0, 0.0 );
+
+  Utility::clearUnitVectorOfRoundingErrors( unit_vector[0],
+                                            unit_vector[1],
+                                            unit_vector[2],
+                                            1e-14 );
+
+  TEST_COMPARE_ARRAYS( unit_vector(), ref_unit_vector() );
+
+  unit_vector = Teuchos::tuple( 1e-15, -1.0, -1e-15 );
+  ref_unit_vector = Teuchos::tuple( 0.0, -1.0, 0.0 );
+
+  Utility::clearUnitVectorOfRoundingErrors( unit_vector[0],
+                                            unit_vector[1],
+                                            unit_vector[2],
+                                            1e-14 );
+
+  TEST_COMPARE_ARRAYS( unit_vector(), ref_unit_vector() );
 }
 
 //---------------------------------------------------------------------------//

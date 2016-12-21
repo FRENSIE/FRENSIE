@@ -50,6 +50,26 @@ double normalizeVectorAndReturnMagnitude( double& x_component,
                                           double& y_component,
                                           double& z_component );
 
+//! Clear the vector of rounding errors
+void clearVectorOfRoundingErrors( double vector[3],
+                                  const double tol = 1e-15 );
+  
+//! Clear the vector of rounding errors
+void clearVectorOfRoundingErrors( double& x_component,
+                                  double& y_component,
+                                  double& z_component,
+                                  const double tol = 1e-15 );
+
+//! Clear the unit vector of rounding errors
+void clearUnitVectorOfRoundingErrors( double unit_vector[3],
+                                      const double tol = 1e-15 );
+  
+//! Clear the unit vector of rounding errors
+void clearUnitVectorOfRoundingErrors( double& x_component,
+                                      double& y_component,
+                                      double& z_component,
+                                      double tol = 1e-15 );
+
 //! Calculate the cosine of the angle between two vectors
 double calculateCosineOfAngleBetweenVectors( const double vector_a[3],
 					     const double vector_b[3] );
@@ -204,7 +224,35 @@ inline double normalizeVectorAndReturnMagnitude( double vector[3] )
   return normalizeVectorAndReturnMagnitude( vector[0], vector[1], vector[2] );
 }
 
+// Clear the vector of rounding errors
+/*! \details This method will check if any components are within 
+ * +/- tol*magnitude of 0.0. If so, they will be set to zero. These types
+ * of rounding errors typically occur after rotations.
+ */
+inline void clearVectorOfRoundingErrors( double vector[3], const double tol )
+{
+  clearVectorOfRoundingErrors( vector[0], vector[1], vector[2], tol );
+}
+
+// Clear the unit vector of rounding errors
+/*! \details This method will check if any components are within 
+ * +/- tol of 0.0. If so, they will be set to zero. These types
+ * of rounding errors typically occur after rotations.
+ */
+inline void clearUnitVectorOfRoundingErrors( double unit_vector[3],
+                                             const double tol )
+{
+  clearUnitVectorOfRoundingErrors( unit_vector[0],
+                                   unit_vector[1],
+                                   unit_vector[2],
+                                   tol );
+}
+
 // Calculate the cosine of the angle between two vectors
+/*! \details This method will check if any components are within 
+ * +/- tol of 0.0. If so, they will be set to zero. These types
+ * of rounding errors typically occur after rotations.
+ */
 inline double calculateCosineOfAngleBetweenVectors( const double vector_a[3],
                                                     const double vector_b[3] )
 {
