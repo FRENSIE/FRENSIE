@@ -33,7 +33,7 @@ template<typename DimensionType, PhaseSpaceDimension dimension>
 struct UndefinedPhaseSpaceDimensionTraits
 {
   //! This function should not compile if there is any attempt to instantiate
-  static inline void notDefined() { return DimensionType::desired_dimension_is_misssing_specialization(); }
+  static inline void notDefined() { return DimensionType::desired_dimension_is_missing_specialization(); }
 };
 
 /*! This structure defines the properties of a phase space dimension.

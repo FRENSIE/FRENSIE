@@ -15,20 +15,20 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceDimensionClassType.hpp"
+#include "Utility_SpatialDimensionType.hpp"
+#include "Utility_DirectionalDimensionType.hpp"
 
 namespace MonteCarlo{
 
+//! The particle source dimension type enumeration
 enum ParticleSourceDimensionType
 {
-  X_PS_DIMENSION = 0,
-  Y_PS_DIMENSION,
-  Z_PS_DIMENSION,
-  R_PS_DIMENSION,
-  AXIS_PS_DIMENSION,
-  SPATIAL_POLAR_ANGLE_PS_DIMENSION,
-  SPATIAL_AZIMUTHAL_ANGLE_PS_DIMENSION,
-  DIRECTIONAL_POLAR_ANGLE_PS_DIMENSION,
-  DIRECTIONAL_AZIMUTHAL_ANGLE_PS_DIMENSION,
+  PRIMARY_SPATIAL_PS_DIMENSION = 0,
+  SECONDARY_SPATIAL_PS_DIMENSION,
+  TERTIARY_SPATIAL_PS_DIMENSION,
+  PRIMARY_DIRECTIONAL_PS_DIMENSION,
+  SECONDARY_DIRECTIONAL_PS_DIMENSION,
+  TERTIARY_DIRECTIONAL_PS_DIMENSION,
   ENERGY_PS_DIMENSION,
   TIME_PS_DIMENSION,
   WEIGHT_PS_DIMENSION
@@ -48,6 +48,14 @@ std::string convertParticleSourceDimensionTypeEnumToString(
 //! Get the dimension class associated with a dimension
 ParticleSourceDimensionClassType getClassOfParticleSourceDimensionType(
                                  const ParticleSourceDimensionType dimension );
+
+//! Convert the spatial dimension to the equivalent particle source dimension
+ParticleSourceDimensionType convertSpatialDimensionToParticleSourceDimensionType(
+                       const Utility::SpatialDimensionType spatial_dimension );
+
+//! Convert the directional dimension to the equivalent particle source dim.
+ParticleSourceDimensionType convertDirectionalDimensionToParticleSourceDimensionType(
+               const Utility::DirectionalDimensionType directional_dimension );
 
 //! Stream operator for printing dimension type enums
 inline std::ostream& operator<<( std::ostream& os,

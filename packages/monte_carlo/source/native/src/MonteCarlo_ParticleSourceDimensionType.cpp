@@ -8,6 +8,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceDimensionType.hpp"
+#include "Utility_SpatialCoordinateSystemTraits.hpp"
+#include "Utility_DirectionalCoordinateSystemTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
@@ -15,23 +17,17 @@ namespace MonteCarlo{
 // Test if the dimension name is valid
 bool isValidParticleSourceDimensionName( const std::string& dimension_name )
 {
-  if( dimension_name == "X Dimension" )
+  if( dimension_name == "Primary Spatial Dimension" )
     return true;
-  else if( dimension_name == "Y Dimension" )
+  else if( dimension_name == "Secondary Spatial Dimension" )
     return true;
-  else if( dimension_name == "Z Dimension" )
+  else if( dimension_name == "Tertiary Spatial Dimension" )
     return true;
-  else if( dimension_name == "R Dimension" )
+  else if( dimension_name == "Primary Directional Dimension" )
     return true;
-  else if( dimension_name == "Axis Dimension" )
+  else if( dimension_name == "Secondary Directional Dimension" )
     return true;
-  else if( dimension_name == "Spatial Polar Angle Dimension" )
-    return true;
-  else if( dimension_name == "Spatial Azimuthal Angle Dimension" )
-    return true;
-  else if( dimension_name == "Directional Polar Angle Dimension" )
-    return true;
-  else if( dimension_name == "Directional Azimuthal Angle Dimension" )
+  else if( dimension_name == "Tertiary Directional Dimension" )
     return true;
   else if( dimension_name == "Energy Dimension" )
     return true;
@@ -47,24 +43,18 @@ bool isValidParticleSourceDimensionName( const std::string& dimension_name )
 ParticleSourceDimensionType convertParticleSourceDimensionNameToEnum(
                                             const std::string& dimension_name )
 {
-  if( dimension_name == "X Dimension" )
-    return X_PS_DIMENSION;
-  else if( dimension_name == "Y Dimension" )
-    return Y_PS_DIMENSION;
-  else if( dimension_name == "Z Dimension" )
-    return Z_PS_DIMENSION;
-  else if( dimension_name == "R Dimension" )
-    return R_PS_DIMENSION;
-  else if( dimension_name == "Axis Dimension" )
-    return AXIS_PS_DIMENSION;
-  else if( dimension_name == "Spatial Polar Angle Dimension" )
-    return SPATIAL_POLAR_ANGLE_PS_DIMENSION;
-  else if( dimension_name == "Spatial Azimuthal Angle Dimension" )
-    return SPATIAL_AZIMUTHAL_ANGLE_PS_DIMENSION;
-  else if( dimension_name == "Directional Polar Angle Dimension" )
-    return DIRECTIONAL_POLAR_ANGLE_PS_DIMENSION;
-  else if( dimension_name == "Directional Azimuthal Angle Dimension" )
-    return DIRECTIONAL_AZIMUTHAL_ANGLE_PS_DIMENSION;
+  if( dimension_name == "Primary Spatial Dimension" )
+    return PRIMARY_SPATIAL_PS_DIMENSION;
+  else if( dimension_name == "Secondary Spatial Dimension" )
+    return SECONDARY_SPATIAL_PS_DIMENSION;
+  else if( dimension_name == "Tertiary Spatial Dimension" )
+    return TERTIARY_SPATIAL_PS_DIMENSION;
+  else if( dimension_name == "Primary Directional Dimension" )
+    return PRIMARY_DIRECTIONAL_PS_DIMENSION;
+  else if( dimension_name == "Secondary Directional Dimension" )
+    return SECONDARY_DIRECTIONAL_PS_DIMENSION;
+  else if( dimension_name == "Tertiary Directional Dimension" )
+    return TERTIARY_DIRECTIONAL_PS_DIMENSION;
   else if( dimension_name == "Energy Dimension" )
     return ENERGY_PS_DIMENSION;
   else if( dimension_name == "Time Dimension" )
@@ -85,24 +75,18 @@ std::string convertParticleSourceDimensionTypeEnumToString(
 {
   switch( dimension )
   {
-  case X_PS_DIMENSION:
-    return "X Dimension";
-  case Y_PS_DIMENSION:
-    return "Y Dimension";
-  case Z_PS_DIMENSION:
-    return "Z Dimension";
-  case R_PS_DIMENSION:
-    return "R Dimension";
-  case AXIS_PS_DIMENSION:
-    return "Axis Dimension";
-  case SPATIAL_POLAR_ANGLE_PS_DIMENSION:
-    return "Spatial Polar Angle Dimension";
-  case SPATIAL_AZIMUTHAL_ANGLE_PS_DIMENSION:
-    return "Spatial Azimuthal Angle Dimension";
-  case DIRECTIONAL_POLAR_ANGLE_PS_DIMENSION:
-    return "Directional Polar Angle Dimension";
-  case DIRECTIONAL_AZIMUTHAL_ANGLE_PS_DIMENSION:
-    return "Directional Azimuthal Angle Dimension";
+  case PRIMARY_SPATIAL_PS_DIMENSION:
+    return "Primary Spatial Dimension";
+  case SECONDARY_SPATIAL_PS_DIMENSION:
+    return "Secondary Spatial Dimension";
+  case TERTIARY_SPATIAL_PS_DIMENSION:
+    return "Tertiary Spatial Dimension";
+  case PRIMARY_DIRECTIONAL_PS_DIMENSION:
+    return "Primary Directional Dimension";
+  case SECONDARY_DIRECTIONAL_PS_DIMENSION:
+    return "Secondary Directional Dimension";
+  case TERTIARY_DIRECTIONAL_PS_DIMENSION:
+    return "Tertiary Directional Dimension";
   case ENERGY_PS_DIMENSION:
     return "Energy Dimension";
   case TIME_PS_DIMENSION:
@@ -122,23 +106,17 @@ ParticleSourceDimensionClassType getClassOfParticleSourceDimensionType(
 {
   switch( dimension )
   {
-  case X_PS_DIMENSION:
+  case PRIMARY_SPATIAL_PS_DIMENSION:
     return SPATIAL_PS_DIMENSION_CLASS;
-  case Y_PS_DIMENSION:
+  case SECONDARY_SPATIAL_PS_DIMENSION:
     return SPATIAL_PS_DIMENSION_CLASS;
-  case Z_PS_DIMENSION:
+  case TERTIARY_SPATIAL_PS_DIMENSION:
     return SPATIAL_PS_DIMENSION_CLASS;
-  case R_PS_DIMENSION:
-    return SPATIAL_PS_DIMENSION_CLASS;
-  case AXIS_PS_DIMENSION:
-    return SPATIAL_PS_DIMENSION_CLASS;
-  case SPATIAL_POLAR_ANGLE_PS_DIMENSION:
-    return SPATIAL_PS_DIMENSION_CLASS;
-  case SPATIAL_AZIMUTHAL_ANGLE_PS_DIMENSION:
-    return SPATIAL_PS_DIMENSION_CLASS;
-  case DIRECTIONAL_POLAR_ANGLE_PS_DIMENSION:
+  case PRIMARY_DIRECTIONAL_PS_DIMENSION:
     return DIRECTIONAL_PS_DIMENSION_CLASS;
-  case DIRECTIONAL_AZIMUTHAL_ANGLE_PS_DIMENSION:
+  case SECONDARY_DIRECTIONAL_PS_DIMENSION:
+    return DIRECTIONAL_PS_DIMENSION_CLASS;
+  case TERTIARY_DIRECTIONAL_PS_DIMENSION:
     return DIRECTIONAL_PS_DIMENSION_CLASS;
   case ENERGY_PS_DIMENSION:
     return ENERGY_PS_DIMENSION_CLASS;
@@ -150,6 +128,73 @@ ParticleSourceDimensionClassType getClassOfParticleSourceDimensionType(
     THROW_EXCEPTION( std::logic_error,
                      "Error: An unknown ParticleSourceDimensionType was "
                      "encountered (" << (unsigned)dimension << ")!" );
+  }
+}
+
+// Convert the spatial dimension to the equivalent particle source dimension
+ParticleSourceDimensionType convertSpatialDimensionToParticleSourceDimensionType(
+                        const Utility::SpatialDimensionType spatial_dimension )
+{
+  typedef Utility::SpatialCoordinateSystemTraits<Utility::CARTESIAN_SPATIAL_COORDINATE_SYSTEM> CartesianCS;
+  typedef Utility::SpatialCoordinateSystemTraits<Utility::CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM> CylindricalCS;
+  typedef Utility::SpatialCoordinateSystemTraits<Utility::SPHERICAL_SPATIAL_COORDINATE_SYSTEM> SphericalCS;
+
+  // Check if the spatial dimension is the primary spatial dimension
+  if( spatial_dimension == CartesianCS::primarySpatialDimension() ||
+      spatial_dimension == CylindricalCS::primarySpatialDimension() ||
+      spatial_dimension == SphericalCS::primarySpatialDimension() )
+    return PRIMARY_SPATIAL_PS_DIMENSION;
+  
+  // Check if the spatial dimension is the secondary spatial dimension
+  else if( spatial_dimension == CartesianCS::secondarySpatialDimension() ||
+           spatial_dimension == CylindricalCS::secondarySpatialDimension() ||
+           spatial_dimension == SphericalCS::secondarySpatialDimension() )
+    return SECONDARY_SPATIAL_PS_DIMENSION;
+  
+  // Check if the spatial dimension is the tertiary spatial dimension
+  else if( spatial_dimension == CartesianCS::tertiarySpatialDimension() ||
+           spatial_dimension == CylindricalCS::tertiarySpatialDimension() ||
+           spatial_dimension == SphericalCS::tertiarySpatialDimension() )
+    return TERTIARY_SPATIAL_PS_DIMENSION;
+
+  // Unknown spatial dimension
+  else
+  {
+    THROW_EXCEPTION( std::logic_error,
+                     "Error: An unknown spatial dimension ("
+                     << (unsigned)spatial_dimension << ") was encountered!" );
+  }
+}
+
+// Convert the directional dimension to the equivalent particle source dim.
+ParticleSourceDimensionType convertDirectionalDimensionToParticleSourceDimensionType(
+                const Utility::DirectionalDimensionType directional_dimension )
+{
+  typedef Utility::DirectionalCoordinateSystemTraits<Utility::CARTESIAN_DIRECTIONAL_COORDINATE_SYSTEM> CartesianCS;
+  typedef Utility::DirectionalCoordinateSystemTraits<Utility::SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM> SphericalCS;
+
+  // Check if the directional dimension is the primary directional dimension
+  if( directional_dimension == CartesianCS::primaryDirectionalDimension() ||
+      directional_dimension == SphericalCS::primaryDirectionalDimension() )
+    return PRIMARY_DIRECTIONAL_PS_DIMENSION;
+  
+  // Check if the directional dimension is the secondary directional dimension
+  else if( directional_dimension == CartesianCS::secondaryDirectionalDimension() ||
+           directional_dimension == SphericalCS::secondaryDirectionalDimension() )
+    return SECONDARY_DIRECTIONAL_PS_DIMENSION;
+  
+  // Check if the directional dimension is the tertiary directional dimension
+  else if( directional_dimension == CartesianCS::tertiaryDirectionalDimension() ||
+           directional_dimension == SphericalCS::tertiaryDirectionalDimension() )
+    return TERTIARY_DIRECTIONAL_PS_DIMENSION;
+
+  // Unknown directional dimension
+  else
+  {
+    THROW_EXCEPTION( std::logic_error,
+                     "Error: An unknown directional dimension ("
+                     << (unsigned)directional_dimension <<
+                     ") was encountered!" );
   }
 }
   

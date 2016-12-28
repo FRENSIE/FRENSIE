@@ -11,12 +11,18 @@
 
 // FRENSIE Includes
 #include "Utility_SpatialCoordinateConversionPolicy.hpp"
+#include "Utility_SpatialCoordinateSystemTraits.hpp"
 
 namespace Utility{
 
 //! The Cartesian spatial coordinate conversion policy
 class CartesianSpatialCoordinateConversionPolicy : public SpatialCoordinateConversionPolicy
 {
+
+protected:
+
+  //! The local coordinate system traits
+  typedef SpatialCoordinateSystemTraits<CARTESIAN_SPATIAL_COORDINATE_SYSTEM> LocalCSTraits;
 
 public:
   
@@ -51,6 +57,18 @@ public:
   //! Destructor
   virtual ~CartesianSpatialCoordinateConversionPolicy()
   { /* ... */ }
+
+  //! Get the local coordinate system type
+  SpatialCoordinateSystemType getLocalCoordinateSystemType() const override;
+
+  //! Check if the primary spatial coordinate is valid
+  bool isPrimarySpatialCoordinateValid( const double coordinate ) const override;
+
+  //! Check if the secondary spatial coordinate is valid
+  bool isSecondarySpatialCoordinateValid( const double coordinate ) const override;
+
+  //! Check if the tertiary spatial coordinate is valid
+  bool isTertiarySpatialCoordinateValid( const double coordinate ) const override;
 };
 
 //---------------------------------------------------------------------------//
@@ -119,6 +137,36 @@ inline void CartesianSpatialCoordinateConversionPolicy::convertToCartesianPositi
   output_x_spatial_coord = input_x_spatial_coord;
   output_y_spatial_coord = input_y_spatial_coord;
   output_z_spatial_coord = input_z_spatial_coord;
+}
+
+// Get the local coordinate system type
+inline SpatialCoordinateSystemType CartesianSpatialCoordinateConversionPolicy::getLocalCoordinateSystemType() const
+{
+  return CARTESIAN_SPATIAL_COORDINATE_SYSTEM;
+}
+
+// Check if the primary spatial coordinate is valid
+inline bool CartesianSpatialCoordinateConversionPolicy::isPrimarySpatialCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::primarySpatialDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::primarySpatialDimensionUpperBound();
+}
+
+// Check if the secondary spatial coordinate is valid
+inline bool CartesianSpatialCoordinateConversionPolicy::isSecondarySpatialCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::secondarySpatialDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::secondarySpatialDimensionUpperBound();
+}
+
+// Check if the tertiary spatial coordinate is valid
+inline bool CartesianSpatialCoordinateConversionPolicy::isTertiarySpatialCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::tertiarySpatialDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::tertiarySpatialDimensionUpperBound();
 }
   
 } // end Utility namespace

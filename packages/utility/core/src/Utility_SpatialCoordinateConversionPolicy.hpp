@@ -9,11 +9,20 @@
 #ifndef UTILITY_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 #define UTILITY_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP
 
+// FRENSIE Includes
+#include "Utility_SpatialCoordinateSystemType.hpp"
+#include "Utility_SpatialCoordinateSystemTraits.hpp"
+
 namespace Utility{
 
 //! The spatial coordinate conversion policy class
 class SpatialCoordinateConversionPolicy
 {
+
+protected:
+
+  //! The global coordinate system traits
+  typedef SpatialCoordinateSystemTraits<CARTESIAN_SPATIAL_COORDINATE_SYSTEM> GlobalCSTraits;
 
 public:
 
@@ -24,6 +33,18 @@ public:
   //! Destructor
   virtual ~SpatialCoordinateConversionPolicy()
   { /* ... */ }
+
+  //! Get the local coordinate system type
+  virtual SpatialCoordinateSystemType getLocalCoordinateSystemType() const = 0;
+
+  //! Check if the primary spatial coordinate is valid
+  virtual bool isPrimarySpatialCoordinateValid( const double coordinate ) const = 0;
+
+  //! Check if the secondary spatial coordinate is valid
+  virtual bool isSecondarySpatialCoordinateValid( const double coordinate ) const = 0;
+
+  //! Check if the tertiary spatial coordinate is valid
+  virtual bool isTertiarySpatialCoordinateValid( const double coordinate ) const = 0;
 
   //! Convert the spatial coordinates to cartesian coordinates
   virtual void convertToCartesianSpatialCoordinates(

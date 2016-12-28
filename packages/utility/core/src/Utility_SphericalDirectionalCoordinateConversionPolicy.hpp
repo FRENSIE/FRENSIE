@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "Utility_DirectionalCoordinateConversionPolicy.hpp"
+#include "Utility_DirectionalCoordinateSystemTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -25,6 +26,11 @@ namespace Utility{
 //! The spherical directional coordinate conversion policy class
 class SphericalDirectionalCoordinateConversionPolicy : public DirectionalCoordinateConversionPolicy
 {
+
+protected:
+
+  //! The local coordinate system traits
+  typedef DirectionalCoordinateSystemTraits<SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM> LocalCSTraits;
   
 public:
 
@@ -61,6 +67,24 @@ public:
   //! Destructor
   virtual ~SphericalDirectionalCoordinateConversionPolicy()
   { /* ... */ }
+
+  //! Get the local coordinate system type
+  DirectionalCoordinateSystemType getLocalCoordinateSystemType() const override;
+
+  //! Check if the primary directional coordinate is valid
+  bool isPrimaryDirectionalCoordinateValid( const double coordinate ) const override;
+
+  //! Check if the secondary directional coordinate is valid
+  bool isSecondaryDirectionalCoordinateValid( const double coordinate ) const override;
+
+  //! Check if the tertiary directional coordinate is valid
+  bool isTertiaryDirectionalCoordinateValid( const double coordinate ) const override;
+
+  //! Normalize the local directional coordinates
+  void normalizeLocalDirectionalCoordinates(
+                           double& primary_directional_coord,
+                           double& secondary_directional_coord,
+                           double& tertiary_directional_coord ) const override;
 };
 
 //---------------------------------------------------------------------------//
@@ -123,11 +147,10 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertFromCartesian
   r_directional_coord = 1.0;
 
   // Make sure that the azimuthal angle is valid
-  testPostcondition( theta_directional_coord >= 0.0 );
-  testPostcondition( theta_directional_coord <= 2*Utility::PhysicalConstants::pi );
+  testPostcondition( this->isSecondaryDirectionalCoordinateValid( theta_directional_coord ) );
+  
   // Make sure that the polar angle cosine is valid
-  testPostcondition( mu_directional_coord >= -1.0 );
-  testPostcondition( mu_directional_coord <= 1.0 );
+  testPostcondition( this->isTertiaryDirectionalCoordinateValid( mu_directional_coord ) );
 }
 
 // Convert the spherical coords (on unit sphere) to a Cartesian direction
@@ -162,8 +185,7 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDi
                                           double& z_direction )
 {
   // Make sure that the polar angle cosine is valid
-  testPrecondition( mu_directional_coord >= -1.0 );
-  testPrecondition( mu_directional_coord <= 1.0 );
+  testPrecondition( this->isTertiaryDirectionalCoordinateValid( mu_directional_coord ) );
 
   const double polar_angle_sine =
     sqrt( std::max(0.0, 1.0-mu_directional_coord*mu_directional_coord) );
@@ -178,10 +200,49 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDi
   z_direction = mu_directional_coord;
 
   // Normalize the Cartesian direction to eliminate rounding errors
-  normalizeVector( x_direction, y_direction, z_direction );
+  this->normalizeGlobalDirectionalCoordinates( x_direction, y_direction, z_direction );
   
   // Make sure that the direction is a unit vector
   testPostcondition( isUnitVector( x_direction, y_direction, z_direction ) );
+}
+
+// Get the local coordinate system type
+inline DirectionalCoordinateSystemType SphericalDirectionalCoordinateConversionPolicy::getLocalCoordinateSystemType() const
+{
+  return SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM;
+}
+
+// Check if the primary directional coordinate is valid
+inline bool SphericalDirectionalCoordinateConversionPolicy::isPrimaryDirectionalCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::primaryDirectionalDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::primaryDirectionalDimensionUpperBound();
+}
+
+// Check if the secondary directional coordinate is valid
+inline bool SphericalDirectionalCoordinateConversionPolicy::isSecondaryDirectionalCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::secondaryDirectionalDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::secondaryDirectionalDimensionUpperBound();
+}
+
+// Check if the tertiary directional coordinate is valid
+inline bool SphericalDirectionalCoordinateConversionPolicy::isTertiaryDirectionalCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::tertiaryDirectionalDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::tertiaryDirectionalDimensionUpperBound();
+}
+
+// Normalize the local directional coordinates
+inline void SphericalDirectionalCoordinateConversionPolicy::normalizeLocalDirectionalCoordinates(
+                                     double& primary_directional_coord,
+                                     double& secondary_directional_coord,
+                                     double& tertiary_directional_coord ) const
+{
+  primary_directional_coord = 1.0;
 }
   
 } // end Utility namespace

@@ -202,12 +202,12 @@ TARGET_LINK_LIBRARIES(tstSetOperationFunctor utility_core)
 ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
 SET_PROPERTY(TEST SetOperationFunctor_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstDirectionHelpers
-  tstDirectionHelpers.cpp
+ADD_EXECUTABLE(tstSpatialCoordinateSystemType
+  tstSpatialCoordinateSystemType.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstDirectionHelpers utility_core)
-ADD_TEST(DirectionHelpers_test tstDirectionHelpers)
-SET_PROPERTY(TEST DirectionHelpers_test PROPERTY LABELS utility_core)
+TARGET_LINK_LIBRARIES(tstSpatialCoordinateSystemType utility_core)
+ADD_TEST(SpatialCoordinateSystemType_test tstSpatialCoordinateSystemType)
+SET_PROPERTY(TEST SpatialCoordinateSystemType_test PROPERTY LABELS utility_core )
 
 ADD_EXECUTABLE(tst3DCartesianVectorHelpers
   tst3DCartesianVectorHelpers.cpp

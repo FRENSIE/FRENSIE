@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_PARTICLE_SOURCE_PHASE_SPACE_POINT_HPP
 #define MONTE_CARLO_PARTICLE_SOURCE_PHASE_SPACE_POINT_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceDimensionType.hpp"
 #include "MonteCarlo_ParticleState.hpp"
@@ -24,7 +27,11 @@ class ParticleSourcePhaseSpacePoint
 public:
 
   //! Constructor
-  ParticleSourcePhaseSpacePoint();
+  ParticleSourcePhaseSpacePoint(
+            const std::shared_ptr<const SpatialCoordinateConversionPolicy>&
+            spatial_coord_conversion_policy,
+            const std::shared_ptr<const DirectionalCoordinateConversionPolicy>&
+            directional_coord_conversion_policy );
 
   //! Destructor
   ~ParticleSourcePhaseSpacePoint()
@@ -66,50 +73,59 @@ public:
   //! Set the tertiary spatial coordinate weight
   void setTertiarySpatialCoordinateWeight( const double weight );
 
+  //! Get the tertiary spatial coordinate weight
+  double getTertiarySpatialCoordinateWeight() const;
+
   //! Convert spatial coordinates to cartesian coordinates
   void convertSpatialCoordinatesToCartesianCoordinates(
-                                       const SpatialCoordinateConversionPolicy&
-                                       spatial_coord_conversion_policy,
-                                       double& x_spatial_coord,
-                                       double& y_spatial_coord,
-                                       double& z_spatial_coord ) const;
+                                               double& x_spatial_coord,
+                                               double& y_spatial_coord,
+                                               double& z_spatial_coord ) const;
 
   //! Return the weight of all spatial coordinates
   double getWeightOfSpatialCoordinates() const;
 
-  //! Return the polar angle directional coordinate of the phase space point
-  double getPolarAngleDirectionalCoordinate() const;
+  //! Return the primary Directional coordinate of the phase space point
+  double getPrimaryDirectionalCoordinate() const;
 
-  //! Set the polar angle directional coordinate of the phase space point
-  void setPolarAngleDirectionalCoordinate(
-                                  const double polar_angle_directional_coord );
+  //! Set the primary Directional coordinate of the phase space point
+  void setPrimaryDirectionalCoordinate( const double primary_directional_coord );
 
-  //! Return the polar angle directional coordinate weight
-  double getPolarAngleDirectionalCoordinateWeight() const;
+  //! Return the primary Directional coordinate weight
+  double getPrimaryDirectionalCoordinateWeight() const;
+  
+  //! Set the primary Directional coordinate weight
+  void setPrimaryDirectionalCoordinateWeight( const double weight );
 
-  //! Set the polar angle directional coordinate weight
-  void setPolarAngleDirectionalCoordinateWeight( const double weight );
+  //! Return the secondary Directional coordinate of the phase space point
+  double getSecondaryDirectionalCoordinate() const;
 
-  //! Return the azimuthal angle directional coord. of the phase space point
-  double getAzimuthalAngleDirectionalCoordinate() const;
+  //! Set the secondary Directional coordinate of the phase space point
+  void setSecondaryDirectionalCoordinate( const double secondary_directional_coord );
 
-  //! Set the the azimuthal angle directional coord. of the phase space point
-  void setAzimuthalAngleDirectionalCoordinate(
-                              const double azimuthal_angle_directional_coord );
+  //! Return the secondary Directional coordinate weight
+  double getSecondaryDirectionalCoordinateWeight() const;
 
-  //! Return the azimuthal angle directional coordinate weight
-  double getAzimuthalAngleDirectionalCoordinateWeight() const;
+  //! Set the secondary Directional coordinate weight
+  void setSecondaryDirectionalCoordinateWeight( const double weight );
 
-  //! Set the azimuthal angle directional coordinate weight
-  void setAzimuthalAngleDirectionalCoordinateWeight( const double weight );
+  //! Return the tertiary Directional coordinate of the phase space point
+  double getTertiaryDirectionalCoordinate() const;
+
+  //! Set the tertiary Directional coordinate of the phase space point
+  void setTertiaryDirectionalCoordinate( const double tertiary_directional_coord );
+
+  //! Return the tertiary Directional coordinate weight
+  double getTertiaryDirectionalCoordinateWeight() const;
+
+  //! Set the tertiary Directional coordinate weight
+  void setTertiaryDirectionalCoordinateWeight( const double weight );
 
   //! Convert directional coordinates to cartesian coordinates
   void convertDirectionalCoordinatesToCartesianCoordinates(
-                                   const DirectionalCoordinateConversionPolicy&
-                                   directional_coord_conversion_policy,
-                                   double& x_directional_coord,
-                                   double& y_directional_coord,
-                                   double& z_directional_coord ) const;
+                                       double& x_directional_coord,
+                                       double& y_directional_coord,
+                                       double& z_directional_coord ) const = 0;
 
   //! Return the weight of all directional coordinates
   double getWeightOfDirectionalCoordinates() const;
@@ -148,11 +164,7 @@ public:
   void getWeightOfCoordinates() const;
 
   //! Set a particle state
-  void setParticleState( const Utility::SpatialCoordinateConversionPolicy&
-                         spatial_coord_conversion_policy,
-                         const Utility::DirectionalCoordinateConversionPolicy&
-                         directional_coord_conversion_policy,
-                         ParticleState& particle ) const;
+  void setParticleState( ParticleState& particle ) const;
 
   //! Return the dimension value
   template<ParticleSourceDimensionType dimension>
@@ -172,6 +184,14 @@ public:
 
 private:
 
+  // The spatial coordinate conversion policy
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+  d_spatial_coord_conversion_policy;
+
+  // The directional coordinate conversion policy
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+  d_directional_coord_conversion_policy;
+
   // The primary spatial coordinate
   double d_primary_spatial_coord;
 
@@ -189,18 +209,24 @@ private:
 
   // The tertiary spatial coordinate weight
   double d_tertiary_spatial_coord_weight;
+  
+  // The primary directional coordinate
+  double d_primary_directional_coord;
 
-  // The polar angle directional coordinate
-  double d_polar_angle_directional_coord;
+  // The primary directional coordinate weight
+  double d_primary_directional_coord_weight;
 
-  // The polar angle directional coordinate weight
-  double d_polar_angle_directional_coord_weight;
+  // The secondary directional coordinate
+  double d_secondary_directional_coord;
 
-  // The azimuthal angle directional coordinate
-  double d_azimuthal_angle_directional_coord;
+  // The secondary directional coordinate weight
+  double d_secondary_directional_coord_weight;
 
-  // The azimuthal angle directional coordinate weight
-  double d_azimuthal_angle_directional_coord_weight;
+  // The tertiary directional coordinate
+  double d_tertiary_directional_coord;
+
+  // The tertiary directional coordinate weight
+  double d_tertiary_directional_coord_weight;
 
   // The energy coordinate
   double d_energy_coord;

@@ -9,9 +9,6 @@
 #ifndef UTILITY_3D_CARTESIAN_VECTOR_HELPERS_HPP
 #define UTILITY_3D_CARTESIAN_VECTOR_HELPERS_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
@@ -180,12 +177,6 @@ inline double vectorMagnitude( const double x_component,
 			       const double y_component,
 			       const double z_component )
 {
-  // Make sure that the coordinates are valid
-  remember( typedef Teuchos::ScalarTraits<double> ST );
-  testPrecondition( !ST::isnaninf( x_component ) );
-  testPrecondition( !ST::isnaninf( y_component ) );
-  testPrecondition( !ST::isnaninf( z_component ) );
-
   return sqrt( x_component*x_component + y_component*y_component +
 	       z_component*z_component );
 }

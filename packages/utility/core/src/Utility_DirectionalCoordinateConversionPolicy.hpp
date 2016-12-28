@@ -9,11 +9,21 @@
 #ifndef UTILITY_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP
 #define UTILITY_DIRECTIONAL_COORDINATE_CONVERSION_POLICY_HPP
 
+// FRENSIE Includes
+#include "Utility_DirectionalCoordinateSystemType.hpp"
+#include "Utility_DirectionalCoordinateSystemTraits.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
+
 namespace Utility{
 
 //! The directional coordinate conversion policy class
 class DirectionalCoordinateConversionPolicy
 {
+
+protected:
+
+  //! The global coordinate system traits
+  typedef DirectionalCoordinateSystemTraits<CARTESIAN_DIRECTIONAL_COORDINATE_SYSTEM> GlobalCSTraits;
 
 public:
 
@@ -25,7 +35,37 @@ public:
   virtual ~DirectionalCoordinateConversionPolicy()
   { /* ... */ }
 
-  //! Convert the directional coordinates to cartesian coordinates
+  //! Get the local coordinate system type
+  virtual DirectionalCoordinateSystemType getLocalCoordinateSystemType() const = 0;
+
+  //! Check if the primary directional coordinate is valid
+  virtual bool isPrimaryDirectionalCoordinateValid( const double coordinate ) const = 0;
+
+  //! Check if the secondary directional coordinate is valid
+  virtual bool isSecondaryDirectionalCoordinateValid( const double coordinate ) const = 0;
+
+  //! Check if the tertiary directional coordinate is valid
+  virtual bool isTertiaryDirectionalCoordinateValid( const double coordinate ) const = 0;
+
+  //! Normalize the local directional coordinates
+  virtual void normalizeLocalDirectionalCoordinates(
+                                double& primary_directional_coord,
+                                double& secondary_directional_coord,
+                                double& tertiary_directional_coord ) const = 0;
+
+  //! Normalize the local directional coordinates
+  void normalizeLocalDirectionalCoordinates( double coordinates[3] ) const;
+
+  //! Normalize the Cartesian directional coordinates
+  void normalizeCartesianDirectionalCoordinates(
+                                           double& x_directional_coord,
+                                           double& y_directional_coord,
+                                           double& z_directional_coord ) const;
+
+  //! Normalize the Cartesian directional coordinates
+  void normalizeCartesianDirectionalCoordinates( double coordinates[3] ) const;
+                                         
+  //! Convert the directional coordinates to Cartesian coordinates
   virtual void convertToCartesianDirectionalCoordinates(
                                       const double primary_directional_coord,
                                       const double secondary_directional_coord,
@@ -34,7 +74,7 @@ public:
                                       double& y_directional_coord,
                                       double& z_directional_coord ) const = 0;
 
-  //! Convert the directional coordinates to cartesian coordinates
+  //! Convert the directional coordinates to Cartesian coordinates
   void convertToCartesianDirectionalCoordinates(
                                        const double coordinates[3],
                                        double cartesian_coordinates[3] ) const;
@@ -58,6 +98,35 @@ public:
 // Inline Definitions
 //---------------------------------------------------------------------------//
 
+// Normalize the local directional coordinates
+inline void DirectionalCoordinateConversionPolicy::normalizeLocalDirectionalCoordinates(
+                                                  double coordinates[3] ) const
+{
+  this->normalizeLocalDirectionalCoordinates( coordinates[0],
+                                              coordinates[1],
+                                              coordinates[2] );
+}
+
+// Normalize the Cartesian directional coordinates
+inline void DirectionalCoordinateConversionPolicy::normalizeCartesianDirectionalCoordinates(
+                                            double& x_directional_coord,
+                                            double& y_directional_coord,
+                                            double& z_directional_coord ) const
+{
+  normalizeVector( x_directional_coord,
+                   y_directional_coord,
+                   z_directional_coord );
+}
+
+// Normalize the Cartesian directional coordinates
+inline void DirectionalCoordinateConversionPolicy::normalizeCartesianDirectionalCoordinates(
+                                                  double coordinates[3] ) const
+{
+  this->normalizeCartesianDirectionalCoordinates( coordinates[0],
+                                                  coordinates[1],
+                                                  coordinates[2] );
+}
+  
 // Convert the directional coordinates to cartesian coordinates
 inline void DirectionalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates(
                                         const double coordinates[3],

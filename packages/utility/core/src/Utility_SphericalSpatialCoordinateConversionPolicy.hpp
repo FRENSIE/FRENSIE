@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "Utility_SpatialCoordinateConversionPolicy.hpp"
+#include "Utility_SpatialCoordinateSystemTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -25,6 +26,11 @@ namespace Utility{
 //! The spherical spatial coordinate conversion policy class
 class SphericalSpatialCoordinateConversionPolicy : public SpatialCoordinateConversionPolicy
 {
+
+protected:
+
+  //! The local coordinate system traits
+  typedef SpatialCoordinateSystemTraits<SPHERICAL_SPATIAL_COORDINATE_SYSTEM> LocalCSTraits;
 
 public:
   
@@ -59,6 +65,18 @@ public:
   //! Destructor
   virtual ~SphericalSpatialCoordinateConversionPolicy()
   { /* ... */ }
+
+  //! Get the local coordinate system type
+  SpatialCoordinateSystemType getLocalCoordinateSystemType() const override;
+
+  //! Check if the primary spatial coordinate is valid
+  bool isPrimarySpatialCoordinateValid( const double coordinate ) const override;
+
+  //! Check if the secondary spatial coordinate is valid
+  bool isSecondarySpatialCoordinateValid( const double coordinate ) const override;
+
+  //! Check if the tertiary spatial coordinate is valid
+  bool isTertiarySpatialCoordinateValid( const double coordinate ) const override;
 };
 
 //---------------------------------------------------------------------------//
@@ -93,6 +111,22 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertFromCartesianPosi
                                                   double& theta_spatial_coord,
                                                   double& mu_spatial_coord )
 {
+  // Make sure that the x coordinate is valid
+  testPrecondition( GlobalCSTraits::primarySpatialDimensionLowerBound() <=
+                    x_spatial_coord );
+  testPrecondition( GlobalCSTraits::primarySpatialDimensionUpperBound() >=
+                    x_spatial_coord );
+  // Make sure that the y coordinate is valid
+  testPrecondition( GlobalCSTraits::secondarySpatialDimensionLowerBound() <=
+                    y_spatial_coord );
+  testPrecondition( GlobalCSTraits::secondarySpatialDimensionUpperBound() >=
+                    y_spatial_coord );
+  // Make sure that the z coordinate is valid
+  testPrecondition( GlobalCSTraits::tertiarySpatialDimensionLowerBound() <=
+                    z_spatial_coord );
+  testPrecondition( GlobalCSTraits::tertiarySpatialDimensionUpperBound() >=
+                    z_spatial_coord );
+                    
   // Compute the radius
   r_spatial_coord = sqrt( x_spatial_coord*x_spatial_coord +
                           y_spatial_coord*y_spatial_coord +
@@ -113,13 +147,14 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertFromCartesianPosi
     mu_spatial_coord = copysign( 1.0, mu_spatial_coord );
 
   // Make sure that the radius is valid
-  testPostcondition( r_spatial_coord >= 0.0 );
+  testPostcondition( r_spatial_coord >= LocalCSTraits::primarySpatialDimensionLowerBound() );
+  testPostcondition( r_spatial_coord <= LocalCSTraits::primarySpatialDimensionUpperBound() );
   // Make sure that the azimuthal angle is valid
-  testPostcondition( theta_spatial_coord >= 0.0 );
-  testPostcondition( theta_spatial_coord <= 2*Utility::PhysicalConstants::pi );
+  testPostcondition( theta_spatial_coord >= LocalCSTraits::secondarySpatialDimensionLowerBound() );
+  testPostcondition( theta_spatial_coord <= LocalCSTraits::secondarySpatialDimensionUpperBound() );
   // Make sure that the polar angle cosine is valid
-  testPostcondition( mu_spatial_coord >= -1.0 );
-  testPostcondition( mu_spatial_coord <= 1.0 );
+  testPostcondition( mu_spatial_coord >= LocalCSTraits::tertiarySpatialDimensionLowerBound() );
+  testPostcondition( mu_spatial_coord <= LocalCSTraits::tertiarySpatialDimensionUpperBound() );
 }
 
 // Convert the spherical coordinates to Cartesian coordinates
@@ -151,10 +186,11 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertToCartesianPositi
                                               double& z_spatial_coord )
 {
   // Make sure that the radius is valid
-  testPrecondition( r_spatial_coord >= 0.0 );
+  testPrecondition( r_spatial_coord >= LocalCSTraits::primarySpatialDimensionLowerBound() );
+  testPrecondition( r_spatial_coord <= LocalCSTraits::primarySpatialDimensionUpperBound() );
   // Make sure that the polar angle cosine is valid
-  testPrecondition( mu_spatial_coord >= -1.0 );
-  testPrecondition( mu_spatial_coord <= 1.0 );
+  testPrecondition( mu_spatial_coord >= LocalCSTraits::tertiarySpatialDimensionLowerBound() );
+  testPrecondition( mu_spatial_coord <= LocalCSTraits::tertiarySpatialDimensionUpperBound() );
   
   const double polar_angle_sine =
     sqrt( std::max(0.0, 1.0-mu_spatial_coord*mu_spatial_coord) );
@@ -167,6 +203,52 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertToCartesianPositi
 
   // Compute the z coordinate
   z_spatial_coord = r_spatial_coord*mu_spatial_coord;
+
+  // Make sure that the x coordinate is valid
+  testPostcondition( GlobalCSTraits::primarySpatialDimensionLowerBound() <=
+                     x_spatial_coord );
+  testPostcondition( GlobalCSTraits::primarySpatialDimensionUpperBound() >=
+                     x_spatial_coord );
+  // Make sure that the y coordinate is valid
+  testPostcondition( GlobalCSTraits::secondarySpatialDimensionLowerBound() <=
+                     y_spatial_coord );
+  testPostcondition( GlobalCSTraits::secondarySpatialDimensionUpperBound() >=
+                     y_spatial_coord );
+  // Make sure that the z coordinate is valid
+  testPostcondition( GlobalCSTraits::tertiarySpatialDimensionLowerBound() <=
+                     z_spatial_coord );
+  testPostcondition( GlobalCSTraits::tertiarySpatialDimensionUpperBound() >=
+                     z_spatial_coord );
+}
+
+// Get the local coordinate system type
+inline SpatialCoordinateSystemType SphericalSpatialCoordinateConversionPolicy::getLocalCoordinateSystemType() const
+{
+  return SPHERICAL_SPATIAL_COORDINATE_SYSTEM;
+}
+
+// Check if the primary spatial coordinate is valid
+inline bool SphericalSpatialCoordinateConversionPolicy::isPrimarySpatialCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::primarySpatialDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::primarySpatialDimensionUpperBound();
+}
+
+// Check if the secondary spatial coordinate is valid
+inline bool SphericalSpatialCoordinateConversionPolicy::isSecondarySpatialCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::secondarySpatialDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::secondarySpatialDimensionUpperBound();
+}
+
+// Check if the tertiary spatial coordinate is valid
+inline bool SphericalSpatialCoordinateConversionPolicy::isTertiarySpatialCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::tertiarySpatialDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::tertiarySpatialDimensionUpperBound();
 }
   
 } // end Utility namespace

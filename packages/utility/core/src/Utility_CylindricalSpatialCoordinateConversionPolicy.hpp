@@ -15,12 +15,18 @@
 // FRENSIE Includes
 #include "Utility_SpatialCoordinateConversionPolicy.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 //! The cylindrical spatial coordinate conversion policy class
 class CylindricalSpatialCoordinateConversionPolicy : public SpatialCoordinateConversionPolicy
 {
+
+protected:
+
+  //! The locl coordinate system traits
+  typedef SpatialCoordinateSystemTraits<CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM> LocalCSTraits;
 
 public:
 
@@ -55,6 +61,18 @@ public:
   //! Destructor
   virtual ~CylindricalSpatialCoordinateConversionPolicy()
   { /* ... */ }
+
+  //! Get the local coordinate system type
+  SpatialCoordinateSystemType getLocalCoordinateSystemType() const override;
+
+  //! Check if the primary spatial coordinate is valid
+  bool isPrimarySpatialCoordinateValid( const double coordinate ) const override;
+
+  //! Check if the secondary spatial coordinate is valid
+  bool isSecondarySpatialCoordinateValid( const double coordinate ) const override;
+
+  //! Check if the tertiary spatial coordinate is valid
+  bool isTertiarySpatialCoordinateValid( const double coordinate ) const override;
 };
 
 //---------------------------------------------------------------------------//
@@ -84,6 +102,22 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianPo
                                                double& theta_spatial_coord,
                                                double& z_spatial_coord_out )
 {
+  // Make sure that the x coordinate is valid
+  testPrecondition( GlobalCSTraits::primarySpatialDimensionLowerBound() <=
+                    x_spatial_coord );
+  testPrecondition( GlobalCSTraits::primarySpatialDimensionUpperBound() >=
+                    x_spatial_coord );
+  // Make sure that the y coordinate is valid
+  testPrecondition( GlobalCSTraits::secondarySpatialDimensionLowerBound() <=
+                    y_spatial_coord );
+  testPrecondition( GlobalCSTraits::secondarySpatialDimensionUpperBound() >=
+                    y_spatial_coord );
+  // Make sure that the z coordinate is valid
+  testPrecondition( GlobalCSTraits::tertiarySpatialDimensionLowerBound() <=
+                    z_spatial_coord_in );
+  testPrecondition( GlobalCSTraits::tertiarySpatialDimensionUpperBound() >=
+                    z_spatial_coord_in );
+  
   // Compute the radius
   r_spatial_coord = sqrt( x_spatial_coord*x_spatial_coord +
                           y_spatial_coord*y_spatial_coord );
@@ -97,6 +131,13 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianPo
 
   // The z coordinate is the same
   z_spatial_coord_out = z_spatial_coord_in;
+
+  // Make sure that the radius is valid
+  testPostcondition( r_spatial_coord >= LocalCSTraits::primarySpatialDimensionLowerBound() );
+  testPostcondition( r_spatial_coord <= LocalCSTraits::primarySpatialDimensionUpperBound() );
+  // Make sure that the azimuthal angle is valid
+  testPostcondition( theta_spatial_coord >= LocalCSTraits::secondarySpatialDimensionLowerBound() );
+  testPostcondition( theta_spatial_coord <= LocalCSTraits::secondarySpatialDimensionUpperBound() );
 }
 
 // Convert the cylindrical coordinates to cartesian coordinates
@@ -122,6 +163,13 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertToCartesianPosi
                                               double& y_spatial_coord,
                                               double& z_spatial_coord_out )
 {
+  // Make sure that the radius is valid
+  testPrecondition( r_spatial_coord >= LocalCSTraits::primarySpatialDimensionLowerBound() );
+  testPrecondition( r_spatial_coord <= LocalCSTraits::primarySpatialDimensionUpperBound() );
+  // Make sure that the z coordinate is valid
+  testPrecondition( z_spatial_coord_in >= LocalCSTraits::tertiarySpatialDimensionLowerBound() );
+  testPrecondition( z_spatial_coord_in <= LocalCSTraits::tertiarySpatialDimensionUpperBound() );
+  
   // Compute the x coordinate
   x_spatial_coord = r_spatial_coord*cos(theta_spatial_coord);
 
@@ -130,6 +178,52 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertToCartesianPosi
 
   // The z coordinate is the same
   z_spatial_coord_out = z_spatial_coord_in;
+
+  // Make sure that the x coordinate is valid
+  testPostcondition( GlobalCSTraits::primarySpatialDimensionLowerBound() <=
+                     x_spatial_coord );
+  testPostcondition( GlobalCSTraits::primarySpatialDimensionUpperBound() >=
+                     x_spatial_coord );
+  // Make sure that the y coordinate is valid
+  testPostcondition( GlobalCSTraits::secondarySpatialDimensionLowerBound() <=
+                     y_spatial_coord );
+  testPostcondition( GlobalCSTraits::secondarySpatialDimensionUpperBound() >=
+                     y_spatial_coord );
+  // Make sure that the z coordinate is valid
+  testPostcondition( GlobalCSTraits::tertiarySpatialDimensionLowerBound() <=
+                     z_spatial_coord_out );
+  testPostcondition( GlobalCSTraits::tertiarySpatialDimensionUpperBound() >=
+                     z_spatial_coord_out );
+}
+
+// Get the local coordinate system type
+inline SpatialCoordinateSystemType CylindricalSpatialCoordinateConversionPolicy::getLocalCoordinateSystemType() const
+{
+  return CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM;
+}
+
+// Check if the primary spatial coordinate is valid
+inline bool CylindricalSpatialCoordinateConversionPolicy::isPrimarySpatialCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::primarySpatialDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::primarySpatialDimensionUpperBound();
+}
+
+// Check if the secondary spatial coordinate is valid
+inline bool CylindricalSpatialCoordinateConversionPolicy::isSecondarySpatialCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::secondarySpatialDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::secondarySpatialDimensionUpperBound();
+}
+
+// Check if the tertiary spatial coordinate is valid
+inline bool CylindricalSpatialCoordinateConversionPolicy::isTertiarySpatialCoordinateValid(
+                                                const double coordinate ) const
+{
+  return coordinate >= LocalCSTraits::tertiarySpatialDimensionLowerBound() &&
+    coordinate <= LocalCSTraits::tertiarySpatialDimensionUpperBound();
 }
   
 } // end Utility namespace
