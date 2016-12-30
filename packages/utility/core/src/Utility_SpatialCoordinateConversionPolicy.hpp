@@ -35,7 +35,7 @@ public:
   { /* ... */ }
 
   //! Get the local coordinate system type
-  virtual SpatialCoordinateSystemType getLocalCoordinateSystemType() const = 0;
+  virtual SpatialCoordinateSystemType getLocalSpatialCoordinateSystemType() const = 0;
 
   //! Check if the primary spatial coordinate is valid
   virtual bool isPrimarySpatialCoordinateValid( const double coordinate ) const = 0;

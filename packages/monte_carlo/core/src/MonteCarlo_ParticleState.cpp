@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -237,9 +237,9 @@ void ParticleState::setDirection( const double x_direction,
   testPrecondition( !ST::isnaninf( y_direction ) );
   testPrecondition( !ST::isnaninf( z_direction ) );
   // Make sure the direction is a unit vector
-  testPrecondition( Utility::validDirection( x_direction,
-					     y_direction,
-					     z_direction ) );
+  testPrecondition( Utility::isUnitVector( x_direction,
+                                           y_direction,
+                                           z_direction ) );
 
   d_direction[0] = x_direction;
   d_direction[1] = y_direction;
@@ -258,7 +258,7 @@ void ParticleState::rotateDirection( const double polar_angle_cosine,
 				     const double azimuthal_angle )
 {
   // Make sure the current particle direction is valid (initialized)
-  testPrecondition( Utility::validDirection( this->getDirection() ) );
+  testPrecondition( Utility::isUnitVector( this->getDirection() ) );
   // Make sure the polar angle cosine is valid
   testPrecondition( polar_angle_cosine >= -1.0 );
   testPrecondition( polar_angle_cosine <= 1.0 );
@@ -268,10 +268,10 @@ void ParticleState::rotateDirection( const double polar_angle_cosine,
 
   double outgoing_direction[3];
 
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle( polar_angle_cosine,
-							 azimuthal_angle,
-							 this->getDirection(),
-							 outgoing_direction );
+  Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle( polar_angle_cosine,
+                                                          azimuthal_angle,
+                                                          this->getDirection(),
+                                                          outgoing_direction );
 
   this->setDirection( outgoing_direction );
 }

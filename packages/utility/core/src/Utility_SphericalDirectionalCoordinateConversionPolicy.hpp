@@ -69,7 +69,7 @@ public:
   { /* ... */ }
 
   //! Get the local coordinate system type
-  DirectionalCoordinateSystemType getLocalCoordinateSystemType() const override;
+  DirectionalCoordinateSystemType getLocalDirectionalCoordinateSystemType() const override;
 
   //! Check if the primary directional coordinate is valid
   bool isPrimaryDirectionalCoordinateValid( const double coordinate ) const override;
@@ -147,10 +147,12 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertFromCartesian
   r_directional_coord = 1.0;
 
   // Make sure that the azimuthal angle is valid
-  testPostcondition( this->isSecondaryDirectionalCoordinateValid( theta_directional_coord ) );
+  testPostcondition( theta_directional_coord >= LocalCSTraits::secondaryDirectionalDimensionLowerBound() );
+  testPostcondition( theta_directional_coord <= LocalCSTraits::secondaryDirectionalDimensionUpperBound() );
   
   // Make sure that the polar angle cosine is valid
-  testPostcondition( this->isTertiaryDirectionalCoordinateValid( mu_directional_coord ) );
+  testPostcondition( mu_directional_coord >= LocalCSTraits::tertiaryDirectionalDimensionLowerBound() );
+  testPostcondition( mu_directional_coord <= LocalCSTraits::tertiaryDirectionalDimensionUpperBound() );
 }
 
 // Convert the spherical coords (on unit sphere) to a Cartesian direction
@@ -185,7 +187,8 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDi
                                           double& z_direction )
 {
   // Make sure that the polar angle cosine is valid
-  testPrecondition( this->isTertiaryDirectionalCoordinateValid( mu_directional_coord ) );
+  testPrecondition( mu_directional_coord >= LocalCSTraits::tertiaryDirectionalDimensionLowerBound() );
+  testPrecondition( mu_directional_coord <= LocalCSTraits::tertiaryDirectionalDimensionUpperBound() );
 
   const double polar_angle_sine =
     sqrt( std::max(0.0, 1.0-mu_directional_coord*mu_directional_coord) );
@@ -200,14 +203,14 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDi
   z_direction = mu_directional_coord;
 
   // Normalize the Cartesian direction to eliminate rounding errors
-  this->normalizeGlobalDirectionalCoordinates( x_direction, y_direction, z_direction );
+  normalizeVector( x_direction, y_direction, z_direction );
   
   // Make sure that the direction is a unit vector
   testPostcondition( isUnitVector( x_direction, y_direction, z_direction ) );
 }
 
 // Get the local coordinate system type
-inline DirectionalCoordinateSystemType SphericalDirectionalCoordinateConversionPolicy::getLocalCoordinateSystemType() const
+inline DirectionalCoordinateSystemType SphericalDirectionalCoordinateConversionPolicy::getLocalDirectionalCoordinateSystemType() const
 {
   return SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM;
 }

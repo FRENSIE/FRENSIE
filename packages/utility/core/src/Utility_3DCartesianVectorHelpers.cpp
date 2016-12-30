@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
 

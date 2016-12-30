@@ -14,7 +14,7 @@
 namespace Utility{
 
 // Convert the directional coordinate system type enum to a string
-std::string convertSpatialCoordinateSystemTypeEnumToString(
+std::string convertDirectionalCoordinateSystemTypeEnumToString(
                            const DirectionalCoordinateSystemType coord_system )
 {
   switch( coord_system )

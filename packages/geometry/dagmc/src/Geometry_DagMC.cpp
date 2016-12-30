@@ -16,7 +16,7 @@
 #include "Geometry_FastDagMCCellHandler.hpp"
 #include "Geometry_StandardDagMCSurfaceHandler.hpp"
 #include "Geometry_FastDagMCSurfaceHandler.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -656,7 +656,7 @@ PointLocation DagMC::getPointLocation( const double position[3],
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   int test_result;
 
@@ -763,7 +763,7 @@ moab::EntityHandle DagMC::checkFoundCellCache( const double position[3],
                                                const double direction[3] )
 {
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   moab::EntityHandle cell_handle = 0;
 
@@ -857,7 +857,7 @@ moab::EntityHandle DagMC::findCellHandleContainingRay(
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   moab::EntityHandle cell_handle = 0;
 
@@ -931,7 +931,7 @@ moab::EntityHandle DagMC::findAndCacheCellHandleContainingRay(
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   // Test the cells in the cache first
   moab::EntityHandle cell_handle =
@@ -1023,7 +1023,7 @@ double DagMC::fireExternalRayWithCellHandle(
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   double distance_to_surface;
 
@@ -1080,7 +1080,7 @@ void DagMC::setInternalRay( const double position[3],
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   moab::EntityHandle cell_handle;
 
@@ -1105,7 +1105,7 @@ void DagMC::setInternalRay(
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
   // Make sure the cell exists
   testPrecondition( DagMC::doesCellExist( current_cell ) );
   // Make sure the cell contains the ray
@@ -1130,7 +1130,7 @@ void DagMC::setInternalRay( const double position[3],
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   DagMCRay& dagmc_ray = DagMC::getInternalRay();
 
@@ -1163,9 +1163,9 @@ void DagMC::changeInternalRayDirection( const double x_direction,
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( x_direction,
-                                             y_direction,
-                                             z_direction ) );
+  testPrecondition( Utility::isUnitVector( x_direction,
+                                           y_direction,
+                                           z_direction ) );
   // Make sure the ray is set
   testPrecondition( DagMC::isInternalRaySet() );
 
@@ -1333,9 +1333,9 @@ bool DagMC::advanceInternalRayToCellBoundary( double* surface_normal )
 
     double reflected_direction[3];
 
-    Utility::reflectDirection( ray.getDirection(),
-                               local_surface_normal,
-                               reflected_direction );
+    Utility::reflectUnitVector( ray.getDirection(),
+                                local_surface_normal,
+                                reflected_direction );
 
     // This will also fire a ray to fill the new intersection data
     DagMC::changeInternalRayDirection( reflected_direction );

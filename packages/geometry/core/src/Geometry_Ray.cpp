@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "Geometry_Ray.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Geometry{
@@ -29,9 +29,9 @@ Ray::Ray( const double x_position,
   testPrecondition( !ST::isnaninf( d_position[1] ) );
   testPrecondition( !ST::isnaninf( d_position[2] ) );
   // Make sure the direction is a unit vector
-  testPrecondition( Utility::validDirection( x_direction,
-					     y_direction,
-					     z_direction ) );
+  testPrecondition( Utility::isUnitVector( x_direction,
+                                           y_direction,
+                                           z_direction ) );
 
   d_position[0] = x_position;
   d_position[1] = y_position;
@@ -54,9 +54,9 @@ Ray::Ray( const double position[3],
   testPrecondition( !ST::isnaninf( d_position[1] ) );
   testPrecondition( !ST::isnaninf( d_position[2] ) );
   // Make sure the direction is a unit vector
-  testPrecondition( Utility::validDirection( direction[0],
-					     direction[1],
-					     direction[2] ) );
+  testPrecondition( Utility::isUnitVector( direction[0],
+                                           direction[1],
+                                           direction[2] ) );
 
   d_position[0] = position[0];
   d_position[1] = position[1];
@@ -85,9 +85,9 @@ Ray::Ray( double position[3],
     testPrecondition( !ST::isnaninf( d_position[1] ) );
     testPrecondition( !ST::isnaninf( d_position[2] ) );
     // Make sure the direction is a unit vector
-    testPrecondition( Utility::validDirection( direction[0],
-					       direction[1],
-					       direction[2] ) );
+    testPrecondition( Utility::isUnitVector( direction[0],
+                                             direction[1],
+                                             direction[2] ) );
     d_position = new double[3];
     d_position[0] = position[0];
     d_position[1] = position[1];
@@ -162,7 +162,7 @@ const double* Ray::getDirection() const
 void Ray::changeDirection( const double direction[3] )
 {
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   // Deep copy the direction
   d_direction[0] = direction[0];
@@ -176,9 +176,9 @@ void Ray::changeDirection( const double x_direction,
                            const double z_direction )
 {
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( x_direction,
-                                             y_direction,
-                                             z_direction ) );
+  testPrecondition( Utility::isUnitVector( x_direction,
+                                           y_direction,
+                                           z_direction ) );
 
   d_direction[0] = x_direction;
   d_direction[1] = y_direction;

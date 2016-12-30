@@ -17,14 +17,14 @@
 #include <unordered_set>
 
 // FRENSIE Includes
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Geometry{
 
 // Get the boundary cell
-/*! \details DagMC geometry are set up so that every surface belongs to
+/*! \details DagMC geometries are set up so that every surface belongs to
  * exactly two cells. When a ray crosses a boundary surface finding the
  * next cell that will be entered is simply a matter of knowing the current
  * cell and the boundary surface.
@@ -224,7 +224,7 @@ inline void DagMC::changeInternalRayDirection( const double direction[3] )
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
   // Make sure the ray is set
   testPrecondition( DagMC::isInternalRaySet() );
 

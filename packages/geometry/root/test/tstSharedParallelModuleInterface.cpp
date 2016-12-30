@@ -25,7 +25,7 @@
 #include "Geometry_ModuleInterface_Root.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, parallel_ray_trace )
     // Change the ray direction
     double new_direction[3];
 
-    Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
+    Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle(
           0.0,
           0.0,
           Geometry::ModuleInterface<Geometry::Root>::getInternalRayDirection(),

@@ -16,7 +16,7 @@ namespace Utility{
 // Test if the spatial dimension name is valid
 bool isValidSpatialDimensionName( const std::string& dimension_name )
 {
-  if( dimension_name == "X Spatial Dimension " ||
+  if( dimension_name == "X Spatial Dimension" ||
       dimension_name == "X Dimension" )
     return true;
   else if( dimension_name == "Y Spatial Dimension" ||

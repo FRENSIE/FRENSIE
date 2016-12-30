@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "Geometry_DagMCRay.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Geometry{
@@ -45,7 +45,7 @@ DagMCRay::DagMCRay( const double position[3],
     d_intersection_surface_handle( 0 )
 {
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
   // Make sure the cell handle is valid
   testPrecondition( cell_handle != 0 );
 }
@@ -101,7 +101,7 @@ void DagMCRay::set( const double position[3],
                     const moab::EntityHandle cell_handle )
 {
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
   // Make sure the cell is valid
   testPrecondition( cell_handle != 0 );
 

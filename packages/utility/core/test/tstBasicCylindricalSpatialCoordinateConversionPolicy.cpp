@@ -22,6 +22,65 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the local spatial coordinate system type can be returned
+TEUCHOS_UNIT_TEST( BasicCylindricalCoordinateConversionPolicy,
+                   getLocalSpatialCoordinateSystemType )
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy> policy(
+              new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+
+  TEST_EQUALITY_CONST( policy->getLocalSpatialCoordinateSystemType(),
+                       Utility::CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the primary spatial coordinate is valid
+TEUCHOS_UNIT_TEST( BasicCylindricalCoordinateConversionPolicy,
+                   isPrimarySpatialCoordinateValid )
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy> policy(
+              new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+
+  TEST_ASSERT( policy->isPrimarySpatialCoordinateValid( 0.0 ) );
+  
+  TEST_ASSERT( policy->isPrimarySpatialCoordinateValid(
+                                   std::numeric_limits<double>::infinity() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the secondary spatial coordinate is valid
+TEUCHOS_UNIT_TEST( BasicCylindricalCoordinateConversionPolicy,
+                   isSecondarySpatialCoordinateValid )
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy> policy(
+              new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+
+  TEST_ASSERT( policy->isSecondarySpatialCoordinateValid( 0.0 ) );
+                                                       
+  
+  TEST_ASSERT( policy->isSecondarySpatialCoordinateValid(
+                                          2*Utility::PhysicalConstants::pi ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the tertiary spatial coordinate is valid
+TEUCHOS_UNIT_TEST( BasicCylindricalCoordinateConversionPolicy,
+                   isTertiarySpatialCoordinateValid )
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy> policy(
+              new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+
+  TEST_ASSERT( policy->isTertiarySpatialCoordinateValid(
+                                  -std::numeric_limits<double>::infinity() ) );
+
+  TEST_ASSERT( policy->isTertiarySpatialCoordinateValid( 0.0 ) );
+                                                       
+  
+  TEST_ASSERT( policy->isTertiarySpatialCoordinateValid(
+                                   std::numeric_limits<double>::infinity() ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the local cylindrical spatial coordinates can be converted to
 // global Cartesian spatial coordinates
 TEUCHOS_UNIT_TEST( BasicCylindricalSpatialCoordinateConversionPolicy,
@@ -209,7 +268,7 @@ TEUCHOS_UNIT_TEST( BasicCylindricalSpatialCoordinateConversionPolicy,
                                         1e-15 );
 
   // Neg. x-axis
-  global_cartesian_position = Teuchos::tuple( 2.0, 0.0, 0.0 );
+  global_cartesian_position = Teuchos::tuple( -2.0, 0.0, 0.0 );
   ref_local_cylindrical_position =
     Teuchos::tuple( 2.0, Utility::PhysicalConstants::pi, 0.0 );
 

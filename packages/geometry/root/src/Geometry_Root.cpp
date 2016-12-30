@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "Geometry_Root.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 
 namespace Geometry{
@@ -423,7 +423,7 @@ void Root::setInternalRay( const double position[3],
   // Make sure root has been initialized
   testPrecondition( Root::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   // The internal ray is set now
   Root::internalRaySet();
@@ -451,7 +451,7 @@ void Root::changeInternalRayDirection( const double direction[3] )
   // Make sure the internal ray is set
   testPrecondition( Root::isInternalRaySet() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::isUnitVector( direction ) );
 
   // Note: The TGeoManager interface should take a const double* array
   // but the array it takes is non-const.
@@ -468,9 +468,9 @@ void Root::changeInternalRayDirection( const double x_direction,
   // Make sure the internal ray is set
   testPrecondition( Root::isInternalRaySet() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( x_direction,
-                                             y_direction,
-                                             z_direction ) );
+  testPrecondition( Utility::isUnitVector( x_direction,
+                                           y_direction,
+                                           z_direction ) );
 
   s_manager->SetCurrentDirection( x_direction, y_direction, z_direction );
 }

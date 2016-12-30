@@ -209,6 +209,41 @@ TARGET_LINK_LIBRARIES(tstSpatialCoordinateSystemType utility_core)
 ADD_TEST(SpatialCoordinateSystemType_test tstSpatialCoordinateSystemType)
 SET_PROPERTY(TEST SpatialCoordinateSystemType_test PROPERTY LABELS utility_core )
 
+ADD_EXECUTABLE(tstDirectionalCoordinateSystemType
+  tstDirectionalCoordinateSystemType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDirectionalCoordinateSystemType utility_core)
+ADD_TEST(DirectionalCoordinateSystemType_test tstDirectionalCoordinateSystemType)
+SET_PROPERTY(TEST DirectionalCoordinateSystemType_test PROPERTY LABELS utility_core )
+
+ADD_EXECUTABLE(tstSpatialDimensionType
+  tstSpatialDimensionType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSpatialDimensionType utility_core)
+ADD_TEST(SpatialDimensionType_test tstSpatialDimensionType)
+SET_PROPERTY(TEST SpatialDimensionType_test PROPERTY LABELS utility_core )
+
+ADD_EXECUTABLE(tstDirectionalDimensionType
+  tstDirectionalDimensionType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDirectionalDimensionType utility_core)
+ADD_TEST(DirectionalDimensionType_test tstDirectionalDimensionType)
+SET_PROPERTY(TEST DirectionalDimensionType_test PROPERTY LABELS utility_core )
+
+ADD_EXECUTABLE(tstSpatialCoordinateSystemTraits
+  tstSpatialCoordinateSystemTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSpatialCoordinateSystemTraits utility_core)
+ADD_TEST(SpatialCoordinateSystemTraits_test tstSpatialCoordinateSystemTraits)
+SET_PROPERTY(TEST SpatialCoordinateSystemTraits_test PROPERTY LABELS utility_core )
+
+ADD_EXECUTABLE(tstDirectionalCoordinateSystemTraits
+  tstDirectionalCoordinateSystemTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDirectionalCoordinateSystemTraits utility_core)
+ADD_TEST(DirectionalCoordinateSystemTraits_test tstDirectionalCoordinateSystemTraits)
+SET_PROPERTY(TEST DirectionalCoordinateSystemTraits_test PROPERTY LABELS utility_core )
+
 ADD_EXECUTABLE(tst3DCartesianVectorHelpers
   tst3DCartesianVectorHelpers.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

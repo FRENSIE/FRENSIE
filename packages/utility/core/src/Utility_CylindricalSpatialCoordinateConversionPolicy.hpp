@@ -63,7 +63,7 @@ public:
   { /* ... */ }
 
   //! Get the local coordinate system type
-  SpatialCoordinateSystemType getLocalCoordinateSystemType() const override;
+  SpatialCoordinateSystemType getLocalSpatialCoordinateSystemType() const override;
 
   //! Check if the primary spatial coordinate is valid
   bool isPrimarySpatialCoordinateValid( const double coordinate ) const override;
@@ -197,7 +197,7 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertToCartesianPosi
 }
 
 // Get the local coordinate system type
-inline SpatialCoordinateSystemType CylindricalSpatialCoordinateConversionPolicy::getLocalCoordinateSystemType() const
+inline SpatialCoordinateSystemType CylindricalSpatialCoordinateConversionPolicy::getLocalSpatialCoordinateSystemType() const
 {
   return CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM;
 }

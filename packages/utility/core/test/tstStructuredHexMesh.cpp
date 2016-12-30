@@ -21,7 +21,7 @@
 
 // Frensie Includes
 #include "Utility_StructuredHexMesh.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables

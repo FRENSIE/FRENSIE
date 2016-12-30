@@ -63,7 +63,7 @@ public:
   { /* ... */ }
 
   //! Get the local coordinate system type
-  DirectionalCoordinateSystemType getLocalCoordinateSystemType() const override;
+  DirectionalCoordinateSystemType getLocalDirectionalCoordinateSystemType() const override;
 
   //! Check if the primary directional coordinate is valid
   bool isPrimaryDirectionalCoordinateValid( const double coordinate ) const override;
@@ -162,7 +162,7 @@ inline void CartesianDirectionalCoordinateConversionPolicy::convertToCartesianDi
 }
 
 // Get the local coordinate system type
-inline DirectionalCoordinateSystemType CartesianDirectionalCoordinateConversionPolicy::getLocalCoordinateSystemType() const
+inline DirectionalCoordinateSystemType CartesianDirectionalCoordinateConversionPolicy::getLocalDirectionalCoordinateSystemType() const
 {
   return CARTESIAN_DIRECTIONAL_COORDINATE_SYSTEM;
 }
