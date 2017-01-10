@@ -290,10 +290,7 @@ void ParticleSimulationManager<GeometryHandler,
   ray_start_point[0] = particle.getXPosition();
   ray_start_point[1] = particle.getYPosition();
   ray_start_point[2] = particle.getZPosition();
-  std::cout << std::endl;
-  std::cout << "History Number: " << particle.getHistoryNumber() << std::endl;
-  std::cout << "Start point: " << ray_start_point[0] << ", " << ray_start_point[1] << ", " << ray_start_point[2] << std::endl;
-  std::cout << std::endl;
+
   // Surface information
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
   Teuchos::Array<double> surface_normal( 3 );
@@ -344,10 +341,7 @@ void ParticleSimulationManager<GeometryHandler,
       {
   	    // Advance the particle to the cell boundary
   	    particle.advance( distance_to_surface_hit );
-  	    std::cout << std::endl;
-  	    std::cout << " Surface end" << std::endl;
-        std::cout << "Position: " << particle.getXPosition() << ", " << particle.getYPosition() << ", " << particle.getZPosition() << std::endl;
-        std::cout << std::endl;
+
         // Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
                                                        particle,
@@ -412,15 +406,12 @@ void ParticleSimulationManager<GeometryHandler,
       // A collision occurs in this cell
       else
       {
-  	// Advance the particle to the collision site
-  	double distance_to_collision =
-          remaining_subtrack_op/cell_total_macro_cross_section;
+  	    // Advance the particle to the collision site
+  	    double distance_to_collision =
+            remaining_subtrack_op/cell_total_macro_cross_section;
 
-  	particle.advance( distance_to_collision );
-  	std::cout << std::endl;
-  	std::cout << " Collision end" << std::endl;
-    std::cout << "Position: " << particle.getXPosition() << ", " << particle.getYPosition() << ", " << particle.getZPosition() << std::endl;
-    std::cout << std::endl;
+  	    particle.advance( distance_to_collision );
+
         GMI::advanceInternalRayBySubstep( distance_to_collision );
 
 	      // Update the observers: particle subtrack ending in cell event
