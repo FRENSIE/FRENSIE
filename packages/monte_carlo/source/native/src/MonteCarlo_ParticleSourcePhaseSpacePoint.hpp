@@ -28,10 +28,10 @@ public:
 
   //! Constructor
   ParticleSourcePhaseSpacePoint(
-            const std::shared_ptr<const SpatialCoordinateConversionPolicy>&
-            spatial_coord_conversion_policy,
-            const std::shared_ptr<const DirectionalCoordinateConversionPolicy>&
-            directional_coord_conversion_policy );
+   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+   spatial_coord_conversion_policy,
+   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+   directional_coord_conversion_policy );
 
   //! Destructor
   ~ParticleSourcePhaseSpacePoint()
@@ -72,9 +72,6 @@ public:
 
   //! Set the tertiary spatial coordinate weight
   void setTertiarySpatialCoordinateWeight( const double weight );
-
-  //! Get the tertiary spatial coordinate weight
-  double getTertiarySpatialCoordinateWeight() const;
 
   //! Convert spatial coordinates to cartesian coordinates
   void convertSpatialCoordinatesToCartesianCoordinates(
@@ -123,9 +120,9 @@ public:
 
   //! Convert directional coordinates to cartesian coordinates
   void convertDirectionalCoordinatesToCartesianCoordinates(
-                                       double& x_directional_coord,
-                                       double& y_directional_coord,
-                                       double& z_directional_coord ) const = 0;
+                                           double& x_directional_coord,
+                                           double& y_directional_coord,
+                                           double& z_directional_coord ) const;
 
   //! Return the weight of all directional coordinates
   double getWeightOfDirectionalCoordinates() const;
@@ -155,32 +152,16 @@ public:
   void setTimeCoordinateWeight( const double weight );
 
   //! Return the weight coordinate of the phase space point
-  void getWeightCoordinate() const;
+  double getWeightCoordinate() const;
 
   //! Set the weight coordinate of the phase space point
   void setWeightCoordinate( const double weight_coord );
 
   //! Return the weight of all coordinates
-  void getWeightOfCoordinates() const;
+  double getWeightOfCoordinates() const;
 
   //! Set a particle state
   void setParticleState( ParticleState& particle ) const;
-
-  //! Return the dimension value
-  template<ParticleSourceDimensionType dimension>
-  double getCoordinate() const;
-
-  //! Set the dimension value
-  template<ParticleSourceDimensionType dimension>
-  void setCoordinate( const double coord_value );
-
-  //! Get the dimension weight
-  template<ParticleSourceDimensionType dimension>
-  double getCoordinateWeight() const;
-
-  //! Set the dimension weight
-  template<ParticleSourceDimensionType dimension>
-  void setCoordinateWeight( const double coord_weight );
 
 private:
 
@@ -245,14 +226,6 @@ private:
 };
   
 } // end MonteCarlo namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_ParticleSourcePhaseSpacePoint_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_PARTICLE_SOURCE_PHASE_SPACE_POINT_HPP
 

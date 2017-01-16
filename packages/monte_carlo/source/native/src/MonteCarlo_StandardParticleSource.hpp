@@ -48,7 +48,7 @@ public:
   StandardParticleSource(
    const ModuleTraits::InternalSourceHandle id,
    const ParticleType particle_type,
-   const std::set<ParticleSourceDimensionType>& independent_dimensions
+   const std::set<ParticleSourceDimensionType>& independent_dimensions,
    const std::map<ParticleSourceDimensionType,std::shared_ptr<const ParticleSourceDimension> >& dimensions,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
@@ -109,8 +109,9 @@ private:
 
   // Generate probe particles
   void generateProbeParticles(
-                       const ParticleSourcePhaseSpacePoint& phase_space_sample,
-                       ParticleBank& bank ) const;
+                             ParticleSourcePhaseSpacePoint& phase_space_sample,
+                             ParticleBank& bank,
+                             const unsigned long long history ) const;
 
   // Reduce the local samples counters
   unsigned long long reduceLocalSamplesCounters() const;
@@ -142,7 +143,7 @@ private:
   Teuchos::ArrayRCP<const double> d_critical_line_energies;
 
   // The cell rejection functions
-  typedef boost::function<Geometry::PointLocation (const Geometry::Ray&)> CellRejectionFunction;
+  typedef std::function<Geometry::PointLocation (const Geometry::Ray&)> CellRejectionFunction;
   Teuchos::Array<CellRejectionFunction> d_cell_rejection_functions;
 
   // The number of trials
@@ -171,7 +172,9 @@ inline void StandardParticleSource::setRejectionCell(
                     Geometry::ModuleTraits::invalid_internal_cell_handle );
 
   CellRejectionFunction new_cell_rejection_function =
-    boost::bind<Geometry::PointLocation>( location_function, _1, cell );
+    std::bind<Geometry::PointLocation>( location_function,
+                                        std::placeholders::_1,
+                                        cell );
 
   d_cell_rejection_functions.push_back( new_cell_rejection_function );
 }

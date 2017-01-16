@@ -25,7 +25,7 @@ namespace MonteCarlo{
 StandardParticleSource::StandardParticleSource(
    const unsigned id,
    const ParticleType particle_type,
-   const std::set<ParticleSourceDimensionType>& independent_dimensions
+   const std::set<ParticleSourceDimensionType>& independent_dimensions,
    const std::map<ParticleSourceDimensionType,std::shared_ptr<const ParticleSourceDimension> >& dimensions,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
@@ -44,7 +44,7 @@ StandardParticleSource::StandardParticleSource(
 { 
   // Make sure the conversion policies are valid
   testPrecondition( spatial_coord_conversion_policy.get() );
-  testPrecondition( directional_coord_conversion_policyt.get() );
+  testPrecondition( directional_coord_conversion_policy.get() );
 }
 
 // Enable thread support
@@ -183,7 +183,9 @@ void StandardParticleSource::sampleParticleState(
   ParticleStateFactory::createState( particle, d_particle_type, history );
 
   // Initialize a source phase space point
-  ParticleSourcePhaseSpacePoint phase_space_sample;
+  ParticleSourcePhaseSpacePoint phase_space_sample(
+                                       d_spatial_coord_conversion_policy,
+                                       d_directional_coord_conversion_policy );
   
   // Sample the particle state
   while( true )
@@ -191,22 +193,31 @@ void StandardParticleSource::sampleParticleState(
     // Increment the trials counter
     ++d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
 
-    for( unsigned i = 0; i < d_independent_dimension.size(); ++i )
-    {
-      d_dimensions.find( d_independent_dimensions[i] )->second->sample(
-                                                          phase_space_sample );
-    }
-    
-    phase_space_sample.setParticleState(*d_spatial_coord_conversion_policy,
-                                        *d_directional_coord_conversion_policy,
-                                        *particle );
+    std::set<ParticleSourceDimensionType>::const_iterator
+      independent_dimension = d_independent_dimensions.begin();
 
+    // Sample independent dimensions values first. This will also trigger
+    // the sampling of the dimensions that are dependent on the
+    // sampled independent dimension.
+    while( independent_dimension != d_independent_dimensions.end() )
+    {
+      d_dimensions.find( *independent_dimension )->second->sample(
+                                                          phase_space_sample );
+
+      ++independent_dimension;
+    }
+
+    // Convert the sampled phase space point to a particle state. This will
+    // use the spatial and directional conversion policies
+    phase_space_sample.setParticleState( *particle );
+
+    // Check if the particle position satisfies the rejection cells.
     if( this->isSampledParticlePositionValid( *particle ) )
       break;
   }
 
   // Generate probe particles with the critical line energies
-  this->generateProbeParticles( phase_space_sample, bank );
+  this->generateProbeParticles( phase_space_sample, bank, history );
 
   // Increment the samples counter
   ++d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
@@ -300,8 +311,9 @@ bool StandardParticleSource::isSampledParticlePositionValid(
  * probe particles will not affect the sampling efficiency of the source.
  */
 void StandardParticleSource::generateProbeParticles(
-                       const ParticleSourcePhaseSpacePoint& phase_space_sample,
-                       ParticleBank& bank ) const
+                       ParticleSourcePhaseSpacePoint& phase_space_sample,
+                       ParticleBank& bank,
+                       const unsigned long long history ) const
 {
   // Get the energy dimension
   const ParticleSourceDimension& energy_dimension =
@@ -328,10 +340,7 @@ void StandardParticleSource::generateProbeParticles(
       energy_dimension.setDimensionValueAndSample(
                              phase_space_sample, d_critical_line_energies[i] );
 
-      phase_space_sample.setParticleState(
-                                        *d_spatial_coord_conversion_policy,
-                                        *d_directional_coord_conversion_policy,
-                                        *particle );
+      phase_space_sample.setParticleState( *particle );
 
       if( this->isSampledParticlePositionValid( *particle ) )
         break;

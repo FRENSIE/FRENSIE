@@ -44,8 +44,9 @@ void ParticleSourceDimension::sampleDependentDimensions(
 }
 
 // Set the dimension value and weight appropriately (then sample dep. dists)
-void setDimensionValueAndSample( ParticleSourcePhasePoint& phase_space_sample,
-                                 const double dimension_value ) const
+void ParticleSourceDimension::setDimensionValueAndSample(
+                             ParticleSourcePhaseSpacePoint& phase_space_sample,
+                             const double dimension_value ) const
 {
   // Set the dimension value
   this->setDimensionValue( phase_space_sample, dimension_value );

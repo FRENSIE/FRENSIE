@@ -6,8 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PARTICLE_SOURCE_DIMENSION_TYPE_HPP
-#define MONTE_CARLO_PARTICLE_SOURCE_DIMENSION_TYPE_HPP
+#ifndef MONTE_CARLO_PARTICLE_SOURCE_DIMENSION_CLASS_TYPE_HPP
+#define MONTE_CARLO_PARTICLE_SOURCE_DIMENSION_CLASS_TYPE_HPP
+
+// Std Lib Includes
+#include <iostream>
+#include <string>
 
 namespace MonteCarlo{
 
@@ -21,7 +25,7 @@ enum ParticleSourceDimensionClassType
   WEIGHT_PS_DIMENSION_CLASS
 };
 
-//! Convert the dimension type enum to a string
+//! Convert the dimension class type enum to a string
 std::string convertParticleSourceDimensionClassTypeEnumToString(
                       const ParticleSourceDimensionClassType dimension_class );
 
@@ -36,7 +40,7 @@ inline std::ostream& operator<<(
   
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PARTICLE_SOURCE_DIMENSION_TYPE_HPP
+#endif // end MONTE_CARLO_PARTICLE_SOURCE_DIMENSION_CLASS_TYPE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSourceDimensionClassType.hpp

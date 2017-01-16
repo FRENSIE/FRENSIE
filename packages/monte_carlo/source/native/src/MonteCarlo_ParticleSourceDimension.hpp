@@ -49,8 +49,9 @@ public:
   void sample( ParticleSourcePhaseSpacePoint& phase_space_sample ) const;
 
   //! Set the dimension value and weight appropriately (then sample dep. dists)
-  void setDimensionValueAndSample(ParticleSourcePhasePoint& phase_space_sample,
-                                  const double dimension_value ) const;
+  void setDimensionValueAndSample(
+                             ParticleSourcePhaseSpacePoint& phase_space_sample,
+                             const double dimension_value ) const;
 
   //! Add a dependent dimension
   void addDependentDimension(
@@ -64,8 +65,9 @@ protected:
                  ParticleSourcePhaseSpacePoint& phase_space_sample ) const = 0;
 
   //! Set the value for this dimension only
-  virtual void setDimensionValue( ParticleSourcePhasePoint& phase_space_sample,
-                                  const double dimension_value ) const = 0;
+  virtual void setDimensionValue(
+                             ParticleSourcePhaseSpacePoint& phase_space_sample,
+                             const double dimension_value ) const = 0;
 
   //! Sample from all of the dependent dimensions with the value from this dim.
   void sampleDependentDimensions(

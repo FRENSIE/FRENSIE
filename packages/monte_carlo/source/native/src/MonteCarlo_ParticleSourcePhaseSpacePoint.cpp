@@ -14,10 +14,10 @@ namespace MonteCarlo{
 
 // Constructor
 ParticleSourcePhaseSpacePoint::ParticleSourcePhaseSpacePoint(
-            const std::shared_ptr<const SpatialCoordinateConversionPolicy>&
-            spatial_coord_conversion_policy,
-            const std::shared_ptr<const DirectionalCoordinateConversionPolicy>&
-            directional_coord_conversion_policy )
+   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+   spatial_coord_conversion_policy,
+   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+   directional_coord_conversion_policy )
   : d_spatial_coord_conversion_policy( spatial_coord_conversion_policy ),
     d_directional_coord_conversion_policy( directional_coord_conversion_policy ),
     d_primary_spatial_coord( 0.0 ),
@@ -345,7 +345,7 @@ void ParticleSourcePhaseSpacePoint::setTimeCoordinateWeight( const double weight
 }
 
 // Return the weight coordinate of the phase space point
-void ParticleSourcePhaseSpacePoint::getWeightCoordinate() const
+double ParticleSourcePhaseSpacePoint::getWeightCoordinate() const
 {
   return d_weight_coord;
 }
@@ -360,7 +360,7 @@ void ParticleSourcePhaseSpacePoint::setWeightCoordinate( const double weight_coo
 }
 
 // Return the weight of all coordinates
-void ParticleSourcePhaseSpacePoint::getWeightOfCoordinates() const
+double ParticleSourcePhaseSpacePoint::getWeightOfCoordinates() const
 {
   return this->getWeightOfSpatialCoordinates()*
     this->getWeightOfDirectionalCoordinates()*

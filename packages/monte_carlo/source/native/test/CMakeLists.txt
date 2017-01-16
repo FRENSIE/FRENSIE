@@ -2,16 +2,17 @@ ADD_SUBDIRECTORY(test_files)
 
 ADD_EXECUTABLE(tstSourceHDF5FileHandler
   tstSourceHDF5FileHandler.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSourceHDF5FileHandler monte_carlo_source_native)
 ADD_TEST(SourceHDF5FileHandler_test tstSourceHDF5FileHandler)
 SET_PROPERTY(TEST SourceHDF5FileHandler_test PROPERTY LABELS monte_carlo_source_native)
 
-ADD_EXECUTABLE(tstParticleSourcePhaseSpacePoint
-  tstParticleSourcePhaseSpacePoint.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleSourcePhaseSpacePoint monte_carlo_source_native)
-ADD_TEST(ParticleSourcePhaseSpacePoint_test PROPERTY LABELS monte_carlo_source_native)
+ADD_EXECUTABLE(tstParticleSourceDimensionClassType
+  tstParticleSourceDimensionClassType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstParticleSourceDimensionClassType monte_carlo_source_native)
+ADD_TEST(ParticleSourceDimensionClassType_test tstParticleSourceDimensionClassType)
+SET_PROPERTY(TEST ParticleSourceDimensionClassType_test PROPERTY LABELS monte_carlo_source_native)
 
 # ADD_EXECUTABLE(tstStandardParticleSource
 #   tstStandardParticleSource.cpp)
