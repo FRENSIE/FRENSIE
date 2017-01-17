@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo.Collision.i
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The MonteCarlo.Collision sub-module swig interface file
 //!
 //---------------------------------------------------------------------------//
@@ -18,7 +18,7 @@ monte_carlo/collision subpackage.
         docstring = %monte_carlo_collision_docstring) Collision
 
 %{
-// FRENSIE Includes
+/*// FRENSIE Includes*/
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
 #include "Utility_ContractException.hpp"
@@ -28,12 +28,13 @@ monte_carlo/collision subpackage.
 %include <stl.i>
 %include <std_string.i>
 %include <std_except.i>
+%include <std_shared_ptr.i>
 
 // Include typemaps support
 %include <typemaps.i>
 
 // Standard exception handling
-%include <exception.i>
+%include "exception.i"
 
 // General exception handling
 %exception
@@ -186,6 +187,11 @@ MonteCarlo::calculateDopplerBroadenedEnergy;
 // Include the PhotonKinematicHelpers and AdjointPhotonKinematicsHelpers
 %include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 %include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Add Atomic Excitation Distribution support
+//---------------------------------------------------------------------------//
+%include "MonteCarlo_ElectronScatteringDistribution.i"
 
 //---------------------------------------------------------------------------//
 // Turn off the exception handling

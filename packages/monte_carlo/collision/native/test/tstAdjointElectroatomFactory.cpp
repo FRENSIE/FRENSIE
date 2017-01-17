@@ -111,7 +111,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
 
   energy = 20.0;
   cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 1.4710547898900E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4710547792854498e+05, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -151,7 +151,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   cross_section = atom->getReactionCrossSection(
       20.0,
       MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 6.52725961285674E+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.5272596128567449e+04, 1e-12 );
 
 
   // Test that there is no P3 subshell electroionization cross section
@@ -180,7 +180,24 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   cross_section = atom->getReactionCrossSection(
                     20.0,
                     MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.52732920066756, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.5273292006675694, 1e-12 );
+
+  // Test that the atmic excitaion cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+                    1e-5,
+                    MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
+  TEST_FLOATING_EQUALITY( cross_section, 6.1222996978575356e+07, 1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+                    1e-3,
+                    MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0537482649407225e+07, 1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+                    20.0,
+                    MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
+  TEST_FLOATING_EQUALITY( cross_section, 8.1829299853764838e+04, 1e-12 );
+
 
   // Test that the hybrid elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
@@ -196,7 +213,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   cross_section = atom->getReactionCrossSection(
                     20.0,
                     MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 2.0556774693960, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0546170120025198, 1e-12 );
 
 
   // Test that there is no analog elastic cross section

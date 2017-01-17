@@ -15,7 +15,7 @@ namespace MonteCarlo{
 
 // Create a atomic excitation distribution
 void AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
-			  const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+			  const Data::ElectronPhotonRelaxationDataContainer& data_container,
 			  std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
 			    energy_loss_distribution )
 {
@@ -24,7 +24,7 @@ void AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicEx
                                                     energy_loss_function;
 
   AtomicExcitationElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
-							  raw_electroatom_data,
+							  data_container,
 							  energy_loss_function );
 
   energy_loss_distribution.reset(
@@ -33,17 +33,17 @@ void AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicEx
 
 // Create the energy loss function
 void AtomicExcitationElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
-	   const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+	   const Data::ElectronPhotonRelaxationDataContainer& data_container,
            AtomicExcitationElectronScatteringDistribution::AtomicDistribution&
                                                         energy_loss_function )
 {
   // Extract the energy grid for atomic excitation energy loss
   Teuchos::Array<double> excitation_energy_grid(
-        raw_electroatom_data.getAtomicExcitationEnergyGrid() );
+        data_container.getAtomicExcitationEnergyGrid() );
 
   // Extract the energy loss for atomic excitation
   Teuchos::Array<double> energy_loss (
-        raw_electroatom_data.getAtomicExcitationEnergyLoss() );
+        data_container.getAtomicExcitationEnergyLoss() );
 
   energy_loss_function.reset(
     new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,

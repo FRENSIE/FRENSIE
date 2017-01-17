@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction,
 
   TEST_FLOATING_EQUALITY( cross_section, 2.80490481543817E+06*ratio, 1e-12 );
 
-  ratio = 8.28478449217045E-06;
+  ratio = 8.2702774720157165e-06;
   cross_section =
     cutoff_elastic_reaction->getCrossSection( 20.0 );
 
