@@ -29,9 +29,13 @@ ElectroatomFactory::ElectroatomFactory(
     const Teuchos::RCP<AtomicRelaxationModelFactory>&
         atomic_relaxation_model_factory,
     const unsigned hash_grid_bins,
+    const bool use_atomic_relaxation_data,
+    const bool use_elastic_data,
+    const bool use_electroionization_data,
+    const bool use_bremsstrahlung_data,
+    const bool use_atomic_excitation_data,
     const BremsstrahlungAngularDistributionType
         photon_distribution_function,
-    const bool use_atomic_relaxation_data,
     const double cutoff_angle_cosine,
     std::ostream* os_message )
   :d_os_message( os_message )
@@ -69,8 +73,12 @@ ElectroatomFactory::ElectroatomFactory(
                 atomic_weight,
                 atomic_relaxation_model_factory,
                 hash_grid_bins,
-                photon_distribution_function,
                 use_atomic_relaxation_data,
+                use_elastic_data,
+                use_electroionization_data,
+                use_bremsstrahlung_data,
+                use_atomic_excitation_data,
+                photon_distribution_function,
                 cutoff_angle_cosine );
     }
     else if( electroatom_file_type == Data::CrossSectionsXMLProperties::native_file )
@@ -81,8 +89,12 @@ ElectroatomFactory::ElectroatomFactory(
                 atomic_weight,
                 atomic_relaxation_model_factory,
                 hash_grid_bins,
-                photon_distribution_function,
                 use_atomic_relaxation_data,
+                use_elastic_data,
+                use_electroionization_data,
+                use_bremsstrahlung_data,
+                use_atomic_excitation_data,
+                photon_distribution_function,
                 cutoff_angle_cosine );
     }
     else
@@ -124,8 +136,12 @@ void ElectroatomFactory::createElectroatomFromACETable(
     const Teuchos::RCP<AtomicRelaxationModelFactory>&
         atomic_relaxation_model_factory,
     const unsigned hash_grid_bins,
-    const BremsstrahlungAngularDistributionType photon_distribution_function,
     const bool use_atomic_relaxation_data,
+    const bool use_elastic_data,
+    const bool use_electroionization_data,
+    const bool use_bremsstrahlung_data,
+    const bool use_atomic_excitation_data,
+    const BremsstrahlungAngularDistributionType photon_distribution_function,
     const double cutoff_angle_cosine )
 {
   *d_os_message << "Loading ACE electroatomic cross section table "
@@ -166,8 +182,12 @@ void ElectroatomFactory::createElectroatomFromACETable(
                                               hash_grid_bins,
                                               atomic_relaxation_model,
                                               electroatom,
-                                              photon_distribution_function,
                                               use_atomic_relaxation_data,
+                                              use_elastic_data,
+                                              use_electroionization_data,
+                                              use_bremsstrahlung_data,
+                                              use_atomic_excitation_data,
+                                              photon_distribution_function,
                                               cutoff_angle_cosine );
 
     // Cache the new electroatom in the table name map
@@ -192,9 +212,12 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
     const Teuchos::RCP<AtomicRelaxationModelFactory>&
         atomic_relaxation_model_factory,
     const unsigned hash_grid_bins,
-    const BremsstrahlungAngularDistributionType
-        photon_distribution_function,
     const bool use_atomic_relaxation_data,
+    const bool use_elastic_data,
+    const bool use_electroionization_data,
+    const bool use_bremsstrahlung_data,
+    const bool use_atomic_excitation_data,
+    const BremsstrahlungAngularDistributionType photon_distribution_function,
     const double cutoff_angle_cosine )
 {
   std::cout << "Loading native electroatomic cross section table "
@@ -226,8 +249,12 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
                                                  hash_grid_bins,
                                                  atomic_relaxation_model,
                                                  electroatom,
-                                                 photon_distribution_function,
                                                  use_atomic_relaxation_data,
+                                                 use_elastic_data,
+                                                 use_electroionization_data,
+                                                 use_bremsstrahlung_data,
+                                                 use_atomic_excitation_data,
+                                                 photon_distribution_function,
                                                  cutoff_angle_cosine );
 
     // Cache the new electroatom in the table name map

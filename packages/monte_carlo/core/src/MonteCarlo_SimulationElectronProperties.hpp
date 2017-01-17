@@ -45,8 +45,32 @@ public:
   //! Set atomic relaxation mode to off (on by default)
   static void setAtomicRelaxationModeOff();
 
+  //! Set elastic mode to off (on by default)
+  static void setElasticModeOff();
+
+  //! Set electroionization mode to off (on by default)
+  static void setElectroionizationModeOff();
+
+  //! Set bremsstrahlung mode to off (on by default)
+  static void setBremsstrahlungModeOff();
+
+  //! Set atomic excitation mode to off (on by default)
+  static void setAtomicExcitationModeOff();
+
   //! Return if atomic relaxation mode is on
   static bool isAtomicRelaxationModeOn();
+
+  //! Return if elastic mode is on
+  static bool isElasticModeOn();
+
+  //! Return if electroionization mode is on
+  static bool isElectroionizationModeOn();
+
+  //! Return if bremsstrahlung mode is on
+  static bool isBremsstrahlungModeOn();
+
+  //! Return if atomic excitation mode is on
+  static bool isAtomicExcitationModeOn();
 
   //! Set the bremsstrahlung photon angular distribution function (2BS by default)
   static void setBremsstrahlungAngularDistributionFunction(
@@ -85,8 +109,17 @@ private:
   // The atomic relaxation mode (true = on - default, false = off)
   static bool atomic_relaxation_mode_on;
 
-  // The detailed pair production mode (true = on, false = off - default)
-  static bool detailed_pair_production_mode_on;
+  // The elasic electron scattering mode (true = on - default, false = off)
+  static bool elastic_mode_on;
+
+  // The electroionization electron scattering mode (true = on - default, false = off)
+  static bool electroionization_mode_on;
+
+  // The bremsstrahlung electron scattering mode (true = on - default, false = off)
+  static bool bremsstrahlung_mode_on;
+
+  // The atomic excitation electron scattering mode (true = on - default, false = off)
+  static bool atomic_excitation_mode_on;
 
   // The bremsstrahlung photon angular distribution function (default is 2BS)
   static BremsstrahlungAngularDistributionType
@@ -128,6 +161,31 @@ inline bool SimulationElectronProperties::isAtomicRelaxationModeOn()
 {
   return SimulationElectronProperties::atomic_relaxation_mode_on;
 }
+
+// Return if elastic mode is on
+inline bool SimulationElectronProperties::isElasticModeOn()
+{
+  return SimulationElectronProperties::elastic_mode_on;
+}
+
+// Return if electroionization mode is on
+inline bool SimulationElectronProperties::isElectroionizationModeOn()
+{
+  return SimulationElectronProperties::electroionization_mode_on;
+}
+
+// Return if bremsstrahlung mode is on
+inline bool SimulationElectronProperties::isBremsstrahlungModeOn()
+{
+  return SimulationElectronProperties::bremsstrahlung_mode_on;
+}
+
+// Return if atomic excitation mode is on
+inline bool SimulationElectronProperties::isAtomicExcitationModeOn()
+{
+  return SimulationElectronProperties::atomic_excitation_mode_on;
+}
+
 
 // Return if detailed bremsstrahlung mode is on
 inline BremsstrahlungAngularDistributionType

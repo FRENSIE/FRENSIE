@@ -839,8 +839,12 @@ int main( int argc, char** argv )
                 atom_aliases,
                 atomic_relaxation_model_factory,
                 hash_grid_bins,
-                MonteCarlo::TWOBS_DISTRIBUTION,
                 true,
+                true,
+                true,
+                true,
+                true,
+                MonteCarlo::TWOBS_DISTRIBUTION,
                 upper_cutoff_angle_cosine );
 
     std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
