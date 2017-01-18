@@ -253,7 +253,10 @@ void ParticleSourcePhaseSpacePoint::setTertiaryDirectionalCoordinateWeight(
   d_tertiary_directional_coord_weight = weight;
 }
 
-// Convert directional coordinates to cartesian coordinates
+// Convert directional coordinates to Cartesian coordinates
+/*! \details After converting to the Cartesian coordinate system the 
+ * directional coordinates will be normalized.
+ */
 void ParticleSourcePhaseSpacePoint::convertDirectionalCoordinatesToCartesianCoordinates(
                                             double& x_directional_coord,
                                             double& y_directional_coord,

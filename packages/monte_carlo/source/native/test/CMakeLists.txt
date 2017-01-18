@@ -21,6 +21,13 @@ TARGET_LINK_LIBRARIES(tstParticleSourceDimensionType monte_carlo_source_native)
 ADD_TEST(ParticleSourceDimensionType_test tstParticleSourceDimensionType)
 SET_PROPERTY(TEST ParticleSourceDimensionType_test PROPERTY LABELS monte_carlo_source_native)
 
+ADD_EXECUTABLE(tstParticleSourcePhaseSpacePoint
+  tstParticleSourcePhaseSpacePoint.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstParticleSourcePhaseSpacePoint monte_carlo_source_native)
+ADD_TEST(ParticleSourcePhaseSpacePoint_test tstParticleSourcePhaseSpacePoint)
+SET_PROPERTY(TEST ParticleSourcePhaseSpacePoint_test PROPERTY LABELS monte_carlo_source_native)
+
 # ADD_EXECUTABLE(tstStandardParticleSource
 #   tstStandardParticleSource.cpp)
 # TARGET_LINK_LIBRARIES(tstStandardParticleSource monte_carlo_source_native)

@@ -73,7 +73,7 @@ public:
   //! Set the tertiary spatial coordinate weight
   void setTertiarySpatialCoordinateWeight( const double weight );
 
-  //! Convert spatial coordinates to cartesian coordinates
+  //! Convert spatial coordinates to Cartesian coordinates
   void convertSpatialCoordinatesToCartesianCoordinates(
                                                double& x_spatial_coord,
                                                double& y_spatial_coord,
@@ -82,47 +82,47 @@ public:
   //! Return the weight of all spatial coordinates
   double getWeightOfSpatialCoordinates() const;
 
-  //! Return the primary Directional coordinate of the phase space point
+  //! Return the primary directional coordinate of the phase space point
   double getPrimaryDirectionalCoordinate() const;
 
-  //! Set the primary Directional coordinate of the phase space point
+  //! Set the primary directional coordinate of the phase space point
   void setPrimaryDirectionalCoordinate( const double primary_directional_coord );
 
-  //! Return the primary Directional coordinate weight
+  //! Return the primary directional coordinate weight
   double getPrimaryDirectionalCoordinateWeight() const;
   
-  //! Set the primary Directional coordinate weight
+  //! Set the primary directional coordinate weight
   void setPrimaryDirectionalCoordinateWeight( const double weight );
 
-  //! Return the secondary Directional coordinate of the phase space point
+  //! Return the secondary directional coordinate of the phase space point
   double getSecondaryDirectionalCoordinate() const;
 
-  //! Set the secondary Directional coordinate of the phase space point
+  //! Set the secondary directional coordinate of the phase space point
   void setSecondaryDirectionalCoordinate( const double secondary_directional_coord );
 
-  //! Return the secondary Directional coordinate weight
+  //! Return the secondary directional coordinate weight
   double getSecondaryDirectionalCoordinateWeight() const;
 
-  //! Set the secondary Directional coordinate weight
+  //! Set the secondary directional coordinate weight
   void setSecondaryDirectionalCoordinateWeight( const double weight );
 
-  //! Return the tertiary Directional coordinate of the phase space point
+  //! Return the tertiary directional coordinate of the phase space point
   double getTertiaryDirectionalCoordinate() const;
 
-  //! Set the tertiary Directional coordinate of the phase space point
+  //! Set the tertiary directional coordinate of the phase space point
   void setTertiaryDirectionalCoordinate( const double tertiary_directional_coord );
 
-  //! Return the tertiary Directional coordinate weight
+  //! Return the tertiary directional coordinate weight
   double getTertiaryDirectionalCoordinateWeight() const;
 
-  //! Set the tertiary Directional coordinate weight
+  //! Set the tertiary directional coordinate weight
   void setTertiaryDirectionalCoordinateWeight( const double weight );
 
-  //! Convert directional coordinates to cartesian coordinates
+  //! Convert directional coordinates to Cartesian coordinates
   void convertDirectionalCoordinatesToCartesianCoordinates(
-                                           double& x_directional_coord,
-                                           double& y_directional_coord,
-                                           double& z_directional_coord ) const;
+                                           double& u_directional_coord,
+                                           double& v_directional_coord,
+                                           double& w_directional_coord ) const;
 
   //! Return the weight of all directional coordinates
   double getWeightOfDirectionalCoordinates() const;
