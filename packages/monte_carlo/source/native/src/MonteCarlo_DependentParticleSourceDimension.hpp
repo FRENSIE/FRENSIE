@@ -38,8 +38,14 @@ public:
   //! Return the dependent dimension type
   ParticleSourceDimensionType getDimensionType() const override;
 
+  //! Return the dimension class type
+  ParticleSourceDimensionClassType getDimensionClassType() const override;
+
   //! Return the independent dimension type
   ParticleSourceDimensionType getIndepDimensionType() const;
+
+  //! Return the independent dimension class type
+  ParticleSourceDimensionClassType getIndepDimensionClassType() const;
 
   //! Check if the dimension is independent
   bool isIndependent() const override;

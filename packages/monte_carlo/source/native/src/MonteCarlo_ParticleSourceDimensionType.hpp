@@ -14,7 +14,6 @@
 #include <iostream>
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleSourceDimensionClassType.hpp"
 #include "Utility_SpatialDimensionType.hpp"
 #include "Utility_DirectionalDimensionType.hpp"
 
@@ -43,10 +42,6 @@ ParticleSourceDimensionType convertParticleSourceDimensionNameToEnum(
 
 //! Convert the dimension type enum to a string
 std::string convertParticleSourceDimensionTypeEnumToString(
-                                 const ParticleSourceDimensionType dimension );
-
-//! Get the dimension class associated with a dimension
-ParticleSourceDimensionClassType getClassOfParticleSourceDimensionType(
                                  const ParticleSourceDimensionType dimension );
 
 //! Convert the spatial dimension to the equivalent particle source dimension

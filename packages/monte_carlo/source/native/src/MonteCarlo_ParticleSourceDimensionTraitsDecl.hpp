@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourcePhaseSpacePoint.hpp"
+#include "MonteCarlo_ParticleSourceDimensionClassType.hpp"
 #include "MonteCarlo_ParticleSourceDimensionType.hpp"
 
 /*! \defgroup particle_source_dimension_traits Particle Source Dimension Traits
@@ -49,6 +50,12 @@ struct ParticleSourceDimensionTraits
 {
   //! The type associated with this dimension
   typedef double DimensionType;
+
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  {
+    UndefinedParticleSourceDimensionTraits<double,dimension>::notDefined();
+  }
   
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )

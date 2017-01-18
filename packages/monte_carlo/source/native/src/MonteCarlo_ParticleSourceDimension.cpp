@@ -17,13 +17,6 @@ ParticleSourceDimension::ParticleSourceDimension()
   : d_dependent_dimensions()
 { /* ... */ }
 
-// Return the dimension class type
-ParticleSourceDimensionClassType
-ParticleSourceDimension::getDimensionClassType() const
-{
-  return getClassOfParticleSourceDimensionType( this->getDimensionType() );
-}
-
 // Sample from the dimension distribution (and all dependent dim. dists.)
 void ParticleSourceDimension::sample(
                       ParticleSourcePhaseSpacePoint& phase_space_sample ) const

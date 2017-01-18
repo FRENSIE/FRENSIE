@@ -22,6 +22,10 @@ struct ParticleSourceDimensionTraits<PRIMARY_SPATIAL_PS_DIMENSION>
   //! The type associated with this dimension
   typedef double DimensionType;
 
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  { return SPATIAL_PS_DIMENSION_CLASS; }
+
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )
   { return point.getPrimarySpatialCoordinate(); }
@@ -48,6 +52,10 @@ struct ParticleSourceDimensionTraits<SECONDARY_SPATIAL_PS_DIMENSION>
 {
   //! The type associated with this dimension
   typedef double DimensionType;
+
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  { return SPATIAL_PS_DIMENSION_CLASS; }
 
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )
@@ -76,6 +84,10 @@ struct ParticleSourceDimensionTraits<TERTIARY_SPATIAL_PS_DIMENSION>
   //! The type associated with this dimension
   typedef double DimensionType;
 
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  { return SPATIAL_PS_DIMENSION_CLASS; }
+
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )
   { return point.getTertiarySpatialCoordinate(); }
@@ -102,6 +114,10 @@ struct ParticleSourceDimensionTraits<PRIMARY_DIRECTIONAL_PS_DIMENSION>
 {
   //! The type associated with this dimension
   typedef double DimensionType;
+
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  { return DIRECTIONAL_PS_DIMENSION_CLASS; }
 
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )
@@ -130,6 +146,10 @@ struct ParticleSourceDimensionTraits<SECONDARY_DIRECTIONAL_PS_DIMENSION>
   //! The type associated with this dimension
   typedef double DimensionType;
 
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  { return DIRECTIONAL_PS_DIMENSION_CLASS; }
+
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )
   { return point.getSecondaryDirectionalCoordinate(); }
@@ -156,6 +176,10 @@ struct ParticleSourceDimensionTraits<TERTIARY_DIRECTIONAL_PS_DIMENSION>
 {
   //! The type associated with this dimension
   typedef double DimensionType;
+
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  { return DIRECTIONAL_PS_DIMENSION_CLASS; }
 
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )
@@ -184,6 +208,10 @@ struct ParticleSourceDimensionTraits<ENERGY_PS_DIMENSION>
   //! The type associated with this dimension
   typedef double DimensionType;
 
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  { return ENERGY_PS_DIMENSION_CLASS; }
+
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )
   { return point.getEnergyCoordinate(); }
@@ -210,6 +238,10 @@ struct ParticleSourceDimensionTraits<TIME_PS_DIMENSION>
 {
   //! The type associated with this dimension
   typedef double DimensionType;
+
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  { return TIME_PS_DIMENSION_CLASS; }
 
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )
@@ -240,6 +272,10 @@ struct ParticleSourceDimensionTraits<WEIGHT_PS_DIMENSION>
 {
   //! The type associated with this dimension
   typedef double DimensionType;
+
+  //! Get the dimension class type
+  static inline ParticleSourceDimensionClassType getClass()
+  { return WEIGHT_PS_DIMENSION_CLASS; }
 
   //! Get the coordinate value
   static inline double getCoordinate( const ParticleSourcePhaseSpacePoint& point )

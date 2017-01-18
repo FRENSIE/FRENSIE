@@ -37,7 +37,7 @@ public:
   virtual ParticleSourceDimensionType getDimensionType() const = 0;
 
   //! Return the dimension class type
-  ParticleSourceDimensionClassType getDimensionClassType() const;
+  virtual ParticleSourceDimensionClassType getDimensionClassType() const = 0;
 
   //! Check if the dimension is independent
   virtual bool isIndependent() const = 0;

@@ -99,37 +99,6 @@ std::string convertParticleSourceDimensionTypeEnumToString(
                      "encountered (" << (unsigned)dimension << ")!" );
   }
 }
-  
-// Get the dimension class associated with a dimension
-ParticleSourceDimensionClassType getClassOfParticleSourceDimensionType(
-                                  const ParticleSourceDimensionType dimension )
-{
-  switch( dimension )
-  {
-  case PRIMARY_SPATIAL_PS_DIMENSION:
-    return SPATIAL_PS_DIMENSION_CLASS;
-  case SECONDARY_SPATIAL_PS_DIMENSION:
-    return SPATIAL_PS_DIMENSION_CLASS;
-  case TERTIARY_SPATIAL_PS_DIMENSION:
-    return SPATIAL_PS_DIMENSION_CLASS;
-  case PRIMARY_DIRECTIONAL_PS_DIMENSION:
-    return DIRECTIONAL_PS_DIMENSION_CLASS;
-  case SECONDARY_DIRECTIONAL_PS_DIMENSION:
-    return DIRECTIONAL_PS_DIMENSION_CLASS;
-  case TERTIARY_DIRECTIONAL_PS_DIMENSION:
-    return DIRECTIONAL_PS_DIMENSION_CLASS;
-  case ENERGY_PS_DIMENSION:
-    return ENERGY_PS_DIMENSION_CLASS;
-  case TIME_PS_DIMENSION:
-    return TIME_PS_DIMENSION_CLASS;
-  case WEIGHT_PS_DIMENSION:
-    return WEIGHT_PS_DIMENSION_CLASS;
-  default:
-    THROW_EXCEPTION( std::logic_error,
-                     "Error: An unknown ParticleSourceDimensionType was "
-                     "encountered (" << (unsigned)dimension << ")!" );
-  }
-}
 
 // Convert the spatial dimension to the equivalent particle source dimension
 ParticleSourceDimensionType convertSpatialDimensionToParticleSourceDimensionType(

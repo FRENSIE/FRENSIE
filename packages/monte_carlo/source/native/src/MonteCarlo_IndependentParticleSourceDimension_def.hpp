@@ -13,6 +13,7 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleSourceDimensionTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -30,9 +31,16 @@ IndependentParticleSourceDimension<dimension>::IndependentParticleSourceDimensio
 
 // Return the dimension type
 template<ParticleSourceDimensionType dimension>
-ParticleSourceDimensionType IndependentParticleSourceDimension<dimension>::getDimensionType() const override
+ParticleSourceDimensionType IndependentParticleSourceDimension<dimension>::getDimensionType() const
 {
   return dimension;
+}
+
+// Return the dimension class type
+template<ParticleSourceDimensionType dimension>
+ParticleSourceDimensionClassType IndependentParticleSourceDimension<dimension>::getDimensionClassType() const
+{
+  return ParticleSourceDimensionTraits<dimension>::getClass();
 }
 
 // Check if the dimension is independent
