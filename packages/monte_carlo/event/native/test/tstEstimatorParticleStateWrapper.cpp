@@ -18,8 +18,7 @@
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_EventUnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.

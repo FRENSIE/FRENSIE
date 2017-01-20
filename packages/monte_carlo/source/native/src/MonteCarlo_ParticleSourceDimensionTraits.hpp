@@ -15,6 +15,7 @@
 namespace MonteCarlo{
 
 /*! Specialization of MonteCarlo::ParticleSourceDimensionTraits for MonteCarlo::PRIMARY_SPATIAL_PS_DIMENSION
+ * \ingroup particle_source_dimension_traits
  */
 template<>
 struct ParticleSourceDimensionTraits<PRIMARY_SPATIAL_PS_DIMENSION>
@@ -46,6 +47,7 @@ struct ParticleSourceDimensionTraits<PRIMARY_SPATIAL_PS_DIMENSION>
 };
 
 /*! Specialization of MonteCarlo::ParticleSourceDimensionTraits for MonteCarlo::SECONDARY_SPATIAL_PS_DIMENSION
+ * \ingroup particle_source_dimension_traits
  */
 template<>
 struct ParticleSourceDimensionTraits<SECONDARY_SPATIAL_PS_DIMENSION>
@@ -77,6 +79,7 @@ struct ParticleSourceDimensionTraits<SECONDARY_SPATIAL_PS_DIMENSION>
 };
 
 /*! Specialization of MonteCarlo::ParticleSourceDimensionTraits for MonteCarlo::TERTIARY_SPATIAL_PS_DIMENSION
+ * \ingroup particle_source_dimension_traits
  */
 template<>
 struct ParticleSourceDimensionTraits<TERTIARY_SPATIAL_PS_DIMENSION>
@@ -108,6 +111,7 @@ struct ParticleSourceDimensionTraits<TERTIARY_SPATIAL_PS_DIMENSION>
 };
 
 /*! Specialization of MonteCarlo::ParticleSourceDimensionTraits for MonteCarlo::PRIMARY_DIRECTIONAL_PS_DIMENSION
+ * \ingroup particle_source_dimension_traits
  */
 template<>
 struct ParticleSourceDimensionTraits<PRIMARY_DIRECTIONAL_PS_DIMENSION>
@@ -139,6 +143,7 @@ struct ParticleSourceDimensionTraits<PRIMARY_DIRECTIONAL_PS_DIMENSION>
 };
 
 /*! Specialization of MonteCarlo::ParticleSourceDimensionTraits for MonteCarlo::SECONDARY_DIRECTIONAL_PS_DIMENSION
+ * \ingroup particle_source_dimension_traits
  */
 template<>
 struct ParticleSourceDimensionTraits<SECONDARY_DIRECTIONAL_PS_DIMENSION>
@@ -170,6 +175,7 @@ struct ParticleSourceDimensionTraits<SECONDARY_DIRECTIONAL_PS_DIMENSION>
 };
 
 /*! Specialization of MonteCarlo::ParticleSourceDimensionTraits for MonteCarlo::TERTIARY_DIRECTIONAL_PS_DIMENSION
+ * \ingroup particle_source_dimension_traits
  */
 template<>
 struct ParticleSourceDimensionTraits<TERTIARY_DIRECTIONAL_PS_DIMENSION>
@@ -201,6 +207,7 @@ struct ParticleSourceDimensionTraits<TERTIARY_DIRECTIONAL_PS_DIMENSION>
 };
 
 /*! Specialization of MonteCarlo::ParticleSourceDimensionTraits for MonteCarlo::ENERGY_PS_DIMENSION
+ * \ingroup particle_source_dimension_traits
  */
 template<>
 struct ParticleSourceDimensionTraits<ENERGY_PS_DIMENSION>
@@ -232,6 +239,7 @@ struct ParticleSourceDimensionTraits<ENERGY_PS_DIMENSION>
 };
 
 /*! Specialization of MonteCarlo::ParticleSourceDimensionTraits for MonteCarlo::TIME_PS_DIMENSION
+ * \ingroup particle_source_dimension_traits
  */
 template<>
 struct ParticleSourceDimensionTraits<TIME_PS_DIMENSION>
@@ -265,7 +273,10 @@ struct ParticleSourceDimensionTraits<TIME_PS_DIMENSION>
 /*! Specialization of MonteCarlo::ParticleSourceDimensionTraits for MonteCarlo::WEIGHT_PS_DIMENSION
  *
  * Note that the weight dimension does not have an additional weight associated
- * with it.
+ * with it (the set/get coordinate weight methods call the same 
+ * MonteCarlo::ParticleSourcePhaseSpacePoint method as the set/get coordinate
+ * methods).
+ * \ingroup particle_source_dimension_traits
  */
 template<>
 struct ParticleSourceDimensionTraits<WEIGHT_PS_DIMENSION>
@@ -285,6 +296,15 @@ struct ParticleSourceDimensionTraits<WEIGHT_PS_DIMENSION>
   static inline double setCoordinate( ParticleSourcePhaseSpacePoint& point,
                                       const double coord_value )
   { point.setWeightCoordinate( coord_value ); }
+
+  //! Get the coordinate weight
+  static inline double getCoordinateWeight( const ParticleSourcePhaseSpacePoint& point )
+  { point.getWeightCoordinate(); }
+
+  //! Set the coordinate weight
+  static inline double setCoordinateWeight( ParticleSourcePhaseSpacePoint& point,
+                                            const double coord_weight )
+  { point.setWeightCoordinate( coord_weight ); }
 };
 
 } // end MonteCarlo namespace

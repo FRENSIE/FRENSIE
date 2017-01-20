@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   tstParticleModeType.cpp
-//! \author Luke Kersting
+//! \author Luke Kersting, Alex Robinson
 //! \brief  Particle mode type unit tests.
 //!
 //---------------------------------------------------------------------------//
@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
 #include "MonteCarlo_ParticleModeType.hpp"
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//

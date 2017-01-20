@@ -21,7 +21,7 @@
 #include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_EventUnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.

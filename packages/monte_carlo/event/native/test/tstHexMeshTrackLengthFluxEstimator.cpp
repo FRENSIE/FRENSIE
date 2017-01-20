@@ -24,7 +24,7 @@
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_EventUnitTestHarnessExtensions.hpp"
 #include "Utility_StructuredHexMesh.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"

@@ -17,7 +17,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_EventUnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_Estimator.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_EnergySpaceResponseFunction.hpp"

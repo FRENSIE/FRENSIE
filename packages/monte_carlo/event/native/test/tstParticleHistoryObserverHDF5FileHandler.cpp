@@ -15,7 +15,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_EventUnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_ParticleHistoryObserverHDF5FileHandler.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_HDF5FileHandler.hpp"

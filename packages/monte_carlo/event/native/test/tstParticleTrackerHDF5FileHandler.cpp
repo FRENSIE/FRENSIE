@@ -16,7 +16,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_EventUnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
