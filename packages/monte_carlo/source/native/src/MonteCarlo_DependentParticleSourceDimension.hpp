@@ -32,7 +32,7 @@ public:
             dimension_distribution );
 
   //! Destructor
-  ~DependentParticleSourceDimension()
+  virtual ~DependentParticleSourceDimension()
   { /* ... */ }
 
   //! Return the dependent dimension type
@@ -53,29 +53,24 @@ public:
   //! Check if the dimension is dependent on the dimension of interest
   bool isDependentOnDimension( const ParticleSourceDimensionType dimension ) const override;
 
-  //! Set the dimension importance distribution
-  void setImportanceDistribution(
-            const std::shared_ptr<const Utility::FullyTabularTwoDDistribution>&
-            importance_distribution ); 
-
 protected:
 
   //! Sample a value for this dimension only
-  void sampleDimension( ParticleSourcePhaseSpacePoint& phase_space_sample ) const override;
+  virtual void sampleDimension( ParticleSourcePhaseSpacePoint& phase_space_sample ) const override;
 
   //! Set the value for this dimension only
   void setDimensionValue( ParticleSourcePhasePoint& phase_space_sample,
                           const double dimension_value ) const override;
+
+  //! Evaluate the conditional pdf of the dimension distribution
+  double evaluateDimensionConditionalPDF( const double indep_dimension_value,
+                                          const double dimension_value ) const;
 
 private:
 
   // The dimension distribution
   std::shared_ptr<const Utility::FullyTabularTwoDDistribution>
   d_dimension_distribution;
-
-  // The dimension importance distribution
-  std::shared_ptr<const Utility::FullyTabularTwoDDistribution>
-  d_dimension_importance_distribution;
 };
   
 } // end MonteCarlo namespace

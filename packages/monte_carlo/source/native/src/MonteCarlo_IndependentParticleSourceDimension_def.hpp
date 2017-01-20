@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_INDEPENDENT_PARTICLE_SOURCE_DIMENSION_DEF_HPP
 #define MONTE_CARLO_INDEPENDENT_PARTICLE_SOURCE_DIMENSION_DEF_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceDimensionTraits.hpp"
 #include "Utility_ContractException.hpp"
@@ -57,71 +54,42 @@ bool IndependentParticleSourceDimension<dimension>::isDependentOnDimension( cons
   return false;
 }
 
-// Set the dimension importance distribution
-template<ParticleSourceDimensionType dimension>
-void IndependentParticleSourceDimension<dimension>::setImportanceDistribution(
-                        const std::shared_ptr<const Utility::OneDDistribution>&
-                        importance_distribution )
-{
-  // Make sure that the importance distribution is valid
-  testPrecondition( importance_distribution.get() );
-  
-  d_dimension_importance_distribution = importance_distribution;
-}
-
 // Sample a value for this dimension only
 /*! \details A phase space dimension value will be sampled from the
- * distribution that was specified. If an importance function
- * has been set, the particle energy will instead be sampled from the
- * importance function with the weight of the particle multiplied by the
- * PDF value of the original function divided by the importance PDF value
- * corresponding to the sampled point.
+ * distribution that was specified. The weight of the dimension will be 1.0.
  */
 template<ParticleSourceDimensionType dimension>
-void IndependentParticleSourceDimension<dimension>::sampleDimension( ParticleSourcePhaseSpacePoint& phase_space_sample ) const override
+void IndependentParticleSourceDimension<dimension>::sampleDimension( ParticleSourcePhaseSpacePoint& phase_space_sample ) const
 {
-  double sample;
-  double weight = 1.0;
+  const double sample = d_dimension_distribution->sample();
   
-  if( !d_dimension_importance_distribution.get() )
-    sample = d_dimension_distribution->sample();
-  // Use importance sampling
-  else
-  {
-    sample = d_dimension_importance_distribution->sample();
-
-    double weight_numerator =
-      d_dimension_distribution->evaluatePDF( sample );
-
-    double weight_denominator =
-      d_dimension_importance_distribution->evaluatePDF( sample );
-
-    // If both evaluate to 0, a weight of 1 is desired but nan will result
-    if( weight_numerator > 0.0 || weight_denominator > 0.0 )
-      weight = weight_numerator/weight_denominator;
-  }
-
-  // Make sure that the weight is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( weight ) );
-  testPostcondition( weight > 0.0 );
-
-  phase_space_sample.setCoordinate<dimension>( sample );
-  phase_space_sample.setCoordinateWeight<dimension>( weight );
+  setCoordinate<dimension>( phase_space_sample, sample );
+  setCoordinateWeight<dimension>( phase_space_sample, 1.0 );
 }
 
 // Set the value for this dimension only
+/*! \details The weight associated with the dimension will be the value
+ * of the PDF at the specified dimension value.
+ */
 template<ParticleSourceDimensionType dimension>
 void IndependentParticleSourceDimension<dimension>::setDimensionValue(
                                   ParticleSourcePhasePoint& phase_space_sample,
                                   const double dimension_value ) const override
 {
-  double weight = d_dimension_distribution->evaluatePDF( dimension_value );
+  double weight = this->evaluateDimensionPDF( dimension_value );
 
   // Make sure that the weight is valid
   testPostcondition( weight > 0.0 );
 
-  phase_space_sample.setCoordinate<dimension>( dimension_value );
-  phase_space_sample.setCoordinateWeight<dimension>( weight );
+  setCoordinate<dimension>( phase_space_sample, dimension_value );
+  setCoordinateWeight<dimension>( phase_space_sample, weight );
+}
+
+// Evaluate the pdf of the dimension distribution
+template<ParticleSourceDimensionType dimension>
+inline double IndependentParticleSourceDimension<dimension>::evaluateDimensionPDF( const double dimension_value ) const
+{
+  return d_dimension_distribution->evaluatePDF( dimension_value );
 }
   
 } // end MonteCarlo namespace

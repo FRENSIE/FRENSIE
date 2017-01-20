@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_DEPENDENT_PARTICLE_SOURCE_DIMENSION_DEF_HPP
 #define MONTE_CARLO_DEPENDENT_PARTICLE_SOURCE_DIMENSION_DEF_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceDimensionTraits.hpp"
 #include "Utility_ContractException.hpp"
@@ -33,7 +30,7 @@ DependentParticleSourceDimension<indep_dimension,dep_dimension>::DependentPartic
 // Return the dependent dimension type
 template<ParticleSourceDimensionType indep_dimension,
          ParticleSourceDimensionType dep_dimension>
-ParticleSourceDimensionType DependentParticleSourceDimension<indep_dimension,dep_dimension>::getDimensionType() const override
+ParticleSourceDimensionType DependentParticleSourceDimension<indep_dimension,dep_dimension>::getDimensionType() const
 {
   return dep_dimension;
 }
@@ -41,7 +38,7 @@ ParticleSourceDimensionType DependentParticleSourceDimension<indep_dimension,dep
 // Return the dimension class type
 template<ParticleSourceDimensionType indep_dimension,
          ParticleSourceDimensionType dep_dimension>
-ParticleSourceDimensionClassType DependentParticleSourceDimension<indep_dimension,dep_dimension>::getDimensionClassType() const override
+ParticleSourceDimensionClassType DependentParticleSourceDimension<indep_dimension,dep_dimension>::getDimensionClassType() const
 {
   return ParticleSourceDimensionTraits<dep_dimension>::getClass();
 }
@@ -79,19 +76,6 @@ bool DependentParticleSourceDimension<indep_dimension,dep_dimension>::isDependen
   return dimension == indep_dimension;
 }
 
-// Set the dimension importance distribution
-template<ParticleSourceDimensionType indep_dimension,
-         ParticleSourceDimensionType dep_dimension>
-void DependentParticleSourceDimension<indep_dimension,dep_dimension>::setImportanceDistribution(
-            const std::shared_ptr<const Utility::FullyTabularTwoDDistribution>&
-            importance_distribution )
-{
-  // Make sure that the importance distribution is valid
-  testPrecondition( importance_distribution.get() );
-
-  d_dimension_importance_distribution = importance_distribution;
-}
-
 // Sample a value for this dimension only
 /*! \details A phase space dimension value will be sampled from the
  * distribution that was specified. If an importance function
@@ -103,44 +87,14 @@ void DependentParticleSourceDimension<indep_dimension,dep_dimension>::setImporta
 template<ParticleSourceDimensionType indep_dimension,
          ParticleSourceDimensionType dep_dimension>
 void DependentParticleSourceDimension<indep_dimension,dep_dimension>::sampleDimension(
-             ParticleSourcePhaseSpacePoint& phase_space_sample ) const override
+                      ParticleSourcePhaseSpacePoint& phase_space_sample ) const
 {
-  double sample;
-  double weight = 1.0;
+  const double sample =
+    d_dimension_distribution->sampleSecondaryConditionalExact(
+                        getCoordinate<indep_dimension>( phase_space_sample ) );
 
-  double indep_dimension_value =
-    phase_space_sample.getCoordinate<indep_dimension>();
-
-  if( !d_dimension_importance_distribution.get() )
-  {
-    sample = d_dimension_distribution->sampleSecondaryConditionalExact(
-                                                       indep_dimension_value );
-  }
-  // Use importance sampling
-  else
-  {
-    sample = d_dimension_importance_distribution->sampleSecondaryConditionalExact(
-                                                       indep_dimension_value );
-
-    double weight_numerator =
-      d_dimension_distribution->evaluateSecondaryConditionalPDF(
-                                               indep_dimension_value, sample );
-
-    double weight_denominator =
-      d_dimension_importance_distribution->evaluateSecondaryConditionalPDF(
-                                               indep_dimension_value, sample );
-
-    // If both evaluate to 0, a weight of 1 is desired but nan will result
-    if( weight_numerator > 0.0 || weight_denominator > 0.0 )
-      weight = weight_numerator/weight_denominator;
-  }
-
-  // Make sure that the weight is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( weight ) );
-  testPostcondition( weight > 0.0 );
-
-  phase_space_sample.setCoordinate<dep_dimension>( sample );
-  phase_space_sample.setCoordinateWeight<dep_dimension>( weight );
+  setCoordinate<dep_dimension>( sample );
+  setCoordinateWeight<dep_dimension>( 1.0 );
 }
 
 // Set the value for this dimension only
@@ -150,17 +104,26 @@ void DependentParticleSourceDimension<indep_dimension,dep_dimension>::setDimensi
                                   ParticleSourcePhasePoint& phase_space_sample,
                                   const double dimension_value ) const override
 {
-  double indep_dimension_value =
-    phase_space_sample.getCoordinate<indep_dimension>();
-  
-  double weight = d_dimension_distribution->evaluateSecondaryConditionalPDF(
-                                      indep_dimension_value, dimension_value );
+  const double weight = this->evaluateDimensionConditionalPDF(
+                          getCoordinate<indep_dimension>( phase_space_sample ),
+                          dimension_value );
 
   // Make sure that the weight is valid
   testPostcondition( weight > 0.0 );
 
-  phase_space_sample.setCoordinate<dep_dimension>( dimension_value );
-  phase_space_sample.setCoordinateWeight<dep_dimension>( weight );
+  setCoordinate<dep_dimension>( phase_space_sample, dimension_value );
+  setCoordinateWeight<dep_dimension>( phase_space_sample, weight );
+}
+
+// Evaluate the conditional pdf of the dimension distribution
+template<ParticleSourceDimensionType indep_dimension,
+         ParticleSourceDimensionType dep_dimension>
+inline double DependentParticleSourceDimension<indep_dimension,dep_dimension>::evaluateDimensionConditionalPDF(
+                                           const double indep_dimension_value,
+                                           const double dimension_value ) const
+{
+  return d_dimension_distribution->evaluateSecondaryConditionalPDF(
+                                      indep_dimension_value, dimension_value );
 }
   
 } // end MonteCarlo namespace
