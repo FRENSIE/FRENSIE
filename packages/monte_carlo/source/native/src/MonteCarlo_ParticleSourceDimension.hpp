@@ -45,11 +45,19 @@ public:
   //! Check if the dimension is dependent on the dimension of interest
   virtual bool isDependentOnDimension( const ParticleSourceDimensionType dimension ) const = 0;
 
-  //! Sample from the dimension distribution (and all dependent dim. dists.)
-  void sample( ParticleSourcePhaseSpacePoint& phase_space_sample ) const;
+  //! Check if the dimension distribution is uniform
+  virtual bool isDistributionUniform() const = 0;
 
-  //! Set the dimension value and weight appropriately (then sample dep. dists)
-  void setDimensionValueAndSample(
+  //! Evaluate the dimension distribution at the desired phase space point
+  double evaluateDistribution(
+                const ParticleSourcePhaseSpacePoint& phase_space_point ) const;
+
+  //! Sample from the dimension distribution 
+  void sampleFromDistribution(
+                     ParticleSourcePhaseSpacePoint& phase_space_sample ) const;
+
+  //! Set the dimension value and weight appropriately
+  void setDimensionValueAndCalculateWeight(
                              ParticleSourcePhaseSpacePoint& phase_space_sample,
                              const double dimension_value ) const;
 
@@ -60,20 +68,28 @@ public:
 
 protected:
 
-  //! Sample a value for this dimension only
-  virtual void sampleDimension(
+  //! Evaluate the dimension distribution at the desired phase space point
+  virtual double evaluateDistributionWithoutCascade(
+            const ParticleSourcePhaseSpacePoint& phase_space_point ) const = 0;
+
+  //! Sample a value for this dimension distribution only
+  virtual void sampleFromDistributionWithoutCascade(
                  ParticleSourcePhaseSpacePoint& phase_space_sample ) const = 0;
 
-  //! Set the value for this dimension only
-  virtual void setDimensionValue(
+  //! Set the value for this dimension only and weight appropriately
+  virtual void setDimensionValueAndCalculateWeightWithoutCascade(
                              ParticleSourcePhaseSpacePoint& phase_space_sample,
                              const double dimension_value ) const = 0;
 
-  //! Sample from all of the dependent dimensions with the value from this dim.
-  void sampleDependentDimensions(
-                     ParticleSourcePhaseSpacePoint& phase_space_sample ) const;
-
 private:
+
+  // Evaluate the dependent dimension dists. at the desired phase space point
+  double evaluateDependentDistributions(
+                const ParticleSourcePhaseSpacePoint& phase_space_point ) const;
+
+  // Sample from all of the dependent dimensions with the value from this dim.
+  void sampleFromDependentDimensionDistributions(
+                     ParticleSourcePhaseSpacePoint& phase_space_sample ) const;
 
   // The dependent dimensions
   std::vector<std::shared_ptr<const ParticleSourceDimension> >
