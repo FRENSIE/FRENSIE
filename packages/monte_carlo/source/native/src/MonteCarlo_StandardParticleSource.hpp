@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <memory>
 #include <functional>
-#include <vector>
-#include <map>
-#include <set>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -23,12 +20,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
-#include "MonteCarlo_ParticleSourceDimension.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "MonteCarlo_ParticleDistribution.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_SpatialCoordinateConversionPolicy.hpp"
-#include "Utility_DirectionalCoordinateConversionPolicy.hpp"
 
 namespace MonteCarlo{
 
@@ -46,14 +40,8 @@ public:
 
   //! Constructor
   StandardParticleSource(
-   const ModuleTraits::InternalSourceHandle id,
-   const ParticleType particle_type,
-   const std::set<ParticleSourceDimensionType>& independent_dimensions,
-   const std::map<ParticleSourceDimensionType,std::shared_ptr<const ParticleSourceDimension> >& dimensions,
-   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
-   spatial_coord_conversion_policy,
-   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
-   directional_coord_conversion_policy );
+    const ModuleTraits::InternalSourceHandle id,
+    const std::shared_ptr<const ParticleDistribution>& particle_distribution );
 
   //! Destructor
   ~StandardParticleSource()
@@ -119,32 +107,16 @@ private:
   // Reduce the local trials counters
   unsigned long long reduceLocalTrialsCounters() const;
 
-  // The source id
-  unsigned d_id;
-
-  // The type of particle emitted
-  ParticleType d_particle_type;
-
-  // The independent particle source dimensions
-  std::set<ParticleSourceDimensionType> d_independent_dimensions;
-
-  // The particle source dimensions
-  std::map<ParticleSourceDimensionType,std::shared_ptr<const ParticleSourceDimension> > d_dimensions;
-
-  // The spatial coordinate conversion policy
-  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
-  d_spatial_coord_conversion_policy;
-
-  // The directional coordinate conversion policy
-  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
-  d_directional_coord_conversion_policy;
-
   // The critical line energies
   Teuchos::ArrayRCP<const double> d_critical_line_energies;
 
   // The cell rejection functions
   typedef std::function<Geometry::PointLocation (const Geometry::Ray&)> CellRejectionFunction;
   Teuchos::Array<CellRejectionFunction> d_cell_rejection_functions;
+
+  //! The dimension trial counter map
+  typedef ParticleDistribution::DimensionTrialCounterMap DimensionTrialCounterMap;
+  DimensionTrialCounterMap d_dimension_trial_counters;
 
   // The number of trials
   Teuchos::Array<unsigned long long> d_number_of_trials;

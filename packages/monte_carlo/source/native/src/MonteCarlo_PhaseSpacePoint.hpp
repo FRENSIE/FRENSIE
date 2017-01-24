@@ -1,19 +1,19 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleSourcePhaseSpacePoint.hpp
+//! \file   MonteCarlo_PhaseSpacePoint.hpp
 //! \author Alex Robinson
-//! \brief  Particle source phase space point class declaration
+//! \brief  Phase space point class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PARTICLE_SOURCE_PHASE_SPACE_POINT_HPP
-#define MONTE_CARLO_PARTICLE_SOURCE_PHASE_SPACE_POINT_HPP
+#ifndef MONTE_CARLO_PHASE_SPACE_POINT_HPP
+#define MONTE_CARLO_PHASE_SPACE_POINT_HPP
 
 // Std Lib Includes
 #include <memory>
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleSourceDimensionType.hpp"
+#include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "Utility_SpatialCoordinateConversionPolicy.hpp"
 #include "Utility_DirectionalCoordinateConversionPolicy.hpp"
@@ -21,20 +21,28 @@
 namespace MonteCarlo{
 
 //! The particle source phase space point class
-class ParticleSourcePhaseSpacePoint
+class PhaseSpacePoint
 {
 
 public:
 
-  //! Constructor
-  ParticleSourcePhaseSpacePoint(
+  //! Constructor (default initialization)
+  PhaseSpacePoint(
+   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+   spatial_coord_conversion_policy,
+   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+   directional_coord_conversion_policy );
+
+  //! Constructor (particle state initialization)
+  PhaseSpacePoint(
+   const ParticleState& particle,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
    directional_coord_conversion_policy );
 
   //! Destructor
-  ~ParticleSourcePhaseSpacePoint()
+  ~PhaseSpacePoint()
   { /* ... */ }
 
   //! Return the primary spatial coordinate of the phase space point
@@ -227,8 +235,8 @@ private:
   
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PARTICLE_SOURCE_PHASE_SPACE_POINT_HPP
+#endif // end MONTE_CARLO_PHASE_SPACE_POINT_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleSourcePhaseSpacePoint.hpp
+// end MonteCarlo_PhaseSpacePoint.hpp
 //---------------------------------------------------------------------------//

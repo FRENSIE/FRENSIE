@@ -18,6 +18,8 @@
 
 // MonteCarlo Includes
 #include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_PhaseSpaceDimension.hpp"
+#include "Geometry_ModuleTraits.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 
 namespace MonteCarlo{
@@ -29,7 +31,7 @@ class ParticleSource
 public:
 
   //! Constructor
-  ParticleSource()
+  ParticleSource( const ModuleTraits::InternalSourceHandle id )
   { /* ... */ }
 
   //! Destructor
@@ -61,8 +63,16 @@ public:
   //! Return the number of sampling trials
   virtual unsigned long long getNumberOfTrials() const = 0;
 
+  //! Return the number of sampling trials in the phase space dimension
+  virtual unsigned long long getNumberOfDimensionTrials(
+                               const PhaseSpaceDimension dimension ) const = 0;
+
   //! Return the number of samples
   virtual unsigned long long getNumberOfSamples() const = 0;
+
+  //! Return the number of samples in the phase space dimension
+  virtual unsigned long long getNumberOfDimensionSamples(
+                               const PhaseSpaceDimension dimension ) const = 0;
 
   //! Return the sampling efficiency from the source
   virtual double getSamplingEfficiency() const = 0;
@@ -75,6 +85,18 @@ protected:
                              const unsigned long long samples,
                              const double efficiency,
                              std::ostream& os ) const;
+
+  //! Print a standard summary of the dimension data
+  void printStandardDimensionSummary( const PhaseSpaceDimension dimension,
+                                      const unsigned long long trials,
+                                      const unsigned long long samples,
+                                      const double efficiency,
+                                      std::ostream& os ) const;
+
+private:
+
+  // The source id
+  ModuleTraits::InternalSourceHandle d_id;
 };
 
 // Print a standard summary of the source data
@@ -88,7 +110,21 @@ inline void ParticleSource::printStandardSummary(
   os << source_name << " Sampling Summary..." << std::endl
      << "\tNumber of (position) trials: " << trials << std::endl
      << "\tNumber of samples: " << samples << std::endl
-     << "\tSampling Efficiency: " << efficiency << std::endl;
+     << "\tSampling efficiency: " << efficiency << std::endl;
+}
+
+// Print a standard summary of the dimension data
+inline void ParticleSource::printStandardDimensionSummary(
+                                           const PhaseSpaceDimension dimension,
+                                           const unsigned long long trials,
+                                           const unsigned long long samples,
+                                           const double efficiency,
+                                           std::ostream& os ) const
+{
+  os << dimension << " Sampling Summary..." << std::endl
+     << "\tNumber of trials: " << trials << std::endl
+     << "\tNumber of samples: " << samples << std::endl
+     << "\tSampling efficiency: " << efficiency << std::endl;
 }
 
 } // end MonteCarlo namespace
