@@ -35,6 +35,9 @@ private:
   // Typedef for scalar traits
   typedef Teuchos::ScalarTraits<double> ST;
 
+  // Typedef for the dimension trial counter map
+  typedef ParticleDistribution::DimensionTrialCounterMap
+  DimensionTrialCounterMap;
 
 public:
 
@@ -79,16 +82,25 @@ public:
 			    const unsigned long long history );
 
   //! Return the number of sampling trials
-  unsigned long long getNumberOfTrials() const;
+  TrialCounter getNumberOfTrials() const;
 
-  //! Return the number of samples
-  unsigned long long getNumberOfSamples() const;
+  //! Return the number of trials in the phase space dimension
+  DimensionTrialCounter getNumberOfDimensionTrials(
+                                   const PhaseSpaceDimension dimension ) const;
 
-  //! Get the sampling efficiency from the source distribution
+  //! Return the number of samples that have been generated
+  TrialCounter getNumberOfSamples() const;
+
+  //! Return the number of samples in the phase space dimension
+  DimensionTrialCounter getNumberOfDimensionSamples(
+                                   const PhaseSpaceDimension dimension ) const;
+
+  //! Return the sampling efficiency from the source
   double getSamplingEfficiency() const;
 
-  //! Get the source id
-  unsigned getId() const;
+  //! Return the sampling efficiency in the phase space dimension
+  double getDimensionSamplingEfficiency(
+                                   const PhaseSpaceDimension dimension ) const;
 
 private:
 
@@ -102,27 +114,59 @@ private:
                              const unsigned long long history ) const;
 
   // Reduce the local samples counters
-  unsigned long long reduceLocalSamplesCounters() const;
+  TrialCounter reduceLocalSampleCounters() const;
 
   // Reduce the local trials counters
-  unsigned long long reduceLocalTrialsCounters() const;
+  TrialCounter reduceLocalTrialCounters() const;
+
+  // Reduce all of the local dimension samples counters
+  void reduceAllLocalDimensionSampleCounters(
+                   DimensionTrialCounterMap& dimension_sample_counters ) const;
+
+  // Reduce all of the local dimension trials counters
+  void reduceAllLocalDimensionTrialCounters(
+                    DimensionTrialCounterMap& dimension_trial_counters ) const;
+
+  // Reduce the dimension counters
+  static void reduceAllDimensionCounters(
+      DimensionTrailCounterMap& dimension_counters,
+      const Teuchos::Array<DimensionTrialCounterMap>& all_dimension_counters );
+
+  // Reduce the local dimension sample counters
+  DimensionTrailCounter reduceLocalDimensionSampleCounters(
+                                   const PhaseSpaceDimension dimension ) const;
+
+  // Reduce the local dimension trial counters
+  DimensionTrialCounter reduceLocalDimensionTrialCounters(
+                                   const PhaseSpaceDimension dimension ) const;
+
+  // Reduce the dimension counter
+  static DimensionTrialCounter reduceDimensionCounters(
+          const PhaseSpaceDimension dimension,
+          const Teuchos::Array<DimensionTrialCounterMap>& dimension_counters );
+  
+  // The particle distribution
+  std::shared_ptr<const ParticleDistribution> d_particle_distribution;
 
   // The critical line energies
   Teuchos::ArrayRCP<const double> d_critical_line_energies;
 
   // The cell rejection functions
-  typedef std::function<Geometry::PointLocation (const Geometry::Ray&)> CellRejectionFunction;
+  typedef std::function<Geometry::PointLocation (const Geometry::Ray&)>
+  CellRejectionFunction;
   Teuchos::Array<CellRejectionFunction> d_cell_rejection_functions;
 
-  //! The dimension trial counter map
-  typedef ParticleDistribution::DimensionTrialCounterMap DimensionTrialCounterMap;
-  DimensionTrialCounterMap d_dimension_trial_counters;
-
   // The number of trials
-  Teuchos::Array<unsigned long long> d_number_of_trials;
+  Teuchos::Array<TrialCounter> d_number_of_trials;
 
   // The number of valid samples
-  Teuchos::Array<unsigned long long> d_number_of_samples;
+  Teuchos::Array<TrialCounter> d_number_of_samples;
+
+  // The dimension trial counters
+  Teuchos::Array<DimensionTrialCounterMap> d_dimension_trial_counters;
+
+  // The dimension samples counters
+  Teuchos::Array<DimensionTrialCounterMap> d_dimension_sample_counters;
 };
 
 // Set a rejection cell

@@ -30,6 +30,9 @@ class ParticleDistribution
 
 public:
 
+  //! The trial counter
+  typedef PhaseSpaceDimensionDistribution::TrialCounter TrialCounter;
+
   //! The dimension trial counter map
   typedef PhaseSpaceDimensionDistribution::DimensionTrialCounterMap DimensionTrialCounterMap;
 

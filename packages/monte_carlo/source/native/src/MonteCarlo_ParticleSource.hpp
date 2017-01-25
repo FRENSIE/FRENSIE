@@ -19,6 +19,7 @@
 // MonteCarlo Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
+#include "MonteCarlo_ParticleDistribution.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 
@@ -30,6 +31,12 @@ class ParticleSource
 
 public:
 
+  //! The trial counter
+  typedef unsigned long long TrialCounter;
+
+  //! The dimension trial counter
+  typedef ParticleDistribution::TrialCounter DimensionTrialCounter;
+
   //! Constructor
   ParticleSource( const ModuleTraits::InternalSourceHandle id )
   { /* ... */ }
@@ -37,6 +44,9 @@ public:
   //! Destructor
   virtual ~ParticleSource()
   { /* ... */ }
+
+  //! Get the source id
+  ModuleTraits::InternalSourceHandle getId() const;
 
   //! Enable thread support
   virtual void enableThreadSupport( const unsigned threads ) = 0;
@@ -61,21 +71,25 @@ public:
 				    const unsigned long long history ) = 0;
 
   //! Return the number of sampling trials
-  virtual unsigned long long getNumberOfTrials() const = 0;
+  virtual TrialCounter getNumberOfTrials() const = 0;
 
   //! Return the number of sampling trials in the phase space dimension
-  virtual unsigned long long getNumberOfDimensionTrials(
+  virtual DimensionTrialCounter getNumberOfDimensionTrials(
                                const PhaseSpaceDimension dimension ) const = 0;
 
-  //! Return the number of samples
-  virtual unsigned long long getNumberOfSamples() const = 0;
+  //! Return the number of samples that have been generated
+  virtual TrialCounter getNumberOfSamples() const = 0;
 
   //! Return the number of samples in the phase space dimension
-  virtual unsigned long long getNumberOfDimensionSamples(
+  virtual DimensionTrialCounter getNumberOfDimensionSamples(
                                const PhaseSpaceDimension dimension ) const = 0;
 
   //! Return the sampling efficiency from the source
   virtual double getSamplingEfficiency() const = 0;
+
+  //! Return the sampling efficiency in the phase space dimension
+  virtual double getDimensionSamplingEfficiency(
+                               const PhaseSpaceDimension dimension ) const = 0;
 
 protected:
 
