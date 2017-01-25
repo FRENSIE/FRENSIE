@@ -28,6 +28,18 @@ double SimulationElectronProperties::max_electron_energy = 20.0;
 // The atomic relaxation mode (true = on - default, false = off)
 bool SimulationElectronProperties::atomic_relaxation_mode_on = true;
 
+// The elasic electron scattering mode (true = on - default, false = off)
+bool SimulationElectronProperties::elastic_mode_on = true;
+
+// The electroionization electron scattering mode (true = on - default, false = off)
+bool SimulationElectronProperties::electroionization_mode_on = true;
+
+// The bremsstrahlung electron scattering mode (true = on - default, false = off)
+bool SimulationElectronProperties::bremsstrahlung_mode_on = true;
+
+// The atomic excitation electron scattering mode (true = on - default, false = off)
+bool SimulationElectronProperties::atomic_excitation_mode_on = true;
+
 // The bremsstrahlung photon angular distribution function (2BS by default)
 BremsstrahlungAngularDistributionType
   SimulationElectronProperties::bremsstrahlung_angular_distribution_function =
@@ -63,6 +75,31 @@ void SimulationElectronProperties::setMaxElectronEnergy( const double energy )
 void SimulationElectronProperties::setAtomicRelaxationModeOff()
 {
   SimulationElectronProperties::atomic_relaxation_mode_on = false;
+}
+
+// Set elastic mode to off (on by default)
+void SimulationElectronProperties::setElasticModeOff()
+{
+  SimulationElectronProperties::elastic_mode_on = false;
+}
+
+
+// Set electroionization mode to off (on by default)
+void SimulationElectronProperties::setElectroionizationModeOff()
+{
+  SimulationElectronProperties::electroionization_mode_on = false;
+}
+
+// Set bremsstrahlung mode to off (on by default)
+void SimulationElectronProperties::setBremsstrahlungModeOff()
+{
+  SimulationElectronProperties::bremsstrahlung_mode_on = false;
+}
+
+// Set atomic excitation mode to off (on by default)
+void SimulationElectronProperties::setAtomicExcitationModeOff()
+{
+  SimulationElectronProperties::atomic_excitation_mode_on = false;
 }
 
 // Set the bremsstrahlung photon angular distribution function (2BS by default)

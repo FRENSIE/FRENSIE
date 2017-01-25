@@ -30,6 +30,7 @@ FRENSIE formate data file.
 
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_ArchivableObject.hpp"
 #include "Utility_ContractException.hpp"
 %}
@@ -147,6 +148,75 @@ tutorial for this class is shown below:
 // Include the ElectronPhotonRelaxationDataContainer
 %include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
+
+//---------------------------------------------------------------------------//
+// Add support for the AdjointElectronPhotonRelaxationDataContainer
+//---------------------------------------------------------------------------//
+// Add a more detailed docstring for the AdjointElectronPhotonRelaxationDataContainer
+%feature("docstring")
+Data::AdjointElectronPhotonRelaxationDataContainer
+"
+The AdjointElectronPhotonRelaxationDataContainer can be used to read in a Native
+format AEPR data file and extract the data contained in it. A brief usage
+tutorial for this class is shown below:
+
+  import PyFrensie.Data.Native, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+
+  source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
+  xml_obj = source.getObject()
+  cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
+
+  h_data_list = cs_list.get( 'H-Native' )
+  h_native_file_name = 'datadir' + h_data_list.get( 'adjoint_photoatomic_file_path' )
+
+  h_native_data = PyFrensie.Data.Native.AdjointElectronPhotonRelaxationDataContainer( h_native_file_name )
+
+  matplotlib.pyplot.loglog( h_native_data.getAdjointPhotonEnergyGrid(), h_native_data.getWallerHartreeTotalCrossSection() )
+  matplotlib.pyplot.loglog( h_native_data.getPhotonEnergyGrid(), h_native_data.getImpulseApproxTotalCrossSection() )
+  matplotlib.pyplot.show()
+"
+
+// Allow std::set<unsigned> output type
+%template(SubshellSet) std::set<unsigned>;
+
+// Allow std::vector<std::pair<unsigned,unsigned> > output type
+%template(RelaxationVacancyArray) std::vector<std::pair<unsigned,unsigned> >;
+
+// Keep the Utility::ArchivableObject hidden and instead add static constants
+// to the AdjointElectronPhotonRelaxationDataContainer that can be used to read in
+// data tables with the different archive formats. Also add some useful
+// methods.
+%extend Data::AdjointElectronPhotonRelaxationDataContainer
+{
+  static const Utility::ArchivableObject::ArchiveType ASCII =
+    Utility::ArchivableObject::ASCII_ARCHIVE;
+  static const Utility::ArchivableObject::ArchiveType BINARY =
+    Utility::ArchivableObject::BINARY_ARCHIVE;
+  static const Utility::ArchivableObject::ArchiveType XML =
+    Utility::ArchivableObject::XML_ARCHIVE;
+
+  // String conversion method
+  PyObject* __str__() const
+  {
+    std::ostringstream oss;
+    oss << "EPR for Z=" << $self->getAtomicNumber();
+
+    return PyString_FromString( oss.str().c_str() );
+  }
+
+  // String representation method
+  PyObject* __repr__() const
+  {
+    std::ostringstream oss;
+    oss << "AdjointElectronPhotonRelaxationDataContainer(AEPR for Z="
+        << $self->getAtomicNumber() << ")";
+
+    return PyString_FromString( oss.str().c_str() );
+  }
+}
+
+// Include the AdjointElectronPhotonRelaxationDataContainer
+%include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 // Turn off the exception handling
 %exception;
 

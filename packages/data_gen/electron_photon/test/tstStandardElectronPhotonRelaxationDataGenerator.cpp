@@ -638,6 +638,13 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.2931601408114005462e-07, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
 
+  std::vector<double> reduction_ratio =
+    data_container.getReducedCutoffCrossSectionRatios();
+
+  TEST_FLOATING_EQUALITY( reduction_ratio.front(), 0.9500004750002375431, 1e-15 );
+  TEST_FLOATING_EQUALITY( reduction_ratio.back(), 8.0626912867985410017e-06, 1e-15 );
+  TEST_EQUALITY_CONST( reduction_ratio.size(), 729-threshold );
+
   // Check the electroionization data
   threshold =
     data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
@@ -1139,6 +1146,13 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
 
+  std::vector<double> reduction_ratio =
+    data_container.getReducedCutoffCrossSectionRatios();
+
+  TEST_FLOATING_EQUALITY( reduction_ratio.front(), 0.9500004750002375431, 1e-15 );
+  TEST_FLOATING_EQUALITY( reduction_ratio.back(), 8.0626912867985410017e-06, 1e-15 );
+  TEST_EQUALITY_CONST( reduction_ratio.size(), 729-threshold );
+
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
@@ -1328,7 +1342,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container( "test_h_epr.xml",
                     Utility::ArchivableObject::XML_ARCHIVE );
 
-  TEST_ASSERT( data_container.hasMomentPreservingData() );;
+  TEST_ASSERT( data_container.hasMomentPreservingData() );
 
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
     data_container,
@@ -1336,7 +1350,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     1.0,
     0 );
 
-  TEST_ASSERT( !data_container.hasMomentPreservingData() );;
+  TEST_ASSERT( !data_container.hasMomentPreservingData() );
 
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
     data_container,
@@ -1689,6 +1703,13 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
+
+  std::vector<double> reduction_ratio =
+    data_container.getReducedCutoffCrossSectionRatios();
+
+  TEST_FLOATING_EQUALITY( reduction_ratio.front(), 0.9500004750002375431, 1e-15 );
+  TEST_FLOATING_EQUALITY( reduction_ratio.back(), 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( reduction_ratio.size(), 729-threshold );
 
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
@@ -3069,6 +3090,13 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( cross_section.front(), 3.06351e+9 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 4.72309e-4, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 725-threshold );
+
+  std::vector<double> reduction_ratio =
+    data_container.getReducedCutoffCrossSectionRatios();
+
+  TEST_FLOATING_EQUALITY( reduction_ratio.front(), 0.9500004750002375431, 1e-15 );
+  TEST_FLOATING_EQUALITY( reduction_ratio.back(), 8.3043750827917510102e-06, 1e-15 );
+  TEST_EQUALITY_CONST( reduction_ratio.size(), 725-threshold );
 
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();

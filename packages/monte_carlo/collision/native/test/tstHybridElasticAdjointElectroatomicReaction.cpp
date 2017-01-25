@@ -89,13 +89,13 @@ TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.97547570775064E+06,
+                          1.9754757077506483e+06,
                           1e-12 );
 
   cross_section = hybrid_elastic_reaction->getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          3.04727623729037E+02*8.28478449217045E-06 + 2.05315286670457,
+                          3.04727623729037E+02*8.2702774720157165e-06 + 2.0520968300008926,
                           1e-12 );
 }
 
@@ -158,6 +158,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getAdjointMomentPreservingCrossSection().begin(),
         data_container.getAdjointMomentPreservingCrossSection().end() );
 
+  // Reduced cutoff elastic cross section ratio
+  std::vector<double> reduced_cutoff_ratio =
+    data_container.getReducedCutoffCrossSectionRatios();
+
     // Create the hash-based grid searcher
     Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
       new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
@@ -202,10 +206,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     if ( i < mp_threshold_diff )
     {
-      double cutoff_cdf =
-        hybrid_elastic_distribution->evaluateCDF( energy, cutoff_angle_cosine );
-
-      combined_cross_section[i] = cutoff_cross_section[i]*cutoff_cdf;
+      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio[i];
     }
     else if ( i < cutoff_threshold_diff )
     {
@@ -213,11 +214,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     }
     else
     {
-      double cutoff_cdf =
-        hybrid_elastic_distribution->evaluateCDF( energy, cutoff_angle_cosine );
-
       combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff]*cutoff_cdf + 
+        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio[i] +
         mp_cross_section[i-mp_threshold_diff];
     }
   }

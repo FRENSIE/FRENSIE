@@ -23,7 +23,7 @@ public:
 
   //! Create a electroionization subshell distribution
   static void createElectroionizationSubshellDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
@@ -34,7 +34,7 @@ public:
 
   //! Create the electroionization subshell distribution function
   static void createSubshellDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double> energy_grid,
     const unsigned subshell,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&

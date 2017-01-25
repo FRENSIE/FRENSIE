@@ -40,6 +40,24 @@ inline bool ValuesGreaterThanOrEqualToZero( const Array& values )
                        isValueLessThanZero ) == values.end();
 }
 
+// Test preconditions for values in array less than one
+template<typename Array>
+inline bool ValuesLessThanOne( const Array& values )
+{
+  return std::find_if( values.begin(),
+                       values.end(),
+                       isValueGreaterThanOrEqualToOne ) == values.end();
+}
+
+// Test preconditions for values in array less than one
+template<typename Array>
+inline bool ValuesLessThanOrEqualToOne( const Array& values )
+{
+  return std::find_if( values.begin(),
+                       values.end(),
+                       isValueGreaterThanOne ) == values.end();
+}
+
 // Test if a value is less than or equal to zero
 bool isValueLessThanOrEqualToZero( const double value )
 {
@@ -56,6 +74,12 @@ bool isValueLessThanZero( const double value )
 bool isValueGreaterThanOne( const double value )
 {
   return value > 1.0;
+}
+
+// Test if a value is greater than or equal to one
+bool isValueGreaterThanOrEqualToOne( const double value )
+{
+  return value >= 1.0;
 }
 
 // Test if a value is less than -1.0

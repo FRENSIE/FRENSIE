@@ -120,20 +120,20 @@ void CollisionHandlerFactory::initializeHandler(
   case PHOTON_MODE:
   {
     this->createPhotonMaterials(
-		     cross_sections_table_info,
-		     cross_sections_xml_directory,
-		     material_id_fraction_map,
-		     material_id_component_map,
-		     aliases,
-		     cell_id_mat_id_map,
-		     cell_id_density_map,
-		     atomic_relaxation_model_factory,
-		     SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationPhotonProperties::getIncoherentModelType(),
-		     SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
-		     SimulationPhotonProperties::isDetailedPairProductionModeOn(),
-		     SimulationPhotonProperties::isAtomicRelaxationModeOn(),
-		     SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
+            cross_sections_table_info,
+            cross_sections_xml_directory,
+            material_id_fraction_map,
+            material_id_component_map,
+            aliases,
+            cell_id_mat_id_map,
+            cell_id_density_map,
+            atomic_relaxation_model_factory,
+            SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
+            SimulationPhotonProperties::getIncoherentModelType(),
+            SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
+            SimulationPhotonProperties::isDetailedPairProductionModeOn(),
+            SimulationPhotonProperties::isAtomicRelaxationModeOn(),
+            SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
     break;
   }
   case NEUTRON_PHOTON_MODE:
@@ -149,37 +149,42 @@ void CollisionHandlerFactory::initializeHandler(
 				  true );
 
     this->createPhotonMaterials(
-		     cross_sections_table_info,
-		     cross_sections_xml_directory,
-		     material_id_fraction_map,
-		     material_id_component_map,
-		     aliases,
-		     cell_id_mat_id_map,
-		     cell_id_density_map,
-		     atomic_relaxation_model_factory,
-		     SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationPhotonProperties::getIncoherentModelType(),
-		     SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
-		     SimulationPhotonProperties::isDetailedPairProductionModeOn(),
-		     SimulationPhotonProperties::isAtomicRelaxationModeOn(),
-		     SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
+            cross_sections_table_info,
+            cross_sections_xml_directory,
+            material_id_fraction_map,
+            material_id_component_map,
+            aliases,
+            cell_id_mat_id_map,
+            cell_id_density_map,
+            atomic_relaxation_model_factory,
+            SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
+            SimulationPhotonProperties::getIncoherentModelType(),
+            SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
+            SimulationPhotonProperties::isDetailedPairProductionModeOn(),
+            SimulationPhotonProperties::isAtomicRelaxationModeOn(),
+            SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
     break;
   }
   case ELECTRON_MODE:
   {
     this->createElectronMaterials(
-		     cross_sections_table_info,
-		     cross_sections_xml_directory,
-		     material_id_fraction_map,
-		     material_id_component_map,
-		     aliases,
-		     cell_id_mat_id_map,
-		     cell_id_density_map,
-		     atomic_relaxation_model_factory,
-		     SimulationElectronProperties::getNumberOfElectronHashGridBins(),
-		     SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-		     SimulationElectronProperties::isAtomicRelaxationModeOn(),
-		     SimulationElectronProperties::getElasticCutoffAngleCosine() );
+            cross_sections_table_info,
+            cross_sections_xml_directory,
+            material_id_fraction_map,
+            material_id_component_map,
+            aliases,
+            cell_id_mat_id_map,
+            cell_id_density_map,
+            atomic_relaxation_model_factory,
+            SimulationElectronProperties::getNumberOfElectronHashGridBins(),
+            SimulationElectronProperties::isAtomicRelaxationModeOn(),
+            SimulationElectronProperties::isElasticModeOn(),
+            SimulationElectronProperties::isElectroionizationModeOn(),
+            SimulationElectronProperties::isBremsstrahlungModeOn(),
+            SimulationElectronProperties::isAtomicExcitationModeOn(),
+            SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
+            SimulationElectronProperties::getElasticCutoffAngleCosine() );
+            
     break;
   }
   default:
@@ -428,8 +433,12 @@ void CollisionHandlerFactory::createElectronMaterials(
     const Teuchos::RCP<AtomicRelaxationModelFactory>&
         atomic_relaxation_model_factory,
     const unsigned hash_grid_bins,
-    const BremsstrahlungAngularDistributionType photon_distribution_function,
     const bool use_atomic_relaxation_data,
+    const bool use_elastic_data,
+    const bool use_electroionization_data,
+    const bool use_bremsstrahlung_data,
+    const bool use_atomic_excitation_data,
+    const BremsstrahlungAngularDistributionType photon_distribution_function,
     const double cutoff_angle_cosine )
 {
   std::unordered_map<std::string,Teuchos::RCP<Electroatom> > electroatom_map;
@@ -439,8 +448,12 @@ void CollisionHandlerFactory::createElectronMaterials(
                                           electroatom_aliases,
                                           atomic_relaxation_model_factory,
                                           hash_grid_bins,
-                                          photon_distribution_function,
                                           use_atomic_relaxation_data,
+                                          use_elastic_data,
+                                          use_electroionization_data,
+                                          use_bremsstrahlung_data,
+                                          use_atomic_excitation_data,
+                                          photon_distribution_function,
                                           cutoff_angle_cosine,
                                           d_os_warn );
 

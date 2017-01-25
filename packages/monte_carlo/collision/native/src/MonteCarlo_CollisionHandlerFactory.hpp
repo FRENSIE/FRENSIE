@@ -149,8 +149,12 @@ private:
    const Teuchos::RCP<AtomicRelaxationModelFactory>&
     atomic_relaxation_model_factory,
    const unsigned hash_grid_bins,
-   const BremsstrahlungAngularDistributionType photon_distribution_function,
    const bool use_atomic_relaxation_data,
+   const bool use_elastic_data,
+   const bool use_electroionization_data,
+   const bool use_bremsstrahlung_data,
+   const bool use_atomic_excitation_data,
+   const BremsstrahlungAngularDistributionType photon_distribution_function,
    const double cutoff_angle_cosine );
 
 

@@ -1026,6 +1026,15 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    TEST_EQUALITY_CONST( cross_section.back(), 6.94769517429430272e-01 );
    TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
 
+   threshold =
+     h_data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
+
+   std::vector<double> reduction_ratio =
+    h_data_container.getReducedCutoffCrossSectionRatios();
+
+   TEST_FLOATING_EQUALITY( reduction_ratio.front(), 0.9500004750002375431, 1e-15 );
+   TEST_FLOATING_EQUALITY( reduction_ratio.back(), 8.2772190307494877072e-06, 1e-15 );
+   TEST_EQUALITY_CONST( reduction_ratio.size(), 24-threshold );
 
    // Check the forward inelastic cross section data
    threshold =

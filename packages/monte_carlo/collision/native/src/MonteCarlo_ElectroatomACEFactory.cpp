@@ -29,9 +29,13 @@ void ElectroatomACEFactory::createElectroatomCore(
     const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
     Teuchos::RCP<ElectroatomCore>& electroatom_core,
     const unsigned hash_grid_bins,
+    const bool use_atomic_relaxation_data,
+    const bool use_elastic_data,
+    const bool use_electroionization_data,
+    const bool use_bremsstrahlung_data,
+    const bool use_atomic_excitation_data,
     const BremsstrahlungAngularDistributionType
         photon_distribution_function,
-    const bool use_atomic_relaxation_data,
     const double cutoff_angle_cosine )
 {
   // Make sure the atomic relaxation model is valid
@@ -51,20 +55,25 @@ void ElectroatomACEFactory::createElectroatomCore(
 						     energy_grid,
 						     hash_grid_bins ) );
 
-  // Create the cutoff elastic scattering reaction
+  // Create the elastic scattering reaction
+  if ( use_elastic_data )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
+    // Create the cutoff elastic scattering reaction
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createCutoffElasticReaction(
+      ElectroatomicReactionACEFactory::createCutoffElasticReaction(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction_pointer,
         cutoff_angle_cosine );
+    }
   }
 
   // Create the bremsstrahlung scattering reaction
+  if ( use_bremsstrahlung_data )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
@@ -78,6 +87,7 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
 
   // Create the atomic excitation scattering reaction
+  if ( use_atomic_excitation_data )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
@@ -90,6 +100,7 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
 
   // Create the electroionization reaction(s)
+  if ( use_electroionization_data )
   {
     std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
@@ -123,15 +134,19 @@ void ElectroatomACEFactory::createElectroatomCore(
  * Otherwise a single total electroionization reaction will be created.
  */
 void ElectroatomACEFactory::createElectroatom(
-	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	    const std::string& electroatom_name,
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
+        const std::string& electroatom_name,
         const double atomic_weight,
-	    const unsigned hash_grid_bins,
-	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	    Teuchos::RCP<Electroatom>& electroatom,
+        const unsigned hash_grid_bins,
+        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+        Teuchos::RCP<Electroatom>& electroatom,
+        const bool use_atomic_relaxation_data,
+        const bool use_elastic_data,
+        const bool use_electroionization_data,
+        const bool use_bremsstrahlung_data,
+        const bool use_atomic_excitation_data,
         const BremsstrahlungAngularDistributionType
-                photon_distribution_function,
-	    const bool use_atomic_relaxation_data,
+            photon_distribution_function,
         const double cutoff_angle_cosine )
 {
   // Make sure the atomic weight is valid
@@ -141,13 +156,17 @@ void ElectroatomACEFactory::createElectroatom(
 
   Teuchos::RCP<ElectroatomCore> core;
 
-  ElectroatomACEFactory::createElectroatomCore(raw_electroatom_data,
-                                               atomic_relaxation_model,
-                                               core,
-                                               hash_grid_bins,
-                                               photon_distribution_function,
-                                               use_atomic_relaxation_data,
-                                               cutoff_angle_cosine );
+  ElectroatomACEFactory::createElectroatomCore( raw_electroatom_data,
+                                                atomic_relaxation_model,
+                                                core,
+                                                hash_grid_bins,
+                                                use_atomic_relaxation_data,
+                                                use_elastic_data,
+                                                use_electroionization_data,
+                                                use_bremsstrahlung_data,
+                                                use_atomic_excitation_data,
+                                                photon_distribution_function,
+                                                cutoff_angle_cosine );
 
   // Create the electroatom
   electroatom.reset(

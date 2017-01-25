@@ -41,6 +41,14 @@ namespace Data{
   template<typename Array>
   bool ValuesGreaterThanOrEqualToZero( const Array& values );
 
+  // Test preconditions for values in array less than one
+  template<typename Array>
+  bool ValuesLessThanOne( const Array& values );
+
+  // Test preconditions for values in array less than or equal to one
+  template<typename Array>
+  bool ValuesLessThanOrEqualToOne( const Array& values );
+
   // Test if a value is less than or equal to zero
   static bool isValueLessThanOrEqualToZero( const double value );
 
@@ -49,6 +57,9 @@ namespace Data{
 
   // Test if a value is greater than one
   static bool isValueGreaterThanOne( const double value );
+
+  // Test if a value is greater than or equal to one
+  static bool isValueGreaterThanOrEqualToOne( const double value );
 
   // Test if a value is less than minus one
   static bool isValueLessThanMinusOne( const double value );

@@ -92,6 +92,7 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, moliere_screening_constant );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
+  DATA_MAKE_NVP_DEFAULT( ar, reduced_cutoff_cross_section_ratios );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_pdf );
@@ -188,6 +189,7 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, moliere_screening_constant );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
+  DATA_MAKE_NVP_DEFAULT( ar, reduced_cutoff_cross_section_ratios );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_pdf );
