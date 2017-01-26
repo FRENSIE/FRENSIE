@@ -59,22 +59,7 @@ ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribut
     cutoff_angle_cosine );
 }
 
-// Create a cutoff elastic distribution
-void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
-    std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double& cutoff_angle_cosine )
-{
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
-    cutoff_elastic_distribution,
-    data_container.getCutoffElasticAngles(),
-    data_container.getCutoffElasticPDF(),
-    data_container.getElasticAngularEnergyGrid(),
-    cutoff_angle_cosine );
-}
-
-//! Create a moment preserving elastic distribution
+// Create a moment preserving elastic distribution
 void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -136,22 +121,7 @@ ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribut
     cutoff_angle_cosine );
 }
 
-// Create a cutoff elastic distribution
-void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
-    std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
-    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double& cutoff_angle_cosine )
-{
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
-    cutoff_elastic_distribution,
-    data_container.getAdjointCutoffElasticAngles(),
-    data_container.getAdjointCutoffElasticPDF(),
-    data_container.getAdjointElasticAngularEnergyGrid(),
-    cutoff_angle_cosine );
-}
-
-//! Create a moment preserving elastic distribution
+// Create a moment preserving elastic distribution
 void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -249,29 +219,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
                 cutoff_angle_cosine ) );
 }
 
-// Create a cutoff elastic distribution
-void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
-    std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
-    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
-    const std::vector<double>& angular_energy_grid,
-    const double& cutoff_angle_cosine )
-{
-  // Create the scattering function
-  std::shared_ptr<TwoDDist> scattering_function;
-  ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
-        cutoff_elastic_angles,
-        cutoff_elastic_pdf,
-        angular_energy_grid,
-        scattering_function );
-
-  cutoff_elastic_distribution.reset(
-        new CutoffElasticElectronScatteringDistribution(
-                scattering_function,
-                cutoff_angle_cosine ) );
-}
-
 // Create a screened Rutherford elastic distribution
 void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
     std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
@@ -287,7 +234,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
                 atomic_number ) );
 }
 
-//! Create a moment preserving elastic distribution
+// Create a moment preserving elastic distribution
 void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -424,7 +371,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     evaluated_pdf.resize( angular_grid.size() );
     for ( unsigned i = 0; i < angular_grid.size(); i++ )
     {
-      evaluated_pdf[i] = Utility::LinLin::interpolate(
+      evaluated_pdf[i] = Utility::LinLog::interpolate(
                             lower_bin->first,
                             upper_bin->first,
                             energy,
@@ -562,44 +509,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
       new const TabularDist( elastic_angles.find( energy )->second,
                              elastic_pdf.find( energy )->second ) );
   }
-}
-
-// Create the scattering function
-/*! \details This function has been overloaded so it can be called without using
- *  the native data container. This functionality is neccessary for generating
- *  native moment preserving data without first creating native data files.
- */
-void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
-        const std::map<double,std::vector<double> >& elastic_angles,
-        const std::map<double,std::vector<double> >& elastic_pdf,
-        const std::vector<double>& energy_grid,
-        std::shared_ptr<TwoDDist>& scattering_function,
-        bool discrete_function )
-{
-  // Make sure the energy grid is valid
-  testPrecondition( energy_grid.back() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
-
-  testPrecondition( Data::ValuesGreaterThanZero( energy_grid ) );
-
-  // Get the distribution data
-  TwoDDist::DistributionType function_data( energy_grid.size() );
-
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
-  {
-    ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
-        elastic_angles,
-        elastic_pdf,
-        energy_grid[n],
-        function_data[n],
-        discrete_function );
-  }
-
-  // Set the scattering function
-  scattering_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
-        function_data ) );
 }
 
 } // end MonteCarlo namespace

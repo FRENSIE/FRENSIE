@@ -446,8 +446,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   
   // Read in the xml file storing the cross section table information
   Teuchos::updateParametersFromXmlFile(
-			         cross_section_xml_file,
-			         Teuchos::inoutArg(cross_section_table_info) );
+                                 cross_section_xml_file,
+                                 Teuchos::inoutArg(cross_section_table_info) );
 
   std::unordered_set<std::string> nuclide_aliases;
   nuclide_aliases.insert( "H-1_293.6K" );
@@ -468,10 +468,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
   
   // Create the nuclide factory
-  MonteCarlo::NuclideFactory nuclide_factory(test_cross_sections_xml_directory,
-					     cross_section_table_info,
-					     nuclide_aliases,
-                                             properties );
+  MonteCarlo::NuclideFactory nuclide_factory( test_cross_sections_xml_directory,
+                                              cross_section_table_info,
+                                              nuclide_aliases,
+                                              properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> >
     nuclide_map;

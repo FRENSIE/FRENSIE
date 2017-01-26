@@ -23,33 +23,24 @@ public:
 
   //! Create a simple dipole bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-		        	  scattering_distribution );
-
-  //! Create a detailed tabular bremsstrahlung distribution
-  static void createBremsstrahlungDistribution(
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-			          scattering_distribution,
-        std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
-        const double lower_cutoff_energy,
-        const double upper_cutoff_energy );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+        scattering_distribution );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-		                  scattering_distribution,
-        const int atomic_number );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+        scattering_distribution,
+    const int atomic_number );
 
 protected:
 
   //! Create the energy loss function
   static void createScatteringFunction(
-      const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-                                                        scattering_function );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+        scattering_function );
 };
 
 } // end MonteCarlo namespace

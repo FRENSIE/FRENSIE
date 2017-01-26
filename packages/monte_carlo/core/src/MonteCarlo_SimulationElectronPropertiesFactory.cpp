@@ -65,6 +65,34 @@ void SimulationElectronPropertiesFactory::initializeProperties(
       electron_properties.setAtomicRelaxationModeOff();
   }
 
+  // Get the elastic scattering mode - optional
+  if( properties.isParameter( "Electron Elastic Scattering" ) )
+  {
+    if( !properties.get<bool>( "Electron Elastic Scattering" ) )
+      electron_properties.setElasticModeOff();
+  }
+
+  // Get the electroionization scattering mode - optional
+  if( properties.isParameter( "Electron Electroionization Scattering" ) )
+  {
+    if( !properties.get<bool>( "Electron Electroionization Scattering" ) )
+      electron_properties.setElectroionizationModeOff();
+  }
+
+  // Get the elastic scattering mode - optional
+  if( properties.isParameter( "Electron Elastic Scattering" ) )
+  {
+    if( !properties.get<bool>( "Electron Elastic Scattering" ) )
+      electron_properties.setElasticModeOff();
+  }
+
+  // Get the elastic scattering mode - optional
+  if( properties.isParameter( "Electron Elastic Scattering" ) )
+  {
+    if( !properties.get<bool>( "Electron Elastic Scattering" ) )
+      electron_properties.setElasticModeOff();
+  }
+
   // Get the bremsstrahlung photon angular distribution function - optional
   if( properties.isParameter( "Bremsstrahlung Angular Distribution" ) )
   {

@@ -47,20 +47,25 @@ void ElectroatomACEFactory::createElectroatomCore(
                               energy_grid,
                   properties.getNumberOfElectronHashGridBins() ) );
 
-  // Create the cutoff elastic scattering reaction
+  // Create the elastic scattering reaction
+  if ( properties.isElasticModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
+    // Create the cutoff elastic scattering reaction
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createCutoffElasticReaction(
+      ElectroatomicReactionACEFactory::createCutoffElasticReaction(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction_pointer,
         properties.getElasticCutoffAngleCosine() );
+    }
   }
 
   // Create the bremsstrahlung scattering reaction
+  if ( properties.isBremsstrahlungModeOn() )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
@@ -74,6 +79,7 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
 
   // Create the atomic excitation scattering reaction
+  if ( properties.isAtomicExcitationModeOn() )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
@@ -86,20 +92,21 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
 
   // Create the subshell electroionization reaction(s)
+  if ( properties.isElectroionizationModeOn() )
   {
-  std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
-  ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
+    ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction_pointers );
 
-  for( unsigned i = 0; i < reaction_pointers.size(); ++i )
-  {
-    scattering_reactions[reaction_pointers[i]->getReactionType()] =
+    for( unsigned i = 0; i < reaction_pointers.size(); ++i )
+    {
+      scattering_reactions[reaction_pointers[i]->getReactionType()] =
         reaction_pointers[i];
-  }
+    }
   }
 
   // Create the electroatom core
@@ -137,7 +144,7 @@ void ElectroatomACEFactory::createElectroatom(
                                                 atomic_relaxation_model,
                                                 properties,
                                                 core );
-                                                
+
   // Create the electroatom
   electroatom.reset(
     new Electroatom( electroatom_name,

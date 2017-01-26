@@ -1845,6 +1845,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         angular_energy_grid,
         cross_section_reduction ) );
 
+  // Calucate the reduced cutoff cross section ratio to the full cutoff cross section
+  std::vector<double> reduced_cutoff_cross_section_ratio;
+
   // Calculate the moment preserving cross section
   std::vector<double> moment_preserving_cross_section;
   StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCrossSection(
@@ -1856,7 +1859,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         analog_distribution,
         reduction_distribution,
         data_container.getCutoffAngleCosine(),
-        moment_preserving_cross_section );
+        moment_preserving_cross_section,
+        reduced_cutoff_cross_section_ratio );
+
+  data_container.setReducedCutoffCrossSectionRatios(
+    reduced_cutoff_cross_section_ratio );
 
   data_container.setMomentPreservingCrossSection(
     moment_preserving_cross_section );
@@ -2540,12 +2547,14 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCros
         analog_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
-    std::vector<double>& moment_preserving_cross_section )
+    std::vector<double>& moment_preserving_cross_section,
+    std::vector<double>& reduced_cutoff_cross_section_ratio )
 {
   // Get the max energy of the distributions
   double max_energy = reduction_distribution->getUpperBoundOfIndepVar();
 
   moment_preserving_cross_section.resize( cutoff_cross_sections.size() );
+  reduced_cutoff_cross_section_ratio.resize( cutoff_cross_sections.size() );
 
   unsigned begin = cutoff_threshold_energy_index;
 
@@ -2554,6 +2563,8 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCros
     double cutoff_cdf = analog_distribution->evaluateCDF(
         electron_energy_grid[i],
         cutoff_angle_cosine );
+
+    reduced_cutoff_cross_section_ratio[i] = cutoff_cdf;
 
     double cross_section_reduction =
         reduction_distribution->evaluate( electron_energy_grid[i] );

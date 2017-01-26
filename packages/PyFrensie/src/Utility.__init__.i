@@ -20,9 +20,11 @@ PyFrensie.Utility is the python interface to the FRENSIE utilities package.
 %pythoncode
 %{
 __all__ = ['Distribution',
-           'Prng'
+           'Prng',
+           'Interpolation'
            ]
 %}
+
 
 %{
 #include "Utility_RandomNumberGenerator.hpp"

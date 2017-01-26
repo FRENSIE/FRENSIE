@@ -66,6 +66,7 @@ public:
     const double& cutoff_angle_cosine );
 
   //! Create a cutoff elastic distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -101,6 +102,7 @@ public:
     const double& cutoff_angle_cosine );
 
   //! Create a cutoff elastic distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -143,6 +145,7 @@ public:
     const double& cutoff_angle_cosine );
 
   //! Create a cutoff elastic distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -218,6 +221,7 @@ protected:
     HybridFunction& hybrid_function );
 
   //! Create the cutoff elastic scattering function
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createScatteringFunction(
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,
@@ -236,6 +240,15 @@ protected:
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
+
 
 #endif // end MONTE_CARLO_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 

@@ -171,7 +171,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 {
   std::vector<double> angular_grid, evaluated_pdf;
 
-  // Test
+  // Test lowerest energy bin
   double energy = 1.0e-5;
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     angular_grid,
@@ -187,7 +187,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( evaluated_pdf.front(), 0.5 );
   TEST_EQUALITY_CONST( evaluated_pdf.back(), 0.5 );
 
-  // Test
+  // Test inbetween energy bins
   energy = 20.0;
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     angular_grid,
@@ -200,11 +200,11 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
   TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
   TEST_EQUALITY_CONST( evaluated_pdf.size(), 79 );
-  TEST_EQUALITY_CONST( evaluated_pdf.front(), 6.14603e-8 );
-  TEST_EQUALITY_CONST( evaluated_pdf.back(), 4.33429111111111124e5 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 5.19221420086210804e-08 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 5.06129128916336165e5 );
 
 
-  // Test
+  // Test highest energy bin
   energy = 1.0e+5;
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     angular_grid,
@@ -451,6 +451,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the analog distribution can be created
+//! \todo Make tests that are dependent on the interpolation policy
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createAnalogElasticDistribution )
 {

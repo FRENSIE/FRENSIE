@@ -49,46 +49,51 @@ void ElectroatomNativeFactory::createElectroatomCore(
                               energy_grid,
                               properties.getNumberOfElectronHashGridBins() ) );
 
-  // Create the analog elastic scattering reaction (no moment preserving elastic scattering)
-  if( properties.getElasticCutoffAngleCosine() == 1.0 )
+  // Create the elastic scattering reaction
+  if ( properties.isElasticModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
+    // Create the analog elastic scattering reaction (no moment preserving elastic scattering)
+    if ( properties.getElasticCutoffAngleCosine() == 1.0 )
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+      ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
                        reaction_pointer );
-  }
-  // Create the moment preserving elastic scattering reaction (no analog elastic scattering)
-  else if( properties.getElasticCutoffAngleCosine() == -1.0 )
-  {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
+    }
+    // Create the moment preserving elastic scattering reaction (no analog elastic scattering)
+    else if ( properties.getElasticCutoffAngleCosine() == -1.0 )
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
+      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
                        reaction_pointer,
                        properties.getElasticCutoffAngleCosine() );
-  }
-  // Create the hybrid elastic scattering reaction (if cutoff is within range)
-  else
-  {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+    }
+    // Create the hybrid elastic scattering reaction (if cutoff is within range)
+    else
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createHybridElasticReaction(
+      ElectroatomicReactionNativeFactory::createHybridElasticReaction(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
                        reaction_pointer,
                        properties.getElasticCutoffAngleCosine() );
+    }
   }
 
   // Create the bremsstrahlung scattering reaction
+  if ( properties.isBremsstrahlungModeOn() )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
@@ -102,6 +107,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   }
 
   // Create the atomic excitation scattering reaction
+  if ( properties.isAtomicExcitationModeOn() )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
@@ -114,6 +120,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   }
 
   // Create the subshell electroionization reactions
+  if ( properties.isElectroionizationModeOn() )
   {
   std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
@@ -123,11 +130,11 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                grid_searcher,
                                reaction_pointers );
 
-  for( unsigned i = 0; i < reaction_pointers.size(); ++i )
-  {
-    scattering_reactions[reaction_pointers[i]->getReactionType()] =
+    for( unsigned i = 0; i < reaction_pointers.size(); ++i )
+    {
+      scattering_reactions[reaction_pointers[i]->getReactionType()] =
         reaction_pointers[i];
-  }
+    }
   }
 
   // Create the electroatom core
@@ -161,10 +168,10 @@ void ElectroatomNativeFactory::createElectroatom(
 
   Teuchos::RCP<ElectroatomCore> core;
 
-  ElectroatomNativeFactory::createElectroatomCore(raw_electroatom_data,
-                                                  atomic_relaxation_model,
-                                                  properties,
-                                                  core );
+  ElectroatomNativeFactory::createElectroatomCore( raw_electroatom_data,
+                                                   atomic_relaxation_model,
+                                                   properties,
+                                                   core );
 
   // Create the electroatom
   electroatom.reset( new Electroatom( electroatom_name,

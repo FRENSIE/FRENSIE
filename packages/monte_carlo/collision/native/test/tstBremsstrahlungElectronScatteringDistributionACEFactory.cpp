@@ -32,14 +32,8 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   dipole_distribution;
 
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  tabular_distribution;
-
-std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   twobs_distribution;
 
-std::shared_ptr<Utility::OneDDistribution> angular_distribution;
-
-double upper_cutoff_energy, lower_cutoff_energy;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -104,73 +98,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05 , 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the sample() function using detailed tabular
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
-                   sample_TabularBremsstrahlung )
-{
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
-                                                 *xss_data_extractor,
-                                                 tabular_distribution,
-                                                 angular_distribution,
-                                                 lower_cutoff_energy,
-                                                 upper_cutoff_energy );
-
-  // Set up the random number stream
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  double incoming_energy = 0.0009;
-  double photon_energy, photon_angle_cosine;
-
-  tabular_distribution->sample( incoming_energy,
-                                photon_energy,
-                                photon_angle_cosine );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the sampleAndRecordTrials() function using detailed tabular
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
-                   sampleAndRecordTrials_TabularBremsstrahlung )
-{
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
-                                                 *xss_data_extractor,
-                                                 tabular_distribution,
-                                                 angular_distribution,
-                                                 lower_cutoff_energy,
-                                                 upper_cutoff_energy );
-
-  // Set up the random number stream
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  unsigned trials = 0.0;
-  double incoming_energy = 0.0009;
-  double photon_energy, photon_angle_cosine;
-
-  tabular_distribution->sampleAndRecordTrials( incoming_energy,
-                                               photon_energy,
-                                               photon_angle_cosine,
-                                               trials );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
-  TEST_EQUALITY_CONST( trials, 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -273,24 +200,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
                                        ace_file_handler->getTableJXSArray(),
                                        ace_file_handler->getTableXSSArray() ) );
-
-  // Create the tabular angular distribution
-  Teuchos::Array<double> energy_bins( 3 ); // (MeV)
-  energy_bins[0] = 1e-6;
-  energy_bins[1] = 1e-2;
-  energy_bins[2] = 1e5;
-
-  Teuchos::Array<double> angular_distribution_values( 3 );
-  angular_distribution_values[0] =  0.0;
-  angular_distribution_values[1] =  0.9;
-  angular_distribution_values[2] =  1.0;
-
-  angular_distribution.reset( new Utility::TabularDistribution<Utility::LinLin>(
-                                                energy_bins,
-                                                angular_distribution_values ) );
-
-  upper_cutoff_energy = 1000;
-  lower_cutoff_energy = 0.001;
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

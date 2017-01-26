@@ -108,12 +108,12 @@ std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
   {
     this->createNeutronMaterials( collision_handler,
                                   cross_sections_table_info,
-				  cross_sections_xml_directory,
-				  material_id_fraction_map,
-				  material_id_component_map,
-				  aliases,
-				  cell_id_mat_id_map,
-				  cell_id_density_map,
+                                  cross_sections_xml_directory,
+                                  material_id_fraction_map,
+                                  material_id_component_map,
+                                  aliases,
+                                  cell_id_mat_id_map,
+                                  cell_id_density_map,
                                   properties );
   }
 

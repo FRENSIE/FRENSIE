@@ -23,13 +23,13 @@ public:
 
   //! Create a electroionization subshell distribution
   static void createElectroionizationSubshellDistribution(
-        const unsigned table_info_location,
-        const unsigned table_location,
-        const unsigned number_of_tables,
-        const double binding_energy,
-	const Teuchos::ArrayView<const double>& raw_electroionization_data,
-	std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
-	  electroionization_subshell_distribution );
+    const unsigned table_info_location,
+    const unsigned table_location,
+    const unsigned number_of_tables,
+    const double binding_energy,
+    const Teuchos::ArrayView<const double>& raw_electroionization_data,
+    std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
+      electroionization_subshell_distribution );
 
 protected:
 
@@ -40,7 +40,7 @@ protected:
     const unsigned number_of_tables,
     const Teuchos::ArrayView<const double>& raw_electroionization_data,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-	        subshell_distribution );
+      subshell_distribution );
 };
 
 } // end MonteCarlo namespace

@@ -33,9 +33,6 @@ std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>
   ace_dipole_bremsstrahlung_reaction;
 
 std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
-  ace_tabular_bremsstrahlung_reaction;
-
-std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
   ace_twobs_bremsstrahlung_reaction;
 
 //---------------------------------------------------------------------------//
@@ -55,9 +52,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getReactionType_ace )
   TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getReactionType(),
                MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getReactionType(),
-               MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
-
   TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getReactionType(),
                MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 }
@@ -67,9 +61,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getReactionType_ace )
 TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getThresholdEnergy_ace )
 {
   TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getThresholdEnergy(),
-                       1.000000000000E-05 );
-
-  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getThresholdEnergy(),
                        1.000000000000E-05 );
 
   TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getThresholdEnergy(),
@@ -84,13 +75,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getNumberOfEmittedElectr
                        0u );
 
   TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getNumberOfEmittedElectrons(20.0),
-                       0u );
-
-
-  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getNumberOfEmittedElectrons(1e-8),
-                       0u );
-
-  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getNumberOfEmittedElectrons(20.0),
                        0u );
 
 
@@ -112,13 +96,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getNumberOfEmittedPhoton
                        1u );
 
 
-  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-8),
-                       0u );
-
-  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getNumberOfEmittedPhotons(20.0),
-                       1u );
-
-
   TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-8),
                        0u );
 
@@ -132,35 +109,20 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getCrossSection_ace )
 {
   // 2BS
   double cross_section =
-    ace_tabular_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
+    ace_twobs_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
 
   cross_section =
-    ace_tabular_bremsstrahlung_reaction->getCrossSection( 4.000000000000E-04 );
+    ace_twobs_bremsstrahlung_reaction->getCrossSection( 4.000000000000E-04 );
 
   TEST_FLOATING_EQUALITY( cross_section, 8.914234996439E+03, 1e-12 );
 
   cross_section =
-    ace_tabular_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
+    ace_twobs_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.258661418255E+03, 1e-12 );
 
-  // Tabular
-  cross_section =
-    ace_tabular_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
-
-  cross_section =
-    ace_tabular_bremsstrahlung_reaction->getCrossSection( 4.000000000000E-04 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 8.914234996439E+03, 1e-12 );
-
-  cross_section =
-    ace_tabular_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 9.258661418255E+03, 1e-12 );
 
   // Dipole
   cross_section =
@@ -185,7 +147,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
 {
   // 2BS
   double diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+    ace_twobs_bremsstrahlung_reaction->getDifferentialCrossSection(
         1.0e-5,
         9.0e-6 );
 
@@ -194,7 +156,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
                                   1e-12 );
 
   diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+    ace_twobs_bremsstrahlung_reaction->getDifferentialCrossSection(
         3.16228E-01,
         3.16115596E-01 );
 
@@ -203,7 +165,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
                                   1e-12 );
 
   diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+    ace_twobs_bremsstrahlung_reaction->getDifferentialCrossSection(
         1.0e5,
         8.0E4 );
 
@@ -211,33 +173,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSect
                                   2.665370886148930E-03,
                                   1e-12 );
 
-  // Tabular
-  diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
-        1.0e-5,
-        9.0e-6 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  8.859383971725880E+08,
-                                  1e-12 );
-
-  diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
-        3.16228E-01,
-        3.16115596E-01 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  9.504071722591320E+05,
-                                  1e-12 );
-
-  diff_cross_section =
-    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
-        1.0e5,
-        8.0E4 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  2.665370886148930E-03,
-                                  1e-12 );
 
   // Dipole
   diff_cross_section =
@@ -281,27 +216,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_detailed_2BS_ace )
   Data::SubshellType shell_of_interaction;
 
   ace_twobs_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
-
-  TEST_ASSERT( electron.getEnergy() < 20.0 );
-  TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the detailed tabular bremsstrahlung reaction can be simulated
-TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction,
-                   react_detailed_tabular_ace )
-{
-  MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 20 );
-  electron.setDirection( 0.0, 0.0, 1.0 );
-
-  MonteCarlo::ParticleBank bank;
-
-  Data::SubshellType shell_of_interaction;
-
-  ace_tabular_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
@@ -377,23 +291,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   unsigned bremsstrahlung_threshold_index =
     energy_grid.size() - bremsstrahlung_cross_section.size();
 
-  // Create the tabular angular distribution
-  Teuchos::Array<double> energy_bins( 3 ); // (MeV)
-  energy_bins[0] = 1e-7;
-  energy_bins[1] = 1.0;
-  energy_bins[2] = 1e5;
-
-  //! \todo Find real bremsstrahlung photon angular distribution
-  Teuchos::Array<double> angular_distribution_values( 3 );
-  angular_distribution_values[0] =  0.0;
-  angular_distribution_values[1] =  0.5;
-  angular_distribution_values[2] =  1.0;
-
-  std::shared_ptr<Utility::OneDDistribution> angular_distribution(
-                new Utility::TabularDistribution<Utility::LinLin>(
-                        energy_bins,
-                        angular_distribution_values ) );
-
   // Extract the elastic scattering information data block (BREMI)
   Teuchos::ArrayView<const double> bremi_block(
                       xss_data_extractor->extractBREMIBlock() );
@@ -433,25 +330,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
             function_data ) );
 
-  double lower_cutoff_energy = 0.001;
-  double upper_cutoff_energy = 1000;
-
   std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-        dipole_scattering_distribution, tabular_scattering_distribution,
-        twobs_scattering_distribution;
+        dipole_scattering_distribution, twobs_scattering_distribution;
 
   // Create the distributions
   dipole_scattering_distribution.reset(
    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
         scattering_function,
-        false ) );
-
-  tabular_scattering_distribution.reset(
-   new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-        scattering_function,
-        angular_distribution,
-        lower_cutoff_energy,
-        upper_cutoff_energy,
         false ) );
 
   twobs_scattering_distribution.reset(
@@ -468,13 +353,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                               bremsstrahlung_cross_section,
                               bremsstrahlung_threshold_index,
                               dipole_scattering_distribution ) );
-
-  ace_tabular_bremsstrahlung_reaction.reset(
-    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-                              energy_grid,
-                              bremsstrahlung_cross_section,
-                              bremsstrahlung_threshold_index,
-                              tabular_scattering_distribution ) );
 
   ace_twobs_bremsstrahlung_reaction.reset(
         new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(

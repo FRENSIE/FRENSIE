@@ -36,14 +36,6 @@ public:
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
     const bool use_weighted_sampling = true );
 
-  //! Constructor with detailed tabular photon angular distribution
-  BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
-    const double lower_cutoff_energy,
-    const double upper_cutoff_energy,
-    const bool use_weighted_sampling = true );
-
   //! Constructor with detailed 2BS photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
@@ -59,6 +51,9 @@ public:
 
   //! Return the Max incoming energy
   double getMaxEnergy() const;
+
+  //! Return if weighted sampling is on
+  bool isWeightedSamplingOn() const;
 
   //! Evaluate the distribution for a given incoming and photon energy
   double evaluate( const double incoming_energy,
@@ -84,8 +79,8 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-                        ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
 private:
@@ -95,10 +90,6 @@ private:
 
   //! Sample a secondary energy from the distribution
   double sampleExact( const double incoming_energy ) const;
-
-  // Sample the outgoing photon angle from a tabular distribution
-  double SampleTabularAngle(  const double incoming_electron_energy,
-                              const double photon_energy ) const ;
 
   // Sample the outgoing photon angle from a dipole distribution
   double SampleDipoleAngle(  const double incoming_electron_energy,
@@ -126,9 +117,6 @@ private:
   // lower cutoff energy for the condensed-history method
   double d_lower_cutoff_energy;
 
-  // bremsstrahlung angular distribution of generated photons
-  std::shared_ptr<Utility::OneDDistribution> d_angular_distribution;
-
   // Bool to use a weighted interpolation routine to sample the distribution
   bool d_use_weighted_sampling;
 
@@ -136,7 +124,7 @@ private:
   std::function<double ( const double, const double )>
                                         d_angular_distribution_func;
 
-  // The secondary energy function pointer
+  // The sample function pointer
   std::function<double ( const double )> d_sample_func;
 
 };

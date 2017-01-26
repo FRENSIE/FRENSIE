@@ -22,42 +22,59 @@ class BremsstrahlungElectronScatteringDistributionNativeFactory
 public:
 
   //! Create a simple dipole bremsstrahlung distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungDistribution(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double>& bremsstrahlung_energy_grid,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-		        	  scattering_distribution );
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+        scattering_distribution,
+    const bool use_weighted_sampling = true );
 
   //! Create a simple dipole bremsstrahlung distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungDistribution(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-		        	  scattering_distribution );
-
-  //! Create a detailed 2BS bremsstrahlung distribution
-  static void createBremsstrahlungDistribution(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const int atomic_number );
+    const bool use_weighted_sampling = true );
 
   //! Create a detailed 2BS bremsstrahlung distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungDistribution(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+        scattering_distribution,
+    const int atomic_number,
+    const bool use_weighted_sampling );
+
+  //! Create a detailed 2BS bremsstrahlung distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
+  static void createBremsstrahlungDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double>& bremsstrahlung_energy_grid,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const int atomic_number );
+    const int atomic_number,
+    const bool use_weighted_sampling );
 
   //! Create the energy loss function
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createEnergyLossFunction(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double> bremsstrahlung_energy_grid,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         energy_loss_function );
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 

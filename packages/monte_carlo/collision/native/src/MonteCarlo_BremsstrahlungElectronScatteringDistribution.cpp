@@ -38,7 +38,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   if( d_use_weighted_sampling )
   {
-    // Use simple analytical photon angular distribution
+    // Use weighted sampling
     d_sample_func = std::bind<double>(
            &BremsstrahlungElectronScatteringDistribution::sampleWeighted,
            std::cref( *this ),
@@ -46,49 +46,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
   }
   else
   {
-    // Use simple analytical photon angular distribution
-    d_sample_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::sampleExact,
-           std::cref( *this ),
-           std::placeholders::_1 );
-  }
-}
-
-// Constructor with detailed tabular photon angular distribution
-BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
-    const double lower_cutoff_energy,
-    const double upper_cutoff_energy,
-    const bool use_weighted_sampling )
-  : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
-    d_angular_distribution( angular_distribution ),
-    d_lower_cutoff_energy( lower_cutoff_energy ),
-    d_upper_cutoff_energy( upper_cutoff_energy ),
-    d_use_weighted_sampling( use_weighted_sampling )
-{
-  // Make sure the arraies are valid
-  testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
-  testPrecondition( d_angular_distribution.use_count() > 0 );
-
-  // Use detailed photon angular distribution
-  d_angular_distribution_func = std::bind<double>(
-            &BremsstrahlungElectronScatteringDistribution::SampleTabularAngle,
-            std::cref( *this ),
-            std::placeholders::_1,
-            std::placeholders::_2 );
-
-  if( d_use_weighted_sampling )
-  {
-    // Use simple analytical photon angular distribution
-    d_sample_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::sampleWeighted,
-           std::cref( *this ),
-           std::placeholders::_1 );
-  }
-  else
-  {
-    // Use simple analytical photon angular distribution
+    // Don't use weighted sampling
     d_sample_func = std::bind<double>(
            &BremsstrahlungElectronScatteringDistribution::sampleExact,
            std::cref( *this ),
@@ -145,6 +103,12 @@ double BremsstrahlungElectronScatteringDistribution::getMaxEnergy() const
   return d_bremsstrahlung_scattering_distribution->getUpperBoundOfPrimaryIndepVar();
 }
 
+// Return if weighted sampling is on
+bool BremsstrahlungElectronScatteringDistribution::isWeightedSamplingOn() const
+{
+  return d_use_weighted_sampling;
+}
+
 // Evaluate the distribution for a given incoming and photon energy
 double BremsstrahlungElectronScatteringDistribution::evaluate(
                      const double incoming_energy,
@@ -155,10 +119,20 @@ double BremsstrahlungElectronScatteringDistribution::evaluate(
   testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
 
-  // evaluate the distribution using a weighted interpolation scheme
-  return d_bremsstrahlung_scattering_distribution->evaluateWeighted(
+  if ( d_use_weighted_sampling )
+  {
+    // evaluate the distribution using a weighted interpolation scheme
+    return d_bremsstrahlung_scattering_distribution->evaluateWeighted(
             incoming_energy,
             photon_energy/incoming_energy );
+  }
+  else
+  {
+    // evaluate the distribution
+    return d_bremsstrahlung_scattering_distribution->evaluate(
+            incoming_energy,
+            photon_energy );
+  }
 
 }
 
@@ -172,10 +146,20 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
 
+  if ( d_use_weighted_sampling )
+  {
   // evaluate the PDF using a weighted interpolation scheme
   return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDFWeighted(
             incoming_energy,
             photon_energy/incoming_energy );
+  }
+  else
+  {
+  // evaluate the PDF
+  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDF(
+            incoming_energy,
+            photon_energy );
+  }
 }
 
 // Evaluate the CDF value for a given incoming and photon energy
@@ -188,10 +172,20 @@ double BremsstrahlungElectronScatteringDistribution::evaluateCDF(
   testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
 
-  // evaluate the PDF using a weighted interpolation scheme
+  if ( d_use_weighted_sampling )
+  {
+  // evaluate the CDF using a weighted interpolation scheme
   return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDFWeighted(
             incoming_energy,
             photon_energy/incoming_energy );
+  }
+  else
+  {
+  // evaluate the CDF
+  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDF(
+            incoming_energy,
+            photon_energy );
+  }
 }
 
 // Sample the photon energy and direction from the distribution
@@ -258,7 +252,7 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   // Set the photon outgoing angle cosine
   bremsstrahlung_photon->rotateDirection( photon_angle_cosine,
-			                  sampleAzimuthalAngle() );
+                                          sampleAzimuthalAngle() );
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );
@@ -383,28 +377,6 @@ double BremsstrahlungElectronScatteringDistribution::Calculate2BSRejection(
   return 3.0*parameter1 - two_ratio -
          ( 4.0 + m )*( parameter1 - 2.0*x*two_ratio/parameter2 );
 
-}
-
-// Sample the detailed outgoing photon direction
-double BremsstrahlungElectronScatteringDistribution::SampleTabularAngle(
-                                          const double incoming_electron_energy,
-                                          const double photon_energy ) const
-{
-    if ( incoming_electron_energy > d_upper_cutoff_energy )
-  {
-    return SampleDipoleAngle( incoming_electron_energy, photon_energy );
-  }
-  else
-  {
-    if ( incoming_electron_energy > d_lower_cutoff_energy )
-    {
-      return d_angular_distribution->evaluate( photon_energy );
-    }
-    else
-    {
-    return SampleDipoleAngle( incoming_electron_energy, photon_energy );
-    }
-  }
 }
 
 } // end MonteCarlo namespace

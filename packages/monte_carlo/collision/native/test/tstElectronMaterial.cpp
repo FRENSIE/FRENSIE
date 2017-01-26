@@ -54,44 +54,27 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getNumberDensity )
 // Check that the macroscopic total cross section can be returned
 TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicTotalCrossSection )
 {
-  double energy = 1.00000e-05;
+  double energy = 1.0e-5;
   double cross_section =
     material->getMacroscopicTotalCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 7.641204418336E+06, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          7.641204418336E+06,
-                          1e-12 );
-
-
-  energy = 1.00000e+05;
-  cross_section =
-    material->getMacroscopicTotalCrossSection( energy );
-
-  cross_section =
-    material->getMacroscopicTotalCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          8.269992326372E+03,
-                          1e-12 );
+  energy = 1.0e5;
+  cross_section = material->getMacroscopicTotalCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 8.269992326372E+03, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the macroscopic absorption cross section can be returned
 TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicAbsorptionCrossSection )
 {
-  double cross_section =
-    material->getMacroscopicAbsorptionCrossSection( 1.00000e-05 );
-
+  double cross_section = material->getMacroscopicAbsorptionCrossSection( 1.0e-5 );
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section =
-    material->getMacroscopicAbsorptionCrossSection( 1.00000e+00 );
-
+  cross_section = material->getMacroscopicAbsorptionCrossSection( 1.0 );
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section =
-    material->getMacroscopicAbsorptionCrossSection( 1.00000e+05 );
-
+  cross_section = material->getMacroscopicAbsorptionCrossSection( 1.0e5 );
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 }
 
@@ -99,14 +82,10 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicAbsorptionCrossSection )
 // Check that the survival probability can be returned
 TEUCHOS_UNIT_TEST( ElectronMaterial, getSurvivalProbability )
 {
-  double survival_prob =
-    material->getSurvivalProbability( 1.00000e-05 );
-
+  double survival_prob = material->getSurvivalProbability( 1.0e-5 );
   TEST_FLOATING_EQUALITY( survival_prob, 1.0, 1e-12 );
 
-  survival_prob =
-    material->getSurvivalProbability( 1.00000e+05 );
-
+  survival_prob = material->getSurvivalProbability( 1.0e5 );
   TEST_FLOATING_EQUALITY( survival_prob, 1.0, 1e-12 );
 }
 
@@ -116,80 +95,69 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
 {
   // Test that the atomic excitation cross section can be returned
   double cross_section = material->getMacroscopicReactionCrossSection(
-        1.00000e-05,
+        1.0e-5,
         MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
-
   TEST_FLOATING_EQUALITY( cross_section, 2.545329003693E+04, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-        1.00000e+05,
+        1.0e5,
         MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
-
   TEST_FLOATING_EQUALITY( cross_section, 4.588134602166E+03, 1e-12 );
+
 
   // Test that the bremsstrahlung cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
-        1.00000e-05,
+        1.0e-5,
         MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
-
   TEST_FLOATING_EQUALITY( cross_section, 1.415377951846E+01, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-        1.00000e+05,
+        1.0e5,
         MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
-
   TEST_FLOATING_EQUALITY( cross_section, 5.679677054824E+00, 1e-12 );
+
 
   // Test that the K subshell electroionization cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
-        1.00000e-05,
+        1.0e-5,
         MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         8.97540E-02,
         MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
   TEST_FLOATING_EQUALITY( cross_section, 3.6350071826026E-04, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-        1.00000e+05,
+        1.0e5,
         MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
   TEST_FLOATING_EQUALITY( cross_section, 1.060615028974E-01, 1e-12 );
+
 
   // Test that the P3 subshell electroionization cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
-        1.00000e-05,
+        1.0e-5,
         MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
   TEST_FLOATING_EQUALITY( cross_section, 3.096230095899E+05, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-        1.00000e+05,
+        1.0e5,
         MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
   TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
 
+
   // Test that the cutoff elastic cross section can be returned
-  double energy = 1.00000e-05;
+  double energy = 1.0e-5;
   cross_section = material->getMacroscopicReactionCrossSection(
         energy,
         MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_FLOATING_EQUALITY( cross_section, 7.234825686582E+06, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          7.234825686582E+06,
-                          1e-12 );
-
-  energy = 1.00000e+05;
+  energy = 1.0e5;
   cross_section = material->getMacroscopicReactionCrossSection(
         energy,
         MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          2.566534386946E-04,
-                          1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.566534386946E-04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

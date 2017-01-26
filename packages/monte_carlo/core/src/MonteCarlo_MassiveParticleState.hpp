@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 //! The massive particle state class
-class MassiveParticleState : public ParticleState
+class MassiveParticleState : public MonteCarlo::ParticleState
 {
 
 private:

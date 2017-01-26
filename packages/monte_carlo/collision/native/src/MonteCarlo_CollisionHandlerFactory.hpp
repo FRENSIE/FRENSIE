@@ -162,7 +162,6 @@ private:
       atomic_relaxation_model_factory,
       const SimulationProperties& properties );
 
-
   //! Create the material name data maps
   template<typename ScatteringCenterType, typename MaterialType>
   static void createMaterialNameDataMaps(

@@ -30,20 +30,20 @@ public:
 
   //! Create a electroatom core (using the provided atomic relaxation model)
   static void createElectroatomCore(
-	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+            const Data::XSSEPRDataExtractor& raw_electroatom_data,
+            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             const SimulationElectronProperties& properties,
-	    Teuchos::RCP<ElectroatomCore>& electroatom_core );            
+            Teuchos::RCP<ElectroatomCore>& electroatom_core );
 
   //! Create a electroatom (using the provided atomic relaxation model)
   static void createElectroatom(
-	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	    const std::string& electroatom_name,
+            const Data::XSSEPRDataExtractor& raw_electroatom_data,
+            const std::string& electroatom_name,
             const double atomic_weight,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             const SimulationElectronProperties& properties,
-	    Teuchos::RCP<Electroatom>& electroatom );
-           
+            Teuchos::RCP<Electroatom>& electroatom );
+
 private:
 
   // Constructor

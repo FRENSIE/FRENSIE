@@ -58,6 +58,42 @@ public:
   //! Return if atomic relaxation mode is on
   bool isAtomicRelaxationModeOn() const;
 
+  //! Set elastic mode to off (on by default)
+  void setElasticModeOff();
+
+  //! Set elastic mode to on (on by default)
+  void setElasticModeOn();
+
+  //! Return if elastic mode is on
+  bool isElasticModeOn() const;
+
+  //! Set electroionization mode to off (on by default)
+  void setElectroionizationModeOff();
+
+  //! Set electroionization mode to on (on by default)
+  void setElectroionizationModeOn();
+
+  //! Return if electroionization mode is on
+  bool isElectroionizationModeOn() const;
+
+  //! Set bremsstrahlung mode to off (on by default)
+  void setBremsstrahlungModeOff();
+
+  //! Set bremsstrahlung mode to on (on by default)
+  void setBremsstrahlungModeOn();
+
+  //! Return if bremsstrahlung mode is on
+  bool isBremsstrahlungModeOn() const;
+
+  //! Set atomic excitation mode to off (on by default)
+  void setAtomicExcitationModeOff();
+
+  //! Set atomic excitation mode to on (on by default)
+  void setAtomicExcitationModeOn();
+
+  //! Return if atomic excitation mode is on
+  bool isAtomicExcitationModeOn() const;
+
   //! Set the bremsstrahlung photon angular distribution function (2BS by default)
   void setBremsstrahlungAngularDistributionFunction(
                          const BremsstrahlungAngularDistributionType function );
@@ -94,6 +130,18 @@ private:
 
   // The atomic relaxation mode (true = on - default, false = off)
   bool d_atomic_relaxation_mode_on;
+
+  // The elasic electron scattering mode (true = on - default, false = off)
+  bool d_elastic_mode_on;
+
+  // The electroionization electron scattering mode (true = on - default, false = off)
+  bool d_electroionization_mode_on;
+
+  // The bremsstrahlung electron scattering mode (true = on - default, false = off)
+  bool d_bremsstrahlung_mode_on;
+
+  // The atomic excitation electron scattering mode (true = on - default, false = off)
+  bool d_atomic_excitation_mode_on;
 
   // The bremsstrahlung photon angular distribution function (default is 2BS)
   BremsstrahlungAngularDistributionType

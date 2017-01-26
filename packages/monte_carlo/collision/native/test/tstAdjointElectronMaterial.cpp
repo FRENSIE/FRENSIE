@@ -264,7 +264,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideSurvivalBias )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   material->collideSurvivalBias( electron, bank );
-std::cout << std::setprecision(20) << "electron.getZDirection() = "<< electron.getZDirection() << std::endl;
+
   TEST_EQUALITY_CONST( electron.getEnergy(), 1e-3 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.90000623580299476956, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getWeight(), 1.0, 1e-12 );
@@ -311,8 +311,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         test_cross_sections_xml_directory,
         cross_section_table_info,
         atom_aliases,
-        upper_cutoff_angle_cosine,
-        hash_grid_bins );
+        hash_grid_bins,
+        false,
+        upper_cutoff_angle_cosine );
 
     std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointElectroatom> >
       atom_map;

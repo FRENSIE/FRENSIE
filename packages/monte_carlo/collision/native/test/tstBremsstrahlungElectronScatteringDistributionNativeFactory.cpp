@@ -30,12 +30,7 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   dipole_distribution;
 
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  tabular_distribution;
-
-std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   twobs_distribution;
-
-double upper_cutoff_energy, lower_cutoff_energy;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -46,7 +41,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
                                                  *data_container,
-                                                 dipole_distribution );
+                                                 dipole_distribution,
+                                                 true );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
@@ -77,7 +73,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
                                                  *data_container,
-                                                 dipole_distribution );
+                                                 dipole_distribution,
+                                                 true );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
@@ -110,7 +107,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
                     *data_container,
                     twobs_distribution,
-                    data_container->getAtomicNumber() );
+                    data_container->getAtomicNumber(),
+                    true );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
@@ -144,7 +142,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
                     *data_container,
                     twobs_distribution,
-                    data_container->getAtomicNumber() );
+                    data_container->getAtomicNumber(),
+                    true );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
@@ -193,9 +192,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the native data file container
   data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
                              test_native_file_name ) );
-
-  upper_cutoff_energy = 1000;
-  lower_cutoff_energy = 0.001;
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

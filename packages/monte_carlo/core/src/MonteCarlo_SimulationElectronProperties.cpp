@@ -23,11 +23,15 @@ SimulationElectronProperties::SimulationElectronProperties()
   : d_min_electron_energy( s_absolute_min_electron_energy ),
     d_max_electron_energy( 20.0 ),
     d_atomic_relaxation_mode_on( true ),
+    d_elastic_mode_on( true ),
+    d_bremsstrahlung_mode_on( true ),
+    d_electroionization_mode_on( true ),
+    d_atomic_excitation_mode_on( true ),
     d_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_elastic_cutoff_angle_cosine( 1.0 ),
     d_num_electron_hash_grid_bins( 1000 )
 { /* ... */ }
-  
+
 // Set the minimum electron energy (MeV)
 void SimulationElectronProperties::setMinElectronEnergy( const double energy )
 {
@@ -88,6 +92,78 @@ void SimulationElectronProperties::setAtomicRelaxationModeOn()
 bool SimulationElectronProperties::isAtomicRelaxationModeOn() const
 {
   return d_atomic_relaxation_mode_on;
+}
+
+// Set elastic mode to off (on by default)
+void SimulationElectronProperties::setElasticModeOff()
+{
+  d_elastic_mode_on = false;
+}
+
+// Set elastic mode to on (on by default)
+void SimulationElectronProperties::setElasticModeOn()
+{
+  d_elastic_mode_on = true;
+}
+
+// Return if elastic mode is on
+bool SimulationElectronProperties::isElasticModeOn() const
+{
+  return d_elastic_mode_on;
+}
+
+// Set electroionization mode to off (on by default)
+void SimulationElectronProperties::setElectroionizationModeOff()
+{
+  d_electroionization_mode_on = false;
+}
+
+// Set electroionization mode to on (on by default)
+void SimulationElectronProperties::setElectroionizationModeOn()
+{
+  d_electroionization_mode_on = true;
+}
+
+// Return if electroionization mode is on
+bool SimulationElectronProperties::isElectroionizationModeOn() const
+{
+  return d_electroionization_mode_on;
+}
+
+// Set bremsstrahlung mode to off (on by default)
+void SimulationElectronProperties::setBremsstrahlungModeOff()
+{
+  d_bremsstrahlung_mode_on = false;
+}
+
+// Set bremsstrahlung mode to on (on by default)
+void SimulationElectronProperties::setBremsstrahlungModeOn()
+{
+  d_bremsstrahlung_mode_on = true;
+}
+
+// Return if bremsstrahlung mode is on
+bool SimulationElectronProperties::isBremsstrahlungModeOn() const
+{
+  return d_bremsstrahlung_mode_on;
+}
+
+// Set atomic excitation mode to off (on by default)
+void SimulationElectronProperties::setAtomicExcitationModeOff()
+{
+  d_atomic_excitation_mode_on = false;
+}
+
+// Set atomic excitation mode to on (on by default)
+void SimulationElectronProperties::setAtomicExcitationModeOn()
+{
+  d_atomic_excitation_mode_on = true;
+}
+
+// Return if atomic excitation mode is on
+bool SimulationElectronProperties::isAtomicExcitationModeOn() const
+{
+  return d_atomic_excitation_mode_on;
 }
 
 // Set the bremsstrahlung photon angular distribution function (2BS by default)

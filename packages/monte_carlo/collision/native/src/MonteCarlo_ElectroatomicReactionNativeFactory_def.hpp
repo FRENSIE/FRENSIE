@@ -134,7 +134,8 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
   {
     BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
       raw_electroatom_data,
-      bremsstrahlung_distribution );
+      bremsstrahlung_distribution,
+      true );
 
   }
   else if( photon_distribution_function = TABULAR_DISTRIBUTION )
@@ -147,7 +148,8 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
       raw_electroatom_data,
       bremsstrahlung_distribution,
-      raw_electroatom_data.getAtomicNumber() );
+      raw_electroatom_data.getAtomicNumber(),
+      true );
   }
 
   // Create the bremsstrahlung reaction

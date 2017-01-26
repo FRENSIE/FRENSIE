@@ -31,9 +31,6 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
-/*! \details The cutoff and moment preserving distributions are evaluated 
- *  independently of eachother.
- */
 double HybridElasticElectronScatteringDistribution::evaluate(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
@@ -43,17 +40,13 @@ double HybridElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-
-  return this->evaluateImpl( incoming_energy,
+  return this->evaluateImpl<EvaluationMethodType>(
+                             incoming_energy,
                              scattering_angle_cosine,
                              &Utility::TabularOneDDistribution::evaluate );
 }
 
-
 // Evaluate the PDF at the given energy and scattering angle cosine
-/*! \details The cutoff and moment preserving PDF values are evaluated 
- *  independently of eachother.
- */
 double HybridElasticElectronScatteringDistribution::evaluatePDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
@@ -63,15 +56,13 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return this->evaluateImpl( incoming_energy,
+  return this->evaluateImpl<EvaluationMethodType>(
+                             incoming_energy,
                              scattering_angle_cosine,
                              &Utility::TabularOneDDistribution::evaluatePDF );
 }
 
 // Evaluate the CDF
-/*! \details The cutoff and moment preserving CDF values are evaluated
- *  independently of eachother.
- */
 double HybridElasticElectronScatteringDistribution::evaluateCDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
@@ -86,7 +77,8 @@ double HybridElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return this->evaluateImpl( incoming_energy,
+  return this->evaluateImpl<EvaluationMethodType>(
+                             incoming_energy,
                              scattering_angle_cosine,
                              &Utility::TabularOneDDistribution::evaluateCDF );
 }
@@ -103,9 +95,9 @@ void HybridElasticElectronScatteringDistribution::sample(
   unsigned trial_dummy;
 
   // Sample an outgoing direction
-  this->sampleAndRecordTrialsImpl( incoming_energy,
-                                   scattering_angle_cosine,
-                                   trial_dummy );
+  this->sampleAndRecordTrialsImpl<Utility::LinLog>( incoming_energy,
+                                                    scattering_angle_cosine,
+                                                    trial_dummy );
 }
 
 // Sample an outgoing energy and direction and record the number of trials
@@ -119,9 +111,9 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrials(
   outgoing_energy = incoming_energy;
 
   // Sample an outgoing direction
-  this->sampleAndRecordTrialsImpl( incoming_energy,
-                                   scattering_angle_cosine,
-                                   trials );
+  this->sampleAndRecordTrialsImpl<Utility::LinLog>( incoming_energy,
+                                                    scattering_angle_cosine,
+                                                    trials );
 }
 
 // Randomly scatter the electron
@@ -196,68 +188,6 @@ void HybridElasticElectronScatteringDistribution::sampleBin(
         distribution_bin->third->sampleWithRandomNumber( scaled_random_number );
   }
 }
-
-// Sample an outgoing direction from the distribution
-void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
-                                                const double incoming_energy,
-                                                double& scattering_angle_cosine,
-                                                unsigned& trials ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-
-  // Increment the number of trials
-  ++trials;
-
-  if( incoming_energy < d_hybrid_distribution->front().first ||
-      incoming_energy > d_hybrid_distribution->back().first )
-  {
-    scattering_angle_cosine = 1.0;
-  }
-  else
-  {
-    double random_number =
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-    // Find the bin boundaries
-    HybridDistribution::const_iterator lower_bin, upper_bin;
-
-    // Find the distribution bin with E_i <= E_in
-    lower_bin = Utility::Search::binaryLowerBound<Utility::FIRST>(
-                            d_hybrid_distribution->begin(),
-                            d_hybrid_distribution->end(),
-                            incoming_energy );
-
-    // Sampling the lower bin if E_i = E_in
-    if ( lower_bin->first == incoming_energy )
-    {
-      this->sampleBin( lower_bin, random_number, scattering_angle_cosine );
-    }
-    else
-    {
-      // Find the upper bin
-      upper_bin = lower_bin;
-      upper_bin++;
-
-      // sample scattering angles from the lower and upper bins
-      double lower_angle, upper_angle;
-      this->sampleBin( lower_bin, random_number, lower_angle );
-      this->sampleBin( upper_bin, random_number, upper_angle );
-
-      scattering_angle_cosine =
-        Utility::LinLog::interpolate( lower_bin->first,
-                                      upper_bin->first,
-                                      incoming_energy,
-                                      lower_angle,
-                                      upper_angle );
-    }
-  }
-
-  // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= -1.0 );
-  testPostcondition( scattering_angle_cosine <= 1.0 );
-}
-
 
 } // end MonteCarlo namespace
 

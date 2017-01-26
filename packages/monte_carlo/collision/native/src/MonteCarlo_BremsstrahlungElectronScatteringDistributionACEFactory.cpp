@@ -38,33 +38,6 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
                                                      false ) );
 }
 
-// Create a detailed tabular bremsstrahlung distribution
-void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-			          scattering_distribution,
-        std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
-        const double lower_cutoff_energy,
-        const double upper_cutoff_energy )
-{
-  // Get the number of tables
-  double size = raw_electroatom_data.extractBREMIBlock().size()/3;
-
-  // Create the scattering function
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
-
-  BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
-							  raw_electroatom_data,
-							  scattering_function );
-
-  scattering_distribution.reset(
-   new BremsstrahlungElectronScatteringDistribution( scattering_function,
-                                                     angular_distribution,
-                                                     lower_cutoff_energy,
-                                                     upper_cutoff_energy,
-                                                     false  ) );
-}
-
 // Create a detailed 2BS bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,

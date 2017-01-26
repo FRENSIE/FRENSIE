@@ -37,6 +37,8 @@ public:
   //! Typedef for the elastic discrete distribution
   typedef std::vector<HybridFunction> HybridDistribution;
 
+  typedef double (Utility::TabularOneDDistribution::*EvaluationMethodType)(double) const;
+
   //! Constructor
   HybridElasticElectronScatteringDistribution(
     const std::shared_ptr<HybridDistribution>& hybrid_distribution,
@@ -46,17 +48,9 @@ public:
   virtual ~HybridElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the distribution
-  double evaluate( const unsigned incoming_energy_bin,
-                   const double scattering_angle_cosine ) const;
-
   //! Evaluate the PDF
   double evaluate( const double incoming_energy,
                    const double scattering_angle_cosine ) const;
-
-  //! Evaluate the PDF
-  double evaluatePDF( const unsigned incoming_energy_bin,
-                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the distribution
   double evaluatePDF( const double incoming_energy,
@@ -78,18 +72,19 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-                        ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
   //! Randomly scatter the adjoint electron
-  void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
-                               ParticleBank& bank,
+  void scatterAdjointElectron( MonteCarlo::AdjointElectronState& adjoint_electron,
+                               MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
 protected:
 
    //! Sample an outgoing direction from the distribution
+  template<typename InterpPolicy = Utility::LinLog>
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
@@ -100,13 +95,28 @@ protected:
         const double& random_number,
         double& scattering_angle_cosine ) const;
 
-  // Evaluate the distribution using the desired evaluation method
+  //! Evaluate the PDF
   template<typename EvaluationMethod>
+  double evaluateBin( 
+    const HybridDistribution::const_iterator& distribution_bin,
+    const double scattering_angle_cosine,
+    EvaluationMethod evaluate ) const;
+
+  // Evaluate the distribution using the desired evaluation method
+  template<typename EvaluationMethod, typename InterpPolicy = Utility::LinLog>
   double evaluateImpl( const double incoming_energy,
                        const double scattering_angle_cosine,
                        EvaluationMethod evaluate,
                        double below_lower_limit_return_value = 0.0,
                        double above_upper_limit_return_value = 0.0  ) const;
+
+//  // Evaluate the distribution using the desired evaluation method
+//  template<typename InterpPolicy = Utility::LinLog>
+//  double evaluateImpl( const double incoming_energy,
+//                       const double scattering_angle_cosine,
+//                       double (Utility::TabularOneDDistribution::*)(double) const evaluate,
+//                       double below_lower_limit_return_value = 0.0,
+//                       double above_upper_limit_return_value = 0.0  ) const;
 
 private:
 
