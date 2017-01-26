@@ -12,6 +12,9 @@
 #include "Utility_DirectionalCoordinateSystemTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
+//! Convert the PhaseSpaceDimensionEnum to a string
+#define PHASE_SPACE_DIMENSION_STRING( dim ) #dim
+
 namespace MonteCarlo{
 
 // Test if the dimension name is valid
@@ -69,6 +72,37 @@ PhaseSpaceDimension convertPhaseSpaceDimensionNameToEnum(
   }
 }
 
+// Convert an unsigned to a PhaseSpaceDimension enum
+PhaseSpaceDimension convertUnsignedToPhaseSpaceDimensionEnum(
+                                                     const unsigned dimension )
+{
+  switch( dimension )
+  {
+  case 0u:
+    return PRIMARY_SPATIAL_DIMENSION;
+  case 1u:
+    return SECONDARY_SPATIAL_DIMENSION;
+  case 2u:
+    return TERTIARY_SPATIAL_DIMENSION;
+  case 3u:
+    return PRIMARY_DIRECTIONAL_DIMENSION;
+  case 4u:
+    return SECONDARY_DIRECTIONAL_DIMENSION;
+  case 5u:
+    return TERTIARY_DIRECTIONAL_DIMENSION;
+  case 6u:
+    return ENERGY_DIMENSION;
+  case 7u:
+    return TIME_DIMENSION;
+  case 8u:
+    return WEIGHT_DIMENSION;
+  default:
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: Cannot convert " << dimension << " to a "
+                     "PhaseSpaceDimension!" );
+  }
+}
+
 // Convert the dimension type enum to a string
 std::string convertPhaseSpaceDimensionEnumToString(
                                   const PhaseSpaceDimension dimension )
@@ -98,6 +132,36 @@ std::string convertPhaseSpaceDimensionEnumToString(
                      "Error: An unknown PhaseSpaceDimension was "
                      "encountered (" << (unsigned)dimension << ")!" );
   }
+}
+
+// Convert the dimension type enum to a basic string
+std::string convertPhaseSpaceDimensionEnumToBasicString(
+                                          const PhaseSpaceDimension dimension )
+{
+  switch( dimension )
+  {
+  case PRIMARY_SPATIAL_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( PRIMARY_SPATIAL_DIMENSION );
+  case SECONDARY_SPATIAL_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( SECONDARY_SPATIAL_DIMENSION );
+  case TERTIARY_SPATIAL_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( TERTIARY_SPATIAL_DIMENSION );
+  case PRIMARY_DIRECTIONAL_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( PRIMARY_DIRECTIONAL_DIMENSION );
+  case SECONDARY_DIRECTIONAL_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( SECONDARY_SPATIAL_DIMENSION );
+  case TERTIARY_DIRECTIONAL_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( TERTIARY_SPATIAL_DIMENSION );
+  case ENERGY_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( ENERGY_DIMENSION );
+  case TIME_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( TIME_DIMENSION );
+  case WEIGHT_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( WEIGHT_DIMENSION );
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "Error: An unknown PhaseSpaceDimension was "
+                     "encountered (" << (unsigned)dimension << ")!" );
 }
 
 // Convert the spatial dimension to the equivalent phase space dimension

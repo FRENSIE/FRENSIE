@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <memory>
 #include <vector>
+#include <string>
 #include <map>
 #include <unordered_map>
 
@@ -19,6 +20,7 @@
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionClass.hpp"
 #include "MonteCarlo_PhaseSpacePoint.hpp"
+#include "MonteCarlo_ModuleTraits.hpp"
 #include "Utility_OneDDistributionType.hpp"
 
 namespace MonteCarlo{
@@ -29,11 +31,9 @@ class PhaseSpaceDimensionDistribution
 
 public:
 
-  //! The trial counter
-  typedef unsigned long long TrialCounter;
-
   //! The dimension trial counter map
-  typedef std::map<PhaseSpaceDimension,TrialCounter> DimensionTrialCounterMap;
+  typedef std::map<PhaseSpaceDimension,ModuleTraits::InternalCounter>
+  DimensionCounterMap;
 
   //! Constructor
   PhaseSpaceDimensionDistribution();
@@ -47,6 +47,9 @@ public:
 
   //! Return the phase space dimension class
   virtual PhaseSpaceDimensionClass getDimensionClass() const = 0;
+
+  //! Get the distribution type name
+  virtual std::string getDistributionTypeName() const = 0;
 
   //! Check if the dimension distribution is independent
   virtual bool isIndependent() const = 0;
@@ -85,7 +88,7 @@ public:
   //! Sample a dimension value and cascade to the dependent distributions 
   void sampleAndRecordTrialsWithCascade(
                                       PhaseSpacePoint& phase_space_sample,
-                                      DimensionTrialCounterMap& trials ) const;
+                                      DimensionCounterMap& trials ) const;
 
   //! Sample a dimension value without a cascade to the dependent dists.
   virtual void sampleAndRecordTrialsWithoutCascade(
@@ -101,7 +104,7 @@ public:
   //! Set the dimension value, weight appropriately and record the trials
   void sampleAndRecordTrailsWithCascadeUsingDimensionValue(
                                           PhaseSpacePoint& phase_space_sample,
-                                          DimensionTrialCounterMap& trials,
+                                          DimensionCounterMap& trials,
                                           const PhaseSpaceDimension dimension,
                                           const double dimension_value ) const;
 
@@ -127,8 +130,8 @@ private:
 
   // Sample from all of the dependent dimensions and record trials
   void sampleFromDependentDistributionsAndRecordTrials(
-                              PhaseSpacePoint& phase_space_sample,
-                              DimensionTrialCounterMap& trials ) const;
+                                           PhaseSpacePoint& phase_space_sample,
+                                           DimensionCounterMap& trials ) const;
 
   // Sample from all of the dependent dimensions using the dimension value
   void sampleFromDependentDistributionsUsingDimensionValue(
@@ -139,7 +142,7 @@ private:
   // Sample from all of the dependent dims. and record trials using dim. value
   void sampleFromDependentDistributionsAndRecordTrialsUsingDimensionValue(
                                           PhaseSpacePoint& phase_space_sample,
-                                          DimensionTrailCounterMap& trials,
+                                          DimensionCounterMap& trials,
                                           const PhaseSpaceDimension dimension,
                                           const double dimension_value ) const;
 

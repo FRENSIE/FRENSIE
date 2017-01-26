@@ -23,18 +23,37 @@ namespace MonteCarlo{
 
 // Constructor
 StandardParticleSource::StandardParticleSource(
-   const unsigned id,
-   const std::shared_ptr<const ParticleDistribution>& particle_distribution )
-  : ParticleSource( id ),
+     const std::shared_ptr<const ParticleDistribution>& particle_distribution )
+  : ParticleSource( particle_distribution->getId() ),
     d_particle_distribution( particle_distribution ),
-    d_critical_line_energies(),
-    d_cell_rejection_functions(),
+    d_default_particle_state_sampling_function(),
     d_number_of_trials( 1, 0ull ),
     d_number_of_samples( 1, 0ull ),
-    d_dimension_trial_counters( 1 )
+    d_dimensions_with_distributions(),
+    d_dimension_trial_counters( 1 ),
+    d_dimension_sample_counters( 1 ),
+    d_particle_state_critical_line_energy_sampling_functions(),
+    d_cell_rejection_functions()
 { 
   // Make sure that the particle distribution is valid
   testPrecondition( particle_distribution.get() );
+
+  // Create the default particle state sampling function
+  d_default_particle_state_sampling_function =
+    std::bind<void>( &ParticleDistribution::sampleAndRecordTrials,
+                     std::cref( *d_particle_distribution ),
+                     std::placeholders::_1,
+                     std::placeholders::_2 );
+
+  // Initialize the set of dimensions with distributions set
+  particle_distribution->getDimensionsWithDistributionsDefined(
+                                             d_dimensions_with_distributions );
+
+  // Initialize the dimension trial counters
+  this->initializeDimensionTrialCounters();
+
+  // Initialize the dimension sample counters
+  this->initializeDimensionSampleCounters();
 }
 
 // Enable thread support
@@ -52,6 +71,10 @@ void StandardParticleSource::enableThreadSupport( const unsigned threads )
   
   d_dimension_trial_counters.resize( threads );
   d_dimension_sample_counters.resize( threads );
+
+  // Initialize the dimension counters
+  this->initializeDimensionTrialCounters();
+  this->initializeDimensionSampleCounters();
 }
 
 // Reset the source data
@@ -66,32 +89,10 @@ void StandardParticleSource::resetData()
   {
     d_number_of_trials[i] = 0;
     d_number_of_samples[i] = 0;
-
-    // Reset the dimension trial counters
-    DimensionTrailCounterMap::iterator dimension_counters_it,
-      dimension_counters_end;
-
-    dimension_counters_it = d_dimension_trial_counters[i].begin();
-    dimension_counters_end = d_dimension_trial_counters[i].end();
-
-    while( dimension_counters_it != dimension_counters_end )
-    {
-      dimension_counters_it->second = 0;
-      
-      ++dimension_counters_it;
-    }
-
-    // Reset the dimension sample counters
-    dimension_counters_it = d_dimension_sample_counters[i].begin();
-    dimension_counters_it = d_dimension_sample_counters[i].end();
-
-    while( dimension_counters_it != dimension_counters_end )
-    {
-      dimension_counters_it->second = 0;
-
-      ++dimension_counters_it;
-    }
   }
+
+  this->initializeDimensionSampleCounters();
+  this->initializeDimensionTrialCounters();
 }
 
 // Reduce the source data
@@ -111,60 +112,132 @@ void StandardParticleSource::reduceData(
   // Only do the reduction if there is more than one process
   if( comm->getSize() > 1 )
   {
+    // Reduce the trial counters
     try{
-      Teuchos::reduceAll<TrialCounter>( *comm,
-                                        Teuchos::REDUCE_SUM,
-                                        d_number_of_trials.size(),
-                                        d_number_of_trials.getRawPtr(),
-                                        d_number_of_trials.getRawPtr() );
+      this->reduceTrialCounters( comm, root_process );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Error: unable to reduce the source trials!" );
+                             "Error: unable to reduce the source trial "
+                             "counters!" );
 
+    // Reduce the sample counters
     try{
-      Teuchos::reduceAll<TrialCounter>( *comm,
-                                        Teuchos::REDUCE_SUM,
-                                        d_number_of_samples.size(),
-                                        d_number_of_samples.getRawPtr(),
-                                        d_number_of_samples.getRawPtr());
+      this->reduceSampleCounters( comm, root_process );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Error: unable to reduce the source samples!" );
+                             "Error: unable to reduce the source sample "
+                             "counters!" );
 
     // Reduce the dimension trial counters
-    for( size_t i = 0; i < d_dimension_trial_counters.size(); ++i )
-    {
-      DimensionTrialCounter::const_iterator local_dimension_trial_counters_it,
-        local_dimension_trial_counters_end;
-
-      local_dimension_trial_counters_it =
-        d_dimension_trial_counters[i].begin();
-      
-      local_dimension_trial_counters_end =
-        d_dimension_trial_counters[i].end();
-
-      while( local_dimension_trial_counters_it !=
-             local_dimension_trial_counters_end )
-      {
-        try{
-          Teuchos::reduceAll<DimensionTrialCounter>(
-                                  *comm,
-                                  Teuchos::REDUCE_SUM,
-                                  1,
-                                  &local_dimension_trial_counters_it->second,
-                                  &local_dimension_trial_counters_it->second );
-        }
-        EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                                 "Error: unable to reduce the source samples "
-                                 "for dimension "
-                                 << local_dimension_trial_counters_it->first
-                                 << "!" );
-      }
+    try{
+      this->reduceDimensionTrialCounters( comm, root_process );
     }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Error: unable to reduce the dimension trial "
+                             "counters!" );
+
+    // Reduce the dimension sample counters
+    try{
+      this->reduceDimensionTrialCounters( comm, root_process );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Error: unable to reduce the dimension sample "
+                             "counters!" );
     
     // Reset the sampling data if not the root process
     if( comm->getRank() != root_process )
       this->resetData();
+  }
+}
+
+// Reduce the sample counters on the comm
+void StandardParticleSource::reduceSampleCounters(
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process )
+{
+  StandardParticleSource::reduceCounters( d_number_of_samples,
+                                          comm,
+                                          root_process );
+                                         
+}
+
+// Reduce the trial counters on the comm
+void StandardParticleSource::reduceTrialCounters(
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process )
+{
+  StandardParticleSource::reduceCounters( d_number_of_trials,
+                                          comm,
+                                          root_process );
+}
+
+// Reduce the counters on the comm
+void StandardParticleSource::reduceCounters(
+            Teuchos::Array<ModuleTraits::InternalCounter>& counters,
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process )
+{
+  try{
+    Teuchos::reduceAll<ModuleTraits::InternalCounter>( *comm,
+                                      Teuchos::REDUCE_SUM,
+                                      counters.size(),
+                                      counters.getRawPtr(),
+                                      counters.getRawPtr() );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: unable to reduce the counters!" );
+}
+
+// Reduce the dimension trial counters on the comm
+void StandardParticleSource::reduceDimensionTrialCounters(
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process )
+{
+  StandardParticleSource::reduceDimensionCounters( d_dimension_trial_counters,
+                                                   comm,
+                                                   root_process );
+}
+
+// Reduce the dimension sample counters on the comm
+void StandardParticleSource::reduceDimensionSampleCounters(
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process )
+{
+  StandardParticleSource::reduceDimensionCounters( d_dimension_sample_counters,
+                                                   comm,
+                                                   root_process );
+}
+
+// Reduce the dimension counters on the comm
+void StandardParticleSource::reduceDimensionCounters(
+            Teuchos::Array<DimensionCounterMap>& dimension_counters,
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process )
+{
+  for( size_t i = 0; i < dimension_counters.size(); ++i )
+  {
+    DimensionCounterMap::const_iterator local_dimension_counters_it,
+      local_dimension_counters_end;
+
+    local_dimension_counters_it = dimension_counters[i].begin();
+    local_dimension_counters_end = dimension_counters[i].end();
+    
+    while( local_dimension_counters_it != local_dimension_counters_end )
+    {
+      try{
+        Teuchos::reduceAll<ModuleTraits::InternalCounter>(
+                                        *comm,
+                                        Teuchos::REDUCE_SUM,
+                                        1,
+                                        &local_dimension_counters_it->second,
+                                        &local_dimension_counters_it->second );
+      }
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Error: unable to reduce the source counters "
+                               "for dimension "
+                               << local_dimension_counters_it->first
+                               << "!" );
+    }
   }
 }
 
@@ -183,19 +256,49 @@ void StandardParticleSource::exportData(
   SourceHDF5FileHandler source_hdf5_file( hdf5_file );
 
   // Set the number of trials
-  TrialCounter trials = this->getNumberOfTrials();
+  ModuleTraits::InternalCounter trials = this->getNumberOfTrials();
 
   source_hdf5_file.setNumberOfSourceSamplingTrials( this->getId(), trials );
 
-  source_hdf5_file.setNumberOfDefaultSourceSamplingTrials( trials );
-
-
   // Set the number of samples
-  TrialCounter  samples = this->getNumberOfSamples();
+  ModuleTraits::InternalCounter samples = this->getNumberOfSamples();
 
   source_hdf5_file.setNumberOfSourceSamples( this->getId(), samples );
 
-  source_hdf5_file.setNumberOfDefaultSourceSamples( samples );
+  // Set the number of trials in each dimension
+  DimensionCounterMap dimension_counters;
+
+  this->reduceAllLocalDimensionTrialCounters( dimension_counters );
+
+  DimensionCounterMap::const_iterator dimension_counter_it =
+    dimension_counters.begin();
+
+  while( dimension_counter_it != dimension_counters.end() )
+  {
+    source_hdf5_file.setNumberOfSourceDimensionSamplingTrials(
+                                                this->getId(),
+                                                dimension_counter_it->first,
+                                                dimension_counter_it->second );
+    
+    ++dimension_counter_it;
+  }
+
+  // set the number of samples in each dimension
+  dimension_counters.clear();
+
+  this->reduceAllLocalDimensionSampleCounters( dimension_counters );
+
+  dimension_counter_it = dimension_counters.begin();
+
+  while( dimension_counter_it != dimension_counters.end() )
+  {
+    source_hdf5_file.setNumberOfSourceDimensionSamples(
+                                                this->getId(),
+                                                dimension_counter_it->first,
+                                                dimension_counter_it->second );
+    
+    ++dimension_counter_it;
+  }
 }
 
 // Print a summary of the source data
@@ -206,13 +309,57 @@ void StandardParticleSource::printSummary( std::ostream& os ) const
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
+  // Print the source sampling statistics
   this->printStandardSummary( "Standard Source",
                               this->getNumberOfTrials(),
                               this->getNumberOfSamples(),
                               this->getSamplingEfficiency(),
                               os );
+
+  // Print the sampling statistics for each source dimension
+  ParticleDistribution::DimensionSet::const_iterator dimension_it =
+    d_dimensions_with_distributions.begin();
+  
+  while( dimension_it != dimensions.end() )
+  {
+    this->printStandardDimensionSummary(
+      d_particle_distribution->getDimensionDistributionTypeName(*dimension_it),
+      *dimension_it,
+      this->getNumberOfDimensionTrials( *dimension_it ),
+      this->getNumberOfDimensionSamples( *dimension_it ),
+      this->getDimensionSamplingEfficiency( *dimension_it ),
+      os );
+    
+    ++dimension_it;
+  }
 }
 
+// Set the critical line energies
+void StandardParticleSource::setCriticalLineEnergies(
+                const Teuchos::ArrayRCP<const double>& critical_line_energies )
+{
+  // Make sure that at least one critical line energy has been specified
+  testPrecondition( critical_line_energy.size() > 0 );
+  // Make sure that the energy dimension has a distribution assigned
+  testPrecondition( d_dimensions_with_distributions.count(ENERGY_DIMENSION) );
+  
+  // Resize the particle state critical line energy sampling functions array
+  d_particle_state_critical_line_energy_sampling_functions.resize(
+                                               critical_line_energies.size() );
+
+  // Create the sampling function for each critical line energy
+  for( size_t i = 0; i < critical_line_energies.size(); ++i )
+  {
+    d_particle_state_critical_line_energy_sampling_functions[i] =
+      std::bind<void>( &ParticleDistribution::sampleWithDimensionValueAndRecordTrials,
+                       std::cref( *d_particle_distribution ),
+                       std::placeholders::_1,
+                       std::placeholders::_2,
+                       ENERGY_DIMENSION,
+                       critical_line_energies[i] );
+  }
+}
+  
 // Sample the particle state from the source
 /*! \details If enableThreadSupport has been called, this method is
  * thread-safe. The cell that contains the sampled particle state will
@@ -229,79 +376,127 @@ void StandardParticleSource::sampleParticleState(
   // Initialize the particle
   std::shared_ptr<ParticleState> particle;
     
-  ParticleStateFactory::createState( particle, d_particle_type, history );
-
-  // Initialize a source phase space point
-  ParticleSourcePhaseSpacePoint phase_space_sample(
-                                       d_spatial_coord_conversion_policy,
-                                       d_directional_coord_conversion_policy );
+  ParticleStateFactory::createState(
+               particle, d_particle_distribution->getParticleType(), history );
   
+  // Sample the particle state
+  this->sampleParticleStateBasicImpl(
+                       d_default_particle_state_sampling_function, *particle );
+
+  // Add the particle to the bank
+  bank.push( *particle );
+
+  // Generate probe particles with the critical line energies
+  this->generateProbeParticles( bank, history );
+}
+
+// Generate probe particles
+/* Note: Probe particles are currently sampled completely independently from
+ * the parent particle. It is quite possible that there is a more efficient
+ * way to generate probe particles but given that a particle distribution
+ * can be defined in a very general way it is not immediately obvious how to
+ * do this. 
+ */
+void StandardParticleSource::generateProbeParticles(
+                                       ParticleBank& bank,
+                                       const unsigned long long history ) const
+{
+  for( size_t i = 0; i < d_particle_state_critical_line_energy_sampling_functions.size(); ++i )
+  {
+    // Initialize the particle (probe)
+    std::shared_ptr<ParticleState> particle;
+
+    try{
+      ParticleStateFactory::createState(
+         particle, d_particle_distribution->getParticleType(), history, true );
+    }
+    EXCEPTION_CATCH_RETHROW( std::logic_error,
+                             "Error: A probe particle with the desired "
+                             "critical line energy ("
+                             << d_critical_line_energies[i] << ") could not "
+                             "be created!" );
+    
+    this->sampleParticleStateBasicImpl(
+                   d_particle_state_critical_line_energy_sampling_functions[i],
+                   *particle,
+                   true );
+
+    // Add the particle to the bank
+    bank.push( *particle );
+  }  
+}
+
+// Sample a particle state
+void StandardParticleSource::sampleParticleStateBasicImpl(
+                              ParticleStateSamplingFunction& sampling_function,
+                              ParticleState& particle,
+                              const bool ignore_energy_dimension_counters )
+{
+  // Cache some of the counters for this thread in case they need to be
+  // accessed multiple times
+  ModuleTraits::InternalCounter& trial_counter =
+    d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
+
+  DimensionCounterMap& dimension_trial_counters =
+    d_dimension_trial_counters[Utility::GlobalOpenMPSession::getThreadId()];
+
+  DimensionCounterMap& dimension_sample_counters =
+    d_dimension_sample_counters[Utility::GlobalOpenMPSession::getThreadId()];
+
   // Sample the particle state
   while( true )
   {
     // Increment the trials counter
-    ++d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
+    ++trial_counter;
 
-    std::set<ParticleSourceDimensionType>::const_iterator
-      independent_dimension = d_independent_dimensions.begin();
+    // Sample the particle state and record dimension sampling statistics
+    sampling_function( particle, dimension_trial_counters );
 
-    // Sample independent dimensions values first. This will also trigger
-    // the sampling of the dimensions that are dependent on the
-    // sampled independent dimension.
-    while( independent_dimension != d_independent_dimensions.end() )
-    {
-      d_dimensions.find( *independent_dimension )->second->sample(
-                                                          phase_space_sample );
+    // Increment the dimension sample counters
+    this->incrementDimensionCounters( dimension_sample_counters,
+                                      ignore_energy_dimension_counters );
 
-      ++independent_dimension;
-    }
-
-    // Convert the sampled phase space point to a particle state. This will
-    // use the spatial and directional conversion policies
-    phase_space_sample.setParticleState( *particle );
-
-    // Check if the particle position satisfies the rejection cells.
-    if( this->isSampledParticlePositionValid( *particle ) )
+    // Check if the particle position satisfies a rejection cell.
+    if( this->isSampledParticlePositionValid( particle ) )
       break;
   }
 
-  // Generate probe particles with the critical line energies
-  this->generateProbeParticles( phase_space_sample, bank, history );
-
   // Increment the samples counter
   ++d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
-
-  // Add the particle to the bank
-  bank.push( *particle );
 }
-
+  
 // Return the number of sampling trials
 /*! \details Only the master thread should call this method.
  */
-auto StandardParticleSource::getNumberOfTrials() const -> TrialCounter
+auto StandardParticleSource::getNumberOfTrials() const
+  -> ModuleTraits::InternalCounter
 {
   // Make sure that only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
+  
   return this->reduceLocalTrialCounters();
 }
-
+                  
 // Return the number of trials in the phase space dimension
 /*! \details Only the master thread should call this method.
  */
-auto StandardParticleSource::getNumberOfTrials(
-           const PhaseSpaceDimension dimension ) const -> DimensionTrialCounter
+auto StandardParticleSource::getNumberOfDimensionTrials(
+                                    const PhaseSpaceDimension dimension ) const
+  -> ModuleTraits::InternalCounter
 {
   // Make sure that only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
-  return this->reduceLocalDimensionTrialCounters( dimension );
+  if( d_dimensions_with_distributions.count( dimension ) )
+    return this->reduceLocalDimensionTrialCounters( dimension );
+  else
+    return 0;
 }
-
+                  
 // Return the number of samples
 /*! \details Only the master thread should call this method.
  */
-auto StandardParticleSource::getNumberOfSamples() const -> TrialCounter
+auto StandardParticleSource::getNumberOfSamples() const -> ModuleTraits::InternalCounter
 {
   // Make sure that only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -313,12 +508,15 @@ auto StandardParticleSource::getNumberOfSamples() const -> TrialCounter
 /*! \details Only the master thread should call this method.
  */
 auto StandardParticleSource::getNumberOfDimensionSamples(
-           const PhaseSpaceDimension dimension ) const -> DimensionTrialCounter
+           const PhaseSpaceDimension dimension ) const -> ModuleTraits::InternalCounter
 {
   // Make sure that only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
-  return this->reduceLocalDimensionSampleCounters( dimension );
+  if( d_dimensions_with_distributions.count( dimension ) )
+    return this->reduceLocalDimensionSampleCounters( dimension );
+  else
+    return 0;
 }
 
 // Return the sampling efficiency from the source distribution
@@ -330,10 +528,10 @@ double StandardParticleSource::getSamplingEfficiency() const
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
   // Reduce the number of samples
-  TrialCounter total_samples = this->reduceLocalSampleCounters();
+  ModuleTraits::InternalCounter total_samples = this->reduceLocalSampleCounters();
 
   // Reduce the number of trials
-  TrialCounter total_trials = this->reduceLocalTrialCounters();
+  ModuleTraits::InternalCounter total_trials = this->reduceLocalTrialCounters();
 
   if( total_trials > 0ull )
     return static_cast<double>( total_samples )/total_trials;
@@ -351,11 +549,11 @@ double StandardParticleSource::getDimensionSamplingEfficiency(
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
   // Reduce the number of samples for the dimension
-  DimensionTrialCounter total_samples =
+  ModuleTraits::InternalCounter total_samples =
     this->reduceLocalDimensionSampleCounters( dimension );
 
   // Reduce the number of trials for the dimension
-  DimensionTrialCounter total_trials =
+  ModuleTraits::InternalCounter total_trials =
     this->reduceLocalDimensionTrialCounters( dimension );
 
   if( total_trials > 0 )
@@ -392,57 +590,8 @@ bool StandardParticleSource::isSampledParticlePositionValid(
   return valid_position;
 }
 
-// Generate probe particles
-/* Note: If a spatial dimension is dependent on the energy dimension then
- * it is possible for the position of a generated probe particle to be 
- * outside of a rejection cell even if the original sampled particle state
- * was inside of a rejection cell. The position of the generated probe 
- * particles will always be checked against the rejection cells. Rejected 
- * probe particles will not affect the sampling efficiency of the source.
- */
-void StandardParticleSource::generateProbeParticles(
-                       ParticleSourcePhaseSpacePoint& phase_space_sample,
-                       ParticleBank& bank,
-                       const unsigned long long history ) const
-{
-  // Get the energy dimension
-  const ParticleSourceDimension& energy_dimension =
-    *d_dimensions.find( ENERGY_PS_DIMENSION )->second;
-  
-  for( size_t i = 0; i < d_critical_line_energies.size(); ++i )
-  {
-    // Initialize the particle (probe)
-    std::shared_ptr<ParticleState> particle;
-
-    try{
-      ParticleStateFactory::createState(
-                                    particle, d_particle_type, history, true );
-    }
-    EXCEPTION_CATCH_RETHROW( std::logic_error,
-                             "Error: The probe particles with the desired "
-                             "critical line energies could not be created!" );
-
-    // If the position is dependent on the energy, the position of the probe
-    // must be checked
-    while( true )
-    {
-      // Set the phase space sample energy to the critical line energy
-      energy_dimension.setDimensionValueAndSample(
-                             phase_space_sample, d_critical_line_energies[i] );
-
-      phase_space_sample.setParticleState( *particle );
-
-      if( this->isSampledParticlePositionValid( *particle ) )
-        break;
-    }
-
-    // Add the particle to the bank
-    bank.push( *particle );
-  }  
-}
-
 // Reduce the local samples counters
-auto StandardParticleSource::reduceLocalSamplesCounters() const -> TrialCounter
+auto StandardParticleSource::reduceLocalSamplesCounters() const -> ModuleTraits::InternalCounter
 {
   return std::accumulate( d_number_of_samples.begin(),
                           d_number_of_samples.end(),
@@ -450,7 +599,7 @@ auto StandardParticleSource::reduceLocalSamplesCounters() const -> TrialCounter
 }
 
 // Reduce the local trials counters
-auto StandardParticleSource::reduceLocalTrialsCounters() const -> TrialCounter
+auto StandardParticleSource::reduceLocalTrialsCounters() const -> ModuleTraits::InternalCounter
 {
   return std::accumulate( d_number_of_trials.begin(),
                           d_number_of_trials.end(),
@@ -459,7 +608,7 @@ auto StandardParticleSource::reduceLocalTrialsCounters() const -> TrialCounter
 
 // Reduce all of the local dimension samples counters
 void StandardParticleSource::reduceAllLocalDimensionSampleCounters(
-                    DimensionTrialCounterMap& dimension_sample_counters ) const
+                    DimensionCounterMap& dimension_sample_counters ) const
 {
   StandardParticleSource::reduceAllDimensionCounters(
                                                  dimension_trial_counters,
@@ -468,7 +617,7 @@ void StandardParticleSource::reduceAllLocalDimensionSampleCounters(
 
 // Reduce all of the local dimension trials counters
 void StandardParticleSource::reduceAllLocalDimensionTrialsCounters(
-                     DimensionTrialCounterMap& dimension_trial_counters ) const
+                     DimensionCounterMap& dimension_trial_counters ) const
 {
   StandardParticleSource::reduceAllDimensionCounters(
                                                   dimension_trial_counters,
@@ -477,12 +626,12 @@ void StandardParticleSource::reduceAllLocalDimensionTrialsCounters(
 
 // Reduce the dimension counters
 void StandardParticleSource::reduceAllDimensionCounters(
-       DimensionTrailCounterMap& dimension_counters,
-       const Teuchos::Array<DimensionTrialCounterMap>& all_dimension_counters )
+       DimensionCounterMap& dimension_counters,
+       const Teuchos::Array<DimensionCounterMap>& all_dimension_counters )
 {
   for( size_t i = 0; i < all_dimension_counters.size(); ++i )
   {
-    DimensionTrailCounterMap::const_iterator dimension_counter_it,
+    DimensionCounterMap::const_iterator dimension_counter_it,
       dimension_counter_end;
     
     dimension_counter_it = all_dimension_counters[i].begin();
@@ -505,7 +654,8 @@ void StandardParticleSource::reduceAllDimensionCounters(
 
 // Reduce the local dimension sample counters
 auto StandardParticleSource::reduceLocalDimensionSampleCounters(
-           const PhaseSpaceDimension dimension ) const -> DimensionTrailCounter
+                                    const PhaseSpaceDimension dimension ) const
+  -> ModuleTraits::InternalCounter
 {
   return StandardParticleSource::reduceDimensionCounters(
                                       dimension, d_dimension_sample_counters );
@@ -513,19 +663,20 @@ auto StandardParticleSource::reduceLocalDimensionSampleCounters(
 
 // Reduce the local dimension trial counters
 auto StandardParticleSource::reduceLocalDimensionTrialCounters(
-           const PhaseSpaceDimension dimension ) const -> DimensionTrialCounter
+                                    const PhaseSpaceDimension dimension ) const
+  -> ModuleTraits::InternalCounter
 {
   return StandardParticleSource::reduceDimensionCounters(
                                        dimension, d_dimension_trial_counters );
 }
-
+                  
 // Reduce the dimension counter
 auto StandardParticleSource::reduceDimensionCounters(
            const PhaseSpaceDimension dimension,
-           const Teuchos::Array<DimensionTrialCounterMap>& dimension_counters )
-  -> DimensionTrialCounter
+           const Teuchos::Array<DimensionCounterMap>& dimension_counters )
+  -> ModuleTraits::InternalCounter
 {
-  DimensionTrialCounter counter = 0;
+  ModuleTraits::InternalCounter counter = 0;
 
   for( size_t i = 0; i < d_dimension_counters.size(); ++i )
   {
@@ -535,6 +686,63 @@ auto StandardParticleSource::reduceDimensionCounters(
   }
 
   return counter;
+}
+
+// Initialize the dimension sample counters
+void StandardParticleSource::initializeDimensionSampleCounters()
+{
+  StandardParticleSource::initializeDimensionCounters(
+                                               d_dimensions_with_distributions,
+                                               d_dimension_sample_counters );
+}
+
+// Initialize the dimension trial counters
+void StandardParticleSource::initializeDimensionTrialCounters()
+{
+  StandardParticleSource::initializeDimensionCounters(
+                                               d_dimensions_with_distributions,
+                                               d_dimension_trial_counters );
+}
+
+// Initialize the dimension counters
+void StandardParticleSource::initializeDimensionCounters(
+                      const ParticleDistribution::DimensionSet& dimensions,
+                      Teuchos::Array<DimensionCounterMap>& dimension_counters )
+{
+  ParticleDistribution::DimensionSet::const_iterator dimension_it =
+    dimensions.begin();
+
+  while( dimension_it != dimensions.end() )
+  {
+    for( size_t i = 0; i < dimension_counters.size(); ++i )
+      dimension_counters[i][*dimension_it] = 0;
+
+    ++dimension_it;
+  }
+}
+
+// Increment the dimension counters
+void StandardParticleSource::incrementDimensionCounters(
+                                       DimensionCounterMap& dimension_counters,
+                                       const bool ignore_energy_dimension )
+{
+  DimensionCounterMap::const_iterator dimension_counter_it =
+    dimension_counters.begin();
+
+  while( dimension_counter_it != dimension_counters.end() )
+  {
+    // Always increment a dimension counter if it is not associated with the
+    // energy dimension
+    if( dimension_counter_it->first != ENERGY_DIMENSION )
+      ++dimension_counter_it->second;
+    
+    // Only increment the energy dimension counter if requested
+    else
+    {
+      if( !ignore_energy_dimension )
+        ++dimension_counter_it->second;
+    }
+  }
 }
 
 } // end MonteCarlo namespace

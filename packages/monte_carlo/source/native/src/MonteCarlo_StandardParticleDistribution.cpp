@@ -21,13 +21,13 @@ StandardParticleDistribution::StandardParticleDistribution(
    const ModuleTraits::InternalSourceHandle id,
    const std::string& name,
    const ParticleType particle_type,
-   const PhaseSpaceDimensionSet& independent_dimensions,
-   const PhaseSpaceDimensionDistributionMap& dimension_distributions,
+   const DimensionSet& independent_dimensions,
+   const DimensionDistributionMap& dimension_distributions,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
    directional_coord_conversion_policy )
-  : ParticleDistribution( id, name ),
+  : ParticleDistribution( id, name, particle_type ),
     d_particle_type( particle_type ),
     d_independent_dimensions( independent_dimensions ),
     d_dimension_distributions( dimension_distributions ),
@@ -49,7 +49,7 @@ bool StandardParticleDistribution::isDimensionDataValid() const
   
   // Check that the independent dimensions can be found in the dimension
   // distribution map
-  PhaseSpaceDimensionSet::const_iterator indep_dimension_it = 
+  DimensionSet::const_iterator indep_dimension_it = 
     d_independent_dimensions.begin();
 
   while( indep_dimension_it != d_independent_dimensions.end() )
@@ -65,6 +65,39 @@ bool StandardParticleDistribution::isDimensionDataValid() const
   }
 
   return valid_data;
+}
+
+// Check if a dimension has a distribution defined
+bool StandardParticleDistribution::doesDimensionHaveDistributionDefined(
+                                    const PhaseSpaceDimension dimension ) const
+{
+  return d_dimension_distributions.find( dimension ) !=
+    d_dimension_distributions.end();
+}
+
+// Return the dimensions with distributions defined
+void StandardParticleDistribution::getDimensionsWithDistributionsDefined(
+                                               DimensionSet& dimensions ) const
+{
+  DimensionDistributionMap::const_iterator dimension_dist_map_it =
+    d_dimension_distributions.begin();
+
+  while( dimension_dist_map_it != d_dimension_distributions.end() )
+  {
+    dimensions.insert( dimension_dist_map_it->first );
+
+    ++dimension_dist_map_it;
+  }
+}
+
+// Return the dimension distribution type name
+std::string StandardParticleDistribution::getDimensionDistributionTypeName(
+                                    const PhaseSpaceDimension dimension ) const
+{
+  // Make sure that the dimension has a distribution defined
+  testPrecondition( this->doesDimensionHaveDistributionDefined( dimension ) );
+
+  return d_dimension_distributions.find(dimension)->second->getDistributionTypeName();
 }
 
 // Check if the distribution is spatially uniform (somewhere)
@@ -140,7 +173,7 @@ double StandardParticleDistribution::evaluate(
   double distribution_value = 1.0;
 
   // Evaluate the distribution at the phase space point
-  PhaseSpaceDimensionDistributionMap::const_iterator
+  DimensionDistributionMap::const_iterator
     dimension_dist_it = d_dimension_distributions.begin();
 
   // Each dimension distribution will be evaluated individually (without
@@ -160,11 +193,10 @@ double StandardParticleDistribution::evaluate(
 void StandardParticleDistribution::sample( ParticleState& particle ) const;
 {
   // Create the dimension sampling functor
-  std::function<void(const PhaseSpaceDimensionDistribution&,PhaseSpacePoint&)>
-    dimension_sample_functor = std::bind<void>(
-                          &PhaseSpaceDimensionDistribution::sampleWithCascade,
-                          std::placeholders::_1,
-                          std::placeholders::_2 );
+  DimensionSamplingFunction dimension_sample_functor =
+    std::bind<void>( &PhaseSpaceDimensionDistribution::sampleWithCascade,
+                     std::placeholders::_1,
+                     std::placeholders::_2 );
 
   this->sampleImpl( dimension_sample_functor, particle );
 }
@@ -172,11 +204,11 @@ void StandardParticleDistribution::sample( ParticleState& particle ) const;
 // Sample a particle state from the dist. and record the number of trials
 void StandardParticleDistribution::sampleAndRecordTrials(
                                        ParticleState& particle,
-                                       DimensionTrialCounterMap& trials ) const
+                                       DimensionCounterMap& trials ) const
 {
   // Create the dimension sampling functor
-  std::function<void(const PhaseSpaceDimensionDistribution&,PhaseSpacePoint&)>
-    dimension_sample_functor = std::bind<void>(
+  DimensionSamplingFunction dimension_sample_functor =
+    std::bind<void>(
             &PhaseSpaceDimensionDistribution::sampleAndRecordTrialsWithCascade,
             std::placeholders::_1,
             std::placeholders::_2,
@@ -192,8 +224,8 @@ void StandardParticleDistribution::sampleWithDimensionValue(
                                            const double dimension_value ) const
 {
   // Create the dimension sampling functor
-  std::function<void(const PhaseSpaceDimensionDistribution&,PhaseSpacePoint&)>
-    dimension_sample_functor = std::bind<void>(
+  DimensionSamplingFunction dimension_sample_functor =
+    std::bind<void>(
        &PhaseSpaceDimensionDistribution::sampleWithCascadeUsingDimensionValue,
        std::placeholders::_1,
        std::placeholders::_2,
@@ -206,13 +238,13 @@ void StandardParticleDistribution::sampleWithDimensionValue(
 // Sample a particle state with the desired dim. value and record trials
 void StandardParticleDistribution::sampleWithDimensionValueAndRecordTrials(
                                            ParticleState& particle,
-                                           DimensionTrialCounterMap& trials,
+                                           DimensionCounterMap& trials,
                                            const PhaseSpaceDimension dimension,
                                            const double dimension_value ) const
 {
   // Create the dimension sampling functor
-  std::function<void(const PhaseSpaceDimensionDistribution&,PhaseSpacePoint&)>
-    dimension_sample_functor = std::bind<void>(
+  DimensionSamplingFunction dimension_sample_functor =
+    std::bind<void>(
        &PhaseSpaceDimensionDistribution::sampleAndRecordTrailsWithCascadeUsingDimensionValue,
        std::placeholders::_1,
        std::placeholders::_2,

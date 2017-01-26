@@ -14,6 +14,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <functional>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -37,21 +38,24 @@ private:
   // Typedef for scalar traits
   typedef Teuchos::ScalarTraits<double> ST;
 
+  // Typedef for the dimension sampling function
+  typedef std::function<void(const PhaseSpaceDimensionDistribution&,PhaseSpacePoint&)> DimensionSamplingFunction;
+
 public:
 
   //! Typedef for the phase space dimension set
-  typedef std::set<PhaseSpaceDimension> PhaseSpaceDimensionSet;
+  typedef std::set<PhaseSpaceDimension> DimensionSet;
 
   //! Typedef for the phase space dimension distribution map
-  typedef std::map<PhaseSpaceDimension,std::shared_ptr<const PhaseSpaceDimensionDistribution> > PhaseSpaceDimensionDistributionMap;
+  typedef std::map<PhaseSpaceDimension,std::shared_ptr<const PhaseSpaceDimensionDistribution> > DimensionDistributionMap;
 
   //! Constructor
   StandardParticleDistribution(
    const ModuleTraits::InternalSourceHandle id,
    const std::string& name,
    const ParticleType particle_type,
-   const PhaseSpaceDimensionSet& independent_dimensions,
-   const PhaseSpaceDimensionDistributionMap& dimension_distributions,
+   const DimensionSet& independent_dimensions,
+   const DimensionDistributionMap& dimension_distributions,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
@@ -60,6 +64,18 @@ public:
   //! Destructor
   ~StandardParticleDistribution()
   { /* ... */ }
+
+  //! Check if a dimension has a distribution defined
+  bool doesDimensionHaveDistributionDefined(
+                          const PhaseSpaceDimension dimension ) const override;
+
+  //! Return the dimensions with distributions defined
+  void getDimensionsWithDistributionsDefined(
+                                     DimensionSet& dimensions ) const override;
+
+  //! Return the dimension distribution type name
+  std::string getDimensionDistributionTypeName(
+                          const PhaseSpaceDimension dimension ) const override;
 
   //! Check if the distribution is spatially uniform (somewhere)
   bool isSpatiallyUniform() const override;
@@ -75,7 +91,7 @@ public:
 
   //! Sample a particle state from the dist. and record the number of trials
   void sampleAndRecordTrials( ParticleState& particle,
-                              DimensionTrialCounterMap& trials ) const override;
+                              DimensionCounterMap& trials ) const override;
 
   //! Sample a particle state with the desired dimension value
   void sampleWithDimensionValue( ParticleState& particle,
@@ -85,28 +101,24 @@ public:
   //! Sample a particle state with the desired dim. value and record trials
   void sampleWithDimensionValueAndRecordTrials(
                                  ParticleState& particle,
-                                 DimensionTrialCounterMap& trials,
+                                 DimensionCounterMap& trials,
                                  const PhaseSpaceDimension dimension,
                                  const double dimension_value ) const override;
 
 private:
 
   // Sample the particle state using the desired sampling functor
-  template<typename DimensionSampleFunctor>
-  void sampleImpl( DimensionSampleFunctor dimension_sample_functor,
+  void sampleImpl( DimensionSamplingFunction dimension_sampling_function,
                    ParticleState& particle ) const;
 
   // Check if the dimension data is valid
-  bool isDimensionDataValid() const;  
-
-  // The type of particle emitted
-  ParticleType d_particle_type;
+  bool isDimensionDataValid() const;
 
   // The independent particle source dimensions
-  PhaseSpaceDimensionSet d_independent_dimensions;
+  DimensionSet d_independent_dimensions;
 
   // The particle source dimensions
-  PhaseSpaceDimensionDistributionMap d_dimension_distributions;
+  DimensionDistributionMap d_dimension_distributions;
 
   // The spatial coordinate conversion policy
   std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
@@ -120,22 +132,22 @@ private:
 // Sample the particle state using the desired dimension sampling functor
 template<typename DimensionSampleFunctor>
 inline void StandardParticleSource::sampleImpl(
-                              DimensionSampleFunctor& dimension_sample_functor,
-                              ParticleState& particle ) const
+                        DimensionSamplingFunction& dimension_sampling_function,
+                        ParticleState& particle ) const
 {
   // Initialize a phase space point
   PhaseSpacePoint phase_space_sample( d_spatial_coord_conversion_policy,
                                       d_directional_coord_conversion_policy );
 
   // Sample the particle state
-  PhaseSpaceDimensionSet::const_iterator
+  DimensionSet::const_iterator
     indep_dimension_it = d_independent_dimension.begin();
 
   // Sample independent dimensions first. We will have the sampling process
   // cascade from the independent dimensions down to all dependent dimensions
   while( indep_dimension_it != d_independent_dimensions.end() )
   {
-    dimension_sample_functor(
+    dimension_sampling_function(
                   *d_dimension_distributions.find(*indep_dimension_it)->second,
                   phase_space_sample );
 

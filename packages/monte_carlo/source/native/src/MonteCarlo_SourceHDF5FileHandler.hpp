@@ -16,79 +16,89 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_PhaseSpaceDimension.hpp"
+#include "MonteCarlo_ModuleTraits.hpp"
+#include "MonteCarlo_HDF5FileHandler.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 
 namespace MonteCarlo{
 
 //! The source hdf5 file handler
-class SourceHDF5FileHandler
+class SourceHDF5FileHandler : public MonteCarlo::HDF5FileHandler
 {
 
 public:
 
-  //! Enum for file operations
-  enum SourceHDF5FileOps{
-    OVERWRITE_SOURCE_HDF5_FILE = 0,
-    APPEND_SOURCE_HDF5_FILE,
-    READ_ONLY_SOURCE_HDF5_FILE
-  };
-
   //! Constructor (file ownership)
-  SourceHDF5FileHandler(
-                const std::string& hdf5_file_name,
-                const SourceHDF5FileOps file_op = OVERWRITE_SOURCE_HDF5_FILE );
+  SourceHDF5FileHandler( const std::string& hdf5_file_name,
+                         const MonteCarlo::HDF5FileHandler::FileOps file_op =
+                         OVERWRITE_SOURCE_HDF5_FILE );
 
   //! Constructor (file sharing)
   SourceHDF5FileHandler(
                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file );
 
   //! Destructor
-  ~SourceHDF5FileHandler();
+  ~SourceHDF5FileHandler()
+  { /* ... */ }
 
   //! Check if a source exists
-  bool doesSourceExist( const unsigned source_id ) const;
+  bool doesSourceExist( const InternalROIHandle source_id ) const;
+
+  //! Check if a source dimension exists
+  bool doesSourceDimenionExist( const InternalROIHandle source_id,
+                                const PhaseSpaceDimension dimension ) const;
 
   //! Set the number of source sampling trials
-  void setNumberOfSourceSamplingTrials( const unsigned source_id,
-                                        const unsigned long long trials );
+  void setNumberOfSourceSamplingTrials( const InternalROIHandle source_id,
+                                        const InternalCounter trials );
 
   //! Get the number of source sampling trials
-  unsigned long long getNumberOfSourceSamplingTrials(
-                                              const unsigned source_id ) const;
-
-  //! Set the number of default source sampling trials
-  void setNumberOfDefaultSourceSamplingTrials(
-                                             const unsigned long long trials );
-
-  //! Get the number of default source sampling trials
-  unsigned long long getNumberOfDefaultSourceSamplingTrials() const;
+  InternalCounter getNumberOfSourceSamplingTrials(
+                                     const InternalROIHandle source_id ) const;
 
   //! Set the number of source samples
-  void setNumberOfSourceSamples( const unsigned source_id,
-                                 const unsigned long long samples );
+  void setNumberOfSourceSamples( const InternalROIHandle source_id,
+                                 const InternalCounter samples );
 
   //! Get the number of source samples
-  unsigned long long getNumberOfSourceSamples( const unsigned source_id) const;
+  InternalCounter getNumberOfSourceSamples(
+                                      const InternalROIHandle source_id) const;
 
-  //! Set the number of default source samples
-  void setNumberOfDefaultSourceSamples( const unsigned long long samples );
+  //! Set the number of sampling trials in the source phase space dimension
+  void setNumberOfSourceDimensionSamplingTrials(
+                                           const InternalROIHandle source_id,
+                                           const PhaseSpaceDimension dimension,
+                                           const InternalCounter trials );
 
-  //! Get the number of default source samples
-  unsigned long long getNumberOfDefaultSourceSamples() const;
+  //! Get the number of sampling trials in the source phase space dimension
+  InternalCounter getNumberOfSourceDimensionSamplingTrials(
+                                   const InternalROIHandle source_id,
+                                   const PhaseSpaceDimension dimension ) const;
+                                             
+  //! Set the number of samples in the phase space dimension
+  void setNumberOfSourceDimensionSamples(
+                                         const InternalROIHandle source_id,
+                                         const PhaseSpaceDimension dimension,
+                                         const InternalCounter samples );
 
+  //! Get the number of samples in the phase space dimension
+  InternalCounter getNumberOfSourceDimensionSamples(
+                                   const InternalROIHandle source_id,
+                                   const PhaseSpaceDimension dimension ) const;
+  
 private:
 
   // Get the source location
-  std::string getSourceGroupLocation( const unsigned source_id ) const;
+  std::string getSourceGroupLocation( const InternalROIHandle source_id ) const;
 
-  // The source group location and name
-  static const std::string source_group_loc_name;
+  // Get the source dimension location
+  std::string getSourceDimensionGroupLocation(
+                                   const InternalROIHandle source_id,
+                                   const PhaseSpaceDimension dimension ) const;
 
-  // The HDF5 file handler
-  std::shared_ptr<Utility::HDF5FileHandler> d_hdf5_file;
-
-  // The ownership flag
-  bool d_hdf5_file_ownership;
+  // The source group root location and name
+  static const std::string source_group_root_loc_name;
 };
 
 } // end MonteCarlo namespace

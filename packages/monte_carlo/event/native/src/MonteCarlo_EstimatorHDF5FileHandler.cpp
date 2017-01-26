@@ -21,65 +21,27 @@ const std::string EstimatorHDF5FileHandler::estimator_group_loc_name(
 							      "/Estimators/" );
 
 // Constructor (file ownership)
-/*! \details The EstimatorHDF5FileOps enum will determine how the HDF5 file
- * is opened. If the read only option is used, calling any of the set
- * methods will result in an exception.
+/*! \details The MonteCarlo::HDF5FileHandler::FileOps enum will determine how 
+ * the HDF5 file is opened. If the read only option is used, calling any of the
+ * set methods will result in an exception.
  */
 EstimatorHDF5FileHandler::EstimatorHDF5FileHandler(
-					   const std::string& hdf5_file_name,
-					   const EstimatorHDF5FileOps file_op )
-  : d_hdf5_file( new Utility::HDF5FileHandler ),
-    d_hdf5_file_ownership( true )
-{
-  // Make sure the name is valid
-  testPrecondition( hdf5_file_name.size() > 0 );
-
-  Utility::HDF5FileHandler::throwExceptions();
-
-  try{
-    switch( file_op )
-    {
-    case OVERWRITE_ESTIMATOR_HDF5_FILE:
-      d_hdf5_file->openHDF5FileAndOverwrite( hdf5_file_name );
-      break;
-    case APPEND_ESTIMATOR_HDF5_FILE:
-      d_hdf5_file->openHDF5FileAndAppend( hdf5_file_name );
-      break;
-    case READ_ONLY_ESTIMATOR_HDF5_FILE:
-      d_hdf5_file->openHDF5FileAndReadOnly( hdf5_file_name );
-      break;
-    }
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to construct the estimator HDF5 file"
-                           " handler!" );
-}
+                           const std::string& hdf5_file_name,
+			   const MonteCarlo::HDF5FileHandler::FileOps file_op )
+  : MonteCarlo::HDF5FileHandler( hdf5_file_name, file_op )
+{ /* ... */ }
 
 // Constructor (file sharing)
 EstimatorHDF5FileHandler::EstimatorHDF5FileHandler(
                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
-  : d_hdf5_file( hdf5_file ),
-    d_hdf5_file_ownership( false )
-{
-  // Make sure the file is valid
-  testPrecondition( hdf5_file.get() );
-  testPrecondition( hdf5_file->hasOpenFile() );
-
-  Utility::HDF5FileHandler::throwExceptions();
-}
-
-// Destructor
-EstimatorHDF5FileHandler::~EstimatorHDF5FileHandler()
-{
-  if( d_hdf5_file_ownership )
-    d_hdf5_file->closeHDF5File();
-}
+  : MonteCarlo::HDF5FileHandler( hdf5_file )
+{ /* ... */ }
 
 // Check if an estimator exists
 bool EstimatorHDF5FileHandler::doesEstimatorExist(
 					    const unsigned estimator_id ) const
 {
-  return d_hdf5_file->doesGroupExist(
+  return this->getHDF5File().doesGroupExist(
 			     this->getEstimatorGroupLocation( estimator_id ) );
 }
 
@@ -88,7 +50,7 @@ void EstimatorHDF5FileHandler::setSurfaceEstimator(
 						  const unsigned estimator_id )
 {
   try{
-    d_hdf5_file->writeValueToGroupAttribute(
+    this->getHDF5File().writeValueToGroupAttribute(
 			       SURFACE_ENTITY,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "entity_type" );
@@ -105,7 +67,7 @@ bool EstimatorHDF5FileHandler::isSurfaceEstimator(
   EntityType type;
 
   try{
-    d_hdf5_file->readValueFromGroupAttribute(
+    this->getHDF5File().readValueFromGroupAttribute(
 			       type,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "entity_type" );
@@ -122,7 +84,7 @@ bool EstimatorHDF5FileHandler::isSurfaceEstimator(
 void EstimatorHDF5FileHandler::setCellEstimator( const unsigned estimator_id )
 {
   try{
-    d_hdf5_file->writeValueToGroupAttribute(
+    this->getHDF5File().writeValueToGroupAttribute(
 			       CELL_ENTITY,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "entity_type" );
@@ -139,7 +101,7 @@ bool EstimatorHDF5FileHandler::isCellEstimator(
   EntityType type;
 
   try{
-    d_hdf5_file->readValueFromGroupAttribute(
+    this->getHDF5File().readValueFromGroupAttribute(
 			       type,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "entity_type" );
@@ -155,7 +117,7 @@ bool EstimatorHDF5FileHandler::isCellEstimator(
 void EstimatorHDF5FileHandler::setMeshEstimator( const unsigned estimator_id )
 {
   try{
-    d_hdf5_file->writeValueToGroupAttribute(
+    this->getHDF5File().writeValueToGroupAttribute(
 			       MESH_VOLUME_ENTITY,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "entity_type" );
@@ -172,7 +134,7 @@ bool EstimatorHDF5FileHandler::isMeshEstimator(
   EntityType type;
 
   try{
-    d_hdf5_file->readValueFromGroupAttribute(
+    this->getHDF5File().readValueFromGroupAttribute(
 			       type,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "entity_type" );
@@ -190,7 +152,7 @@ void EstimatorHDF5FileHandler::setEstimatorMultiplier(
 						   const double multiplier )
 {
   try{
-    d_hdf5_file->writeValueToGroupAttribute(
+    this->getHDF5File().writeValueToGroupAttribute(
 			       multiplier,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "multiplier" );
@@ -206,7 +168,7 @@ void EstimatorHDF5FileHandler::getEstimatorMultiplier(
 						   double& multiplier ) const
 {
   try{
-    d_hdf5_file->readValueFromGroupAttribute(
+    this->getHDF5File().readValueFromGroupAttribute(
 			       multiplier,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "multiplier" );
@@ -222,7 +184,7 @@ void EstimatorHDF5FileHandler::setEstimatorResponseFunctionOrdering(
 		  const Teuchos::Array<unsigned>& response_function_ordering )
 {
   try{
-    d_hdf5_file->writeArrayToGroupAttribute(
+    this->getHDF5File().writeArrayToGroupAttribute(
 			       response_function_ordering,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "response_function_ordering" );
@@ -238,7 +200,7 @@ void EstimatorHDF5FileHandler::getEstimatorResponseFunctionOrdering(
 		  Teuchos::Array<unsigned>& response_function_ordering ) const
 {
   try{
-    d_hdf5_file->readArrayFromGroupAttribute(
+    this->getHDF5File().readArrayFromGroupAttribute(
 			       response_function_ordering,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "response_function_ordering" );
@@ -254,7 +216,7 @@ void EstimatorHDF5FileHandler::setEstimatorDimensionOrdering(
 	       const Teuchos::Array<PhaseSpaceDimension>& dimension_ordering )
 {
   try{
-    d_hdf5_file->writeArrayToGroupAttribute(
+    this->getHDF5File().writeArrayToGroupAttribute(
 			       dimension_ordering,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "dimension_ordering" );
@@ -273,11 +235,11 @@ void EstimatorHDF5FileHandler::getEstimatorDimensionOrdering(
 
   // If an exception is thrown, there are no estimator dimensions
   try{
-    if( d_hdf5_file->doesGroupAttributeExist(
+    if( this->getHDF5File().doesGroupAttributeExist(
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "dimension_ordering" ) )
     {
-      d_hdf5_file->readArrayFromGroupAttribute(
+      this->getHDF5File().readArrayFromGroupAttribute(
 			       dimension_ordering,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "dimension_ordering" );
@@ -294,7 +256,7 @@ void EstimatorHDF5FileHandler::setEstimatorTotalNormConstant(
 			     const double total_norm_constant )
 {
   try{
-    d_hdf5_file->writeValueToGroupAttribute(
+    this->getHDF5File().writeValueToGroupAttribute(
 			       total_norm_constant,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "total_norm_constant" );
@@ -310,7 +272,7 @@ void EstimatorHDF5FileHandler::getEstimatorTotalNormConstant(
 					    double& total_norm_constant ) const
 {
   try{
-    d_hdf5_file->readValueFromGroupAttribute(
+    this->getHDF5File().readValueFromGroupAttribute(
 			       total_norm_constant,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "total_norm_constant" );
@@ -334,7 +296,7 @@ void EstimatorHDF5FileHandler::setRawEstimatorTotalBinData(
   data_set_location += "raw_total_bin_data";
 
   try{
-    d_hdf5_file->writeArrayToDataSet( raw_bin_data, data_set_location );
+    this->getHDF5File().writeArrayToDataSet( raw_bin_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to set the raw total bin data for "
@@ -352,7 +314,8 @@ void EstimatorHDF5FileHandler::getRawEstimatorTotalBinData(
   data_set_location += "raw_total_bin_data";
 
   try{
-    d_hdf5_file->readArrayFromDataSet( raw_bin_data, data_set_location );
+    this->getHDF5File().readArrayFromDataSet(
+                                             raw_bin_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to get the raw total bin data for "
@@ -373,7 +336,8 @@ void EstimatorHDF5FileHandler::setProcessedEstimatorTotalBinData(
   data_set_location += "processed_total_bin_data";
 
   try{
-    d_hdf5_file->writeArrayToDataSet( processed_bin_data, data_set_location );
+    this->getHDF5File().writeArrayToDataSet(
+                                       processed_bin_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to set the processed total bin data "
@@ -391,7 +355,8 @@ void EstimatorHDF5FileHandler::getProcessedEstimatorTotalBinData(
   data_set_location += "processed_total_bin_data";
 
   try{
-    d_hdf5_file->readArrayFromDataSet( processed_bin_data, data_set_location );
+    this->getHDF5File().readArrayFromDataSet(
+                                       processed_bin_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to get the processed total bin data "
@@ -413,7 +378,8 @@ void EstimatorHDF5FileHandler::setRawEstimatorTotalData(
   data_set_location += "raw_total_data";
 
   try{
-    d_hdf5_file->writeArrayToDataSet( raw_total_data, data_set_location );
+    this->getHDF5File().writeArrayToDataSet(
+                                           raw_total_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to set the raw total data for "
@@ -432,7 +398,8 @@ void EstimatorHDF5FileHandler::getRawEstimatorTotalData(
   data_set_location += "raw_total_data";
 
   try{
-    d_hdf5_file->readArrayFromDataSet( raw_total_data, data_set_location );
+    this->getHDF5File().readArrayFromDataSet(
+                                           raw_total_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to get the raw total data for "
@@ -454,7 +421,8 @@ void EstimatorHDF5FileHandler::setProcessedEstimatorTotalData(
   data_set_location += "processed_total_data";
 
   try{
-    d_hdf5_file->writeArrayToDataSet( processed_total_data, data_set_location);
+    this->getHDF5File().writeArrayToDataSet(
+                                      processed_total_data, data_set_location);
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to set the processed total data for "
@@ -473,7 +441,8 @@ void EstimatorHDF5FileHandler::getProcessedEstimatorTotalData(
   data_set_location += "processed_total_data";
 
   try{
-    d_hdf5_file->readArrayFromDataSet(processed_total_data, data_set_location);
+    this->getHDF5File().readArrayFromDataSet(
+                                     processed_total_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to get the processed total data for "

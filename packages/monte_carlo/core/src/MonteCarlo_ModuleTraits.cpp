@@ -12,9 +12,9 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const ModuleTraits::InternalSourceHandle
-ModuleTraits::invalid_internal_source_handle =
-  std::numeric_limits<ModuleTraits::InternalSourceHandle>::max();
+const ModuleTraits::InternalROIHandle
+ModuleTraits::invalid_internal_roi_handle =
+  std::numeric_limits<ModuleTraits::InternalROIHandle>::max();
 
 const ModuleTraits::InternalEventObserverHandle
 ModuleTraits::invalid_internal_event_observer_handle =

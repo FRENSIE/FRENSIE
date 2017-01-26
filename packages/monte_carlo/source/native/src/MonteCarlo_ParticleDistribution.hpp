@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ParticleDistribution.hpp
 //! \author Alex Robinson
-//! \brief  Particle distribution declaration
+//! \brief  Particle distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <memory>
+#include <set>
 
 // Trilinos Includes
 #include <Teuchos_Comm.hpp>
@@ -19,6 +20,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_ParticleStateFactory.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 
@@ -30,26 +32,42 @@ class ParticleDistribution
 
 public:
 
-  //! The trial counter
-  typedef PhaseSpaceDimensionDistribution::TrialCounter TrialCounter;
+  //! The dimension set
+  typedef std::set<PhaseSpaceDimension> DimensionSet;
 
   //! The dimension trial counter map
-  typedef PhaseSpaceDimensionDistribution::DimensionTrialCounterMap DimensionTrialCounterMap;
+  typedef PhaseSpaceDimensionDistribution::DimensionCounterMap
+  DimensionCounterMap;
 
   //! Constructor
-  ParticleDistribution( const ModuleTraits::InternalSourceHandle id,
-                        const std::string& name )
-  { /* ... */ }
+  ParticleDistribution( const ModuleTraits::InternalROIHandle id,
+                        const std::string& name,
+                        const ParticleType particle_type );
 
   //! Destructor
   virtual ~ParticleDistribution()
   { /* ... */ }
 
   //! Return the id
-  unsigned getId() const;
+  ModuleTraits::InternalROIHandle getId() const;
 
   //! Return the name of the region of interest
   const std::string& getName() const;
+
+  //! Return the particle type that this distribution uses
+  ParticleType getParticleType() const;
+
+  //! Check if a dimension has a distribution defined
+  virtual bool doesDimensionHaveDistributionDefined(
+                               const PhaseSpaceDimension dimension ) const = 0;
+
+  //! Return the dimensions with distributions defined
+  virtual void getDimensionsWithDistributionsDefined(
+                                          DimensionSet& dimensions ) const = 0;
+
+  //! Return the dimension distribution type name
+  virtual std::string getDimensionDistributionTypeName(
+                               const PhaseSpaceDimension dimension ) const = 0;
 
   //! Check if the distribution is spatially uniform (somewhere)
   virtual bool isSpatiallyUniform() const = 0;
@@ -64,9 +82,8 @@ public:
   virtual void sample( ParticleState& particle ) const = 0;
 
   //! Sample a particle state from the dist. and record the number of trials
-  virtual void sampleAndRecordTrials(
-                                  ParticleState& particle,
-                                  DimensionTrialCounterMap& trials ) const = 0;
+  virtual void sampleAndRecordTrials( ParticleState& particle,
+                                      DimensionCounterMap& trials ) const = 0;
 
   //! Sample a particle state with the desired dimension value
   virtual void sampleWithDimensionValue(
@@ -77,7 +94,7 @@ public:
   //! Sample a particle state with the desired dim. value and record trials
   virtual void sampleWithDimensionValueAndRecordTrials(
                                       ParticleState& particle,
-                                      DimensionTrialCounterMap& trials,
+                                      DimensionCounterMap& trials,
                                       const PhaseSpaceDimension dimension,
                                       const double dimension_value ) const = 0;
 
@@ -88,6 +105,9 @@ private:
 
   // The distribution name
   std::string d_name;
+
+  // The type of particle emitted
+  ParticleType d_particle_type;
 };
   
 } // end MonteCarlo namespace

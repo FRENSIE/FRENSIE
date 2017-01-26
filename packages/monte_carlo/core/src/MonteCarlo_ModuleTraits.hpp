@@ -30,15 +30,18 @@ namespace MonteCarlo{
  */
 struct ModuleTraits
 {
-  //! The internal source handle type
-  typedef unsigned int InternalSourceHandle;
+  //! The internal region of interest (ROI) handle type
+  typedef unsigned int InternalROIHandle;
   //! The internal event observer handle type
   typedef unsigned long long InternalEventObserverHandle;
   //! The internal material handle type
   typedef unsigned long long InternalMaterialHandle;
 
-  //! The invalid source handle value
-  static const InternalSourceHandle invalid_internal_source_handle;
+  //! The internal counter type
+  typedef unsigned long long InternalCounter;
+
+  //! The invalid ROI handle value
+  static const InternalROIHandle invalid_internal_roi_handle;
 
   //! The invalid estimator handle value
   static const InternalEventObserverHandle invalid_internal_event_observer_handle;

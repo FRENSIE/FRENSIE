@@ -21,58 +21,21 @@ const std::string ParticleTrackerHDF5FileHandler::particle_tracker_group_loc_nam
 							      "/Particle_Tracker/" );
 
 // Constructor (file ownership)
-/*! \details The ParticleTrackerHDF5FileOps enum will determine how the HDF5
- * file is opened. If the read only option is used, calling any of the set
- * methods will result in an exception.
+/*! \details The MonteCarlo::HDF5FileHandler::FileOps enum will determine how 
+ * the HDF5 file is opened. If the read only option is used, calling any of the
+ * set methods will result in an exception.
  */
 ParticleTrackerHDF5FileHandler::ParticleTrackerHDF5FileHandler(
-					   const std::string& hdf5_file_name,
-					   const ParticleTrackerHDF5FileOps file_op )
-  : d_hdf5_file( new Utility::HDF5FileHandler ),
-    d_hdf5_file_ownership( true )
-{
-  // Make sure the name is valid
-  testPrecondition( hdf5_file_name.size() > 0 );
-
-  Utility::HDF5FileHandler::throwExceptions();
-
-  try{
-    switch( file_op )
-    {
-    case OVERWRITE_PTRACK_HDF5_FILE:
-      d_hdf5_file->openHDF5FileAndOverwrite( hdf5_file_name );
-      break;
-    case APPEND_PTRACK_HDF5_FILE:
-      d_hdf5_file->openHDF5FileAndAppend( hdf5_file_name );
-      break;
-    case READ_ONLY_PTRACK_HDF5_FILE:
-      d_hdf5_file->openHDF5FileAndReadOnly( hdf5_file_name );
-      break;
-    }
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Ownership Constructor Error" );
-}
+                           const std::string& hdf5_file_name,
+			   const MonteCarlo::HDF5FileHandler::FileOps file_op )
+  : MonteCarlo::HDF5FileHandler( hdf5_file_name, file_op )
+{ /* ... */ }
 
 // Constructor (file sharing)
 ParticleTrackerHDF5FileHandler::ParticleTrackerHDF5FileHandler(
-		      const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
-  : d_hdf5_file( hdf5_file ),
-    d_hdf5_file_ownership( false )
-{
-  // Make sure the file is valid
-  testPrecondition( hdf5_file.get() );
-  testPrecondition( hdf5_file->hasOpenFile() );
-
-  Utility::HDF5FileHandler::throwExceptions();
-}
-
-// Destructor
-ParticleTrackerHDF5FileHandler::~ParticleTrackerHDF5FileHandler()
-{
-  if( d_hdf5_file_ownership )
-    d_hdf5_file->closeHDF5File();
-}
+		   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
+  : MonteCarlo::HDF5FileHandler( hdf5_file )
+{ /* ... */ }
 
 // Assign particle tracker data to HDF5 file
 void ParticleTrackerHDF5FileHandler::setParticleTrackerData(
@@ -148,55 +111,55 @@ void ParticleTrackerHDF5FileHandler::setParticleTrackerData(
 
           // Write the arrays to data sets
           try{
-            d_hdf5_file->writeArrayToDataSet( x_pos, x_pos_dataset );
+            this->getHDF5File().writeArrayToDataSet( x_pos, x_pos_dataset );
           }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking x position data to HDF5 dataset" );
 
           try{
-          d_hdf5_file->writeArrayToDataSet( y_pos, y_pos_dataset );
+          this->getHDF5File().writeArrayToDataSet( y_pos, y_pos_dataset );
                     }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking y position data to HDF5 dataset" );
 
           try{
-          d_hdf5_file->writeArrayToDataSet( z_pos, z_pos_dataset );
+          this->getHDF5File().writeArrayToDataSet( z_pos, z_pos_dataset );
                               }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking z position data to HDF5 dataset" );
 
           try{
-          d_hdf5_file->writeArrayToDataSet( x_dir, x_dir_dataset );
+          this->getHDF5File().writeArrayToDataSet( x_dir, x_dir_dataset );
                               }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking x_direction data to HDF5 dataset" );
 
           try{
-          d_hdf5_file->writeArrayToDataSet( y_dir, y_dir_dataset );
+          this->getHDF5File().writeArrayToDataSet( y_dir, y_dir_dataset );
                               }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking y direction data to HDF5 dataset" );
 
           try{
-          d_hdf5_file->writeArrayToDataSet( z_dir, z_dir_dataset );
+          this->getHDF5File().writeArrayToDataSet( z_dir, z_dir_dataset );
                               }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking z direction data to HDF5 dataset" );
 
           try{
-          d_hdf5_file->writeArrayToDataSet( energy, energy_dataset );
+          this->getHDF5File().writeArrayToDataSet( energy, energy_dataset );
                               }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking energy data to HDF5 dataset" );
 
           try{
-          d_hdf5_file->writeArrayToDataSet( col_num, col_num_dataset );
+          this->getHDF5File().writeArrayToDataSet( col_num, col_num_dataset );
                               }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking collision number data to HDF5 dataset" );
 
           try{
-          d_hdf5_file->writeArrayToDataSet( weight, weight_dataset );
+          this->getHDF5File().writeArrayToDataSet( weight, weight_dataset );
                               }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking weight data to HDF5 dataset" );
@@ -217,7 +180,7 @@ void ParticleTrackerHDF5FileHandler::getXPositionData(
                                 std::vector< double >& data )
 {
   try{
-    d_hdf5_file->readArrayFromDataSet(
+    this->getHDF5File().readArrayFromDataSet(
 			       data,
              particle_data_location + "x_position" );
   }
@@ -231,7 +194,7 @@ void ParticleTrackerHDF5FileHandler::getYPositionData(
                                 std::vector< double >& data )
 {
   try{
-    d_hdf5_file->readArrayFromDataSet(
+    this->getHDF5File().readArrayFromDataSet(
 			       data,
              particle_data_location + "y_position" );
   }
@@ -245,7 +208,7 @@ void ParticleTrackerHDF5FileHandler::getZPositionData(
                                 std::vector< double >& data )
 {
   try{
-    d_hdf5_file->readArrayFromDataSet(
+    this->getHDF5File().readArrayFromDataSet(
 			       data,
              particle_data_location + "z_position" );
   }
@@ -259,7 +222,7 @@ void ParticleTrackerHDF5FileHandler::getXDirectionData(
                                 std::vector< double >& data )
 {
   try{
-    d_hdf5_file->readArrayFromDataSet(
+    this->getHDF5File().readArrayFromDataSet(
 			       data,
              particle_data_location + "x_direction" );
   }
@@ -273,7 +236,7 @@ void ParticleTrackerHDF5FileHandler::getYDirectionData(
                                 std::vector< double >& data )
 {
   try{
-    d_hdf5_file->readArrayFromDataSet(
+    this->getHDF5File().readArrayFromDataSet(
 			       data,
              particle_data_location + "y_direction" );
   }
@@ -287,7 +250,7 @@ void ParticleTrackerHDF5FileHandler::getZDirectionData(
                                 std::vector< double >& data )
 {
   try{
-    d_hdf5_file->readArrayFromDataSet(
+    this->getHDF5File().readArrayFromDataSet(
 			       data,
              particle_data_location + "z_direction" );
   }
@@ -301,7 +264,7 @@ void ParticleTrackerHDF5FileHandler::getEnergyData(
                                 std::vector< double >& data )
 {
   try{
-    d_hdf5_file->readArrayFromDataSet(
+    this->getHDF5File().readArrayFromDataSet(
 			       data,
              particle_data_location + "energy" );
   }
@@ -315,7 +278,7 @@ void ParticleTrackerHDF5FileHandler::getCollisionNumberData(
                                 std::vector< double >& data )
 {
   try{
-    d_hdf5_file->readArrayFromDataSet(
+    this->getHDF5File().readArrayFromDataSet(
 			       data,
              particle_data_location + "collision_number" );
   }
@@ -329,7 +292,7 @@ void ParticleTrackerHDF5FileHandler::getWeightData(
                                 std::vector< double >& data )
 {
   try{
-    d_hdf5_file->readArrayFromDataSet(
+    this->getHDF5File().readArrayFromDataSet(
 			       data,
              particle_data_location + "weight" );
   }

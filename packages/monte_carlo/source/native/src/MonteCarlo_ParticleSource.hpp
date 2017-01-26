@@ -20,6 +20,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "MonteCarlo_ParticleDistribution.hpp"
+#include "MonteCarlo_ModuleTraits.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 
@@ -31,14 +32,8 @@ class ParticleSource
 
 public:
 
-  //! The trial counter
-  typedef unsigned long long TrialCounter;
-
-  //! The dimension trial counter
-  typedef ParticleDistribution::TrialCounter DimensionTrialCounter;
-
   //! Constructor
-  ParticleSource( const ModuleTraits::InternalSourceHandle id )
+  ParticleSource( const ModuleTraits::InternalROIHandle id )
   { /* ... */ }
 
   //! Destructor
@@ -46,7 +41,7 @@ public:
   { /* ... */ }
 
   //! Get the source id
-  ModuleTraits::InternalSourceHandle getId() const;
+  ModuleTraits::InternalROIHandle getId() const;
 
   //! Enable thread support
   virtual void enableThreadSupport( const unsigned threads ) = 0;
@@ -71,17 +66,17 @@ public:
 				    const unsigned long long history ) = 0;
 
   //! Return the number of sampling trials
-  virtual TrialCounter getNumberOfTrials() const = 0;
+  virtual ModuleTraits::InternalCounter getNumberOfTrials() const = 0;
 
   //! Return the number of sampling trials in the phase space dimension
-  virtual DimensionTrialCounter getNumberOfDimensionTrials(
+  virtual ModuleTraits::InternalCounter getNumberOfDimensionTrials(
                                const PhaseSpaceDimension dimension ) const = 0;
 
   //! Return the number of samples that have been generated
-  virtual TrialCounter getNumberOfSamples() const = 0;
+  virtual ModuleTraits::InternalCounter getNumberOfSamples() const = 0;
 
   //! Return the number of samples in the phase space dimension
-  virtual DimensionTrialCounter getNumberOfDimensionSamples(
+  virtual ModuleTraits::InternalCounter getNumberOfDimensionSamples(
                                const PhaseSpaceDimension dimension ) const = 0;
 
   //! Return the sampling efficiency from the source
@@ -94,34 +89,37 @@ public:
 protected:
 
   //! Print a standard summary of the source data
-  void printStandardSummary( const std::string& source_name,
-                             const unsigned long long trials,
-                             const unsigned long long samples,
+  void printStandardSummary( const std::string& source_type,
+                             const ModuleTraits::InternalCounter trials,
+                             const ModuleTraits::InternalCounter samples,
                              const double efficiency,
                              std::ostream& os ) const;
 
   //! Print a standard summary of the dimension data
-  void printStandardDimensionSummary( const PhaseSpaceDimension dimension,
-                                      const unsigned long long trials,
-                                      const unsigned long long samples,
-                                      const double efficiency,
-                                      std::ostream& os ) const;
+  void printStandardDimensionSummary(
+                                const std::string& dimension_distribution_type,
+                                const PhaseSpaceDimension dimension,
+                                const ModuleTraits::InternalCounter trials,
+                                const ModuleTraits::InternalCounter samples,
+                                const double efficiency,
+                                std::ostream& os ) const;
 
 private:
 
   // The source id
-  ModuleTraits::InternalSourceHandle d_id;
+  ModuleTraits::InternalROIHandle d_id;
 };
 
 // Print a standard summary of the source data
 inline void ParticleSource::printStandardSummary(
-                                              const std::string& source_name,
-                                              const unsigned long long trials,
-                                              const unsigned long long samples,
-                                              const double efficiency,
-                                              std::ostream& os ) const
+                                   const std::string& source_type,
+                                   const ModuleTraits::InternalCounter trials,
+                                   const ModuleTraits::InternalCounter samples,
+                                   const double efficiency,
+                                   std::ostream& os ) const
 {
-  os << source_name << " Sampling Summary..." << std::endl
+  os << "Source " << d_id << " Summary..." << std::endl
+     << "\tType: " << source_type << std::endl
      << "\tNumber of (position) trials: " << trials << std::endl
      << "\tNumber of samples: " << samples << std::endl
      << "\tSampling efficiency: " << efficiency << std::endl;
@@ -129,13 +127,16 @@ inline void ParticleSource::printStandardSummary(
 
 // Print a standard summary of the dimension data
 inline void ParticleSource::printStandardDimensionSummary(
-                                           const PhaseSpaceDimension dimension,
-                                           const unsigned long long trials,
-                                           const unsigned long long samples,
-                                           const double efficiency,
-                                           std::ostream& os ) const
+                                const std::string& dimension_distribution_type,
+                                const PhaseSpaceDimension dimension,
+                                const ModuleTraits::InternalCounter trials,
+                                const ModuleTraits::InternalCounter samples,
+                                const double efficiency,
+                                std::ostream& os ) const
 {
-  os << dimension << " Sampling Summary..." << std::endl
+  os << "Source " << d_id << " " << dimension << " Sampling Summary..."
+     << std::endl
+     << "\tDistribution Type: " << dimension_distribution_type << std::endl
      << "\tNumber of trials: " << trials << std::endl
      << "\tNumber of samples: " << samples << std::endl
      << "\tSampling efficiency: " << efficiency << std::endl;

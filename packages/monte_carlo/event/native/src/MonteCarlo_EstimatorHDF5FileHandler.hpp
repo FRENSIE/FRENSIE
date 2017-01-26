@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
+#include "MonteCarlo_HDF5FileHandler.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_HDF5TypeTraits.hpp"
@@ -24,29 +25,23 @@
 namespace MonteCarlo{
 
 //! The estimator hdf5 file handler
-class EstimatorHDF5FileHandler
+class EstimatorHDF5FileHandler : public MonteCarlo::HDF5FileHandler
 {
 
 public:
 
-  //! Enum for file operations
-  enum EstimatorHDF5FileOps{
-    OVERWRITE_ESTIMATOR_HDF5_FILE = 0,
-    APPEND_ESTIMATOR_HDF5_FILE,
-    READ_ONLY_ESTIMATOR_HDF5_FILE
-  };
-
   //! Constructor (file ownership)
-  EstimatorHDF5FileHandler(
-	  const std::string& hdf5_file_name,
-	  const EstimatorHDF5FileOps file_op = OVERWRITE_ESTIMATOR_HDF5_FILE );
+  EstimatorHDF5FileHandler(const std::string& hdf5_file_name,
+                           const MonteCarlo::HDF5FileHandler::FileOps file_op =
+                           OVERWRITE_FILE );
 
   //! Constructor (file sharing)
   EstimatorHDF5FileHandler(
                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file );
 
   //! Destructor
-  ~EstimatorHDF5FileHandler();
+  ~EstimatorHDF5FileHandler()
+  { /* ... */ }
 
   //! Check if an estimator exists
   bool doesEstimatorExist( const unsigned estimator_id ) const;
@@ -299,12 +294,6 @@ private:
 
   // The estimator group location and name
   static const std::string estimator_group_loc_name;
-
-  // The HDF5 file handler
-  std::shared_ptr<Utility::HDF5FileHandler> d_hdf5_file;
-
-  // The ownership flag
-  bool d_hdf5_file_ownership;
 };
 
 } // end MonteCarlo namespace

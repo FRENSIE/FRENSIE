@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
+#include "MonteCarlo_HDF5FileHandler.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_HDF5TypeTraits.hpp"
@@ -22,7 +23,7 @@
 namespace MonteCarlo{
 
 //! The Estimator hdf5 file handler
-class ParticleTrackerHDF5FileHandler
+class ParticleTrackerHDF5FileHandler : public MonteCarlo::HDF5FileHandler
 {
 
 public:
@@ -42,24 +43,19 @@ public:
   typedef std::unordered_map< unsigned, ParticleTypeSubmap >
     OverallHistoryMap;
 
-  //! Enum for file operations
-  enum ParticleTrackerHDF5FileOps{
-    OVERWRITE_PTRACK_HDF5_FILE = 0,
-    APPEND_PTRACK_HDF5_FILE,
-    READ_ONLY_PTRACK_HDF5_FILE
-  };
-
   //! Constructor (file ownership)
   ParticleTrackerHDF5FileHandler(
-	  const std::string& hdf5_file_name,
-	  const ParticleTrackerHDF5FileOps file_op = OVERWRITE_PTRACK_HDF5_FILE );
+                           const std::string& hdf5_file_name,
+	                   const MonteCarlo::HDF5FileHandler::FileOps file_op =
+                           OVERWRITE_FILE );
 
   //! Constructor (file sharing)
   ParticleTrackerHDF5FileHandler(
 		     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file );
 
   //! Destructor
-  ~ParticleTrackerHDF5FileHandler();
+  ~ParticleTrackerHDF5FileHandler()
+  { /* ... */ }
 
   //! Assign particle tracker data to HDF5 file
   void setParticleTrackerData( OverallHistoryMap particle_tracker_data_map );
@@ -104,12 +100,6 @@ private:
 
   // The estimator group location and name
   static const std::string particle_tracker_group_loc_name;
-
-  // The HDF5 file handler
-  std::shared_ptr<Utility::HDF5FileHandler> d_hdf5_file;
-
-  // The ownership flag
-  bool d_hdf5_file_ownership;
 };
 
 } // end MonteCarlo namespace
