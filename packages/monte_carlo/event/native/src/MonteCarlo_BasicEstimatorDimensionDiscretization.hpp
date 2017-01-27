@@ -26,7 +26,7 @@ public:
 
   //! Constructor
   BasicEstimatorDimensionDiscretization(
-                           const PhaseSpaceDimension dimension,
+                           const ObserverPhaseSpaceDimension dimension,
                            const Teuchos::Array<T>& dimension_bin_boundaries );
 
   //! Destructor

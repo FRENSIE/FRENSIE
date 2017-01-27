@@ -19,7 +19,7 @@ namespace MonteCarlo{
 // Constructor
 template<typename T>
 StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::StandardBasicEstimatorDimensionDiscretization(
-                       const PhaseSpaceDimension dimension,
+                       const ObserverPhaseSpaceDimension dimension,
                        const Teuchos::Array<T>& dimension_bin_boundaries )
   : BasicEstimatorDimensionDiscretization<T>( dimension, dimension_bin_boundaries )
 {
@@ -34,7 +34,7 @@ StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost:
 // Constructor
 template<typename T>
 StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::StandardBasicEstimatorDimensionDiscretization(
-                       const PhaseSpaceDimension dimension,
+                       const ObserverPhaseSpaceDimension dimension,
                        const Teuchos::Array<T>& dimension_bin_boundaries )
   : BasicEstimatorDimensionDiscretization<T>( dimension, dimension_bin_boundaries )
 {

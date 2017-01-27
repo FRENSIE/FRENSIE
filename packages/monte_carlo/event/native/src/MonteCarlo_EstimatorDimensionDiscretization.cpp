@@ -8,18 +8,19 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorDimensionDiscretization.hpp"
-#include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
+#include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 EstimatorDimensionDiscretization::EstimatorDimensionDiscretization(
-				          const PhaseSpaceDimension dimension )
+				  const ObserverPhaseSpaceDimension dimension )
   : d_dimension( dimension )
 { /* ... */ }
 
 // Return the dimension that has been discretized
-PhaseSpaceDimension EstimatorDimensionDiscretization::getDimension() const
+ObserverPhaseSpaceDimension
+EstimatorDimensionDiscretization::getDimension() const
 {
   return d_dimension;
 }

@@ -16,7 +16,7 @@
 #include <Teuchos_any.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhaseSpaceDimension.hpp"
+#include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 
@@ -28,14 +28,15 @@ class EstimatorDimensionDiscretization
 public:
 
   //! Constructor
-  EstimatorDimensionDiscretization( const PhaseSpaceDimension dimension );
+  EstimatorDimensionDiscretization(
+                                 const ObserverPhaseSpaceDimension dimension );
 
   //! Destructor
   virtual ~EstimatorDimensionDiscretization()
   { /* ... */ }
 
   //! Return the dimension that has been discretized
-  PhaseSpaceDimension getDimension() const;
+  ObserverPhaseSpaceDimension getDimension() const;
 
   //! Return the dimension name that has been discretized
   virtual std::string getDimensionName() const = 0;
@@ -71,7 +72,7 @@ public:
 
 private:
 
-  PhaseSpaceDimension d_dimension;
+  ObserverPhaseSpaceDimension d_dimension;
 };
 
 } // end MonteCarlo namespace

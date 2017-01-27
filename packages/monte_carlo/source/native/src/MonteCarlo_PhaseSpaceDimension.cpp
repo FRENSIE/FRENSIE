@@ -12,7 +12,7 @@
 #include "Utility_DirectionalCoordinateSystemTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
-//! Convert the PhaseSpaceDimensionEnum to a string
+//! Convert the PhaseSpaceDimension enum to a string
 #define PHASE_SPACE_DIMENSION_STRING( dim ) #dim
 
 namespace MonteCarlo{
@@ -78,23 +78,23 @@ PhaseSpaceDimension convertUnsignedToPhaseSpaceDimensionEnum(
 {
   switch( dimension )
   {
-  case 0u:
+  case (unsigned)PRIMARY_SPATIAL_DIMENSION:
     return PRIMARY_SPATIAL_DIMENSION;
-  case 1u:
+  case (unsigned)SECONDARY_SPATIAL_DIMENSION:
     return SECONDARY_SPATIAL_DIMENSION;
-  case 2u:
+  case (unsigned)TERTIARY_SPATIAL_DIMENSION:
     return TERTIARY_SPATIAL_DIMENSION;
-  case 3u:
+  case (unsigned)PRIMARY_DIRECTIONAL_DIMENSION:
     return PRIMARY_DIRECTIONAL_DIMENSION;
-  case 4u:
+  case (unsigned)SECONDARY_DIRECTIONAL_DIMENSION:
     return SECONDARY_DIRECTIONAL_DIMENSION;
-  case 5u:
+  case (unsigned)TERTIARY_DIRECTIONAL_DIMENSION:
     return TERTIARY_DIRECTIONAL_DIMENSION;
-  case 6u:
+  case (unsigned)ENERGY_DIMENSION:
     return ENERGY_DIMENSION;
-  case 7u:
+  case (unsigned)TIME_DIMENSION:
     return TIME_DIMENSION;
-  case 8u:
+  case (unsigned)WEIGHT_DIMENSION:
     return WEIGHT_DIMENSION;
   default:
     THROW_EXCEPTION( std::runtime_error,

@@ -44,6 +44,21 @@ public:
   //! Return the angle cosine
   double getAngleCosine() const;
 
+  //! Set the reference time
+  void setReferenceTime( const double reference_time );
+
+  //! Calculate the reference time at the end of a track
+  void calculateReferenceTimeAtEndOfTrack( const double track_length );
+
+  //! Calculate the reference time at the beginning of track
+  void calculateReferenceTimeAtBeginningOfTrack( const double track_length );
+
+  //! Get the reference time
+  double getReferenceTime() const;
+
+  //! Get the time duration (particle time - reference time)
+  double getTimeDuration() const;
+
 private:
 
   // The particle state
@@ -51,6 +66,9 @@ private:
 
   // The angle cosine
   double d_angle_cosine;
+
+  // The reference time
+  double d_reference_time;
 };
 
 } // end MonteCarlo namespace

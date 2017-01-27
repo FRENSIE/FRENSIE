@@ -14,7 +14,7 @@ namespace MonteCarlo{
 // Constructor
 template<typename T>
 BasicEstimatorDimensionDiscretization<T>::BasicEstimatorDimensionDiscretization(
-                           const PhaseSpaceDimension dimension,
+                           const ObserverPhaseSpaceDimension dimension,
                            const Teuchos::Array<T>& dimension_bin_boundaries )
   : EstimatorDimensionDiscretization( dimension ),
     d_dimension_bin_boundaries( dimension_bin_boundaries )

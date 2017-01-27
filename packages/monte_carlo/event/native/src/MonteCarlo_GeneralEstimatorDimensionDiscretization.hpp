@@ -23,21 +23,21 @@ namespace MonteCarlo{
  * StandardBasicEstimatorDimensionDiscretization class then a specialization of
  * this class should be made.
  */
-template<PhaseSpaceDimension dimension>
+template<ObserverPhaseSpaceDimension dimension>
 class GeneralEstimatorDimensionDiscretization : public StandardBasicEstimatorDimensionDiscretization<typename PhaseSpaceDimensionTraits<dimension>::dimensionType>
 {
 
 private:
 
   // Estimator phase space dimension traits typedef
-  typedef PhaseSpaceDimensionTraits<dimension> DT;
+  typedef ObserverPhaseSpaceDimensionTraits<dimension> DT;
 
 public:
 
   //! Constructor
   GeneralEstimatorDimensionDiscretization(
-                              const Teuchos::Array<typename DT::dimensionType>&
-			      dimension_bin_boundaries );
+                           const Teuchos::Array<typename DT::dimensionBinType>&
+                           dimension_bin_boundaries );
 
   //! Destructor
   virtual ~GeneralEstimatorDimensionDiscretization()

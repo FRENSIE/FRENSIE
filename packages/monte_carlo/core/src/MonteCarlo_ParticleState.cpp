@@ -20,6 +20,7 @@ namespace MonteCarlo{
 ParticleState::ParticleState()
   : d_history_number( 0 ),
     d_particle_type(),
+    d_source_id( MonteCarlo::ModuleTraits::invalid_internal_roi_handle ),
     d_position(),
     d_direction{0.0,0.0,1.0},
     d_source_energy( 0.0 ),
@@ -43,6 +44,7 @@ ParticleState::ParticleState(
 			 const ParticleType type )
   : d_history_number( history_number ),
     d_particle_type( type ),
+    d_source_id( MonteCarlo::ModuleTraits::invalid_internal_roi_handle ),
     d_position(),
     d_direction(),
     d_source_energy( 0.0 ),
@@ -70,6 +72,7 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
 			      const bool reset_collision_number )
   : d_history_number( existing_base_state.d_history_number ),
     d_particle_type( new_type ),
+    d_source_id( existing_base_state.d_source_id ),
     d_position{existing_base_state.d_position[0],
                existing_base_state.d_position[1],
                existing_base_state.d_position[2]},
@@ -125,6 +128,22 @@ ParticleState::historyNumberType ParticleState::getHistoryNumber() const
 ParticleType ParticleState::getParticleType() const
 {
   return d_particle_type;
+}
+
+// Return the source id that created the particle (history)
+MonteCarlo::ModuleTraits::InternalROIHandle ParticleState::getSourceId() const
+{
+  return d_source_id;
+}
+
+// Set the source id of the source that created the particle (history)
+void ParticleState::setSourceId(
+                         const MonteCarlo::ModuleTraits::InternalROIHandle id )
+{
+  // Make sure that the id is valid
+  testPrecondition( id != MonteCarlo::ModuleTraits::invalid_internal_roi_handle );
+  
+  d_source_id = id;
 }
 
 // Return the cell handle for the cell where the particle (history) started

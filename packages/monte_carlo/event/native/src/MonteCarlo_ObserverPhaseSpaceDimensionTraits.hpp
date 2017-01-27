@@ -1,31 +1,37 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PhaseSpaceDimensionTraits.hpp
+//! \file   MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp
 //! \author Alex Robinson
-//! \brief  Phase space dimension traits class specializations
+//! \brief  Observer phase space dimension traits class specializations
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_HPP
-#define MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_HPP
+#ifndef MONTE_CARLO_OBSERVER_PHASE_SPACE_DIMENSION_TRAITS_HPP
+#define MONTE_CARLO_OBSERVER_PHASE_SPACE_DIMENSION_TRAITS_HPP
 
 // Std Lib Includes
 #include <limits>
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
 // FRENSIE Includes
-#include "MonteCarlo_PhaseSpaceDimensionTraitsDecl.hpp"
-#include "MonteCarlo_PhaseSpaceDimension.hpp"
+#include "MonteCarlo_ObserverPhaseSpaceDimensionTraitsDecl.hpp"
+#include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 
 namespace MonteCarlo{
 
-/*! The specialization of the PhaseSpaceDimensionTraits for COSINE_DIMENSION
- * \ingroup phase_space_dim_traits
+/*! \brief The specialization of the ObserverPhaseSpaceDimensionTraits for 
+ * OBSERVER_COSINE_DIMENSION
+ * \ingroup observer_phase_space_dim_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
+struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COSINE_DIMENSION>
 {
   typedef double dimensionType;
+
+  typedef dimensionType dimensionBinType;
 
   static inline std::string name()
   { return "Cosine"; }
@@ -43,13 +49,15 @@ struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
   { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
-/*! The specialization of the PhaseSpaceDimensionTraits for SOURCE_ENERGY_DIMENSION
- * \ingroup phase_space_dim_traits
+/*! \brief The specialization of the ObserverPhaseSpaceDimensionTraits for OBSERVER_SOURCE_ENERGY_DIMENSION
+ * \ingroup observer_phase_space_dim_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<SOURCE_ENERGY_DIMENSION>
+struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ENERGY_DIMENSION>
 {
   typedef ParticleState::energyType dimensionType;
+
+  typedef dimensionType dimensionBinType;
 
   static inline std::string name()
   { return "Source Energy"; }
@@ -60,6 +68,9 @@ struct PhaseSpaceDimensionTraits<SOURCE_ENERGY_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
 
+  static inline bool isContinuous()
+  { return true; }
+
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceEnergy(); }
 
@@ -67,13 +78,16 @@ struct PhaseSpaceDimensionTraits<SOURCE_ENERGY_DIMENSION>
   { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
-/*! The specialization of the PhaseSpaceDimensionTraits for ENERGY_DIMENSION
- * \ingroup phase_space_dim_traits
+/*! \brief The specialization of the ObserverPhaseSpaceDimensionTraits for 
+ * OBSERVER_ENERGY_DIMENSION
+ * \ingroup observer_phase_space_dim_traits
  */
 template<>
 struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
 {
   typedef ParticleState::energyType dimensionType;
+
+  typedef dimensionType dimensionBinType;
 
   static inline std::string name()
   { return "Energy"; }
@@ -84,6 +98,9 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
 
+  static inline bool isContinuous()
+  { return true; }
+
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getEnergy(); }
 
@@ -92,12 +109,14 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
 };
 
 /*! The specialization of the PhaseSpaceDimensionTraits for SOURCE_TIME_DIMENSION
- * \ingroup phase_space_dim_traits
+ * \ingroup observer_phase_space_dim_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
+struct ObserverPhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
 {
   typedef ParticleState::timeType dimensionType;
+
+  typedef dimensionType dimensionBinType;
 
   static inline std::string name()
   { return "Source Time"; }
@@ -108,6 +127,9 @@ struct PhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
 
+  static inline bool isContinuous()
+  { return true; }
+
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getSourceTime(); }
 
@@ -115,13 +137,16 @@ struct PhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
   { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
-/*! The specialization of the PhaseSpaceDimensionTraits for TIME_DIMENSION
- * \ingroup phase_space_dim_traits
+/*! \brief The specialization of the ObserverPhaseSpaceDimensionTraits for 
+ * OBSERVER_TIME_DIMENSION
+ * \ingroup observer_phase_space_dim_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
+struct ObserverPhaseSpaceDimensionTraits<OBSERVER_TIME_DIMENSION>
 {
   typedef ParticleState::timeType dimensionType;
+
+  typedef dimensionType dimensionBinType;
 
   static inline std::string name()
   { return "Time"; }
@@ -132,6 +157,9 @@ struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
 
+  static inline bool isContinuous()
+  { return true; }
+
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getTime(); }
 
@@ -139,14 +167,16 @@ struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
   { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
-/*! The specialization of the PhaseSpaceDimensionTraits for
- * COLLISION_NUMBER_DIMENSION
- * \ingroup phase_space_dim_traits
+/*! \brief The specialization of the ObserverPhaseSpaceDimensionTraits for
+ * OBSERVER_COLLISION_NUMBER_DIMENSION
+ * \ingroup observer_phase_space_dim_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
+struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>
 {
   typedef ParticleState::collisionNumberType dimensionType;
+
+  typedef dimensionType dimensionBinType;
 
   static inline std::string name()
   { return "Collision Number"; }
@@ -157,6 +187,9 @@ struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::max(); }
 
+  static inline bool isContinuous()
+  { return false; }
+
   static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
   { return particle_wrapper.getParticleState().getCollisionNumber(); }
 
@@ -164,10 +197,40 @@ struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
   { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
+/*! \brief The specialization of the ObserverPhaseSpaceDimensionTraits for
+ * OBSERVER_SOURCE_ID_DIMENSION
+ * \ingroup observer_phase_space_dim_traits
+ */
+template<>
+struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
+{
+  typedef MonteCarlo::ModuleTraits::InternalROIHandle dimensionType;
+
+  typedef Teuchos::Array<dimensionType> dimensionBinType;
+
+  static inline std::string name()
+  { return "Source Id"; }
+
+  static inline dimensionType lowerBound()
+  { return 0; }
+
+  static inline dimensionType upperBound()
+  { return std::numeric_limits<dimensionType>::max(); }
+
+  static inline bool isContinuous()
+  { return false; }
+
+  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  { return particle_wrapper.getParticleState().getSourceId(); }
+
+  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
+  { return Teuchos::any_cast<dimensionType>( any_value ); }
+};
+
 } // end MonteCarlo namespace
 
-#endif // end PHASE_SPACE_DIMENSION_TRAITS_HPP
+#endif // end MONTE_CARLO_OBSERVER_PHASE_SPACE_DIMENSION_TRAITS_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PhaseSpaceDimensionTraits.hpp
+// end MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp
 //---------------------------------------------------------------------------//

@@ -38,7 +38,7 @@ public:
 
   //! Constructor
   StandardBasicEstimatorDimensionDiscretization(
-                           const PhaseSpaceDimension dimension,
+                           const ObserverPhaseSpaceDimension dimension,
                            const Teuchos::Array<T>& dimension_bin_boundaries );
 
   //! Destructor
@@ -72,7 +72,7 @@ class StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<
 
   //! Constructor
   StandardBasicEstimatorDimensionDiscretization(
-                           const PhaseSpaceDimension dimension,
+                           const ObserverPhaseSpaceDimension dimension,
                            const Teuchos::Array<T>& dimension_bin_boundaries );
 
   //! Destructor

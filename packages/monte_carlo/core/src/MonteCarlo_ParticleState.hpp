@@ -21,6 +21,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
+#include "MonteCarlo_ModuleTraits.hpp"
 #include "Geometry_Ray.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_PrintableObject.hpp"
@@ -98,6 +99,12 @@ public:
 
   //! Return the particle type
   ParticleType getParticleType() const;
+
+  //! Return the id of the source that created the particle (history)
+  MonteCarlo::ModuleTraits::InternalROIHandle getSourceId() const;
+
+  //! Set the id of the source that created the particle (history)
+  void setSourceId( const MonteCarlo::ModuleTraits::InternalROIHandle id );
 
   //! Return the cell handle for the cell where the particle (history) started
   Geometry::ModuleTraits::InternalCellHandle getSourceCell() const;
@@ -265,6 +272,9 @@ private:
 
   // The particle type
   ParticleType d_particle_type;
+
+  // The source id
+  MonteCarlo::ModuleTraits::InternalROIHandle d_source_id;
 
   // Position of the particle
   positionType d_position[3];
