@@ -190,7 +190,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sample() co
 // Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   ++trials;
 

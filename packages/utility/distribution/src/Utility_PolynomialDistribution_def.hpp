@@ -242,7 +242,7 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::sample() const
 //! Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   ++trials;
 

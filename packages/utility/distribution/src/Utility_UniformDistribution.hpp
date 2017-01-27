@@ -95,13 +95,13 @@ public:
 			       const IndepQuantity max_independent_value );
 
   //! Return a random sample from the corresponding CDF and record the number of trials
-  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample from the distribution and record the number of trials
   static IndepQuantity sampleAndRecordTrials(
 			        const IndepQuantity min_independent_value,
 			        const IndepQuantity max_independent_value,
-				unsigned& trials );
+				DistributionTraits::Counter& trials );
 
   //! Return a random sample from the distribution at the given CDF value
   IndepQuantity sampleWithRandomNumber( const double random_number ) const;

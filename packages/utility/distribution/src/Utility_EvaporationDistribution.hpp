@@ -115,14 +115,14 @@ public:
 			       const IndepQuantity restriction_energy );
 
   //! Return a random sample from the distribution, and record the number of trials
-  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample from the corresponding CDF and record the number of trials
   static IndepQuantity sampleAndRecordTrials(
     const IndepQuantity incident_energy,
     const IndepQuantity nuclear_temperature,
     const IndepQuantity restriction_energy,
-    unsigned& trials );
+    DistributionTraits::Counter& trials );
 
   //! Test if the distribution is continuous
   bool isContinuous() const;

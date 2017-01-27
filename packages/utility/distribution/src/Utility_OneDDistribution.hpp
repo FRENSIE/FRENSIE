@@ -25,6 +25,7 @@
 #include "Utility_ComparePolicy.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_DistributionTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
@@ -95,7 +96,7 @@ public:
   virtual IndepQuantity sample() const = 0;
 
   //! Return a random sample and record the number of trials
-  virtual IndepQuantity sampleAndRecordTrials( unsigned& trials ) const = 0;
+  virtual IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const = 0;
 
   //! Return the upper bound of the distribution independent variable
   virtual IndepQuantity getUpperBoundOfIndepVar() const = 0;

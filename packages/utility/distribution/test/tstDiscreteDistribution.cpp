@@ -504,7 +504,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   // Test the first bin
   double sample = distribution->sampleAndRecordTrials( trials );
@@ -655,7 +655,7 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   // Test the first bin
   quantity<ElectronVolt> sample =

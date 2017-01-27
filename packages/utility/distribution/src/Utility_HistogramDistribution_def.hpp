@@ -256,7 +256,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sample() const
 // Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   ++trials;
 

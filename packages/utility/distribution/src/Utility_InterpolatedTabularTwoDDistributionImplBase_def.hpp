@@ -203,7 +203,7 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
 template<typename TwoDInterpPolicy, typename Distribution>
 auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const
+                            DistributionTraits::Counter& trials ) const
   -> SecondaryIndepQuantity
 {
   // Create the sampling functor

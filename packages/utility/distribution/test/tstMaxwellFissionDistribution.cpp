@@ -179,7 +179,7 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_FLOATING_EQUALITY( sample, 0.78269807500829, 1e-14 );
@@ -210,7 +210,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   quantity<MegaElectronVolt> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
@@ -321,7 +321,7 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incident_energy, nuclear_temperature, restriction_energy, sample;
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   incident_energy = 0.5;
   nuclear_temperature = 0.1;
@@ -361,7 +361,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 
   quantity<MegaElectronVolt> incident_energy, nuclear_temperature,
     restriction_energy, sample;
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   incident_energy = 0.5*MeV;
   nuclear_temperature = 0.1*MeV;

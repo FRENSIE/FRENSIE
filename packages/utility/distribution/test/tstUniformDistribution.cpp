@@ -246,7 +246,7 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, -1.0 );
@@ -274,7 +274,7 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   quantity<si::energy> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
@@ -303,7 +303,7 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordTrials_static )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = Utility::UniformDistribution::sampleAndRecordTrials(
 							   -1.0, 1.0, trials );
@@ -334,7 +334,7 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sampleAndRecordTrials_static )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   quantity<si::energy> sample = Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sampleAndRecordTrials(
 				        0.0*si::joule, 1.0*si::joule, trials );

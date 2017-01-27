@@ -260,7 +260,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sample() const
 // Return a random sample and record the number of trials
 template<typename IndependentUnit,typename DependentUnit>
 typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   ++trials;
 

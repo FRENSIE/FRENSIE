@@ -110,14 +110,14 @@ public:
 
   //! Return a random sample and record the number of trials
   PrimaryIndepQuantity samplePrimaryMarginalAndRecordTrials(
-                                                      unsigned& trials ) const;
+                                                      DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample from the secondary marginal PDF
   SecondarIndepQuantity sampleSecondaryMarginal() const;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryMarginalAndRecordTrials(
-                                                      unsigned& trials ) const;
+                                                      DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample from the primary conditional PDF
   PrimaryIndepQuantity samplePrimaryConditional(
@@ -126,7 +126,7 @@ public:
   //! Return a random sample and record the number of trials
   PrimaryIndepQuantity samplePrimaryConditionalAndRecordTrials(
                         const SecondaryIndepQuantity secondary_indep_var_value,
-                        unsigned& trials ) const;
+                        DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
@@ -135,7 +135,7 @@ public:
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const;
+                            DistributionTraits::Counter& trials ) const;
 
   //! Return the upper bound of the distribution primary independent variable
   PrimaryIndepQuantity getUpperBoundOfPrimaryIndepVar() const;

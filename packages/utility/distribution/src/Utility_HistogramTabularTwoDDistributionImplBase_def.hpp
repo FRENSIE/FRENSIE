@@ -136,7 +136,7 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSeco
 template<typename Distribution>
 auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const -> SecondaryIndepQuantity
+                            DistributionTraits::Counter& trials ) const -> SecondaryIndepQuantity
 {
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>

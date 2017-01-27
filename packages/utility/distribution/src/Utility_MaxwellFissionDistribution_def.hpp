@@ -207,7 +207,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sample(
   const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
   const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
 {
-  unsigned trials = 0;
+  DistributionTraits::Counter trials = 0;
 
   return ThisType::sampleAndRecordTrials( incident_energy,
 					  nuclear_temperature,
@@ -218,7 +218,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sample(
 // Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   return ThisType::sampleAndRecordTrials( d_incident_energy,
 					  d_nuclear_temperature,
@@ -233,7 +233,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRec
   const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
   const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
   const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
-  unsigned& trials )
+  DistributionTraits::Counter& trials )
 {
   // Make sure values are valid
   testPrecondition( !IQT::isnaninf( incident_energy ) );

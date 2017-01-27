@@ -207,7 +207,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );

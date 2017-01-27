@@ -291,7 +291,7 @@ TEUCHOS_UNIT_TEST( WattDistribution, sampleAndRecordTrials_pass_parameters )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incident_energy, a_parameter, b_parameter, restriction_energy, sample;
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   incident_energy = 0.5;
   a_parameter = 0.2;
@@ -343,7 +343,7 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
 
   Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>::InverseIndepQuantity b_parameter;
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   incident_energy = 0.5*MeV;
   a_parameter = 0.2*MeV;

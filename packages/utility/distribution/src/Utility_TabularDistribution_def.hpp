@@ -275,7 +275,7 @@ template<typename InterpolationPolicy,
 	 typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-						       unsigned& trials ) const
+						       DistributionTraits::Counter& trials ) const
 {
   ++trials;
 

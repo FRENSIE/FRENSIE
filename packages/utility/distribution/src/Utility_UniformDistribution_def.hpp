@@ -206,7 +206,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sample(
 // Return a random sample from the corresponding CDF and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   return ThisType::sampleAndRecordTrials( d_min_independent_value,
 					  d_max_independent_value,
@@ -219,7 +219,7 @@ inline typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::Ind
 UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
  const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity min_independent_value,
  const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_independent_value,
- unsigned& trials )
+ DistributionTraits::Counter& trials )
 {
   // Make sure that the max value is greater than the min value
   testPrecondition( max_independent_value > min_independent_value );

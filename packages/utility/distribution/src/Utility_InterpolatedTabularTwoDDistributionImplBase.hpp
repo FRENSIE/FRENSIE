@@ -99,7 +99,7 @@ public:
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const;
+                            DistributionTraits::Counter& trials ) const;
 
   //! Return the upper bound of the conditional distribution
   SecondaryIndepQuantity getUpperBoundOfConditionalIndepVar(

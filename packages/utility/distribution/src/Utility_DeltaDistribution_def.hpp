@@ -179,7 +179,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sample() const
 // Return a random sample from the corresponding CDF and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   ++trials;
 

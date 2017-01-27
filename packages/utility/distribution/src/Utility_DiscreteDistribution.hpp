@@ -105,7 +105,7 @@ public:
   IndepQuantity sample() const;
 
   //! Return a random sample and record the number of trials
-  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample and sampled index from the distribution
   IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;

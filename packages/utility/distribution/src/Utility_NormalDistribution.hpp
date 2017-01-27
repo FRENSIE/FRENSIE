@@ -102,7 +102,7 @@ public:
 
   //! Return a random sample from the distribution and record the trials
   static IndepQuantity sampleAndRecordTrials(
-			       unsigned& trials,
+			       DistributionTraits::Counter& trials,
 			       const IndepQuantity mean,
 			       const IndepQuantity standard_deviation,
 			       const IndepQuantity min_independent_value =
@@ -114,7 +114,7 @@ public:
   IndepQuantity sample() const;
 
   //! Return a random sample from the distribution and record the trials
-  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;

@@ -92,7 +92,7 @@ public:
   IndepQuantity sample() const;
 
   //! Return a random sample from the corresponding CDF and record the number of trials
-  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample from the distribution and the sampled index
   IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;

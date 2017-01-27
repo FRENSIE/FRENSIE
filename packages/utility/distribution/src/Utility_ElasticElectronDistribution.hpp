@@ -64,7 +64,7 @@ public:
   double sample() const;
 
   //! Return a random sample and record the number of trials
-  double sampleAndRecordTrials( unsigned& trials ) const;
+  double sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample and bin index from the distribution
   double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;

@@ -1371,7 +1371,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
-  unsigned trials = 0u;
+  Utility::DistributionTraits::Counter trials = 0u;
   
   // Before the first bin - no extension
   TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials ),
@@ -1626,7 +1626,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
-  unsigned trials = 0u;
+  Utility::DistributionTraits::Counter trials = 0u;
   
   // Before the first bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials ),

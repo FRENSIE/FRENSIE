@@ -463,7 +463,7 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   // Test the first bin
   double sample = pdf_distribution->sampleAndRecordTrials( trials );
@@ -569,7 +569,7 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   // Test the first bin
   quantity<MegaElectronVolt> sample =

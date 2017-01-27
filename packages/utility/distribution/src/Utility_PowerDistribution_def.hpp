@@ -242,7 +242,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sample(
 // Return a random sample and record the number of trials
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   ++trials;
 

@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_DistributionTraits.hpp"
 #include "Utility_ComparePolicy.hpp"
 
 /*! \defgroup two_d_distributions Two-Dimensinal Distributions
@@ -96,7 +97,7 @@ public:
   //! Return a random sample and record the number of trials
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const = 0;
+                            DistributionTraits::Counter& trials ) const = 0;
 
   //! Return the upper bound of the distribution primary independent variable
   virtual PrimaryIndepQuantity getUpperBoundOfPrimaryIndepVar() const = 0;

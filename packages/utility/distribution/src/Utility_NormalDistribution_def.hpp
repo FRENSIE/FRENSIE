@@ -195,7 +195,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sample(
 				    const IndepQuantity min_independent_value,
 			            const IndepQuantity max_independent_value )
 {
-  unsigned number_of_trials;
+  DistributionTraits::Counter number_of_trials;
 
   return ThisType::sampleAndRecordTrials( number_of_trials,
 					  mean,
@@ -219,7 +219,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sample() const
 template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-				    unsigned& trials,
+				    DistributionTraits::Counter& trials,
 			            const IndepQuantity mean,
 				    const IndepQuantity standard_deviation,
 				    const IndepQuantity min_independent_value,
@@ -264,7 +264,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrial
 // Return a random sample from the corresponding CDF and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   return ThisType::sampleAndRecordTrials( trials,
 					  d_mean,

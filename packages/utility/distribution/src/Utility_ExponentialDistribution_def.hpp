@@ -268,7 +268,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample() const
 // Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   ++trials;
 

@@ -246,7 +246,7 @@ inline double ElasticElectronDistribution<InterpolationPolicy>::sample() const
 // Return a random sample and record the number of trials
 template<typename InterpolationPolicy>
 double ElasticElectronDistribution<InterpolationPolicy>::sampleAndRecordTrials(
-						       unsigned& trials ) const
+						       DistributionTraits::Counter& trials ) const
 {
   ++trials;
 

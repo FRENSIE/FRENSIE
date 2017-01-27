@@ -187,7 +187,7 @@ TEUCHOS_UNIT_TEST( NormalDistribution, sampleAndRecordTrials_static )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = Utility::NormalDistribution::sampleAndRecordTrials(
 							    trials, 0.0, 1.0 );
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials_static )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   quantity<cgs::length> sample =
     Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials(
@@ -340,7 +340,7 @@ TEUCHOS_UNIT_TEST( NormalDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
@@ -376,7 +376,7 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   quantity<cgs::length> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );

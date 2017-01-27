@@ -238,7 +238,7 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, sampleAndRecordTrials_pass_parameter
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incident_energy, nuclear_temperature, restriction_energy, sample;
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   incident_energy = 0.5;
   nuclear_temperature = 0.1;
@@ -277,7 +277,7 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution,
 
   quantity<MegaElectronVolt> incident_energy, nuclear_temperature,
     restriction_energy, sample;
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   incident_energy = 0.5*MeV;
   nuclear_temperature = 0.1*MeV;

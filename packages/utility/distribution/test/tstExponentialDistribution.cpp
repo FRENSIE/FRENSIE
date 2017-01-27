@@ -278,7 +278,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );
@@ -306,7 +306,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   quantity<cgs::length> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );

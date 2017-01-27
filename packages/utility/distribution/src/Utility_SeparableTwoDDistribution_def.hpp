@@ -93,7 +93,7 @@ template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
          typename SecondaryDependentUnit>
-PrimaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::samplePrimaryMarginalAndRecordTrials( unsigned& trials ) const
+PrimaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::samplePrimaryMarginalAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   return d_primary_distribution->sampleAndRecordTrials( trials );
 }
@@ -113,7 +113,7 @@ template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
          typename SecondaryDependentUnit>
-SecondarIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal( unsigned& trials ) const
+SecondarIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal( DistributionTraits::Counter& trials ) const
 {
   return d_secondary_distribution->sampleAndRecordTrails( trials );
 }
@@ -142,7 +142,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryDependentUnit>
 PrimaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::samplePrimaryConditionalAndRecordTrials(
                         const SecondaryIndepQuantity secondary_indep_var_value,
-                        unsigned& trials ) const
+                        DistributionTraits::Counter& trials ) const
 {
   if( secondary_indep_var_value <
       d_secondary_distribution->getLowerBoundOfIndepVar() ||
@@ -180,7 +180,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryDependentUnit>
 SecondaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const
+                            DistributionTraits::Counter& trials ) const
 {
   if( primary_indep_var_value <
       d_primary_distribution->getLowerBoundOfIndepVar() ||

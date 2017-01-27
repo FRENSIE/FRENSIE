@@ -661,7 +661,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   // First bin
   double sample = distribution->sampleAndRecordTrials( trials );
@@ -974,7 +974,7 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0u;
+  Utility::DistributionTraits::Counter trials = 0u;
 
   // First bin
   quantity<MegaElectronVolt> sample =

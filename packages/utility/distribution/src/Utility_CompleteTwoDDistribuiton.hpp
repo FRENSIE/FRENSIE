@@ -76,21 +76,21 @@ public:
 
   //! Return a random sample and record the number of trials
   virtual std::pair<PrimaryIndepQuantity,SecondaryIndepQuantity>
-  sampleAndRecordTrials( unsigned& trials ) const;
+  sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample from the primary marginal PDF
   virtual PrimaryIndepQuantity samplePrimaryMarginal() const = 0;
 
   //! Return a random sample and record the number of trials
   virtual PrimaryIndepQuantity samplePrimaryMarginalAndRecordTrials(
-                                                  unsigned& trials ) const = 0;
+                                                  DistributionTraits::Counter& trials ) const = 0;
 
   //! Return a random sample from the secondary marginal PDF
   virtual SecondaryIndepQuantity sampleSecondaryMarginal() const = 0;
 
   //! Return a random sample and record the number of trials
   virtual SecondaryIndepQuantity sampleSecondaryMarginalAndRecordTrials(
-                                                  unsigned& trials ) const = 0;
+                                                  DistributionTraits::Counter& trials ) const = 0;
 
   //! Return a random sample from the primary conditional PDF
   virtual PrimaryIndepQuantity samplePrimaryConditional(
@@ -99,7 +99,7 @@ public:
   //! Return a random sample and record the number of trials
   virtual PrimaryIndepQuantity samplePrimaryConditionalAndRecordTrials(
                          const SecondaryIndepQuantity seconary_indep_var_value,
-                         unsigned& trials ) const;
+                         DistributionTraits::Counter& trials ) const;
 
   //! Return the upper bound of the distribution secondary independent variable
   virtual SecondaryIndepQuantity getUpperBoundOfSecondaryIndepVar() const = 0;
@@ -163,7 +163,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 std::pair<PrimaryIndepQuantity,SecondaryIndepQuantity>
-UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   PrimaryIndepQuantity primary_indep_sample =
     this->samplePrimaryMarginalAndRecordTrials( trials );

@@ -140,7 +140,7 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sample )
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordTrials )
 {
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
   double sample = distribution->sampleAndRecordTrials( trials );
 
   TEST_EQUALITY_CONST( sample, 0.0 );
@@ -151,7 +151,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordTrials )
 // Check that the unit-aware distribution can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordTrials )
 {
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   quantity<si::time> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );

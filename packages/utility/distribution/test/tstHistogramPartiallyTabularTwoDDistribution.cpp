@@ -952,7 +952,7 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
-  unsigned trials = 0u;
+  Utility::DistributionTraits::Counter trials = 0u;
 
   // Before the first bin - no extension
   TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials ),
@@ -1077,7 +1077,7 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
-  unsigned trials = 0u;
+  Utility::DistributionTraits::Counter trials = 0u;
 
   // Before the first bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials ),

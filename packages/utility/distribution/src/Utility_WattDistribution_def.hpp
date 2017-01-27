@@ -217,7 +217,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sample(
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity b_parameter,
 	const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
 {
-  unsigned trials = 0;
+  DistributionTraits::Counter trials = 0;
 
   return ThisType::sampleAndRecordTrials( incident_energy,
 					  a_parameter,
@@ -229,7 +229,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sample(
 // Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   return ThisType::sampleAndRecordTrials( d_incident_energy,
 					  d_a_parameter,
@@ -246,7 +246,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity a_parameter,
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity b_parameter,
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
-  unsigned& trials )
+  DistributionTraits::Counter& trials )
 {
   // Make sure values are valid
   testPrecondition( !IQT::isnaninf( incident_energy ) );

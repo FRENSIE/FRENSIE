@@ -286,7 +286,7 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_EQUALITY_CONST( sample, 0.0 );
@@ -320,7 +320,7 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   quantity<cgs::length> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );

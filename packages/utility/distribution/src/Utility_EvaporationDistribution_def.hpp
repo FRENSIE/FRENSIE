@@ -203,7 +203,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sample(
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
 {
-  unsigned trials = 0;
+  DistributionTraits::Counter trials = 0;
 
   return ThisType::sampleAndRecordTrials( incident_energy,
 					  nuclear_temperature,
@@ -214,7 +214,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sample(
 // Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   return ThisType::sampleAndRecordTrials( d_incident_energy,
 					  d_nuclear_temperature,
@@ -229,7 +229,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecord
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
-  unsigned& trials )
+  DistributionTraits::Counter& trials )
 {
   // Make sure values are valid
   testPrecondition( !IQT::isnaninf( incident_energy ) );

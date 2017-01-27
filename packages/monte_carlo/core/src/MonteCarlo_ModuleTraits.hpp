@@ -12,6 +12,9 @@
 // Std Lib Includes
 #include <limits>
 
+// FRENSIE Includes
+#include "Utility_DistributionTraits.hpp"
+
 /*! \defgroup module_traits Module Traits
  * \ingroup traits
  *
@@ -38,7 +41,7 @@ struct ModuleTraits
   typedef unsigned long long InternalMaterialHandle;
 
   //! The internal counter type
-  typedef unsigned long long InternalCounter;
+  typedef Utility::DistributionTraits::Counter InternalCounter;
 
   //! The invalid ROI handle value
   static const InternalROIHandle invalid_internal_roi_handle;
