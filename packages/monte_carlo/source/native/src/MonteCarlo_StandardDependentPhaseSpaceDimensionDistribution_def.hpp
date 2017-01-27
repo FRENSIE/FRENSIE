@@ -15,60 +15,6 @@
 
 namespace MonteCarlo{
 
-//! The generic TwoDDistribution sampling policy class
-template<typename T>
-struct TwoDDistributionSamplingPolicy
-{
-  //! Generate a sample from the TwoDDistribution object
-  static inline double sample( const T& distribution,
-                               const double indep_dimension_value )
-  {
-    return distribution->sampleSecondaryConditional( indep_dimension_value );
-  }
-
-  //! Generate a sample from the TwoDDistribution object
-  static inline double sampleAndRecordTrials(
-                                  const T& distribution,
-                                  const double indep_dimension_value,
-                                  ModuleTraits::InternalCounter& trials )
-  {
-    return distribution->sampleSecondaryConditionAndRecordTrials(
-                                               indep_dimension_value, trials );
-  }
-};
-
-/*! \brief The TwoDDistribution sampling policy specialization for 
- * the Utility::FullyTabularTwoDDistribution class
- */
-template<>
-struct TwoDDistributionSamplingPolicy<Utility::FullyTabularTwoDDistribution>
-{
-  //! Generate a sample from the Utility::FullyTabularTwoDDistribution object
-  static inline double sample(
-                     const Utility::FullyTabularTwoDDistribution& distribution,
-                     const double indep_dimension_value )
-  {
-    return distribution->sampleSecondaryConditionalExact(
-                                                       indep_dimension_value );
-  }
-
-  //! Generate a sample from the Utility::FullyTabularTwoDDistribution object
-  static inline double sampleAndRecordTrials(
-                     const Utility::FullyTabularTwoDDistribution& distribution,
-                     const double indep_dimension_value,
-                     ModuleTraits::InternalCounter& trials )
-  {
-    // The number of trials can be tracked when we use exact sampling. We
-    // will simply increment the trials counter. Since the underlying
-    // conditional distributions are tabular the sampling efficiency should
-    // always be one anyway.
-    ++trials;
-    
-    return distribution->sampleSecondaryConditionalExact(
-                                                       indep_dimension_value );
-  }
-};
-
 // Constructor
 template<PhaseSpaceDimension indep_dimension,
          PhaseSpaceDimension dep_dimension,
