@@ -73,15 +73,15 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 //! Create a simple dipole bremsstrahlung distribution
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool use_linlinlin_interpolation = false,
-    const bool use_weighted_sampling = true );
+    const bool use_linlinlin_interpolation,
+    const bool use_weighted_sampling );
 
 //! Create a detailed 2BS bremsstrahlung distribution
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
-    const bool use_linlinlin_interpolation = false,
-    const bool use_weighted_sampling = true );
+    const bool use_linlinlin_interpolation,
+    const bool use_weighted_sampling );
 
 //----------------------------------------------------------------------------//
 //      ****ELECTROIONIZATION SUBSHELL DISTRIBUTIONS****
