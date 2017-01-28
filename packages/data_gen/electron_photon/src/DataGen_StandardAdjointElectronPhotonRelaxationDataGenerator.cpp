@@ -568,10 +568,10 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
   (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
   // Set the electron data
-  (*d_os_log) << Utility::Bold( "Setting the adjoint electron data: " )
-              << std::endl;
-  this->setAdjointElectronData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  // (*d_os_log) << Utility::Bold( "Setting the adjoint electron data: " )
+  //             << std::endl;
+  // this->setAdjointElectronData( data_container );
+  // (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 }
 
 // Set the table data

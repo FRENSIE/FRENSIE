@@ -494,7 +494,7 @@ int main( int argc, char** argv )
     double atomic_weight;
 
     try{
-      Data::CrossSectionsXMLProperties::extractInfoFromAdjointPhotoatomTableInfoParameterList(
+      Data::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
 						    cross_section_directory,
 						    cross_section_alias,
 						    *cross_sections_table_info,
