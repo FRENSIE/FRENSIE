@@ -1,21 +1,21 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_BasicEstimatorDimesionDiscretization_def.hpp
+//! \file   MonteCarlo_OrderedEstimatorDimesionDiscretization_def.hpp
 //! \author Alex Robinson
-//! \brief  Basic estimator dimension discretization definition
+//! \brief  Ordered estimator dimension discretization definition
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_BASIC_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
-#define MONTE_CARLO_BASIC_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
+#ifndef MONTE_CARLO_ORDERED_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
+#define MONTE_CARLO_ORDERED_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
 
 namespace MonteCarlo{
 
 // Constructor
 template<typename T>
-BasicEstimatorDimensionDiscretization<T>::BasicEstimatorDimensionDiscretization(
+OrderedEstimatorDimensionDiscretization<T>::OrderedEstimatorDimensionDiscretization(
                            const ObserverPhaseSpaceDimension dimension,
-                           const Teuchos::Array<T>& dimension_bin_boundaries )
+                           const BinBoundaryArray& dimension_bin_boundaries )
   : EstimatorDimensionDiscretization( dimension ),
     d_dimension_bin_boundaries( dimension_bin_boundaries )
 {
@@ -25,7 +25,7 @@ BasicEstimatorDimensionDiscretization<T>::BasicEstimatorDimensionDiscretization(
 
 // Print the dimension discretization
 template<typename T>
-void BasicEstimatorDimensionDiscretization<T>::print( std::ostream& os ) const
+void OrderedEstimatorDimensionDiscretization<T>::print( std::ostream& os ) const
 {
   os << this->getDimensionName() << " Bin Boundaries: ";
 
@@ -35,15 +35,16 @@ void BasicEstimatorDimensionDiscretization<T>::print( std::ostream& os ) const
 
 // Return the boundaries array
 template<typename T>
-const Teuchos::Array<T>& BasicEstimatorDimensionDiscretization<T>::getBinBoundaries() const
+auto OrderedEstimatorDimensionDiscretization<T>::getBinBoundaries() const
+ -> const BinBoundaryArray&
 {
   return d_dimension_bin_boundaries;
 }
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_BASIC_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
+#endif // end MONTE_CARLO_ORDERED_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_BasicEstimatorDimensionDiscretization_def.hpp
+// end MonteCarlo_OrderedEstimatorDimensionDiscretization_def.hpp
 //---------------------------------------------------------------------------//

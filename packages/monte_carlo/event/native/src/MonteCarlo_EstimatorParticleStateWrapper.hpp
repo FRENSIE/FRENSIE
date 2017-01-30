@@ -44,19 +44,21 @@ public:
   //! Return the angle cosine
   double getAngleCosine() const;
 
-  //! Set the reference time
-  void setReferenceTime( const double reference_time );
+  //! Calculate the state times using particle time as track start time
+  void calculateStateTimesUsingParticleTimeAsStartTime(
+                                                   const double track_length );
 
-  //! Calculate the reference time at the end of a track
-  void calculateReferenceTimeAtEndOfTrack( const double track_length );
+  //! Calculate the state times using particle time as track end time
+  void calculateStateTimesUsingParticleTimeAsEndTime(
+                                                   const double track_length );
 
-  //! Calculate the reference time at the beginning of track
-  void calculateReferenceTimeAtBeginningOfTrack( const double track_length );
+  //! Get the state start time
+  double getStartTime() const;
 
-  //! Get the reference time
-  double getReferenceTime() const;
+  //! Get the state end time
+  double getEndTime() const;
 
-  //! Get the time duration (particle time - reference time)
+  //! Get the state time duration
   double getTimeDuration() const;
 
 private:
@@ -67,8 +69,11 @@ private:
   // The angle cosine
   double d_angle_cosine;
 
-  // The reference time
-  double d_reference_time;
+  // The state start time
+  double d_state_start_time;
+
+  // The state end time
+  double d_state_end_time;
 };
 
 } // end MonteCarlo namespace

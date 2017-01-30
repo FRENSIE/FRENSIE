@@ -11,19 +11,16 @@
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
-#include "Utility_SearchAlgorithms.hpp"
-#include "Utility_SortAlgorithms.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 template<PhaseSpaceDimension dimension>
-GeneralEstimatorDimensionDiscretization<dimension>::GeneralEstimatorDimensionDiscretization( const Teuchos::Array<typename DT::dimensionType>& dimension_bin_boundaries )
-  : StandardBasicEstimatorDimensionDiscretization<typename DT::dimensionType>( dimension, dimension_bin_boundaries )
+GeneralEstimatorDimensionDiscretization<dimension>::GeneralEstimatorDimensionDiscretization( const InputArray& dimension_bin_boundaries )
+  : BaseEstimatorDimensionDiscretization( dimension, dimension_bin_boundaries )
 {
-  // Make sure the bins are valid
-  testPrecondition( dimension_bin_boundaries.front() >= DT::lowerBound() );
-  testPrecondition( dimension_bin_boundaries.back() <= DT::upperBound() );
+  // Make sure the bins bounds are valid
+  testPrecondition( GeneralEstimatorDimensionDiscretizationHelper<dimension>::areInputArrayBoundsValid( dimension_bin_boundaries ) );
 }
 
 // Return the dimension name that has been discretized
@@ -38,7 +35,7 @@ template<PhaseSpaceDimension dimension>
 inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscretization(
             const EstimatorParticleStateWrapper& particle_state_wrapper ) const
 {
-  return isValueInDiscretization(
+  return this->isValueInDiscretization(
                       getDimensionValue<dimension>( particle_state_wrapper ) );
 }
 
@@ -51,27 +48,50 @@ inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscret
                                    getDimensionValue<dimension>( any_value ) );
 }
 
-// Calculate the index of the bin that the value falls in
+// Calculate the index of bins that the value falls in
 template<PhaseSpaceDimension dimension>
-unsigned GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndex(
-            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+void GeneralEstimatorDimensionDiscretization<dimension>::calculatecalculateBinIndicesOfValue(
+                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   BinIndexArray& bin_indices ) const
 {
   // Make sure the value is in the dimension discretization
   testPrecondition( this->isValueInDiscretization( particle_state_wrapper ) );
 
-  return this->calculateBinIndex(
-                      getDimensionValue<dimension>( particle_state_wrapper ) );
+  return this->calculateBinIndicesOfValue(
+                        getDimensionValue<dimension>( particle_state_wrapper ),
+                        bin_indices );
 }
 
 // Calculate the index of the bin that the value falls in
 template<PhaseSpaceDimension dimension>
-unsigned GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndex(
-                                          const Teuchos::any& any_value ) const
+void GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndicesOfValue(
+                                             const Teuchos::any& any_value,
+                                             BinIndexArray& bin_indices ) const
 {
-  // Make sure the value is in the dimension discretization
+  // Make sure that the value is in the dimension discretization
   testPrecondition( this->isValueInDiscretization( any_value ) );
 
-  return this->calculateBinIndex( getDimensionValue<dimension>( any_value ) );
+  return this->calculateBinIndicesOfValue(
+                                     getDimensionValue<dimension>( any_value ),
+                                     bin_indices );
+}
+
+// Calculate the index of bins that the value range falls in
+template<PhaseSpaceDimension dimension>
+void GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndicesOfRange(
+                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   BinIndexWeightPairArray& bin_indices_and_weights ) const
+{
+  // Make sure that the value is in the dimension discretization
+  testPrecondition( this->doesRangeIntersectDiscretization( particle_state_wrapper ) );
+
+  typename DT::dimensionType range_start, range_end;
+
+  getDimensionRange<dimension>( particle_state_wrapper,
+                                range_start,
+                                range_end );
+
+  this->calculateBinIndicesOfRange( range_start, range_end, bin_indices_and_weights );
 }
 
 // Export the bin boundaries

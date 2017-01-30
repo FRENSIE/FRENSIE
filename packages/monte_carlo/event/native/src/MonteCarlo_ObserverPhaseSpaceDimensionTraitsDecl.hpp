@@ -48,6 +48,9 @@ struct ObserverPhaseSpaceDimensionTraits
   //! The value associated with a bin of the dimension
   typedef double dimensionBinType;
 
+  //! Indicates if the dimension is ordered (ranges must be sorted)
+  static const bool is_ordered = true;
+
   //! The name of the dimension
   static inline std::string name()
   {
@@ -82,10 +85,19 @@ struct ObserverPhaseSpaceDimensionTraits
     (void)UndefinedObserverPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return 0;
   }
+
+  //! Extract a value range from an estimator particle state wrapper
+  static inline void getDimensionRange( const EstimatorParticleStateWrapper& particle_wrapper,
+                                        dimensionType& range_start,
+                                        dimensionType& range_end )
+  {
+    (void)UndefinedObserverPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
+    return 0;
+  }
 };
 
-/*! This function allows access to the getDimensionValue ObserserPhaseSpaceDimension
- * traits function
+/*! \brief This function allows access to the getDimensionValue 
+ * ObserserPhaseSpaceDimension traits function
  * \ingrouop observer_phase_space_dim_traits
  */
 template<ObserverPhaseSpaceDimension dimension>
@@ -105,6 +117,22 @@ inline typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType
 getDimensionValue( const Teuchos::any& any_value )
 {
   return ObserverPhaseSpaceDimensionTraits<dimension>::getDimensionValue( any_value );
+}
+
+/*! \brief This function allows access to the getDimensionRange 
+ * ObserverPhaseSpaceDimension traits function
+ * \ingroup observer_phase_space_dim_traits
+ */
+template<ObserverPhaseSpaceDimension dimension>
+inline typename void getDimensionRange(
+      const EstimatorParticleStateWrapper& particle_wrapper,
+      ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType& range_start,
+      ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType& range_end )
+{
+  return ObserverPhaseSpaceDimensionTraits<dimension>::getDimensionRange(
+                                                              particle_wrapper,
+                                                              range_start,
+                                                              range_end );
 }
 
 } // end MonteCarlo namespace

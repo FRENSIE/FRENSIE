@@ -16,7 +16,8 @@ namespace MonteCarlo{
 EstimatorParticleStateWrapper::EstimatorParticleStateWrapper()
   : d_particle( NULL ),
     d_angle_cosine( 0.0 ),
-    d_reference_time( 0.0 )
+    d_state_start_time( 0.0 ),
+    d_state_end_time( 0.0 )
 { /* ... */ }
 
 // Particle state constructor
@@ -24,7 +25,8 @@ EstimatorParticleStateWrapper::EstimatorParticleStateWrapper(
                                                 const ParticleState& particle )
   : d_particle( &particle ),
     d_angle_cosine( 0.0 ),
-    d_reference_time( particle.getTime() )
+    d_state_start_time( particle.getTime() ),
+    d_state_end_time( particle.getTime() )
 { /* ... */ }
 
 // Return the particle state
@@ -52,48 +54,44 @@ double EstimatorParticleStateWrapper::getAngleCosine() const
   return d_angle_cosine;
 }
 
-// Set the reference time
-void EstimatorParticleStateWrapper::setReferenceTime(
-                                                  const double reference_time )
-{
-  // Make sure that the time is valid
-  testPrecondition( reference_time >= 0.0 );
-  
-  d_reference_time = reference_time
-}
-
-// Calculate the reference time at the end of a track
-void EstimatorParticleStateWrapper::calculateReferenceTimeAtEndOfTrack(
+// Calculate the state times using particle time as track start time
+void EstimatorParticleStateWrapper::calculateStateTimesUsingParticleTimeAsStartTime(
                                                     const double track_length )
 {
   // Make sure that the track length is valid
   testPrecondition( track_length > 0.0 );
 
-  d_reference_time = d_particle->getTime() +
-    track_length/d_particle->getSpeed();
+  d_state_start_time = d_particle->getTime();
+  d_state_end_time = d_state_start_time + track_length/d_particle->getSpeed();
 }
 
-// Calculate the reference time at the beginning of track
-void EstimatorParticleStateWrapper::calculateReferenceTimeAtBeginningOfTrack(
+// Calculate the state times using particle time as track end time
+void EstimatorParticleStateWrapper::calculateStateTimesUsingParticleTimeAsEndTime(
                                                     const double track_length )
 {
   // Make sure that the track length is valid
   testPrecondition( track_length > 0.0 );
 
-  d_reference_time = d_particle->getTime() -
-    track_length/d_particle->getSpeed();
+  d_state_end_time = d_particle->getTime();
+  d_state_start_time = d_state_end_time - track_length/d_particle->getSpeed();
 }
 
-// Get the reference time
-double EstimatorParticleStateWrapper::getReferenceTime() const
+// Get the state start time
+double EstimatorParticleStateWrapper::getStartTime() const
 {
-  return d_reference_time;
+  return d_state_start_time;
 }
 
-// Get the time duration (particle time - reference time)
+// Get the state end time
+double EstimatorParticleStateWrapper::getEndTime() const
+{
+  return d_state_end_time;
+}
+
+// Get the state time duration
 double EstimatorParticleStateWrapper::getTimeDuration() const
 {
-  return d_particle->getTime() - d_reference_time;
+  return d_state_start_time - d_state_end_time;
 }
 
 } // end MonteCarlo namespace
