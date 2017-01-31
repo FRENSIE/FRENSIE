@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_EstimatorDimensionDiscretization.hpp
+//! \file   MonteCarlo_ObserverPhaseSpaceDimensionDiscretization.hpp
 //! \author Alex Robinson
-//! \brief  Etimator dimension discretization base class declaration
+//! \brief  Observer phase space dimension discretization base class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
-#define MONTE_CARLO_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#ifndef MONTE_CARLO_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
+#define MONTE_CARLO_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -20,12 +20,13 @@
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
-#include "MonteCarlO_ParticleHistoryObserver.hpp"
+#include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
 
-class EstimatorDimensionDiscretization
+//! The observer phase space dimension discretization base class
+class ObserverPhaseSpaceDimensionDiscretization
 {
 
 public:
@@ -40,15 +41,15 @@ public:
   typedef Teuchos::Array<BinIndexWeightPair> BinIndexWeightPairArray;
 
   //! Constructor
-  EstimatorDimensionDiscretization(
-                                 const ObserverPhaseSpaceDimension dimension );
+  ObserverPhaseSpaceDimensionDiscretization()
+  { /* ... */ }
 
   //! Destructor
-  virtual ~EstimatorDimensionDiscretization()
+  virtual ~ObserverPhaseSpaceDimensionDiscretization()
   { /* ... */ }
 
   //! Return the dimension that has been discretized
-  ObserverPhaseSpaceDimension getDimension() const;
+  virtual ObserverPhaseSpaceDimension getDimension() const = 0;
 
   //! Return the dimension name that has been discretized
   virtual std::string getDimensionName() const = 0;
@@ -80,8 +81,8 @@ public:
 
   //! Calculate the index of bins that the value range falls in
   virtual void calculateBinIndicesOfRange(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
-                   BinIndexWeightPairArray& bin_indices_and_weights ) const;
+                  const EstimatorParticleStateWrapper& particle_state_wrapper,
+                  BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
 
   //! Print the boundaries of a bin
   virtual void printBoundariesOfBin( std::ostream& os,
@@ -93,16 +94,12 @@ public:
   //! Export the bin boundaries
   virtual void exportData( const ParticleHistoryObserver::idType estimator_id,
 			   EstimatorHDF5FileHandler& hdf5_file ) const = 0;
-
-private:
-
-  ObserverPhaseSpaceDimension d_dimension;
 };
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#endif // end MONTE_CARLO_OBSERVER_PHASE_SPACE_DIMENSION_DISCRETIZATION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_EstimatorDimensionDiscretization.hpp
+// end MonteCarlo_ObserverPhaseSpaceDimensionDiscretization.hpp
 //---------------------------------------------------------------------------//

@@ -33,7 +33,7 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COSINE_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  static const bool is_ordered = true;
+  typedef boost::mpl::bool_<true> isOrdered;
 
   static inline std::string name()
   { return "Cosine"; }
@@ -69,7 +69,7 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ENERGY_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  static const bool is_ordered = true;
+  typedef boost::mpl::bool_<true> isOrdered;
 
   static inline std::string name()
   { return "Source Energy"; }
@@ -109,7 +109,7 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  static const bool is_ordered = true;
+  typedef boost::mpl::bool_<true> isOrdered;
 
   static inline std::string name()
   { return "Energy"; }
@@ -148,7 +148,7 @@ struct ObserverPhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  static const bool is_ordered = true;
+  typedef boost::mpl::bool_<true> isOrdered;
 
   static inline std::string name()
   { return "Source Time"; }
@@ -188,7 +188,7 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_TIME_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  static const bool is_ordered = true;
+  typedef boost::mpl::bool_<true> isOrdered;
 
   static inline std::string name()
   { return "Time"; }
@@ -228,7 +228,7 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>
 
   typedef dimensionType dimensionBinType;
 
-  static const bool is_ordered = true;
+  typedef boost::mpl::bool_<true> isOrdered;
 
   static inline std::string name()
   { return "Collision Number"; }
@@ -268,7 +268,7 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
 
   typedef Teuchos::Array<dimensionType> dimensionBinType;
 
-  static const bool is_ordered = false;
+  typedef boost::mpl::bool_<false> isOrdered;
 
   static inline std::string name()
   { return "Source Id"; }

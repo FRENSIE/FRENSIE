@@ -13,7 +13,7 @@
 #include <string>
 
 // Boost Includes
-#include <boost/unordered_map.hpp>
+#include <boost/mpl/bool.hpp>
 
 // Trilinos Includes
 #include <Teuchos_any.hpp>
@@ -49,7 +49,7 @@ struct ObserverPhaseSpaceDimensionTraits
   typedef double dimensionBinType;
 
   //! Indicates if the dimension is ordered (ranges must be sorted)
-  static const bool is_ordered = true;
+  typedef boost::mpl::bool_<true> isOrdered;
 
   //! The name of the dimension
   static inline std::string name()
