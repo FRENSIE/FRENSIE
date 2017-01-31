@@ -167,7 +167,7 @@ void CellPulseHeightEstimator<
     {
       bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
 
-      bin_contribution = calculateHistoryContribution(
+      bin_contribution = this->calculateHistoryContribution(
 					      cell_data->second,
 					      ContributionMultiplierPolicy() );
 

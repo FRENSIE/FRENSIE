@@ -36,34 +36,6 @@ double Estimator::tol = 1e-8;
   // d_particle_types.insert( PHOTON );
 }
 
-// Set the response functions
-void Estimator::setResponseFunctions(
-                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
-                      response_functions )
-{
-  // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure there is at least one response function
-  testPrecondition( response_functions.size() >= 1 );
-
-  d_response_functions = response_functions;
-}
-
-// Set the particle types
-void Estimator::setParticleTypes(
-			   const Teuchos::Array<ParticleType>& particle_types )
-{
-  // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure at least one particle type is specified
-  testPrecondition( particle_types.size() > 0 );
-
-  d_particle_types.clear();
-
-  for( unsigned i = 0; i < particle_types.size(); ++i )
-    d_particle_types.insert( particle_types[i] );
-}
-
 // Check if the estimator has uncommitted history contributions
 bool Estimator::hasUncommittedHistoryContribution(
 					       const unsigned thread_id ) const
@@ -100,9 +72,9 @@ void Estimator::exportData(
 
   // Export the response function ordering
   {
-    Teuchos::Array<unsigned> response_function_ordering(
+    Teuchos::Array<size_t> response_function_ordering(
 						 d_response_functions.size() );
-    for( unsigned i = 0; i < d_response_functions.size(); ++i )
+    for( size_t i = 0; i < d_response_functions.size(); ++i )
       response_function_ordering[i] = d_response_functions[i]->getId();
 
     estimator_hdf5_file.setEstimatorResponseFunctionOrdering(
@@ -118,17 +90,77 @@ void Estimator::exportData(
   }
 
   // Export the bin boundaries
-  for( unsigned i = 0; i < d_dimension_ordering.size(); ++i )
+  for( size_t i = 0; i < d_dimension_ordering.size(); ++i )
   {
-    const std::shared_ptr<EstimatorDimensionDiscretization>&
-      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
-					     d_dimension_ordering[i] )->second;
+    const DimensionDiscretizationPointer& dimension_bins =
+      d_dimension_bins_map.find( d_dimension_ordering[i] )->second;
 
-    dimension_bin_boundaries->exportData( this->getId(), estimator_hdf5_file );
+    dimension_bins->exportData( this->getId(), estimator_hdf5_file );
   }
 
   // Export the estimator multiplier
   estimator_hdf5_file.setEstimatorMultiplier( this->getId(), d_multiplier );
+}
+
+// Assign response function to the estimator
+/*! \details Override this method in a derived class if response function
+ * properties need to be checked before the assignment takes place.
+ */
+void Estimator::assignResponseFunction(
+                             const ResponseFunctionPointer& response_function )
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  // Make sure that the response function pointer is valid
+  testPrecondition( response_function.get() );
+  
+  d_response_functions.push_back( response_function );
+}
+
+// Assign the particle type to the estimator
+/*! \details Override this method in a derived class if response function
+ * properties need to be checked before assignment takes place.
+ */
+void Estimator::assignParticleType( const ParticleType particle_type )
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+
+  d_particle_types.insert( particle_type );
+}
+
+// Assign bins to an estimator dimension
+void Estimator::assignBins(
+ const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins )
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+
+  if( d_dimension_bins_map.count( bins->getDimension() ) == 0 )
+  {
+    d_dimension_bins_map[bin_boundaries->getDimension()] = bins;
+
+    // Add the new dimension to the dimension ordering array
+    d_dimension_ordering.push_back( bins->getDimension() );
+
+    // Calculate the index step size for the new dimension
+    size_t dimension_index_step_size = 1;
+
+    for( size_t i = 0u; i < d_dimension_ordering.size()-1u; ++i )
+    {
+      dimension_index_step_size *=
+	d_dimension_bins_map[d_dimension_ordering[i]]->getNumberOfBins();
+    }
+
+    d_dimension_index_step_size_map[bin_boundaries->getDimension()] =
+      dimension_index_step_size;
+  }
+  else
+  {
+    std::cerr << "Warning: The dimension requested already has bin boundaries "
+	      << "set. The new boundaries will be ignored."
+	      << std::endl;
+  }
 }
 
 // Set the has uncommited history contribution flag
@@ -157,43 +189,8 @@ void Estimator::unsetHasUncommittedHistoryContribution(
   d_has_uncommitted_history_contribution[thread_id] = false;
 }
 
-// Assign bin boundaries to an estimator dimension
-void Estimator::assignBinBoundaries(
-      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
-{
-  // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  if(d_dimension_bin_boundaries_map.count(bin_boundaries->getDimension()) == 0)
-  {
-    d_dimension_bin_boundaries_map[bin_boundaries->getDimension()] =
-      bin_boundaries;
-
-    // Add the new dimension to the dimension ordering array
-    d_dimension_ordering.push_back( bin_boundaries->getDimension() );
-
-    // Calculate the index step size for the new dimension
-    unsigned dimension_index_step_size = 1u;
-
-    for( unsigned i = 0u; i < d_dimension_ordering.size()-1u; ++i )
-    {
-      dimension_index_step_size *=
-	d_dimension_bin_boundaries_map[d_dimension_ordering[i]]->getNumberOfBins();
-    }
-
-    d_dimension_index_step_size_map[bin_boundaries->getDimension()] =
-      dimension_index_step_size;
-  }
-  else
-  {
-    std::cerr << "Warning: The dimension requested already has bin boundaries "
-	      << "set. The new boundaries will be ignored."
-	      << std::endl;
-  }
-}
-
 // Return the bin name
-std::string Estimator::getBinName( const unsigned bin_index ) const
+std::string Estimator::getBinName( const size_t bin_index ) const
 {
   // Make sure the bin index is valid
   testPrecondition( bin_index <
@@ -202,18 +199,18 @@ std::string Estimator::getBinName( const unsigned bin_index ) const
   std::ostringstream oss;
 
   // Get a name for each bin
-  //unsigned reduced_bin_index = bin_index % getNumberOfBins();
+  //size_t reduced_bin_index = bin_index % getNumberOfBins();
 
-  unsigned total_bins = 1u;
+  size_t total_bins = 1u;
 
-  for( unsigned i = 0; i < d_dimension_ordering.size(); ++i )
+  for( size_t i = 0; i < d_dimension_ordering.size(); ++i )
   {
-    unsigned dim_bins = getNumberOfBins( d_dimension_ordering[i] );
+    size_t dim_bins = getNumberOfBins( d_dimension_ordering[i] );
 
-    unsigned dim_bin_index = (bin_index/total_bins) % dim_bins;
+    size_t dim_bin_index = (bin_index/total_bins) % dim_bins;
 
     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries =
-      d_dimension_bin_boundaries_map.find(d_dimension_ordering[i])->second;
+      d_dimension_bins_map.find(d_dimension_ordering[i])->second;
 
     //oss << bin_boundaries->getDimensionName() << "_";
 
@@ -234,16 +231,16 @@ void Estimator::printEstimatorResponseFunctionNames( std::ostream& os ) const
 {
   os << "Response Functions: " << std::endl;
 
-  for( unsigned i = 0u; i < d_response_functions.size(); ++i )
+  for( size_t i = 0u; i < d_response_functions.size(); ++i )
     os << "  " << i+1 << ".) " << getResponseFunctionName( i ) << std::endl;
 }
 
 // Print the estimator bins
 void Estimator::printEstimatorBins( std::ostream& os ) const
 {
-  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  for( size_t i = 0u; i < d_dimension_ordering.size(); ++i )
   {
-    d_dimension_bin_boundaries_map.find(d_dimension_ordering[i])->second->print( os );
+    d_dimension_bins_map.find(d_dimension_ordering[i])->second->print( os );
     os << std::endl;
   }
 }
@@ -262,23 +259,23 @@ void Estimator::printEstimatorBinData(
 		    getNumberOfBins()*getNumberOfResponseFunctions() );
 
   // Use this array to determine when bin indices should be printed
-  Teuchos::Array<unsigned> previous_bin_indices(
+  Teuchos::Array<size_t> previous_bin_indices(
 					d_dimension_ordering.size(),
-					std::numeric_limits<unsigned>::max() );
+					std::numeric_limits<size_t>::max() );
 
-  for( unsigned r = 0u; r < getNumberOfResponseFunctions(); ++r )
+  for( size_t r = 0u; r < getNumberOfResponseFunctions(); ++r )
   {
     os << "Response Function: " << getResponseFunctionName( r ) << std::endl;
 
-    for( unsigned i = 0u; i < getNumberOfBins(); ++i )
+    for( size_t i = 0u; i < getNumberOfBins(); ++i )
     {
       for( int d = d_dimension_ordering.size()-1; d >= 0; --d )
       {
-	const unsigned& dimension_index_step_size =
+	const size_t& dimension_index_step_size =
 	 d_dimension_index_step_size_map.find(d_dimension_ordering[d])->second;
 
 	// Calculate the bin index for the dimension
-	unsigned bin_index = (i/dimension_index_step_size)%
+	size_t bin_index = (i/dimension_index_step_size)%
 	  (getNumberOfBins( d_dimension_ordering[d] ));
 
 	// Print the bin boundaries if the dimension index has changed
@@ -287,10 +284,10 @@ void Estimator::printEstimatorBinData(
 	  previous_bin_indices[d] = bin_index;
 
 	  // Add proper spacing before printing
-	  for( unsigned s = 0u; s < d_dimension_ordering.size()-d; ++s )
+	  for( size_t s = 0u; s < d_dimension_ordering.size()-d; ++s )
 	    os << " ";
 
-	  d_dimension_bin_boundaries_map.find(d_dimension_ordering[d])->second->printBoundariesOfBin( os, bin_index );
+	  d_dimension_bins_map.find(d_dimension_ordering[d])->second->printBoundariesOfBin( os, bin_index );
 
 	  // Print a new line character for all but the first dimension
 	  if( d != 0 )
@@ -299,7 +296,7 @@ void Estimator::printEstimatorBinData(
       }
 
       // Calculate the bin index for the response function
-      unsigned bin_index = i + r*getNumberOfBins();
+      size_t bin_index = i + r*getNumberOfBins();
 
 
       // Calculate the estimator bin data
@@ -331,7 +328,7 @@ void Estimator::printEstimatorTotalData(
   testPrecondition( total_estimator_moments_data.size() ==
 		    getNumberOfResponseFunctions() );
 
-   for( unsigned i = 0; i < d_response_functions.size(); ++i )
+   for( size_t i = 0; i < d_response_functions.size(); ++i )
   {
     os << "Response Function: " << getResponseFunctionName( i ) << std::endl;
 
@@ -360,10 +357,10 @@ bool Estimator::isPointInEstimatorPhaseSpace(
 {
   bool point_in_phase_space = true;
 
-  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  for( size_t i = 0u; i < d_dimension_ordering.size(); ++i )
   {
     const std::shared_ptr<EstimatorDimensionDiscretization>&
-      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+      dimension_bin_boundaries = d_dimension_bins_map.find(
 					     d_dimension_ordering[i] )->second;
 
     if( !dimension_bin_boundaries->isValueInDiscretization( particle_state_wrapper ) )
@@ -383,17 +380,17 @@ bool Estimator::isPointInEstimatorPhaseSpace(
 {
   // Make sure there are at least as many dimension values as dimensions
   testPrecondition( dimension_values.size() >=
-		    d_dimension_bin_boundaries_map.size() );
+		    d_dimension_bins_map.size() );
 
   bool point_in_phase_space = true;
 
-  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  for( size_t i = 0u; i < d_dimension_ordering.size(); ++i )
   {
     const Teuchos::any& dimension_value =
       dimension_values.find(d_dimension_ordering[i])->second;
 
     const std::shared_ptr<EstimatorDimensionDiscretization>&
-      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+      dimension_bin_boundaries = d_dimension_bins_map.find(
 					     d_dimension_ordering[i] )->second;
 
     if( !dimension_bin_boundaries->isValueInDiscretization( dimension_value ) )
@@ -408,22 +405,25 @@ bool Estimator::isPointInEstimatorPhaseSpace(
 }
 
 // Calculate the bin index for the desired response function
-unsigned Estimator::calculateBinIndex(
+void Estimator::calculateBinIndices(
                    const EstimatorParticleStateWrapper& particle_state_wrapper,
-                   const unsigned response_function_index ) const
+                   const size_t response_function_index,
+                   ObserverPhaseSpaceDimensionDiscretization::BinIndexArray&
+                   bin_indices ) const
 {
   // Make sure the response function is valid
-  testPrecondition( response_function_index < getNumberOfResponseFunctions() );
+  testPrecondition( response_function_index <
+                    this->getNumberOfResponseFunctions() );
 
-  unsigned long bin_index = 0u;
+  size_t bin_index = 0u;
 
-  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  for( size_t i = 0u; i < d_dimension_ordering.size(); ++i )
   {
     const std::shared_ptr<EstimatorDimensionDiscretization>&
-      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+      dimension_bin_boundaries = d_dimension_bins_map.find(
 					     d_dimension_ordering[i] )->second;
 
-    const unsigned& dimension_index_step_size =
+    const size_t& dimension_index_step_size =
       d_dimension_index_step_size_map.find( d_dimension_ordering[i] )->second;
 
     bin_index +=
@@ -436,34 +436,34 @@ unsigned Estimator::calculateBinIndex(
   // Make sure the bin index calculated is valid
   testPostcondition( bin_index <
 		     getNumberOfBins()*getNumberOfResponseFunctions() );
-  testPostcondition( bin_index < std::numeric_limits<unsigned>::max() );
+  testPostcondition( bin_index < std::numeric_limits<size_t>::max() );
 
   return bin_index;
 }
 
 // Calculate the bin index for the desired response function
-unsigned Estimator::calculateBinIndex(
+size_t Estimator::calculateBinIndex(
 			         const DimensionValueMap& dimension_values,
-			         const unsigned response_function_index ) const
+			         const size_t response_function_index ) const
 {
   // Make sure there are at least as many dimension values as dimensions
   testPrecondition( dimension_values.size() >=
-		    d_dimension_bin_boundaries_map.size() );
+		    d_dimension_bins_map.size() );
   // Make sure the response function is valid
   testPrecondition( response_function_index < getNumberOfResponseFunctions() );
 
-  unsigned long bin_index = 0u;
+  size_t long bin_index = 0u;
 
-  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  for( size_t i = 0u; i < d_dimension_ordering.size(); ++i )
   {
     const Teuchos::any& dimension_value =
       dimension_values.find(d_dimension_ordering[i])->second;
 
     const std::shared_ptr<EstimatorDimensionDiscretization>&
-      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+      dimension_bin_boundaries = d_dimension_bins_map.find(
 					     d_dimension_ordering[i] )->second;
 
-    const unsigned& dimension_index_step_size =
+    const size_t& dimension_index_step_size =
       d_dimension_index_step_size_map.find( d_dimension_ordering[i] )->second;
 
     bin_index += dimension_bin_boundaries->calculateBinIndex(dimension_value)*
@@ -475,19 +475,19 @@ unsigned Estimator::calculateBinIndex(
   // Make sure the bin index calculated is valid
   testPostcondition( bin_index <
 		     getNumberOfBins()*getNumberOfResponseFunctions() );
-  testPostcondition( bin_index < std::numeric_limits<unsigned>::max() );
+  testPostcondition( bin_index < std::numeric_limits<size_t>::max() );
 
   return bin_index;
 }
 
 // Calculate the response function index given a bin index
-unsigned Estimator::calculateResponseFunctionIndex(
-					       const unsigned bin_index ) const
+size_t Estimator::calculateResponseFunctionIndex(
+					       const size_t bin_index ) const
 {
   // Make sure the bin index is valid
   testPrecondition( bin_index <
 		    getNumberOfBins()*getNumberOfResponseFunctions() );
-  testPrecondition( bin_index < std::numeric_limits<unsigned>::max() );
+  testPrecondition( bin_index < std::numeric_limits<size_t>::max() );
 
   return bin_index/getNumberOfBins();
 }
