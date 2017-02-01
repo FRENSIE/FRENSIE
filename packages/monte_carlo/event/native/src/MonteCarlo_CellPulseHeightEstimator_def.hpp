@@ -64,7 +64,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
 
   for( unsigned i = 0; i < particle_types.size(); ++i )
   {
-    if( particle_types[i] != PHOTON )
+    if( particle_types[i] != PHOTON || particle_types[i] != ELECTRON)
     {
       if( !warning_issued )
       {
@@ -86,6 +86,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
   testPostcondition( !this->isParticleTypeAssigned( NEUTRON ) );
   testPostcondition( !this->isParticleTypeAssigned( ADJOINT_NEUTRON ) );
   testPostcondition( !this->isParticleTypeAssigned( ADJOINT_PHOTON ) );
+  testPostcondition( !this->isParticleTypeAssigned( ADJOINT_ELECTRON ) );
 }
 
 // Add current history estimator contribution
