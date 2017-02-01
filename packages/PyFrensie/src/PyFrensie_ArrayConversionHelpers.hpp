@@ -26,7 +26,7 @@ namespace PyFrensie{
  * function will return NULL.
  */
 template<typename T>
-PyObject* copyVectorToNumPy( std::vector<T>& vector )
+PyObject* copyVectorToNumPy( const std::vector<T>& vector )
 {
   npy_intp dims[] = { vector.size() };
   int typecode = numpyTypecode( T() );
@@ -36,7 +36,7 @@ PyObject* copyVectorToNumPy( std::vector<T>& vector )
   T* data = (T*) PyArray_DATA((PyArrayObject*) py_array);
 
   // Deep copy the ArrayRCP
-  for( typename Teuchos::ArrayRCP<const T>::size_type i = 0u;
+  for( typename std::vector<double>::size_type i = 0u;
        i < vector.size();
        ++i )
     *(data++) = vector[i];
@@ -49,7 +49,7 @@ PyObject* copyVectorToNumPy( std::vector<T>& vector )
  * will return NULL.
  */
 template<typename T>
-PyObject* copyTeuchosToNumPy( Teuchos::ArrayRCP<const T>& t_array )
+PyObject* copyTeuchosToNumPy( const Teuchos::ArrayRCP<const T>& t_array )
 {
   npy_intp dims[] = { t_array.size() };
   int typecode = numpyTypecode( T() );
@@ -72,7 +72,7 @@ PyObject* copyTeuchosToNumPy( Teuchos::ArrayRCP<const T>& t_array )
  * will return NULL.
  */
 template<typename T>
-PyObject* copyTeuchosToNumPy( Teuchos::ArrayView<const T>& t_array )
+PyObject* copyTeuchosToNumPy( const Teuchos::ArrayView<const T>& t_array )
 {
   npy_intp dims[] = { t_array.size() };
   int typecode = numpyTypecode( T() );
@@ -96,7 +96,7 @@ PyObject* copyTeuchosToNumPy( Teuchos::ArrayView<const T>& t_array )
  * will return NULL.
  */
 template<typename T>
-PyObject* copyTeuchosToNumPy( Teuchos::Array<T>& t_array )
+PyObject* copyTeuchosToNumPy( const Teuchos::Array<T>& t_array )
 {
   return PyTrilinos::copyTeuchosArrayToNumPy( t_array );
 }

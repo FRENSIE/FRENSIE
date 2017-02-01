@@ -461,7 +461,7 @@ int main( int argc, char** argv )
       
       new_table_info.set(
 	    Data::CrossSectionsXMLProperties::photoatomic_file_path_prop,
-	    oss.str() );
+	    local_file_name );
       new_table_info.set(
 	    Data::CrossSectionsXMLProperties::photoatomic_file_type_prop,
 	    Data::CrossSectionsXMLProperties::native_file );
@@ -494,7 +494,7 @@ int main( int argc, char** argv )
     // Add the notes to the data container before exporting it
     if( table_notes.size() > 0 )
       data_container.setNotes( table_notes );
-
+    
     data_container.exportData( new_file_name,
                                Utility::ArchivableObject::XML_ARCHIVE );
   }

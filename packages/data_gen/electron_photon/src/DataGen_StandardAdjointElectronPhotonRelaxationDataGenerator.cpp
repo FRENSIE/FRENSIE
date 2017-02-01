@@ -1352,6 +1352,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
     grid_generator( this->getMaxPhotonEnergy(),
                     d_adjoint_incoherent_max_energy_nudge_value,
                     d_adjoint_incoherent_energy_to_max_energy_nudge_value,
+                    //this->getDefaultGridConvergenceTolerance(),
                     d_adjoint_incoherent_grid_convergence_tol,
                     d_adjoint_incoherent_grid_absolute_diff_tol,
                     d_adjoint_incoherent_grid_distance_tol );
