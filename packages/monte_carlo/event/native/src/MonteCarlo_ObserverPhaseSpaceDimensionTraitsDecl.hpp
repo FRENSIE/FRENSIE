@@ -29,6 +29,9 @@
 
 namespace MonteCarlo{
 
+/*! The undefined observer phase space dimension traits
+ * \ingroup observer_phase_space_dim_traits
+ */
 template<typename DimensionType, ObserverPhaseSpaceDimension dimension>
 struct UndefinedObserverPhaseSpaceDimensionTraits
 {
