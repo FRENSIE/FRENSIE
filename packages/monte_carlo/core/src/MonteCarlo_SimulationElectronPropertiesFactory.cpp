@@ -65,32 +65,32 @@ void SimulationElectronPropertiesFactory::initializeProperties(
       electron_properties.setAtomicRelaxationModeOff();
   }
 
-  // Get the elastic scattering mode - optional
-  if( properties.isParameter( "Electron Elastic Scattering" ) )
+  // Get the elastic scattering reaction mode - optional
+  if( properties.isParameter( "Electron Elastic" ) )
   {
-    if( !properties.get<bool>( "Electron Elastic Scattering" ) )
+    if( !properties.get<bool>( "Electron Elastic" ) )
       electron_properties.setElasticModeOff();
   }
 
-  // Get the electroionization scattering mode - optional
-  if( properties.isParameter( "Electron Electroionization Scattering" ) )
+  // Get the electroionization scattering reaction mode - optional
+  if( properties.isParameter( "Electron Electroionization" ) )
   {
-    if( !properties.get<bool>( "Electron Electroionization Scattering" ) )
+    if( !properties.get<bool>( "Electron Electroionization" ) )
       electron_properties.setElectroionizationModeOff();
   }
 
-  // Get the elastic scattering mode - optional
-  if( properties.isParameter( "Electron Elastic Scattering" ) )
+  // Get the bremsstrahlung reaction mode - optional
+  if( properties.isParameter( "Electron Bremsstrahlung" ) )
   {
-    if( !properties.get<bool>( "Electron Elastic Scattering" ) )
-      electron_properties.setElasticModeOff();
+    if( !properties.get<bool>( "Electron Bremsstrahlung" ) )
+      electron_properties.setBremsstrahlungModeOff();
   }
 
-  // Get the elastic scattering mode - optional
-  if( properties.isParameter( "Electron Elastic Scattering" ) )
+  // Get the atomic excitation scattering reaction mode - optional
+  if( properties.isParameter( "Electron Atomic Excitation" ) )
   {
-    if( !properties.get<bool>( "Electron Elastic Scattering" ) )
-      electron_properties.setElasticModeOff();
+    if( !properties.get<bool>( "Electron Atomic Excitation" ) )
+      electron_properties.setAtomicExcitationModeOff();
   }
 
   // Get the bremsstrahlung photon angular distribution function - optional

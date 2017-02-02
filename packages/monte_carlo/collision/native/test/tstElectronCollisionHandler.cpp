@@ -399,8 +399,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   
   // Read in the xml file storing the cross section table information
   Teuchos::updateParametersFromXmlFile(
-			         cross_section_xml_file,
-			         Teuchos::inoutArg(cross_section_table_info) );
+                     cross_section_xml_file,
+                     Teuchos::inoutArg(cross_section_table_info) );
 
   // Assign the atom fractions and names
   std::unordered_set<std::string> atom_aliases;

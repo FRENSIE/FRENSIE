@@ -37,10 +37,10 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
 
   // General Properties
   TEST_EQUALITY_CONST( parsed_properties->getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_MODE );
+                       MonteCarlo::NEUTRON_PHOTON_MODE );
   TEST_EQUALITY_CONST( parsed_properties->getNumberOfHistories(), 10 );
   TEST_EQUALITY_CONST( parsed_properties->getSurfaceFluxEstimatorAngleCosineCutoff(),
-		       0.1 );
+                       0.1 );
   TEST_ASSERT( !parsed_properties->displayWarnings() );
   TEST_ASSERT( parsed_properties->isImplicitCaptureModeOn() );
   TEST_EQUALITY_CONST( parsed_properties->getNumberOfBatchesPerProcessor(), 25 );
@@ -78,6 +78,10 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   TEST_EQUALITY_CONST( parsed_properties->getMinElectronEnergy(), 1e-2 );
   TEST_EQUALITY_CONST( parsed_properties->getMaxElectronEnergy(), 10.0 );
   TEST_ASSERT( !parsed_properties->isAtomicRelaxationModeOn( MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( !parsed_properties->isElasticModeOn() );
+  TEST_ASSERT( !parsed_properties->isElectroionizationModeOn() );
+  TEST_ASSERT( !parsed_properties->isBremsstrahlungModeOn() );
+  TEST_ASSERT( !parsed_properties->isAtomicExcitationModeOn() );
   TEST_EQUALITY_CONST(
              parsed_properties->getBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );
