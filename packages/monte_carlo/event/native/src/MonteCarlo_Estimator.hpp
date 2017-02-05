@@ -29,7 +29,7 @@
 #include "MonteCarlo_ResponseFunction.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
-#include "MonteCarlo_ObserverPhaseSpaceDimensionDiscretization.hpp"
+#include "MonteCarlo_ObserverPhaseSpaceDiscretization.hpp"
 #include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
@@ -65,11 +65,11 @@ protected:
   typedef Teuchos::ScalarTraits<double> ST;
 
   //! Typedef for map of dimension values
-  typedef boost::unordered_map<ObserverPhaseSpaceDimension,Teuchos::any>
+  typedef ObserverPhaseSpaceDiscretization::DimensionValueMap
   DimensionValueMap;
 
   // Typedef for the ObserverPhaseSpaceDimensionDiscretization pointer type
-  typedef std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>
+  typedef ObserverPhaseSpaceDiscretization::DimensionDiscretizationPointer
   DimensionDiscretizationPointer;
 
 public:
@@ -85,12 +85,12 @@ public:
   //! Return the estimator constant multiplier
   double getMultiplier() const;
 
-  //! Set the bin boundaries for a dimension of the phase space (floating pt)
+  //! Set the discretization for a dimension of the phase space
   template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
-  void setBinBoundaries( const InputDataType& bin_data );
+  void setDiscretization( const InputDataType& bin_data );
 
   //! Return the number of bins for a dimension of the phase space
-  size_t getNumberOfBins( const PhaseSpaceDimension dimension ) const;
+  size_t getNumberOfBins( const ObserverPhaseSpaceDimension dimension ) const;
 
   //! Return the total number of bins
   size_t getNumberOfBins() const;
@@ -252,16 +252,8 @@ private:
   // The response functions
   Teuchos::Array<ResponseFunctionPointer> d_response_functions;
 
-  // The estimator phase space dimension bin boundaries map
-  boost::unordered_map<ObserverPhaseSpaceDimension,std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization> >
-  d_dimension_bins_map;
-
-  // The estimator phase space dimension index step size map
-  boost::unordered_map<ObserverPhaseSpaceDimension,size_t>
-  d_dimension_index_step_size_map;
-
-  // The estimator phase space dimension ordering
-  Teuchos::Array<ObserverPhaseSpaceDimension> d_dimension_ordering;
+  // The estimator phase space discretization
+  ObserverPhaseSpaceDiscretization d_phase_space_discretization;
 
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;

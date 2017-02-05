@@ -4,7 +4,7 @@
 MACRO(ENABLE_BOOST_SUPPORT)
 
     # No multithreading
-    SET(Boost_USE_MULTITHREAD OFF)
+    SET(Boost_USE_MULTITHREAD ON)
 
     # Use the user supplied prefix to find the Boost libraries and include dirs.
     IF(DEFINED BOOST_PREFIX)

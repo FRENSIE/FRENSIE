@@ -16,6 +16,15 @@ TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core)
 ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter)
 SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
 
+# This test cannot use the FRENSIE_STD_UNIT_TEST_MAIN because the
+# LoggingMacros are used by the main function
+ADD_EXECUTABLE(tstLoggingMacros
+  tstLoggingMacros.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core)
+ADD_TEST(LoggingMacros_test tstLoggingMacros)
+SET_PROPERTY(TEST LoggingMacros_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstAssertion
   tstAssertion.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

@@ -46,6 +46,7 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 ## Command Line Options
 ##---------------------------------------------------------------------------##
 OPTION(FRENSIE_ENABLE_DBC "Enable Design-by-Contract checks in FRENSIE" ON)
+OPTION(FRENSIE_ENABLE_DETAILED_LOGGING "Enable detailed logging in FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST "Enable explicit template instantiation to speed up build times and reduce build memory overhead" ON)
 OPTION(FRENSIE_ENABLE_COLOR_OUTPUT "Enable color output from FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_PROFILING "Enable profiling with FRENSIE" OFF)
@@ -66,6 +67,13 @@ IF(FRENSIE_ENABLE_DBC)
   SET(HAVE_FRENSIE_DBC "1")
 ELSE()
   SET(HAVE_FRENSIE_DBC "0")
+ENDIF()
+
+# Add detailed logging support if requested
+IF(FRENSIE_ENABLE_DETAILED_LOGGING)
+  SET(HAVE_FRENSIE_DETAILED_LOGGING "1")
+ELSE()
+  SET(HAVE_FRENSIE_DETAILED_LOGGING "0")
 ENDIF()
 
 # Add explicit template instantiation support if requested
@@ -185,14 +193,14 @@ ENABLE_TRILINOS_SUPPORT()
 # If the Boost package is in a non-standard location, set the BOOST_PREFIX
 # variable. The boost subpackages that must be found can be passed to
 # the ENABLE_BOOST_SUPPORT macro.
-ENABLE_BOOST_SUPPORT(serialization)
+ENABLE_BOOST_SUPPORT(serialization log)
 
 # NOTE: Boost still uses the std::auto_ptr class, which is now depricated.
 #       The newer GNU C++ compilers will generate a large number of warning
 #       messages regarding this usage of the std::auto_ptr class. To avoid
 #       these warning messages that are not direcly related to FRENSIE we
 #       will simply turn them off
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations -DBOOST_LOG_DYN_LINK")
 
 ##---------------------------------------------------------------------------##
 ## Configure Root Support
