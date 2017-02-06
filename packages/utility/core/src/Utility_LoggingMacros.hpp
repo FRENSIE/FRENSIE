@@ -9,52 +9,34 @@
 #ifndef UTILITY_LOGGING_MACROS_HPP
 #define UTILITY_LOGGING_MACROS_HPP
 
-// Std Lib Includes
-#include <iostream>
-
-// Boost Includes
-#include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/core/null_deleter.hpp>
-#include <boost/log/sources/basic_logger.hpp>
-#include <boost/log/sources/severity_logger.hpp>
-#include <boost/log/sources/record_ostream.hpp>
-#include <boost/log/attributes/constant.hpp>
-#include <boost/log/expressions/formatters/named_scope.hpp>
-#include <boost/log/expressions/keyword.hpp>
-
 // FRENSIE Includes
 #include "FRENSIE_config.hpp"
-#include "Utility_LogRecordType.hpp"
+#include "Utility_LoggingHelper.hpp"
 
-namespace Utility{
+/*! \defgroup logging_macros Logging Macros.
+ *
+ * These macros are designed to allow for easy logging of errors, warnings
+ * and notifications without having to worry about how the logs are
+ * set up. Thread safety is already taken care of so these macros can 
+ * be used inside of methods that will be used in a multithreaded environment.
+ * There are also some standard log setup methods. Note that there is
+ * overhead associated with logging so it is generally advised that 
+ * performance critical code avoid unnecessary logging. To address the issue
+ * of logging info in performance critical code the LOG_DETAILS and 
+ * LOG_PEDANTIC_DETAILS macros have been provided. These macros can be
+ * disabled with the build system option FRENSIE_ENABLE_DETAILED_LOGGING=OFF.
+ * When this option is turned off the detailed logging info and their 
+ * associated overhead will be eliminated. The FRENSIE_LOG_SCOPE and
+ * FRENSIE_LOG_SCOPE_NAME macros can be used to construct a stack trace.
+ * They will also be disabled if the build system option
+ * FRENSIE_ENABLE_DETAILED_LOGGING is set to OFF.
+ */
 
-//! Typedef for the standard logger type
-typedef boost::log::sources::severity_logger<Utility::LogRecordType> StandardLoggerType;
-
-//! Add standard global attributes
-void addStandardGlobalAttributes();
-
-//! Add standard log sinks using the requested output stream
-void addStandardLogSinks( const boost::shared_ptr<std::ostream>& os );
-
-//! Add a standard error log sink using the requestd output stream
-void addStandardErrorLogSink( const boost::shared_ptr<std::ostream>& os );
-
-//! Add a standard warning log sink using the requested output stream
-void addStandardWarningLogSink( const boost::shared_ptr<std::ostream>& os );
-
-//! Add a standard notification log sink using the requested output stream
-void addStandardNotificationLogSink( const boost::shared_ptr<std::ostream>& os );
-  
-} // end Utility namespace
-
-// Declare public global attributes
-BOOST_LOG_ATTRIBUTE_KEYWORD( record_type_log_attr, "Severity", Utility::LogRecordType );
-BOOST_LOG_ATTRIBUTE_KEYWORD( tag_log_attr, "Tag", std::string );
-
-//! \brief Add the standard global attributes to the log
+/*! \brief Add the standard global attributes to the log
+ * \ingroup logging_macros
+ */
 #define FRENSIE_ADD_STANDARD_LOG_ATTRIBUTES()    \
-  Utility::addStandardGlobalAttributes()
+  Utility::LoggingHelper::addStandardGlobalAttributes()
 
 /*! \brief Add a global logging filter.
  *
@@ -66,74 +48,100 @@ BOOST_LOG_ATTRIBUTE_KEYWORD( tag_log_attr, "Tag", std::string );
  *        record_type_log_attr == Utility::ERROR_RECORD </li>
  *   <li> record_type_log_attr < Utility::NOTIFICATION_RECORD ||
  *        record_type_log_attr >= Utility::WARNING_RECORD </li>
+ *   <li> record_type_log_attr >= Utility::WARNING_RECORD &&
+ *        (boost::log::expressions::has_attr(tag_log_attr) &&
+ *        tag_attr == "Utility" </li>
  *  </ol>
+ * \ingroup logging_macros
  */
 #define FRENSIE_SET_GLOBAL_LOG_FILTER( filter_expr )    \
-  boost::log::core::get()->add_filter( filter_expr )
+  Utility::LoggingHelper::addGlobalLogFilter( filter_expr )
 
-/*! \brief Create a log using the requested ostream object (wrapped in a 
- * boost::shared_ptr).
- */
-#define FRENSIE_SETUP_STANDARD_LOGS( boost_os_ptr )       \
-  Utility::addStandardLogSinks( boost_os_ptr )
-
-/*! Create a log using the requested console object
- * 
- * Only use cout, cerr and clog objects (without the std:: namespace).
- */
-#define FRENSIE_SETUP_STANDARD_LOGS_WITH_CONSOLE( os )                  \
-  boost::shared_ptr<std::ostream>                                       \
-    console_##os##_ptr( &std::os, boost::null_deleter() );                \
-  Utility::addStandardLogSinks( console_##os##_ptr )
-
-/*! \brief Create an error log using the requested ostream object (wrapped in a
- * boost::shared_ptr).
- */
-#define FRENSIE_SETUP_ERROR_LOG( boost_os_ptr ) \
-  Utility::addStandardErrorLogSink( boost_os_ptr )
-
-/*! \brief Create an error log using the requested console object
+/*! \brief Create a log using the requested ostream object. 
  *
- * Only use cout, cerr and clog objects (without the std:: namespace).
+ * This object should have one of the following types: 
+ * <ol>
+ *  <li>std::cout </li>
+ *  <li>std::cerr </li>
+ *  <li>std::clog </li>
+ *  <li>boost::shared_ptr<std::ostream> </li>
+ *  <li>Array<boost::shared_ptr<std::ostream> > (where Array is any STL
+ *      compliant array type). </li>
+ * </ol>
+ * Note that the console streams can be safely wrapped in a 
+ * boost::shared_ptr<std::ostream> object by using the boost::null_deleter()
+ * (e.g. boost::shared_ptr<std::ostream> 
+ *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
+ * \ingroup logging_macros
  */
-#define FRENSIE_SETUP_ERROR_LOG_WITH_CONSOLE( os )      \
-  boost::shared_ptr<std::ostream>                       \
-    error_console_##os##_ptr( &std::os, boost::null_deleter() );    \
-  Utility::addStandardErrorLogSink( error_console_##os##_ptr )
+#define FRENSIE_SETUP_STANDARD_LOGS( os )       \
+  Utility::LoggingHelper::addStandardLogSinks( os )
 
-/*! \brief Create a warning log using the requested ostream object (wrapped in
- * a boost::shared_ptr).
+/*! \brief Create an error log using the requested ostream object.
+ *
+ * This object should have one of the following types:
+ * <ol>
+ *  <li>std::cout </li>
+ *  <li>std::cerr </li>
+ *  <li>std::clog </li>
+ *  <li>boost::shared_ptr<std::ostream> </li>
+ *  <li>Array<boost::shared_ptr<std::ostream> > (where Array is any STL
+ *      compliant array type). </li>
+ * </ol>
+ * Note that the console streams can be safely wrapped in a 
+ * boost::shared_ptr<std::ostream> object by using the boost::null_deleter()
+ * (e.g. boost::shared_ptr<std::ostream> 
+ *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
+ * \ingroup logging_macros
+ */
+#define FRENSIE_SETUP_ERROR_LOG( os ) \
+  Utility::LoggingHelper::addStandardErrorLogSink( os )
+
+/*! \brief Create a warning log using the requested ostream object.
+ * 
+ * This object should have one of the following types:
+ * <ol>
+ *  <li>std::cout </li>
+ *  <li>std::cerr </li>
+ *  <li>std::clog </li>
+ *  <li>boost::shared_ptr<std::ostream> </li>
+ *  <li>Array<boost::shared_ptr<std::ostream> > (where Array is any STL
+ *      compliant array type). </li>
+ * </ol>
+ * Note that the console streams can be safely wrapped in a 
+ * boost::shared_ptr<std::ostream> object by using the boost::null_deleter()
+ * (e.g. boost::shared_ptr<std::ostream> 
+ *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
+ * \ingroup logging_macros
  */
 #define FRENSIE_SETUP_WARNING_LOG( boost_os_ptr ) \
   Utility::addStandardWarningLogSink( boost_os_ptr );
 
-/*! \brief Create a warning log using the requested console object
- *
- * Only use cout, cerr and clog objects (without the std:: namespace).
+/*! \brief Create a notification log using the requested ostream object.
+ * 
+ * This object should have one of the following types:
+ * <ol>
+ *  <li>std::cout </li>
+ *  <li>std::cerr </li>
+ *  <li>std::clog </li>
+ *  <li>boost::shared_ptr<std::ostream> </li>
+ *  <li>Array<boost::shared_ptr<std::ostream> > (where Array is any STL
+ *      compliant array type). </li>
+ * </ol>
+ * Note that the console streams can be safely wrapped in a 
+ * boost::shared_ptr<std::ostream> object by using the boost::null_deleter()
+ * (e.g. boost::shared_ptr<std::ostream> 
+ *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
+ * \ingroup logging_macros
  */
-#define FRENSIE_SETUP_WARNING_LOG_WITH_CONSOLE( os )    \
-  boost::shared_ptr<std::ostream>                       \
-    warning_console_##os##_ptr( &std::os, boost::null_deleter() );  \
-  Utility::addStandardWarningLogSink( warning_console_##os##_ptr )
+#define FRENSIE_SETUP_NOTIFICATION_LOG( os )  \
+  Utility::LoggingHelper::addStandardNotificationLogSink( os );
 
-/*! \brief Create a notification log using the requested ostream object
- * (wrapped in a boost::shared_ptr)
+/*! Add the tag to the logger
+ * \ingroup logging_macros
  */
-#define FRENSIE_SETUP_NOTIFICATION_LOG( boost_os_ptr )  \
-  Utility::addStandardNotificationLogSink( boost_os_ptr );
-
-/*! \brief Create a notification log using the requested console object
- *
- * Only use cout, cerr, clog objects (without the std:: namespace)
- */
-#define FRENSIE_SETUP_NOTIFICATION_LOG_WITH_CONSOLE( os )       \
-  boost::shared_ptr<std::ostream>                               \
-    notification_console_##os##_ptr( &std::os, boost::null_deleter() );     \
-  Utility::addStandardNotificationLogSink( notification_console_##os##_ptr )
-
-//! Add the tag to the logger
 #define FRENSIE_ADD_TAG_TO_LOGGER( tag, logger )        \
-  logger.add_attribute( "Tag", boost::log::attributes::constant<std::string>( tag ) )
+  Utility::LoggingHelper::addTagToLogger( tag, logger );
 
 //! Never call this macro directly
 #define __FRENSIE_LOG_MSG_WITH_LOGGER__( type, logger, msg )    \
@@ -196,63 +204,89 @@ BOOST_LOG_ATTRIBUTE_KEYWORD( tag_log_attr, "Tag", std::string );
 
 /*! Log an error
  * \details This macro will attempt to deduce the function scope.
+ * \ingroup logging_macros
  */
 #define FRENSIE_LOG_ERROR( msg )            \
   __FRENSIE_LOG_MSG_GET_SCOPE__( Utility::ERROR_RECORD, msg )
 
 /*! Log a tagged error with the logger
  * \details This macro will attempt to deduce the function scope.
+ * \ingroup logging_macros
  */
 #define FRENSIE_LOG_TAGGED_ERROR( tag, msg )    \
   __FRENSIE_LOG_MSG_WITH_TAG_GET_SCOPE__( Utility::ERROR_RECORD, tag, msg )
 
-//! Log an error in the scope
+/*! Log an error in the scope
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_SCOPE_ERROR( scope, msg )   \
   __FRENSIE_LOG_SCOPE_MSG__( Utility::ERROR_RECORD, scope, msg )
 
-//! Log a tagged error in the scope
+/*! Log a tagged error in the scope
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_TAGGED_SCOPE_ERROR( scope, tag, msg )       \
   __FRENSIE_LOG_SCOPE_MESSAGE_WITH_TAG__( Utility::ERROR_RECORD, scope, tag, msg )
 
-//! Log a warning
+/*! Log a warning
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_WARNING( msg )                      \
   __FRENSIE_LOG_MSG_GET_SCOPE__( Utility::WARNING_RECORD, msg )
 
-//! Log a tagged warning
+/*! Log a tagged warning
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_TAGGED_WARNING( tag, msg )  \
   __FRENSIE_LOG_MSG_WITH_TAG_GET_SCOPE__( Utility::WARNING_RECORD, tag, msg )
 
-//! Log a notification
+/*! Log a notification
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_NOTIFICATION( msg )                         \
   __FRENSIE_LOG_MSG__( Utility::NOTIFICATION_RECORD, msg )
 
-//! Log a tagged notification
+/*! Log a tagged notification
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_TAGGED_NOTIFICATION( tag, msg )      \
   __FRENSIE_LOG_MSG_WITH_TAG__( Utility::NOTIFICATION_RECORD, tag, msg )
 
 #if HAVE_FRENSIE_DETAILED_LOGGING
 
-//! Log details
+/*! Log details
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_DETAILS( msg )                      \
   __FRENSIE_LOG_MSG__( Utility::DETAILS_RECORD, msg )
 
-//! Log tagged details
+/*! Log tagged details
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_TAGGED_DETAILS( tag, msg )  \
   __FRENSIE_LOG_MSG_WITH_TAG__( Utility::DETAILS_RECORD, tag, msg )
 
-//! Log pedantic details
+/*! Log pedantic details
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_PEDANTIC_DETAILS( msg )             \
   __FRENSIE_LOG_MSG__( Utility::PEDANTIC_DETAILS_RECORD, msg )
 
-//! Log tagged pedantic details
+/*! Log tagged pedantic details
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_TAGGED_PEDANTIC_DETAILS( tag, msg )                  \
   __FRENSIE_LOG_MSG_WITH_TAG__( Utility::PEDANTIC_DETAILS_RECORD, tag, msg )
 
-//! Log the scope
+/*! Log the scope
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_SCOPE() \
   BOOST_LOG_FUNCTION()
 
-//! Log the scope name
+/*! Log the scope name
+ * \ingroup logging_macros
+ */
 #define FRENSIE_LOG_SCOPE_NAME( scope )              \
   BOOST_LOG_NAMED_SCOPE( scope )
 
