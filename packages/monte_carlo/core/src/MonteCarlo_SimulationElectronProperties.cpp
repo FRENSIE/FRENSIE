@@ -27,6 +27,8 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_bremsstrahlung_mode_on( true ),
     d_electroionization_mode_on( true ),
     d_atomic_excitation_mode_on( true ),
+    d_weighted_interpolation_mode_on( true ),
+    d_secondary_interpolation_method( LIN_LIN_LOG ),
     d_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_elastic_cutoff_angle_cosine( 1.0 ),
     d_num_electron_hash_grid_bins( 1000 )
@@ -164,6 +166,44 @@ void SimulationElectronProperties::setAtomicExcitationModeOn()
 bool SimulationElectronProperties::isAtomicExcitationModeOn() const
 {
   return d_atomic_excitation_mode_on;
+}
+
+// Set weighted interpolation mode to off (on by default)
+void SimulationElectronProperties::setWeightedInterpolationModeOff()
+{
+  d_weighted_interpolation_mode_on = false;
+}
+
+// Set weighted interpolation mode to on (on by default)
+void SimulationElectronProperties::setWeightedInterpolationModeOn()
+{
+  d_weighted_interpolation_mode_on = true;
+}
+
+// Return if weighted interpolation mode is on
+bool SimulationElectronProperties::isWeightedInterpolationModeOn() const
+{
+  return d_weighted_interpolation_mode_on;
+}
+
+// Set the interplation method for secondary electron distributions (LinLinLog by default)
+/*! \details The sondary interpolation method is the interpolation policy used
+ *  for interpoalting between the incoming energies of secondary electron
+ *  distributions (ie: elastic angular distribution, bremsstrahlung photon
+ *  energy distribution, electro-ionization knock-on energy distribution, etc.).
+ *  The current two options are LinLinLog or LinLinLin
+ */
+void SimulationElectronProperties::setSecondaryInterpolationMethod(
+        const ElectronSecondaryInterpolationType interpolation_method )
+{
+  d_secondary_interpolation_method = interpolation_method;
+}
+
+// Return the interplation method for secondary electron distributions
+ElectronSecondaryInterpolationType
+SimulationElectronProperties::getSecondaryInterpolationMethod() const
+{
+  return d_secondary_interpolation_method;
 }
 
 // Set the bremsstrahlung photon angular distribution function (2BS by default)

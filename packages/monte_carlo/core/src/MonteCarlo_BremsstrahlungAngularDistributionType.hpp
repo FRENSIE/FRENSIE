@@ -24,11 +24,11 @@ enum BremsstrahlungAngularDistributionType{
 
 //! Convert a BremsstrahlungAngularDistributionType enum to a string
 std::string convertBremsstrahlungAngularDistributionEnumToString(
-				      const BremsstrahlungAngularDistributionType reaction );
+                      const BremsstrahlungAngularDistributionType reaction );
 
 //! Stream operator for printing BremsstrahlungAngularDistributionType enums
 inline std::ostream& operator<<( std::ostream& os,
-				 const BremsstrahlungAngularDistributionType reaction )
+                const BremsstrahlungAngularDistributionType reaction )
 {
   os << convertBremsstrahlungAngularDistributionEnumToString( reaction );
   return os;

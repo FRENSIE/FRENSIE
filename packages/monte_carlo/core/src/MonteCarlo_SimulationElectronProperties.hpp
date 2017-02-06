@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
+#include "MonteCarlo_ElectronSecondaryInterpolationType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 namespace MonteCarlo{
@@ -94,6 +95,23 @@ public:
   //! Return if atomic excitation mode is on
   bool isAtomicExcitationModeOn() const;
 
+  //! Set weighted interpolation mode to off (on by default)
+  void setWeightedInterpolationModeOff();
+
+  //! Set weighted interpolation mode to on (on by default)
+  void setWeightedInterpolationModeOn();
+
+  //! Return if weighted interpolation mode is on
+  bool isWeightedInterpolationModeOn() const;
+
+  //! Set the interplation method for secondary electron distributions (LinLinLog by default)
+  void setSecondaryInterpolationMethod(
+        const ElectronSecondaryInterpolationType interpolation_method );
+
+  //! Return the interplation method for secondary electron distributions
+  ElectronSecondaryInterpolationType
+  getSecondaryInterpolationMethod() const;
+
   //! Set the bremsstrahlung photon angular distribution function (2BS by default)
   void setBremsstrahlungAngularDistributionFunction(
                          const BremsstrahlungAngularDistributionType function );
@@ -142,6 +160,21 @@ private:
 
   // The atomic excitation electron scattering mode (true = on - default, false = off)
   bool d_atomic_excitation_mode_on;
+
+  /* The lin-lin interpolation mode for secondary distributions
+   * (true = on - default, false = off) */
+  bool d_linlin_interpolation_mode_on;
+
+  /* The lin-log interpolation mode for secondary distributions
+   * (true = on - default, false = off) */
+  bool d_linlog_interpolation_mode_on;
+
+  /* The weighted interpolation mode for bremsstrahlung and electroionization
+   * (true = on - default, false = off) */
+  bool d_weighted_interpolation_mode_on;
+
+  // The interplation method for secondary electron distributions (default is LinLinLog)
+  ElectronSecondaryInterpolationType d_secondary_interpolation_method;
 
   // The bremsstrahlung photon angular distribution function (default is 2BS)
   BremsstrahlungAngularDistributionType

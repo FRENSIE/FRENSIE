@@ -93,6 +93,40 @@ void SimulationElectronPropertiesFactory::initializeProperties(
       electron_properties.setAtomicExcitationModeOff();
   }
 
+  // Get the weighted interpolation mode - optional
+  if( properties.isParameter( "Electron Weighted Interpolation" ) )
+  {
+    if( !properties.get<bool>( "Electron Weighted Interpolation" ) )
+      electron_properties.setWeightedInterpolationModeOff();
+  }
+
+  // Get the interplation method for secondary electron distributions - optional
+  if( properties.isParameter( "Secondary Interpolation Method" ) )
+  {
+    std::string raw_method =
+      properties.get<std::string>( "Secondary Interpolation Method" );
+
+     ElectronSecondaryInterpolationType interpolation_method;
+
+    if( raw_method == "Lin-Lin-Lin" || raw_method == "LIN-LIN-LIN" ||
+        raw_method == "lin-lin-lin" || raw_method == "LinLinLin" ||
+        raw_method == "LINLINLIN" || raw_method == "linlinlin")
+      interpolation_method = LIN_LIN_LIN;
+    else if( raw_method == "Lin-Lin-Log" || raw_method == "LIN-LIN-LOG" ||
+        raw_method == "lin-lin-log" || raw_method == "LinLinLog" ||
+        raw_method == "LINLINLOG" || raw_method == "linlinlog")
+      interpolation_method = LIN_LIN_LOG;
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: secondary electron interplation method "
+                       << raw_method <<
+                       " is not currently supported!" );
+    }
+
+    electron_properties.setSecondaryInterpolationMethod( interpolation_method );
+  }
+
   // Get the bremsstrahlung photon angular distribution function - optional
   if( properties.isParameter( "Bremsstrahlung Angular Distribution" ) )
   {
@@ -104,13 +138,13 @@ void SimulationElectronPropertiesFactory::initializeProperties(
     if( raw_function == "Dipole" || raw_function == "dipole" || raw_function == "DIPOLE" )
       function = MonteCarlo::DIPOLE_DISTRIBUTION;
     else if( raw_function == "Tabular" || raw_function == "tabular" || raw_function == "TABULAR" )
-      function = MonteCarlo::DIPOLE_DISTRIBUTION;
+      function = MonteCarlo::TABULAR_DISTRIBUTION;
     else if( raw_function == "2BS" || raw_function == "2bs" || raw_function == "twobs" )
       function = MonteCarlo::TWOBS_DISTRIBUTION;
     else
     {
       THROW_EXCEPTION( std::runtime_error,
-		       "Error: bremsstrahlung angular distribution "
+                       "Error: bremsstrahlung angular distribution "
                        << raw_function <<
                        " is not currently supported!" );
     }

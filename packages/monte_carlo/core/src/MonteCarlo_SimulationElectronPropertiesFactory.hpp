@@ -29,7 +29,7 @@ public:
 
   //! Initialize the simulation electron properties
   static void initializeProperties(
-			     const Teuchos::ParameterList& properties,
+                             const Teuchos::ParameterList& properties,
                              SimulationElectronProperties& electron_properties,
                              std::ostream* os_warn = &std::cerr );
 };
