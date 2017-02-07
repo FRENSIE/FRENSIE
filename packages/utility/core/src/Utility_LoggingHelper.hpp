@@ -17,6 +17,10 @@
 // Boost Includes
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/core/null_deleter.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/text_ostream_backend.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/sources/basic_logger.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
@@ -30,14 +34,38 @@
 
 // FRENSIE Includes
 #include "Utility_LogRecordType.hpp"
+#include "Utility_FancyTextOStreamBackend.hpp"
 
 // Declare public global attributes
 BOOST_LOG_ATTRIBUTE_KEYWORD( record_type_log_attr, "Severity", Utility::LogRecordType );
 BOOST_LOG_ATTRIBUTE_KEYWORD( tag_log_attr, "Tag", std::string );
 
+/*! \defgroup frensie_logging FRENSIE Logging.
+ *
+ * FRENSIE Logging is done through a series of macros that are designed to
+ * hide the implementation details of the logs and also allow for certain
+ * log details to be ignored with no associated overhead (see the
+ * Logging Macros). 
+ *
+ * For those that are interest about the implementation of FRENSIE logging,
+ * please note that we have simply wrapped much of the boost::log interface.
+ * Some features that we deemed to be unnecessary for FRENSIE have been
+ * hidden by our wrapper interface. We have also simplified the log setup
+ * somewhat with our interface. As mentioned above, our interface also
+ * allows for certain logging features to be turned off at configure time,
+ * which can be important for performance since logging does incur some
+ * overhead.
+ */
+
 namespace Utility{
 
-//! The logging helper class
+/*! The logging helper class
+ *
+ * This class is primarily used as a backend for the FRENSIE logging
+ * methods that cannot be inlined (e.g. log setup methods, logger attribute
+ * methods, filter setting methods, etc.).
+ * \ingroup frensie_logging
+ */
 class LoggingHelper
 {
 
@@ -50,7 +78,7 @@ private:
   typedef boost::log::sinks::synchronous_sink<BasicTextSinkBackend> BasicTextSink;
 
   // Typedef for fancy text sink backend type
-  typedef Utilaity::FancyTextOStreamBackend FancyTextSinkBackend;
+  typedef FancyTextOStreamBackend FancyTextSinkBackend;
 
   // Typedef for the fancy text sink type
   typedef boost::log::sinks::synchronous_sink<FancyTextSinkBackend> FancyTextSink;
@@ -74,7 +102,7 @@ typedef boost::log::sources::severity_logger<Utility::LogRecordType> StandardLog
   static void addStandardLogSinks( std::ostream& console_os );
 
   //! Add standard log sinks using the requested output streams
-  template<template<typename,...> class STLCompliantArray>
+  template<template<typename,typename...> class STLCompliantArray>
   static void addStandardLogSinks(
          const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array );
 
@@ -86,7 +114,7 @@ typedef boost::log::sources::severity_logger<Utility::LogRecordType> StandardLog
   static void addStandardErrorLogSink( std::ostream& console_os );
   
   //! Add a standard error log sink using the requested output streams
-  template<template<typename,...> class STLCompliantArray>
+  template<template<typename,typename...> class STLCompliantArray>
   static void addStandardErrorLogSink(
          const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array );
 
@@ -98,7 +126,7 @@ typedef boost::log::sources::severity_logger<Utility::LogRecordType> StandardLog
   static void addStandardWarningLogSink( std::ostream& console_os );
   
   //! Add a standard warning log sink using the requested output streams
-  template<template<typename,...> class STLCompliantArray>
+  template<template<typename,typename...> class STLCompliantArray>
   static void addStandardWarningLogSink(
          const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array );
 
@@ -110,9 +138,12 @@ typedef boost::log::sources::severity_logger<Utility::LogRecordType> StandardLog
   static void addStandardNotificationLogSink( std::ostream& console_os );
 
   //! Add a standard notification log sink using the requested output streams
-  template<template<typename,...> class STLCompliantArray>
+  template<template<typename,typename...> class STLCompliantArray>
   static void addStandardNotificationLogSink(
          const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array );
+
+  //! Remove all log sinks
+  static void removeAllLogSinks();
 
   //! Add a tag to the logger
   template<typename Logger>

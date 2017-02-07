@@ -78,40 +78,34 @@
  * This macro should never be called directly outside of this header file.
  * \ingroup exception_macros
  */
-#define __EXCEPTION_CATCH_AND_EXIT_BODY__( file, line, msg, exception, Exception ) \
-  std::cerr << "\n "                                                      \
-            << Utility::Underlined( "*** Caught Exception of Type " )   \
-            << Utility::Underlined( #Exception )                        \
-            << Utility::Underlined( " ***" ) << " \n\n"                 \
-            << Utility::BoldCyan( "File: " ) << Utility::Bold( file ) << "\n"\
-            << Utility::BoldCyan( "Line: " ) << line << "\n";           \
-                                                                        \
-  std::ostringstream oss;                                               \
-  oss << msg << "\n";                                                   \
-  oss << exception.what();                                              \
-                                                                        \
-  Utility::DynamicOutputFormatter formatter( oss.str() );               \
-  formatter.formatStandardErrorKeywords();                              \
-  formatter.formatStandardWarningKeywords();                            \
-  formatter.formatStandardFilenameKeywords();                           \
-  formatter.boldCyanKeyword( "\\s*File:" );                             \
-  formatter.boldCyanKeyword( "\\s*Line:" );                             \
-                                                                        \
-  std::cerr << formatter << std::endl;                                  \
-                                                                        \
-  exit(EXIT_FAILURE)
+#define __EXCEPTION_CATCH_AND_LOG_BODY__( Exception, exception, msg )\
+  FRENSIE_LOG_SCOPE();                                                  \
+  FRENSIE_LOG_TAGGED_ERROR( "Caught Exception",                         \
+                            msg << "\n  Exception Type: " << #Exception ); \
+  FRENSIE_LOG_NESTED_ERROR( exception.what() )
+
+/*! \brief Catch statement macro body for catching of user specified exceptions
+ * and exiting code with desired error code
+ *
+ * This macro should never be called directly outside of this header file.
+ * \ingroup exception_macros
+ */
+#define __EXCEPTION_CATCH_AND_EXIT_BODY__( Exception, exception, msg, exit_code ) \
+  __EXCEPTION_CATCH_AND_LOG_BODY__( Exception, exception, msg ); \
+  exit( exit_code )
 
 /*! Catch macro body for catching exceptions, adding error info, and rethrowing
  *
  * This macro should never be called directly outside of this header file.
  * \ingroup exception_macros
  */
-#define __EXCEPTION_CATCH_RETHROW_AS_BODY__( file, line, msg, exception, NewException ) \
+#define __EXCEPTION_CATCH_RETHROW_AS_BODY__( file, line, msg, Exception, exception, NewException ) \
   std::ostringstream detailed_msg;					\
-  detailed_msg << "\n" << "File: " << file << "\n"                      \
-               << "Line: " << line << "\n"                              \
-               << msg << "\n"						\
-               << exception.what() << "\n";				\
+  detailed_msg << "\n" << msg                                           \
+  << "\n  Exception Type: " << #Exception << " -> " << #NewException    \
+  << "\n  Location: " << file << ":" << line                            \
+  << "\n"                                                               \
+  << exception.what();                                                  \
                                                                         \
   throw NewException(detailed_msg.str())
 
@@ -161,13 +155,23 @@ catch( const H5::Exception& exception )                             \
   }                                                                     \
 }
 
+/*! \brief Catch statement macro for catching of user specified exceptions and 
+ * logging of their error messages
+ * \ingroup exception_macros
+ */
+#define EXCEPTION_CATCH_AND_LOG( Exception, msg )       \
+catch( const Exception& exception )                   \
+{                                                     \
+  __EXCEPTION_CATCH_AND_LOG_BODY__( Exception, exception, msg );        \
+}
+
 /*! Catch statement macro for catching of user specified exceptions
  * \ingroup exception_macros
  */
 #define EXCEPTION_CATCH_AND_EXIT( Exception, msg ) \
-catch( const Exception &exception ) \
+catch( const Exception& exception ) \
 {				      \
-  __EXCEPTION_CATCH_AND_EXIT_BODY__( __FILE__, __LINE__, msg, exception, Exception ); \
+  __EXCEPTION_CATCH_AND_EXIT_BODY__( Exception, exception, msg, EXIT_FAILURE ); \
 }
 
 /*! Catch macro for catching exceptions, adding error info, rethrowing
@@ -178,9 +182,9 @@ catch( const Exception &exception ) \
  * \ingroup exception_macros
  */
 #define EXCEPTION_CATCH_RETHROW( Exception, msg ) \
-catch( const Exception &exception )				\
+catch( const Exception& exception )				\
 {								\
-  __EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, exception, Exception ); \
+  __EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, Exception, exception, Exception ); \
 }
 
 /*! Catch macro for catching exceptions, adding error info, and rethrowing
@@ -192,24 +196,24 @@ catch( const Exception &exception )				\
  * \ingroup exception_macros
  */
 #define EXCEPTION_CATCH_RETHROW_AS( ExceptionIn, ExceptionOut, msg )	\
-catch( const ExceptionIn &exception )					\
+catch( const ExceptionIn& exception )					\
 {									\
-  __EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, exception, ExceptionOut ); \
+  __EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, ExceptionIn, exception, ExceptionOut ); \
 }
 
 /*! Catch statement macro for catching of user specified exceptions
  * \ingroup exception_macros
  */
 #define EXCEPTION_CATCH( Exception, Exit, msg )	\
-catch( const Exception &exception )                                     \
+catch( const Exception& exception )                                     \
 {                                                                       \
   if( Exit )								\
   {                                                                     \
-    __EXCEPTION_CATCH_AND_EXIT_BODY__( __FILE__, __LINE__, msg, exception, Exception ); \
+    __EXCEPTION_CATCH_AND_EXIT_BODY__( Exception, exception, msg, EXIT_FAILURE ); \
   }                                                                     \
   else                                                                  \
   {                                                                     \
-    __EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, exception, ExceptionOut ); \
+    __EXCEPTION_CATCH_RETHROW_AS_BODY__( __FILE__, __LINE__, msg, Exception, exception, ExceptionOut ); \
   }                                                                     \
 }                                                                       \
 

@@ -30,6 +30,7 @@
  * FRENSIE_LOG_SCOPE_NAME macros can be used to construct a stack trace.
  * They will also be disabled if the build system option
  * FRENSIE_ENABLE_DETAILED_LOGGING is set to OFF.
+ * \ingroup frensie_logging
  */
 
 /*! \brief Add the standard global attributes to the log
@@ -114,8 +115,8 @@
  *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
  * \ingroup logging_macros
  */
-#define FRENSIE_SETUP_WARNING_LOG( boost_os_ptr ) \
-  Utility::addStandardWarningLogSink( boost_os_ptr );
+#define FRENSIE_SETUP_WARNING_LOG( os ) \
+  Utility::LoggingHelper::addStandardWarningLogSink( os );
 
 /*! \brief Create a notification log using the requested ostream object.
  * 
@@ -137,11 +138,35 @@
 #define FRENSIE_SETUP_NOTIFICATION_LOG( os )  \
   Utility::LoggingHelper::addStandardNotificationLogSink( os );
 
+/*! Remove all logs
+ * \ingroup logging_macros
+ */
+#define FRENSIE_REMOVE_ALL_LOGS( os )           \
+  Utility::LoggingHelper::removeAllLogSinks()
+
 /*! Add the tag to the logger
  * \ingroup logging_macros
  */
 #define FRENSIE_ADD_TAG_TO_LOGGER( tag, logger )        \
   Utility::LoggingHelper::addTagToLogger( tag, logger );
+
+/*! Log the scope
+ * \details Use this macro to create a stack trace in the error log. This
+ * macro should rarely be called directly (see the 
+ * Utility_ExceptionTestMacros.hpp for a usage example).
+ * \ingroup logging_macros
+ */
+#define FRENSIE_LOG_SCOPE()                     \
+  BOOST_LOG_FUNCTION()
+
+/*! Log the scope name
+ * \details Use this macro to create a stack trace in the error log. This
+ * macro should rarely be called directly (see the 
+ * Utility_ExceptionTestMacros.hpp for a usage example).
+ * \ingroup logging_macros
+ */
+#define FRENSIE_LOG_SCOPE_NAME( scope )              \
+  BOOST_LOG_NAMED_SCOPE( scope )
 
 //! Never call this macro directly
 #define __FRENSIE_LOG_MSG_WITH_LOGGER__( type, logger, msg )    \
@@ -160,28 +185,28 @@
 //! Never call this macro directly
 #define __FRENSIE_LOG_MSG__( type, msg )                                \
   {                                                                     \
-    Utility::StandardLoggerType slg;                                    \
+    Utility::LoggingHelper::StandardLoggerType slg;                     \
     __FRENSIE_LOG_MSG_WITH_LOGGER__( type, slg, msg );                  \
   }
 
 //! Never call this macro directly
 #define __FRENSIE_LOG_MSG_GET_SCOPE__( type, msg )                      \
   {                                                                     \
-    Utility::StandardLoggerType slg;                                    \
+    Utility::LoggingHelper::StandardLoggerType slg;                     \
     __FRENSIE_LOG_MSG_WITH_LOGGER_GET_SCOPE__( type, slg, msg );        \
   }
 
 //! Never call this macro directly
 #define __FRENSIE_LOG_SCOPE_MSG__( type, scope, msg )                   \
   {                                                                     \
-    Utility::StandardLoggerType slg;                                    \
+    Utility::LoggingHelper::StandardLoggerType slg;                     \
     __FRENSIE_LOG_SCOPE_MSG_WITH_LOGGER__( type, scope, slg, msg );     \
   }
 
 //! Never call this macro directly
 #define __FRENSIE_LOG_MSG_WITH_TAG__( type, tag, msg )      \
   {                                                         \
-    Utility::StandardLoggerType slg;                        \
+    Utility::LoggingHelper::StandardLoggerType slg;         \
     FRENSIE_ADD_TAG_TO_LOGGER( tag, slg );                  \
     __FRENSIE_LOG_MSG_WITH_LOGGER__( type, slg, msg );      \
   }
@@ -189,7 +214,7 @@
 //! Never call this macro directly
 #define __FRENSIE_LOG_MSG_WITH_TAG_GET_SCOPE__( type, tag, msg )        \
   {                                                                     \
-    Utility::StandardLoggerType slg;                                    \
+    Utility::LoggingHelper::StandardLoggerType slg;                     \
     FRENSIE_ADD_TAG_TO_LOGGER( tag, slg );                              \
     __FRENSIE_LOG_MSG_WITH_LOGGER_GET_SCOPE__( type,slg, msg );         \
   }
@@ -197,7 +222,7 @@
 //! Never call this macro directly
 #define __FRENSIE_LOG_SCOPE_MESSAGE_WITH_TAG__( type, scope, tag, msg ) \
   {                                                                     \
-    Utility::StandardLoggerType slg;                                    \
+    Utility::LoggingHelper::StandardLoggerType slg;                     \
     FRENSIE_ADD_TAG_TO_LOGGER( tag, slg );                              \
     __FRENSIE_LOG_SCOPE_MSG_WITH_LOGGER__( type, scope, slg, msg );     \
   }
@@ -208,6 +233,15 @@
  */
 #define FRENSIE_LOG_ERROR( msg )            \
   __FRENSIE_LOG_MSG_GET_SCOPE__( Utility::ERROR_RECORD, msg )
+
+/*! Log a nested error
+ * \details This macro should be used to log nested errors (see the 
+ * exception catch macros for an example). Unlike the other error logging
+ * macros this macro will only print the message (usually from 
+ * exception.what()).
+ */
+#define FRENSIE_LOG_NESTED_ERROR( msg )         \
+  __FRENSIE_LOG_MSG_WITH_TAG__( Utility::ERROR_RECORD, "__NESTED__", msg )
 
 /*! Log a tagged error with the logger
  * \details This macro will attempt to deduce the function scope.
@@ -228,6 +262,22 @@
 #define FRENSIE_LOG_TAGGED_SCOPE_ERROR( scope, tag, msg )       \
   __FRENSIE_LOG_SCOPE_MESSAGE_WITH_TAG__( Utility::ERROR_RECORD, scope, tag, msg )
 
+/*! Log an error using the provided logger
+ * \details This macro will attempt to deduce the function scope. This method 
+ * should be used when a class or function already has a logger created.
+ * \ingroup logging_macros
+ */
+#define FRENSIE_LOG_ERROR_WITH_LOGGER( logger, msg )    \
+  __FRENSIE_LOG_MSG_WITH_LOGGER_GET_SCOPE__( Utility::ERROR_RECORD, logger, msg )
+
+/*! Log an error in the scope using the provided logger
+ * \details This method should be used when a class or function already has
+ * a logger created.
+ * \ingroup logging_macros
+ */
+#define FRENSIE_LOG_SCOPE_ERROR_WITH_LOGGER( logger, scope, msg )       \
+  __FRENSIE_LOG_SCOPE_MSG_WITH_LOGGER__( Utility::ERROR_RECORD, scope, logger, msg )
+
 /*! Log a warning
  * \ingroup logging_macros
  */
@@ -240,6 +290,14 @@
 #define FRENSIE_LOG_TAGGED_WARNING( tag, msg )  \
   __FRENSIE_LOG_MSG_WITH_TAG_GET_SCOPE__( Utility::WARNING_RECORD, tag, msg )
 
+/*! Log a warning using the provided logger
+ * \details This method should be used when a class or function already has
+ * a logger created.
+ * \ingroup logging_macros
+ */
+#define FRENSIE_LOG_WARNING_WITH_LOGGER( logger, msg ) \
+  __FRENSIE_LOG_MSG_WITH_LOGGER__( Utility::WARNING_RECORD, logger, msg )
+
 /*! Log a notification
  * \ingroup logging_macros
  */
@@ -251,6 +309,16 @@
  */
 #define FRENSIE_LOG_TAGGED_NOTIFICATION( tag, msg )      \
   __FRENSIE_LOG_MSG_WITH_TAG__( Utility::NOTIFICATION_RECORD, tag, msg )
+
+/*! Log a notification using the provided logger
+ * \details This method should be used when a class or function already has
+ * a logger created.
+ * \ingroup logging_macros
+ */
+#define FRENSIE_LOG_NOTIFICATION_WITH_LOGGER( logger, msg )     \
+  __FRENSIE_LOG_MSG_WITH_LOGGER__( Utility::NOTIFICATION_RECORD, logger, msg )
+
+
 
 #if HAVE_FRENSIE_DETAILED_LOGGING
 
@@ -266,6 +334,14 @@
 #define FRENSIE_LOG_TAGGED_DETAILS( tag, msg )  \
   __FRENSIE_LOG_MSG_WITH_TAG__( Utility::DETAILS_RECORD, tag, msg )
 
+/*! Log details using the provided logger
+ * \details This method should be used when a class or function already has
+ * a logger created.
+ * \ingroup logging_macros
+ */
+#define FRENSIE_LOG_DETAILS_WITH_LOGGER( logger, msg )  \
+  __FRENSIE_LOG_MSG_WITH_LOGGER__( Utility::DETAILS_RECORD, logger, msg )
+
 /*! Log pedantic details
  * \ingroup logging_macros
  */
@@ -278,27 +354,22 @@
 #define FRENSIE_LOG_TAGGED_PEDANTIC_DETAILS( tag, msg )                  \
   __FRENSIE_LOG_MSG_WITH_TAG__( Utility::PEDANTIC_DETAILS_RECORD, tag, msg )
 
-/*! Log the scope
+/*! Log pedantic details using the provided logger
+ * \details This method should be used when a class or function already has
+ * a logger created.
  * \ingroup logging_macros
  */
-#define FRENSIE_LOG_SCOPE() \
-  BOOST_LOG_FUNCTION()
-
-/*! Log the scope name
- * \ingroup logging_macros
- */
-#define FRENSIE_LOG_SCOPE_NAME( scope )              \
-  BOOST_LOG_NAMED_SCOPE( scope )
+#define FRENSIE_LOG_PEDANTIC_DETAILS_WITH_LOGGER( logger, msg )         \
+  __FRENSIE_LOG_MSG_WITH_LOGGER__( Utility::PEDANTIC_DETAILS_RECORD, logger, msg )
 
 #else // HAVE_FRENSIE_DETAILED_LOGGING
 
 #define FRENSIE_LOG_DETAILS( msg )
 #define FRENSIE_LOG_TAGGED_DETAILS( tag, msg )
+#define FRENSIE_LOG_DETAILS_WITH_LOGGER( logger, msg )
 #define FRENSIE_LOG_PEDANTIC_DETAILS( msg )
 #define FRENSIE_LOG_TAGGED_PEDANTIC_DETAILS( tag, msg )
-
-#define FRENSIE_LOG_SCOPE()
-#define FRENSIE_LOG_SCOPE_NAME( scope )
+#define FRENSIE_LOG_PEDANTIC_DETAILS_WITH_LOGGER( logger, msg )
 
 #endif // end HAVE_FRENSIE_DETAILED_LOGGING
 

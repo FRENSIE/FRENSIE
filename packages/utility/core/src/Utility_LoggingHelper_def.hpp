@@ -9,25 +9,31 @@
 #ifndef UTILITY_LOGGING_HELPER_DEF_HPP
 #define UTILITY_LOGGING_HELPER_DEF_HPP
 
+// Boost Includes
+#include <boost/smart_ptr/make_shared_object.hpp>
+#include <boost/log/core.hpp>
+
 namespace Utility{
 
 // Add a global log filter
 template<typename FilterExpression>
 inline void LoggingHelper::addGlobalLogFilter( FilterExpression expr )
 {
-  boost::log::core::get()->add_filter( expr );
+  boost::log::core::get()->set_filter( expr );
 }
 
 // Add standard log sinks using the requested output streams
-template<template<typename,...> class STLCompliantArray>
+template<template<typename,typename...> class STLCompliantArray>
 void LoggingHelper::addStandardLogSinks(
           const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array )
 {
-  
+  LoggingHelper::addStandardErrorLogSink( os_array );
+  LoggingHelper::addStandardWarningLogSink( os_array );
+  LoggingHelper::addStandardNotificationLogSink( os_array );
 }
 
 // Add a standard error log sink using the requested output streams
-template<template<typename,...> class STLCompliantArray>
+template<template<typename,typename...> class STLCompliantArray>
 void LoggingHelper::addStandardErrorLogSink(
           const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array )
 {
@@ -43,7 +49,7 @@ void LoggingHelper::addStandardErrorLogSink(
 }
 
 // Add a standard warning log sink using the requested output streams
-template<template<typename,...> class STLCompliantArray>
+template<template<typename,typename...> class STLCompliantArray>
 void LoggingHelper::addStandardWarningLogSink(
           const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array )
 {
@@ -59,7 +65,7 @@ void LoggingHelper::addStandardWarningLogSink(
 }
 
 // Add a standard notification log sink using the requested output streams
-template<template<typename,...> class STLCompliantArray>
+template<template<typename,typename...> class STLCompliantArray>
 void LoggingHelper::addStandardNotificationLogSink(
           const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array )
 {

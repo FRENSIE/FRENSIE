@@ -13,6 +13,9 @@
 #include <sstream>
 #include <string>
 
+// FRENSIE Includes
+#include "Utility_LoggingMacros.hpp"
+
 /*! Exception test macro used to throw an exception when a required condition
  * fails.
  *
@@ -25,10 +28,13 @@
 {									\
  const bool throw_exception = (throw_exception_test);			\
  if( throw_exception ){							\
+   FRENSIE_LOG_SCOPE();                                                 \
    std::ostringstream detailed_msg;					\
-   detailed_msg << "\n" << __FILE__ << ":" << __LINE__ << ":\n"       \
-       << "Throw test that evaluated to true: "#throw_exception_test	\
-       << "\n" << msg;						\
+   detailed_msg << "\n" << msg						\
+                << "\n  Throw test that evaluated to true: "#throw_exception_test \
+                << "\n  Exception Type: " #Exception                    \
+                << "\n  Location: " << __FILE__ << ":" << __LINE__;     \
+                                                                        \
    const std::string &detailed_msg_str = detailed_msg.str();		\
    throw Exception(detailed_msg_str);					\
  }									\
@@ -41,11 +47,14 @@
  * \ingroup exception_macros
  */
 #define THROW_EXCEPTION( Exception, msg ) \
-{					  \
- std::ostringstream detailed_msg;	  \
- detailed_msg << "\n" << __FILE__ << ":" << __LINE__ << ":\n"  \
-              << msg;                                            \
- throw Exception(detailed_msg.str());                            \
+{                                                                       \
+  FRENSIE_LOG_SCOPE();                                                  \
+  std::ostringstream detailed_msg;                                      \
+  detailed_msg << "\n" << msg                                           \
+               << "\n  Location: " << __FILE__ << ":" << __LINE__       \
+               << "\n";                                                 \
+                                                                        \
+  throw Exception(detailed_msg.str());                                  \
 }
 
 #endif // end UTILITY_EXCEPTION_TEST_MACROS_HPP
