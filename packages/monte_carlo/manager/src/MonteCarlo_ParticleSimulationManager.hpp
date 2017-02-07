@@ -54,9 +54,9 @@ public:
   //! Constructor
   ParticleSimulationManager(
                 const std::shared_ptr<const SimulationProperties> properties,
-		const unsigned long long start_history = 0ull,
-		const unsigned long long previously_completed_histories = 0ull,
-		const double previous_run_time = 0.0 );
+                const unsigned long long start_history = 0ull,
+                const unsigned long long previously_completed_histories = 0ull,
+                const double previous_run_time = 0.0 );
 
   //! Destructor
   virtual ~ParticleSimulationManager()
@@ -79,7 +79,7 @@ protected:
 
   //! Run the simulation batch
   void runSimulationBatch( const unsigned long long start_history,
-			   const unsigned long long end_history );
+                           const unsigned long long end_history );
 
   //! Return the number of histories
   unsigned long long getNumberOfHistories() const;
@@ -111,7 +111,7 @@ private:
   // Dummy function for ignoring a particle
   template<typename ParticleStateType>
   void ignoreParticle( ParticleStateType& particle,
-		       ParticleBank& particle_bank ) const;
+                       ParticleBank& particle_bank ) const;
 
   // Print lost particle info
   void printLostParticleInfo( const std::string& file,

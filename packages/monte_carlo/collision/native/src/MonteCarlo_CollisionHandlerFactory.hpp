@@ -44,10 +44,10 @@ public:
 
   //! Create the collision handler
   std::shared_ptr<CollisionHandler> createHandler(
-		     const Teuchos::ParameterList& material_reps,
-		     const Teuchos::ParameterList& cross_sections_table_info,
-                     const SimulationProperties& properties,
-		     const std::string& cross_sections_xml_directory );
+             const Teuchos::ParameterList& material_reps,
+             const Teuchos::ParameterList& cross_sections_table_info,
+             const SimulationProperties& properties,
+             const std::string& cross_sections_xml_directory );
 
 protected:
 
