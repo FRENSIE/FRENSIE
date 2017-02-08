@@ -1,6 +1,13 @@
+ADD_EXECUTABLE(tstHDF5ExceptionCatchMacros
+  tstHDF5ExceptionCatchMacros.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHDF5ExceptionCatchMacros utility_hdf5)
+ADD_TEST(HDF5ExceptionCatchMacros_test tstHDF5ExceptionCatchMacros)
+SET_PROPERTY(TEST HDF5ExceptionCatchMacros_test PROPERTY LABELS utility_hdf5)
+
 ADD_EXECUTABLE(tstHDF5FileHandler
   tstHDF5FileHandler.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstHDF5FileHandler utility_hdf5)
 ADD_TEST(HDF5FileHandler_test tstHDF5FileHandler)
 SET_PROPERTY(TEST HDF5FileHandler_test PROPERTY LABELS utility_hdf5)

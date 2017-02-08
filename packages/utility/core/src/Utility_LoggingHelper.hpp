@@ -35,10 +35,15 @@
 // FRENSIE Includes
 #include "Utility_LogRecordType.hpp"
 #include "Utility_FancyTextOStreamBackend.hpp"
+#include "Utility_LoggingStaticConstants.hpp"
 
 // Declare public global attributes
-BOOST_LOG_ATTRIBUTE_KEYWORD( record_type_log_attr, "Severity", Utility::LogRecordType );
-BOOST_LOG_ATTRIBUTE_KEYWORD( tag_log_attr, "Tag", std::string );
+BOOST_LOG_ATTRIBUTE_KEYWORD( record_type_log_attr,
+                             FRENSIE_LOG_RECORD_TYPE_ATTR_KEYWORD,
+                             Utility::LogRecordType );
+BOOST_LOG_ATTRIBUTE_KEYWORD( tag_log_attr,
+                             FRENSIE_LOG_TAG_ATTR_KEYWORD,
+                             std::string );
 
 /*! \defgroup frensie_logging FRENSIE Logging.
  *

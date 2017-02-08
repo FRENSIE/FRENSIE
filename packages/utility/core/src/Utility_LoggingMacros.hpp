@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "FRENSIE_config.hpp"
 #include "Utility_LoggingHelper.hpp"
+#include "Utility_LoggingStaticConstants.hpp"
 
 /*! \defgroup logging_macros Logging Macros.
  *
@@ -241,7 +242,7 @@
  * exception.what()).
  */
 #define FRENSIE_LOG_NESTED_ERROR( msg )         \
-  __FRENSIE_LOG_MSG_WITH_TAG__( Utility::ERROR_RECORD, "__NESTED__", msg )
+  __FRENSIE_LOG_MSG_WITH_TAG__( Utility::ERROR_RECORD, FRENSIE_LOG_NESTED_ERROR_TAG, msg )
 
 /*! Log a tagged error with the logger
  * \details This macro will attempt to deduce the function scope.

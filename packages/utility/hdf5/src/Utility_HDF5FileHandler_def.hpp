@@ -26,7 +26,7 @@
 #include "Utility_Tuple.hpp"
 #include "Utility_HDF5TypeTraits.hpp"
 #include "Utility_ArrayTraits.hpp"
-#include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_HDF5ExceptionCatchMacros.hpp"
 #include "Utility_Assertion.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"

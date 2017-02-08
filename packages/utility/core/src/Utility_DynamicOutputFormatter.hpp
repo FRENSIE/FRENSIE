@@ -64,11 +64,38 @@ public:
   //! Format the standard error message keywords in the output
   void formatStandardErrorKeywords();
 
+  //! Format the extra error keywords in the output
+  void formatExtraErrorKeywords();
+
   //! Format the standard warning message keywords in the output
   void formatStandardWarningKeywords();
 
   //! Format the standard note keywords in the output
   void formatStandardNoteKeywords();
+
+  //! Format the extra message keywords in the output
+  void formatExtraMessageKeywords();
+
+  //! Format the standard location keywords in the output
+  void formatStandardLocationKeywords();
+
+  //! Format the standard stack keywords in the output
+  void formatStandardStackKeywords();
+
+  //! Format the standard stack depth deliminator keywords in the output
+  void formatStandardStackDeliminatorKeywords();
+
+  //! Format the standard arrow keywords in the output
+  void formatStandardArrowKeywords();
+
+  //! Format the standard exception type keywords in the output
+  void formatStandardExceptionTypeKeywords();
+
+  //! Format the standard throw test evaluation true keywords in the output
+  void formatStandardThrowTestEvaluatedTrueKeywords();
+
+  //! Format the standard beginning nested errors keywords in the output
+  void formatStandardBeginningNestedErrorsKeywords();
 
   //! Format the standard filename keywords in the output
   void formatStandardFilenameKeywords();
@@ -78,6 +105,12 @@ public:
 
   //! Format the standard fail keywords in the output
   void formatStandardFailKeywords();
+
+  //! Format the error log keywords
+  void formatErrorLogKeywords();
+
+  //! Format the warning log keywords
+  void formatWarningLogKeywords();
 
   //! Format the Teuchos unit test keywords in the output
   void formatTeuchosUnitTestKeywords();

@@ -17,6 +17,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -28,6 +29,7 @@
 #include "Utility_DynamicOutputFormatter.hpp"
 #include "Utility_StaticOutputFormatter.hpp"
 #include "Utility_TeuchosUnitTestInitializer.hpp"
+#include "Utility_LoggingMacros.hpp"
 
 // Report local failure details
 void reportLocalFailureDetails( const bool local_success,
@@ -113,6 +115,19 @@ int main( int argc, char** argv )
 
   out->setProcRankAndSize( mpi_session.getRank(), mpi_session.getNProc() );
 
+  // Set up the logs
+  FRENSIE_ADD_STANDARD_LOG_ATTRIBUTES();
+
+  {
+    boost::shared_ptr<std::ostream>
+      log_stream( out.get(), boost::null_deleter() );
+      //log_stream( &std::cout, boost::null_deleter() );
+  
+    FRENSIE_SETUP_STANDARD_LOGS( log_stream );
+  }
+
+  FRENSIE_LOG_TAGGED_NOTIFICATION( "Testing", "Logger initialized" );
+  
   mpi_session.barrier();
 
   // Initialize the unit test data
@@ -184,6 +199,8 @@ int main( int argc, char** argv )
 
     std::cout << formatter << std::endl;
   }
+
+  FRENSIE_REMOVE_ALL_LOGS();
 
   return (success ? 0 : 1 );
 }

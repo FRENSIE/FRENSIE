@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_HDF5FileHandler.hpp"
-#include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_HDF5ExceptionCatchMacros.hpp"
 
 namespace Utility{
 

@@ -18,12 +18,24 @@
 #include "Utility_LoggingHelper.hpp"
 
 // Declare hidden global attributes
-BOOST_LOG_ATTRIBUTE_KEYWORD( line_id_log_attr, "LineID", unsigned int );
-BOOST_LOG_ATTRIBUTE_KEYWORD( scope_log_attr, "Scope", boost::log::attributes::named_scope::value_type );
-BOOST_LOG_ATTRIBUTE_KEYWORD( thread_id_log_attr, "ThreadID", boost::log::attributes::current_thread_id::value_type );
-BOOST_LOG_ATTRIBUTE_KEYWORD( proc_id_log_attr, "ProcessID", boost::log::attributes::current_process_id::value_type );
-BOOST_LOG_ATTRIBUTE_KEYWORD( time_stamp_log_attr, "TimeStamp", boost::log::attributes::local_clock::value_type );
-BOOST_LOG_ATTRIBUTE_KEYWORD( chrono_log_attr, "Chrono", boost::log::attributes::timer::value_type );
+BOOST_LOG_ATTRIBUTE_KEYWORD( line_id_log_attr,
+                             FRENSIE_LOG_LINE_ID_ATTR_KEYWORD,
+                             unsigned int );
+BOOST_LOG_ATTRIBUTE_KEYWORD( scope_log_attr,
+                             FRENSIE_LOG_SCOPE_ATTR_KEYWORD,
+                             boost::log::attributes::named_scope::value_type );
+BOOST_LOG_ATTRIBUTE_KEYWORD( thread_id_log_attr,
+                             FRENSIE_LOG_THREAD_ID_ATTR_KEYWORD,
+                             boost::log::attributes::current_thread_id::value_type );
+BOOST_LOG_ATTRIBUTE_KEYWORD( proc_id_log_attr,
+                             FRENSIE_LOG_PROCESS_ID_ATTR_KEYWORD,
+                             boost::log::attributes::current_process_id::value_type );
+BOOST_LOG_ATTRIBUTE_KEYWORD( time_stamp_log_attr,
+                             FRENSIE_LOG_TIME_STAMP_ATTR_KEYWORD,
+                             boost::log::attributes::local_clock::value_type );
+BOOST_LOG_ATTRIBUTE_KEYWORD( chrono_log_attr,
+                             FRENSIE_LOG_CHRONO_ATTR_KEYWORD,
+                             boost::log::attributes::timer::value_type );
 
 namespace Utility{
 
@@ -35,10 +47,10 @@ void LoggingHelper::addStandardGlobalAttributes()
 {
   boost::shared_ptr<boost::log::core> core = boost::log::core::get();
 
-  //core->add_global_attribute( "LineID", boost::log::attributes::counter<unsigned>(0) );
-  //core->add_global_attribute( "TimeStamp", boost::log::attributes::local_clock() );
-  core->add_global_attribute( "ThreadID", boost::log::attributes::current_thread_id() );
-  core->add_global_attribute( "Scope", boost::log::attributes::named_scope() );
+  core->add_global_attribute( FRENSIE_LOG_THREAD_ID_ATTR_KEYWORD,
+                              boost::log::attributes::current_thread_id() );
+  core->add_global_attribute( FRENSIE_LOG_SCOPE_ATTR_KEYWORD,
+                              boost::log::attributes::named_scope() );
 }
 
 // Add standard log sinks using the requested output stream
@@ -140,15 +152,7 @@ void LoggingHelper::initializeAndAddErrorLogSink(
                   const boost::shared_ptr<FancyTextSinkBackend>& sink_backend )
 {
   // Add some dynamic formatting to the sink backend
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::boldRedKeyword, ".*Error:" );
-  sink_backend->addBasicDynamicFormattingOp( &DynamicOutputFormatter::formatStandardFilenameKeywords );
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::boldCyanKeyword, "Location:" );
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::boldCyanKeyword, "Stack:" );
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::boldCyanKeyword, "\\*\\*" );
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::boldCyanKeyword, "->" );
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::boldCyanKeyword, "Exception Type:" );
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::boldCyanKeyword, "Throw test that evaluated to true:" );
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::underlinedKeyword, "Beginning nested errors..." );
+  sink_backend->addBasicDynamicFormattingOp( &DynamicOutputFormatter::formatErrorLogKeywords );
   
   // Set up the error sink
   boost::shared_ptr<FancyTextSink> error_sink(
@@ -159,12 +163,11 @@ void LoggingHelper::initializeAndAddErrorLogSink(
   // Set the error record format
   error_sink->set_formatter(
         boost::log::expressions::stream
-        << boost::log::expressions::if_( boost::log::expressions::has_attr( tag_log_attr ) && tag_log_attr == "__NESTED__" )
+        << boost::log::expressions::if_( boost::log::expressions::has_attr( tag_log_attr ) && tag_log_attr == FRENSIE_LOG_NESTED_ERROR_TAG )
         [
           boost::log::expressions::stream
-          << "\nBeginning nested errors...\n\n"
-          << boost::log::expressions::smessage
-          << "\n"
+          << FRENSIE_LOG_BEGINNING_NESTED_ERRORS_MSG
+          << boost::log::expressions::smessage << "\n"
         ].else_
         [
           boost::log::expressions::stream
@@ -172,19 +175,21 @@ void LoggingHelper::initializeAndAddErrorLogSink(
           [
            boost::log::expressions::stream << tag_log_attr << " "
           ]
-          << "Error: "
-          << boost::log::expressions::smessage
-          << "\n  Location: "
+          << FRENSIE_LOG_ERROR_MSG << boost::log::expressions::smessage << "\n"
+          << FRENSIE_LOG_LOCATION_MSG
           << boost::log::expressions::format_named_scope(
-             "Scope",
-             boost::log::keywords::format = "%f:%l",
-             boost::log::keywords::depth = 1,
-             boost::log::keywords::incomplete_marker = "" )
-          << "\n  Stack: \n    **  "
+                                 FRENSIE_LOG_SCOPE_ATTR_KEYWORD,
+                                 boost::log::keywords::format =
+                                 "%f" FRENSIE_LOG_FILE_LINE_SEP "%l",
+                                 boost::log::keywords::depth = 1,
+                                 boost::log::keywords::incomplete_marker = "" )
+          << "\n"
+          << FRENSIE_LOG_STACK_MSG << FRENSIE_LOG_STACK_DELIMINATOR 
           << boost::log::expressions::format_named_scope(
-             "Scope",
-             boost::log::keywords::format = "%n",
-             boost::log::keywords::delimiter = "\n    **  " )
+                                           FRENSIE_LOG_SCOPE_ATTR_KEYWORD,
+                                           boost::log::keywords::format = "%n",
+                                           boost::log::keywords::delimiter =
+                                           FRENSIE_LOG_STACK_DELIMINATOR )
           << "\n"
          ] );
 
@@ -197,9 +202,7 @@ void LoggingHelper::initializeAndAddWarningLogSink(
                   const boost::shared_ptr<FancyTextSinkBackend>& sink_backend )
 {
   // Add some dynamic formatting to the sink backend
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::boldMagentaKeyword, ".*Warning:" );
-  sink_backend->addBasicDynamicFormattingOp( &DynamicOutputFormatter::formatStandardFilenameKeywords );
-  sink_backend->addDynamicFormattingOp( &DynamicOutputFormatter::boldCyanKeyword, "Location:" );
+  sink_backend->addBasicDynamicFormattingOp( &DynamicOutputFormatter::formatWarningLogKeywords );
 
   // Set up the warning sink
   boost::shared_ptr<FancyTextSink> warning_sink(
@@ -210,15 +213,18 @@ void LoggingHelper::initializeAndAddWarningLogSink(
   // Set the warning record format
   warning_sink->set_formatter(
         boost::log::expressions::stream
-        << boost::log::expressions::if_( boost::log::expressions::has_attr<std::string>( "Tag" ) )
+        << boost::log::expressions::if_( boost::log::expressions::has_attr( tag_log_attr ) )
         [
          boost::log::expressions::stream << tag_log_attr << " "
         ]
-        << "Warning: "
-        << boost::log::expressions::smessage
-        << "\n  "
+        << FRENSIE_LOG_WARNING_MSG << boost::log::expressions::smessage << "\n"
+        << FRENSIE_LOG_LOCATION_MSG
         << boost::log::expressions::format_named_scope(
-               "Scope", boost::log::keywords::format = "Location: %f:%l" )
+                                 FRENSIE_LOG_SCOPE_ATTR_KEYWORD,
+                                 boost::log::keywords::format =
+                                 "%f" FRENSIE_LOG_FILE_LINE_SEP "%l",
+                                 boost::log::keywords::depth = 1,
+                                 boost::log::keywords::incomplete_marker = "" )
         << "\n" );
 
   // Register the warning sink with the logging core
@@ -241,7 +247,7 @@ void LoggingHelper::initializeAndAddNotificationLogSink(
   
   notification_sink->set_formatter(
         boost::log::expressions::stream
-        << boost::log::expressions::if_( boost::log::expressions::has_attr<std::string>( "Tag" ) )
+        << boost::log::expressions::if_( boost::log::expressions::has_attr( tag_log_attr ) )
         [
          boost::log::expressions::stream << tag_log_attr << ": "
         ]

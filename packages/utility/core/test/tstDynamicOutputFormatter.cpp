@@ -552,19 +552,29 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
 #endif
   }
 
-  // Check that the "error:" keyword can be formatted
+  // Check that the "My Error:" keyword can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "My Error: this is a test!" );
+
+    formatter.formatStandardErrorKeywords();
+    
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;31;49mMy Error:\E[0m this is a test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "My Error: this is a test!" );
+#endif
+  }
+
+  // Check that the "error:" keyword will not be formatted
   {
     Utility::DynamicOutputFormatter formatter( " error: this is a test!" );
 
     formatter.formatStandardErrorKeywords();
-
-#ifdef TTY_FORMATTING_SUPPORTED
+    
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;31;49m error:\E[0m this is a test!" );
-#else
-    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         " error: this is a test!" );
-#endif    
+                         " error: this is a test!" );  
   }
 
   // Check that the "Error" keyword will not be formatted
@@ -601,7 +611,77 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
                          "Error: this is an error test!" );
 #endif
   }
-}  
+}
+
+//---------------------------------------------------------------------------//
+// Check that extra error keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatExtraErrorKeywords )
+{
+  // Check that the "Error:" keyword can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Error: this is a test!" );
+
+    formatter.formatExtraErrorKeywords();
+    
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;31;49mError:\E[0m this is a test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Error: this is a test!" );
+#endif
+  }
+
+  // Check that the "error:" keyword can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " error: this is a test!" );
+
+    formatter.formatExtraErrorKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;31;49m error:\E[0m this is a test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         " error: this is a test!" );
+#endif    
+  }
+
+  // Check that the "Error" keyword will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is an Error test!" );
+
+    formatter.formatExtraErrorKeywords();
+    
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is an Error test!" );
+  }
+
+  // Check that the "error" keyword will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "This is an error test!" );
+
+    formatter.formatExtraErrorKeywords();
+    
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "This is an error test!" );
+  }
+
+  // Check that multiple occurances can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Error: this is an error test!" );
+
+    formatter.formatExtraErrorKeywords();
+    
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;31;49mError:\E[0m this is an error test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Error: this is an error test!" );
+#endif
+  }
+}
 
 //---------------------------------------------------------------------------//
 // Check that the standard warning message keywords can be formatted
@@ -619,21 +699,6 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Warning: this is a test!" );
-#endif
-  }
-
-  // Check that the "warning:" keyword can be formatted
-  {
-    Utility::DynamicOutputFormatter formatter( " warning: this is a test!" );
-
-    formatter.formatStandardWarningKeywords();
-    
-#ifdef TTY_FORMATTING_SUPPORTED
-    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;35;49m warning:\E[0m this is a test!" );
-#else
-    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "warning: this is a test!" );
 #endif
   }
 
@@ -740,6 +805,464 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardNoteKeywords )
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Note: This is a note test!" );
 #endif
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the extra message keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatExtraMessageKeywords )
+{
+  // Check that the "Msg:" keyword can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\nMsg: this is a message test!" );
+
+    formatter.formatExtraMessageKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m\nMsg:\E[0m this is a message test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\nMsg: this is a message test!" );
+#endif
+  }
+
+  // Check that the "My Msg:" keyword can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\nMy Msg: this is a message test!" );
+
+    formatter.formatExtraMessageKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m\nMy Msg:\E[0m this is a message test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\nMy Msg: this is a message test!" );
+#endif
+  }
+
+  // Check that the "msg:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " msg: this is a message test!" );
+
+    formatter.formatExtraMessageKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         " msg: this is a message test!" );
+  }
+
+  // Check that "Msg" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Msg test!" );
+
+    formatter.formatExtraMessageKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(), "Msg test!" );
+  }
+
+  // Check that "msg" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "msg test!" );
+
+    formatter.formatExtraMessageKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(), "msg test!" );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the standard location keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardLocationKeywords )
+{
+  // Check that " Location:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " Location: my location message!" );
+
+    formatter.formatStandardLocationKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m Location:\E[0m my location message!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         " Location: my location message!" );
+#endif
+  }
+
+  // Check that "  Location:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "  Location: my location message!" );
+
+    formatter.formatStandardLocationKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m  Location:\E[0m my location message!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "  Location: my location message!" );
+#endif
+  }
+
+  // Check that "Location:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Location: my location message!" );
+
+    formatter.formatStandardLocationKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Location: my location message!" );
+  }
+
+  // Check that "location:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "location: my location message!" );
+
+    formatter.formatStandardLocationKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "location: my location message!" );
+  }
+
+  // Check that " location:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " location: my location message!" );
+
+    formatter.formatStandardLocationKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         " location: my location message!" );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the standard stack keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardStackKeywords )
+{
+  // Check that "Stack:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\nStack: my stack message!" );
+
+    formatter.formatStandardStackKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m\nStack:\E[0m my stack message!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\nStack: my stack message!" );
+#endif
+  }
+
+  // Check that " Stack:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\n Stack: my stack message!" );
+
+    formatter.formatStandardStackKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m\n Stack:\E[0m my stack message!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\n Stack: my stack message!" );
+#endif
+  }
+
+  // Check that "My Stack:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\nMy Stack: my stack message!" );
+
+    formatter.formatStandardStackKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m\nMy Stack:\E[0m my stack message!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\nMy Stack: my stack message!" );
+#endif
+  }
+
+  // Check that " My Stack:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\n My Stack: my stack message!" );
+
+    formatter.formatStandardStackKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m\n My Stack:\E[0m my stack message!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\n My Stack: my stack message!" );
+#endif
+  }
+
+  // Check that "stack:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\nstack: my stack message!" );
+
+    formatter.formatStandardStackKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\nstack: my stack message!" );
+  }
+
+  // Check that starting "Stack:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Stack: my stack message!" );
+
+    formatter.formatStandardStackKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Stack: my stack message!" );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the standard arrow keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardArrowKeywords )
+{
+  // Check that "  ->  " can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "this  ->  that" );
+
+    formatter.formatStandardArrowKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "this\E[1;36;49m  ->  \E[0mthat" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(), "this  ->  that" );
+#endif
+  }
+
+  // Check that " -> " will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "this -> that" );
+
+    formatter.formatStandardArrowKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(), "this -> that" );
+  }
+
+  // Check that "->" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "this->that" );
+
+    formatter.formatStandardArrowKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(), "this->that" );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the standard exception type keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter,
+                   formatStandardExceptionTypeKeywords )
+{
+  // Check that " Exception Type:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " Exception Type: my exception type!" );
+
+    formatter.formatStandardExceptionTypeKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m Exception Type:\E[0m my exception type!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         " Exception Type: my exception type!" );
+#endif
+  }
+
+  // Check that "  Exception Type:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "  Exception Type: my exception type!" );
+
+    formatter.formatStandardExceptionTypeKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m  Exception Type:\E[0m my exception type!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "  Exception Type: my exception type!" );
+#endif
+  }
+
+  // Check that "Exception Type:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Exception Type: my exception type!" );
+
+    formatter.formatStandardExceptionTypeKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Exception Type: my exception type!" );
+  }
+
+  // Check that "exception type:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "exception type: my exception type!" );
+
+    formatter.formatStandardExceptionTypeKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "exception type: my exception type!" );
+  }
+
+  // Check that " exception type:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " exception type: my exception type!" );
+
+    formatter.formatStandardExceptionTypeKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         " exception type: my exception type!" );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the standard throw test evaluated true keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter,
+                   formatStandardThrowTestEvaluatedTrueKeywords )
+{
+  // Check that " Throw test that evaluated to true:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " Throw test that evaluated to true: my test!" );
+
+    formatter.formatStandardThrowTestEvaluatedTrueKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m Throw test that evaluated to true:\E[0m my test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         " Throw test that evaluated to true: my test!" );
+#endif
+  }
+
+  // Check that "  Throw test that evaluated to true:" can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "  Throw test that evaluated to true: my test!" );
+
+    formatter.formatStandardThrowTestEvaluatedTrueKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[1;36;49m  Throw test that evaluated to true:\E[0m my test!" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "  Throw test that evaluated to true: my test!" );
+#endif
+  }
+
+  // Check that "Throw test that evaluated to true:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Throw test that evaluated to true: my test!" );
+
+    formatter.formatStandardThrowTestEvaluatedTrueKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Throw test that evaluated to true: my test!" );
+  }
+
+  // Check that "throw test that evaluated to true:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "throw test that evaluated to true: my test!" );
+
+    formatter.formatStandardThrowTestEvaluatedTrueKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "throw test that evaluated to true: my test!" );
+  }
+
+  // Check that " throw test that evaluated to true:" will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " throw test that evaluated to true: my test!" );
+
+    formatter.formatStandardThrowTestEvaluatedTrueKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         " throw test that evaluated to true: my test!" );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the standard beginning nested errors keywords can be formatted
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter,
+                   formatStandardBeginningNestedErrorsKeywords )
+{
+  // Check that "Beginning nested errors..." can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "Beginning nested errors..." );
+
+    formatter.formatStandardBeginningNestedErrorsKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[4;29;49mBeginning nested errors...\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "Beginning nested errors..." );
+#endif
+  }
+
+  // Check that "\nBeginning nested errors..." can be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\nBeginning nested errors..." );
+
+    formatter.formatStandardBeginningNestedErrorsKeywords();
+
+#ifdef TTY_FORMATTING_SUPPORTED
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\E[4;29;49m\nBeginning nested errors...\E[0m" );
+#else
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\nBeginning nested errors..." );
+#endif
+  }
+
+  // Check that " Beginning nested errors..." will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( " Beginning nested errors..." );
+
+    formatter.formatStandardBeginningNestedErrorsKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         " Beginning nested errors..." );
+  }
+
+  // Check that "\n Beginning nested errors..." will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\n Beginning nested errors..." );
+
+    formatter.formatStandardBeginningNestedErrorsKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\n Beginning nested errors..." );
+  }
+
+  // Check that "beginning nested errors..." will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "beginning nested errors..." );
+
+    formatter.formatStandardBeginningNestedErrorsKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "beginning nested errors..." );
+  }
+
+  // Check that "\nbeginning nested errors..." will not be formatted
+  {
+    Utility::DynamicOutputFormatter formatter( "\nbeginning nested errors..." );
+
+    formatter.formatStandardBeginningNestedErrorsKeywords();
+
+    TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
+                         "\nbeginning nested errors..." );
   }
 }
 

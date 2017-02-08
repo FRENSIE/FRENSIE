@@ -1,5 +1,12 @@
 // This file is used to add material to the utility package page
 
+/*! \defgroup exception_macros Exception Catch Macros
+ *
+ * These macros are design to catch certain types of exceptions, log
+ * error messages with some meta-data (e.g. file name, line number, etc.) and 
+ * optionally exit the program.
+ */
+
 /*! \page utility Utility Package
  *
  * \tableofcontents
