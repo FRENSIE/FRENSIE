@@ -31,6 +31,13 @@ TARGET_LINK_LIBRARIES(tstExceptionCatchMacros utility_core)
 ADD_TEST(ExceptionCatchMacros_test tstExceptionCatchMacros)
 SET_PROPERTY(TEST ExceptionCatchMacros_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstLogRecordType
+  tstLogRecordType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogRecordType utility_core)
+ADD_TEST(LogRecordType_test tstLogRecordType)
+SET_PROPERTY(TEST LogRecordType_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstAssertion
   tstAssertion.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

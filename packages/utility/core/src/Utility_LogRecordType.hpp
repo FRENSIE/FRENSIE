@@ -25,7 +25,7 @@ enum LogRecordType{
 };
 
 //! Test if the log record type name is valid
-bool isValidLogRecordName( const std::string& log_record_type_name );
+bool isValidLogRecordTypeName( const std::string& log_record_type_name );
 
 //! Convert the log record type name to a log record type enum
 LogRecordType convertLogRecordTypeNameToEnum(

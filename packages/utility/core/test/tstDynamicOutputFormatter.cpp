@@ -545,7 +545,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
     
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;31;49mError:\E[0m this is a test!" );
+                         "\E[1;31;49mError: \E[0mthis is a test!" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Error: this is a test!" );
@@ -560,7 +560,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
     
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;31;49mMy Error:\E[0m this is a test!" );
+                         "\E[1;31;49mMy Error: \E[0mthis is a test!" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "My Error: this is a test!" );
@@ -605,7 +605,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
     
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;31;49mError:\E[0m this is an error test!" );
+                         "\E[1;31;49mError: \E[0mthis is an error test!" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Error: this is an error test!" );
@@ -695,7 +695,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
     
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;35;49mWarning:\E[0m this is a test!" );
+                         "\E[1;35;49mWarning: \E[0mthis is a test!" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Warning: this is a test!" );
@@ -730,7 +730,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
     
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;35;49mWarning:\E[0m This is a warning test!" );
+                         "\E[1;35;49mWarning: \E[0mThis is a warning test!" );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Warning: This is a warning test!" );
@@ -1625,7 +1625,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatTeuchosUnitTestKeywords )
 
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;31;49mError:\E[0m details..." );
+                         "\E[1;31;49mError: \E[0mdetails..." );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Error: details..." );
@@ -1655,7 +1655,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatTeuchosUnitTestKeywords )
 
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
-                         "\E[1;35;49mWarning:\E[0m details..." );
+                         "\E[1;35;49mWarning: \E[0mdetails..." );
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "Warning: details..." );

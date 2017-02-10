@@ -49,13 +49,13 @@
 //---------------------------------------------------------------------------//
 
 //! The white-space free error log message basic starting string
-#define FRENSIE_LOG_ERROR_MSG_BASIC "Error:"
+#define FRENSIE_LOG_ERROR_MSG_BASIC "Error"
 
 //! The error log message starting string
-#define FRENSIE_LOG_ERROR_MSG FRENSIE_LOG_ERROR_MSG_BASIC " "
+#define FRENSIE_LOG_ERROR_MSG FRENSIE_LOG_ERROR_MSG_BASIC ": "
 
 //! The regex string used for finding error log message starting strings
-#define FRENSIE_LOG_ERROR_MSG_REGEX "^[\\w ]*" FRENSIE_LOG_ERROR_MSG_BASIC "|\\n[\\w ]*" FRENSIE_LOG_ERROR_MSG_BASIC
+#define FRENSIE_LOG_ERROR_MSG_REGEX "^[\\w ]*" FRENSIE_LOG_ERROR_MSG "|\\n[\\w ]*" FRENSIE_LOG_ERROR_MSG
 
 /*! \brief The message used to report that nested errors will be reported (no 
  * beginning or trailing white-space)
@@ -75,13 +75,26 @@
 //---------------------------------------------------------------------------//
 
 //! The white-space free warning log message basic starting string
-#define FRENSIE_LOG_WARNING_MSG_BASIC "Warning:"
+#define FRENSIE_LOG_WARNING_MSG_BASIC "Warning"
 
 //! The warning log message starting string
-#define FRENSIE_LOG_WARNING_MSG FRENSIE_LOG_WARNING_MSG_BASIC " "
+#define FRENSIE_LOG_WARNING_MSG FRENSIE_LOG_WARNING_MSG_BASIC ": "
 
 //! The regex string used for finding warning log message starting strings
-#define FRENSIE_LOG_WARNING_MSG_REGEX "^[\\w ]*" FRENSIE_LOG_WARNING_MSG_BASIC "|\\n[\\w ]*" FRENSIE_LOG_WARNING_MSG_BASIC
+#define FRENSIE_LOG_WARNING_MSG_REGEX "^[\\w ]*" FRENSIE_LOG_WARNING_MSG "|\\n[\\w ]*" FRENSIE_LOG_WARNING_MSG
+
+//---------------------------------------------------------------------------//
+// Notification log message strings
+//---------------------------------------------------------------------------//
+
+//! The white-space free notification log message basic starting string
+#define FRENSIE_LOG_NOTIFICATION_MSG_BASIC "Notification"
+
+//! The white-space free details log message basic starting string
+#define FRENSIE_LOG_DETAILS_MSG_BASIC "Details"
+
+//! The white-space free pedantic details log message basic starting string
+#define FRENSIE_LOG_PEDANTIC_DETAILS_MSG_BASIC "Pedantic Details"
 
 //---------------------------------------------------------------------------//
 // Log data message strings
