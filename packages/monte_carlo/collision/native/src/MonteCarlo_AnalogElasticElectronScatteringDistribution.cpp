@@ -380,23 +380,27 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                     lower_bin,
                                                     upper_bin );
 
+  // Get a random number
+  double random_number =
+            Utility::RandomNumberGenerator::getRandomNumber<double>();
+
   if ( lower_bin->first == incoming_energy )
   {
-    sampleBin( lower_bin, scattering_angle_cosine );
+    sampleBin( lower_bin, random_number, scattering_angle_cosine );
   }  
   else if ( upper_bin->first == incoming_energy )
   {
-    sampleBin( upper_bin, scattering_angle_cosine );
+    sampleBin( upper_bin, random_number, scattering_angle_cosine );
   }
   else if ( lower_bin != upper_bin )
   {
     // Sample lower bin
     double lower_angle;
-    sampleBin( lower_bin, lower_angle );
+    sampleBin( lower_bin, random_number, lower_angle );
 
     // Sample upper bin
     double upper_angle;
-    sampleBin( upper_bin, upper_angle );
+    sampleBin( upper_bin, random_number, upper_angle );
 
     if ( d_use_linlinlog_interpolation )
     {
@@ -436,6 +440,7 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
  */
 void AnalogElasticElectronScatteringDistribution::sampleBin(
         const TwoDDist::DistributionType::const_iterator& distribution_bin,
+        const double random_number,
         double& scattering_angle_cosine ) const
 {
   // Get the bin energy
@@ -444,9 +449,6 @@ void AnalogElasticElectronScatteringDistribution::sampleBin(
   double eta = evaluateMoliereScreeningConstant( energy );
   // Get maximum CDF at the bin energy
   double max_cdf = evaluateScreenedRutherfordCDF( energy, 1.0, eta );
-  // Get a random number scaled to the max cdf
-  double random_number =
-            Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   if ( max_cdf*random_number > 1.0 ) // Sample screened Rutherford
   {

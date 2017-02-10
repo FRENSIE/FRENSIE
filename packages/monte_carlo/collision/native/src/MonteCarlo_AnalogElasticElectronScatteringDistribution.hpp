@@ -112,6 +112,7 @@ protected:
    //! Sample an outgoing direction from the distribution
   void sampleBin(
             const TwoDDist::DistributionType::const_iterator& distribution_bin,
+            const double random_number,
             double& scattering_angle_cosine ) const;
 
    //! Sample an outgoing direction from the distribution

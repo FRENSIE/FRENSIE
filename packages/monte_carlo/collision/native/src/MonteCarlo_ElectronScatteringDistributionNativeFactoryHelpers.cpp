@@ -23,8 +23,16 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-    distribution, data_container );
+  if ( use_linlinlog_interpolation )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<true>(
+      distribution, data_container );
+  }
+  else
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<false>(
+      distribution, data_container );
+  }
 
   return distribution;
 }
@@ -37,8 +45,16 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-    distribution, data_container );
+  if ( use_linlinlog_interpolation )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<true>(
+      distribution, data_container );
+  }
+  else
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<false>(
+      distribution, data_container );
+  }
 
   return distribution;
 }
@@ -84,14 +100,29 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   std::shared_ptr<const HybridElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
-    distribution,
-    grid_searcher,
-    energy_grid,
-    cutoff_cross_section,
-    mp_cross_section,
-    data_container,
-    cutoff_angle_cosine );
+  if ( use_linlinlog_interpolation )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<true>(
+      distribution,
+      grid_searcher,
+      energy_grid,
+      cutoff_cross_section,
+      mp_cross_section,
+      data_container,
+      cutoff_angle_cosine );
+  }
+  else
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<false>(
+      distribution,
+      grid_searcher,
+      energy_grid,
+      cutoff_cross_section,
+      mp_cross_section,
+      data_container,
+      cutoff_angle_cosine );
+  }
+
 
   return distribution;
 }
