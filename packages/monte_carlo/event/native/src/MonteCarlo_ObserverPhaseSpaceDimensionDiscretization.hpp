@@ -76,6 +76,11 @@ public:
 
   //! Calculate the index of bins that the value falls in
   virtual void calculateBinIndicesOfValue(
+                  const EstimatorParticleStateWrapper& particle_state_wrapper,
+                  BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
+
+  //! Calculate the index of bins that the value falls in
+  virtual void calculateBinIndicesOfValue(
                              const Teuchos::any& any_value,
                              BinIndexArray& bin_indices ) const = 0;
 

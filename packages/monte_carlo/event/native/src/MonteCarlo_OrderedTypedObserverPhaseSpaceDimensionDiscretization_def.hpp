@@ -72,6 +72,25 @@ void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculate
   bin_indices[0] = this->calculateBinIndexOfValue( value );
 }
 
+// Calculate the index of bins that the value falls in
+/*! \details With ordered discretizations there will only ever be one bin that
+ * the value falls in. The weight will also always be 1.0.
+ */
+template<ObserverPhaseSpaceDimension dimension>
+void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfValue(
+                       const DimensionValueType value,
+                       BinIndexWeightPairArray& bin_indices_and_weights ) const
+{
+  // Make sure that the value is in the discretization
+  testPrecondition( this->isValueInDiscretization( value ) );
+
+  // There will only ever be one bin that the value falls in
+  bin_indices_and_weights.resize( 1 );
+
+  bin_indices_and_weights[0].first = this->calculateBinIndexOfValue( value );
+  bin_indices_and_weights[0].second = 1.0;
+}
+
 // Calculate the index of bins that the range falls in
 template<ObserverPhaseSpaceDimension dimension>
 void OrderedTypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfRange(

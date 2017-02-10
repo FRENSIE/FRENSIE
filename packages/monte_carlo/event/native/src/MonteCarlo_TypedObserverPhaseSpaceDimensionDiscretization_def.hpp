@@ -80,6 +80,20 @@ void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndi
 // Calculate the index of bins that the value falls in
 template<ObserverPhaseSpaceDimension dimension>
 void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfValue(
+                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   BinIndexWeightPairArray& bin_indices_and_weights ) const
+{
+  // Make sure that the value is in the discretization
+  testPrecondition( this->isValueInDiscretization( particle_state_wrapper ) );
+  
+  this->calculateBinIndicesOfValue(
+                        getDimensionValue<dimension>( particle_state_wrapper ),
+                        bin_indices_and_weighs );
+}
+
+// Calculate the index of bins that the value falls in
+template<ObserverPhaseSpaceDimension dimension>
+void TypedObserverPhaseSpaceDimensionDiscretization<dimension>::calculateBinIndicesOfValue(
                                              const Teuchos::any& any_value,
                                              BinIndexArray& bin_indices ) const
 {

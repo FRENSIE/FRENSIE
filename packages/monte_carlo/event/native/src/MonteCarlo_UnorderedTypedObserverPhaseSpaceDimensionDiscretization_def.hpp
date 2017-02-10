@@ -157,6 +157,39 @@ inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,ty
   bin_indices.assign( bin_index_set.begin(), bin_index_set.end() );
 }
 
+// Calculate the index of bins that the value falls in
+/*! \details Because the bins are not ordered this operation is O(N), where
+ * N is the number of bins. The weight will always be 1.0.
+ */
+template<ObserverPhaseSpaceDimension dimension>
+void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename boost::enable_if<boost::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType> >::type>::calculateBinIndicesOfValue(
+                       const DimensionValueType value,
+                       BinIndexWeightPairArray& bin_indices_and_weights ) const
+{
+  // Make sure that the value is in the discretization
+  testPrecondition( this->isValueInDiscretization( value ) );
+
+  std::set<size_t> bin_index_set;
+
+  this->calculateSetOfBinIndicesOfValue( value, bin_index_set );
+  
+  // Set the bin indices
+  bin_indices_and_weights.resize( bin_index_set.size() );
+
+  std::set<size_t>::const_iterator bin_index_set_it = bin_index_set.begin();
+  BinIndexWeightPairArray::iterator bin_indices_and_weights_it =
+    bin_indices_and_weights.begin();
+
+  while( bin_index_set_it != bin_index_set.end() )
+  {
+    bin_indices_and_weights_it->first = *bin_index_set_it;
+    bin_indices_and_weights_it->second = 1.0;
+    
+    ++bin_index_set_it;
+    ++bin_indices_and_weights;
+  }
+}
+
 // Calculate the index of bins that the range falls in
 template<ObserverPhaseSpaceDimension dimension>
 inline void UnorderedTypedObserverPhaseSpaceDimensionDiscretization<dimension,typename boost::enable_if<boost::is_integral<typename ObserverPhaseSpaceDimensionTraits<dimension>::dimensionType> >::type>::calculateBinIndicesOfRange(

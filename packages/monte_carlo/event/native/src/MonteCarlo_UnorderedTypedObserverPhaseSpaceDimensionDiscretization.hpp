@@ -87,6 +87,11 @@ protected:
   void calculateBinIndicesOfValue( const DimensionValueType value,
                                    BinIndexArray& bin_indices ) const override;
 
+  //! Calculate the index of bins that the value falls in
+  void calculateBinIndicesOfValue(
+             const DimensionValueType value,
+             BinIndexWeightPairArray& bin_indices_and_weights ) const override;
+
   //! Calculate the index of bins that the range falls in
   void calculateBinIndicesOfRange(
              const DimensionValueType range_start,

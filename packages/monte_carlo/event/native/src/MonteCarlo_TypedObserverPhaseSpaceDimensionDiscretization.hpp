@@ -59,7 +59,12 @@ public:
   //! Calculate the index of bins that the value falls in
   void calculateBinIndicesOfValue(
                    const EstimatorParticleStateWrapper& particle_state_wrapper,
-                   BinIndexArray& bin_indices ) const;
+                   BinIndexArray& bin_indices ) const override;
+
+  //! Calculate the index of bins that the value falls in
+  void calculateBinIndicesOfValue(
+             const EstimatorParticleStateWrapper& particle_state_wrapper,
+             BinIndexWeightPairArray& bin_indices_and_weights ) const override;
 
   //! Calculate the index of bins that the value falls in
   void calculateBinIndicesOfValue( const Teuchos::any& any_value,
@@ -85,6 +90,11 @@ protected:
   virtual void calculateBinIndicesOfValue(
                                         const DimensionValueType value,
                                         BinIndexArray& bin_indices ) const = 0;
+
+  //! Calculate the index of bins that the value falls in
+  virtual void calculateBinIndicesOfValue(
+                  const DimensionValueType value,
+                  BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
 
   //! Calculate the index of bins that the range falls in
   virtual void calculateBinIndicesOfRange(
