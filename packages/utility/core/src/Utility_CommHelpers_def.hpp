@@ -75,7 +75,7 @@ public:
 
     TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
                         std::runtime_error,
-                        "Error: could not get the size of the message from "
+                        "could not get the size of the message from "
                         "the MPI_Status! Here is the error message: "
                         << Utility::getMpiErrorString( return_value ) );
 
@@ -123,11 +123,11 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm,
 
     TEST_FOR_EXCEPTION( serial_comm == NULL,
                         std::runtime_error,
-                        "Error: The comm type is unknown! The nonblocking "
+                        "the comm type is unknown! The nonblocking "
                         "probe could not be done." );
 
     THROW_EXCEPTION( std::logic_error,
-                     "Error: you can not call iprobe(...) when you only have "
+                     "you can not call iprobe(...) when you only have "
                      "one process!" );
 
     status.reset( new Teuchos::SerialCommStatus<Ordinal> );
@@ -145,8 +145,7 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm,
 
     TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
                         std::runtime_error,
-                        "Error: MPI_IProbe failed! Here is the error "
-                        "message: "
+                        "MPI_IProbe failed! Here is the error message: "
                         << Utility::getMpiErrorString( return_value ) );
 
     status.reset( new ExtendedMpiCommStatus<Ordinal>( raw_status ) );
@@ -155,8 +154,8 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm,
   }
 #else // MPI is not enabled - no messages can be sent
   THROW_EXCEPTION( std::logic_error,
-                   "Error: you can not call iprobe(...) when you only have "
-                   "one process!" );
+                   "you can not call iprobe(...) when you only have one "
+                   "process!" );
 #endif // end HAVE_FRENSIE_MPI
 }
 
@@ -202,11 +201,11 @@ void probe( const Teuchos::Comm<Ordinal>& comm,
 
     TEST_FOR_EXCEPTION( serial_comm == NULL,
                         std::runtime_error,
-                        "Error: The comm type is unknown! The nonblocking "
+                        "the comm type is unknown! The nonblocking "
                         "probe could not be done." );
 
     THROW_EXCEPTION( std::logic_error,
-                     "Error: you can not call probe(...) when you only have "
+                     "you can not call probe(...) when you only have "
                      "one process!" );
   }
   else
@@ -220,16 +219,15 @@ void probe( const Teuchos::Comm<Ordinal>& comm,
 
     TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
                         std::runtime_error,
-                        "Error: MPI_Probe failed! Here is the error "
-                        "message: "
+                        "MPI_Probe failed! Here is the error message: "
                         << Utility::getMpiErrorString( return_value ) );
 
     status.reset( new ExtendedMpiCommStatus<Ordinal>( raw_status ) );
   }
 #else // MPI is not enabled - no messages can be sent
   THROW_EXCEPTION( std::logic_error,
-                   "Error: you can not call probe(...) when you only have "
-                   "one process!" );
+                   "you can not call probe(...) when you only have one "
+                   "process!" );
 #endif // end HAVE_FRENSIE_MPI
 }
 
@@ -263,8 +261,8 @@ int getMessageSize( const Teuchos::CommStatus<Ordinal>& status )
 
     TEST_FOR_EXCEPTION( serial_comm_status == NULL,
                         std::runtime_error,
-                        "Error: The size of the message could not be "
-                        "determined! \n\tNote: The message size can only be "
+                        "the size of the message could not be determined! \n"
+                        "\tNote: The message size can only be "
                         "determined after a call to probe or iprobe." );
 
     return 0;

@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "Utility_GaussLegendreQuadratureSet.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -230,9 +231,8 @@ std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
   }
   // Make sure weights are valid
   if ( sum_of_weights > long_float(1) )
-  {
-    std::cout << std::endl << " Error: non-physical weight! " << std::endl;
-  }
+    FRENSIE_LOG_WARNING( "non-physical weight!" );
+  
   // Calculate the weight of the Mu = 1 node
   weights[weights.size()-1] = long_float(1) - sum_of_weights;
 }

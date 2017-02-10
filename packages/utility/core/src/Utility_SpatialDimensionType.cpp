@@ -59,7 +59,7 @@ SpatialDimensionType convertSpatialDimensionNameToEnum(
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: Spatial dimension name " << dimension_name <<
+                     "spatial dimension name " << dimension_name <<
                      " cannot be converted to an enum!" );
   }
 }
@@ -84,7 +84,7 @@ std::string convertSpatialDimensionTypeEnumToString(
     return "Polar Angle Cosine Spatial Dimension";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: An unknown SpatialDimensionType was "
+                     "an unknown SpatialDimensionType was "
                      "encountered (" << (unsigned)dimension << ")!" );
   }
 }

@@ -57,7 +57,7 @@ DirectionalDimensionType convertDirectionalDimensionNameToEnum(
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: Directional dimension name " << dimension_name <<
+                     "directional dimension name " << dimension_name <<
                      " cannot be converted to an enum!" );
   }
 }
@@ -82,8 +82,8 @@ std::string convertDirectionalDimensionTypeEnumToString(
     return "Polar Angle Cosine Directional Dimension";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: An unknown DirectionalDimensionType was "
-                     "encountered (" << (unsigned)dimension << ")!" );
+                     "an unknown DirectionalDimensionType was encountered ("
+                     << (unsigned)dimension << ")!" );
   }
 }
   

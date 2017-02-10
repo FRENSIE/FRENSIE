@@ -27,7 +27,7 @@ std::string convertSpatialCoordinateSystemTypeEnumToString(
     return "Spherical Spatial Coordinate System";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: Spatial coordinate system type "
+                     "spatial coordinate system type "
                      << (unsigned)coord_system <<
                      " cannot be converted to a string!" );
   }

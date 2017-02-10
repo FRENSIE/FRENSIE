@@ -357,7 +357,7 @@ struct HDF5TypeTraits<Pair<T1,T2> >
     }
 
     HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "Error: Unable to create the HDF5 data type!" );
+                                     "unable to create the HDF5 data type!" );
 
     return memtype;
   }
@@ -421,7 +421,7 @@ struct HDF5TypeTraits<Trip<T1,T2,T3> >
     }
 
     HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "Error: Unable to crete the HDF5 data type!" );
+                                     "unable to crete the HDF5 data type!" );
 
     return memtype;
   }
@@ -494,7 +494,7 @@ struct HDF5TypeTraits<Quad<T1,T2,T3,T4> >
     }
 
     HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "Error: Unable to crete the HDF5 data type!" );
+                                     "unable to crete the HDF5 data type!" );
 
     return memtype;
   }

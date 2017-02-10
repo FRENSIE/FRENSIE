@@ -27,7 +27,6 @@
 #include "Utility_HDF5TypeTraits.hpp"
 #include "Utility_ArrayTraits.hpp"
 #include "Utility_HDF5ExceptionCatchMacros.hpp"
-#include "Utility_Assertion.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -518,11 +517,12 @@ void HDF5FileHandler::readValueFromDataSetAttribute(
     hsize_t dims[rank];
     int ndims = dataspace.getSimpleExtentDims( dims, NULL );
 
-    ASSERT_ALWAYS( (rank == 1 && dims[0] == 1) );
+    TEST_FOR_EXCEPTION( rank != 1 || dims[0] != 1,
+                        std::runtime_error,
+                        "cannot read a single value from an attribute array.");
 
     // Read the data in the dataset and save it to the output array
-    attribute.read( HDF5TypeTraits<T>::dataType(),
-		    &value );
+    attribute.read( HDF5TypeTraits<T>::dataType(), &value );
   }
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
@@ -864,12 +864,12 @@ void HDF5FileHandler::readValueFromGroupAttribute(
     hsize_t dims[rank];
     int ndims = dataspace.getSimpleExtentDims( dims, NULL );
 
-    ASSERT_ALWAYS_MSG( (rank == 1 && dims[0] == 1),
-			      "Fatal Error: Cannot read a single value from an attribute array.");
+    TEST_FOR_EXCEPTION( rank != 1 || dims[0] != 1,
+                        std::runtime_error,
+                        "cannot read a single value from an attribute array.");
 
     // Read the data in the dataset and save it to the output array
-    attribute.read( HDF5TypeTraits<T>::dataType(),
-		    &value );
+    attribute.read( HDF5TypeTraits<T>::dataType(), &value );
   }
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,

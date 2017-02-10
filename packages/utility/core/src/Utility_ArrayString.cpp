@@ -67,8 +67,8 @@ void ArrayString::replacePiInSubstring( const std::string::size_type start,
 
   TEST_FOR_EXCEPTION( array_string.find( "pi", pi_pos+2 ) < true_end,
 		      std::runtime_error,
-		      "Error: 'pi' cannot occur multiple times in the same "
-		      "array element!" );
+		      "'pi' cannot occur multiple times in the same array "
+                      "element!" );
 
   if( pi_pos >= start && pi_pos < true_end )
   {
@@ -103,7 +103,7 @@ void ArrayString::replacePiInSubstring( const std::string::size_type start,
     else if( div_pos < pi_pos )
     {
       THROW_EXCEPTION( std::runtime_error,
-		       "Error: invalid array element value ("
+		       "invalid array element value ("
 		       << array_string.substr( start, true_end )
 		       << ")! " );
     }
@@ -132,14 +132,14 @@ void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
   TEST_FOR_EXCEPTION( array_elements.front().find_first_of( "il" ) <
 		      array_elements.front().size(),
 		      std::runtime_error,
-		      "Error: the first array element cannot have an "
-		      "interval operator!" );
+		      "the first array element cannot have an interval "
+                      "operator!" );
 
   TEST_FOR_EXCEPTION( array_elements.back().find_first_of( "il" ) <
 		      array_elements.back().size(),
 		      std::runtime_error,
-		      "Error: the last array element cannot have an "
-		      "interval operator!" );
+		      "the last array element cannot have an interval "
+                      "operator!" );
 
   std::string::size_type bracket_pos = array_elements.front().find( "{" );
 
@@ -188,14 +188,14 @@ void ArrayString::replaceIntervalOperatorInSubstring(
     TEST_FOR_EXCEPTION( left_element.find_first_of( "il" ) <
 			left_element.size(),
 			std::runtime_error,
-			"Error: interval operators cannot occur in "
-			"consecutive array elements!" );
+			"interval operators cannot occur in consecutive array "
+                        "elements!" );
 
     TEST_FOR_EXCEPTION( right_element.find_first_of( "il" ) <
 			right_element.size(),
 			std::runtime_error,
-			"Error: interval operators cannot occur in "
-			"consecutive array elements!" );
+			"interval operators cannot occur in consecutive array "
+                        "elements!" );
 
     double left_value, right_value;
 
@@ -213,9 +213,8 @@ void ArrayString::replaceIntervalOperatorInSubstring(
 
     TEST_FOR_EXCEPTION( left_value > right_value,
 			std::runtime_error,
-			"Error: the array elements must be in ascending "
-			"order (" << left_value << " !<= " << right_value <<
-			")!" );
+			"the array elements must be in ascending order ("
+                        << left_value << " !<= " << right_value << ")!" );
 
     int intervals;
 
@@ -227,8 +226,8 @@ void ArrayString::replaceIntervalOperatorInSubstring(
 
     TEST_FOR_EXCEPTION( intervals <= 0,
 			std::runtime_error,
-			"Error: a positive integer must be specified with "
-			"the interval operator!" );
+			"a positive integer must be specified with the "
+                        "interval operator!" );
 
     // Increment the interval value to account for the last element
     ++intervals;
@@ -258,9 +257,9 @@ void ArrayString::replaceIntervalOperatorInSubstring(
     {
       TEST_FOR_EXCEPTION( left_value <= 0.0,
 			  std::runtime_error,
-			  "Error: the starting value ( "
-			  << left_value << ") must be positive when "
-			  "using the log interval operator (l)!" );
+			  "the starting value ( " << left_value <<
+                          ") must be positive when using the log interval "
+                          "operator (l)!" );
 
       double step_size = log(right_value/left_value)/intervals;
 

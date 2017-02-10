@@ -25,7 +25,7 @@ std::string convertDirectionalCoordinateSystemTypeEnumToString(
     return "Spherical Directional Coordinate System";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: Directional coordinate system type "
+                     "directional coordinate system type "
                      << (unsigned)coord_system <<
                      " cannot be converted to a string!" );
   }
