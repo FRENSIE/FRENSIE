@@ -167,13 +167,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   getAngularGridAndPDF )
+                   getAngularGridAndPDF_LinLinLog )
 {
   std::vector<double> angular_grid, evaluated_pdf;
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -189,7 +189,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test inbetween energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -206,7 +206,64 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test highest energy bin
   energy = 1.0e+5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
+    angular_grid,
+    evaluated_pdf,
+    data_container->getCutoffElasticAngles(),
+    data_container->getCutoffElasticPDF(),
+    energy );
+
+  TEST_EQUALITY_CONST( angular_grid.size(), 90 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
+  TEST_EQUALITY_CONST( evaluated_pdf.size(), 90 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 1.76576e-8 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 9.86374e5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the angular grid can be returned
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
+                   getAngularGridAndPDF_LinLinLin )
+{
+  std::vector<double> angular_grid, evaluated_pdf;
+
+  // Test lowerest energy bin
+  double energy = 1.0e-5;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
+    angular_grid,
+    evaluated_pdf,
+    data_container->getCutoffElasticAngles(),
+    data_container->getCutoffElasticPDF(),
+    energy );
+
+  TEST_EQUALITY_CONST( angular_grid.size(), 2 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
+  TEST_EQUALITY_CONST( evaluated_pdf.size(), 2 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 0.5 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 0.5 );
+
+  // Test inbetween energy bins
+  energy = 20.0;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
+    angular_grid,
+    evaluated_pdf,
+    data_container->getCutoffElasticAngles(),
+    data_container->getCutoffElasticPDF(),
+    energy );
+
+  TEST_EQUALITY_CONST( angular_grid.size(), 79 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
+  TEST_EQUALITY_CONST( evaluated_pdf.size(), 79 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 6.14602999999999988e-08 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 4.33429111111111124e+05 );
+
+
+  // Test highest energy bin
+  energy = 1.0e5;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -224,17 +281,18 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the cutoff distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   createCutoffElasticDistribution )
+                   createCutoffElasticDistribution_LinLinLog )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
         native_cutoff_elastic_distribution,
         *data_container,
         1.0 );
 
   // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
+  std::vector<double> fake_stream( 2 );
   // Cutoff
   fake_stream[0] = 0.5; // sample angle cosine = 1.249161208881750E-02
+  fake_stream[1] = 0.5; // sample angle cosine = 1.249161208881750E-02
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -251,14 +309,75 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                           1.0 - 1.249161208881750E-02,
                           1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+
+  incoming_energy = 1.0e-4;
+
+  // sample cutoff
+  native_cutoff_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+                          0.49375394395559125,
+                          1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cutoff distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   createCutoffElasticDistribution_adjoint )
+                   createCutoffElasticDistribution_LinLinLin )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+        native_cutoff_elastic_distribution,
+        *data_container,
+        1.0 );
+
+  // Set fake random number stream
+  std::vector<double> fake_stream( 2 );
+  // Cutoff
+  fake_stream[0] = 0.5; // sample angle cosine = 1.249161208881750E-02
+  fake_stream[1] = 0.5; // sample angle cosine = 1.249161208881750E-02
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 1.0e-3;
+  double scattering_angle_cosine, outgoing_energy;
+
+  // sample cutoff
+  native_cutoff_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+                          1.0 - 1.249161208881750E-02,
+                          1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+
+  incoming_energy = 1.0e-4;
+
+  // sample cutoff
+  native_cutoff_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+                          0.0897730352646529,
+                          1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cutoff distribution can be created
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
+                   createCutoffElasticDistribution_LinLinLog_adjoint )
+{
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
         native_cutoff_elastic_distribution,
         *adjoint_data_container,
         1.0 );
@@ -266,19 +385,73 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
   fake_stream[0] = 0.5; // sample mu = 0.9875083879111824503
-
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
+  double incoming_energy = 1.0e-3;
   double scattering_angle_cosine, outgoing_energy;
 
-  // sampleAndRecordTrialsImpl from distribution
-  native_cutoff_elastic_distribution->sample( 1.0e-3,
+  // sample from distribution
+  native_cutoff_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
 
   // test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.98549702576858821956, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+
+  incoming_energy = 1.0e-4;
+  // sample from distribution
+  native_cutoff_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+                          0.49274826288429413,
+                          1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cutoff distribution can be created
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
+                   createCutoffElasticDistribution_LinLinLin_adjoint )
+{
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+        native_cutoff_elastic_distribution,
+        *adjoint_data_container,
+        1.0 );
+
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 0.5; // sample mu = 0.9875083879111824503
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 1.0e-3;
+  double scattering_angle_cosine, outgoing_energy;
+
+  // sample from distribution
+  native_cutoff_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.98549702576858821956, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+
+  incoming_energy = 1.0e-4;
+  // sample from distribution
+  native_cutoff_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+                          0.0895901841607807,
+                          1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -394,16 +567,17 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the moment preserving distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   createMomentPreservingElasticDistribution )
+                   createMomentPreservingElasticDistribution_LinLinLog )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
         native_mp_elastic_distribution,
         *data_container,
         0.9 );
 
   // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
+  std::vector<double> fake_stream( 2 );
   fake_stream[0] = 1.44375258484736535e-01; // sample mu = 9.23978505045084053e-01
+  fake_stream[1] = 0.02;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -418,21 +592,76 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.23978505045084053e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+
+  incoming_energy = 1.0e-4;
+
+  // sample moment preserving
+  native_mp_elastic_distribution->sample( incoming_energy,
+                                          outgoing_energy,
+                                          scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9162754118818063, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the moment preserving distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   createMomentPreservingElasticDistribution_adjoint )
+                   createMomentPreservingElasticDistribution_LinLinLin )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
+        native_mp_elastic_distribution,
+        *data_container,
+        0.9 );
+
+  // Set fake random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 1.44375258484736535e-01; // sample mu = 9.23978505045084053e-01
+  fake_stream[1] = 0.02;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 1.0e-3;
+  double scattering_angle_cosine, outgoing_energy;
+
+  // sample moment preserving
+  native_mp_elastic_distribution->sample( incoming_energy,
+                                          outgoing_energy,
+                                          scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.23978505045084053e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+
+  incoming_energy = 1.0e-4;
+
+  // sample moment preserving
+  native_mp_elastic_distribution->sample( incoming_energy,
+                                          outgoing_energy,
+                                          scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9162754118818063, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the moment preserving distribution can be created
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
+                   createMomentPreservingElasticDistribution_LinLinLog_adjoint )
+{
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
         native_mp_elastic_distribution,
         *adjoint_data_container,
         0.9 );
 
   // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
+  std::vector<double> fake_stream( 2 );
   fake_stream[0] = 1.44375258484736535e-01; // sample mu = 9.23978505045084053e-01
+  fake_stream[1] = 0.02;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -447,6 +676,60 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.92398608900202416905, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+
+  incoming_energy = 1.0e-4;
+
+  // sample moment preserving
+  native_mp_elastic_distribution->sample( incoming_energy,
+                                          outgoing_energy,
+                                          scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9162761013324372, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the moment preserving distribution can be created
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
+                   createMomentPreservingElasticDistribution_LinLinLin_adjoint )
+{
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
+        native_mp_elastic_distribution,
+        *adjoint_data_container,
+        0.9 );
+
+  // Set fake random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 1.44375258484736535e-01; // sample mu = 9.23978505045084053e-01
+  fake_stream[1] = 0.02;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 1.0e-3;
+  double scattering_angle_cosine, outgoing_energy;
+
+  // sample moment preserving
+  native_mp_elastic_distribution->sample( incoming_energy,
+                                          outgoing_energy,
+                                          scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.92398608900202416905, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+
+  incoming_energy = 1.0e-4;
+
+  // sample moment preserving
+  native_mp_elastic_distribution->sample( incoming_energy,
+                                          outgoing_energy,
+                                          scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9162761013324372, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-4, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

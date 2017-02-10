@@ -1,20 +1,25 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.cpp
+//! \file   MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory_def.hpp
 //! \author Luke Kersting
 //! \brief  The electroionization subshell scattering distribution Native factory definition
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
+#define MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
+
+
 // FRENSIE Includes
-#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Create a electroionization subshell distribution
-void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
+template <typename TwoDInterpPolicy>
+void
+ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,
@@ -29,7 +34,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
 
   // Create the subshell distribution
-  createSubshellDistribution( raw_electroionization_data,
+  createSubshellDistribution<TwoDInterpPolicy>( raw_electroionization_data,
                               energy_grid,
                               subshell,
                               subshell_distribution );
@@ -41,7 +46,9 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
 }
 
 // Create the subshell recoil distribution
-void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubshellDistribution(
+template <typename TwoDInterpPolicy>
+void
+ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid,
     const unsigned subshell,
@@ -75,13 +82,14 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
 
   // Create the scattering function
   subshell_distribution.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy>(
             function_data ) );
 }
 
 } // end MonteCarlo namespace
 
+#endif // end MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
+
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.cpp
 //---------------------------------------------------------------------------//
-

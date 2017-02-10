@@ -141,4 +141,3 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLoss
 //---------------------------------------------------------------------------//
 // end MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory_def.hpp
 //---------------------------------------------------------------------------//
-

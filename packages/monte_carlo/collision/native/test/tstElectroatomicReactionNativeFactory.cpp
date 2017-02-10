@@ -31,7 +31,7 @@ Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 std::shared_ptr<MonteCarlo::ElectroatomicReaction> reaction;
 
 //---------------------------------------------------------------------------//
-// Tests.
+// LinLinLog Tests.
 //---------------------------------------------------------------------------//
 // Check that an analog elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
@@ -46,24 +46,24 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
                        MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
 
   // Test that the stored cross section is correct
-  double energy = 1.00000e-5;
+  double energy = 1.0e-5;
   double cross_section =
     reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000e+9 + 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e9 + 0.0, 1e-12 );
 
-  energy = 4.00000e-4;
+  energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e+8 + 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e8 + 0.0, 1e-12 );
 
-  energy = 1.00000e+5;
+  energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2 + 2.1116099116949E+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2 + 2.1116099116949e6, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -83,21 +83,21 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
                        MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
 
   // Test that the stored cross section is correct
-  double energy = 1.00000e-5;
+  double energy = 1.0e-5;
   double cross_section =
     reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000e+9, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e9, 1e-12 );
 
-  energy = 4.00000e-4;
+  energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e+8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e8, 1e-12 );
 
-  energy = 1.00000e+5;
+  energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
 
   TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2, 1e-12 );
@@ -137,7 +137,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.1116099116949E+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.1116099116949e6, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -164,12 +164,12 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   double cross_section =
     reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.10632944155859E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.10632944155859e8, 1e-12 );
 
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.73737676297259E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.73737676297259e8, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
@@ -194,21 +194,21 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
                        MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
 
   // Test that the stored cross section is correct
   double cross_section =
-    reaction->getCrossSection( 1.00000e-5 );
+    reaction->getCrossSection( 1.0e-5 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.757550000000e+6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.75755e6, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 4.00000e-4 );
+  cross_section = reaction->getCrossSection( 4.0e-4 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.226820000000e+8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.22682e8, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 1.00000e+5 );
+  cross_section = reaction->getCrossSection( 1.0e5 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.578610000000e+6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.57861e6, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -234,54 +234,54 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
               reactions.front()->getReactionType(),
               MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
-                       8.82899999999999935e-02 );
+                       8.82899999999999935e-2 );
 
   // Test the first shell's stored cross section is correct
   double cross_section =
-    reactions.front()->getCrossSection( 8.82899999999999935e-02 );
+    reactions.front()->getCrossSection( 8.82899999999999935e-2 );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section =
-    reactions.front()->getCrossSection( 1.00000e-1 );
+    reactions.front()->getCrossSection( 1.0e-1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.283500e-1, 1e-12 );
-
-  cross_section =
-    reactions.front()->getCrossSection( 1.58489e+2 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 2.788860E+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.2835e-1, 1e-12 );
 
   cross_section =
-    reactions.front()->getCrossSection( 1.00000e+5 );
+    reactions.front()->getCrossSection( 1.58489e2 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.649190e+1, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.788860e1, 1e-12 );
+
+  cross_section =
+    reactions.front()->getCrossSection( 1.0e5 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 3.649190e1, 1e-12 );
 
   // Check the last shell's reaction properties
   TEST_EQUALITY_CONST(
           reactions.back()->getReactionType(),
           MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reactions.back()->getThresholdEnergy(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( reactions.back()->getThresholdEnergy(), 1.0e-5 );
 
   cross_section =
-    reactions.back()->getCrossSection( 1.00000e-5 );
+    reactions.back()->getCrossSection( 1.0e-5 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.065300e+8, 1e-12 );
-
-  cross_section =
-    reactions.back()->getCrossSection( 1.00000e-3 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 3.248850E+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0653e8, 1e-12 );
 
   cross_section =
-    reactions.back()->getCrossSection( 1.000000E+00 );
+    reactions.back()->getCrossSection( 1.0e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.033500E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.248850e7, 1e-12 );
 
   cross_section =
-    reactions.back()->getCrossSection( 1.00000e+5 );
+    reactions.back()->getCrossSection( 1.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.8223400e+5, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0335e5, 1e-12 );
+
+  cross_section =
+    reactions.back()->getCrossSection( 1.0e5 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.82234e5, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -301,25 +301,25 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
                        MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
 
   // Test that the stored cross section is correct
   double cross_section =
     reaction->getCrossSection( reaction->getThresholdEnergy() );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.869800000000e+3, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 1.00000e-3 );
+  cross_section = reaction->getCrossSection( 1.0e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.528370E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.528370e3, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 4.000000E+01 );
+  cross_section = reaction->getCrossSection( 4.0e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.405050E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 1.00000e+5 );
+  cross_section = reaction->getCrossSection( 1.0e5 );
 
-  TEST_EQUALITY_CONST( cross_section, 1.9541700e+3 );
+  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
 
   // Clear the reaction
   reaction.reset();
@@ -344,31 +344,298 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
                        MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
 
   // Test that the stored cross section is correct
   double cross_section =
     reaction->getCrossSection( reaction->getThresholdEnergy() );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.869800e+3, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 1.00000e-3 );
+  cross_section = reaction->getCrossSection( 1.0e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.528370E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.528370e3, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 4.000000E+01 );
+  cross_section = reaction->getCrossSection( 4.0e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.405050E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 1.00000e+5 );
+  cross_section = reaction->getCrossSection( 1.0e5 );
 
-  TEST_EQUALITY_CONST( cross_section, 1.9541700e+3 );
+  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
 
   // Clear the reaction
   reaction.reset();
 }
 
 
+//---------------------------------------------------------------------------//
+// LinLinLog Tests.
+//---------------------------------------------------------------------------//
+// Check that an analog elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createAnalogElasticReaction_lin )
+{
+  MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+                *data_container,
+                energy_grid,
+                grid_searcher,
+                reaction,
+                false );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section =
+    reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e9 + 0.0, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e8 + 0.0, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2 + 2.1116099116949e6, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+// Check that an cutoff elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createCutoffElasticReaction_lin )
+{
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLin>(
+                *data_container,
+                energy_grid,
+                grid_searcher,
+                reaction );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section =
+    reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e9, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e8, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+// Check that an moment preserving elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createMomentPreservingElasticReaction_lin )
+{
+  MonteCarlo::ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLin>(
+                *data_container,
+                energy_grid,
+                grid_searcher,
+                reaction );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1e-5;
+  double cross_section =
+    reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.10632944155859e8, 1e-12 );
+
+  energy = 4e-4;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.73737676297259e8, 1e-12 );
+
+  energy = 1e5;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.20377030499672E-03, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization subshell reactions can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createSubshellElectroelectricReactions_lin )
+{
+  std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
+
+  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
+                               *data_container,
+                               energy_grid,
+                               grid_searcher,
+                               reactions );
+
+  TEST_EQUALITY_CONST( reactions.size(), 24 );
+
+  // Test the first shell's reaction properties
+  TEST_EQUALITY_CONST(
+              reactions.front()->getReactionType(),
+              MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
+                       8.82899999999999935e-2 );
+
+  // Test the first shell's stored cross section is correct
+  double cross_section =
+    reactions.front()->getCrossSection( 8.82899999999999935e-2 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
+  cross_section =
+    reactions.front()->getCrossSection( 1.0e-1 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 9.2835e-1, 1e-12 );
+
+  cross_section =
+    reactions.front()->getCrossSection( 1.58489e2 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.788860e1, 1e-12 );
+
+  cross_section =
+    reactions.front()->getCrossSection( 1.0e5 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 3.649190e1, 1e-12 );
+
+  // Check the last shell's reaction properties
+  TEST_EQUALITY_CONST(
+          reactions.back()->getReactionType(),
+          MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reactions.back()->getThresholdEnergy(), 1.0e-5 );
+
+  cross_section =
+    reactions.back()->getCrossSection( 1.0e-5 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.0653e8, 1e-12 );
+
+  cross_section =
+    reactions.back()->getCrossSection( 1.0e-3 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 3.248850e7, 1e-12 );
+
+  cross_section =
+    reactions.back()->getCrossSection( 1.0 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.0335e5, 1e-12 );
+
+  cross_section =
+    reactions.back()->getCrossSection( 1.0e5 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.82234e5, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a basic (dipole distribution) bremsstrahlung reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createBremsstrahlungReaction_dipole_lin )
+{
+  photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
+
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
+                               *data_container,
+                               energy_grid,
+                               grid_searcher,
+                               reaction,
+                               photon_distribution_function );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double cross_section =
+    reaction->getCrossSection( reaction->getThresholdEnergy() );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1.0e-3 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 9.528370e3, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 4.0e1 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1.0e5 );
+
+  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+/* Check that a electroatom with detailed 2BS photon angular distribution
+ * data can be created
+ */
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createBremsstrahlungReaction_2bs_lin )
+{
+  photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
+
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
+                               *data_container,
+                               energy_grid,
+                               grid_searcher,
+                               reaction,
+                               photon_distribution_function );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double cross_section =
+    reaction->getCrossSection( reaction->getThresholdEnergy() );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1.0e-3 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 9.528370e3, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 4.0e1 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.40505e3, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1.0e5 );
+
+  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+
+  // Clear the reaction
+  reaction.reset();
+}
 
 //---------------------------------------------------------------------------//
 // Check that a void absorption reaction can be created
@@ -381,7 +648,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
                        MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
 
   // Test that the stored cross section is correct
   double cross_section =
@@ -389,7 +656,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   TEST_EQUALITY_CONST( cross_section, 0.0);
 
-  cross_section = reaction->getCrossSection( 1.00000e-4 );
+  cross_section = reaction->getCrossSection( 1.0e-4 );
 
   TEST_EQUALITY_CONST( cross_section, 0.0);
 
@@ -397,7 +664,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   TEST_EQUALITY_CONST( cross_section, 0.0);
 
-  cross_section = reaction->getCrossSection( 1.00000e+5 );
+  cross_section = reaction->getCrossSection( 1.0e5 );
 
   TEST_EQUALITY_CONST( cross_section, 0.0);
 

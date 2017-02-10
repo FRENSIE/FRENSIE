@@ -15,17 +15,17 @@ namespace MonteCarlo{
 
 // Create a atomic excitation distribution
 void AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
-			  const Data::ElectronPhotonRelaxationDataContainer& data_container,
-			  std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
-			    energy_loss_distribution )
+        const Data::ElectronPhotonRelaxationDataContainer& data_container,
+        std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
+            energy_loss_distribution )
 {
   // Create the energy loss function
   AtomicExcitationElectronScatteringDistribution::AtomicDistribution
                                                     energy_loss_function;
 
   AtomicExcitationElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
-							  data_container,
-							  energy_loss_function );
+            data_container,
+            energy_loss_function );
 
   energy_loss_distribution.reset(
    new AtomicExcitationElectronScatteringDistribution( energy_loss_function ) );
@@ -33,7 +33,7 @@ void AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicEx
 
 // Create the energy loss function
 void AtomicExcitationElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
-	   const Data::ElectronPhotonRelaxationDataContainer& data_container,
+       const Data::ElectronPhotonRelaxationDataContainer& data_container,
            AtomicExcitationElectronScatteringDistribution::AtomicDistribution&
                                                         energy_loss_function )
 {

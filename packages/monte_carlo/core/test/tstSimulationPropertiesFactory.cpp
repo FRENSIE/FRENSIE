@@ -18,7 +18,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
-#include "MonteCarlo_ElectronSecondaryInterpolationType.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -83,9 +82,8 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   TEST_ASSERT( !parsed_properties->isElectroionizationModeOn() );
   TEST_ASSERT( !parsed_properties->isBremsstrahlungModeOn() );
   TEST_ASSERT( !parsed_properties->isAtomicExcitationModeOn() );
+  TEST_ASSERT( !parsed_properties->isLinLinLogInterpolationModeOn() );
   TEST_ASSERT( !parsed_properties->isWeightedInterpolationModeOn() );
-  TEST_EQUALITY_CONST( parsed_properties->getSecondaryInterpolationMethod(),
-                       MonteCarlo::LIN_LIN_LIN );
   TEST_EQUALITY_CONST(
              parsed_properties->getBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );

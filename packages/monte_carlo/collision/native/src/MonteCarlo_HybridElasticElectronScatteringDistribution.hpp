@@ -42,7 +42,8 @@ public:
   //! Constructor
   HybridElasticElectronScatteringDistribution(
     const std::shared_ptr<HybridDistribution>& hybrid_distribution,
-    const double& cutoff_angle_cosine );
+    const double& cutoff_angle_cosine,
+    const bool& use_linlinlog_interpolation = true );
 
   //! Destructor
   virtual ~HybridElasticElectronScatteringDistribution()
@@ -84,7 +85,6 @@ public:
 protected:
 
    //! Sample an outgoing direction from the distribution
-  template<typename InterpPolicy = Utility::LinLog>
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
@@ -103,25 +103,20 @@ protected:
     EvaluationMethod evaluate ) const;
 
   // Evaluate the distribution using the desired evaluation method
-  template<typename EvaluationMethod, typename InterpPolicy = Utility::LinLog>
+  template<typename EvaluationMethod>
   double evaluateImpl( const double incoming_energy,
                        const double scattering_angle_cosine,
                        EvaluationMethod evaluate,
                        double below_lower_limit_return_value = 0.0,
                        double above_upper_limit_return_value = 0.0  ) const;
 
-//  // Evaluate the distribution using the desired evaluation method
-//  template<typename InterpPolicy = Utility::LinLog>
-//  double evaluateImpl( const double incoming_energy,
-//                       const double scattering_angle_cosine,
-//                       double (Utility::TabularOneDDistribution::*)(double) const evaluate,
-//                       double below_lower_limit_return_value = 0.0,
-//                       double above_upper_limit_return_value = 0.0  ) const;
-
 private:
 
   // cutoff angle cosine
   double d_cutoff_angle_cosine;
+
+  // boolean to for LinLinLog interpolation (true = LinLinLog, false = LinLinLin)
+  bool d_use_linlinlog_interpolation;
 
   /* Hybrid distribution ( first = energy, second = 1D cutoff distribution,
    * third = 1D Moment preserving discrete distribution,

@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 //! Initialize the simulation properties
 void SimulationElectronPropertiesFactory::initializeProperties(
-			     const Teuchos::ParameterList& properties,
+                             const Teuchos::ParameterList& properties,
                              SimulationElectronProperties& electron_properties,
                              std::ostream* os_warn )
 {
@@ -30,12 +30,12 @@ void SimulationElectronPropertiesFactory::initializeProperties(
     else
     {
       electron_properties.setMinElectronEnergy(
-			  electron_properties.getAbsoluteMinElectronEnergy() );
+                          electron_properties.getAbsoluteMinElectronEnergy() );
 
       *os_warn << "Warning: the lowest supported electron energy is "
-		<< electron_properties.getAbsoluteMinElectronEnergy()
-		<< ". This value will be used instead of "
-		<< min_energy << "." << std::endl;
+               << electron_properties.getAbsoluteMinElectronEnergy()
+               << ". This value will be used instead of "
+               << min_energy << "." << std::endl;
     }
   }
 
@@ -49,12 +49,12 @@ void SimulationElectronPropertiesFactory::initializeProperties(
     else
     {
       electron_properties.setMaxElectronEnergy(
-			  electron_properties.getAbsoluteMaxElectronEnergy() );
+                          electron_properties.getAbsoluteMaxElectronEnergy() );
 
       *os_warn << "Warning: the highest supported electron energy is "
-		<< electron_properties.getAbsoluteMaxElectronEnergy()
-		<< ". This value will be used instead of "
-		<< max_energy << "." << std::endl;
+               << electron_properties.getAbsoluteMaxElectronEnergy()
+               << ". This value will be used instead of "
+               << max_energy << "." << std::endl;
     }
   }
 
@@ -93,38 +93,18 @@ void SimulationElectronPropertiesFactory::initializeProperties(
       electron_properties.setAtomicExcitationModeOff();
   }
 
+  // Get the secondary electron LinLinLog interpolation mode - optional
+  if( properties.isParameter( "Electron LinLinLog Interpolation" ) )
+  {
+    if( !properties.get<bool>( "Electron LinLinLog Interpolation" ) )
+      electron_properties.setLinLinLogInterpolationModeOff();
+  }
+
   // Get the weighted interpolation mode - optional
   if( properties.isParameter( "Electron Weighted Interpolation" ) )
   {
     if( !properties.get<bool>( "Electron Weighted Interpolation" ) )
       electron_properties.setWeightedInterpolationModeOff();
-  }
-
-  // Get the interplation method for secondary electron distributions - optional
-  if( properties.isParameter( "Secondary Interpolation Method" ) )
-  {
-    std::string raw_method =
-      properties.get<std::string>( "Secondary Interpolation Method" );
-
-     ElectronSecondaryInterpolationType interpolation_method;
-
-    if( raw_method == "Lin-Lin-Lin" || raw_method == "LIN-LIN-LIN" ||
-        raw_method == "lin-lin-lin" || raw_method == "LinLinLin" ||
-        raw_method == "LINLINLIN" || raw_method == "linlinlin")
-      interpolation_method = LIN_LIN_LIN;
-    else if( raw_method == "Lin-Lin-Log" || raw_method == "LIN-LIN-LOG" ||
-        raw_method == "lin-lin-log" || raw_method == "LinLinLog" ||
-        raw_method == "LINLINLOG" || raw_method == "linlinlog")
-      interpolation_method = LIN_LIN_LOG;
-    else
-    {
-      THROW_EXCEPTION( std::runtime_error,
-                       "Error: secondary electron interplation method "
-                       << raw_method <<
-                       " is not currently supported!" );
-    }
-
-    electron_properties.setSecondaryInterpolationMethod( interpolation_method );
   }
 
   // Get the bremsstrahlung photon angular distribution function - optional
@@ -166,10 +146,10 @@ void SimulationElectronPropertiesFactory::initializeProperties(
     else
     {
       std::cerr << "Warning: the elastic cutoff angle cosine must have a "
-		<< "value between -1 and 1. The default value of "
-		<< electron_properties.getElasticCutoffAngleCosine()
-		<< " will be used instead of " << cutoff_angle_cosine << "."
-		<< std::endl;
+                << "value between -1 and 1. The default value of "
+                << electron_properties.getElasticCutoffAngleCosine()
+                << " will be used instead of " << cutoff_angle_cosine << "."
+                << std::endl;
     }
   }
 

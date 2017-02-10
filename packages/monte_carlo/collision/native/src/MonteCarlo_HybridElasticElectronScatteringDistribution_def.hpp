@@ -44,7 +44,7 @@ double HybridElasticElectronScatteringDistribution::evaluateBin(
 }
 
 // Evaluate the distribution using the desired evaluation method
-template<typename EvaluationMethod, typename InterpPolicy>
+template<typename EvaluationMethod>
 double HybridElasticElectronScatteringDistribution::evaluateImpl(
         const double incoming_energy,
         const double scattering_angle_cosine,
@@ -75,75 +75,27 @@ double HybridElasticElectronScatteringDistribution::evaluateImpl(
     upper_bin = lower_bin;
     ++upper_bin;
 
-    return InterpPolicy::interpolate(
+    if ( d_use_linlinlog_interpolation )
+    {
+      // Use LinLinLog interpolation
+      return Utility::LinLog::interpolate(
               lower_bin->first,
               upper_bin->first,
               incoming_energy,
               this->evaluateBin( lower_bin, scattering_angle_cosine, evaluate ),
               this->evaluateBin( upper_bin, scattering_angle_cosine, evaluate ) );
-  }
-}
-
-// Sample an outgoing direction from the distribution
-template<typename InterpPolicy>
-void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
-                                                const double incoming_energy,
-                                                double& scattering_angle_cosine,
-                                                unsigned& trials ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-
-  // Increment the number of trials
-  ++trials;
-
-  if( incoming_energy < d_hybrid_distribution->front().first ||
-      incoming_energy > d_hybrid_distribution->back().first )
-  {
-    scattering_angle_cosine = 1.0;
-  }
-  else
-  {
-    double random_number =
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-    // Find the bin boundaries
-    HybridDistribution::const_iterator lower_bin, upper_bin;
-
-    // Find the distribution bin with E_i <= E_in
-    lower_bin = Utility::Search::binaryLowerBound<Utility::FIRST>(
-                            d_hybrid_distribution->begin(),
-                            d_hybrid_distribution->end(),
-                            incoming_energy );
-
-    // Sampling the lower bin if E_i = E_in
-    if ( lower_bin->first == incoming_energy )
-    {
-      this->sampleBin( lower_bin, random_number, scattering_angle_cosine );
     }
     else
     {
-      // Find the upper bin
-      upper_bin = lower_bin;
-      upper_bin++;
-
-      // sample scattering angles from the lower and upper bins
-      double lower_angle, upper_angle;
-      this->sampleBin( lower_bin, random_number, lower_angle );
-      this->sampleBin( upper_bin, random_number, upper_angle );
-
-      scattering_angle_cosine =
-        InterpPolicy::interpolate( lower_bin->first,
-                                   upper_bin->first,
-                                   incoming_energy,
-                                   lower_angle,
-                                   upper_angle );
+      // Use LinLinLin interpolation
+      return Utility::LinLin::interpolate(
+              lower_bin->first,
+              upper_bin->first,
+              incoming_energy,
+              this->evaluateBin( lower_bin, scattering_angle_cosine, evaluate ),
+              this->evaluateBin( upper_bin, scattering_angle_cosine, evaluate ) );
     }
   }
-
-  // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= -1.0 );
-  testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
 #endif // end MONTE_CARLO_HYBRID_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_DEF_HPP

@@ -14,7 +14,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationElectronProperties.hpp"
-#include "MonteCarlo_ElectronSecondaryInterpolationType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 //---------------------------------------------------------------------------//
@@ -34,9 +33,8 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
   TEST_ASSERT( properties.isElectroionizationModeOn() );
   TEST_ASSERT( properties.isBremsstrahlungModeOn() );
   TEST_ASSERT( properties.isAtomicExcitationModeOn() );
+  TEST_ASSERT( properties.isLinLinLogInterpolationModeOn() );
   TEST_ASSERT( properties.isWeightedInterpolationModeOn() );
-  TEST_EQUALITY_CONST( properties.getSecondaryInterpolationMethod(),
-                       MonteCarlo::LIN_LIN_LOG );
   TEST_EQUALITY_CONST(
                      properties.getBremsstrahlungAngularDistributionFunction(),
                      MonteCarlo::TWOBS_DISTRIBUTION );
@@ -142,6 +140,21 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicExcitationModeOffOn )
 }
 
 //---------------------------------------------------------------------------//
+// Test that secondary electron LinLinLog interpolation can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setLinLinLogInterpolationModeOffOn )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  properties.setLinLinLogInterpolationModeOff();
+
+  TEST_ASSERT( !properties.isLinLinLogInterpolationModeOn() );
+
+  properties.setLinLinLogInterpolationModeOn();
+  
+  TEST_ASSERT( properties.isLinLinLogInterpolationModeOn() );
+}
+
+//---------------------------------------------------------------------------//
 // Test that weighted interpolation mode can be turned off
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setWeightedInterpolationModeOffOn )
 {
@@ -154,38 +167,6 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setWeightedInterpolationModeOff
   properties.setWeightedInterpolationModeOn();
   
   TEST_ASSERT( properties.isWeightedInterpolationModeOn() );
-}
-
-//---------------------------------------------------------------------------//
-// Test that the interplation method can be turned to LIN_LIN_LIN
-TEUCHOS_UNIT_TEST( SimulationElectronProperties,
-                   setSecondaryInterpolationMethod_LinLinLin )
-{
-  MonteCarlo::SimulationElectronProperties properties;
-  
-  MonteCarlo::ElectronSecondaryInterpolationType interpolation_method;
-  interpolation_method = MonteCarlo::LIN_LIN_LIN;
-
-  properties.setSecondaryInterpolationMethod( interpolation_method );
-
-  TEST_EQUALITY_CONST( properties.getSecondaryInterpolationMethod(),
-                       MonteCarlo::LIN_LIN_LIN );
-}
-
-//---------------------------------------------------------------------------//
-// Test that the interplation method can be turned to LIN_LIN_LOG
-TEUCHOS_UNIT_TEST( SimulationElectronProperties,
-                   setSecondaryInterpolationMethod_LinLinLog )
-{
-  MonteCarlo::SimulationElectronProperties properties;
-  
-  MonteCarlo::ElectronSecondaryInterpolationType interpolation_method;
-  interpolation_method = MonteCarlo::LIN_LIN_LOG;
-
-  properties.setSecondaryInterpolationMethod( interpolation_method );
-
-  TEST_EQUALITY_CONST( properties.getSecondaryInterpolationMethod(),
-                       MonteCarlo::LIN_LIN_LOG );
 }
 
 //---------------------------------------------------------------------------//

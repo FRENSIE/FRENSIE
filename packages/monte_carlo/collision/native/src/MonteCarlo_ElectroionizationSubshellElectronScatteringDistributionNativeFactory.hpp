@@ -16,12 +16,13 @@
 namespace MonteCarlo{
 
 //! The subshell electroionization scattering distribution factory class that uses Native data
-class ElectroionizationSubshellElectronScatteringDistributionNativeFactory //: public ElectroionizationSubshellElectronScatteringDistributionFactory
+class ElectroionizationSubshellElectronScatteringDistributionNativeFactory
 {
 
 public:
 
   //! Create a electroionization subshell distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createElectroionizationSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
@@ -33,6 +34,7 @@ public:
 
 
   //! Create the electroionization subshell distribution function
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double> energy_grid,
@@ -42,6 +44,14 @@ public:
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 

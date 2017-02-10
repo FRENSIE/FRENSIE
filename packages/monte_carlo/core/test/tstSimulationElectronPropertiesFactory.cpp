@@ -48,9 +48,8 @@ TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory, initializeProperties )
   TEST_ASSERT( !properties.isElectroionizationModeOn() );
   TEST_ASSERT( !properties.isBremsstrahlungModeOn() );
   TEST_ASSERT( !properties.isAtomicExcitationModeOn() );
+  TEST_ASSERT( !properties.isLinLinLogInterpolationModeOn() );
   TEST_ASSERT( !properties.isWeightedInterpolationModeOn() );
-  TEST_EQUALITY_CONST( properties.getSecondaryInterpolationMethod(),
-                       MonteCarlo::LIN_LIN_LIN );
   TEST_EQUALITY_CONST(
                      properties.getBremsstrahlungAngularDistributionFunction(),
                      MonteCarlo::DIPOLE_DISTRIBUTION );

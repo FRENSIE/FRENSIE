@@ -43,8 +43,8 @@
     <Parameter name="Electron Electroionization" type="bool" value="false"/>
     <Parameter name="Electron Bremsstrahlung" type="bool" value="false"/>
     <Parameter name="Electron Atomic Excitation" type="bool" value="false"/>
+    <Parameter name="Electron LinLinLog Interpolation" type="bool" value="false"/>
     <Parameter name="Electron Weighted Interpolation" type="bool" value="false"/>
-    <Parameter name="Secondary Interpolation Method" type="string" value="LinLinLin"/>
     <Parameter name="Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
     <Parameter name="Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
   </ParameterList>

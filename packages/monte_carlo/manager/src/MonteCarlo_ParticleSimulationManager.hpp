@@ -29,9 +29,9 @@ namespace MonteCarlo{
 
 //! The generic particle simulation manager class
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
 class ParticleSimulationManager : public SimulationManager
 {
 

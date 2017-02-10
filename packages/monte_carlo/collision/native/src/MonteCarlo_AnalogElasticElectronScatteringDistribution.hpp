@@ -32,7 +32,8 @@ public:
   //! Constructor
   AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
-    const int atomic_number );
+    const int atomic_number,
+    const bool use_linlinlog_interpolation = true );
 
   //! Destructor
   virtual ~AnalogElasticElectronScatteringDistribution()
@@ -134,6 +135,9 @@ private:
 
   // Atomic number (Z) of the target atom
   int d_atomic_number;
+
+  // Bool for linLinLog 2-D interpoaltion (true = LinLinLog, false = LinLinLin).
+  bool d_use_linlinlog_interpolation;
 
   // Atomic number (Z) of the target atom to the 2/3 power (Z^2/3)
   double d_Z_two_thirds_power;

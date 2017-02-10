@@ -19,6 +19,7 @@
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_TwoDInterpolationPolicy.hpp"
 
 namespace MonteCarlo{
 
@@ -29,6 +30,7 @@ class ElectroatomNativeFactory
 public:
 
   //! Create a electroatom core (using the provided atomic relaxation model)
+  template <typename SecondInterpPolicy = Utility::LinLinLog>
   static void createElectroatomCore(
        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -51,6 +53,14 @@ private:
 };
 
 } // end MonteCarlo
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ElectroatomNativeFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_HPP
 

@@ -49,12 +49,14 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+  template <bool use_linlinlog_interpolation = true>
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+  template <bool use_linlinlog_interpolation = true>
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
@@ -74,6 +76,7 @@ public:
     const double& cutoff_angle_cosine = 1.0 );
 
   //! Create a moment preserving elastic distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -85,12 +88,14 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+  template <bool use_linlinlog_interpolation = true>
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+  template <bool use_linlinlog_interpolation = true>
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
@@ -110,6 +115,7 @@ public:
     const double& cutoff_angle_cosine = 1.0 );
 
   //! Create a moment preserving elastic distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -121,6 +127,7 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+  template <bool use_linlinlog_interpolation = true>
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
@@ -130,6 +137,7 @@ public:
     const unsigned& atomic_number );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+  template <bool use_linlinlog_interpolation = true>
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
@@ -155,6 +163,7 @@ public:
     const double& cutoff_angle_cosine );
 
   //! Create a screened Rutherford elastic distribution
+//  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createScreenedRutherfordElasticDistribution(
     std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
@@ -163,6 +172,7 @@ public:
     const unsigned atomic_number );
 
   //! Create a moment preserving elastic distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -172,6 +182,7 @@ public:
     const double& cutoff_angle_cosine = 0.9 );
 
   //! Return angle cosine grid with the evaluated pdf for the given cutoff angle
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void getAngularGridAndPDF(
     std::vector<double>& angular_grid,
     std::vector<double>& evaluated_pdf,
