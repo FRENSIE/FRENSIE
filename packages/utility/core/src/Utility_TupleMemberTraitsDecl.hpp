@@ -46,20 +46,44 @@ struct UndefinedTupleMemberTraits
  * THIRD and FOURTH
  * \ingroup tuple_member_traits
  */
-template<typename Tuple, TupleMember member>
+template<typename Tuple, TupleMember member, typename Enabled = void>
 struct TupleMemberTraits
 {
+  //! The tuple type
+  typedef typename Tuple tupleType;
+  
   //! The type of the desired tuple member
-  typedef typename Tuple::type tupleMemberType;
+  typedef typename Tuple tupleMemberType;
 
   //! Get the value of the desired tuple member
-  static inline tupleMemberType get(const Tuple &tuple)
-  { (void)UndefinedTupleMemberTraits<Tuple,member>::notDefined(); return 0; }
+  static inline const tupleMemberType& get(const tupleType& tuple)
+  { (void)UndefinedTupleMemberTraits<tupleType,member>::notDefined(); return tuple; }
+
+  //! Get the value of the desired tuple member
+  static inline tupleMemberType& get( tupleType& tuple )
+  { (void)UndefinedTupleMemberTraits<tupleType,member>::notDefined(); return tuple; }
 
   //! Set the value of the desired tuple member
-  static inline void set(Tuple &tuple, const tupleMemberType &value)
-  { (void)UndefinedTupleMemberTraits<Tuple,member>::notDefined(); }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  { (void)UndefinedTupleMemberTraits<tupleType,member>::notDefined(); }
 };
+
+/*! This function allows access to the get TupleMemberTraits function.
+ *
+ * This function is simply a more concise way to access the get static
+ * member function associated with the TupleMemberTraits class. It simply
+ * forwards calls to get a member to the associated
+ * Utility::TupleMemberTraits class. It is important to note that the
+ * tuple type will be deduced by the function. The Utility::TupleMember must be
+ * specified manually (i.e. get<FIRST>( my_tuple ) ). Because the return type
+ * is a reference this method can also be used to set the value of the tuple
+ * member.
+ * \ingroup tuple_member_traits
+ */
+template<TupleMember member, typename Tuple>
+inline typename TupleMemberTraits<Tuple,member>::tupleMemberType&
+get( Tuple& tuple )
+{ return TupleMemberTraits<Tuple,member>::get( tuple ); }
 
 /*! This function allows access to the get TupleMemberTraits function.
  *
@@ -72,8 +96,8 @@ struct TupleMemberTraits
  * \ingroup tuple_member_traits
  */
 template<TupleMember member, typename Tuple>
-inline typename TupleMemberTraits<Tuple,member>::tupleMemberType
-get( const Tuple &tuple )
+inline typename const TupleMemberTraits<Tuple,member>::tupleMemberType&
+get( const Tuple& tuple )
 { return TupleMemberTraits<Tuple,member>::get( tuple ); }
 
 /*! This function allows access to the set TupleMemberTraits function.

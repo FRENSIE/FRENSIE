@@ -9,8 +9,18 @@
 #ifndef UTILITY_TUPLE_MEMBER_TRAITS_HPP
 #define UTILITY_TUPLE_MEMBER_TRAITS_HPP
 
+// Std Lib Includes
+#include <utility>
+#include <tuple>
+
 // Boost Includes
 #include <boost/units/quantity.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_constant.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/not.hpp>
 
 // FRENSIE Includes
 #include "Utility_TupleMemberTraitsDecl.hpp"
@@ -18,16 +28,63 @@
 
 namespace Utility{
 
+/*! \brief The partial spacialization of the TupleMemberTraits for all
+ * constant types
+ * \details The set method will not compile when using const types.
+ * \ingroup tuple_member_traits
+ */
+template<typename T, TupleMember member>
+struct TupleMemberTraits<T,member,typename boost::enable_if<boost::is_const<T> >::type> : public TupleMemberTraits<boost::remove_const<T>::type,member>
+{ /* ... */ }
+
+/*! \brief The partial specialization of the TupleMemberTraits for arithmetic
+ * types and FIRST
+ * \ingroup tuple_member_traits
+ */
+template<typename T>
+struct TupleMemberTraits<T,FIRST,typename boost::enable_if<boost::mpl::and_<boost::is_arithmetic<T>,boost::mpl::not_<boost::is_const<T> > > >::type>
+{
+  typedef T tupleType;
+  typedef T tupleMemberType;
+  static inline T& get( tupleType& value )
+  { return value; }
+  static inline const T& get( const tupleType& value )
+  { return value; }
+  static inline void set( tupleType& value, const tupleMemberType new_value )
+  { value = new_value; }
+};
+  
+/*! The partial specialization of the TupleMemberTraits for
+ * boost::units::quantity and FIRST
+ * \ingroup tuple_member_traits
+ */
+template<typename Unit, typename T>
+struct TupleMemberTraits<boost::units::quantity<Unit,T>,FIRST>
+{
+  typedef boost::units::quantity<Unit,T> tupleType;
+  typedef boost::units::quantity<Unit,T> tupleMemberType;
+  static inline tupleMemberType& get( tupleType& quantity )
+  { return quantity; }
+  static inline const tupleMemberType& get( const tupleType& quantity )
+  { return quantity; }
+  static inline void set( tupleType& quantity,
+			  const tupleMemberType& new_quantity )
+  { quantity = new_quantity; }
+};
+
 /*! The partial specialization of the TupleMemberTraits for FIRST
  * \ingroup tuple_member_traits
  */
 template<typename Tuple>
 struct TupleMemberTraits<Tuple,FIRST>
 {
+  typedef typename Tuple tupleType;
   typedef typename Tuple::firstType tupleMemberType;
-  static inline tupleMemberType get( const Tuple &tuple )
+  static inline tupleMemberType& get( tupleType& tuple )
   { return tuple.first; }
-  static inline void set( Tuple &tuple, const tupleMemberType &value )
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return tuple.first; }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
   { tuple.first = value; }
 };
 
@@ -37,10 +94,13 @@ struct TupleMemberTraits<Tuple,FIRST>
 template<typename Tuple>
 struct TupleMemberTraits<Tuple,SECOND>
 {
+  typedef typename Tuple tupleType;
   typedef typename Tuple::secondType tupleMemberType;
-  static inline tupleMemberType get( const Tuple &tuple )
+  static inline tupleMemberType& get( tupleType& tuple )
   { return tuple.second; }
-  static inline void set( Tuple &tuple, const tupleMemberType &value )
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return tuple.second; }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
   { tuple.second = value; }
 };
 
@@ -50,10 +110,13 @@ struct TupleMemberTraits<Tuple,SECOND>
 template<typename Tuple>
 struct TupleMemberTraits<Tuple,THIRD>
 {
+  typedef typename Tuple tupleType;
   typedef typename Tuple::thirdType tupleMemberType;
-  static inline tupleMemberType get( const Tuple &tuple )
+  static inline tupleMemberType& get( tupleType& tuple )
   { return tuple.third; }
-  static inline void set( Tuple &tuple, const tupleMemberType &value )
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return tuple.third; }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
   { tuple.third = value; }
 };
 
@@ -63,93 +126,116 @@ struct TupleMemberTraits<Tuple,THIRD>
 template<typename Tuple>
 struct TupleMemberTraits<Tuple,FOURTH>
 {
+  typedef typename Tuple tupleType;
   typedef typename Tuple::fourthType tupleMemberType;
-  static inline tupleMemberType get( const Tuple &tuple )
+  static inline tupleMemberType& get( tupleType& tuple )
   { return tuple.fourth; }
-  static inline void set( Tuple &tuple, const tupleMemberType &value )
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return tuple.fourth; }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
   { tuple.fourth = value; }
 };
 
-/*! The partial specialization of the TupleMemberTraits for
- * boost::units::quantity and FIRST
+/*! \brief The partial specialization of the TupleMemberTraits for std::pair
+ * and FIRST
  * \ingroup tuple_member_traits
  */
-template<typename Unit, typename T>
-struct TupleMemberTraits<boost::units::quantity<Unit,T>,FIRST>
+template<typename T1, typename T2>
+struct TuplememberTraits<std::pair<T1,T2>,FIRST>
 {
-  typedef boost::units::quantity<Unit,T> tupleMemberType;
-  static inline tupleMemberType get( const tupleMemberType& quantity )
-  { return quantity; }
-  static inline void set( tupleMemberType& quantity,
-			  const tupleMemberType& new_quantity )
-  { quantity = new_quantity; }
+  typedef std::pair<T1,T2> tupleType;
+  typedef T1 tupleMemberType;
+  static inline tupleMemberType& get( tupleType& tuple )
+  { return tuple.first; }
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return tuple.first; }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  { tuple.first = value; }
 };
 
-/*! The partial specialization of the TupleMemberTraits for
- * const boost::units::quantity and FIRST
+/*! \brief The partial specialization of the TupleMemberTraits for std::pair
+ * and SECOND
  * \ingroup tuple_member_traits
  */
-template<typename Unit, typename T>
-struct TupleMemberTraits<const boost::units::quantity<Unit,T>,FIRST>
+template<typename T1, typename T2>
+struct TuplememberTraits<std::pair<T1,T2>,SECOND>
 {
-  typedef const boost::units::quantity<Unit,T> tupleMemberType;
-  static inline tupleMemberType get( const tupleMemberType& quantity )
-  { return quantity; }
-  static inline void set( tupleMemberType& quantity,
-			  const tupleMemberType& new_quantity )
-  { /* ... */ }
+  typedef std::pair<T1,T2> tupleType;
+  typedef T1 tupleMemberType;
+  static inline tupleMemberType& get( tupleType& tuple )
+  { return tuple.second; }
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return tuple.second; }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  { tuple.second = value; }
 };
 
-/*! The specialization of the TupleMemberTraits for double and FIRST
+/*! \brief The partial specialization of the TupleMemberTraits for std::tuple
+ * and FIRST
  * \ingroup tuple_member_traits
  */
-template<>
-struct TupleMemberTraits<double,FIRST>
+template<typename T, typename... Types>
+struct TuplememberTraits<std::tuple<T,Types>,FIRST>
 {
-  typedef double tupleMemberType;
-  static inline double get( const double value )
-  { return value; }
-  static inline void set( double &value, const double &new_value )
-  { value = new_value; }
+  typedef std::tuple<T,Types> tupleType;
+  typedef T tupleMemberType;
+  static inline tupleMemberType& get( tupleType& tuple )
+  { return std::get<0>(tuple); }
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return std::get<0>(tuple); }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  { std::get<0>(tuple) = value; }
 };
 
-/*! The specialization of the TupleMemberTraits for const double and FIRST
+/*! \brief The partial specialization of the TupleMemberTraits for std::tuple
+ * and SECOND
  * \ingroup tuple_member_traits
  */
-template<>
-struct TupleMemberTraits<const double,FIRST>
+template<typename T1, typename T2, typename... Types>
+struct TuplememberTraits<std::tuple<T1,T2,Types>,SECOND>
 {
-  typedef const double tupleMemberType;
-  static inline const double get( const double value )
-  { return value; }
-  static inline void set( const double &value, const double &new_value )
-  { /* ... */ }
+  typedef std::tuple<T1,T2,Types> tupleType;
+  typedef T2 tupleMemberType;
+  static inline tupleMemberType& get( tupleType& tuple )
+  { return std::get<1>(tuple); }
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return std::get<1>(tuple); }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  { std::get<1>(tuple) = value; }
 };
 
-/*! The specialization of the TupleMemberTraits for unsigned and FIRST
+/*! \brief The partial specialization of the TupleMemberTraits for std::tuple
+ * and THIRD
  * \ingroup tuple_member_traits
  */
-template<>
-struct TupleMemberTraits<unsigned,FIRST>
+template<typename T1, typename T2, typename T3, typename... Types>
+struct TuplememberTraits<std::tuple<T1,T2,T3,Types>,SECOND>
 {
-  typedef unsigned tupleMemberType;
-  static inline unsigned get( const unsigned value )
-  { return value; }
-  static inline void set( unsigned &value, const unsigned &new_value )
-  { value = new_value; }
+  typedef std::tuple<T1,T2,T3,Types> tupleType;
+  typedef T3 tupleMemberType;
+  static inline tupleMemberType& get( tupleType& tuple )
+  { return std::get<2>(tuple); }
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return std::get<2>(tuple); }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  { std::get<2>(tuple) = value; }
 };
 
-/*! The specialization of the TupleMemberTraits for const unsigned and FIRST
+/*! \brief The partial specialization of the TupleMemberTraits for std::tuple
+ * and FOURTH
  * \ingroup tuple_member_traits
  */
-template<>
-struct TupleMemberTraits<const unsigned,FIRST>
+template<typename T1, typename T2, typename T3, typename T4, typename... Types>
+struct TuplememberTraits<std::tuple<T1,T2,T3,T4,Types>,SECOND>
 {
-  typedef unsigned tupleMemberType;
-  static inline unsigned get( const unsigned value )
-  { return value; }
-  static inline void set( const unsigned &value, const unsigned &new_value )
-  { /* ... */ }
+  typedef std::tuple<T1,T2,T3,T4,Types> tupleType;
+  typedef T4 tupleMemberType;
+  static inline tupleMemberType& get( tupleType& tuple )
+  { return std::get<3>(tuple); }
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return std::get<3>(tuple); }
+  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  { std::get<3>(tuple) = value; }
 };
 
 } // end Utility namespace

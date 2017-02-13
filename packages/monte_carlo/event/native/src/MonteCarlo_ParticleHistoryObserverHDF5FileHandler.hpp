@@ -15,27 +15,21 @@
 // FRENSIE Includes
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_HDF5TypeTraits.hpp"
+#include "MonteCarlo_HDF5FileHandler.hpp"
 
 namespace MonteCarlo{
 
 //! The particle history observer hdf5 file handler
-class ParticleHistoryObserverHDF5FileHandler
+class ParticleHistoryObserverHDF5FileHandler : public MonteCarlo::HDF5FileHandler
 {
 
 public:
 
-  //! Enum for file operations
-  enum ParticleHistoryObserverHDF5FileOps{
-    OVERWRITE_PHO_HDF5_FILE = 0,
-    APPEND_PHO_HDF5_FILE,
-    READ_ONLY_PHO_HDF5_FILE
-  };
-
   //! Constructor (file ownership)
   ParticleHistoryObserverHDF5FileHandler(
-                             const std::string& hdf5_file_name,
-                             const ParticleHistoryObserverHDF5FileOps file_op =
-                             OVERWRITE_PHO_HDF5_FILE );
+                           const std::string& hdf5_file_name,
+                           const MonteCarlo::HDF5FileHandler::FileOps file_op =
+                           OVERWRITE_PHO_HDF5_FILE );
 
   //! Constructor (file sharing)
   ParticleHistoryObserverHDF5FileHandler(
@@ -70,12 +64,6 @@ private:
 
   // The particle history observer group location and name
   static const std::string s_pho_group_loc_name;
-
-  // The HDF5 file handler
-  std::shared_ptr<Utility::HDF5FileHandler> d_hdf5_file;
-
-  // The ownership flag
-  bool d_hdf5_file_ownership;
 };
 
 } // end MonteCarlo namespace

@@ -24,51 +24,21 @@ const std::string ParticleHistoryObserverHDF5FileHandler::s_pho_group_loc_name(
 ParticleHistoryObserverHDF5FileHandler::ParticleHistoryObserverHDF5FileHandler(
                              const std::string& hdf5_file_name,
                              const ParticleHistoryObserverHDF5FileOps file_op )
-  : d_hdf5_file( new Utility::HDF5FileHandler ),
-    d_hdf5_file_ownership( true )
+  : MonteCarlo::HDF5FileHandler( hdf5_file_name, file_op )
 {
   // Make sure the name is valid
   testPrecondition( hdf5_file_name.size() > 0 );
-
-  Utility::HDF5FileHandler::throwExceptions();
-
-  try{
-    switch( file_op )
-    {
-    case OVERWRITE_PHO_HDF5_FILE:
-      d_hdf5_file->openHDF5FileAndOverwrite( hdf5_file_name );
-      break;
-    case APPEND_PHO_HDF5_FILE:
-      d_hdf5_file->openHDF5FileAndAppend( hdf5_file_name );
-      break;
-    case READ_ONLY_PHO_HDF5_FILE:
-      d_hdf5_file->openHDF5FileAndReadOnly( hdf5_file_name );
-      break;
-    }
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Ownership Constructor Error" );
 }
 
 // Constructor (file sharing)
 ParticleHistoryObserverHDF5FileHandler::ParticleHistoryObserverHDF5FileHandler(
                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
-  : d_hdf5_file( hdf5_file ),
-    d_hdf5_file_ownership( false )
-{
-  // Make sure the file is valid
-  testPrecondition( hdf5_file.get() );
-  testPrecondition( hdf5_file->hasOpenFile() );
-
-  Utility::HDF5FileHandler::throwExceptions();
-}
+  : MonteCarlo::HDF5FileHandler( hdf5_file )
+{ /* ... */ }
 
 // Destructor
 ParticleHistoryObserverHDF5FileHandler::~ParticleHistoryObserverHDF5FileHandler()
-{
-  if( d_hdf5_file_ownership )
-    d_hdf5_file->closeHDF5File();
-}
+{ /* ... */ }
 
 // Set the simulation time
 void ParticleHistoryObserverHDF5FileHandler::setSimulationTime(
@@ -78,22 +48,27 @@ void ParticleHistoryObserverHDF5FileHandler::setSimulationTime(
   testPrecondition( simulation_time > 0.0 );
 
   try{
-    d_hdf5_file->writeValueToGroupAttribute( simulation_time,
-					     s_pho_group_loc_name,
-					     "simulation_time" );
+    this->getHDF5File().writeValueToGroupAttribute( simulation_time,
+                                                    s_pho_group_loc_name,
+                                                    "simulation_time" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Set Simulation Time Error" );
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Could not set the simulation time in the HDF5 "
+                           "file!" );
 }
 
 // Get the simulation time
 void ParticleHistoryObserverHDF5FileHandler::getSimulationTime( double& simulation_time ) const
 {
   try{
-    d_hdf5_file->readValueFromGroupAttribute( simulation_time,
-					      s_pho_group_loc_name,
-					      "simulation_time" );
+    this->getHDF5File().readValueFromGroupAttribute( simulation_time,
+                                                     s_pho_group_loc_name,
+                                                     "simulation_time" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Get Simulation Time Error" );
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Could not get the simulation time from the HDF5 "
+                           "file!" );
+  
 }
 
 // Set the last history simulated
@@ -101,12 +76,13 @@ void ParticleHistoryObserverHDF5FileHandler::setLastHistorySimulated(
 			     const unsigned long long last_history_simulated )
 {
   try{
-    d_hdf5_file->writeValueToGroupAttribute( last_history_simulated,
-					     s_pho_group_loc_name,
-					     "last_history_simulated" );
+    this->getHDF5File().writeValueToGroupAttribute( last_history_simulated,
+                                                    s_pho_group_loc_name,
+                                                    "last_history_simulated" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Set Last History Simulated Error" );
+			   "Could not set the last history (id) simulated in "
+                           "the HDF5 file!" );
 }
 
 // Get the last history simulated
@@ -114,12 +90,13 @@ void ParticleHistoryObserverHDF5FileHandler::getLastHistorySimulated(
 			    unsigned long long& last_history_simulated ) const
 {
   try{
-    d_hdf5_file->readValueFromGroupAttribute( last_history_simulated,
-					      s_pho_group_loc_name,
-					      "last_history_simulated" );
+    this->getHDF5File().readValueFromGroupAttribute(last_history_simulated,
+                                                    s_pho_group_loc_name,
+                                                    "last_history_simulated" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Get Last History Simulated Error" );
+			   "Could not get the last history (id) simulated "
+                           "from the HDF5 file!" );
 }
 
 // Set the number of histories simulated
@@ -130,12 +107,14 @@ void ParticleHistoryObserverHDF5FileHandler::setNumberOfHistoriesSimulated(
   testPrecondition( number_histories_simulated > 0ull );
 
   try{
-    d_hdf5_file->writeValueToGroupAttribute( number_histories_simulated,
-					     s_pho_group_loc_name,
-					     "number_of_histories_simulated" );
+    this->getHDF5File().writeValueToGroupAttribute(
+                                             number_histories_simulated,
+                                             s_pho_group_loc_name,
+                                             "number_of_histories_simulated" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Set Number of Histories Simulated Error" );
+			   "Could not set the number of histories simulated "
+                           "in the HDF5 file!" );
 }
 
 // Get the number of histories simulated
@@ -143,12 +122,14 @@ void ParticleHistoryObserverHDF5FileHandler::getNumberOfHistoriesSimulated(
 		        unsigned long long& number_histories_simulated ) const
 {
   try{
-    d_hdf5_file->readValueFromGroupAttribute( number_histories_simulated,
+    this->getHDF5File().readValueFromGroupAttribute(
+                                              number_histories_simulated,
 					      s_pho_group_loc_name,
 					      "number_of_histories_simulated");
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Get Number of Histories Simulated Error" );
+			   "Could not get the number of histories simulated "
+                           "from the HDF5 file!" );
 }
 
 } // end MonteCarlo namespace

@@ -11,13 +11,21 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretization.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Set the bin boundaries for a dimension of the sphase space
+// Set the discretization for a dimension of the phase space
+/*! \details This method is a factory method that will create
+ * a phase space dimension discretization and assign it to the underlying
+ * phase space discretization. Before it is added to the phase space 
+ * discretization the object will determine if discretizations of the
+ * phase space dimension are supported (e.g. cosine binning is not supported
+ * in cell estimators).
+ */
 template<PhaseSpaceDimension dimension, typename InputDataType>
-void Estimator::setBinBoundaries( const InputDataType& bin_data )
+void Estimator::setDiscretization( const InputDataType& bin_data )
 {
   // Make sure the DimensionType matches the type associated with the dimension
   testStaticPrecondition((boost::is_same<typename DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>::InputDataType,InputDataType>::value));
@@ -31,7 +39,12 @@ void Estimator::setBinBoundaries( const InputDataType& bin_data )
 }
 
 // Set the response functions
-template<template<typename,...> class STLCompliantContainer>
+/*! \details Before the response functions are assigned, the object will check
+ * if each response function is compatible with the estimator type (e.g. cell
+ * track-length flux estimators are only compatible with spatially uniform
+ * response functions).
+ */
+template<template<typename,typename...> class STLCompliantContainer>
 void Estimator::setResponseFunctions(
      const STLCompliantContainer<ResponseFunctionPointer>& response_functions )
 {
@@ -50,8 +63,12 @@ void Estimator::setResponseFunctions(
   }
 }
 
-//! Set the particle types that can contribute to the estimator
-template<template<typename,...> class STLCompliantContainer>
+// Set the particle types that can contribute to the estimator
+/*! \details Before each particle type is assigned the object will check
+ * if the particle type is compatible with the estimator type (e.g. cell
+ * pulse height estimators are not compatible with neutrons).
+ */
+template<template<typename,typename...> class STLCompliantContainer>
 void Estimator::setParticleTypes(
                     const STLCompliantContainer<ParticleType>& particle_types )
 {

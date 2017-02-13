@@ -55,6 +55,9 @@ template<typename T,
 	 typename T4 = Empty>
 struct HDF5TypeTraits
 {
+  //! Typedef for the raw type
+  typedef T RawType;
+  
   //! Returns the HDF5 data type object corresponding to the type
   static inline H5::DataType dataType()
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
@@ -64,11 +67,11 @@ struct HDF5TypeTraits
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
 
   //! Returns the zero value for this type
-  static inline T zero()
+  static inline RawType zero()
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
 
   //! Returns the unity value for this type
-  static inline T one()
+  static inline RawType one()
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
 };
 

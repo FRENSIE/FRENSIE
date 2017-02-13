@@ -96,7 +96,7 @@ public:
   size_t getNumberOfBins() const;
 
   //! Set the response functions
-  template<template<typename,...> class STLCompliantContainer>
+  template<template<typename,typename...> class STLCompliantContainer>
   void setResponseFunctions(
     const STLCompliantContainer<ResponseFunctionPointer>& response_functions );
 
@@ -104,7 +104,7 @@ public:
   size_t getNumberOfResponseFunctions() const;
 
   //! Set the particle types that can contribute to the estimator
-  template<template<typename,...> class STLCompliantContainer>
+  template<template<typename,typename...> class STLCompliantContainer>
   void setParticleTypes(
                    const STLCompliantContainer<ParticleType>& particle_types );
 
@@ -164,21 +164,21 @@ protected:
                              const DimensionValueMap& dimension_values ) const;
 
   //! Calculate the bin index for the desired response function
-  void calculateBinIndices(
+  void calculateBinIndicesOfPoint(
                    const EstimatorParticleStateWrapper& particle_state_wrapper,
                    const size_t response_function_index,
                    ObserverPhaseSpaceDimensionDiscretization::BinIndexArray&
                    bin_indices ) const;
 
   //! Calculate the bin index for the desired response function
-  void calculateBinIndices(
+  void calculateBinIndicesOfPoint(
                       const DimensionValueMap& dimension_values,
                       const size_t response_function_index,
                       ObserverPhaseSpaceDimensionDiscretization::BinIndexArray&
                       bin_indices ) const;
 
   //! Calculate the bin indices for the desired response function
-  void calculateBinIndicesAndWeights(
+  void calculateBinIndicesAndWeightsOfRange(
             const EstimatorParticleStateWrapper& particle_state_wrapper,
             const size_t response_function_index,
             const std::set<ObserverPhaseSpaceDimension> dimensions_with_ranges,
@@ -252,11 +252,11 @@ private:
   // The response functions
   Teuchos::Array<ResponseFunctionPointer> d_response_functions;
 
-  // The estimator phase space discretization
-  ObserverPhaseSpaceDiscretization d_phase_space_discretization;
-
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;
+
+  // The estimator phase space discretization
+  ObserverPhaseSpaceDiscretization d_phase_space_discretization;
 };
 
 // Return the estimator constant multiplier
@@ -269,21 +269,13 @@ inline double Estimator::getMultiplier() const
 inline size_t Estimator::getNumberOfBins(
                             const ObserverPhaseSpaceDimension dimension ) const
 {
-  if( d_dimension_bins_map.count( dimension ) != 0 )
-    return d_dimension_bins_map.find(dimension)->second->getNumberOfBins();
-  else
-    return 1u;
+  return d_phase_space_discretization.getNumberOfBins( dimension );
 }
 
 // Return the total number of bins
 inline size_t Estimator::getNumberOfBins() const
 {
-  size_t number_of_bins = 1u;
-
-  for( size_t i = 0u; i < d_dimension_ordering.size(); ++i )
-    number_of_bins *= this->getNumberOfBins( d_dimension_ordering[i] );
-
-  return number_of_bins;
+  return d_phase_space_discretization.getNumberOfBins();
 }
 
 // Return the number of response functions

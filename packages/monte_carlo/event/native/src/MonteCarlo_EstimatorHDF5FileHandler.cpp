@@ -17,8 +17,40 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const std::string EstimatorHDF5FileHandler::estimator_group_loc_name(
-							      "/Estimators/" );
+const char* EstimatorHDF5FileHandler::s_estimator_group_loc_name = 
+  "/Estimators/";
+const char* EstimatorHDf5FileHandler::s_entity_type_attr_name =
+  "entity_type";
+const char* EstimatorHDf5FileHandler::s_multiplier_attr_name =
+  "multiplier";
+const char* EstimatorHDf5FileHandler::s_total_norm_constant_attr_name =
+  "total_norm_constant";
+const char* EstimatorHDf5FileHandler::s_entity_norm_constant_attr_name =
+  "norm_constant";
+const char* EstimatorHDf5FileHandler::s_response_function_ordering_attr_name =
+  "response_function_ordering";
+const char* EstimatorHDf5FileHandler::s_particle_types_attr_name =
+  "particle_types";
+const char* EstimatorHDf5FileHandler::s_dimension_ordering_attr_name =
+  "dimension_ordering";
+const char* EstimatorHDf5FileHandler::s_entity_norm_constant_relative_loc =
+  "entity_norm_constants";
+const char* EstimatorHDf5FileHandler::s_entity_raw_bin_data_relative_loc =
+  "raw_bin_data";
+const char* EstimatorHDf5FileHandler::s_entity_processed_bin_data_relative_loc=
+  "processed_bin_data";
+const char* EstimatorHDf5FileHandler::s_entity_raw_total_data_relative_loc =
+  "raw_total_data";
+const char* EstimatorHDf5FileHandler::s_entity_processed_total_data_relative_loc =
+  "processed_total_data";
+const char* EstimatorHDf5FileHandler::s_raw_total_bin_data_relative_loc =
+  "raw_total_bin_data";
+const char* EstimatorHDf5FileHandler::s_processed_total_bin_data_relative_loc =
+  "processed_total_bin_data";
+const char* EstimatorHDf5FileHandler::s_raw_total_data_relative_loc =
+  "raw_total_data";
+const char* EstimatorHDf5FileHandler::s_processed_total_data_relative_loc =
+  "processed_total_data";
 
 // Constructor (file ownership)
 /*! \details The MonteCarlo::HDF5FileHandler::FileOps enum will determine how 
@@ -39,7 +71,7 @@ EstimatorHDF5FileHandler::EstimatorHDF5FileHandler(
 
 // Check if an estimator exists
 bool EstimatorHDF5FileHandler::doesEstimatorExist(
-					    const unsigned estimator_id ) const
+			 const InternalEventObserverHandle estimator_id ) const
 {
   return this->getHDF5File().doesGroupExist(
 			     this->getEstimatorGroupLocation( estimator_id ) );
@@ -47,22 +79,22 @@ bool EstimatorHDF5FileHandler::doesEstimatorExist(
 
 // Set the estimator as a surface estimator
 void EstimatorHDF5FileHandler::setSurfaceEstimator(
-						  const unsigned estimator_id )
+			       const InternalEventObserverHandle estimator_id )
 {
   try{
     this->getHDF5File().writeValueToGroupAttribute(
 			       SURFACE_ENTITY,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "entity_type" );
+			       s_entity_type_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set estimator " << estimator_id <<
-                           " as a surface estimator!" );
+			   "Unable to set estimator " << estimator_id <<
+                           " as a surface estimator in the HDF5 file!" );
 }
 
 // Check if the estimator is a surface estimator
 bool EstimatorHDF5FileHandler::isSurfaceEstimator(
-					    const unsigned estimator_id ) const
+			 const InternalEventObserverHandle estimator_id ) const
 {
   EntityType type;
 
@@ -70,10 +102,10 @@ bool EstimatorHDF5FileHandler::isSurfaceEstimator(
     this->getHDF5File().readValueFromGroupAttribute(
 			       type,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "entity_type" );
+			       s_entity_type_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to determine if estimator "
+			   "Unable to determine if estimator "
                            << estimator_id << " is a surface estimator!" );
 
   return (type == SURFACE_ENTITY);
@@ -81,22 +113,23 @@ bool EstimatorHDF5FileHandler::isSurfaceEstimator(
 }
 
 // Set the estimator as a cell estimator
-void EstimatorHDF5FileHandler::setCellEstimator( const unsigned estimator_id )
+void EstimatorHDF5FileHandler::setCellEstimator(
+                               const InternalEventObserverHandle estimator_id )
 {
   try{
     this->getHDF5File().writeValueToGroupAttribute(
 			       CELL_ENTITY,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "entity_type" );
+			       s_entity_type_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set estimator " << estimator_id <<
-                           " as a cell estimator!" );
+			   "Unable to set estimator " << estimator_id <<
+                           " as a cell estimator in the HDF5 file!" );
 }
 
 // Check if the estimator is a cell estimator
 bool EstimatorHDF5FileHandler::isCellEstimator(
-					    const unsigned estimator_id ) const
+			 const InternalEventObserverHandle estimator_id ) const
 {
   EntityType type;
 
@@ -104,32 +137,33 @@ bool EstimatorHDF5FileHandler::isCellEstimator(
     this->getHDF5File().readValueFromGroupAttribute(
 			       type,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "entity_type" );
+			       s_entity_type_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to determine if estimator "
+			   "Unable to determine if estimator "
                            << estimator_id << " is a cell estimator!" );
 
   return (type == CELL_ENTITY);
 }
 
 // Set the estimator as a mesh estimator
-void EstimatorHDF5FileHandler::setMeshEstimator( const unsigned estimator_id )
+void EstimatorHDF5FileHandler::setMeshEstimator(
+                               const InternalEventObserverHandle estimator_id )
 {
   try{
     this->getHDF5File().writeValueToGroupAttribute(
 			       MESH_VOLUME_ENTITY,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "entity_type" );
+			       s_entity_type_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set estimator " << estimator_id <<
-                           " as a mesh estimator!" );
+			   "Unable to set estimator " << estimator_id <<
+                           " as a mesh estimator in the HDF5 file!" );
 }
 
 // Check if the estimator is a mesh estimator
 bool EstimatorHDF5FileHandler::isMeshEstimator(
-					    const unsigned estimator_id ) const
+			 const InternalEventObserverHandle estimator_id ) const
 {
   EntityType type;
 
@@ -137,10 +171,10 @@ bool EstimatorHDF5FileHandler::isMeshEstimator(
     this->getHDF5File().readValueFromGroupAttribute(
 			       type,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "entity_type" );
+			       s_entity_type_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to determine if estimator "
+			   "Unable to determine if estimator "
                            << estimator_id << " is a mesh estimator!" );
 
   return (type == MESH_VOLUME_ENTITY);
@@ -148,313 +182,75 @@ bool EstimatorHDF5FileHandler::isMeshEstimator(
 
 // Set the estimator multiplier
 void EstimatorHDF5FileHandler::setEstimatorMultiplier(
-						   const unsigned estimator_id,
-						   const double multiplier )
+				const InternalEventObserverHandle estimator_id,
+                                const double multiplier )
 {
   try{
     this->getHDF5File().writeValueToGroupAttribute(
 			       multiplier,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "multiplier" );
+			       s_multiplier_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the multiplier for estimator "
-                           << estimator_id << "!" );
+			   "Unable to set the multiplier for estimator "
+                           << estimator_id << " in the HDF5 file!" );
 }
 
 // Get the estimator multiplier
 void EstimatorHDF5FileHandler::getEstimatorMultiplier(
-						   const unsigned estimator_id,
-						   double& multiplier ) const
+				const InternalEventObserverHandle estimator_id,
+                                double& multiplier ) const
 {
   try{
     this->getHDF5File().readValueFromGroupAttribute(
 			       multiplier,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "multiplier" );
+			       s_multiplier_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the multiplier for estimator "
-                           << estimator_id << "!" );
-}
-
-// Set the estimator response function ordering
-void EstimatorHDF5FileHandler::setEstimatorResponseFunctionOrdering(
-		  const unsigned estimator_id,
-		  const Teuchos::Array<unsigned>& response_function_ordering )
-{
-  try{
-    this->getHDF5File().writeArrayToGroupAttribute(
-			       response_function_ordering,
-			       this->getEstimatorGroupLocation( estimator_id ),
-			       "response_function_ordering" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the response function "
-                           "ordering for estimator " << estimator_id << "!" );
-}
-
-// Get the estimator response function ordering
-void EstimatorHDF5FileHandler::getEstimatorResponseFunctionOrdering(
-		  const unsigned estimator_id,
-		  Teuchos::Array<unsigned>& response_function_ordering ) const
-{
-  try{
-    this->getHDF5File().readArrayFromGroupAttribute(
-			       response_function_ordering,
-			       this->getEstimatorGroupLocation( estimator_id ),
-			       "response_function_ordering" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the response function "
-                           "ordering for estimator " << estimator_id << "!" );
-}
-
-// Set the estimator dimension ordering
-void EstimatorHDF5FileHandler::setEstimatorDimensionOrdering(
-	       const unsigned estimator_id,
-	       const Teuchos::Array<PhaseSpaceDimension>& dimension_ordering )
-{
-  try{
-    this->getHDF5File().writeArrayToGroupAttribute(
-			       dimension_ordering,
-			       this->getEstimatorGroupLocation( estimator_id ),
-			       "dimension_ordering" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the dimension ordering for "
-                           "estimator " << estimator_id << "!" );
-}
-
-// Get the estimator dimension ordering
-void EstimatorHDF5FileHandler::getEstimatorDimensionOrdering(
-	       const unsigned estimator_id,
-	       Teuchos::Array<PhaseSpaceDimension>& dimension_ordering ) const
-{
-  dimension_ordering.clear();
-
-  // If an exception is thrown, there are no estimator dimensions
-  try{
-    if( this->getHDF5File().doesGroupAttributeExist(
-			       this->getEstimatorGroupLocation( estimator_id ),
-			       "dimension_ordering" ) )
-    {
-      this->getHDF5File().readArrayFromGroupAttribute(
-			       dimension_ordering,
-			       this->getEstimatorGroupLocation( estimator_id ),
-			       "dimension_ordering" );
-    }
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the dimension ordering for "
-                           "estimator " << estimator_id << "!" );
+			   "Unable to get the multiplier from the HDF5 file "
+                           "for estimator " << estimator_id << "!" );
 }
 
 // Set the total normalization constant
 void EstimatorHDF5FileHandler::setEstimatorTotalNormConstant(
-			     const unsigned estimator_id,
-			     const double total_norm_constant )
+			        const InternalEventObserverHandle estimator_id,
+                                const double total_norm_constant )
 {
   try{
     this->getHDF5File().writeValueToGroupAttribute(
 			       total_norm_constant,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "total_norm_constant" );
+			       s_total_norm_constant_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the normalization constant "
-                           "for estimator " << estimator_id << "!" );
+			   "Unable to set the normalization constant "
+                           "for estimator " << estimator_id << "in the"
+                           "HDF5 file!" );
 }
 
 // Get the total normalization constant
 void EstimatorHDF5FileHandler::getEstimatorTotalNormConstant(
-					    const unsigned estimator_id,
-					    double& total_norm_constant ) const
+				const InternalEventObserverHandle estimator_id,
+                                double& total_norm_constant ) const
 {
   try{
     this->getHDF5File().readValueFromGroupAttribute(
 			       total_norm_constant,
 			       this->getEstimatorGroupLocation( estimator_id ),
-			       "total_norm_constant" );
+			       s_total_norm_constant_attr_name );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the normalization constant "
-                           "for estimator " << estimator_id << "!" );
-}
-
-// Set the raw estimator bin data over all entities (1st, 2nd moments)
-void EstimatorHDF5FileHandler::setRawEstimatorTotalBinData(
-	   const unsigned estimator_id,
-	   const Teuchos::Array<Utility::Pair<double,double> >& raw_bin_data )
-{
-  // Make sure the bin data is valid
-  testPrecondition( raw_bin_data.size() > 0 );
-
-  std::string data_set_location =
-    this->getEstimatorGroupLocation( estimator_id );
-
-  data_set_location += "raw_total_bin_data";
-
-  try{
-    this->getHDF5File().writeArrayToDataSet( raw_bin_data, data_set_location );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the raw total bin data for "
-                           "estimator " << estimator_id << "!" );
-}
-
-// Get the raw estimator bin data over all entities (1st, 2nd moments)
-void EstimatorHDF5FileHandler::getRawEstimatorTotalBinData(
-	   const unsigned estimator_id,
-	   Teuchos::Array<Utility::Pair<double,double> >& raw_bin_data ) const
-{
-  std::string data_set_location =
-    this->getEstimatorGroupLocation( estimator_id );
-
-  data_set_location += "raw_total_bin_data";
-
-  try{
-    this->getHDF5File().readArrayFromDataSet(
-                                             raw_bin_data, data_set_location );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the raw total bin data for "
-                           "estimator " << estimator_id << "!" );
-}
-
-// Set the processed estimator bin data over all entities (mean, rel. err.)
-void EstimatorHDF5FileHandler::setProcessedEstimatorTotalBinData(
-     const unsigned estimator_id,
-     const Teuchos::Array<Utility::Pair<double,double> >& processed_bin_data )
-{
-  // Make sure the total bin data is valid
-  testPrecondition( processed_bin_data.size() > 0 );
-
-  std::string data_set_location =
-    this->getEstimatorGroupLocation( estimator_id );
-
-  data_set_location += "processed_total_bin_data";
-
-  try{
-    this->getHDF5File().writeArrayToDataSet(
-                                       processed_bin_data, data_set_location );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the processed total bin data "
-                           "for estimator " << estimator_id << "!" );
-}
-
-// Get the processed estimator bin data over all entities (mean, rel. err.)
-void EstimatorHDF5FileHandler::getProcessedEstimatorTotalBinData(
-     const unsigned estimator_id,
-     Teuchos::Array<Utility::Pair<double,double> >& processed_bin_data ) const
-{
-  std::string data_set_location =
-    this->getEstimatorGroupLocation( estimator_id );
-
-  data_set_location += "processed_total_bin_data";
-
-  try{
-    this->getHDF5File().readArrayFromDataSet(
-                                       processed_bin_data, data_set_location );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the processed total bin data "
-                           "for estimator " << estimator_id << "!" );
-}
-
-// Set the raw estimator total data over all entities
-void EstimatorHDF5FileHandler::setRawEstimatorTotalData(
-	     const unsigned estimator_id,
-	     const Teuchos::Array<Utility::Quad<double,double,double,double> >&
-	     raw_total_data )
-{
-  // Make sure the total bin data is valid
-  testPrecondition( raw_total_data.size() > 0 );
-
-  std::string data_set_location =
-    this->getEstimatorGroupLocation( estimator_id );
-
-  data_set_location += "raw_total_data";
-
-  try{
-    this->getHDF5File().writeArrayToDataSet(
-                                           raw_total_data, data_set_location );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the raw total data for "
-                           "estimator " << estimator_id << "!" );
-}
-
-// Get the raw estimator total data over all entities
-void EstimatorHDF5FileHandler::getRawEstimatorTotalData(
-		   const unsigned estimator_id,
-		   Teuchos::Array<Utility::Quad<double,double,double,double> >&
-		   raw_total_data ) const
-{
-  std::string data_set_location =
-    this->getEstimatorGroupLocation( estimator_id );
-
-  data_set_location += "raw_total_data";
-
-  try{
-    this->getHDF5File().readArrayFromDataSet(
-                                           raw_total_data, data_set_location );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the raw total data for "
-                           "estimator " << estimator_id << "!" );
-}
-
-// Set the processed estimator total data over all entities
-void EstimatorHDF5FileHandler::setProcessedEstimatorTotalData(
-	     const unsigned estimator_id,
-	     const Teuchos::Array<Utility::Quad<double,double,double,double> >&
-	     processed_total_data )
-{
-  // Make sure the total bin data is valid
-  testPrecondition( processed_total_data.size() > 0 );
-
-  std::string data_set_location =
-    this->getEstimatorGroupLocation( estimator_id );
-
-  data_set_location += "processed_total_data";
-
-  try{
-    this->getHDF5File().writeArrayToDataSet(
-                                      processed_total_data, data_set_location);
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the processed total data for "
-                           "estimator " << estimator_id << "!" );
-}
-
-// Get the processed estimator total data over all entities
-void EstimatorHDF5FileHandler::getProcessedEstimatorTotalData(
-		   const unsigned estimator_id,
-	           Teuchos::Array<Utility::Quad<double,double,double,double> >&
-		   processed_total_data ) const
-{
-  std::string data_set_location =
-    this->getEstimatorGroupLocation( estimator_id );
-
-  data_set_location += "processed_total_data";
-
-  try{
-    this->getHDF5File().readArrayFromDataSet(
-                                     processed_total_data, data_set_location );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the processed total data for "
-                           "estimator " << estimator_id << "!" );
+			   "Unable to get the normalization constant from the "
+                           "HDF5 file for estimator " << estimator_id << "!" );
 }
 
 // Get the estimator location
 std::string EstimatorHDF5FileHandler::getEstimatorGroupLocation(
-					    const unsigned estimator_id ) const
+			 const InternalEventObserverHandle estimator_id ) const
 {
   std::ostringstream oss;
-  oss << EstimatorHDF5FileHandler::estimator_group_loc_name;
+  oss << EstimatorHDF5FileHandler::s_estimator_group_loc_name;
   oss << estimator_id << "/";
 
   return oss.str();

@@ -38,6 +38,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COSINE_DIMENSION>
   static inline std::string name()
   { return "Cosine"; }
 
+  static inline std::string basicName()
+  { return "Cosine"; }
+
   static inline dimensionType lowerBound()
   { return -1.0; }
 
@@ -73,6 +76,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ENERGY_DIMENSION>
 
   static inline std::string name()
   { return "Source Energy"; }
+
+  static inline std::string basicName()
+  { return "Source_Energy"; }
 
   static inline dimensionType lowerBound()
   { return 0.0; }
@@ -114,6 +120,9 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   static inline std::string name()
   { return "Energy"; }
 
+  static inline std::string basicName()
+  { return "Energy"; }
+
   static inline dimensionType lowerBound()
   { return 0.0; }
 
@@ -153,6 +162,9 @@ struct ObserverPhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
   static inline std::string name()
   { return "Source Time"; }
 
+  static inline std::string basicName()
+  { return "Source_Time"; }
+
   static inline dimensionType lowerBound()
   { return 0.0; }
 
@@ -191,6 +203,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_TIME_DIMENSION>
   typedef boost::mpl::bool_<true> isOrdered;
 
   static inline std::string name()
+  { return "Time"; }
+
+  static inline std::string basicName()
   { return "Time"; }
 
   static inline dimensionType lowerBound()
@@ -233,6 +248,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_COLLISION_NUMBER_DIMENSION>
   static inline std::string name()
   { return "Collision Number"; }
 
+  static inline std::string basicName()
+  { return "Collision_Number"; }
+
   static inline dimensionType lowerBound()
   { return 0u; }
 
@@ -272,6 +290,9 @@ struct ObserverPhaseSpaceDimensionTraits<OBSERVER_SOURCE_ID_DIMENSION>
 
   static inline std::string name()
   { return "Source Id"; }
+
+  static inline std::string basicName()
+  { return "Source_Id"; }
 
   static inline dimensionType lowerBound()
   { return 0; }

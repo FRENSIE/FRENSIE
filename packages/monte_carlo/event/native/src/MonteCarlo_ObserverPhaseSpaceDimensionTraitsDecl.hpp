@@ -61,6 +61,13 @@ struct ObserverPhaseSpaceDimensionTraits
     return std::string();
   }
 
+  //! The name of the dimension (no white space)
+  static inline std::string basicName()
+  {
+    (void)UndefinedObserverPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
+    return std::string();
+  }
+
   //! The lower bound of the dimension
   static inline dimensionType lowerBound()
   {

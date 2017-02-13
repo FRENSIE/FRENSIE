@@ -31,9 +31,6 @@ double Estimator::tol = 1e-8;
 
   // Set the response function
   d_response_functions[0] = ResponseFunction::default_response_function;
-
-  // Create the default particle types set (all particle types)
-  // d_particle_types.insert( PHOTON );
 }
 
 // Check if the estimator has uncommitted history contributions
@@ -69,6 +66,9 @@ void Estimator::exportData(
 
   // Open the estimator hdf5 file
   EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
+  
+  // Export the estimator multiplier
+  estimator_hdf5_file.setEstimatorMultiplier( this->getId(), d_multiplier );
 
   // Export the response function ordering
   {
@@ -82,24 +82,8 @@ void Estimator::exportData(
 						  response_function_ordering );
   }
 
-  // Export the dimension ordering
-  if( d_dimension_ordering.size() > 0 )
-  {
-    estimator_hdf5_file.setEstimatorDimensionOrdering( this->getId(),
-                                                       d_dimension_ordering );
-  }
-
-  // Export the bin boundaries
-  for( size_t i = 0; i < d_dimension_ordering.size(); ++i )
-  {
-    const DimensionDiscretizationPointer& dimension_bins =
-      d_dimension_bins_map.find( d_dimension_ordering[i] )->second;
-
-    dimension_bins->exportData( this->getId(), estimator_hdf5_file );
-  }
-
-  // Export the estimator multiplier
-  estimator_hdf5_file.setEstimatorMultiplier( this->getId(), d_multiplier );
+  // Export the dimension discretization
+  d_dimension_discretization.export( this->getId(), estimator_hdf5_file );
 }
 
 // Assign response function to the estimator

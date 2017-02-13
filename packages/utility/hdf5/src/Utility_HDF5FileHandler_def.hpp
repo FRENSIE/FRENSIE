@@ -75,8 +75,10 @@ void HDF5FileHandler::writeArrayToDataSet(const Array &data,
       // Create any parent groups that do not exist yet in the location path
       createParentGroups( location_in_file );
 
-      hsize_t dim = getArraySize( data );
-      H5::DataSpace space( 1, &dim );
+      std::vector<hsize_t> data_shape;
+      getArrayDimensionSizes( data, data_shape );
+    
+      H5::DataSpace space( data_shape.size(), &data_shape[0] );
       H5::DataSet dataset( d_hdf5_file->createDataSet(
 					location_in_file,
 					HDF5TypeTraits<value_type>::dataType(),
@@ -88,7 +90,7 @@ void HDF5FileHandler::writeArrayToDataSet(const Array &data,
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Write Array to Data Set Error" );
+			"Could not write array to data set!" );
 }
 
 // Explicit instantiation (extern declaration)
@@ -162,15 +164,11 @@ void HDF5FileHandler::readArrayFromDataSet(
     int rank = dataspace.getSimpleExtentNdims();
 
     // Get the dimension size of each dimension in the dataspace
-    hsize_t dims[rank];
-    int ndims = dataspace.getSimpleExtentDims( dims, NULL );
+    std::vector<hsize_t> data_shape( rank );
+    int ndims = dataspace.getSimpleExtentDims( &data_shape[0], NULL );
 
-    // Resize the output array to the size of the dataspace
-    size_type size = dims[0];
-    for( unsigned int i = 1; i < rank; ++i )
-      size *= dims[i];
-
-    resizeArray( data, size );
+    // Reshape the output array so that it matches the shape of the dataspace
+    reshapeArray( data, data_shape );
 
     // Read the data in the dataset and save it to the output array
     dataset.read( getHeadPtr( data ),
@@ -179,7 +177,7 @@ void HDF5FileHandler::readArrayFromDataSet(
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Read Array from Data Set Error" );
+			"Could not read array from data set!" );
 }
 
 // Explicit instantiation (extern declaration)
@@ -241,8 +239,10 @@ void HDF5FileHandler::writeArrayToDataSetAttribute(
   // or writing an attribute to a group
   try
   {
-    hsize_t dim = getArraySize(data);
-    H5::DataSpace space( 1, &dim );
+    std::vector<hsize_t> data_shape;
+    getArrayDimensionSizes( data, data_shape );
+    
+    H5::DataSpace space( data_shape.size(), &data_shape[0] );
     H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) );
 
     if( this->doesDataSetAttributeExist( dataset_location, attribute_name ) )
@@ -266,7 +266,7 @@ void HDF5FileHandler::writeArrayToDataSetAttribute(
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Write Array to Data Set Attribute Error" );
+			"Could not write array to data set attribute!" );
 }
 
 // Explicit instantiation (extern declaration)
@@ -349,15 +349,11 @@ void HDF5FileHandler::readArrayFromDataSetAttribute(
     int rank = dataspace.getSimpleExtentNdims();
 
     // Get the dimension size of each dimension in the dataspace
-    hsize_t dims[rank];
-    int ndims = dataspace.getSimpleExtentDims( dims, NULL );
+    std::vector<hsize_t> data_shape( rank );
+    int ndims = dataspace.getSimpleExtentDims( &data_shape[0], NULL );
 
-    // Resize the output array to the size of the dataspace
-    size_type size = dims[0];
-    for( unsigned int i = 1; i < rank; ++i )
-      size *= dims[i];
-
-    resizeArray( data, size );
+    // Reshape the output array so that it matches the shape of the dataspace
+    reshapeArray( data, data_shape );
 
     // Read the data in the dataset and save it to the output array
     attribute.read( HDF5TypeTraits<value_type>::dataType(),
@@ -366,7 +362,7 @@ void HDF5FileHandler::readArrayFromDataSetAttribute(
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Read Array from Data Set Attribute Error" );
+			"Could not read array from data set attribute!" );
 }
 
 // Explicit instantiation (extern declaration)
@@ -449,7 +445,7 @@ void HDF5FileHandler::writeValueToDataSetAttribute(
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Write Value to Data Set Attribute Error" );
+			"Could not write value to data set attribute!" );
 }
 
 // Explicit instantiation (extern declaration)
@@ -527,7 +523,7 @@ void HDF5FileHandler::readValueFromDataSetAttribute(
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Read Value from Data Set Attribute Error" );
+			"Could not read value from data set attribute!" );
 }
 
 // Explicit instantiation (extern declaration)
@@ -586,8 +582,10 @@ void HDF5FileHandler::writeArrayToGroupAttribute(
     // Create any parent groups that do not exist yet in the location path
     createParentGroups( group_location );
 
-    hsize_t dim = getArraySize( data );
-    H5::DataSpace space( 1, &dim );
+    std::vector<hsize_t> data_shape;
+    getArrayDimensionSizes( data, data_shape );
+    
+    H5::DataSpace space( data_shape.size(), &data_shape[0] );
     H5::Group group(d_hdf5_file->openGroup( group_location ) );
 
     if( this->doesGroupAttributeExist( group_location, attribute_name ) )
@@ -611,7 +609,7 @@ void HDF5FileHandler::writeArrayToGroupAttribute(
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Write Array to Group Attribute Error" );
+			"Could not write array to group attribute!" );
 }
 
 // Explicit instantiation (extern declaration)
@@ -694,15 +692,11 @@ void HDF5FileHandler::readArrayFromGroupAttribute(
     int rank = dataspace.getSimpleExtentNdims();
 
     // Get the dimension size of each dimension in the dataspace
-    hsize_t dims[rank];
-    int ndims = dataspace.getSimpleExtentDims( dims, NULL );
+    std::vector<hsize_t> data_shape( rank );
+    int ndims = dataspace.getSimpleExtentDims( &data_shape[0], NULL );
 
-    // Resize the output array to the size of the dataspace
-    size_type size = dims[0];
-    for( unsigned int i = 1; i < rank; ++i )
-      size *= dims[i];
-
-    resizeArray( data, size );
+    // Reshape the output array so that it matches the shape of the dataspace
+    reshapeArray( data, data_shape );
 
     // Read the data in the dataset and save it to the output array
     attribute.read( HDF5TypeTraits<value_type>::dataType(),
@@ -711,7 +705,7 @@ void HDF5FileHandler::readArrayFromGroupAttribute(
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Read Array from Group Attribute Error" );
+			"Could not read array from group attribute!" );
 }
 
 // Explicit instantiation (extern declaration)
@@ -796,7 +790,7 @@ void HDF5FileHandler::writeValueToGroupAttribute(
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Write Value to Group Attribute Error" );
+			"Could not write value to group attribute!" );
 }
 
 // Explicit instantiation (extern declaration)
@@ -874,7 +868,7 @@ void HDF5FileHandler::readValueFromGroupAttribute(
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
 			HDF5FileHandler::print_and_exit,
-			"Read Value from Group Attribute Error" );
+			"Could not read value from group attribute!" );
 }
 
 // Explicit instantiation (extern declaration)
