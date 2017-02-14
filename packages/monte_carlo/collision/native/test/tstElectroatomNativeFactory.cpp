@@ -322,7 +322,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCDF( 1.99526e-4, cutoff_angle_cosine );
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.1309E+8*cross_section_ratio + 9.4050646427459627e7,
+                          6.1309E+8*cross_section_ratio + 2.133609331382077e8,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );
