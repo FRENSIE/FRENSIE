@@ -28,7 +28,7 @@ public:
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_sampling = true );
+    const bool use_weighted_interpolation = true );
 
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
@@ -36,7 +36,7 @@ public:
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_sampling = true );
+    const bool use_weighted_interpolation = true );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
@@ -45,7 +45,7 @@ public:
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
     const int atomic_number,
-    const bool use_weighted_sampling );
+    const bool use_weighted_interpolation );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
@@ -55,7 +55,7 @@ public:
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
     const int atomic_number,
-    const bool use_weighted_sampling );
+    const bool use_weighted_interpolation );
 
   //! Create the energy loss function
   template <typename TwoDInterpPolicy = Utility::LinLinLog>

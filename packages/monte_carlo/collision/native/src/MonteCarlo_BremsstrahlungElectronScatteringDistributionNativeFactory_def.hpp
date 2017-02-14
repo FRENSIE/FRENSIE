@@ -21,7 +21,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_sampling )
+    const bool use_weighted_interpolation )
 {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function;
@@ -33,7 +33,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( energy_loss_function,
-                                                     use_weighted_sampling ) );
+                                                     use_weighted_interpolation ) );
 }
 
 // Create a simple dipole bremsstrahlung distribution
@@ -42,7 +42,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_sampling )
+    const bool use_weighted_interpolation )
 {
   // Get the energy grid for bremsstrahlung energy distributions
   std::vector<double> bremsstrahlung_energy_grid =
@@ -52,7 +52,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     raw_electroatom_data,
     bremsstrahlung_energy_grid,
     scattering_distribution,
-    use_weighted_sampling );
+    use_weighted_interpolation );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
@@ -63,7 +63,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
     const int atomic_number,
-    const bool use_weighted_sampling )
+    const bool use_weighted_interpolation )
 {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function;
@@ -76,7 +76,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( energy_loss_function,
                                                      atomic_number,
-                                                     use_weighted_sampling ) );
+                                                     use_weighted_interpolation ) );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
@@ -86,18 +86,14 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
     const int atomic_number,
-    const bool use_weighted_sampling )
+    const bool use_weighted_interpolation )
 {
-  // Get the energy grid for bremsstrahlung energy distributions
-  std::vector<double> bremsstrahlung_energy_grid =
-        raw_electroatom_data.getBremsstrahlungEnergyGrid();
-
   BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy>(
     raw_electroatom_data,
-    bremsstrahlung_energy_grid,
+    raw_electroatom_data.getBremsstrahlungEnergyGrid(),
     scattering_distribution,
     atomic_number,
-    use_weighted_sampling );
+    use_weighted_interpolation );
 }
 
 // Create the energy loss function

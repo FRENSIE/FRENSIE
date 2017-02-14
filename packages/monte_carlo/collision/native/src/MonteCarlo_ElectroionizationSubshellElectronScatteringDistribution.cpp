@@ -26,17 +26,17 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy,
-    const bool& use_weighted_sampling )
+    const bool& use_weighted_interpolation )
   : d_electroionization_subshell_scattering_distribution(
       electroionization_subshell_scattering_distribution ),
     d_binding_energy( binding_energy ),
-    d_use_weighted_sampling( use_weighted_sampling )
+    d_use_weighted_interpolation( use_weighted_interpolation )
 {
   // Make sure the arraies are valid
   testPrecondition( d_electroionization_subshell_scattering_distribution.use_count() > 0 );
   testPrecondition( binding_energy > 0.0 );
 
-  if( d_use_weighted_sampling )
+  if( d_use_weighted_interpolation )
   {
     // Use simple analytical photon angular distribution
     d_sample_func = std::bind<double>(

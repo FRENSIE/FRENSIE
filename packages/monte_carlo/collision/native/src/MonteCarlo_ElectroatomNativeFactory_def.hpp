@@ -110,7 +110,8 @@ void ElectroatomNativeFactory::createElectroatomCore(
                     energy_grid,
                     grid_searcher,
                     reaction_pointer,
-                    properties.getBremsstrahlungAngularDistributionFunction() );
+                    properties.getBremsstrahlungAngularDistributionFunction(),
+                    properties.isWeightedInterpolationModeOn() );
   }
 
   // Create the atomic excitation scattering reaction
@@ -135,7 +136,8 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                raw_electroatom_data,
                                energy_grid,
                                grid_searcher,
-                               reaction_pointers );
+                               reaction_pointers,
+                               properties.isWeightedInterpolationModeOn() );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {

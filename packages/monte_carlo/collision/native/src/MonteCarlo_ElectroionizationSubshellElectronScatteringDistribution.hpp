@@ -37,7 +37,7 @@ public:
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy,
-    const bool& use_weighted_sampling = true );
+    const bool& use_weighted_interpolation = true );
 
   //! Destructor
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
@@ -103,7 +103,7 @@ private:
   double d_binding_energy;
 
   // Bool to use a weighted interpolation routine to sample the distribution
-  bool d_use_weighted_sampling;
+  bool d_use_weighted_interpolation;
 
   // The secondary energy function pointer
   std::function<double ( const double )> d_sample_func;

@@ -177,7 +177,8 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
-    std::shared_ptr<ReactionType>& electroionization_subshell_reaction )
+    std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
+    const bool use_weighted_interpolation )
 {
   // Convert subshell number to enum
   Data::SubshellType subshell_type =
@@ -220,11 +221,12 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 // Create the subshell electroionization electroatomic reactions
 template<typename ReactionType, typename SecondInterpPolicy>
 void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
-           const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-           const Teuchos::ArrayRCP<const double>& energy_grid,
-           const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-           std::vector<std::shared_ptr<ReactionType> >&
-           electroionization_subshell_reactions )
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    std::vector<std::shared_ptr<ReactionType> >&
+    electroionization_subshell_reactions,
+    const bool use_weighted_interpolation )
 {
   electroionization_subshell_reactions.clear();
 
@@ -255,11 +257,12 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 // Create a bremsstrahlung electroatomic reactions
 template<typename ReactionType, typename SecondInterpPolicy>
 void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
-        BremsstrahlungAngularDistributionType photon_distribution_function )
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
+    BremsstrahlungAngularDistributionType photon_distribution_function,
+    const bool use_weighted_interpolation )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -286,7 +289,7 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<SecondInterpPolicy>(
       raw_electroatom_data,
       bremsstrahlung_distribution,
-      true );
+      use_weighted_interpolation );
 
   }
   else if( photon_distribution_function = TABULAR_DISTRIBUTION )
@@ -300,7 +303,7 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
       raw_electroatom_data,
       bremsstrahlung_distribution,
       raw_electroatom_data.getAtomicNumber(),
-      true );
+      use_weighted_interpolation );
   }
 
   // Create the bremsstrahlung reaction

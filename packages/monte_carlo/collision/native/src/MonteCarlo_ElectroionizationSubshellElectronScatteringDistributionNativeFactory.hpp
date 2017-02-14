@@ -28,7 +28,8 @@ public:
     const unsigned subshell,
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
-      electroionization_subshell_distribution );
+      electroionization_subshell_distribution,
+    const bool use_weighted_interpolation = true );
 
 //protected:
 

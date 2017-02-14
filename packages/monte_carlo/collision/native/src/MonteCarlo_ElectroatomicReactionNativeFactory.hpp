@@ -87,7 +87,8 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
-    std::shared_ptr<ReactionType>& electroionization_subshell_reaction );
+    std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
+    const bool use_weighted_interpolation = true );
 
   //! Create the subshell electroionization electroatomic reactions
   template< typename ReactionType = ElectroatomicReaction,
@@ -97,7 +98,8 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
-        electroionization_subshell_reactions );
+        electroionization_subshell_reactions,
+    const bool use_weighted_interpolation = true );
 
   //! Create the bremsstrahlung electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
@@ -107,7 +109,8 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
-    BremsstrahlungAngularDistributionType photon_distribution_function );
+    BremsstrahlungAngularDistributionType photon_distribution_function,
+    const bool use_weighted_interpolation = true );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(

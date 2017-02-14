@@ -39,7 +39,7 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_DipoleBremsstrahlung )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
                                                  *data_container,
                                                  dipole_distribution,
                                                  true );
@@ -63,7 +63,103 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   // Test
   TEST_FLOATING_EQUALITY( photon_energy, 1.62322147675252E-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the sample() function for a dipole distribution
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+                   sample_LinLinLin )
+{
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
+                                                 *data_container,
+                                                 dipole_distribution,
+                                                 true );
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
+  fake_stream[1] = 0.5; // Sample angle 0.0592724905908 (0.0557151835328) from analytical function
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 0.0009;
+  double photon_energy, photon_angle_cosine;
+
+  // sample dipole_distribution
+  dipole_distribution->sample( incoming_energy,
+                               photon_energy,
+                               photon_angle_cosine );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Test
+  TEST_FLOATING_EQUALITY( photon_energy, 1.67317352723636E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the sample() function for a dipole distribution
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+                   sample_no_weighted )
+{
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
+                                                 *data_container,
+                                                 dipole_distribution,
+                                                 false );
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
+  fake_stream[1] = 0.5; // Sample angle 0.0592724905908 (0.0557151835328) from analytical function
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 0.0009;
+  double photon_energy, photon_angle_cosine;
+
+  // sample dipole_distribution
+  dipole_distribution->sample( incoming_energy,
+                               photon_energy,
+                               photon_angle_cosine );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Test
+  TEST_FLOATING_EQUALITY( photon_energy, 1.61140375902222E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the sample() function for a dipole distribution
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+                   sample_LinLinLin_no_weighted )
+{
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
+                                                 *data_container,
+                                                 dipole_distribution,
+                                                 false );
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
+  fake_stream[1] = 0.5; // Sample angle 0.0592724905908 (0.0557151835328) from analytical function
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 0.0009;
+  double photon_energy, photon_angle_cosine;
+
+  // sample dipole_distribution
+  dipole_distribution->sample( incoming_energy,
+                               photon_energy,
+                               photon_angle_cosine );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Test
+  TEST_FLOATING_EQUALITY( photon_energy, 1.51455974406695E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -71,7 +167,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials_DipoleBremsstrahlung )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
                                                  *data_container,
                                                  dipole_distribution,
                                                  true );
@@ -104,7 +200,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_TwoBSBremsstrahlung )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
                     *data_container,
                     twobs_distribution,
                     data_container->getAtomicNumber(),
@@ -139,7 +235,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials_TwoBSBremsstrahlung )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
                     *data_container,
                     twobs_distribution,
                     data_container->getAtomicNumber(),
