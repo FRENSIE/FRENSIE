@@ -32,9 +32,12 @@ double ElasticElectronMomentsEvaluator::s_rutherford_cutoff_angle_cosine = 0.999
 // Constructor
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine )
+    const double cutoff_angle_cosine,
+    const bool use_linlinlog_interpolation )
+
   : d_cutoff_elastic_angles( data_container.getCutoffElasticAngles() ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine )
+    d_cutoff_angle_cosine( cutoff_angle_cosine ),
+    d_use_linlinlog_interpolation( use_linlinlog_interpolation )
 {
   // Make sure the data is valid
   testPrecondition( cutoff_angle_cosine >= -1.0 );
@@ -46,9 +49,18 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
                                data_container.getElectronEnergyGrid().end() );
 
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+  if ( d_use_linlinlog_interpolation )
+  {
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<true>(
     d_analog_distribution,
     data_container );
+  }
+  else
+  {
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<false>(
+    d_analog_distribution,
+    data_container );
+  }
 
   // Construct the hash-based grid searcher for this atom
   Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
@@ -99,7 +111,8 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const double cutoff_angle_cosine )
   : d_cutoff_elastic_angles( cutoff_elastic_angles ),
     d_analog_distribution( analog_distribution ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine )
+    d_cutoff_angle_cosine( cutoff_angle_cosine ),
+    d_use_linlinlog_interpolation( true )
 {
   // Make sure the data is valid
   testPrecondition( cutoff_angle_cosine >= -1.0 );

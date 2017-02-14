@@ -27,7 +27,7 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_bremsstrahlung_mode_on( true ),
     d_electroionization_mode_on( true ),
     d_atomic_excitation_mode_on( true ),
-    d_linlog_interpolation_mode_on( true ),
+    d_linlinlog_interpolation_mode_on( true ),
     d_weighted_interpolation_mode_on( true ),
     d_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_elastic_cutoff_angle_cosine( 1.0 ),
@@ -174,7 +174,7 @@ bool SimulationElectronProperties::isAtomicExcitationModeOn() const
  */
 void SimulationElectronProperties::setLinLinLogInterpolationModeOff()
 {
-  d_linlog_interpolation_mode_on = false;
+  d_linlinlog_interpolation_mode_on = false;
 }
 
 // Set secondary electron LinLinLog interpolation mode to on (on by default)
@@ -183,7 +183,7 @@ void SimulationElectronProperties::setLinLinLogInterpolationModeOff()
  */
 void SimulationElectronProperties::setLinLinLogInterpolationModeOn()
 {
-  d_linlog_interpolation_mode_on = true;
+  d_linlinlog_interpolation_mode_on = true;
 }
 
 // Return if secondary electron LinLinLog interpolation mode is on
@@ -195,7 +195,7 @@ void SimulationElectronProperties::setLinLinLogInterpolationModeOn()
  */
 bool SimulationElectronProperties::isLinLinLogInterpolationModeOn() const
 {
-  return d_linlog_interpolation_mode_on;
+  return d_linlinlog_interpolation_mode_on;
 }
 
 // Set weighted interpolation mode to off (on by default)

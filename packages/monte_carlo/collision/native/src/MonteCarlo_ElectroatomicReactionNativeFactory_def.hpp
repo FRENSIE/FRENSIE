@@ -49,7 +49,7 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   // Create the cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<SecondInterpPolicy>(
     distribution,
     raw_electroatom_data,
     cutoff_angle_cosine );
@@ -92,7 +92,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     cutoff_distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<SecondInterpPolicy>(
     cutoff_distribution,
     raw_electroatom_data,
     cutoff_angle_cosine );
@@ -146,7 +146,7 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<SecondInterpPolicy>(
     distribution,
     raw_electroatom_data );
 

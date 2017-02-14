@@ -43,6 +43,7 @@ int main( int argc, char** argv )
   // General table options
   std::string cross_section_directory, cross_section_alias;
   std::string subdirectory_name = "native";
+  std::string output_alias = "Native";
   std::string table_notes;
   bool modify_cs_xml_file = false;
 
@@ -74,8 +75,13 @@ int main( int argc, char** argv )
                                true );
   epr_generator_clp.setOption( "cross_sec_alias",
                                &cross_section_alias,
-                               "Photon cross section table alias",
+                               "Electron-Photon-Relaxation cross section table "
+                               "alias",
                                true );
+  epr_generator_clp.setOption( "output_alias",
+                               &output_alias,
+                               "Alias appended onto the cross section table "
+                               "alias used to generate the table" );
   epr_generator_clp.setOption( "subdir",
                                &subdirectory_name,
                                "Subdirectory in the cross section directory "
@@ -301,14 +307,14 @@ int main( int argc, char** argv )
 
   try{
     Data::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
-						    cross_section_directory,
-						    cross_section_alias,
-						    *cross_sections_table_info,
-						    data_file_path,
-						    data_file_type,
-						    data_table_name,
-						    data_file_start_line,
-						    atomic_weight );
+                                                    cross_section_directory,
+                                                    cross_section_alias,
+                                                    *cross_sections_table_info,
+                                                    data_file_path,
+                                                    data_file_type,
+                                                    data_table_name,
+                                                    data_file_start_line,
+                                                    atomic_weight );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
                             "Error: Unable to load the requested cross "
@@ -355,10 +361,10 @@ int main( int argc, char** argv )
                                              true );
 
       std::shared_ptr<const Data::XSSEPRDataExtractor> ace_epr_extractor(
-				new const Data::XSSEPRDataExtractor(
-				       ace_file_handler.getTableNXSArray(),
-				       ace_file_handler.getTableJXSArray(),
-				       ace_file_handler.getTableXSSArray() ) );
+                                new const Data::XSSEPRDataExtractor(
+                                       ace_file_handler.getTableNXSArray(),
+                                       ace_file_handler.getTableJXSArray(),
+                                       ace_file_handler.getTableXSSArray() ) );
 
       atomic_number = ace_epr_extractor->extractAtomicNumber();
       
@@ -384,10 +390,10 @@ int main( int argc, char** argv )
           raw_generator = new DataGen::StandardElectronPhotonRelaxationDataGenerator(
                                             ace_epr_extractor,
                                             endl_data_container,
-					    min_photon_energy,
-					    max_photon_energy,
-					    min_electron_energy,
-					    max_electron_energy );
+                                            min_photon_energy,
+                                            max_photon_energy,
+                                            min_electron_energy,
+                                            max_electron_energy );
         
         raw_generator->setOccupationNumberEvaluationTolerance(
                                             occupation_number_evaluation_tol );
@@ -449,7 +455,7 @@ int main( int argc, char** argv )
       new_file_name += local_file_name;
 
       std::string new_cross_section_alias( cross_section_alias );
-      new_cross_section_alias += "-Native";
+      new_cross_section_alias += "-"+output_alias;
 
       Teuchos::ParameterList& old_table_info =
         cross_sections_table_info->sublist( cross_section_alias );
@@ -460,30 +466,30 @@ int main( int argc, char** argv )
       new_table_info.setParameters( old_table_info );
       
       new_table_info.set(
-	    Data::CrossSectionsXMLProperties::photoatomic_file_path_prop,
-	    local_file_name );
+            Data::CrossSectionsXMLProperties::photoatomic_file_path_prop,
+            local_file_name );
       new_table_info.set(
-	    Data::CrossSectionsXMLProperties::photoatomic_file_type_prop,
-	    Data::CrossSectionsXMLProperties::native_file );
+            Data::CrossSectionsXMLProperties::photoatomic_file_type_prop,
+            Data::CrossSectionsXMLProperties::native_file );
       new_table_info.set(
         Data::CrossSectionsXMLProperties::photoatomic_file_start_line_prop,
         -1 );
       new_table_info.set(
-	   Data::CrossSectionsXMLProperties::photoatomic_table_name_prop,
-	   "" );
+           Data::CrossSectionsXMLProperties::photoatomic_table_name_prop,
+           "" );
 
       new_table_info.set(
-	    Data::CrossSectionsXMLProperties::electroatomic_file_path_prop,
-	    local_file_name );
+            Data::CrossSectionsXMLProperties::electroatomic_file_path_prop,
+            local_file_name );
       new_table_info.set(
-	    Data::CrossSectionsXMLProperties::electroatomic_file_type_prop,
-	    Data::CrossSectionsXMLProperties::native_file );
+            Data::CrossSectionsXMLProperties::electroatomic_file_type_prop,
+            Data::CrossSectionsXMLProperties::native_file );
       new_table_info.set(
         Data::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
         -1 );
       new_table_info.set(
-	   Data::CrossSectionsXMLProperties::electroatomic_table_name_prop,
-	   "" );
+           Data::CrossSectionsXMLProperties::electroatomic_table_name_prop,
+           "" );
 
       Teuchos::writeParameterListToXmlFile( *cross_sections_table_info,
                                             cross_sections_xml_file );

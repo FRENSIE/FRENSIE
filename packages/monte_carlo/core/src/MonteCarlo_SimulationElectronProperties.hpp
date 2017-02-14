@@ -163,7 +163,7 @@ private:
 
   /* The lin-log interpolation mode for secondary distributions
    * (true = on - default, false = off) */
-  bool d_linlog_interpolation_mode_on;
+  bool d_linlinlog_interpolation_mode_on;
 
   /* The weighted interpolation mode for bremsstrahlung and electroionization
    * (true = on - default, false = off) */

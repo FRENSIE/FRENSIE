@@ -25,8 +25,8 @@ public:
 
   //! Constructor (from saved archive)
   ElectronPhotonRelaxationVolatileDataContainer(
-		   const std::string& archive_name,
-		   const Utility::ArchivableObject::ArchiveType archive_type );
+                   const std::string& archive_name,
+                   const Utility::ArchivableObject::ArchiveType archive_type );
 
   // Add the setter member functions to the public interface
   using ElectronPhotonRelaxationDataContainer::setNotes;
@@ -40,6 +40,7 @@ public:
   using ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor;
   using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles;
+  using ElectronPhotonRelaxationDataContainer::setElectronLinLinLogInterpolationModeOnOff;
   using ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;

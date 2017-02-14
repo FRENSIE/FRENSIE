@@ -208,6 +208,592 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the number of moment preserving angles can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setElectronLinLinLogInterpolationMode )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  TEST_ASSERT( generator.isElectronLinLinLogInterpolationModeOn() );
+  generator.setElectronLinLinLogInterpolationModeOff();
+  TEST_ASSERT( !generator.isElectronLinLinLogInterpolationModeOn() );
+  generator.setElectronLinLinLogInterpolationModeOn();
+  TEST_ASSERT( generator.isElectronLinLinLogInterpolationModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a data container can be populated
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   populateEPRDataContainer_h_lin )
+{
+  std::shared_ptr<const DataGen::ElectronPhotonRelaxationDataGenerator>
+    data_generator;
+
+  {
+    DataGen::StandardElectronPhotonRelaxationDataGenerator*
+      raw_data_generator = new DataGen::StandardElectronPhotonRelaxationDataGenerator(
+                h_xss_data_extractor,
+                h_endl_data_container,
+                0.001,
+                20.0,
+                1.0e-5,
+                1.0e+5 );
+    
+    raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
+    raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
+    raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
+    raw_data_generator->setCutoffAngleCosine( 0.9 );
+    raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
+    raw_data_generator->setElectronLinLinLogInterpolationModeOff();
+    raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
+    raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-80 );
+    raw_data_generator->setDefaultGridDistanceTolerance( 1e-20 );
+
+    data_generator.reset( raw_data_generator );
+  }
+
+  Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
+
+  data_generator->populateEPRDataContainer( data_container );
+
+
+  // Check the table settings data
+  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 1 );
+  TEST_EQUALITY_CONST( data_container.getMinPhotonEnergy(), 0.001 );
+  TEST_EQUALITY_CONST( data_container.getMaxPhotonEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( data_container.getMinElectronEnergy(), 1.0e-5 );
+  TEST_EQUALITY_CONST( data_container.getMaxElectronEnergy(), 1.0e+5 );
+  TEST_EQUALITY_CONST(
+    data_container.getOccupationNumberEvaluationTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST(
+    data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST(
+    data_container.getPhotonThresholdEnergyNudgeFactor(), 1.0001 );
+  TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
+  TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
+  TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
+  TEST_EQUALITY_CONST(
+    data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
+  TEST_EQUALITY_CONST( data_container.getGridDistanceTolerance(), 1e-20 );
+
+  // Check the relaxation data
+  TEST_EQUALITY_CONST( data_container.getSubshells().size(), 1 );
+  TEST_ASSERT( data_container.getSubshells().count( 1 ) );
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 1 ), 1 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy( 1 ),
+                       1.361000000000E-05 );
+  TEST_ASSERT( !data_container.hasRelaxationData() );
+  TEST_ASSERT( !data_container.hasSubshellRelaxationData( 1 ) );
+
+  // Check the Compton profiles
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).size(),
+                       871 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).front(),
+                       -1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).back(),
+                       1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(1).size(), 871 );
+  TEST_FLOATING_EQUALITY( data_container.getComptonProfile(1).front(),
+                          2.24060414412282093e-09,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getComptonProfile(1).back(),
+                          2.24060414412282093e-09,
+                          1e-15 );
+
+  // Check the occupation numbers
+  TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(1).size(),
+                      410 );
+  TEST_EQUALITY_CONST(
+                     data_container.getOccupationNumberMomentumGrid(1).front(),
+                     -1.00000000000000000e+00 );
+  TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(1).back(),
+                      1.00000000000000000e+00 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).size(), 410 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).front(),
+                       0.00000000000000000e+00 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).back(),
+                       1.00000000000000000e+00 );
+
+  // Check the Waller-Hartree scattering function
+  TEST_EQUALITY_CONST(
+        data_container.getWallerHartreeScatteringFunctionMomentumGrid().size(),
+        365 );
+  TEST_EQUALITY_CONST(
+       data_container.getWallerHartreeScatteringFunctionMomentumGrid().front(),
+       0.0 );
+  TEST_FLOATING_EQUALITY(
+        data_container.getWallerHartreeScatteringFunctionMomentumGrid().back(),
+        1.0e+17,
+        1e-15 );
+  TEST_EQUALITY_CONST(
+                    data_container.getWallerHartreeScatteringFunction().size(),
+                    365 );
+  TEST_EQUALITY_CONST(
+                   data_container.getWallerHartreeScatteringFunction().front(),
+                   0.0 );
+  TEST_EQUALITY_CONST(
+                    data_container.getWallerHartreeScatteringFunction().back(),
+                    1.0 );
+
+  // Check the Waller-Hartree atomic form factor
+  TEST_EQUALITY_CONST(
+          data_container.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
+          1582 );
+  TEST_EQUALITY_CONST(
+         data_container.getWallerHartreeAtomicFormFactorMomentumGrid().front(),
+         0.0 );
+  TEST_FLOATING_EQUALITY(
+          data_container.getWallerHartreeAtomicFormFactorMomentumGrid().back(),
+          1.0e+17,
+          1e-15 );
+  TEST_EQUALITY_CONST(data_container.getWallerHartreeAtomicFormFactor().size(),
+                      1582 );
+  TEST_FLOATING_EQUALITY(
+                     data_container.getWallerHartreeAtomicFormFactor().front(),
+                     1.0e+00,
+                     1e-15 );
+  TEST_FLOATING_EQUALITY(
+                      data_container.getWallerHartreeAtomicFormFactor().back(),
+                      8.18290000000000004e-39,
+                      1e-15 );
+
+  // Check the Waller-Hartree squared form factor
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
+                       3231 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().front(),
+                          0.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().back(),
+                          1.0e+34,
+                          1e-15 );
+  TEST_EQUALITY_CONST( data_container.getWallerHartreeSquaredAtomicFormFactor().size(),
+                       3231 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().front(),
+                          1.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getWallerHartreeSquaredAtomicFormFactor().back(),
+                          6.695985241e-77,
+                          1e-15 );
+
+  // Check the photon energy grid
+  TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().size(), 854 );
+  TEST_FLOATING_EQUALITY( data_container.getPhotonEnergyGrid().front(),
+                          1.0e-03,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( data_container.getPhotonEnergyGrid().back(),
+                          2.0e+01,
+                          1e-15 );
+
+  // Check the average photon heating numbers
+  TEST_EQUALITY_CONST( data_container.getAveragePhotonHeatingNumbers().size(),
+                       854 );
+  TEST_FLOATING_EQUALITY(
+                       data_container.getAveragePhotonHeatingNumbers().front(),
+                       9.44850385307779940e-04,
+                       1e-15 );
+  TEST_FLOATING_EQUALITY(
+                        data_container.getAveragePhotonHeatingNumbers().back(),
+                        1.52602263568998424e+01,
+                        1e-15 );
+
+  // Check the Waller-Hartree incoherent cross section
+  TEST_EQUALITY_CONST(
+                data_container.getWallerHartreeIncoherentCrossSection().size(),
+                854 );
+  TEST_FLOATING_EQUALITY(
+               data_container.getWallerHartreeIncoherentCrossSection().front(),
+               8.43429999999524560e-02,
+               1e-15 );
+  TEST_FLOATING_EQUALITY(
+               data_container.getWallerHartreeIncoherentCrossSection().back(),
+               3.02353826681303964e-02,
+               1e-15 );
+  TEST_EQUALITY_CONST(
+   data_container.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(),
+   0 );
+
+  // Check the impulse approx. incoherent cross section
+  TEST_EQUALITY_CONST(
+                data_container.getImpulseApproxIncoherentCrossSection().size(),
+                854 );
+  TEST_FLOATING_EQUALITY(
+               data_container.getImpulseApproxIncoherentCrossSection().front(),
+               0.023125376732405889,
+               1e-15 );
+  TEST_FLOATING_EQUALITY(
+                data_container.getImpulseApproxIncoherentCrossSection().back(),
+                0.0302498521139349733,
+                1e-15 );
+  TEST_EQUALITY_CONST(
+   data_container.getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(),
+   0 );
+
+  // Check the subshell impulse approx. incoherent cross sections
+  TEST_EQUALITY_CONST(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(1).size(),
+       854 );
+  TEST_FLOATING_EQUALITY(
+      data_container.getImpulseApproxSubshellIncoherentCrossSection(1).front(),
+      0.023125376732405889,
+      1e-15 );
+  TEST_FLOATING_EQUALITY(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(1).back(),
+       0.0302498521139349733,
+       1e-15 );
+  TEST_EQUALITY_CONST( data_container.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(1),
+                       0 );
+
+  // Check the Waller-Hartree coherent cross section
+  TEST_EQUALITY_CONST(
+                  data_container.getWallerHartreeCoherentCrossSection().size(),
+                  854 );
+  TEST_FLOATING_EQUALITY(
+                 data_container.getWallerHartreeCoherentCrossSection().front(),
+                 5.81790484064093394e-01,
+                 1e-15 );
+  TEST_FLOATING_EQUALITY(
+                 data_container.getWallerHartreeCoherentCrossSection().back(),
+                 1.15654029975768264e-08,
+                 1e-15 );
+  TEST_EQUALITY_CONST(
+     data_container.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex(),
+     0 );
+
+  // Check the pair production cross section
+  TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().size(),
+                       425 );
+  TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().front(),
+                       0.0 );
+  TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().back(),
+                       3.29199999999999979e-03 );
+  
+  unsigned pp_threshold_index =
+    data_container.getPairProductionCrossSectionThresholdEnergyIndex();
+  
+  TEST_EQUALITY_CONST( pp_threshold_index, 429 );
+  TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[pp_threshold_index],
+                      2*Utility::PhysicalConstants::electron_rest_mass_energy);
+
+  // Check the triplet production cross section
+  TEST_EQUALITY_CONST(data_container.getTripletProductionCrossSection().size(),
+                      199 );
+  TEST_EQUALITY_CONST(
+                     data_container.getTripletProductionCrossSection().front(),
+                     0.0 );
+  TEST_EQUALITY_CONST(data_container.getTripletProductionCrossSection().back(),
+                      2.35899999999999999e-03 );
+
+  unsigned tp_threshold_index =
+    data_container.getTripletProductionCrossSectionThresholdEnergyIndex();
+  
+  TEST_EQUALITY_CONST( tp_threshold_index, 655 );
+  TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[tp_threshold_index],
+                      4*Utility::PhysicalConstants::electron_rest_mass_energy);
+
+  // Check the photoelectric cross section
+  TEST_EQUALITY_CONST( data_container.getPhotoelectricCrossSection().size(),
+                       854 );
+  TEST_EQUALITY_CONST( data_container.getPhotoelectricCrossSection().front(),
+                       1.14084154957847943e+01 );
+  TEST_EQUALITY_CONST( data_container.getPhotoelectricCrossSection().back(),
+                       4.05895811339709049e-11 );
+  TEST_EQUALITY_CONST(
+             data_container.getPhotoelectricCrossSectionThresholdEnergyIndex(),
+             0 );
+
+  // Check the subshell photoelectric cross sections
+  TEST_EQUALITY_CONST(
+                 data_container.getSubshellPhotoelectricCrossSection(1).size(),
+                 854 );
+  TEST_EQUALITY_CONST(
+                data_container.getSubshellPhotoelectricCrossSection(1).front(),
+                1.14084154957847943e+01 );
+  TEST_EQUALITY_CONST(
+                 data_container.getSubshellPhotoelectricCrossSection(1).back(),
+                 4.05895811339709049e-11 );
+  TEST_EQUALITY_CONST(
+    data_container.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex(1),
+    0 );
+
+  // Check the Waller-Hartree total cross section
+  TEST_EQUALITY_CONST(
+                     data_container.getWallerHartreeTotalCrossSection().size(),
+                     854 );
+  
+  TEST_FLOATING_EQUALITY(
+                    data_container.getWallerHartreeTotalCrossSection().front(),
+                    1.20745489798488403e+01,
+                    1e-15 );
+  TEST_FLOATING_EQUALITY(
+                     data_container.getWallerHartreeTotalCrossSection().back(),
+                     0.0358863942741229694,
+                     1e-15 );
+
+  // Check the impulse approx. total cross section
+  TEST_EQUALITY_CONST(
+                     data_container.getImpulseApproxTotalCrossSection().size(),
+                     854 );
+  TEST_FLOATING_EQUALITY(
+                    data_container.getImpulseApproxTotalCrossSection().front(),
+                    12.0133313565812934,
+                    1e-15 );
+  TEST_FLOATING_EQUALITY(
+                     data_container.getImpulseApproxTotalCrossSection().back(),
+                     0.0359008637199275463,
+                     1e-15 );
+
+  // Check the electron energy grid
+  std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 729 );
+
+  // Check the elastic data
+  unsigned threshold =
+    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  std::vector<double> cross_section =
+    data_container.getCutoffElasticCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
+
+  threshold =
+    data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
+
+  TEST_EQUALITY_CONST( threshold, 264 );
+
+  cross_section =
+    data_container.getScreenedRutherfordElasticCrossSection();
+
+//  TEST_EQUALITY_CONST( cross_section.front(), 2.5745520470700284932 );
+//! \todo double check what the front cross section should be
+  TEST_EQUALITY_CONST( cross_section.front(), 2.57455204707366647 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
+  TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
+
+  std::vector<double> angular_grid =
+    data_container.getElasticAngularEnergyGrid();
+
+  TEST_EQUALITY_CONST( angular_grid.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( angular_grid.size(), 16 );
+
+  std::vector<double> elastic_angles =
+    data_container.getCutoffElasticAngles(1.0e-5);
+
+  TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
+  TEST_EQUALITY_CONST( elastic_angles.size(), 2 );
+
+  elastic_angles =
+    data_container.getCutoffElasticAngles(1.0e+5);
+
+  TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
+  TEST_EQUALITY_CONST( elastic_angles.size(), 96 );
+
+  std::vector<double> elastic_pdf =
+    data_container.getCutoffElasticPDF(1.0e-5);
+
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 0.5 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 0.5 );
+  TEST_EQUALITY_CONST( elastic_pdf.size(), 2 );
+
+  elastic_pdf =
+    data_container.getCutoffElasticPDF(1.0e+5);
+
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 6.25670e-13 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.86945e+5 );
+  TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
+
+  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
+  TEST_ASSERT( data_container.hasMomentPreservingData() );
+
+  std::vector<double> discrete_angles =
+    data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
+
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.33333333326667125e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.33333333326667125e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.size(), 1 );
+
+  discrete_angles =
+    data_container.getMomentPreservingElasticDiscreteAngles( 1.0e+5 );
+
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.96847743255378838e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.96847743255378838e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.size(), 1 );
+
+  std::vector<double> discrete_weights =
+    data_container.getMomentPreservingElasticWeights( 1.0e-5 );
+
+  TEST_EQUALITY_CONST( discrete_weights.front(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_weights.size(), 1 );
+
+  discrete_weights =
+    data_container.getMomentPreservingElasticWeights( 1.0e+5 );
+
+  TEST_EQUALITY_CONST( discrete_weights.front(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_weights.size(), 1 );
+
+  threshold =
+    data_container.getMomentPreservingCrossSectionThresholdEnergyIndex();
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  cross_section =
+    data_container.getMomentPreservingCrossSection();
+
+  TEST_FLOATING_EQUALITY( cross_section.front(), 1.0308605152240909636E+07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 1.2931601408114005462e-07, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
+
+  std::vector<double> reduction_ratio =
+    data_container.getReducedCutoffCrossSectionRatios();
+
+  TEST_FLOATING_EQUALITY( reduction_ratio.front(), 0.9500004750002375431, 1e-15 );
+  TEST_FLOATING_EQUALITY( reduction_ratio.back(), 8.0626912867985410017e-06, 1e-15 );
+  TEST_EQUALITY_CONST( reduction_ratio.size(), 729-threshold );
+
+  // Check the electroionization data
+  threshold =
+    data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
+
+  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
+                       1.361000000000E-05 );
+
+  cross_section =
+    data_container.getElectroionizationCrossSection( 1u );
+
+  TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
+  TEST_EQUALITY_CONST( cross_section.back(), 8.28924e+4 );
+  TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
+
+  std::vector<double> electroionization_energy_grid =
+    data_container.getElectroionizationEnergyGrid( 1u );
+
+  TEST_EQUALITY_CONST( electroionization_energy_grid.front(), 1.36100e-5 );
+  TEST_EQUALITY_CONST( electroionization_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( electroionization_energy_grid.size(), 8 );
+
+  std::vector<double> electroionization_recoil_energy =
+    data_container.getElectroionizationRecoilEnergy( 1u, 1.36100e-5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 2.79866e-9 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 2.79866e-8 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 2 );
+
+  electroionization_recoil_energy =
+    data_container.getElectroionizationRecoilEnergy( 1u, 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 5.00000e+4 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 147 );
+
+  std::vector<double> electroionization_recoil_pdf =
+    data_container.getElectroionizationRecoilPDF( 1u, 1.36100e-5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 3.97015e+7 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 3.97015e+7 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 2 );
+
+  electroionization_recoil_pdf =
+    data_container.getElectroionizationRecoilPDF( 1u, 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.61897e+5 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 2.77550e-15 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 147 );
+
+  // Check the bremsstrahlung data
+  threshold =
+    data_container.getBremsstrahlungCrossSectionThresholdEnergyIndex();
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  cross_section =
+    data_container.getBremsstrahlungCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(),  2.97832e+1 );
+  TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
+  TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
+
+  std::vector<double> bremsstrahlung_energy_grid =
+    data_container.getBremsstrahlungEnergyGrid();
+
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.front(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 10 );
+
+  std::vector<double> bremsstrahlung_photon_energy =
+    data_container.getBremsstrahlungPhotonEnergy( 1.00000e-5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 17 );
+
+  bremsstrahlung_photon_energy =
+    data_container.getBremsstrahlungPhotonEnergy( 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 111 );
+
+  std::vector<double> bremsstrahlung_photon_pdf =
+    data_container.getBremsstrahlungPhotonPDF( 1.00000e-5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(), 2.13940e+6 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(), 2.12245e+4 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 17 );
+
+  bremsstrahlung_photon_pdf =
+    data_container.getBremsstrahlungPhotonPDF( 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(),  3.65591e+5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  5.16344e-10 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 111 );
+
+  // Check the atomic excitation data
+  threshold =
+    data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex();
+
+  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
+                       1.36100e-5 );
+
+  cross_section =
+    data_container.getAtomicExcitationCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
+  TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
+  TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
+
+  std::vector<double> atomic_excitation_energy_grid =
+    data_container.getAtomicExcitationEnergyGrid();
+
+  TEST_EQUALITY_CONST( atomic_excitation_energy_grid.front(), 1.36100e-5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_grid.size(), 170 );
+
+  std::vector<double> atomic_excitation_energy_loss =
+    data_container.getAtomicExcitationEnergyLoss();
+
+  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 1.36100e-5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 2.10777e-5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 170 );
+
+  data_container.exportData( "test_h_epr.xml",
+                             Utility::ArchivableObject::XML_ARCHIVE );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a data container can be populated
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                    populateEPRDataContainer_h )
@@ -230,6 +816,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
     raw_data_generator->setCutoffAngleCosine( 0.9 );
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
+    raw_data_generator->setElectronLinLinLogInterpolationModeOn();
     raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
     raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-80 );
     raw_data_generator->setDefaultGridDistanceTolerance( 1e-20 );
@@ -790,14 +1377,16 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,
     1.0,
-    0 );
+    0,
+    true );
 
   TEST_ASSERT( !data_container.hasMomentPreservingData() );;
 
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,
     0.9,
-    2 );
+    2,
+    false );
 
   // Check the table settings data
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 1 );
@@ -1346,9 +1935,10 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
     data_container,
-    20.0,
+    21.0,
     1.0,
-    0 );
+    0,
+    true );
 
   TEST_ASSERT( !data_container.hasMomentPreservingData() );
 
@@ -1356,7 +1946,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container,
     20.0,
     0.9,
-    2 );
+    2,
+    false );
 
   // Check the table settings data
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 1 );
@@ -1381,8 +1972,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getSubshells().size(), 1 );
   TEST_ASSERT( data_container.getSubshells().count( 1 ) );
   TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 1 ), 1 );
-  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy( 1 ),
-                       1.361000000000E-05 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy( 1 ), 1.361e-5 );
   TEST_ASSERT( !data_container.hasRelaxationData() );
   TEST_ASSERT( !data_container.hasSubshellRelaxationData( 1 ) );
 
@@ -1405,14 +1995,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(1).size(),
                       410 );
   TEST_EQUALITY_CONST( data_container.getOccupationNumberMomentumGrid(1).front(),
-                       -1.00000000000000000e+00 );
+                       -1.0 );
   TEST_EQUALITY_CONST( data_container.getOccupationNumberMomentumGrid(1).back(),
-                       1.00000000000000000e+00 );
+                       1.0 );
   TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).size(), 410 );
-  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).front(),
-                       0.00000000000000000e+00 );
-  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).back(),
-                       1.00000000000000000e+00 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).front(), 0.0 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).back(), 1.0 );
 
   // Check the Waller-Hartree scattering function
   TEST_EQUALITY_CONST(
@@ -1642,6 +2230,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                      0.0359008637199275463,
                      1e-15 );
 
+
   // Check the electron data
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
@@ -1662,8 +2251,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32883207226057110e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.97994412153097255e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32882814839563146e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.97993385281695344e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   std::vector<double> discrete_weights =
@@ -1673,11 +2262,10 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( discrete_weights.back(), 5.76546554456751736e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
-  discrete_weights =
-    data_container.getMomentPreservingElasticWeights( 20.0 );
+  discrete_weights = data_container.getMomentPreservingElasticWeights( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 2.42115415404845803e-03 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97578845845951467e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 2.42350033091424727e-03 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97576499669085792e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   unsigned threshold =
@@ -1692,13 +2280,11 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_FLOATING_EQUALITY( cross_section.back(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 729-threshold );
 
-  threshold =
-    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
+  threshold = data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   TEST_EQUALITY_CONST( threshold, 0 );
 
-  cross_section =
-    data_container.getCutoffElasticCrossSection();
+  cross_section = data_container.getCutoffElasticCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
@@ -1739,25 +2325,22 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 2 );
 
-  elastic_angles =
-    data_container.getCutoffElasticAngles(20.0);
+  elastic_angles = data_container.getCutoffElasticAngles(20.0);
 
   TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
   TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 95 );
 
-  std::vector<double> elastic_pdf =
-    data_container.getCutoffElasticPDF(1.0e-5);
+  std::vector<double> elastic_pdf = data_container.getCutoffElasticPDF(1.0e-5);
 
   TEST_EQUALITY_CONST( elastic_pdf.front(), 0.5 );
   TEST_EQUALITY_CONST( elastic_pdf.back(), 0.5 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 2 );
 
-  elastic_pdf =
-    data_container.getCutoffElasticPDF(20.0);
+  elastic_pdf = data_container.getCutoffElasticPDF(20.0);
 
-  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.79500114938497566e-10 );
-  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.61179008300966816e+05 );
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.91797262458437489e-10 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.59633061805517529e+05 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 95 );
 
   // Check the electroionization data
@@ -1766,7 +2349,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( threshold, 7 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
-                       1.361000000000E-05 );
+                       1.361e-5 );
 
   cross_section =
     data_container.getElectroionizationCrossSection( 1u );
@@ -2692,7 +3275,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,
     0.9,
-    2 );
+    2,
+    false );
 
   // Check the table settings data
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 6 );

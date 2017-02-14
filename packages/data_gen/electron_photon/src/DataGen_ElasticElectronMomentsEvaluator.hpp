@@ -38,7 +38,8 @@ public:
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 1.0 );
+    const double cutoff_angle_cosine = 1.0,
+    const bool use_linlinlog_interpolation = true );
 
   //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(
@@ -156,6 +157,9 @@ private:
 
   // The screened rutherford elastic threshold_energy_index
   unsigned d_screened_rutherford_threshold_energy_index;
+
+  // Boolean for LinLinLog interpolation
+  bool d_use_linlinlog_interpolation;
 
   // The analog distribution
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>

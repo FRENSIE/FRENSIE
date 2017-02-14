@@ -86,6 +86,15 @@ public:
   //! Get the number of moment preserving angles
   double getNumberOfMomentPreservingAngles() const;
 
+  //! Set secondary electron LinLinLog interpolation mode to off (on by default)
+  void setElectronLinLinLogInterpolationModeOff();
+
+  //! Set secondary electron LinLinLog interpolation mode to on (on by default)
+  void setElectronLinLinLogInterpolationModeOn();
+
+  //! Return if secondary electron LinLinLog interpolation mode is on
+  bool isElectronLinLinLogInterpolationModeOn() const;
+
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
@@ -96,6 +105,7 @@ public:
     const double max_electron_energy = 20.0,
     const double cutoff_angle_cosine = 0.9,
     const unsigned number_of_moment_preserving_angles = 1,
+    const bool use_linlinlog_interpolation = true,
     std::ostream& os_log = std::cout );
 
   //! Repopulate the electron moment preserving data
@@ -103,6 +113,7 @@ public:
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double cutoff_angle_cosine = 0.9,
     const unsigned number_of_moment_preserving_angles = 1,
+    const bool use_linlinlog_interpolation = true,
     std::ostream& os_log = std::cout );
 
 protected:
@@ -142,10 +153,10 @@ private:
 
   // Set the transition data
   void setTransitionData( const unsigned subshell,
-			  const unsigned transitions,
-			  const unsigned subshell_data_start_index,
-			  Data::ElectronPhotonRelaxationVolatileDataContainer&
-			  data_container ) const;
+                          const unsigned transitions,
+                          const unsigned subshell_data_start_index,
+                          Data::ElectronPhotonRelaxationVolatileDataContainer&
+                          data_container ) const;
 
   // Set the Waller-Hartree atomic form factor data
   void setWallerHartreeAtomicFormFactorData(
@@ -158,9 +169,9 @@ private:
 
   // Extract the half Compton profile from the ACE table
   void extractHalfComptonProfile(
-			   const unsigned subshell,
-			   std::vector<double>& half_momentum_grid,
-			   std::vector<double>& half_profile ) const;
+                           const unsigned subshell,
+                           std::vector<double>& half_momentum_grid,
+                           std::vector<double>& half_profile ) const;
 
   // Set the electron cross section union energy grid
   void setElectronCrossSectionsData(
@@ -169,14 +180,15 @@ private:
   // Set the moment preserving data
   static void setMomentPreservingData(
     const std::vector<double>& elastic_energy_grid,
+    const bool use_linlinlog_interpolation,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container );
 
   // Extract the average photon heating numbers
   template<typename InterpPolicy>
   void extractPhotonCrossSection(
-	  Teuchos::ArrayView<const double> raw_energy_grid,
-	  Teuchos::ArrayView<const double> raw_cross_section,
-	  std::shared_ptr<const Utility::OneDDistribution>& cross_section,
+          Teuchos::ArrayView<const double> raw_energy_grid,
+          Teuchos::ArrayView<const double> raw_cross_section,
+          std::shared_ptr<const Utility::OneDDistribution>& cross_section,
           const bool processed_raw_data = true ) const;
 
   // Extract electron cross sections
@@ -223,11 +235,11 @@ private:
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
-	     const std::list<double>& union_energy_grid,
-	     const std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>&
-	     original_cross_section,
-	     std::vector<double>& cross_section,
-	     unsigned& threshold_index ) const;
+             const std::list<double>& union_energy_grid,
+             const std::shared_ptr<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>&
+             original_cross_section,
+             std::vector<double>& cross_section,
+             unsigned& threshold_index ) const;
 
   // Populate a cross section using the raw cross section
   void populateCrossSection( const std::vector<double>& raw_cross_section,
@@ -312,11 +324,15 @@ private:
 
   // The number of moment preserving angles
   unsigned d_number_of_moment_preserving_angles;
+
+  /* The lin-lin-log interpolation mode for electron secondary distributions
+   * (true = on - default, false = off) */
+  bool d_linlinlog_interpolation_mode_on;
 };
 
 // The if a value is not equal to zero
 inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
-							   const double value )
+                                                           const double value )
 {
   return value != 0.0;
 }
