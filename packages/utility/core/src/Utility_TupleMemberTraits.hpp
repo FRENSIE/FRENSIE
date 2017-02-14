@@ -16,7 +16,7 @@
 // Boost Includes
 #include <boost/units/quantity.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_constant.hpp>
+#include <boost/type_traits/is_const.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/mpl/and.hpp>
@@ -34,15 +34,15 @@ namespace Utility{
  * \ingroup tuple_member_traits
  */
 template<typename T, TupleMember member>
-struct TupleMemberTraits<T,member,typename boost::enable_if<boost::is_const<T> >::type> : public TupleMemberTraits<boost::remove_const<T>::type,member>
-{ /* ... */ }
+struct TupleMemberTraits<T,member,typename boost::enable_if<boost::is_const<T> >::type> : public TupleMemberTraits<typename boost::remove_const<T>::type,member>
+{ /* ... */ };
 
 /*! \brief The partial specialization of the TupleMemberTraits for arithmetic
  * types and FIRST
  * \ingroup tuple_member_traits
  */
 template<typename T>
-struct TupleMemberTraits<T,FIRST,typename boost::enable_if<boost::mpl::and_<boost::is_arithmetic<T>,boost::mpl::not_<boost::is_const<T> > > >::type>
+struct TupleMemberTraits<T,FIRST,typename boost::enable_if<typename boost::mpl::and_<boost::is_arithmetic<T>,typename boost::mpl::not_<boost::is_const<T> >::type>::type>::type>
 {
   typedef T tupleType;
   typedef T tupleMemberType;
@@ -75,11 +75,13 @@ struct TupleMemberTraits<boost::units::quantity<Unit,T>,FIRST>
 /*! The partial specialization of the TupleMemberTraits for FIRST
  * \ingroup tuple_member_traits
  */
-template<typename Tuple>
-struct TupleMemberTraits<Tuple,FIRST>
+  template<typename T,
+           typename... Types,
+           template<typename...> class Tuple>
+struct TupleMemberTraits<Tuple<T,Types...>,FIRST>
 {
-  typedef typename Tuple tupleType;
-  typedef typename Tuple::firstType tupleMemberType;
+  typedef Tuple<T,Types...> tupleType;
+  typedef typename tupleType::firstType tupleMemberType;
   static inline tupleMemberType& get( tupleType& tuple )
   { return tuple.first; }
   static inline const tupleMemberType& get( const tupleType& tuple )
@@ -91,11 +93,14 @@ struct TupleMemberTraits<Tuple,FIRST>
 /*! The partial specialization of the TupleMemberTraits for SECOND
  * \ingroup tuple_member_traits
  */
-template<typename Tuple>
-struct TupleMemberTraits<Tuple,SECOND>
+template<typename T1,
+         typename T2,
+         typename... Types,
+         template<typename...> class Tuple>
+struct TupleMemberTraits<Tuple<T1,T2,Types...>,SECOND>
 {
-  typedef typename Tuple tupleType;
-  typedef typename Tuple::secondType tupleMemberType;
+  typedef Tuple<T1,T2,Types...> tupleType;
+  typedef typename tupleType::secondType tupleMemberType;
   static inline tupleMemberType& get( tupleType& tuple )
   { return tuple.second; }
   static inline const tupleMemberType& get( const tupleType& tuple )
@@ -107,11 +112,15 @@ struct TupleMemberTraits<Tuple,SECOND>
 /*! The partial specialization of the TupleMemberTraits for THIRD
  * \ingroup tuple_member_traits
  */
-template<typename Tuple>
-struct TupleMemberTraits<Tuple,THIRD>
+template<typename T1,
+         typename T2,
+         typename T3,
+         typename... Types,
+         template<typename...> class Tuple>
+struct TupleMemberTraits<Tuple<T1,T2,T3,Types...>,THIRD>
 {
-  typedef typename Tuple tupleType;
-  typedef typename Tuple::thirdType tupleMemberType;
+  typedef Tuple<T1,T2,T3,Types...> tupleType;
+  typedef typename tupleType::thirdType tupleMemberType;
   static inline tupleMemberType& get( tupleType& tuple )
   { return tuple.third; }
   static inline const tupleMemberType& get( const tupleType& tuple )
@@ -123,11 +132,16 @@ struct TupleMemberTraits<Tuple,THIRD>
 /*! The partial specialization of the TupleMemberTraits for FOURTH
  * \ingroup tuple_member_traits
  */
-template<typename Tuple>
-struct TupleMemberTraits<Tuple,FOURTH>
+template<typename T1,
+         typename T2,
+         typename T3,
+         typename T4,
+         typename... Types,
+         template<typename...> class Tuple>
+struct TupleMemberTraits<Tuple<T1,T2,T3,T4,Types...>,FOURTH>
 {
-  typedef typename Tuple tupleType;
-  typedef typename Tuple::fourthType tupleMemberType;
+  typedef Tuple<T1,T2,T3,T4,Types...> tupleType;
+  typedef typename tupleType::fourthType tupleMemberType;
   static inline tupleMemberType& get( tupleType& tuple )
   { return tuple.fourth; }
   static inline const tupleMemberType& get( const tupleType& tuple )
@@ -136,48 +150,14 @@ struct TupleMemberTraits<Tuple,FOURTH>
   { tuple.fourth = value; }
 };
 
-/*! \brief The partial specialization of the TupleMemberTraits for std::pair
- * and FIRST
- * \ingroup tuple_member_traits
- */
-template<typename T1, typename T2>
-struct TuplememberTraits<std::pair<T1,T2>,FIRST>
-{
-  typedef std::pair<T1,T2> tupleType;
-  typedef T1 tupleMemberType;
-  static inline tupleMemberType& get( tupleType& tuple )
-  { return tuple.first; }
-  static inline const tupleMemberType& get( const tupleType& tuple )
-  { return tuple.first; }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
-  { tuple.first = value; }
-};
-
-/*! \brief The partial specialization of the TupleMemberTraits for std::pair
- * and SECOND
- * \ingroup tuple_member_traits
- */
-template<typename T1, typename T2>
-struct TuplememberTraits<std::pair<T1,T2>,SECOND>
-{
-  typedef std::pair<T1,T2> tupleType;
-  typedef T1 tupleMemberType;
-  static inline tupleMemberType& get( tupleType& tuple )
-  { return tuple.second; }
-  static inline const tupleMemberType& get( const tupleType& tuple )
-  { return tuple.second; }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
-  { tuple.second = value; }
-};
-
 /*! \brief The partial specialization of the TupleMemberTraits for std::tuple
  * and FIRST
  * \ingroup tuple_member_traits
  */
 template<typename T, typename... Types>
-struct TuplememberTraits<std::tuple<T,Types>,FIRST>
+struct TupleMemberTraits<std::tuple<T,Types...>,FIRST>
 {
-  typedef std::tuple<T,Types> tupleType;
+  typedef std::tuple<T,Types...> tupleType;
   typedef T tupleMemberType;
   static inline tupleMemberType& get( tupleType& tuple )
   { return std::get<0>(tuple); }
@@ -192,9 +172,9 @@ struct TuplememberTraits<std::tuple<T,Types>,FIRST>
  * \ingroup tuple_member_traits
  */
 template<typename T1, typename T2, typename... Types>
-struct TuplememberTraits<std::tuple<T1,T2,Types>,SECOND>
+struct TupleMemberTraits<std::tuple<T1,T2,Types...>,SECOND>
 {
-  typedef std::tuple<T1,T2,Types> tupleType;
+  typedef std::tuple<T1,T2,Types...> tupleType;
   typedef T2 tupleMemberType;
   static inline tupleMemberType& get( tupleType& tuple )
   { return std::get<1>(tuple); }
@@ -209,9 +189,9 @@ struct TuplememberTraits<std::tuple<T1,T2,Types>,SECOND>
  * \ingroup tuple_member_traits
  */
 template<typename T1, typename T2, typename T3, typename... Types>
-struct TuplememberTraits<std::tuple<T1,T2,T3,Types>,SECOND>
+struct TupleMemberTraits<std::tuple<T1,T2,T3,Types...>,SECOND>
 {
-  typedef std::tuple<T1,T2,T3,Types> tupleType;
+  typedef std::tuple<T1,T2,T3,Types...> tupleType;
   typedef T3 tupleMemberType;
   static inline tupleMemberType& get( tupleType& tuple )
   { return std::get<2>(tuple); }
@@ -226,9 +206,9 @@ struct TuplememberTraits<std::tuple<T1,T2,T3,Types>,SECOND>
  * \ingroup tuple_member_traits
  */
 template<typename T1, typename T2, typename T3, typename T4, typename... Types>
-struct TuplememberTraits<std::tuple<T1,T2,T3,T4,Types>,SECOND>
+struct TupleMemberTraits<std::tuple<T1,T2,T3,T4,Types...>,SECOND>
 {
-  typedef std::tuple<T1,T2,T3,T4,Types> tupleType;
+  typedef std::tuple<T1,T2,T3,T4,Types...> tupleType;
   typedef T4 tupleMemberType;
   static inline tupleMemberType& get( tupleType& tuple )
   { return std::get<3>(tuple); }

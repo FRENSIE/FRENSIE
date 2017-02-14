@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "Utility_ParameterListCompatibleObject.hpp"
+#include "Utility_ArrayTraits.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
@@ -53,8 +54,9 @@ public:
   const std::string& getString() const;
 
   //! Return the concrete array
-  template<typename T>
-  const Teuchos::Array<T> getConcreteArray() const;
+  template<typename T,
+           template<typename,typename...> class Array = Teuchos::Array>
+  const Array<T> getConcreteArray() const;
 
   //! Test if boolean data is present
   bool isBooleanDataPresent() const;
@@ -98,14 +100,14 @@ private:
 };
 
 // Return the concrete array
-template<typename T>
-const Teuchos::Array<T> ArrayString::getConcreteArray() const
+template<typename T,template<typename,typename...> class Array>
+const Array<T> ArrayString::getConcreteArray() const
 {
   try{
-    return Teuchos::fromStringToArray<T>( d_array_string );
+    return Utility::stringToArray<Array<T> >( d_array_string );
   }
-  EXCEPTION_CATCH_RETHROW( Teuchos::InvalidArrayStringRepresentation,
-			   "Error converting string to array!" );
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+			   "Could not convert the array string to an array!" );
 }
 
 } // end Utility namespace

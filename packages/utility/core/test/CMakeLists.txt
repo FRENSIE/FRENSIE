@@ -178,6 +178,13 @@ TARGET_LINK_LIBRARIES(tstAtomicMassUnit utility_core)
 ADD_TEST(AtomicMassUnit_test tstAtomicMassUnit)
 SET_PROPERTY(TEST AtomicMassUnit_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstArrayTraits
+  tstArrayTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstArrayTraits utility_core)
+ADD_TEST(ArrayTraits_test tstArrayTraits)
+SET_PROPERTY(TEST ArrayTraits_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstSerialCommHelpers
   tstSerialCommHelpers.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

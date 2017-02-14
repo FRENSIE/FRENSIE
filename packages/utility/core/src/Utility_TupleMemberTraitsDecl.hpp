@@ -50,10 +50,10 @@ template<typename Tuple, TupleMember member, typename Enabled = void>
 struct TupleMemberTraits
 {
   //! The tuple type
-  typedef typename Tuple tupleType;
+  typedef Tuple tupleType;
   
   //! The type of the desired tuple member
-  typedef typename Tuple tupleMemberType;
+  typedef Tuple tupleMemberType;
 
   //! Get the value of the desired tuple member
   static inline const tupleMemberType& get(const tupleType& tuple)
@@ -96,7 +96,7 @@ get( Tuple& tuple )
  * \ingroup tuple_member_traits
  */
 template<TupleMember member, typename Tuple>
-inline typename const TupleMemberTraits<Tuple,member>::tupleMemberType&
+inline const typename TupleMemberTraits<Tuple,member>::tupleMemberType&
 get( const Tuple& tuple )
 { return TupleMemberTraits<Tuple,member>::get( tuple ); }
 

@@ -9,6 +9,13 @@
 #ifndef UTILITY_ARRAY_TRAITS_DECL_HPP
 #define UTILITY_ARRAY_TRAITS_DECL_HPP
 
+// Std Lib Includes
+#include <iostream>
+#include <string>
+
+// Boost Includes
+#include <boost/mpl/bool.hpp>
+
 // Trilinos Includes
 #include <Teuchos_ArrayView.hpp>
 #include <Teuchos_OrdinalTraits.hpp>
@@ -16,6 +23,7 @@
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 /*! \defgroup array_traits Array Traits
  * \ingroup traits
@@ -58,17 +66,11 @@ namespace Utility{
  * std::vector
  * \ingroup array_traits
  */
-template<typename T,
-         template<typename,typename...> class Array,
-         typename Enabled = void>
+template<typename Array, typename Enabled = void>
 struct ArrayTraits
 {
   //! The array type
-  typedef Array<T> ArrayType;
-  //! The array view type
-  typedef Teuchos::ArrayView<T> ArrayViewType;
-  //! The array const view type
-  typedef Teuchos::ArrayView<const T> ArrayConstViewType;
+  typedef Array ArrayType;
   //! The size type of the array
   typedef typename ArrayType::size_type size_type;
   //! The type contained in the array
@@ -77,13 +79,19 @@ struct ArrayTraits
   typedef typename ArrayType::pointer pointer;
   //! The const pointer type of the array
   typedef typename ArrayType::const_pointer const_pointer;
+  //! The array view type
+  typedef Teuchos::ArrayView<value_type> ArrayViewType;
+  //! The array const view type
+  typedef Teuchos::ArrayView<const value_type> ArrayConstViewType;
+  // This typedef will only appear in specializations
+  // typedef boost::mpl::true_ AvoidAmbiguousOverloads;
 
   //! The number of dimensions in the array
   static inline size_type numberOfDimensions( const ArrayType& array )
   { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
 
   //! The size of each array dimension
-  template<typename IntType,template<typename,typename...> DimSizeArray>
+  template<typename IntType,template<typename,typename...> class DimSizeArray>
   static inline void dimensionSizes( const ArrayType& array,
                                      DimSizeArray<IntType>& dim_size_array)
   { (void)UndefinedTraits<ArrayType>::notDefined(); }
@@ -97,7 +105,7 @@ struct ArrayTraits
   { (void)UndefinedTraits<ArrayType>::notDefined(); }
 
   //! Reshape the array
-  template<typename IntType, template<typename,typename... > DimSizeArray>
+  template<typename IntType, template<typename,typename... > class DimSizeArray>
   static inline void reshape( ArrayType& array,
                               const DimSizeArray<IntType>& dim_size_array )
   { (void)UndefinedTraits<ArrayType>::notDefined(); }
@@ -110,28 +118,39 @@ struct ArrayTraits
   static inline const_pointer headPtr( const ArrayType& array)
   { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
 
+  //! Convert the array to a string
+  static inline std::string toString( const ArrayType& array )
+  { (void)UndefinedTraits<ArrayType>::notDefined(); return ""; }
+
+  //! Convert the string to an array
+  static inline ArrayType fromString( const std::string& array_string )
+  { (void)UndefinedTraits<ArrayType>::notDefined(); return ArrayType(); }
+
+  //! Place the array in a stream
+  static inline void toStream( std::ostream& os, const ArrayType& array )
+  { (void)UndefinedTraits<ArrayType>::notDefined(); }
+
   //! A view of the array
-  static inline Teuchos::ArrayView<value_type> view(
+  static inline ArrayViewType view(
 	  ArrayType& array,
 	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
 	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
 
   //! A view of the const array
-  static inline Teuchos::ArrayView<const value_type> view(
+  static inline ArrayConstViewType view(
 	  const ArrayType& array,
 	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
 	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
 
   //! Copy the ArrayView object
-  static inline void copyView( ArrayType& array,
-			       const Teuchos::ArrayView<T> &view )
+  static inline void copyView( ArrayType& array, const ArrayViewType &view )
   { (void)UndefinedTraits<ArrayType>::notDefined(); }
 
   //! Copy the ArrayView of const object
   static inline void copyView( ArrayType& array,
-			       const Teuchos::ArrayView<const T> &view )
+                               const ArrayConstViewType &view )
   { (void)UndefinedTraits<ArrayType>::notDefined(); }
 };
 
@@ -155,7 +174,9 @@ getHeadPtr( Array &array )
 template<typename Array>
 inline typename ArrayTraits<Array>::const_pointer
 getHeadPtr( const Array &array )
-{ return ArrayTraits<Array>::headPtr( array ); }
+{
+  return ArrayTraits<Array>::headPtr( array );
+}
 
 /*! This function allows access to the numberOfDimensions ArrayTraits function.
  *
@@ -169,7 +190,9 @@ getHeadPtr( const Array &array )
 template<typename Array>
 inline typename ArrayTraits<Array>::size_type getNumberOfArrayDimensions(
                                                            const Array& array )
-{ return ArrayTraits<Array>::numberOfDimensions( array ); }
+{
+  return ArrayTraits<Array>::numberOfDimensions( array );
+}
 
 /*! This function allows access to the dimensionSizes ArrayTraits function.
  * 
@@ -181,11 +204,12 @@ inline typename ArrayTraits<Array>::size_type getNumberOfArrayDimensions(
  */
 template<typename Array,
          typename IntType,
-         template<typename,typename...> DimSizeArray>
-inline typename void getArrayDimensionSizes(
-                                        const ArrayType& array,
-                                        DimSizeArray<IntType>& dim_size_array )
-{ ArraTraits<Array>::dimensionSizes( array, dim_size_array ); }
+         template<typename,typename...> class DimSizeArray>
+inline void getArrayDimensionSizes( const Array& array,
+                                    DimSizeArray<IntType>& dim_size_array )
+{
+  ArrayTraits<Array>::dimensionSizes( array, dim_size_array );
+}
 
 /*! This function allows access to the size ArrayTraits function.
  *
@@ -199,7 +223,9 @@ inline typename void getArrayDimensionSizes(
 template<typename Array>
 inline typename ArrayTraits<Array>::size_type
 getArraySize( const Array &array )
-{ return ArrayTraits<Array>::size( array ); }
+{
+  return ArrayTraits<Array>::size( array );
+}
 
 /*! This function allows access to the resize ArrayTraits function.
  *
@@ -213,9 +239,11 @@ getArraySize( const Array &array )
 template<typename Array>
 inline void
 resizeArray( Array &array, typename ArrayTraits<Array>::size_type n )
-{ return ArrayTraits<Array>::resize( array, n ); }
+{
+  return ArrayTraits<Array>::resize( array, n );
+}
 
-  /*! This function allows access to the reshape ArrayTraits function.
+/*! This function allows access to the reshape ArrayTraits function.
  *
  * This function is simply a more concise way to access the reshape static
  * member function associated with the ArrayTraits class. It simply forwards
@@ -226,10 +254,67 @@ resizeArray( Array &array, typename ArrayTraits<Array>::size_type n )
  */
 template<typename Array,
          typename IntType,
-         template<typename,typename... > DimSizeArray>
-inline void reshapeArray( ArrayType& array,
+         template<typename,typename... > class DimSizeArray>
+inline void reshapeArray( Array& array,
                           const DimSizeArray<IntType> dim_size_array )
-{ ArrayTraits<Array>::reshape( array, dim_size_array ); }
+{
+  ArrayTraits<Array>::reshape( array, dim_size_array );
+}
+
+/*! This function allows access to the toString ArrayTraits function
+ *
+ * This function is simply a more concise way to access the toString static
+ * member function associated with the ArrayTraits class. It simply forwards
+ * calls to convert the array to a string to the associated 
+ * Utility::ArrayTraits class. The array type will be deduced by the function
+ * and need not be explicitly stated.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline std::string arrayToString( Array& array )
+{
+  return ArrayTraits<Array>::toString( array );
+}
+
+/*! This function allows access to the fromString ArrayTraits function
+ *
+ * This function is simply a more concise way to access the fromString static
+ * member function associated with the ArrayTraits class. It simply forwards
+ * calls to convert the string to an array to the associated
+ * Utility::ArrayTraits class. The array type will not be deduced by the
+ * function and needs to be stated explicitly.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline Array stringToArray( const std::string& string )
+{
+  try{
+    return ArrayTraits<Array>::fromString( string );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Could not convert the string to an array!" );
+}
+
+/*! This function allows arrays to be placed in a stream object
+ *
+ * To avoid ambiguous overloads with the << operator we use the same
+ * trick that is commonly employed when using boost::enable_if. Only
+ * the specializations of the ArrayTraits class have the 
+ * AvoidAmbiguousOverloads typedef defined. Therefore the compiler will
+ * only resolve the AvoidAmbiguousOverloads template parameter when the
+ * Array type has an ArrayTraits specialization. When it cannot resolve the
+ * template parameter it will move on to the next overload for the operator.
+ * \ingroup array_traits
+ */
+template<typename T,
+         template<typename,typename...> class Array,
+         typename AvoidAmbiguousOverloads = typename ArrayTraits<Array<T> >::AvoidAmbiguousOverloads>
+std::ostream& operator<<( std::ostream& os, const Array<T>& array )
+{
+  ArrayTraits<Array<T> >::toStream( os, array );
+
+  return os;
+}
 
 /*! This function allows access to the view ArrayTriats function.
  *
@@ -241,8 +326,8 @@ inline void reshapeArray( ArrayType& array,
  * \ingroup array_traits
  */
 template<typename Array>
-inline Teuchos::ArrayView<typename ArrayTraits<Array>::value_type>
-getArrayView( Array &array,
+inline typename ArrayTraits<Array>::ArrayViewType
+getArrayView( Array& array,
 	      const typename ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero(),
 	      typename ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() )
 {
@@ -259,9 +344,8 @@ getArrayView( Array &array,
  * \ingroup array_traits
  */
 template<typename Array>
-inline
-Teuchos::ArrayView<const typename ArrayTraits<Array>::value_type>
-getArrayView( const Array &array,
+inline typename ArrayTraits<Array>::ArrayConstViewType
+getArrayView( const Array& array,
 	      const typename ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero(),
 	      const typename ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() )
 {
@@ -284,17 +368,23 @@ getArrayView( const Array &array,
  * \ingroup array_traits
  */
 template<typename Array>
-inline void copyArrayView( Array &array,
-			   const Teuchos::ArrayView<typename ArrayTraits<Array>::value_type> &array_view )
-{ ArrayTraits<Array>::copyView( array, array_view ); }
+inline void copyArrayView(
+                 Array& array,
+		 const typename ArrayTraits<Array>::ArrayViewType& array_view )
+{
+  ArrayTraits<Array>::copyView( array, array_view );
+}
 
 /*! This function allows access to the copyView ArrayTraits function
  * \ingroup array_traits
  */
 template<typename Array>
-inline void copyArrayView( Array &array,
-			   const Teuchos::ArrayView<const typename ArrayTraits<Array>::value_type> &array_view )
-{ ArrayTraits<Array>::copyView( array, array_view ); }
+inline void copyArrayView(
+            Array& array,
+	    const typename ArrayTraits<Array>::ArrayConstViewType& array_view )
+{
+  ArrayTraits<Array>::copyView( array, array_view );
+}
 
 } // end Utility namespace
 
