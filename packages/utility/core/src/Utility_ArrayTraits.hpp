@@ -34,6 +34,106 @@ namespace Utility{
 
 namespace Details{
 
+/*! The front/back array traits helper class
+ *
+ * This class will be used with all array types with a front, back, begin, 
+ * and end member function.
+ * \ingroup array_traits
+ */
+template<typename Array>
+struct FrontBackArrayTraitsHelper
+{
+  //! The reference type of the array
+  typedef typename Array::reference reference;
+  //! The const reference type of the array
+  typedef typename Array::const_reference const_reference;
+  //! The iterator type of the array
+  typedef typename Array::iterator iterator;
+  // The const iterator type of the array
+  typedef typename Array::const_iterator const_iterator;
+
+  //! The front element of the array
+  static inline reference front( Array& array )
+  { return array.front(); }
+
+  //! The front element of the array
+  static inline const_reference front( const Array& array )
+  { return array.front(); }
+
+  //! The back element of the array
+  static inline reference back( Array& array )
+  { return array.back(); }
+
+  //! The back element of the array
+  static inline const_reference back( const Array& array )
+  { return array.back(); }
+
+  //! Return an iterator at the beginning of the array
+  static inline iterator begin( Array& array )
+  { return array.begin(); }
+
+  //! Return an iterator at the beginning of the array
+  static inline const_iterator begin( const Array& array )
+  { return array.begin(); }
+
+  //! Return an iterator at one past the end of the array
+  static inline iterator end( Array& array )
+  { return array.end(); }
+
+  //! Return an iterator at one past the end of the array
+  static inline const_iterator end( const Array& array )
+  { return array.end(); }
+};
+
+/*! \brief The specialization of the front/back array traits helper class for
+ * Teuchos::ArrayRCP
+ * \ingroup array_traits
+ */
+template<typename T>
+struct FrontBackArrayTraitsHelper<Teuchos::ArrayRCP<T> >
+{
+  //! The reference type of the array
+  typedef typename Teuchos::ArrayRCP<T>::reference reference;
+  //! The const reference type of the array
+  typedef typename Teuchos::ArrayRCP<T>::const_reference const_reference;
+  //! The iterator type of the array
+  typedef typename Teuchos::ArrayRCP<T>::iterator iterator;
+  // The const iterator type of the array
+  typedef typename Teuchos::ArrayRCP<T>::const_iterator const_iterator;
+
+  //! The front element of the array
+  static inline reference front( Teuchos::ArrayRCP<T>& array )
+  { return array[0]; }
+
+  //! The front element of the array
+  static inline const_reference front( const Teuchos::ArrayRCP<T>& array )
+  { return array[0]; }
+
+  //! The back element of the array
+  static inline reference back( Teuchos::ArrayRCP<T>& array )
+  { return array[array.size()-1]; }
+
+  //! The back element of the array
+  static inline const_reference back( const Teuchos::ArrayRCP<T>& array )
+  { return array[array.size()-1]; }
+
+  //! Return an iterator at the beginning of the array
+  static inline iterator begin( Teuchos::ArrayRCP<T>& array )
+  { return array.begin(); }
+
+  //! Return an iterator at the beginning of the array
+  static inline const_iterator begin( const Teuchos::ArrayRCP<T>& array )
+  { return array.begin(); }
+
+  //! Return an iterator at one past the end of the array
+  static inline iterator end( Teuchos::ArrayRCP<T>& array )
+  { return array.end(); }
+
+  //! Return an iterator at one past the end of the array
+  static inline const_iterator end( const Teuchos::ArrayRCP<T>& array )
+  { return array.end(); }
+};
+
 /*! The to string array traits helper class
  *
  * For all array types other than the Teuchos::Array, Teuchos::Tuple, 
@@ -49,7 +149,7 @@ struct ToStringArrayTraitsHelper
   //! Convert the array to a string
   static inline std::string toString( const Array& array )
   {
-    Teuchos::Array<typename Array::value_type>
+    Teuchos::Array<typename boost::remove_const<typename Array::value_type>::type>
       array_copy( array.begin(), array.end() );
 
     return Teuchos::toString( array_copy );
@@ -89,17 +189,6 @@ struct ToStringArrayTraitsHelper<Teuchos::Tuple<T,N> >
   //! Convert the array to a string
   static inline std::string toString( const Teuchos::Tuple<T,N>& tuple )
   { return tuple.toString(); }
-};
-
-/*! The specialization of the ToStringArrayTraitsHelper for Teuchos::TwoDArray
- * \ingroup array_traits
- */
-template<typename T>
-struct ToStringArrayTraitsHelper<Teuchos::TwoDArray<T> >
-{
-  //! Convert the array to a string
-  static inline std::string toString( const Teuchos::TwoDArray<T>& array )
-  { return Teuchos::TwoDArray<T>::toString( array ); }    
 };
 
 /*! The from string array traits helper class
@@ -150,22 +239,28 @@ struct FromStringArrayTraitsHelper<Teuchos::Array<T> >
 };
 
 /*! \brief The partial specialization of FromStringArrayTraitsHelper for
- * Teuchos::TwoDArray
+ * Teuchos::ArrayRCP
  * \ingroup array_traits
  */
 template<typename T>
-struct FromStringArrayTraitsHelper<Teuchos::TwoDArray<T> >
+struct FromStringArrayTraitsHelper<Teuchos::ArrayRCP<T> >
 {
   //! Create the array from a string
-  static inline Teuchos::TwoDArray<T> fromString( const std::string& array_string )
+  static inline Teuchos::ArrayRCP<T> fromString( const std::string& array_string )
   {
+    Teuchos::Array<T> array_copy;
+    
     try{
-      return Teuchos::TwoDArray<T>::fromString( array_string );
+      array_copy = Teuchos::fromStringToArray<T>( array_string );
     }
     EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                                 std::runtime_error,
-                                "Could not convert the string to a 2D "
-                                "array!" );
+                                "Could not convert the string to an array!" );
+
+    Teuchos::ArrayRCP<T> array;
+    array.deepCopy( array_copy() );
+
+    return array;
   }
 };
   
@@ -176,7 +271,7 @@ struct FromStringArrayTraitsHelper<Teuchos::TwoDArray<T> >
  * \ingroup array_traits
  */
 template<typename Array>
-struct OneDStaticArrayTraitsHelper : public ToStringArrayTraitsHelper<Array>
+struct OneDStaticArrayTraitsHelper : public FrontBackArrayTraitsHelper<Array>, public ToStringArrayTraitsHelper<Array>
 {
 private:
   // Typedef for thi array traits type
@@ -193,6 +288,14 @@ public:
   typedef typename ArrayType::pointer pointer;
   //! The const pointer type of the array
   typedef typename ArrayType::const_pointer const_pointer;
+  //! The reference type of the array
+  typedef typename FrontBackArrayTraitsHelper<Array>::reference reference;
+  //! The const reference type of the array
+  typedef typename FrontBackArrayTraitsHelper<Array>::const_reference const_reference;
+  //! The iterator type of the array
+  typedef typename FrontBackArrayTraitsHelper<Array>::iterator iterator;
+  // The const iterator type of the array
+  typedef typename FrontBackArrayTraitsHelper<Array>::const_iterator const_iterator;
   //! The array view type
   typedef Teuchos::ArrayView<value_type> ArrayViewType;
   //! The array const view type
@@ -209,7 +312,7 @@ public:
   static inline void dimensionSizes( const ArrayType& array,
                                      DimSizeArray<IntType>& dim_size_array )
   {
-    dim_size_array.resize( 1 );
+    ArrayTraits<DimSizeArray<IntType> >::resize( dim_size_array, 1 );
     dim_size_array[0] = array.size();
   }
   
@@ -236,9 +339,9 @@ public:
 	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   {
     if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
-      return ArrayViewType( headPtr(array), size(array) );
+      return ArrayViewType( headPtr(array), TheseTraits::size(array) );
     else
-      return ArrayViewType( headPtr(array)+offset, size );
+      return ArrayViewType( headPtr(array)+offset, size + offset <= TheseTraits::size(array) ? size : TheseTraits::size(array) - offset );
   }
 
   //! A view of the const array
@@ -248,9 +351,9 @@ public:
           const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   {
     if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
-      return ArrayConstViewType( headPtr(array), size(array) );
+      return ArrayConstViewType( headPtr(array), TheseTraits::size(array) );
     else
-      return ArrayViewConstType( headPtr(array)+offset, size(array) );
+      return ArrayConstViewType( headPtr(array)+offset, size + offset <= TheseTraits::size(array) ? size : TheseTraits::size(array) - offset );
   }
 };
 
@@ -258,7 +361,7 @@ public:
  * \ingroup array_traits
  */
 template<typename Array>
-struct OneDDynamicArrayTraitsHelper: public OneDStaticArrayTraitsHelper<Array>
+struct OneDDynamicArrayTraitsHelper: public OneDStaticArrayTraitsHelper<Array>, public FromStringArrayTraitsHelper<Array>
 {
   //! The array type
   typedef typename OneDStaticArrayTraitsHelper<Array>::ArrayType ArrayType;
@@ -270,6 +373,14 @@ struct OneDDynamicArrayTraitsHelper: public OneDStaticArrayTraitsHelper<Array>
   typedef typename OneDStaticArrayTraitsHelper<Array>::pointer pointer;
   //! The const pointer type of the array
   typedef typename OneDStaticArrayTraitsHelper<Array>::const_pointer const_pointer;
+  //! The reference type of the array
+  typedef typename OneDStaticArrayTraitsHelper<Array>::reference reference;
+  //! The const reference type of the array
+  typedef typename OneDStaticArrayTraitsHelper<Array>::const_reference const_reference;
+  //! The iterator type of the array
+  typedef typename OneDStaticArrayTraitsHelper<Array>::iterator iterator;
+  // The const iterator type of the array
+  typedef typename OneDStaticArrayTraitsHelper<Array>::const_iterator const_iterator;
   //! The array view type
   typedef typename OneDStaticArrayTraitsHelper<Array>::ArrayViewType ArrayViewType;
   //! The array const view type
@@ -288,7 +399,7 @@ struct OneDDynamicArrayTraitsHelper: public OneDStaticArrayTraitsHelper<Array>
                               const DimSizeArray<IntType>& dim_size_array )
   {
     size_t number_of_dims =
-      ArrayTraits<DimSizeArray<size_t> >::size( dim_size_array );
+      ArrayTraits<DimSizeArray<IntType> >::size(dim_size_array);
 
     if( number_of_dims > 0 )
     {
@@ -315,27 +426,38 @@ struct OneDDynamicArrayTraitsHelper: public OneDStaticArrayTraitsHelper<Array>
   
 } // end Details namespace
 
-/*! \brief The partial specialization of the ArrayTraits struct for all const
- * array types and/or arrays with const value types
- * \ingroup array_traits
- */
-template<typename T, template<typename,typename...> class Array>
-struct ArrayTraits<Array<T>,typename boost::enable_if<typename boost::mpl::or_<boost::is_const<Array<T> >,boost::is_const<T> >::type>::type> : public Details::OneDStaticArrayTraitsHelper<boost::remove_const<Array<T> > >
-{ /* ... */ };
-
 /*! The partial specialization of the ArrayTraits struct for std::vector.
+ * \details Template parameter T cannot be const qualified.
  * \ingroup array_traits
  */
 template<typename T>
-struct ArrayTraits<std::vector<T> > : public Details::OneDDynamicArrayTraitsHelper<std::vector<T> >
+struct ArrayTraits<std::vector<T>,typename boost::enable_if<typename boost::mpl::not_<boost::is_const<T> >::type>::type> : public Details::OneDDynamicArrayTraitsHelper<std::vector<T> >
+{ /* ... */ };
+
+/*! The partial specialization of the ArrayTraits struct for const std::vector.
+ * \details Template parameter T cannot be const qualified.
+ * \ingroup array_traits
+ */
+template<typename T>
+struct ArrayTraits<const std::vector<T>,typename boost::enable_if<typename boost::mpl::not_<boost::is_const<T> >::type>::type> : public Details::OneDStaticArrayTraitsHelper<std::vector<T> >
 { /* ... */ };
 
 /*! The partial specialization of the ArrayTraits struct for Teuchos::Array.
+ * \details Template parameter T cannot be const qualified.
  * \ingroup array_traits
  */
 template<typename T>
-struct ArrayTraits<Teuchos::Array<T> > : public Details::OneDDynamicArrayTraitsHelper<Teuchos::Array<T> >
+struct ArrayTraits<Teuchos::Array<T>,typename boost::enable_if<typename boost::mpl::not_<boost::is_const<T> >::type>::type> : public Details::OneDDynamicArrayTraitsHelper<Teuchos::Array<T> >
 { /* ... */ };
+
+/*! \brief The partial specialization of the ArrayTraits struct for const 
+ * \details Template parameter T cannot be const qualified.
+ * Teuchos::Array.
+ * \ingroup array_traits
+ */
+template<typename T>
+struct ArrayTraits<const Teuchos::Array<T>,typename boost::enable_if<typename boost::mpl::not_<boost::is_const<T> >::type>::type> : public Details::OneDStaticArrayTraitsHelper<Teuchos::Array<T> >
+{ /* ... */ };  
 
 /*! The partial specialization of the ArrayTraits struct for Teuchos::ArrayRCP.
  * \ingroup array_traits
@@ -344,20 +466,54 @@ template<typename T>
 struct ArrayTraits<Teuchos::ArrayRCP<T> > : public Details::OneDDynamicArrayTraitsHelper<Teuchos::ArrayRCP<T> >
 { /* ... */ };
 
+/*! \brief The partial specialization of the ArrayTraits struct for 
+ * Teuchos::ArrayRCP of const.
+ * \ingroup array_traits
+ */
+template<typename T>
+struct ArrayTraits<Teuchos::ArrayRCP<const T> > : public Details::OneDStaticArrayTraitsHelper<Teuchos::ArrayRCP<const T> >
+{ /* ... */ };
+
+/*! \brief The partial specialization of the ArrayTraits struct for const
+ * Teuchos::ArrayRCP and const Teuchos::ArrayRCP const.
+ * \ingroup array_traits
+ */
+template<typename T>
+struct ArrayTraits<const Teuchos::ArrayRCP<T> > : public Details::OneDStaticArrayTraitsHelper<Teuchos::ArrayRCP<T> >
+{ /* ... */ };
+
 /*! \brief The partial specialization of the ArrayTraits struct for
  * Teuchos::Tuple<N>
+ * \details Template parameter T cannot be const qualified.
  * \ingroup array_traits
  */
 template<typename T, int N>
-struct ArrayTraits<Teuchos::Tuple<T,N> > : public Details::OneDStaticArrayTraitsHelper<Teuchos::Tuple<T,N> >
+struct ArrayTraits<Teuchos::Tuple<T,N>,typename boost::enable_if<typename boost::mpl::not_<boost::is_const<T> >::type>::type> : public Details::OneDStaticArrayTraitsHelper<Teuchos::Tuple<T,N> >
+{ /* ... */ };
+
+/*! \brief The partial specialization of the ArrayTraits struct for const
+ * Teuchos::Tuple<N>
+ * \details Template parameter T cannot be const qualified.
+ * \ingroup array_traits
+ */
+template<typename T, int N>
+struct ArrayTraits<const Teuchos::Tuple<T,N>,typename boost::enable_if<typename boost::mpl::not_<boost::is_const<T> >::type>::type> : public Details::OneDStaticArrayTraitsHelper<Teuchos::Tuple<T,N> >
 { /* ... */ };
 
 /*! \brief The partial specialization of the ArrayTraits struct for 
- *  Teuchos::ArrayView.
+ *  Teuchos::ArrayView and Teuchos::ArrayView of const.
  * \ingroup array_traits
  */
 template<typename T>
 struct ArrayTraits<Teuchos::ArrayView<T> > : public Details::OneDStaticArrayTraitsHelper<Teuchos::ArrayView<T> >
+{ /* ... */ };
+
+/*! \brief The partial specialization of the ArrayTraits struct for const
+ *  Teuchos::ArrayView and const Teuchos::ArrayView of const.
+ * \ingroup array_traits
+ */
+template<typename T>
+struct ArrayTraits<const Teuchos::ArrayView<T> > : public Details::OneDStaticArrayTraitsHelper<Teuchos::ArrayView<T> >
 { /* ... */ };
 
 /*! \brief The partial specialization of the ArrayTraits struct for const
@@ -377,11 +533,19 @@ public:
   //! The size type of the array
   typedef typename ArrayType::size_type size_type;
   //! The type contained in the array
-  typedef typename ArrayType::value_type value_type;
+  typedef typename Teuchos::Array<T>::value_type value_type;
   //! The pointer type of the array
-  typedef typename ArrayType::pointer pointer;
+  typedef typename Teuchos::Array<T>::pointer pointer;
   //! The const pointer type of the array
-  typedef typename ArrayType::const_pointer const_pointer;
+  typedef typename Teuchos::Array<T>::const_pointer const_pointer;
+  //! The reference type of the array
+  typedef typename Teuchos::Array<T>::reference reference;
+  //! The const reference type of the array
+  typedef typename Teuchos::Array<T>::const_reference const_reference;
+  //! The iterator type of the array
+  typedef typename Teuchos::Array<T>::iterator iterator;
+  // The const iterator type of the array
+  typedef typename Teuchos::Array<T>::const_iterator const_iterator;
   //! The array view type
   typedef Teuchos::ArrayView<T> ArrayViewType;
   //! The array const view type
@@ -407,6 +571,38 @@ public:
   static inline size_type size( const ArrayType& array )
   { return array.getNumRows()*array.getNumCols(); }
 
+  //! The front element of the array
+  static inline reference front( ArrayType& array )
+  { return array( 0, 0 ); }
+
+  //! The front element of the array
+  static inline const_reference front( const ArrayType& array )
+  { return array( 0, 0 ); }
+
+  //! The back element of the array
+  static inline reference back( ArrayType& array )
+  { return array( array.getNumRows()-1, array.getNumCols()-1 ); }
+
+  //! The back element of the array
+  static inline const_reference back( const ArrayType& array )
+  { return array( array.getNumRows()-1, array.getNumCols()-1 ); }
+
+  //! Return an iterator at the beginning of the array
+  static inline iterator begin( ArrayType& array )
+  { return const_cast<Teuchos::Array<T>&>(array.getDataArray()).begin(); }
+
+  //! Return an iterator at the beginning of the array
+  static inline const_iterator begin( const ArrayType& array )
+  { return array.getDataArray().begin(); }
+
+  //! Return an iterator at one past the end of the array
+  static inline iterator end( ArrayType& array )
+  { return const_cast<Teuchos::Array<T>&>(array.getDataArray()).end(); }
+
+  //! Return an iterator at one past the end of the array
+  static inline const_iterator end( const ArrayType& array )
+  { return array.getDataArray().end(); }
+
   //! The head pointer of the array
   static inline pointer headPtr( ArrayType& array )
   { return array[0].getRawPtr(); }
@@ -414,6 +610,10 @@ public:
   //! The head pointer of the const array
   static inline const_pointer headPtr( const ArrayType& array )
   { return const_cast<Teuchos::TwoDArray<T>& >( array )[0].getRawPtr(); }
+
+  //! Convert the array to a string
+  static inline std::string toString( const Teuchos::TwoDArray<T>& array )
+  { return Teuchos::TwoDArray<T>::toString( array ); }    
 
   //! Place the array in a stream
   static inline void toStream( std::ostream& os, const ArrayType& array )
@@ -426,9 +626,9 @@ public:
 	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   {
     if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
-      return array.getDataArray()();
+      return const_cast<Teuchos::Array<T>&>( array.getDataArray() )();
     else
-      return array.getDataArray()( offset, size );
+      return const_cast<Teuchos::Array<T>&>( array.getDataArray() )( offset, size + offset <= TheseTraits::size(array) ? size : TheseTraits::size(array) - offset );
   }
 
   //! A view of the const array
@@ -438,9 +638,9 @@ public:
 	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   {
     if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
-      return array.getDataArray()().getConst();
+      return array.getDataArray()();
     else
-      return array.getDataArray()( offset, size ).getConst();
+      return array.getDataArray()( offset, size + offset <= TheseTraits::size(array) ? size : TheseTraits::size(array) - offset );
   }
 };
   
@@ -461,11 +661,11 @@ public:
   //! The size type of the array
   typedef typename ArrayType::size_type size_type;
   //! The type contained in the array
-  typedef typename ArrayType::value_type value_type;
+  typedef typename Teuchos::Array<T>::value_type value_type;
   //! The pointer type of the array
-  typedef typename ArrayType::pointer pointer;
+  typedef typename Teuchos::Array<T>::pointer pointer;
   //! The const pointer type of the array
-  typedef typename ArrayType::const_pointer const_pointer;
+  typedef typename Teuchos::Array<T>::const_pointer const_pointer;
   //! The array view type
   typedef Teuchos::ArrayView<T> ArrayViewType;
   //! The array const view type
@@ -487,7 +687,7 @@ public:
                               const DimSizeArray<IntType>& dim_size_array )
   {
     size_t number_of_dims =
-      ArrayTraits<DimSizeArray<size_t> >::size( dim_size_array );
+      ArrayTraits<DimSizeArray<IntType> >::size( dim_size_array );
     
     if( number_of_dims == 0 )
       array.clear();
@@ -514,22 +714,36 @@ public:
     }
   }
 
+  //! Create the array from a string
+  static inline Teuchos::TwoDArray<T> fromString( const std::string& array_string )
+  {
+    try{
+      return Teuchos::TwoDArray<T>::fromString( array_string );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+                                std::runtime_error,
+                                "Could not convert the string to a 2D "
+                                "array!" );
+  }
+
   //! Copy the ArrayView object (the TwoDArray will be linear)
   static inline void copyView( ArrayType& array,
 			       const ArrayViewType& view )
   {
-    ArrayType copy_array( 1, view.size() );
-    copy_array[0] = view;
-    array = copy_array;
+    array.resizeRows( 1 );
+    array.resizeCols( view.size() );
+    
+    const_cast<Teuchos::Array<T>&>( array.getDataArray() ).assign( view.begin(), view.end() );
   }
 
   //! Copy the ArrayView of const object (the TwoDArray will be linear)
   static inline void copyView( ArrayType& array,
 			       const ArrayConstViewType& view )
   {
-    ArrayType copy_array( 1, view.size() );
-    copy_array[0] = view;
-    array = copy_array;
+    array.resizeRows( 1 );
+    array.resizeCols( view.size() );
+    
+    const_cast<Teuchos::Array<T>&>( array.getDataArray() ).assign( view.begin(), view.end() );
   }
 };
 

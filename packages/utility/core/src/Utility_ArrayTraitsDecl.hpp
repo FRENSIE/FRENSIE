@@ -79,6 +79,14 @@ struct ArrayTraits
   typedef typename ArrayType::pointer pointer;
   //! The const pointer type of the array
   typedef typename ArrayType::const_pointer const_pointer;
+  //! The reference type of the array
+  typedef typename ArrayType::reference reference;
+  //! The const reference type of the array
+  typedef typename ArrayType::const_reference const_reference;
+  //! The iterator type of the array
+  typedef typename ArrayType::iterator iterator;
+  // The const iterator type of the array
+  typedef typename ArrayType::const_iterator const_iterator;
   //! The array view type
   typedef Teuchos::ArrayView<value_type> ArrayViewType;
   //! The array const view type
@@ -109,6 +117,30 @@ struct ArrayTraits
   static inline void reshape( ArrayType& array,
                               const DimSizeArray<IntType>& dim_size_array )
   { (void)UndefinedTraits<ArrayType>::notDefined(); }
+
+  //! The front element of the array
+  static inline reference front( ArrayType& array );
+
+  //! The front element of the array
+  static inline const_reference front( const ArrayType& array );
+
+  //! The back element of the array
+  static inline reference back( ArrayType& array );
+
+  //! The back element of the array
+  static inline const_reference back( const ArrayType& array );
+
+  //! Return an iterator at the beginning of the array
+  static inline iterator begin( ArrayType& array );
+
+  //! Return an iterator at the beginning of the array
+  static inline const_iterator begin( const ArrayType& array );
+
+  //! Return an iterator at one past the end of the array
+  static inline iterator end( ArrayType& array );
+
+  //! Return an iterator at one past the end of the array
+  static inline const_iterator end( const ArrayType& array );
 
   //! The head pointer of the array
   static inline pointer headPtr( ArrayType& array )
@@ -153,30 +185,6 @@ struct ArrayTraits
                                const ArrayConstViewType &view )
   { (void)UndefinedTraits<ArrayType>::notDefined(); }
 };
-
-/*! This function allows access to the headPtr ArrayTraits function.
- *
- * This function is simply a more concise way to access the getRawPtr static
- * member function associated with the ArrayTraits class. It simply forwards
- * calls to get a raw pointer to the associated Utility::ArrayTraits
- * class. It is important to note that the array type will be deduced by
- * the function.
- * \ingroup array_traits
- */
-template<typename Array>
-inline typename ArrayTraits<Array>::pointer
-getHeadPtr( Array &array )
-{ return ArrayTraits<Array>::headPtr( array ); }
-
-/*! This function allows access to the headPtr ArrayTraits function.
- * \ingroup array_traits
- */
-template<typename Array>
-inline typename ArrayTraits<Array>::const_pointer
-getHeadPtr( const Array &array )
-{
-  return ArrayTraits<Array>::headPtr( array );
-}
 
 /*! This function allows access to the numberOfDimensions ArrayTraits function.
  *
@@ -261,17 +269,137 @@ inline void reshapeArray( Array& array,
   ArrayTraits<Array>::reshape( array, dim_size_array );
 }
 
-/*! This function allows access to the toString ArrayTraits function
+/*! This function allows access to the front ArrayTraits function.
  *
- * This function is simply a more concise way to access the toString static
- * member function associated with the ArrayTraits class. It simply forwards
- * calls to convert the array to a string to the associated 
- * Utility::ArrayTraits class. The array type will be deduced by the function
- * and need not be explicitly stated.
+ * This function is simply a more concise way to access the front static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicitly.
  * \ingroup array_traits
  */
 template<typename Array>
-inline std::string arrayToString( Array& array )
+inline typename ArrayTraits<Array>::reference
+getArrayFront( Array& array )
+{ return ArrayTraits<Array>::front( array ); }
+
+/*! This function allows access to the front ArrayTraits function.
+ *
+ * This function is simply a more concise way to access the front static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicitly.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline typename ArrayTraits<Array>::const_reference
+getArrayFront( const Array& array )
+{ return ArrayTraits<Array>::front( array ); }
+
+/*! This function allows access to the back ArrayTraits function
+ *
+ * This function is simply a more concise way to access the back static
+ * member function associted with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicitly.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline typename ArrayTraits<Array>::reference
+getArrayBack( Array& array )
+{ return ArrayTraits<Array>::back( array ); }
+
+/*! This function allows access to the back ArrayTraits function
+ *
+ * This function is simply a more concise way to access the back static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicitly.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline typename ArrayTraits<Array>::const_reference
+getArrayBack( const Array& array )
+{ return ArrayTraits<Array>::back( array ); }
+
+/*! This function allows access to the begin ArrayTraits function
+ *
+ * This function is simply a more concise way to access the begin static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicitly.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline typename ArrayTraits<Array>::iterator
+getArrayBegin( Array& array )
+{ return ArrayTraits<Array>::begin( array ); }
+
+/*! This function allows access to the begin ArrayTraits function
+ *
+ * This function is simply a more concise way to access the begin static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicitly.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline typename ArrayTraits<Array>::const_iterator
+getArrayBegin( const Array& array )
+{ return ArrayTraits<Array>::begin( array ); }
+
+/*! This function allows access to the end ArrayTraits function
+ *
+ * This function is simply a more concise way to access the end static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicitly.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline typename ArrayTraits<Array>::iterator
+getArrayEnd( Array& array )
+{ return ArrayTraits<Array>::end( array ); }
+
+/*! This function allows access to the end ArrayTraits function
+ *
+ * This function is simply a more concise way to access the end static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicitly.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline typename ArrayTraits<Array>::const_iterator
+getArrayEnd( const Array& array )
+{ return ArrayTraits<Array>::end( array ); }
+
+/*! This function allows access to the headPtr ArrayTraits function.
+ *
+ * This function is simply a more concise way to access the getRawPtr static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicity.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline typename ArrayTraits<Array>::pointer
+getArrayHeadPtr( Array& array )
+{ return ArrayTraits<Array>::headPtr( array ); }
+
+/*! This function allows access to the headPtr ArrayTraits function.
+ *
+ * This function is simply a more concise way to access the getRawPtr static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicity.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline typename ArrayTraits<Array>::const_pointer
+getArrayHeadPtr( const Array& array )
+{
+  return ArrayTraits<Array>::headPtr( array );
+}
+
+/*! This function allows access to the toString ArrayTraits function
+ *
+ * This function is simply a more concise way to access the toString static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicity.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline std::string arrayToString( const Array& array )
 {
   return ArrayTraits<Array>::toString( array );
 }
@@ -279,10 +407,8 @@ inline std::string arrayToString( Array& array )
 /*! This function allows access to the fromString ArrayTraits function
  *
  * This function is simply a more concise way to access the fromString static
- * member function associated with the ArrayTraits class. It simply forwards
- * calls to convert the string to an array to the associated
- * Utility::ArrayTraits class. The array type will not be deduced by the
- * function and needs to be stated explicitly.
+ * member function associated with the ArrayTraits class. The array type will 
+ * not be deduced by the function and needs to be stated explicitly.
  * \ingroup array_traits
  */
 template<typename Array>
@@ -319,10 +445,11 @@ std::ostream& operator<<( std::ostream& os, const Array<T>& array )
 /*! This function allows access to the view ArrayTriats function.
  *
  * This function is simply a more concise way to access the view static
- * member function associated with the ArrayTraits class. It simply forwards
- * calls to get a view of the array to the associated
- * Utility::ArrayTraits class. It is important to note that the array
- * type will be deduced by the function.
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicity. Make sure
+ * that the requested offset is valid (<= array.size()-1). If an invalid size
+ * is given with the offset the maximum valid size (given the requested offset)
+ * will be used.
  * \ingroup array_traits
  */
 template<typename Array>
@@ -331,16 +458,20 @@ getArrayView( Array& array,
 	      const typename ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero(),
 	      typename ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() )
 {
-  // make sure the offset and size supplied are acceptable
-  remember( typename ArrayTraits<Array>::size_type array_size =
-	    getArraySize( array ) );
-  testPrecondition( offset < array_size );
-  testPrecondition( size == Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() || ( size > Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero() && size <= array_size-offset ) );
-
+  // Make sure that the offset is valid
+  testPrecondition( offset < ArrayTraits<Array>::size( array ) - 1 );
+  
   return ArrayTraits<Array>::view( array, offset, size );
 }
 
 /*! This function allows access to the view ArrayTraits function.
+ *
+ * This function is simply a more concise way to access the view static
+ * member function associated with the ArrayTraits class. The array type will
+ * be deduced by the function and need not be stated explicity. Make sure
+ * that the requested offset is valid (<= array.size()-1). If an invalid size
+ * is given with the offset the maximum valid size (given the requested offset)
+ * will be used.
  * \ingroup array_traits
  */
 template<typename Array>
@@ -349,11 +480,8 @@ getArrayView( const Array& array,
 	      const typename ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero(),
 	      const typename ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() )
 {
-  // make sure the offset and size supplied are acceptable
-  remember( typename ArrayTraits<Array>::size_type array_size =
-	    getArraySize( array ) );
-  testPrecondition( offset < array_size );
-  testPrecondition( size == Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() || ( size > Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero() && size <= array_size-offset ) );
+  // Make sure that the offset is valid
+  testPrecondition( offset < ArrayTraits<Array>::size( array ) - 1 );
 
   return ArrayTraits<Array>::view( array, offset, size );
 }
