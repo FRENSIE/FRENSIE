@@ -30,6 +30,9 @@ namespace Utility{
 template<typename Tuple, TupleMember member>
 struct UndefinedTupleMemberTraits
 {
+  //! This type can be used as the defalut tupleMemberType in TupleMemberTraits
+  struct DesiredMemberIsMissingSpecialization{};
+  
   //! This function should not compile if there is any attempt to instantiate
   static inline double notDefined() { return Tuple::desired_member_is_missing_specialization(); }
 };
@@ -53,7 +56,7 @@ struct TupleMemberTraits
   typedef Tuple tupleType;
   
   //! The type of the desired tuple member
-  typedef Tuple tupleMemberType;
+  typedef typename UndefinedTupleMemberTraits<tupleType,member>::DesiredMemberIsMissingSpecialization tupleMemberType;
 
   //! Get the value of the desired tuple member
   static inline const tupleMemberType& get(const tupleType& tuple)
@@ -64,7 +67,8 @@ struct TupleMemberTraits
   { (void)UndefinedTupleMemberTraits<tupleType,member>::notDefined(); return tuple; }
 
   //! Set the value of the desired tuple member
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
   { (void)UndefinedTupleMemberTraits<tupleType,member>::notDefined(); }
 };
 
@@ -110,11 +114,8 @@ get( const Tuple& tuple )
  * specified manually (i.e. set<SECOND>( my_tuple, desired_value ) ).
  * \ingroup tuple_member_traits
  */
-template<TupleMember member, typename Tuple>
-inline void
-set( Tuple &tuple,
-     const typename TupleMemberTraits<Tuple,member>::tupleMemberType
-     &value )
+template<TupleMember member, typename Tuple, typename ValueType>
+inline void set( Tuple &tuple, ValueType value )
 { TupleMemberTraits<Tuple,member>::set( tuple, value ); }
 
 } // end Utility namespace

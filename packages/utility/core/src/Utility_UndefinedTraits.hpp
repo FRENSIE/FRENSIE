@@ -20,6 +20,9 @@ namespace Utility{
 template<typename T>
 struct UndefinedTraits
 {
+  //! This type should be used as the defalut value of typedefs
+  struct DesiredTypeIsMissingSpecialization{};
+  
   //! This function should not compile if there is any attempt to instantiate!
   static inline T notDefined() { return T::this_type_is_missing_a_specialization(); }
 };

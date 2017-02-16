@@ -50,7 +50,8 @@ struct TupleMemberTraits<T,FIRST,typename boost::enable_if<typename boost::mpl::
   { return value; }
   static inline const T& get( const tupleType& value )
   { return value; }
-  static inline void set( tupleType& value, const tupleMemberType new_value )
+  template<typename ValueType>
+  static inline void set( tupleType& value, const ValueType new_value )
   { value = new_value; }
 };
   
@@ -67,8 +68,8 @@ struct TupleMemberTraits<boost::units::quantity<Unit,T>,FIRST>
   { return quantity; }
   static inline const tupleMemberType& get( const tupleType& quantity )
   { return quantity; }
-  static inline void set( tupleType& quantity,
-			  const tupleMemberType& new_quantity )
+  template<typename ValueType>
+  static inline void set( tupleType& quantity, const ValueType new_quantity )
   { quantity = new_quantity; }
 };
 
@@ -78,7 +79,7 @@ struct TupleMemberTraits<boost::units::quantity<Unit,T>,FIRST>
   template<typename T,
            typename... Types,
            template<typename...> class Tuple>
-struct TupleMemberTraits<Tuple<T,Types...>,FIRST>
+struct TupleMemberTraits<Tuple<T,Types...>,FIRST,typename Tuple<T,Types...>::firstType>
 {
   typedef Tuple<T,Types...> tupleType;
   typedef typename tupleType::firstType tupleMemberType;
@@ -86,7 +87,8 @@ struct TupleMemberTraits<Tuple<T,Types...>,FIRST>
   { return tuple.first; }
   static inline const tupleMemberType& get( const tupleType& tuple )
   { return tuple.first; }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
   { tuple.first = value; }
 };
 
@@ -97,7 +99,7 @@ template<typename T1,
          typename T2,
          typename... Types,
          template<typename...> class Tuple>
-struct TupleMemberTraits<Tuple<T1,T2,Types...>,SECOND>
+struct TupleMemberTraits<Tuple<T1,T2,Types...>,SECOND,typename Tuple<T1,T2,Types...>::secondType>
 {
   typedef Tuple<T1,T2,Types...> tupleType;
   typedef typename tupleType::secondType tupleMemberType;
@@ -105,7 +107,8 @@ struct TupleMemberTraits<Tuple<T1,T2,Types...>,SECOND>
   { return tuple.second; }
   static inline const tupleMemberType& get( const tupleType& tuple )
   { return tuple.second; }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
   { tuple.second = value; }
 };
 
@@ -117,7 +120,7 @@ template<typename T1,
          typename T3,
          typename... Types,
          template<typename...> class Tuple>
-struct TupleMemberTraits<Tuple<T1,T2,T3,Types...>,THIRD>
+struct TupleMemberTraits<Tuple<T1,T2,T3,Types...>,THIRD,typename Tuple<T1,T2,T3,Types...>::thirdType>
 {
   typedef Tuple<T1,T2,T3,Types...> tupleType;
   typedef typename tupleType::thirdType tupleMemberType;
@@ -125,7 +128,8 @@ struct TupleMemberTraits<Tuple<T1,T2,T3,Types...>,THIRD>
   { return tuple.third; }
   static inline const tupleMemberType& get( const tupleType& tuple )
   { return tuple.third; }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
   { tuple.third = value; }
 };
 
@@ -138,7 +142,7 @@ template<typename T1,
          typename T4,
          typename... Types,
          template<typename...> class Tuple>
-struct TupleMemberTraits<Tuple<T1,T2,T3,T4,Types...>,FOURTH>
+struct TupleMemberTraits<Tuple<T1,T2,T3,T4,Types...>,FOURTH,typename Tuple<T1,T2,T3,T4,Types...>::fourthType>
 {
   typedef Tuple<T1,T2,T3,T4,Types...> tupleType;
   typedef typename tupleType::fourthType tupleMemberType;
@@ -146,8 +150,44 @@ struct TupleMemberTraits<Tuple<T1,T2,T3,T4,Types...>,FOURTH>
   { return tuple.fourth; }
   static inline const tupleMemberType& get( const tupleType& tuple )
   { return tuple.fourth; }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
   { tuple.fourth = value; }
+};
+
+/*! The partial specialization of the TupleMemberTraits for std::pair and FIRST
+ * \ingroup tuple_member_traits
+ */
+template<typename T1, typename T2>
+struct TupleMemberTraits<std::pair<T1,T2>,FIRST>
+{
+  typedef std::pair<T1,T2> tupleType;
+  typedef typename tupleType::first_type tupleMemberType;
+  static inline tupleMemberType& get( tupleType& tuple )
+  { return tuple.first; }
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return tuple.first; }
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
+  { tuple.first = value; }
+};
+
+/*! \brief The partial specialization of the TupleMemberTraits for std::pair
+ * and SECOND
+ * \ingroup tuple_member_traits
+ */
+template<typename T1, typename T2>
+struct TupleMemberTraits<std::pair<T1,T2>,SECOND>
+{
+  typedef std::pair<T1,T2> tupleType;
+  typedef typename tupleType::second_type tupleMemberType;
+  static inline tupleMemberType& get( tupleType& tuple )
+  { return tuple.second; }
+  static inline const tupleMemberType& get( const tupleType& tuple )
+  { return tuple.second; }
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
+  { tuple.second = value; }
 };
 
 /*! \brief The partial specialization of the TupleMemberTraits for std::tuple
@@ -163,7 +203,8 @@ struct TupleMemberTraits<std::tuple<T,Types...>,FIRST>
   { return std::get<0>(tuple); }
   static inline const tupleMemberType& get( const tupleType& tuple )
   { return std::get<0>(tuple); }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
   { std::get<0>(tuple) = value; }
 };
 
@@ -180,7 +221,8 @@ struct TupleMemberTraits<std::tuple<T1,T2,Types...>,SECOND>
   { return std::get<1>(tuple); }
   static inline const tupleMemberType& get( const tupleType& tuple )
   { return std::get<1>(tuple); }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
   { std::get<1>(tuple) = value; }
 };
 
@@ -197,7 +239,8 @@ struct TupleMemberTraits<std::tuple<T1,T2,T3,Types...>,SECOND>
   { return std::get<2>(tuple); }
   static inline const tupleMemberType& get( const tupleType& tuple )
   { return std::get<2>(tuple); }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
   { std::get<2>(tuple) = value; }
 };
 
@@ -214,7 +257,8 @@ struct TupleMemberTraits<std::tuple<T1,T2,T3,T4,Types...>,SECOND>
   { return std::get<3>(tuple); }
   static inline const tupleMemberType& get( const tupleType& tuple )
   { return std::get<3>(tuple); }
-  static inline void set( tupleType& tuple, const tupleMemberType& value )
+  template<typename ValueType>
+  static inline void set( tupleType& tuple, const ValueType value )
   { std::get<3>(tuple) = value; }
 };
 

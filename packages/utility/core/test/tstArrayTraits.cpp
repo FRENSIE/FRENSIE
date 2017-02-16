@@ -31,14 +31,14 @@
   typedef Teuchos::Tuple<value_type,10> Teuchos_Tuple_10_##value_type_name; \
   typedef Teuchos::TwoDArray<value_type> Teuchos_TwoDArray_##value_type_name
 
-UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( float, float );                         \
-UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( double, double );                       \
-UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( char, char );                           \
-UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( int, int );                             \
-UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( unsigned, unsigned );                   \
-UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( long, long );                           \
-UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( unsigned long, unsigned_long );         \
-UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( long long, long_long );                 \
+UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( float, float );
+UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( double, double );
+UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( char, char ); 
+UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( int, int );   
+UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( unsigned, unsigned );
+UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( long, long ); 
+UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( unsigned long, unsigned_long );
+UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( long long, long_long );
 UNIT_TEST_ONE_D_ARRAY_TYPEDEFS( unsigned long long, unsigned_long_long ); 
 
 //---------------------------------------------------------------------------//
