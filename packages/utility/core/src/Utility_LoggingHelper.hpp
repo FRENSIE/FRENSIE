@@ -18,6 +18,7 @@
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/core/null_deleter.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/async_frontend.hpp>
 #include <boost/log/sinks/text_ostream_backend.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
@@ -80,13 +81,13 @@ private:
   typedef boost::log::sinks::text_ostream_backend BasicTextSinkBackend;
 
   // Typedef for the basic text sink type
-  typedef boost::log::sinks::synchronous_sink<BasicTextSinkBackend> BasicTextSink;
+  typedef boost::log::sinks::asynchronous_sink<BasicTextSinkBackend> BasicTextSink;
 
   // Typedef for fancy text sink backend type
   typedef FancyTextOStreamBackend FancyTextSinkBackend;
 
   // Typedef for the fancy text sink type
-  typedef boost::log::sinks::synchronous_sink<FancyTextSinkBackend> FancyTextSink;
+  typedef boost::log::sinks::asynchronous_sink<FancyTextSinkBackend> FancyTextSink;
 
 public:
 
@@ -149,6 +150,9 @@ typedef boost::log::sources::severity_logger<Utility::LogRecordType> StandardLog
 
   //! Remove all log sinks
   static void removeAllLogSinks();
+
+  //! Flush all sinks
+  static void flushAllLogSinks();
 
   //! Add a tag to the logger
   template<typename Logger>

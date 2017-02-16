@@ -147,6 +147,12 @@ void LoggingHelper::removeAllLogSinks()
   boost::log::core::get()->remove_all_sinks();
 }
 
+// Flush all sinks
+void LoggingHelper::flushAllLogSinks()
+{
+  boost::log::core::get()->flush();
+}
+
 // Initialize and add error log sink
 void LoggingHelper::initializeAndAddErrorLogSink(
                   const boost::shared_ptr<FancyTextSinkBackend>& sink_backend )

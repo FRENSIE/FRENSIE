@@ -145,6 +145,12 @@
 #define FRENSIE_REMOVE_ALL_LOGS( os )           \
   Utility::LoggingHelper::removeAllLogSinks()
 
+/*! Flush all logs
+ * \ingroup logging_macros
+ */
+#define FRENSIE_FLUSH_ALL_LOGS()            \
+  Utility::LoggingHelper::flushAllLogSinks()
+
 /*! Add the tag to the logger
  * \ingroup logging_macros
  */
