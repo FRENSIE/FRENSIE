@@ -178,12 +178,12 @@ TARGET_LINK_LIBRARIES(tstAtomicMassUnit utility_core)
 ADD_TEST(AtomicMassUnit_test tstAtomicMassUnit)
 SET_PROPERTY(TEST AtomicMassUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstTupleMemberTraits
-  tstTupleMemberTraits.cpp
+ADD_EXECUTABLE(tstTuple
+  tstTuple.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTupleMemberTraits utility_core)
-ADD_TEST(TupleMemberTraits_test tstTupleMemberTraits)
-SET_PROPERTY(TEST TupleMemberTraits_test PROPERTY LABELS utility_core)
+TARGET_LINK_LIBRARIES(tstTuple utility_core)
+ADD_TEST(Tuple_test tstTuple)
+SET_PROPERTY(TEST Tuple_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstArrayTraits
   tstArrayTraits.cpp

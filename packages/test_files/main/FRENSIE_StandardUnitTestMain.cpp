@@ -127,6 +127,7 @@ int main( int argc, char** argv )
   }
 
   FRENSIE_LOG_TAGGED_NOTIFICATION( "Testing", "Logger initialized" );
+  FRENSIE_FLUSH_ALL_LOGS();
   
   mpi_session.barrier();
 
@@ -163,6 +164,8 @@ int main( int argc, char** argv )
       (mpi_session.sum(local_unit_test_success ? 0 : 1) == 0 ? true : false);
   }
 
+  FRENSIE_FLUSH_ALL_LOGS();
+
   // Report local failure details
   if( mpi_session.getNProc() > 1 )
     reportLocalFailureDetails( local_unit_test_success, oss );
@@ -179,6 +182,8 @@ int main( int argc, char** argv )
     oss.str( "" );
     oss.clear();
   }
+
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Summarize the local results
   if( mpi_session.getNProc() > 1 )
@@ -200,6 +205,7 @@ int main( int argc, char** argv )
     std::cout << formatter << std::endl;
   }
 
+  FRENSIE_FLUSH_ALL_LOGS();
   FRENSIE_REMOVE_ALL_LOGS();
 
   return (success ? 0 : 1 );

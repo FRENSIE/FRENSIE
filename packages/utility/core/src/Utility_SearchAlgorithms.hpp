@@ -13,7 +13,7 @@
 #include <iterator>
 
 // FRENSIE Includes
-#include "Utility_TupleMemberTraits.hpp"
+#include "Utility_Tuple.hpp"
 
 namespace Utility{
 
@@ -23,7 +23,7 @@ namespace Search{
 template<TupleMember member, typename Iterator>
 Iterator binaryLowerBound( Iterator start,
 			   Iterator end,
-			   const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value );
+			   const typename GetMemberType<member,typename std::iterator_traits<Iterator>::value_type>::type value );
 
 //! Binary search on a container of and return the lower bound iterator
 template<typename Iterator>
@@ -36,7 +36,7 @@ template<TupleMember member, typename Iterator>
 typename std::iterator_traits<Iterator>::difference_type
 binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
-		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value );
+		       const typename GetMemberType<member,typename std::iterator_traits<Iterator>::value_type>::type value );
 
 //! Binary search on a container and return the lower bound container index
 template<typename Iterator>
@@ -49,7 +49,7 @@ binaryLowerBoundIndex( Iterator start,
 template<TupleMember member, typename Iterator>
 Iterator binaryUpperBound( Iterator start,
 			   Iterator end,
-			   const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value);
+			   const typename GetMemberType<member,typename std::iterator_traits<Iterator>::value_type>::type value );
 
 //! Binary search on a container and return the upper bound iterator
 template<typename Iterator>
@@ -62,7 +62,7 @@ template<TupleMember member, typename Iterator>
 typename std::iterator_traits<Iterator>::difference_type
 binaryUpperBoundIndex( Iterator start,
 		       Iterator end,
-		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value );
+		       const typename GetMemberType<member,typename std::iterator_traits<Iterator>::value_type>::type value );
 
 //! Binary search on a container and return the upper bound container index
 template<typename Iterator>

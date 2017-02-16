@@ -18,7 +18,6 @@
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
 #include "Utility_DataProcessingPolicy.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 #include "Utility_ArrayTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 
@@ -95,7 +94,7 @@ public:
 	   TupleMember pdfMember,
 	   TupleMember cdfMember,
 	   typename Array>
-  static typename QuantityTraits<typename TupleMemberTraits<typename ArrayTraits<Array>::value_type,cdfMember>::tupleMemberType>::template GetQuantityToPowerType<-1>::type
+  static typename QuantityTraits<typename GetMemberType<cdfMember,typename ArrayTraits<Array>::value_type>::type>::template GetQuantityToPowerType<-1>::type
   calculateContinuousCDF( Array &data,
 			  const bool normalize = true );
 

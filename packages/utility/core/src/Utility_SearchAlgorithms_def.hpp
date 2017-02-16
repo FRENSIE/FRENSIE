@@ -16,7 +16,6 @@
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 
 namespace Utility{
 
@@ -56,7 +55,7 @@ template<TupleMember member,
 inline Iterator binaryLowerBound(
     Iterator start,
     Iterator end,
-    const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+    const typename GetMemberType<member,typename std::iterator_traits<Iterator>::value_type>::type value )
 {
   // The iterators must be random access iterators (support +/- ops)
   //testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
@@ -141,7 +140,7 @@ template<TupleMember member, typename Iterator>
 inline typename std::iterator_traits<Iterator>::difference_type
 binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
-		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+		       const typename GetMemberType<member,typename std::iterator_traits<Iterator>::value_type>::type value )
 {
   // Make sure the container size can fit in an unsigned integer
   Iterator start_copy = start;
@@ -198,7 +197,7 @@ binaryLowerBoundIndex( Iterator start,
 template<TupleMember member, typename Iterator>
 inline Iterator binaryUpperBound( Iterator start,
 				  Iterator end,
-				  const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+				  const typename GetMemberType<member,typename std::iterator_traits<Iterator>::value_type>::type value )
 {
   // The iterators must be random access iterators (support +/- ops)
   //testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
@@ -291,7 +290,7 @@ template<TupleMember member, typename Iterator>
 inline typename std::iterator_traits<Iterator>::difference_type
 binaryUpperBoundIndex( Iterator start,
 		       Iterator end,
-		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+		       const typename GetMemberType<member,typename std::iterator_traits<Iterator>::value_type>::type value )
 {
   // Make sure the container size can fit in an unsigned integer
   Iterator start_copy = start;

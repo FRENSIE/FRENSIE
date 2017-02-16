@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_Tuple.hpp
 //! \author Alex Robinson
-//! \brief  Simple structs for storing several objects of arbitrary type
+//! \brief  Simple struct for storing objects of arbitrary type
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,160 +11,307 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <string>
+#include <tuple>
+#include <utility>
+
+// Boost Includes
+#include <boost/mpl/and.hpp>
+#include <boost/units/quantity.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
+#include <boost/type_traits/remove_const.hpp>
+
+/*! \defgroup tuple Tuple.
+ */
 
 namespace Utility{
 
-//! Struct for holding two objects of arbitrary type
-template<typename T1, typename T2>
-struct Pair
+/*! Struct for holding objects of arbitrary type (default - no types)
+ * \ingroup tuple
+ */
+template<typename... Types>
+struct Tuple
 {
-  //! Default constructor
-  Pair() : first(), second() { /* ... */ }
-
+  //! Typedef for base tuple type
+  typedef void RemoveHeadType;
+  
   //! Constructor
-  Pair( T1 value1, T2 value2 ) : first(value1), second(value2)
-  { /* ... */ }
+  Tuple( Types... );
+  
+  //! Copy constructor
+  template<template<typename...> class OtherTuple>
+  Tuple( const OtherTuple<Types...>& );
 
+  //! Assignment operator
+  template<template<typename...> class OtherTuple>
+  Tuple& operator=( const OtherTuple<Types...>& );
+  
   //! Reassignment operator
-  void operator()( T1 value1, T2 value2 )
-  { first = value1; second = value2; }
+  void operator()( Types... );
 
-  static const int size = 2;
-  typedef T1 firstType;
-  typedef T2 secondType;
-  T1 first;
-  T2 second;
+  //! Inequality operator
+  template<template<typename...> class OtherTuple>
+  bool operator!=( const OtherTuple<Types...>& );
+
+  //! Equality operator
+  template<template<typename...> class OtherTuple>
+  bool operator==( const OtherTuple<Types...>& );
+
+  //! Place the tuple in a stream
+  void toStream( std::ostream&, const std::string& );
 };
 
-//! Struct for holding three objects of arbitrary type
-template<typename T1, typename T2, typename T3>
-struct Trip
+/*! Struct for holding objects of arbitrary type
+ * \ingroup tuple
+ */
+template<typename T, typename... Types>
+struct Tuple<T,Types...> : public Tuple<Types...>
 {
+  //! Typedef for base tuple type
+  typedef Tuple<Types...> RemoveHeadType;
+  
   //! Default constructor
-  Trip() : first(), second(), third() { /* ... */ }
+  Tuple();
 
   //! Constructor
-  Trip( T1 value1, T2 value2, T3 value3 ) : first(value1), second(value2),
-					    third(value3)
-  { /* ... */ }
+  Tuple( T first_value, Types... last_values );
+
+  //! Copy constructor
+  template<template<typename,typename...> class OtherTuple>
+  Tuple( const OtherTuple<T,Types...>& that );
+
+  //! Assignment operator
+  template<template<typename,typename...> class OtherTuple>
+  Tuple& operator=( const OtherTuple<T,Types...>& that );
 
   //! Reassignment operator
-  void operator()( T1 value1, T2 value2, T3 value3 )
-  { first = value1; second = value2; third = value3; }
+  void operator()( T first_value, Types... last_values );
 
-  static const int size = 3;
-  typedef T1 firstType;
-  typedef T2 secondType;
-  typedef T3 thirdType;
-  T1 first;
-  T2 second;
-  T3 third;
+  //! Inequality operator
+  template<template<typename,typename...> class OtherTuple>
+  bool operator!=( const OtherTuple<T,Types...>& that );
+
+  //! Equality operator
+  template<template<typename,typename...> class OtherTuple>
+  bool operator==( const OtherTuple<T,Types...>& that );
+
+  //! Place the tuple in a stream
+  void toStream( std::ostream& os, const std::string& element_delim );
+
+  // The head of the tuple
+  T head;
 };
 
-//! Struct for holding four objects of arbitrary type
-template<typename T1, typename T2, typename T3, typename T4>
-struct Quad
-{
-  //! Default constructor
-  Quad() : first(), second(), third(), fourth() { /* ... */ }
+/*! The single struct
+ * \ingroup tuple
+ */
+template<typename T> using Single = 
+  Utility::Tuple<T>;
 
-  //! Constructor
-  Quad( T1 value1, T2 value2, T3 value3, T4 value4 ) : first(value1),
-						       second(value2),
-						       third(value3),
-						       fourth(value4)
-  { /* ... */ }
+/*! The pair struct
+ * \ingroup tuple
+ */
+template<typename T1, typename T2> using Pair =
+  Utility::Tuple<T1,T2>;
 
-  //! Reassignment operator
-  void operator()( T1 value1, T2 value2, T3 value3, T4 value4 )
-  { first = value1; second = value2; third = value3; fourth = value4; }
+/*! The trip struct
+ * \ingroup tuple
+ */
+template<typename T1, typename T2, typename T3> using Trip =
+  Utility::Tuple<T1,T2,T3>;
 
-  static const int size = 4;
-  typedef T1 firstType;
-  typedef T2 secondType;
-  typedef T3 thirdType;
-  typedef T4 fourthType;
-  T1 first;
-  T2 second;
-  T3 third;
-  T4 fourth;
-};
+/*! The quad struct
+ * \ingroup tuple
+ */
+template<typename T1, typename T2, typename T3, typename T4> using Quad =
+  Utility::Tuple<T1,T2,T3,T4>;
 
-//! Enum for refering to tuple members
+/*! Enum for refering to commonly used tuple members
+ * \ingroup tuple
+ */
 enum TupleMember{
-  FIRST,
+  FIRST = 0,
   SECOND,
   THIRD,
   FOURTH
 };
 
-//! Non-member Pair inequality operator
-template<typename T1, typename T2>
-bool operator!=( const Pair<T1,T2> &left, const Pair<T1,T2> &right )
-{ return (left.first != right.first) || (left.second != right.second); }
+/*! Meta function that returns the tuple member type
+ *
+ * Specializations must be made for this meta function struct. 
+ * \ingroup tuple
+ */
+template<size_t k, typename TupleType, typename Enabled = void>
+struct GetMemberType
+{ 
+  struct TupleTypeMissingSpecialization{};
 
-//! Non-member Pair equality operator
-template<typename T1, typename T2>
-bool operator==( const Pair<T1,T2> &left, const Pair<T1,T2> &right )
-{ return (left.first == right.first) && (left.second == right.second); }
+  void notDefined() { TupleType::this_type_is_missing_specialization; }
 
-//! Non-member Trip inequality operator
-template<typename T1, typename T2, typename T3>
-bool operator!=( const Trip<T1,T2,T3> &left, const Trip<T1,T2,T3> &right )
-{ return (left.first != right.first) || (left.second != right.second) ||
-    (left.third != right.third); }
+  typedef TupleTypeMissingSpecialization type;
+};
 
-//! Non-member Trip equality operator
-template<typename T1, typename T2, typename T3>
-bool operator==( const Trip<T1,T2,T3> &left, const Trip<T1,T2,T3> &right )
-{ return (left.first == right.first) && (left.second == right.second) &&
-    (left.third == right.third); }
+/*! \brief Specialization of meta function that returns the tuple member type
+ * for all arithmetic types
+ * \ingroup tuple
+ */
+template<size_t k, typename T>
+struct GetMemberType<k,T,typename boost::enable_if<typename boost::mpl::and_<boost::is_same<boost::integral_constant<size_t,k>,boost::integral_constant<size_t,0> >,boost::is_arithmetic<T> >::type>::type>
+{ typedef T type; };
 
-//! Non-member Quad inequality operator
-template<typename T1, typename T2, typename T3, typename T4>
-bool operator!=( const Quad<T1,T2,T3,T4> &left, const Quad<T1,T2,T3,T4> &right)
-{ return (left.first != right.first) || (left.second != right.second) ||
-    (left.third != right.third) || (left.fourth != right.fourth); }
+/*! \brief Specialization of meta function that returns the tuple member type
+ * for boost::units::quantity<Unit,T> types
+ * \ingroup tuple
+ */
+template<size_t k, typename Unit, typename T>
+struct GetMemberType<k,boost::units::quantity<Unit,T>,typename boost::enable_if<boost::is_same<boost::integral_constant<size_t,k>,boost::integral_constant<size_t,0> > >::type>
+{ typedef boost::units::quantity<Unit,T> type; };
 
-//! Non-member Quad equality operator
-template<typename T1, typename T2, typename T3, typename T4>
-bool operator==( const Quad<T1,T2,T3,T4> &left, const Quad<T1,T2,T3,T4> &right)
-{ return (left.first == right.first) && (left.second == right.second) &&
-    (left.third == right.third) && (left.fourth == right.fourth); }
+/*! \brief Specialization of meta function that returns the tuple member type
+ * for const boost::units::quantity<Unit,T> types
+ * \ingroup tuple
+ */
+template<size_t k, typename Unit, typename T>
+struct GetMemberType<k,const boost::units::quantity<Unit,T>,typename boost::enable_if<boost::is_same<boost::integral_constant<size_t,k>,boost::integral_constant<size_t,0> > >::type>
+{ typedef const boost::units::quantity<Unit,T> type; };
 
-/*! \brief Stream operator for Pair
+/*! Meta function that returns the tuple size
+ *
+ * Specializations must be made for this meta function struct.
+ * \ingroup tuple
+ */
+template<typename Tuple, typename Enabled = void>
+struct GetTupleSize
+{ 
+  // static size_t value = ?
+};
+
+/*! \brief Specialization of meta function that returns the tuple size for
+ * all arithmetic types
+ * \ingroup tuple
+ */
+template<typename T>
+struct GetTupleSize<T,typename boost::enable_if<boost::is_arithmetic<T> >::type> : public boost::integral_constant<size_t,1>
+{ /* ... */ };
+
+/*! \brief Specialization of meta function that returns the tuple size for
+ * boost::units::quantity<Unit,T> types
+ * \ingroup tuple
+ */
+template<typename Unit,typename T>
+struct GetTupleSize<boost::units::quantity<Unit,T>,typename boost::enable_if<boost::is_arithmetic<T> >::type> : public boost::integral_constant<size_t,1>
+{ /* ... */ };
+
+/*! \brief Specialization of meta function that returns the tuple size for
+ * const boost::units::quantity<Unit,T> types
+ * \ingroup tuple
+ */
+template<typename Unit,typename T>
+struct GetTupleSize<const boost::units::quantity<Unit,T>,typename boost::enable_if<boost::is_arithmetic<T> >::type> : public boost::integral_constant<size_t,1>
+{ /* ... */ };
+
+/*! Return a reference to the desired tuple member 
+ *
+ * This can be used with native (arithmetic) types 
+ * (e.g. Utility::get<0>( double )).
+ * \ingroup tuple
+ */
+template<size_t k, typename Tuple>
+inline typename boost::enable_if<typename boost::mpl::and_<boost::is_same<boost::integral_constant<size_t,k>,boost::integral_constant<size_t,0> >,boost::is_arithmetic<Tuple> >::type, Tuple&>::type get( Tuple& tuple )
+{ return tuple; }
+
+/*! Return a reference to the desired tuple member
+ *
+ * This can be used with boost::units::quantity<Unit,T>
+ * \ingroup tuple
+ */
+template<size_t k, typename Unit, typename T>
+inline typename boost::enable_if<boost::is_same<boost::integral_constant<size_t,k>,boost::integral_constant<size_t,0> >,boost::units::quantity<Unit,T>&>::type
+get( boost::units::quantity<Unit,T>& tuple )
+{ return tuple; }
+
+/*! Return a reference to the desired tuple member
+ *
+ * This can be used with boost::units::quantity<Unit,T>
+ * \ingroup tuple
+ */
+template<size_t k, typename Unit, typename T>
+inline typename boost::enable_if<boost::is_same<boost::integral_constant<size_t,k>,boost::integral_constant<size_t,0> >,const boost::units::quantity<Unit,T>&>::type
+get( const boost::units::quantity<Unit,T>& tuple )
+{ return tuple; }
+
+/*! Set the head tuple member value
+ *
+ * The ValueType must be implicitly convertable to the tuple member type.
+ * \ingroup tuple
+ */
+template<size_t k, typename... Types, typename ValueType>
+inline void set( Tuple<Types...>& tuple, ValueType value )
+{ Utility::get<k>( tuple ) = value; }
+
+/*! Create a tuple with the specified type values
+ * \ingroup tuple
+ */
+template<typename... Types>
+inline Utility::Tuple<Types...> makeTuple( Types... values )
+{ return Utility::Tuple<Types...>( values... ); }
+
+/*! Stream operator for tuples
+ * \ingroup tuple
  * \ingroup print_format
  */
-template<typename T1, typename T2>
-std::ostream& operator<<(std::ostream &out, const Utility::Pair<T1,T2> &p)
+template<typename... Types>
+inline std::ostream& operator<<( std::ostream& os,
+                                 const Utility::Tuple<Types...>& tuple )
 {
-  out << "{ " << p.first << ", " << p.second << " }";
-  return out;
+  os << "{";
+  tuple.toStream( os, ", " );
+  os << "}";
+  
+  return os;
 }
 
-/*! Stream operator for Trip
+/*! Stream operator for std::tuple
+ * \ingroup tuple
  * \ingroup print_format
  */
-template<typename T1, typename T2, typename T3>
-std::ostream& operator<<(std::ostream &out, const Utility::Trip<T1,T2,T3> &p)
+template<typename... Types>
+inline std::ostream& operator<<( std::ostream& os,
+                                 const std::tuple<Types...>& tuple )
 {
-  out << "{ " << p.first << ", " << p.second << ", " << p.third << " }";
-  return out;
+  Utility::Tuple<Types...> tuple_copy( tuple );
+  
+  os << "{";
+  tuple_copy.toStream( os, ", " );
+  os << "}";
+  
+  return os;
 }
 
-/*! Stream operator for Quad
+/*! Stream operator for std::pair
+ * \ingroup tuple
  * \ingroup print_format
  */
-template<typename T1, typename T2, typename T3, typename T4>
-std::ostream& operator<<(std::ostream &out,
-			 const Utility::Quad<T1,T2,T3,T4> &p)
+template<typename T1, typename T2>
+inline std::ostream& operator<<( std::ostream& os,
+                                 const std::pair<T1,T2>& tuple )
 {
-  out << "{ " << p.first << ", " << p.second << ", " << p.third
-      << ", " << p.fourth << " }";
-  return out;
+  os << "{" << tuple.first << "," << tuple.second << "}";
+  
+  return os;
 }
 
 } // end Utility namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes.
+//---------------------------------------------------------------------------//
+
+#include "Utility_Tuple_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_TUPLE_HPP
 

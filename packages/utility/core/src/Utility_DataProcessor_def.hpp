@@ -47,9 +47,6 @@ namespace Utility{
  * raw table data.
  * \pre A valid array, which is any array of tuples with at least one element,
  * must be given to this function.
- * \note Developers: The Utility::TupleMemberTraits is critical to the
- * generality of this function. Review this struct to better understand how
- * this function operates.
  */
 template<typename DataProcessingPolicy,
 	 TupleMember indepMember,
@@ -63,10 +60,8 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
   typename Teuchos::Array<Tuple>::iterator data_point = data.begin();
   typename Teuchos::Array<Tuple>::iterator end = data.end();
 
-  typename TupleMemberTraits<Tuple,indepMember>::tupleMemberType
-    indep_value;
-  typename TupleMemberTraits<Tuple,depMember>::tupleMemberType
-    dep_value;
+  typename GetMemberType<indepMember,Tuple>::type indep_value;
+  typename GetMemberType<depMember,Tuple>::type dep_value;
 
   while( data_point != end )
   {
@@ -107,9 +102,6 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
  * must be returned from this function. If the testing value is set too high
  * it is possible for all elements to be eliminated from the array, which is
  * surely not an intended results.
- * \note Developers: The Utility::TupleMemberTraits struct is critical
- * to the generality of this function. Review this struct to better understand
- * how this function operates.
  */
 template<TupleMember member,
 	 typename Tuple>
@@ -172,9 +164,6 @@ void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
  * must be returned from this function. If the testing value is set too low it
  * is possible for all elements to be eliminated from the array, which is surely
  * not an intended result.
- * \note Developers: The Utility::TupleMemberTraits struct is critical
- * to the generality of this function. Review this struct to better understand
- * how this function operates.
  */
 template<TupleMember member,
 	 typename Tuple>
@@ -228,9 +217,6 @@ void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
  * </em> elements, must be given to this function.
  * \post A valid array, which is any array of tuples with at least <em> two
  * </em> elements, must be returned from this function.
- * \note Developers: The Utility::TraitsTupleMemberTraits struct is critical to
- * the generality of this function. Review this struct to better understand how
- * this function operates.
  */
 template<TupleMember member,
 	 typename Tuple>
@@ -289,12 +275,6 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
  * data.
  * \pre A valid array, which is any array of tuples with at least two elements,
  * must be given to this function.
- * \note Developers:
- * <ul>
- *  <li> The Utility::TupleMemberTraits struct is critical to the
- *       generality of this function. Review this struct to better understand
- *       how this function operates.
- * </ul>
  */
 template<TupleMember indepMember,
 	 TupleMember depMember,
@@ -313,7 +293,7 @@ void DataProcessor::calculateSlopes( Array &data  )
   data_point_1 = data.begin();
   data_point_2 = data_point_1 + 1;
 
-  typename TupleMemberTraits<Tuple,slopeMember>::tupleMemberType slope;
+  typename GetMemberType<slopeMember,Tuple>::type slope;
 
   while( data_point_2 != end )
   {
@@ -356,18 +336,12 @@ void DataProcessor::calculateSlopes( Array &data  )
  * \param[in,out] data The array of tuple structs which contain the table data.
  * \pre A valid array, which is any array of tuples with at least two
  * elements, must be given to this function.
- * \note Developers:
- * <ul>
- *  <li> The Utility::TupleMemberTraits struct is critical to the
- *       generality of this function. Review this struct to better understand
- *       how this function operates.
- * </ul>
  */
 template<TupleMember indepMember,
 	 TupleMember pdfMember,
 	 TupleMember cdfMember,
 	 typename Array>
-typename QuantityTraits<typename TupleMemberTraits<typename ArrayTraits<Array>::value_type,cdfMember>::tupleMemberType>::template GetQuantityToPowerType<-1>::type
+typename QuantityTraits<typename GetMemberType<cdfMember,typename ArrayTraits<Array>::value_type>::type>::template GetQuantityToPowerType<-1>::type
 DataProcessor::calculateContinuousCDF( Array &data,
 				       const bool normalize )
 {
@@ -375,7 +349,7 @@ DataProcessor::calculateContinuousCDF( Array &data,
   testPrecondition( (data.size() > 1) );
 
   typedef typename ArrayTraits<Array>::value_type Tuple;
-  typedef QuantityTraits<typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType> CDFQT;
+  typedef QuantityTraits<typename GetMemberType<cdfMember,Tuple>::type> CDFQT;
 
   typename Array::iterator data_point_1, data_point_2;
   typename Array::iterator end = data.end();
@@ -383,8 +357,7 @@ DataProcessor::calculateContinuousCDF( Array &data,
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
 
-  typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType
-    cdf_value;
+  typename GetMemberType<cdfMember,Tuple>::type cdf_value;
 
   // Initialize the CDF
   set<cdfMember>( *data_point_1, CDFQT::zero() );
@@ -405,17 +378,15 @@ DataProcessor::calculateContinuousCDF( Array &data,
     ++data_point_2;
   }
 
-  typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType cdf_max =
+  typename GetMemberType<cdfMember,Tuple>::type cdf_max =
     get<cdfMember>( data.back() );
 
   // Normalize the CDF and PDF
   if( normalize )
   {
-    typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType
-      cdf_norm_value;
+    typename GetMemberType<cdfMember,Tuple>::type cdf_norm_value;
 
-    typename TupleMemberTraits<Tuple,pdfMember>::tupleMemberType
-      pdf_norm_value;
+    typename GetMemberType<pdfMember,Tuple>::type pdf_norm_value;
 
     data_point_1 = data.begin();
 
@@ -457,7 +428,7 @@ void DataProcessor::calculateContinuousPDF( Array &data )
   data_point_2 = data.begin() + 1;
 
   // Calculate the slope of the cdf
-  typename TupleMemberTraits<Tuple,pdfMember>::tupleMemberType
+  typename GetMemberType<pdfMember,Tuple>::type
     pdf_value = (get<cdfMember>( *data_point_2 ) -
 		 get<cdfMember>( *data_point_1 ) )/
     (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 ) );
@@ -494,9 +465,6 @@ void DataProcessor::calculateContinuousPDF( Array &data )
  * \param[in,out] data The array of tuple structs which contain the table data.
  * \pre A valid array, which is any array of tuples with at least two elements,
  * must be given to this function.
- * \note Developers: The Utility::TupleMemberTraits struct is critical
- * to the generality of this function. Review this struct to better understand
- * how this function operates.
  */
 template<TupleMember pdfMember,
 	 TupleMember cdfMember,
@@ -511,8 +479,7 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
 
   data_point = data.begin();
 
-  typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType
-    cdf_value = 0;
+  typename GetMemberType<cdfMember,Tuple>::type cdf_value = 0;
 
   // Create the discrete CDF
   while( data_point != end )
@@ -557,12 +524,6 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
  *       elements, must be given to this function.
  *  <li> The two arrays must have the same number of elements.
  *  <li> The two arrays must be distinct.
- * </ul>
- * \note Developers:
- * <ul>
- *  <li> The Utility::TupleMemberTraits struct is critical to the
- *       generality of this function. Review this struct to better understand
- *       how this function operates.
  * </ul>
  */
 template<TupleMember origMember,
@@ -610,12 +571,6 @@ void DataProcessor::copyTupleMemberData( const OrigArray &orig_data,
  *  <li> A valid array, which is any array of tuples with at least one element,
  *       must be given to this function.
  * </ul>
- * \note Developers:
- * <ul>
- *  <li> The Utility::TupleMemberTraits struct is critical to the
- *       generality of this function. Review this struct to better understand
- *       how this function operates.
- * </ul>
  */
 template<TupleMember member1,
 	 TupleMember member2,
@@ -633,7 +588,7 @@ void DataProcessor::swapTupleMemberData( Array &data )
   data_point = data.begin();
   end = data.end();
 
-  typename TupleMemberTraits<Tuple,member1>::tupleMemberType copy;
+  typename GetMemberType<member1,Tuple>::type copy;
 
   while( data_point != end )
   {
