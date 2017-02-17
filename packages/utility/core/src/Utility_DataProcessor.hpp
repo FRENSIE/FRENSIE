@@ -94,7 +94,7 @@ public:
 	   TupleMember pdfMember,
 	   TupleMember cdfMember,
 	   typename Array>
-  static typename QuantityTraits<typename GetMemberType<cdfMember,typename ArrayTraits<Array>::value_type>::type>::template GetQuantityToPowerType<-1>::type
+  static typename QuantityTraits<typename TupleElement<cdfMember,typename ArrayTraits<Array>::value_type>::type>::template GetQuantityToPowerType<-1>::type
   calculateContinuousCDF( Array &data,
 			  const bool normalize = true );
 

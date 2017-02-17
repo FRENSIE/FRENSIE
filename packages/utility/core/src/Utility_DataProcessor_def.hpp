@@ -60,8 +60,8 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
   typename Teuchos::Array<Tuple>::iterator data_point = data.begin();
   typename Teuchos::Array<Tuple>::iterator end = data.end();
 
-  typename GetMemberType<indepMember,Tuple>::type indep_value;
-  typename GetMemberType<depMember,Tuple>::type dep_value;
+  typename TupleElement<indepMember,Tuple>::type indep_value;
+  typename TupleElement<depMember,Tuple>::type dep_value;
 
   while( data_point != end )
   {
@@ -293,7 +293,7 @@ void DataProcessor::calculateSlopes( Array &data  )
   data_point_1 = data.begin();
   data_point_2 = data_point_1 + 1;
 
-  typename GetMemberType<slopeMember,Tuple>::type slope;
+  typename TupleElement<slopeMember,Tuple>::type slope;
 
   while( data_point_2 != end )
   {
@@ -341,7 +341,7 @@ template<TupleMember indepMember,
 	 TupleMember pdfMember,
 	 TupleMember cdfMember,
 	 typename Array>
-typename QuantityTraits<typename GetMemberType<cdfMember,typename ArrayTraits<Array>::value_type>::type>::template GetQuantityToPowerType<-1>::type
+typename QuantityTraits<typename TupleElement<cdfMember,typename ArrayTraits<Array>::value_type>::type>::template GetQuantityToPowerType<-1>::type
 DataProcessor::calculateContinuousCDF( Array &data,
 				       const bool normalize )
 {
@@ -349,7 +349,7 @@ DataProcessor::calculateContinuousCDF( Array &data,
   testPrecondition( (data.size() > 1) );
 
   typedef typename ArrayTraits<Array>::value_type Tuple;
-  typedef QuantityTraits<typename GetMemberType<cdfMember,Tuple>::type> CDFQT;
+  typedef QuantityTraits<typename TupleElement<cdfMember,Tuple>::type> CDFQT;
 
   typename Array::iterator data_point_1, data_point_2;
   typename Array::iterator end = data.end();
@@ -357,7 +357,7 @@ DataProcessor::calculateContinuousCDF( Array &data,
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
 
-  typename GetMemberType<cdfMember,Tuple>::type cdf_value;
+  typename TupleElement<cdfMember,Tuple>::type cdf_value;
 
   // Initialize the CDF
   set<cdfMember>( *data_point_1, CDFQT::zero() );
@@ -378,15 +378,15 @@ DataProcessor::calculateContinuousCDF( Array &data,
     ++data_point_2;
   }
 
-  typename GetMemberType<cdfMember,Tuple>::type cdf_max =
+  typename TupleElement<cdfMember,Tuple>::type cdf_max =
     get<cdfMember>( data.back() );
 
   // Normalize the CDF and PDF
   if( normalize )
   {
-    typename GetMemberType<cdfMember,Tuple>::type cdf_norm_value;
+    typename TupleElement<cdfMember,Tuple>::type cdf_norm_value;
 
-    typename GetMemberType<pdfMember,Tuple>::type pdf_norm_value;
+    typename TupleElement<pdfMember,Tuple>::type pdf_norm_value;
 
     data_point_1 = data.begin();
 
@@ -428,7 +428,7 @@ void DataProcessor::calculateContinuousPDF( Array &data )
   data_point_2 = data.begin() + 1;
 
   // Calculate the slope of the cdf
-  typename GetMemberType<pdfMember,Tuple>::type
+  typename TupleElement<pdfMember,Tuple>::type
     pdf_value = (get<cdfMember>( *data_point_2 ) -
 		 get<cdfMember>( *data_point_1 ) )/
     (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 ) );
@@ -479,7 +479,7 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
 
   data_point = data.begin();
 
-  typename GetMemberType<cdfMember,Tuple>::type cdf_value = 0;
+  typename TupleElement<cdfMember,Tuple>::type cdf_value = 0;
 
   // Create the discrete CDF
   while( data_point != end )
@@ -588,7 +588,7 @@ void DataProcessor::swapTupleMemberData( Array &data )
   data_point = data.begin();
   end = data.end();
 
-  typename GetMemberType<member1,Tuple>::type copy;
+  typename TupleElement<member1,Tuple>::type copy;
 
   while( data_point != end )
   {
