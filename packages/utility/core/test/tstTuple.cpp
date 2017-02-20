@@ -17,8 +17,8 @@
 #include <Teuchos_UnitTestHarness.hpp>
 
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation macros
@@ -67,6 +67,81 @@
 
 //---------------------------------------------------------------------------//
 // Tests.
+//---------------------------------------------------------------------------//
+// Check that the size of a tuple can be determined
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Basic, TupleSize, T )
+{
+  TEST_EQUALITY_CONST( Utility::TupleSize<T>::value, 1 );
+}
+
+UNIT_TEST_TEMPLATE_1_INSTANT( Basic, TupleSize );
+
+//---------------------------------------------------------------------------//
+// Check that the size of a tuple can be determined
+TEUCHOS_UNIT_TEST( Tuple_0, TupleSize )
+{
+  TEST_EQUALITY_CONST( Utility::TupleSize<Utility::Tuple<> >::value, 0 );
+  TEST_EQUALITY_CONST( Utility::TupleSize<std::tuple<> >::value, 0 );
+
+  TEST_EQUALITY_CONST( std::tuple_size<Utility::Tuple<> >::value, 0 );
+  TEST_EQUALITY_CONST( std::tuple_size<std::tuple<> >::value, 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the size of a tuple can be determined
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, TupleSize, T )
+{
+  TEST_EQUALITY_CONST( Utility::TupleSize<Utility::Tuple<T> >::value, 1 );
+  TEST_EQUALITY_CONST( Utility::TupleSize<std::tuple<T> >::value, 1 );
+
+  TEST_EQUALITY_CONST( std::tuple_size<Utility::Tuple<T> >::value, 1 );
+}
+
+UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, TupleSize );
+
+//---------------------------------------------------------------------------//
+// Check that the size of a tuple can be determined
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, TupleSize, T1, T2 )
+{
+  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Tuple<T1,T2> >::value), 2 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2> >::value), 2 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Pair<T1,T2> >::value), 2 );
+
+  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Tuple<T1,T2> >::value), 2 );
+  TEST_EQUALITY_CONST( (std::tuple_size<std::tuple<T1,T2> >::value), 2 );
+  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Pair<T1,T2> >::value), 2 );
+}
+
+UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, TupleSize );
+
+//---------------------------------------------------------------------------//
+// Check that the size of a tuple can be determined
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, TupleSize, T1, T2, T3 )
+{
+  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Tuple<T1,T2,T3> >::value), 3 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2,T3> >::value), 3 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Trip<T1,T2,T3> >::value), 3 );
+
+  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Tuple<T1,T2,T3> >::value), 3 );
+  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Trip<T1,T2,T3> >::value), 3 );
+}
+
+UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, TupleSize );
+
+//---------------------------------------------------------------------------//
+// Check that the size of a tuple can be determined
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, TupleSize, T1, T2, T3, T4 )
+{
+  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Tuple<T1,T2,T3,T4> >::value), 4 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2,T3,T4> >::value), 4 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Quad<T1,T2,T3,T4> >::value), 4 );
+  
+  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Tuple<T1,T2,T3,T4> >::value), 4 );
+  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Quad<T1,T2,T3,T4> >::value ), 4 );
+}
+
+UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, TupleSize );
+
 //---------------------------------------------------------------------------//
 // Check that basic types can be treated like tuples
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Basic, get, T )
@@ -544,6 +619,425 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, get_reference, T1, T2, T3, T4 )
 }
 
 UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, get_reference );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple element can be set
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Basic, set, T )
+{
+  T tuple( 1 );
+  
+  typename Utility::TupleElement<0,T>::type value( 2 );
+
+  Utility::set<0>( tuple, value );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( tuple ), 2 );
+}
+
+UNIT_TEST_TEMPLATE_1_INSTANT( Basic, set );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple element can be set
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, set, T )
+{
+  Utility::Tuple<T> tuple_1( 1 );
+
+  typename Utility::TupleElement<0,decltype(tuple_1)>::type value_0( 2 );
+
+  Utility::set<0>( tuple_1, value_0 );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( tuple_1 ), 2 );
+
+  // Check that std tuple will also work
+  std::tuple<T> std_tuple_1( 1 );
+
+  typename Utility::TupleElement<0,decltype(std_tuple_1)>::type std_value_0( 2 );
+
+  Utility::set<0>( std_tuple_1, std_value_0 );
+}
+
+UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, set );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple element can be set
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, set, T1, T2 )
+{
+  Utility::Tuple<T1,T2> tuple_2( 1, 1 );
+
+  typename Utility::TupleElement<0,decltype(tuple_2)>::type value_0( 2 );
+
+  Utility::set<Utility::FIRST>( tuple_2, value_0 );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( tuple_2 ), value_0 );
+
+  typename Utility::TupleElement<1,decltype(tuple_2)>::type value_1( 2 );
+
+  Utility::set<Utility::SECOND>( tuple_2, value_1 );
+
+  TEST_EQUALITY_CONST( Utility::get<1>( tuple_2 ), value_1 );
+
+  // Check that std tuple will also work
+  std::tuple<T1,T2> std_tuple_2( 1, 1 );
+
+  typename Utility::TupleElement<0,decltype(std_tuple_2)>::type std_value_0( 2 );
+
+  Utility::set<0>( std_tuple_2, std_value_0 );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_2 ), std_value_0 );
+
+  typename Utility::TupleElement<1,decltype(std_tuple_2)>::type std_value_1( 2 );
+
+  Utility::set<1>( std_tuple_2, std_value_1 );
+
+  TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_2 ), std_value_1 );
+}
+
+UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, set );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple element can be set
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, set, T1, T2, T3 )
+{
+  Utility::Tuple<T1,T2,T3> tuple_3( 1, 1, 1 );
+
+  typename Utility::TupleElement<0,decltype(tuple_3)>::type value_0( 2 );
+
+  Utility::set<Utility::FIRST>( tuple_3, value_0 );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( tuple_3 ), value_0 );
+
+  typename Utility::TupleElement<1,decltype(tuple_3)>::type value_1( 2 );
+
+  Utility::set<Utility::SECOND>( tuple_3, value_1 );
+
+  TEST_EQUALITY_CONST( Utility::get<1>( tuple_3 ), value_1 );
+
+  typename Utility::TupleElement<2,decltype(tuple_3)>::type value_2( 2 );
+
+  Utility::set<Utility::THIRD>( tuple_3, value_2 );
+
+  TEST_EQUALITY_CONST( Utility::get<2>( tuple_3 ), value_2 );
+
+  // Check that std tuple will also work
+  std::tuple<T1,T2,T3> std_tuple_3( 1, 1, 1 );
+
+  typename Utility::TupleElement<0,decltype(std_tuple_3)>::type std_value_0( 2 );
+
+  Utility::set<0>( std_tuple_3, std_value_0 );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_3 ), std_value_0 );
+
+  typename Utility::TupleElement<1,decltype(std_tuple_3)>::type std_value_1( 2 );
+
+  Utility::set<1>( std_tuple_3, std_value_1 );
+
+  TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_3 ), std_value_1 );
+
+  typename Utility::TupleElement<2,decltype(std_tuple_3)>::type std_value_2( 2 );
+
+  Utility::set<2>( std_tuple_3, std_value_2 );
+
+  TEST_EQUALITY_CONST( Utility::get<2>( std_tuple_3 ), std_value_2 );
+}
+
+UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, set );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple element can be set
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, set, T1, T2, T3, T4 )
+{
+  Utility::Tuple<T1,T2,T3,T4> tuple_4( 1, 1, 1, 1 );
+
+  Utility::set<0>( tuple_4, 0 );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( tuple_4 ), 0 );
+
+  Utility::set<1>( tuple_4, 1 );
+
+  TEST_EQUALITY_CONST( Utility::get<1>( tuple_4 ), 1 );
+
+  Utility::set<2>( tuple_4, 2 );
+
+  TEST_EQUALITY_CONST( Utility::get<2>( tuple_4 ), 2 );
+
+  Utility::set<3>( tuple_4, 3 );
+
+  TEST_EQUALITY_CONST( Utility::get<3>( tuple_4 ), 3 );
+
+  // Check that std tuple will also work
+  std::tuple<T1,T2,T3,T4> std_tuple_4( 1, 1, 1, 1 );
+
+  Utility::set<0>( std_tuple_4, 0 );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_4 ), 0 );
+
+  Utility::set<1>( std_tuple_4, 1 );
+
+  TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_4 ), 1 );
+
+  Utility::set<2>( std_tuple_4, 2 );
+
+  TEST_EQUALITY_CONST( Utility::get<2>( std_tuple_4 ), 2 );
+
+  Utility::set<3>( std_tuple_4, 3 );
+
+  TEST_EQUALITY_CONST( Utility::get<3>( std_tuple_4 ), 3 );
+}
+
+UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, set );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be constructed using the standalone method
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, makeTuple, T )
+{
+  Utility::Tuple<T> tuple_1 = Utility::makeTuple( T( 1 ) );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( tuple_1 ), 1 );
+
+  // Check that std tuple can also be used
+  std::tuple<T> std_tuple_1 = Utility::makeTuple( T( 1 ) );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_1 ), 1 );
+}
+
+UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, makeTuple );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be contructed using the standalone method
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, makeTuple, T1, T2 )
+{
+  Utility::Tuple<T1,T2> tuple_2 = Utility::makeTuple( T1( 1 ), T2( 2 ) );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( tuple_2 ), 1 );
+  TEST_EQUALITY_CONST( Utility::get<1>( tuple_2 ), 2 );
+
+  // Check that std tuple can also be used
+  std::tuple<T1,T2> std_tuple_2 = Utility::makeTuple( T1( 1 ), T2( 2 ) );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_2 ), 1 );
+  TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_2 ), 2 );
+}
+
+UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, makeTuple );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be constructed using the standalone method
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, makeTuple, T1, T2, T3 )
+{
+  Utility::Tuple<T1,T2,T3> tuple_3 = Utility::makeTuple( T1( 1 ), T2( 2 ), T3( 3 ) );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( tuple_3 ), 1 );
+  TEST_EQUALITY_CONST( Utility::get<1>( tuple_3 ), 2 );
+  TEST_EQUALITY_CONST( Utility::get<2>( tuple_3 ), 3 );
+
+  // Check that std tuple can also be used
+  std::tuple<T1,T2,T3> std_tuple_3 = Utility::makeTuple( T1( 1 ), T2( 2 ), T3( 3 ) );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_3 ), 1 );
+  TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_3 ), 2 );
+  TEST_EQUALITY_CONST( Utility::get<2>( std_tuple_3 ), 3 );
+}
+
+UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, makeTuple );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be constructed using the standalone method
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, makeTuple, T1, T2, T3, T4 )
+{
+  Utility::Tuple<T1,T2,T3,T4> tuple_4 =
+    Utility::makeTuple( T1( 1 ), T2( 2 ), T3( 3 ), T4( 4 ) );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( tuple_4 ), 1 );
+  TEST_EQUALITY_CONST( Utility::get<1>( tuple_4 ), 2 );
+  TEST_EQUALITY_CONST( Utility::get<2>( tuple_4 ), 3 );
+  TEST_EQUALITY_CONST( Utility::get<3>( tuple_4 ), 4 );
+
+  // Check that std tuple can also be used
+  std::tuple<T1,T2,T3,T4> std_tuple_4 =
+    Utility::makeTuple( T1( 1 ), T2( 2 ), T3( 3 ), T4( 4 ) );
+
+  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_4 ), 1 );
+  TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_4 ), 2 );
+  TEST_EQUALITY_CONST( Utility::get<2>( std_tuple_4 ), 3 );
+  TEST_EQUALITY_CONST( Utility::get<3>( std_tuple_4 ), 4 );
+}
+
+UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, makeTuple );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be converted to a string
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, tupleToString, T )
+{
+  Utility::Tuple<T> tuple_1( 1 );
+
+  std::string tuple_string = Utility::tupleToString( tuple_1 );
+
+  TEST_EQUALITY_CONST( tuple_string, "{1}" );
+
+  // Check that std tuple can also be used
+  std::tuple<T> std_tuple_1( 1 );
+
+  tuple_string = Utility::tupleToString( std_tuple_1 );
+
+  TEST_EQUALITY_CONST( tuple_string, "{1}" );
+}
+
+UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, tupleToString );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be converted to a string
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, tupleToString, T1, T2 )
+{
+  Utility::Tuple<T1,T2> tuple_2( 1, 2 );
+
+  std::string tuple_string = Utility::tupleToString( tuple_2 );
+
+  TEST_EQUALITY_CONST( tuple_string, "{1, 2}" );
+
+  // Check that std tuple can also be used
+  std::tuple<T1,T2> std_tuple_2( 1, 2 );
+
+  tuple_string = Utility::tupleToString( std_tuple_2 );
+
+  TEST_EQUALITY_CONST( tuple_string, "{1, 2}" );
+}
+
+UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, tupleToString );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be converted to a string
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, tupleToString, T1, T2, T3 )
+{
+  Utility::Tuple<T1,T2,T3> tuple_3( 1, 2, 3 );
+
+  std::string tuple_string = Utility::tupleToString( tuple_3 );
+
+  TEST_EQUALITY_CONST( tuple_string, "{1, 2, 3}" );
+
+  // Check that std tuple can also be used
+  std::tuple<T1,T2,T3> std_tuple_3( 1, 2, 3 );
+
+  tuple_string = Utility::tupleToString( std_tuple_3 );
+
+  TEST_EQUALITY_CONST( tuple_string, "{1, 2, 3}" );
+}
+
+UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, tupleToString );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be converted to a string
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, tupleToString, T1, T2, T3, T4 )
+{
+  Utility::Tuple<T1,T2,T3,T4> tuple_4( 1, 2, 3, 4 );
+
+  std::string tuple_string = Utility::tupleToString( tuple_4 );
+
+  TEST_EQUALITY_CONST( tuple_string, "{1, 2, 3, 4}" );
+
+  // Check that std tuple can also be used
+  std::tuple<T1,T2,T3,T4> std_tuple_4( 1, 2, 3, 4 );
+
+  tuple_string = Utility::tupleToString( std_tuple_4 );
+
+  TEST_EQUALITY_CONST( tuple_string, "{1, 2, 3, 4}" );
+}
+
+UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, tupleToString );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be placed in a stream
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, stream_operator, T )
+{
+  Utility::Tuple<T> tuple_1( 1 );
+  
+  std::ostringstream oss;
+  oss << tuple_1;
+
+  TEST_EQUALITY_CONST( oss.str(), "{1}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  // Check that std tuple can also be used
+  std::tuple<T> std_tuple_1( 1 );
+
+  oss << std_tuple_1;
+
+  TEST_EQUALITY_CONST( oss.str(), "{1}" );
+}
+
+UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, stream_operator );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be placed in a stream
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, stream_operator, T1, T2 )
+{
+  Utility::Tuple<T1,T2> tuple_2( 1, 2 );
+
+  std::ostringstream oss;
+  oss << tuple_2;
+
+  TEST_EQUALITY_CONST( oss.str(), "{1, 2}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  // Check that std tuple can also be used
+  std::tuple<T1,T2> std_tuple_2( 1, 2 );
+
+  oss << std_tuple_2;
+
+  TEST_EQUALITY_CONST( oss.str(), "{1, 2}" );
+}
+
+UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, stream_operator );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be placed in a stream
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, stream_operator, T1, T2, T3 )
+{
+  Utility::Tuple<T1,T2,T3> tuple_3( 1, 2, 3 );
+
+  std::ostringstream oss;
+  oss << tuple_3;
+
+  TEST_EQUALITY_CONST( oss.str(), "{1, 2, 3}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  // CHeck that std tuple can also be used
+  std::tuple<T1,T2,T3> std_tuple_3( 1, 2, 3 );
+
+  oss << std_tuple_3;
+
+  TEST_EQUALITY_CONST( oss.str(), "{1, 2, 3}" );
+}
+
+UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, stream_operator );
+
+//---------------------------------------------------------------------------//
+// Check that a tuple can be placed in a stream
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, stream_operator, T1, T2, T3, T4 )
+{
+  Utility::Tuple<T1,T2,T3,T4> tuple_4( 1, 2, 3, 4 );
+
+  std::ostringstream oss;
+  oss << tuple_4;
+
+  TEST_EQUALITY_CONST( oss.str(), "{1, 2, 3, 4}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  // Check that std tuple can also be used
+  std::tuple<T1,T2,T3,T4> std_tuple_4( 1, 2, 3, 4 );
+
+  oss << std_tuple_4;
+
+  TEST_EQUALITY_CONST( oss.str(), "{1, 2, 3, 4}" );
+}
+
+UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, stream_operator );
 
 //---------------------------------------------------------------------------//
 // end tstTuple.cpp

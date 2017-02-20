@@ -101,8 +101,7 @@ get( const Utility::Tuple<Types...>& tuple ) noexcept
  * \ingroup tuple
  */
 template<size_t I, typename TupleType, typename ValueType>
-inline void set( TupleType& tuple, ValueType value )
-{ Utility::get<I>( tuple ) = value; }
+void set( TupleType& tuple, ValueType value );
 
 /*! Construct a tuple (std::make_tuple)
  * \ingroup tuple
@@ -115,23 +114,28 @@ inline auto makeTuple( Types&&... args ) -> decltype(std::make_tuple(args...))
  * \ingroup tuple
  */
 template<typename... Types>
-std::string tupleToString( const Utility::Tuple<Types...>& tuple )
-{
-  std::ostringstream oss;
-  oss << tuple;
+std::string tupleToString( const Utility::Tuple<Types...>& tuple );
 
-  return oss.str();
-}
+/*! Place the tuple in a stream
+ * \ingroup tuple
+ */
+template<typename... Types>
+void tupleToStream( std::ostream&os, const Utility::Tuple<Types...>& tuple );
+
+} // end Utility namespace
 
 /*! Stream operator for tuples
  * \ingroup tuple
  * \ingroup print_format
  */
 template<typename... Types>
-std::ostream& operator<<( std::ostream& os,
-                          const Utility::Tuple<Types...>& tuple );
-
-} // end Utility namespace
+inline std::ostream& operator<<( std::ostream& os,
+                                 const Utility::Tuple<Types...>& tuple )
+{
+  Utility::tupleToStream( os, tuple );
+  
+  return os;
+}
 
 //---------------------------------------------------------------------------//
 // Template Includes.

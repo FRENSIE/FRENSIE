@@ -325,16 +325,16 @@ struct HDF5TypeTraits<unsigned char>
 };
 
 /*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
- * Utility::Pair struct
+ * Utility::Tuple struct
  * \ingroup hdf5_type_traits
  */
-template<typename T1, typename T2>
-struct HDF5TypeTraits<Pair<T1,T2> >
+template<typename... Types>
+struct HDF5TypeTraits<Tuple<Types...> >
 {
   //! Typedef for the raw type
-  typedef Pair<T1,T2> RawType;
+  typedef Tuple<Types...> RawType;
   
-  //! Returns the HDF5 data type object corresponding to Pair<T,T2>
+  //! Returns the HDF5 data type object corresponding to Utility::Tuple
   static H5::CompType dataType()
   {
     H5::CompType memtype( sizeof(RawType) );

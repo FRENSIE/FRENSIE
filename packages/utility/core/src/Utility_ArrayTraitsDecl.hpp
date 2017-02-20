@@ -70,23 +70,23 @@ template<typename Array, typename Enabled = void>
 struct ArrayTraits
 {
   //! The array type
-  typedef Array ArrayType;
+  typedef typename UndefinedTraits<Array>::DesiredTypeIsMissingSpecialization ArrayType;
   //! The size type of the array
-  typedef typename ArrayType::size_type size_type;
+  typedef typename UndefinedTraits<Array>::DesiredTypeIsMissingSpecialization size_type;
   //! The type contained in the array
-  typedef typename ArrayType::value_type value_type;
+  typedef typename UndefinedTraits<Array>::DesiredTypeIsMissingSpecialization value_type;
   //! The pointer type of the array
-  typedef typename ArrayType::pointer pointer;
+  typedef typename UndefinedTraits<Array>::DesiredTypeIsMissingSpecialization pointer;
   //! The const pointer type of the array
-  typedef typename ArrayType::const_pointer const_pointer;
+  typedef typename UndefinedTraits<Array>::DesiredTypeIsMissingSpecialization const_pointer;
   //! The reference type of the array
-  typedef typename ArrayType::reference reference;
+  typedef typename UndefinedTraits<Array>::DesiredTypeIsMissingSpecialization reference;
   //! The const reference type of the array
-  typedef typename ArrayType::const_reference const_reference;
+  typedef typename UndefinedTraits<Array>::DesiredTypeIsMissingSpecialization const_reference;
   //! The iterator type of the array
-  typedef typename ArrayType::iterator iterator;
+  typedef typename UndefinedTraits<Array>::DesiredTypeIsMissingSpecialization iterator;
   // The const iterator type of the array
-  typedef typename ArrayType::const_iterator const_iterator;
+  typedef typename UndefinedTraits<Array>::DesiredTypeIsMissingSpecialization const_iterator;
   //! The array view type
   typedef Teuchos::ArrayView<value_type> ArrayViewType;
   //! The array const view type
@@ -96,27 +96,27 @@ struct ArrayTraits
 
   //! The number of dimensions in the array
   static inline size_type numberOfDimensions( const ArrayType& array )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
+  { (void)UndefinedTraits<Array>::notDefined(); return 0; }
 
   //! The size of each array dimension
   template<typename IntType,template<typename,typename...> class DimSizeArray>
   static inline void dimensionSizes( const ArrayType& array,
                                      DimSizeArray<IntType>& dim_size_array)
-  { (void)UndefinedTraits<ArrayType>::notDefined(); }
+  { (void)UndefinedTraits<Array>::notDefined(); }
 
   //! The size of the array
   static inline size_type size(const ArrayType& array)
-  { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
+  { (void)UndefinedTraits<Array>::notDefined(); return 0; }
 
   //! Resize the array
   static inline void resize( ArrayType& array, size_type n )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); }
+  { (void)UndefinedTraits<Array>::notDefined(); }
 
   //! Reshape the array
   template<typename IntType, template<typename,typename... > class DimSizeArray>
   static inline void reshape( ArrayType& array,
                               const DimSizeArray<IntType>& dim_size_array )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); }
+  { (void)UndefinedTraits<Array>::notDefined(); }
 
   //! The front element of the array
   static inline reference front( ArrayType& array );
@@ -144,46 +144,46 @@ struct ArrayTraits
 
   //! The head pointer of the array
   static inline pointer headPtr( ArrayType& array )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
+  { (void)UndefinedTraits<Array>::notDefined(); return 0; }
 
   //! The head pointer of a const array
   static inline const_pointer headPtr( const ArrayType& array)
-  { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
+  { (void)UndefinedTraits<Array>::notDefined(); return 0; }
 
   //! Convert the array to a string
   static inline std::string toString( const ArrayType& array )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); return ""; }
+  { (void)UndefinedTraits<Array>::notDefined(); return ""; }
 
   //! Convert the string to an array
   static inline ArrayType fromString( const std::string& array_string )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); return ArrayType(); }
+  { (void)UndefinedTraits<Array>::notDefined(); return ArrayType(); }
 
   //! Place the array in a stream
   static inline void toStream( std::ostream& os, const ArrayType& array )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); }
+  { (void)UndefinedTraits<Array>::notDefined(); }
 
   //! A view of the array
   static inline ArrayViewType view(
 	  ArrayType& array,
 	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
 	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
+  { (void)UndefinedTraits<Array>::notDefined(); return 0; }
 
   //! A view of the const array
   static inline ArrayConstViewType view(
 	  const ArrayType& array,
 	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
 	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); return 0; }
+  { (void)UndefinedTraits<Array>::notDefined(); return 0; }
 
   //! Copy the ArrayView object
   static inline void copyView( ArrayType& array, const ArrayViewType &view )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); }
+  { (void)UndefinedTraits<Array>::notDefined(); }
 
   //! Copy the ArrayView of const object
   static inline void copyView( ArrayType& array,
                                const ArrayConstViewType &view )
-  { (void)UndefinedTraits<ArrayType>::notDefined(); }
+  { (void)UndefinedTraits<Array>::notDefined(); }
 };
 
 /*! This function allows access to the numberOfDimensions ArrayTraits function.
@@ -431,6 +431,7 @@ inline Array stringToArray( const std::string& string )
  * Array type has an ArrayTraits specialization. When it cannot resolve the
  * template parameter it will move on to the next overload for the operator.
  * \ingroup array_traits
+ * \ingroup print_format
  */
 template<typename T,
          template<typename,typename...> class Array,

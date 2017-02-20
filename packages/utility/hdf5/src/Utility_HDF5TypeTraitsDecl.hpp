@@ -43,16 +43,9 @@ namespace Utility{
  * specializations must be written for each type to be written to HDF5
  * \note The defualt defined specializations are provided for int, uint and
  * double. The tuple structs will also provide their own specializations.
- * \tparam T The first type
- * \tparam T2 The second type.
- * \tparam T3 The third type.
- * \tparam T4 The fourth type.
  * \ingroup hdf5_type_traits
  */
-template<typename T,
-	 typename T2 = Empty,
-	 typename T3 = Empty,
-	 typename T4 = Empty>
+template<typename T, typename Enabled = void>
 struct HDF5TypeTraits
 {
   //! Typedef for the raw type
