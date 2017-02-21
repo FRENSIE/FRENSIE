@@ -18,9 +18,9 @@
 #include <Teuchos_TwoDArray.hpp>
 
 // FRENSIE Includes
+#include "Utility_Tuple.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_HDF5TypeTraits.hpp"
-#include "Utility_Tuple.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -145,6 +145,52 @@
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_d_d )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_u_u )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_d_d )	\
+
+//---------------------------------------------------------------------------//
+// Testing Functions.
+//---------------------------------------------------------------------------//
+template<typename T>
+inline void initializeArray( std::vector<T>& array, size_t size, T value )
+{
+  array.resize( size, value );
+}
+
+template<typename T>
+inline void initializeArray( Teuchos::Array<T>& array, size_t size, T value )
+{
+  array.resize( size, value );
+}
+
+template<typename T>
+inline void initializeArray( Teuchos::ArrayRCP<T>& array, size_t size, T value )
+{
+  array = Teuchos::ArrayRCP<T>( size, value );
+}
+
+template<typename T>
+inline void initializeArray( Teuchos::ArrayView<T>& array, size_t size, T value )
+{
+  static Teuchos::Array<typename boost::remove_const<T>::type>
+    global_view_array;
+
+  global_view_array.clear();
+  global_view_array.resize( size, value );
+
+  array = global_view_array();
+}
+
+template<typename T>
+inline void initializeArray( Teuchos::Tuple<T,100>& array, size_t, T value )
+{
+  for( size_t i = 0; i < 100; ++i )
+    array[i] = value;
+}
+
+template<typename T>
+inline void initializeArray( Teuchos::TwoDArray<T>& array, size_t size, T value )
+{
+  array = Teuchos::TwoDArray<T>( size/2, 2, value );
+}
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -333,11 +379,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   value_type test_value = Utility::HDF5TypeTraits<value_type>::zero();
 
-  Teuchos::Array<value_type> raw_data( 100, test_value );
-
   array data;
-  Utility::copyArrayView( data, raw_data() );
-
+  initializeArray( data, 100, test_value );
+  
   TEST_ASSERT( !hdf5_file_handler.doesDataSetExist( DATASET_NAME ) );
   TEST_NOTHROW( hdf5_file_handler.writeArrayToDataSet( data, DATASET_NAME ) );
 
@@ -381,17 +425,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
-  Teuchos::Array<value_type> raw_data( 100, test_value );
-
   array data_original;
-  Utility::copyArrayView( data_original, raw_data() );
-
-  hdf5_file_handler.writeArrayToDataSet( data_original,
-					 DATASET_NAME );
+  initializeArray( data_original, 100, test_value );
+  
+  hdf5_file_handler.writeArrayToDataSet( data_original, DATASET_NAME );
 
   array data;
-  hdf5_file_handler.readArrayFromDataSet( data,
-  					  DATASET_NAME );
+  hdf5_file_handler.readArrayFromDataSet( data, DATASET_NAME );
 
   UTILITY_TEST_COMPARE_ARRAYS( data_original, data );
 
@@ -425,15 +465,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
-  Teuchos::Array<value_type> raw_data( 100, test_value );
   array set_data;
-  Utility::copyArrayView( set_data, raw_data() );
+  initializeArray( set_data, 100, test_value );
 
-  hdf5_file_handler.writeArrayToDataSet( set_data,
-					 DATASET_NAME );
+  hdf5_file_handler.writeArrayToDataSet( set_data, DATASET_NAME );
 
-  array data;
-  Utility::copyArrayView( data, raw_data() );
+  array data = set_data;
 
   TEST_ASSERT( !hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
 							     ATTRIBUTE_NAME ));
@@ -487,15 +524,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
-  Teuchos::Array<value_type> raw_data( 100, test_value );
   array set_data;
-  Utility::copyArrayView( set_data, raw_data() );
+  initializeArray( set_data, 100, test_value );
+  
+  hdf5_file_handler.writeArrayToDataSet( set_data, DATASET_NAME );
 
-  hdf5_file_handler.writeArrayToDataSet( set_data,
-					 DATASET_NAME );
-
-  array data_original;
-  Utility::copyArrayView( data_original, raw_data() );
+  array data_original = set_data;
 
   hdf5_file_handler.writeArrayToDataSetAttribute( data_original,
 						  DATASET_NAME,
@@ -539,8 +573,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   Teuchos::Array<Type> data( 100, test_value );
 
-  hdf5_file_handler.writeArrayToDataSet( data,
-					 DATASET_NAME );
+  hdf5_file_handler.writeArrayToDataSet( data, DATASET_NAME );
 
   TEST_ASSERT( !hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
 							     ATTRIBUTE_NAME ));
@@ -581,8 +614,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   Teuchos::Array<Type> data( 100, test_value_original );
 
-  hdf5_file_handler.writeArrayToDataSet( data,
-					 DATASET_NAME );
+  hdf5_file_handler.writeArrayToDataSet( data, DATASET_NAME );
 
   hdf5_file_handler.writeValueToDataSetAttribute( test_value_original,
 						  DATASET_NAME,
@@ -616,10 +648,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
-  Teuchos::Array<value_type> raw_data( 100, test_value );
   array data;
-  Utility::copyArrayView( data, raw_data() );
-
+  initializeArray( data, 100, test_value );
+  
   TEST_ASSERT( !hdf5_file_handler.doesGroupAttributeExist( CHILD_GROUP,
 							   ATTRIBUTE_NAME ) );
   TEST_NOTHROW( hdf5_file_handler.writeArrayToGroupAttribute(
@@ -672,10 +703,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
-  Teuchos::Array<value_type> raw_data( 100, test_value );
   array data_original;
-  Utility::copyArrayView( data_original, raw_data() );
-
+  initializeArray( data_original, 100, test_value );
+  std::cout << data_original[0] << std::endl;
   hdf5_file_handler.writeArrayToGroupAttribute( data_original,
 						CHILD_GROUP,
 						ATTRIBUTE_NAME );

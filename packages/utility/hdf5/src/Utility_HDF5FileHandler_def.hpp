@@ -67,7 +67,7 @@ void HDF5FileHandler::writeArrayToDataSet(const Array &data,
     {
       H5::DataSet dataset( d_hdf5_file->openDataSet( location_in_file ) );
 
-      dataset.write( getHeadPtr( data ),
+      dataset.write( getArrayHeadPtr( data ),
 		     HDF5TypeTraits<value_type>::dataType() );
     }
     else
@@ -83,7 +83,7 @@ void HDF5FileHandler::writeArrayToDataSet(const Array &data,
 					location_in_file,
 					HDF5TypeTraits<value_type>::dataType(),
 					space ) );
-      dataset.write( getHeadPtr( data ),
+      dataset.write( getArrayHeadPtr( data ),
 		     HDF5TypeTraits<value_type>::dataType() );
     }
   }
@@ -171,7 +171,7 @@ void HDF5FileHandler::readArrayFromDataSet(
     reshapeArray( data, data_shape );
 
     // Read the data in the dataset and save it to the output array
-    dataset.read( getHeadPtr( data ),
+    dataset.read( getArrayHeadPtr( data ),
 		  HDF5TypeTraits<value_type>::dataType() );
   }
 
@@ -183,19 +183,15 @@ void HDF5FileHandler::readArrayFromDataSet(
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( std::vector<double>&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::Array<double>&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::ArrayView<double>&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::ArrayRCP<double>&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( std::vector<Pair<double,double> >&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::Array<Pair<double,double> >&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::ArrayView<Pair<double,double> >&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::ArrayRCP<Pair<double,double> >&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( std::vector<Trip<double,double,double> >&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::Array<Trip<double,double,double> >&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::ArrayView<Trip<double,double,double> >&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::ArrayRCP<Trip<double,double,double> >&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( std::vector<Quad<double,double,double,double> >&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::Array<Quad<double,double,double,double> >&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::ArrayView<Quad<double,double,double,double> >&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSet( Teuchos::ArrayRCP<Quad<double,double,double,double> >&, const std::string& ) const );
 
 // Write attribute to HDF5 file dataset
@@ -250,7 +246,7 @@ void HDF5FileHandler::writeArrayToDataSetAttribute(
       H5::Attribute attribute( dataset.openAttribute( attribute_name ) );
 
       attribute.write( HDF5TypeTraits<value_type>::dataType(),
-		       getHeadPtr( data ) );
+		       getArrayHeadPtr( data ) );
     }
     else
     {
@@ -260,7 +256,7 @@ void HDF5FileHandler::writeArrayToDataSetAttribute(
 				space ) );
 
       attribute.write( HDF5TypeTraits<value_type>::dataType(),
-		       getHeadPtr( data ) );
+		       getArrayHeadPtr( data ) );
     }
   }
 
@@ -357,7 +353,7 @@ void HDF5FileHandler::readArrayFromDataSetAttribute(
 
     // Read the data in the dataset and save it to the output array
     attribute.read( HDF5TypeTraits<value_type>::dataType(),
-		    getHeadPtr( data ) );
+		    getArrayHeadPtr( data ) );
   }
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
@@ -368,19 +364,15 @@ void HDF5FileHandler::readArrayFromDataSetAttribute(
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( std::vector<double>&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::Array<double>&, const std::string&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::ArrayView<double>&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::ArrayRCP<double>&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( std::vector<Pair<double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::Array<Pair<double,double> >&, const std::string&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::ArrayView<Pair<double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::ArrayRCP<Pair<double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( std::vector<Trip<double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::Array<Trip<double,double,double> >&, const std::string&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::ArrayView<Trip<double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::ArrayRCP<Trip<double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( std::vector<Quad<double,double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::Array<Quad<double,double,double,double> >&, const std::string&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::ArrayView<Quad<double,double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromDataSetAttribute( Teuchos::ArrayRCP<Quad<double,double,double,double> >&, const std::string&, const std::string& ) const );
 
 // Write attribute to HDF5 file dataset
@@ -593,7 +585,7 @@ void HDF5FileHandler::writeArrayToGroupAttribute(
       H5::Attribute attribute( group.openAttribute( attribute_name ) );
 
       attribute.write( HDF5TypeTraits<value_type>::dataType(),
-		       getHeadPtr( data ) );
+		       getArrayHeadPtr( data ) );
     }
     else
     {
@@ -603,7 +595,7 @@ void HDF5FileHandler::writeArrayToGroupAttribute(
 				space ) );
 
       attribute.write( HDF5TypeTraits<value_type>::dataType(),
-		       getHeadPtr( data ) );
+		       getArrayHeadPtr( data ) );
     }
   }
 
@@ -700,7 +692,7 @@ void HDF5FileHandler::readArrayFromGroupAttribute(
 
     // Read the data in the dataset and save it to the output array
     attribute.read( HDF5TypeTraits<value_type>::dataType(),
-		    getHeadPtr( data ) );
+		    getArrayHeadPtr( data ) );
   }
 
   HDF5_EXCEPTION_CATCH( std::runtime_error,
@@ -711,19 +703,15 @@ void HDF5FileHandler::readArrayFromGroupAttribute(
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( std::vector<double>&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::Array<double>&, const std::string&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::ArrayView<double>&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::ArrayRCP<double>&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( std::vector<Pair<double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::Array<Pair<double,double> >&, const std::string&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::ArrayView<Pair<double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::ArrayRCP<Pair<double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( std::vector<Trip<double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::Array<Trip<double,double,double> >&, const std::string&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::ArrayView<Trip<double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::ArrayRCP<Trip<double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( std::vector<Quad<double,double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::Array<Quad<double,double,double,double> >&, const std::string&, const std::string& ) const );
-EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::ArrayView<Quad<double,double,double,double> >&, const std::string&, const std::string& ) const );
 EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void HDF5FileHandler::readArrayFromGroupAttribute( Teuchos::ArrayRCP<Quad<double,double,double,double> >&, const std::string&, const std::string& ) const );
 
 // Write attribute to HDF5 file group

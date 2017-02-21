@@ -124,6 +124,8 @@ void tupleToStream( std::ostream&os, const Utility::Tuple<Types...>& tuple );
 
 } // end Utility namespace
 
+namespace std{
+
 /*! Stream operator for tuples
  * \ingroup tuple
  * \ingroup print_format
@@ -136,6 +138,8 @@ inline std::ostream& operator<<( std::ostream& os,
   
   return os;
 }
+
+} // end std namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes.

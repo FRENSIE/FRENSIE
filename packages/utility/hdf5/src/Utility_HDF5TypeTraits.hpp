@@ -12,11 +12,7 @@
 // Std Lib Includes
 #include <utility>
 #include <tuple>
-
-// Boost Includes
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_constant.hpp>
-#include <boost/type_traits/remove_const.hpp>
+#include <type_traits>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -33,7 +29,7 @@ namespace Utility{
  * \ingroup hdf5_type_traits
  */
 template<typename T>
-struct HDF5TypeTraits<T,typename boost::enable_if<boost::is_const<T> >::type> : public HDF5TypeTraits<boost::remove_const<T>::type>
+struct HDF5TypeTraits<T,typename std::enable_if<std::is_const<T>::value>::type> : public HDF5TypeTraits<typename std::remove_const<T>::type>
 { /* ... */ };
 
 /*! \brief The specialization of the Utility::HDF5TypeTraits for double
@@ -324,6 +320,101 @@ struct HDF5TypeTraits<unsigned char>
   { return 1u; }
 };
 
+namespace Details{
+
+// The helper class that constructs a tuple HDF5 data type
+template<size_t I, typename TupleType, typename Enabled = void>
+struct HDF5TupleTypeHelper
+{
+  static inline void addElementTypes( H5::CompType& type,
+                                      const TupleType& layout_tuple )
+  {
+    std::ostringstream oss;
+    oss << "element_" << I;
+
+    const size_t offset =
+      reinterpret_cast<const uint8_t*>(&Utility::get<I>( layout_tuple )) -
+      reinterpret_cast<const uint8_t*>(&layout_tuple);
+
+    H5::DataType element_type =
+      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::dataType();
+    
+    type.insertMember( oss.str(), offset, element_type );
+
+    // Add the remaining tuple elements
+    HDF5TupleTypeHelper<I+1,TupleType>::addElementTypes( type, layout_tuple );
+  }
+
+  static inline void addElementNames( std::string& type_name )
+  {
+    type_name += HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::name();
+    type_name += ",";
+
+    // Add the remaining tuple element names
+    HDF5TupleTypeHelper<I+1,TupleType>::addElementNames( type_name );
+  }
+
+  static inline void zeroElements( TupleType& tuple )
+  {
+    Utility::get<I>( tuple ) =
+      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::zero();
+
+    // Zero the remaining elements
+    HDF5TupleTypeHelper<I+1,TupleType>::zeroElements( tuple );
+  }
+
+  static inline void oneElements( TupleType& tuple )
+  {
+    Utility::get<I>( tuple ) =
+      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::one();
+
+    // Set the remaining elements to one
+    HDF5TupleTypeHelper<I+1,TupleType>::oneElements( tuple );
+  }
+};
+
+// The helper class that constructs a tuple HDF5 data type (specialization for
+// I = TupleSize-1, which is for the last element)
+template<size_t I, typename TupleType>
+struct HDF5TupleTypeHelper<I,TupleType,typename std::enable_if<I==TupleSize<TupleType>::value-1>::type>
+{
+  static inline void addElementTypes( H5::CompType& type,
+                                      const TupleType& layout_tuple )
+  {
+    std::ostringstream oss;
+    oss << "element_" << I;
+
+    const size_t offset =
+      reinterpret_cast<const uint8_t*>(&Utility::get<I>( layout_tuple )) -
+      reinterpret_cast<const uint8_t*>(&layout_tuple);
+
+
+    H5::DataType element_type =
+      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::dataType();
+    
+    type.insertMember( oss.str(), offset, element_type );
+  }
+
+  static inline void addElementNames( std::string& type_name )
+  { 
+    type_name += HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::name();
+  }
+
+  static inline void zeroElements( TupleType& tuple )
+  {
+    Utility::get<I>( tuple ) =
+      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::zero();
+  }
+
+  static inline void oneElements( TupleType& tuple )
+  {
+    Utility::get<I>( tuple ) =
+      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::one();
+  }
+};
+  
+} // end Details namespace
+
 /*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
  * Utility::Tuple struct
  * \ingroup hdf5_type_traits
@@ -342,15 +433,7 @@ struct HDF5TypeTraits<Tuple<Types...> >
     // the insertMember function can throw H5::DataTypeIException exceptions
     try
     {
-
-      memtype.insertMember( "first",
-			    HOFFSET( RawType, first ),
-			    HDF5TypeTraits<T1>::dataType() );
-
-      memtype.insertMember( "second",
-			    HOFFSET( RawType, second ),
-			    HDF5TypeTraits<T2>::dataType() );
-
+      Details::HDF5TupleTypeHelper<0,RawType>::addElementTypes( memtype, RawType() );
     }
 
     HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
@@ -363,402 +446,31 @@ struct HDF5TypeTraits<Tuple<Types...> >
   //! Returns the name of this type
   static inline std::string name()
   {
-    return "Utility::Pair<" + HDF5TypeTraits<T1>::name() + "," +
-    HDF5TypeTraits<T2>::name() + ">";
+    std::string type_name = "Utility::Tuple<";
+    Details::HDF5TupleTypeHelper<0,RawType>::addElementNames( type_name );
+    type_name += ">";
+
+    return type_name;
   }
 
   //! Returns the zero value for this type
   static inline RawType zero()
   {
-    return RawType(HDF5TypeTraits<T1>::zero(), HDF5TypeTraits<T2>::zero());
+    RawType tuple;
+
+    Details::HDF5TupleTypeHelper<0,RawType>::zeroElements( tuple );
+    
+    return tuple;
   }
 
   //! Returns the unity value for this type
   static inline RawType one()
   {
-    return RawType( HDF5TypeTraits<T1>::one(), HDF5TypeTraits<T2>::one() );
-  }
-};
+    RawType tuple;
 
-/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
- * std::pair struct
- * \ingroup hdf5_type_traits
- */
-template<typename T1, typename T2>
-struct HDF5TypeTraits<std::pair<T1,T2> >
-{
-  //! Typedef for the raw type
-  typedef std::pair<T1,T2> RawType;
-  
-  //! Returns the HDF5 data type object corresponding to Pair<T,T2>
-  static H5::CompType dataType()
-  {
-    H5::CompType memtype( sizeof(RawType) );
-
-    // the insertMember function can throw H5::DataTypeIException exceptions
-    try
-    {
-
-      memtype.insertMember( "first",
-			    HOFFSET( RawType, first ),
-			    HDF5TypeTraits<T1>::dataType() );
-
-      memtype.insertMember( "second",
-			    HOFFSET( RawType, second ),
-			    HDF5TypeTraits<T2>::dataType() );
-
-    }
-
-    HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "unable to create the HDF5 data type ("
-                                     << name() << ")!" );
-
-    return memtype;
-  }
-
-  //! Returns the name of this type
-  static inline std::string name()
-  {
-    return "std::pair<" + HDF5TypeTraits<T1>::name() + "," +
-    HDF5TypeTraits<T2>::name() + ">";
-  }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  {
-    return std::make_pair( HDF5TypeTraits<T1>::zero(),
-                           HDF5TypeTraits<T2>::zero() );
-  }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  {
-    return std::make_pair( HDF5TypeTraits<T1>::one(),
-                           HDF5TypeTraits<T2>::one() );
-  }
-};
-
-/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
- * std::tuple<typename,typename> struct
- * \ingroup hdf5_type_traits
- */
-template<typename T1, typename T2>
-struct HDF5TypeTraits<std::tuple<T1,T2> >
-{
-  //! Typedef for the raw type
-  typedef std::tuple<T1,T2> RawType;
-  
-  //! Returns the HDF5 data type object corresponding to Pair<T,T2>
-  static H5::CompType dataType()
-  {
-    H5::CompType memtype( sizeof(RawType) );
-
-    // the insertMember function can throw H5::DataTypeIException exceptions
-    try
-    {
-
-      memtype.insertMember( "first",
-			    HOFFSET( RawType, first ),
-			    HDF5TypeTraits<T1>::dataType() );
-
-      memtype.insertMember( "second",
-			    HOFFSET( RawType, second ),
-			    HDF5TypeTraits<T2>::dataType() );
-
-    }
-
-    HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "unable to create the HDF5 data type ("
-                                     << name() << ")!" );
-
-    return memtype;
-  }
-
-  //! Returns the name of this type
-  static inline std::string name()
-  {
-    return "std::tuple<" + HDF5TypeTraits<T1>::name() + "," +
-    HDF5TypeTraits<T2>::name() + ">";
-  }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  {
-    return std::make_tuple( HDF5TypeTraits<T1>::zero(),
-                            HDF5TypeTraits<T2>::zero() );
-  }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  {
-    return std::make_tuple( HDF5TypeTraits<T1>::one(),
-                            HDF5TypeTraits<T2>::one() );
-  }
-};
-
-/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
- * Utility::Trip struct
- * \ingroup hdf5_type_traits
- */
-template<typename T1, typename T2, typename T3>
-struct HDF5TypeTraits<Trip<T1,T2,T3> >
-{
-  //! Typedef for the raw type
-  typedef Trip<T1,T2,T3> RawType;
-  
-  //! Returns the HDF5 data type object corresponding to Trip<T1,T2,T3>
-  static H5::CompType dataType()
-  {
-    H5::CompType memtype( sizeof(RawType) );
-
-    // the insertMember function can throw H5::DataTypeIException exceptions
-    try
-    {
-      memtype.insertMember( "first",
-			    HOFFSET( RawType, first ),
-			    HDF5TypeTraits<T1>::dataType() );
-
-      memtype.insertMember( "second",
-			    HOFFSET( RawType, second ),
-			    HDF5TypeTraits<T2>::dataType() );
-
-      memtype.insertMember( "third",
-			    HOFFSET( RawType, third ),
-			    HDF5TypeTraits<T3>::dataType() );
-    }
-
-    HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "unable to create the HDF5 data type ("
-                                     << name() << ")!" );
-
-    return memtype;
-  }
-
-  //! Returns the name of this type
-  static inline std::string name()
-  {
-    return "Utility::Trip<" + HDF5TypeTraits<T1>::name() + "," +
-    HDF5TypeTraits<T2>::name() + "," +
-    HDF5TypeTraits<T3>::name() + ">";
-  }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  {
-    return RawType( HDF5TypeTraits<T1>::zero(),
-                    HDF5TypeTraits<T2>::zero(),
-                    HDF5TypeTraits<T3>::zero() );
-  }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  {
-    return RawType( HDF5TypeTraits<T1>::one(),
-                    HDF5TypeTraits<T2>::one(),
-                    HDF5TypeTraits<T3>::one() );
-  }
-};
-
-/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
- * std::tuple<typename,typename,typename> struct
- * \ingroup hdf5_type_traits
- */
-template<typename T1, typename T2, typename T3>
-struct HDF5TypeTraits<std::tuple<T1,T2,T3> >
-{
-  //! Typedef for the raw type
-  typedef std::tuple<T1,T2,T3> RawType;
-  
-  //! Returns the HDF5 data type object corresponding to Trip<T1,T2,T3>
-  static H5::CompType dataType()
-  {
-    H5::CompType memtype( sizeof(RawType) );
-
-    // the insertMember function can throw H5::DataTypeIException exceptions
-    try
-    {
-      memtype.insertMember( "first",
-			    HOFFSET( RawType, first ),
-			    HDF5TypeTraits<T1>::dataType() );
-
-      memtype.insertMember( "second",
-			    HOFFSET( RawType, second ),
-			    HDF5TypeTraits<T2>::dataType() );
-
-      memtype.insertMember( "third",
-			    HOFFSET( RawType, third ),
-			    HDF5TypeTraits<T3>::dataType() );
-    }
-
-    HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "unable to create the HDF5 data type ("
-                                     << name() << ")!" );
-
-    return memtype;
-  }
-
-  //! Returns the name of this type
-  static inline std::string name()
-  {
-    return "std::tuple<" + HDF5TypeTraits<T1>::name() + "," +
-    HDF5TypeTraits<T2>::name() + "," +
-    HDF5TypeTraits<T3>::name() + ">";
-  }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  {
-    return std::make_tuple( HDF5TypeTraits<T1>::zero(),
-                            HDF5TypeTraits<T2>::zero(),
-                            HDF5TypeTraits<T3>::zero() );
-  }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  {
-    return std::make_tuple( HDF5TypeTraits<T1>::one(),
-                            HDF5TypeTraits<T2>::one(),
-                            HDF5TypeTraits<T3>::one() );
-  }
-};
-
-/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
- * Utility::Quad struct
- * \ingroup hdf5_type_traits
- */
-template<typename T1, typename T2, typename T3, typename T4>
-struct HDF5TypeTraits<Quad<T1,T2,T3,T4> >
-{
-  //! Typedef for the raw type
-  typedef Utility::Quad<T1,T2,T3,T4> RawType;
-  
-  //! Returns the HDF5 data type object corresponding to Quad<T1,T2,T3,T4>
-  static H5::CompType dataType()
-  {
-    H5::CompType memtype( sizeof(RawType) );
-
-    // the insertMember function can throw H5::DataTypeIException exceptions
-    try
-    {
-      memtype.insertMember( "first",
-			    HOFFSET( RawType, first ),
-			    HDF5TypeTraits<T1>::dataType() );
-
-      memtype.insertMember( "second",
-			    HOFFSET( RawType, second ),
-			    HDF5TypeTraits<T2>::dataType() );
-
-      memtype.insertMember( "third",
-			    HOFFSET( RawType, third ),
-			    HDF5TypeTraits<T3>::dataType() );
-
-      memtype.insertMember( "fourth",
-			    HOFFSET( RawType, fourth ),
-			    HDF5TypeTraits<T4>::dataType() );
-    }
-
-    HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "unable to crete the HDF5 data type ("
-                                     << name() << ")!" );
-
-    return memtype;
-  }
-
-  //! Returns the name of this type
-  static inline std::string name()
-  {
-    return "Utility::Quad<" + HDF5TypeTraits<T1>::name() + "," +
-      HDF5TypeTraits<T2>::name() + "," +
-      HDF5TypeTraits<T3>::name() + "," +
-      HDF5TypeTraits<T4>::name() + ">";
-  }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  {
-    return RawType( HDF5TypeTraits<T1>::zero(),
-                    HDF5TypeTraits<T2>::zero(),
-                    HDF5TypeTraits<T3>::zero(),
-                    HDF5TypeTraits<T4>::zero() );
-  }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  {
-    return RawType( HDF5TypeTraits<T1>::one(),
-                    HDF5TypeTraits<T2>::one(),
-                    HDF5TypeTraits<T3>::one(),
-                    HDF5TypeTraits<T4>::one() );
-  }
-};
-
-/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
- * std::tuple<typename,typename,typename,typename> struct
- * \ingroup hdf5_type_traits
- */
-template<typename T1, typename T2, typename T3, typename T4>
-struct HDF5TypeTraits<std::tuple<T1,T2,T3,T4> >
-{
-  //! Typedef for the raw type
-  typedef std::tuple<T1,T2,T3,T4> RawType;
-  
-  //! Returns the HDF5 data type object corresponding to Quad<T1,T2,T3,T4>
-  static H5::CompType dataType()
-  {
-    H5::CompType memtype( sizeof(RawType) );
-
-    // the insertMember function can throw H5::DataTypeIException exceptions
-    try
-    {
-      memtype.insertMember( "first",
-			    HOFFSET( RawType, first ),
-			    HDF5TypeTraits<T1>::dataType() );
-
-      memtype.insertMember( "second",
-			    HOFFSET( RawType, second ),
-			    HDF5TypeTraits<T2>::dataType() );
-
-      memtype.insertMember( "third",
-			    HOFFSET( RawType, third ),
-			    HDF5TypeTraits<T3>::dataType() );
-
-      memtype.insertMember( "fourth",
-			    HOFFSET( RawType, fourth ),
-			    HDF5TypeTraits<T4>::dataType() );
-    }
-
-    HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "unable to crete the HDF5 data type ("
-                                     << name() << ")!" );
-
-    return memtype;
-  }
-
-  //! Returns the name of this type
-  static inline std::string name()
-  {
-    return "std::tuple<" + HDF5TypeTraits<T1>::name() + "," +
-      HDF5TypeTraits<T2>::name() + "," +
-      HDF5TypeTraits<T3>::name() + "," +
-      HDF5TypeTraits<T4>::name() + ">";
-  }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  {
-    return std::make_tuple( HDF5TypeTraits<T1>::zero(),
-                            HDF5TypeTraits<T2>::zero(),
-                            HDF5TypeTraits<T3>::zero(),
-                            HDF5TypeTraits<T4>::zero() );
-  }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  {
-    return std::make_tuple( HDF5TypeTraits<T1>::one(),
-                            HDF5TypeTraits<T2>::one(),
-                            HDF5TypeTraits<T3>::one(),
-                            HDF5TypeTraits<T4>::one() );
+    Details::HDF5TupleTypeHelper<0,RawType>::oneElements( tuple );
+    
+    return tuple;
   }
 };
 
