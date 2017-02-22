@@ -112,9 +112,6 @@ size_t ObserverPhaseSpaceDiscretization::getNumberOfBins(
 std::string ObserverPhaseSpaceDiscretization::getBinName(
                                                  const size_t bin_index ) const
 {
-  // Make sure that the bin index is valid
-  testPrecondition( bin_index < this->getNumberOfBins() );
-
   std::ostringstream oss;
 
   // Get a name for each bin

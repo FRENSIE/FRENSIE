@@ -471,6 +471,13 @@ TARGET_LINK_LIBRARIES(tstArrayString utility_core)
 ADD_TEST(ArrayString_test tstArrayString --test_array_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_arrays.xml")
 SET_PROPERTY(TEST ArrayString_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstSampleMoment
+  tstSampleMoment.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSampleMoment utility_core)
+ADD_TEST(SampleMoment_test tstSampleMoment)
+SET_PROPERTY(TEST SampleMoment_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstMeasurement
   tstMeasurement.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

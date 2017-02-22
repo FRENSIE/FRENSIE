@@ -87,6 +87,73 @@ void Estimator::setParticleTypes(
   }
 }
 
+// Check if the point is in the estimator phase space
+/*! \details The PointType should be either EstimatorParticleStateWrapper or
+ * ObserverPhaseSpaceDiscretization::DimensionValueMap.
+ */
+template<typename PointType>
+inline bool Estimator::isPointInEstimatorPhaseSpace(
+		              const PointType& phase_space_point ) const
+{
+  return d_phase_space_discretization.doesRangeIntersectDiscretization(
+                                                           phase_space_point );
+}
+
+// Check if the range intersects the estimator phase space
+template<ObserverPhaseSpaceDimensions... RangeDimensions>
+inline bool Estimator::doesRangeIntersectEstimatorPhaseSpace(
+            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+{
+  return d_phase_space_discretization.doesRangeIntersectDiscretization<RangeDimensions...>( particle_state_wrapper );
+}
+
+// Calculate the bin index for the desired response function
+/*! \details The PointType should be either EstimatorParticleStateWrapper or
+ * ObserverPhaseSpaceDiscretization::DimensionValueMap.
+ */
+template<typename PointType>
+void Estimator::calculateBinIndices(
+                   const PointType& phase_space_point,
+                   const size_t response_function_index,
+                   ObserverPhaseSpaceDimensionDiscretization::BinIndexArray&
+                   bin_indices ) const
+{
+  // Make sure the response function is valid
+  testPrecondition( response_function_index <
+                    this->getNumberOfResponseFunctions() );
+
+  d_phase_space_discretization.calculateBinIndicesOfPoint( phase_space_point,
+                                                           bin_indices );
+
+  // Add the response function index to each phase space bin index
+  for( size_t i = 0; i < bin_indices.size(); ++i )
+    bin_indices[i] += response_function_index*this->getNumberOfBins();
+}
+
+// Calculate the bin indices for the desired response function
+template<ObserverPhaseSpaceDimension... RangeDimensions>
+inline void Estimator::calculateBinIndicesAndWeightsOfRange(
+            const EstimatorParticleStateWrapper& particle_state_wrapper,
+            const size_t response_function_index,
+            ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray&
+            bin_indices_and_weights ) const
+{
+  // Make sure the response function is valid
+  testPrecondition( response_function_index <
+                    this->getNumberOfResponseFunctions() );
+
+  d_phase_space_discretization.calculateBinIndicesAndWeightsOfRange<RangeDimensions...>(
+                                                     particle_state_wrapper,
+                                                     bin_indices_and_weights );
+
+  // Add the response function index to each phase space bin index
+  for( size_t i = 0; i < bin_indices_and_weights.size(); ++i )
+  {
+    bin_indices_and_weights[i] +=
+      response_function_index*this->getNumberOfBins();
+  }
+}
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ESTIMATOR_DEF_HPP

@@ -156,32 +156,28 @@ protected:
 				const size_t response_function_index ) const;
 
   //! Check if the point is in the estimator phase space
+  template<typename PointType>
   bool isPointInEstimatorPhaseSpace(
+                                    const PointType& phase_space_point ) const;
+
+  //! Check if the range intersects the estimator phase space
+  template<ObserverPhaseSpaceDimensions... RangeDimensions>
+  bool doesRangeIntersectEstimatorPhaseSpace(
            const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
 
-  //! Check if the point is in the estimator phase space
-  bool isPointInEstimatorPhaseSpace(
-                             const DimensionValueMap& dimension_values ) const;
-
   //! Calculate the bin index for the desired response function
+  template<typename PointType>
   void calculateBinIndicesOfPoint(
-                   const EstimatorParticleStateWrapper& particle_state_wrapper,
-                   const size_t response_function_index,
-                   ObserverPhaseSpaceDimensionDiscretization::BinIndexArray&
-                   bin_indices ) const;
-
-  //! Calculate the bin index for the desired response function
-  void calculateBinIndicesOfPoint(
-                      const DimensionValueMap& dimension_values,
+                      const PointType& phase_space_point,
                       const size_t response_function_index,
                       ObserverPhaseSpaceDimensionDiscretization::BinIndexArray&
                       bin_indices ) const;
 
   //! Calculate the bin indices for the desired response function
+  template<ObserverPhaseSpaceDimension... RangeDimensions>
   void calculateBinIndicesAndWeightsOfRange(
             const EstimatorParticleStateWrapper& particle_state_wrapper,
             const size_t response_function_index,
-            const std::set<ObserverPhaseSpaceDimension> dimensions_with_ranges,
             ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray&
             bin_indices_and_weights ) const;
 
