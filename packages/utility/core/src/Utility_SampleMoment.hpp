@@ -88,6 +88,13 @@ typename SampleMoment<2,T>::ValueType calculateVariance(
                                         const SampleMoment<2,T>& second_moment,
                                         const size_t number_of_samples );
 
+//! Calculate the standard deviation of the population
+template<typename T>
+typename SampleMoment<1,T>::ValueType calculateStdDev(
+                                        const SampleMoment<1,T>& first_moment,
+                                        const SampleMoment<2,T>& second_moment,
+                                        const size_t number_of_samples );
+
 //! Calculate the variance of the mean
 template<typename T>
 typename SampleMoment<2,T>::ValueType calculateVarianceOfMean(
@@ -95,22 +102,33 @@ typename SampleMoment<2,T>::ValueType calculateVarianceOfMean(
                                         const SampleMoment<2,T>& second_moment,
                                         const size_t number_of_samples );
 
+//! Calculate the standard deviation of the mean
+template<typename T>
+typename SampleMoment<1,T>::ValueType calculateStdDevOfMean(
+                                        const SampleMoment<1,T>& first_moment,
+                                        const SampleMoment<2,T>& second_moment,
+                                        const size_t number_of_samples );
+
 //! Calculate the relative error
 template<typename T>
-double calculateRelativeError( const SampleMoment<1,T>& first_moment,
-                               const SampleMoment<2,T>& second_moment,
-                               const size_t number_of_samples );
+typename QuantityTraits<T>::RawType
+calculateRelativeError( const SampleMoment<1,T>& first_moment,
+                        const SampleMoment<2,T>& second_moment,
+                        const size_t number_of_samples );
 
 //! Calculate the relative variance of the variance (VOV)
 template<typename T>
-double calculateRelativeVOV( const SampleMoment<1,T>& first_moment,
-                             const SampleMoment<2,T>& second_moment,
-                             const SampleMoment<3,T>& third_moment,
-                             const SampleMoment<4,T>& fourth_moment,
-                             const size_t number_of_samples );
+typename QuantityTraits<T>::RawType
+calculateRelativeVOV( const SampleMoment<1,T>& first_moment,
+                      const SampleMoment<2,T>& second_moment,
+                      const SampleMoment<3,T>& third_moment,
+                      const SampleMoment<4,T>& fourth_moment,
+                      const size_t number_of_samples );
 
 //! Calculate the figure of merit (FOM)
-double calculateFOM( const double relative_error, const double time );
+template<typename T>
+typename std::enable_if<std::is_floating_point<T>::value,T>::type
+calculateFOM( const T relative_error, const T time );
   
 } // end Utility namespace
 

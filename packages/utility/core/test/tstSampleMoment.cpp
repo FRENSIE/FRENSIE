@@ -494,43 +494,126 @@ UNIT_TEST_TEMPLATE_1_INSTANT( SampleMoment_Helpers, calculateMean );
 // Check that the variance can be calculated
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoment_Helpers, calculateVariance, T )
 {
+  typedef typename Utility::SampleMoment<1,T>::ValueType ValueType1;
+  typedef typename Utility::SampleMoment<2,T>::ValueType ValueType2;
   
+  Utility::SampleMoment<1,T> first_moment( Utility::QuantityTraits<ValueType1>::one()*10. );
+  Utility::SampleMoment<2,T> second_moment( Utility::QuantityTraits<ValueType2>::one()*100. );
+
+  ValueType2 variance =
+    Utility::calculateVariance( first_moment, second_moment, 100 );
+
+  TEST_EQUALITY_CONST( variance, Utility::QuantityTraits<ValueType2>::one() );
 }
 
 UNIT_TEST_TEMPLATE_1_INSTANT( SampleMoment_Helpers, calculateVariance );
 
 //---------------------------------------------------------------------------//
-// Check that the variance of the mean can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoment_Helpers, calculateVarianceOfMean, T );
+// Check that the std dev can be calculated
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoment_Helpers, calculateStdDev, T )
 {
+  typedef typename Utility::SampleMoment<1,T>::ValueType ValueType1;
+  typedef typename Utility::SampleMoment<2,T>::ValueType ValueType2;
+  
+  Utility::SampleMoment<1,T> first_moment( Utility::QuantityTraits<ValueType1>::one()*10. );
+  Utility::SampleMoment<2,T> second_moment( Utility::QuantityTraits<ValueType2>::one()*100. );
 
+  ValueType1 std_dev =
+    Utility::calculateStdDev( first_moment, second_moment, 100 );
+
+  TEST_EQUALITY_CONST( std_dev, Utility::QuantityTraits<ValueType1>::one() );
+}
+
+UNIT_TEST_TEMPLATE_1_INSTANT( SampleMoment_Helpers, calculateStdDev );
+
+//---------------------------------------------------------------------------//
+// Check that the variance of the mean can be calculated
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoment_Helpers, calculateVarianceOfMean, T )
+{
+  typedef typename Utility::SampleMoment<1,T>::ValueType ValueType1;
+  typedef typename Utility::SampleMoment<2,T>::ValueType ValueType2;
+  
+  Utility::SampleMoment<1,T> first_moment( Utility::QuantityTraits<ValueType1>::one()*10. );
+  Utility::SampleMoment<2,T> second_moment( Utility::QuantityTraits<ValueType2>::one()*100. );
+
+  ValueType2 variance =
+    Utility::calculateVarianceOfMean( first_moment, second_moment, 100 );
+
+  TEST_EQUALITY_CONST( variance, Utility::QuantityTraits<ValueType2>::one()/100. );
 }
 
 UNIT_TEST_TEMPLATE_1_INSTANT( SampleMoment_Helpers, calculateVarianceOfMean );
 
 //---------------------------------------------------------------------------//
+// Check that the std dev of the mean can be calculated
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoment_Helpers, calculateStdDevOfMean, T )
+{
+  typedef typename Utility::SampleMoment<1,T>::ValueType ValueType1;
+  typedef typename Utility::SampleMoment<2,T>::ValueType ValueType2;
+  
+  Utility::SampleMoment<1,T> first_moment( Utility::QuantityTraits<ValueType1>::one()*10. );
+  Utility::SampleMoment<2,T> second_moment( Utility::QuantityTraits<ValueType2>::one()*100. );
+
+  ValueType1 std_dev =
+    Utility::calculateStdDevOfMean( first_moment, second_moment, 100 );
+
+  TEST_EQUALITY_CONST( std_dev, Utility::QuantityTraits<ValueType1>::one()/10. );
+}
+
+UNIT_TEST_TEMPLATE_1_INSTANT( SampleMoment_Helpers, calculateStdDevOfMean );
+
+//---------------------------------------------------------------------------//
 // Check that the relative error can be calculated
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoment_Helpers, calculateRelativeError, T )
 {
+  typedef typename Utility::SampleMoment<1,T>::ValueType ValueType1;
+  typedef typename Utility::SampleMoment<2,T>::ValueType ValueType2;
 
+  Utility::SampleMoment<1,T> first_moment( Utility::QuantityTraits<ValueType1>::one()*10. );
+  Utility::SampleMoment<2,T> second_moment( Utility::QuantityTraits<ValueType2>::one()*100. );
+
+  typename Utility::QuantityTraits<T>::RawType relative_error =
+    Utility::calculateRelativeError( first_moment, second_moment, 100 );
+
+  TEST_FLOATING_EQUALITY( relative_error, 1.0, 1e-12 );
 }
 
 UNIT_TEST_TEMPLATE_1_INSTANT( SampleMoment_Helpers, calculateRelativeError );
 
 //---------------------------------------------------------------------------//
 // Check that the relative variance of the variance can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoments_Helpers, calculateRelativeVOV, T )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoment_Helpers, calculateRelativeVOV, T )
 {
+  typedef typename Utility::SampleMoment<1,T>::ValueType ValueType1;
+  typedef typename Utility::SampleMoment<2,T>::ValueType ValueType2;
+  typedef typename Utility::SampleMoment<3,T>::ValueType ValueType3;
+  typedef typename Utility::SampleMoment<4,T>::ValueType ValueType4;
+
+  Utility::SampleMoment<1,T> first_moment( Utility::QuantityTraits<ValueType1>::one()*10. );
+  Utility::SampleMoment<2,T> second_moment( Utility::QuantityTraits<ValueType2>::one()*100. );
+  Utility::SampleMoment<3,T> third_moment( Utility::QuantityTraits<ValueType3>::one()*1000. );
+  Utility::SampleMoment<4,T> fourth_moment( Utility::QuantityTraits<ValueType4>::one()*10000. );
+
+  typename Utility::QuantityTraits<T>::RawType relative_vov =
+    Utility::calculateRelativeVOV( first_moment,
+                                   second_moment,
+                                   third_moment,
+                                   fourth_moment,
+                                   100 );
   
+  TEST_FLOATING_EQUALITY( relative_vov, 0.97010101010101002, 1e-12 );
 }
 
 UNIT_TEST_TEMPLATE_1_INSTANT( SampleMoment_Helpers, calculateRelativeVOV );
 
 //---------------------------------------------------------------------------//
 // Check that the figure of merit can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoments_Helpers, calculateFOM )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SampleMoment_Helpers, calculateFOM, T )
 {
+  typename Utility::QuantityTraits<T>::RawType fom =
+    Utility::calculateFOM( 2.0, 1e3 );
 
+  TEST_FLOATING_EQUALITY( fom, 2.5e-4, 1e-12 );
 }
 
 UNIT_TEST_TEMPLATE_1_INSTANT( SampleMoment_Helpers, calculateFOM );

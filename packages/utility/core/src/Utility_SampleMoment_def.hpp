@@ -19,8 +19,7 @@ namespace Utility{
 template<size_t N, typename T>
 inline auto SampleMoment<N,T,typename std::enable_if<(N>0) && std::is_floating_point<typename QuantityTraits<T>::RawType>::value>::type>::processRawScore( const T& raw_score ) -> ValueType
 {
-  return Exponentiation::recursive( Utility::getRawQuantity( raw_score ), N )*
-    Utility::QuantityTraits<ValueType>::one();
+  return Exponentiation::recursive<N>( raw_score );
 }
   
 // Default constructor
@@ -105,9 +104,27 @@ inline typename SampleMoment<2,T>::ValueType calculateVariance(
   // Make sure that there is at least one sample
   testPrecondition( number_of_samples > 1 );
 
+  typedef typename QuantityTraits<typename SampleMoment<2,T>::ValueType>::RawType RawReturnType;
+
   return (second_moment.getCurrentScore() -
           first_moment.getCurrentScore()*first_moment.getCurrentScore()/
-          number_of_samples)/(number_of_samples-1);
+          (RawReturnType)number_of_samples)/
+    (RawReturnType)(number_of_samples-1);
+}
+
+// Calculate the standard deviation of the population
+template<typename T>
+inline typename SampleMoment<1,T>::ValueType calculateStdDev(
+                                        const SampleMoment<1,T>& first_moment,
+                                        const SampleMoment<2,T>& second_moment,
+                                        const size_t number_of_samples )
+{
+  // Make sure that there is at least one sample
+  testPrecondition( number_of_samples > 1 );
+
+  return Utility::sqrt( calculateVariance( first_moment,
+                                           second_moment,
+                                           number_of_samples ) );
 }
 
 // Calculate the variance of the mean
@@ -120,36 +137,55 @@ inline typename SampleMoment<2,T>::ValueType calculateVarianceOfMean(
   // Make sure that there is at least one sample
   testPrecondition( number_of_samples > 1 );
 
+  typedef typename QuantityTraits<typename SampleMoment<2,T>::ValueType>::RawType RawReturnType;
+
   return calculateVariance( first_moment, second_moment, number_of_samples )/
-    number_of_samples;
+    (RawReturnType)number_of_samples;
 }
 
-// Calculate the relative error
+// Calculate the standard deviation of the mean
 template<typename T>
-inline double calculateRelativeError( const SampleMoment<1,T>& first_moment,
-                                      const SampleMoment<2,T>& second_moment,
-                                      const size_t number_of_samples )
+inline typename SampleMoment<1,T>::ValueType calculateStdDevOfMean(
+                                        const SampleMoment<1,T>& first_moment,
+                                        const SampleMoment<2,T>& second_moment,
+                                        const size_t number_of_samples )
 {
   // Make sure that there is at least one sample
   testPrecondition( number_of_samples > 1 );
 
-  double relative_error;
+  return Utility::sqrt( calculateVarianceOfMean( first_moment,
+                                                 second_moment,
+                                                 number_of_samples ) );
+}
+
+// Calculate the relative error
+template<typename T>
+typename QuantityTraits<T>::RawType
+calculateRelativeError( const SampleMoment<1,T>& first_moment,
+                        const SampleMoment<2,T>& second_moment,
+                        const size_t number_of_samples )
+{
+  // Make sure that there is at least one sample
+  testPrecondition( number_of_samples > 1 );
+
+  typename QuantityTraits<T>::RawType relative_error;
 
   if( first_moment.getCurrentScore() > QuantityTraits<T>::zero() )
   {
-    double argument = second_moment.getCurrentScore()/
+    typename QuantityTraits<T>::RawType argument =
+      second_moment.getCurrentScore()/
       (first_moment.getCurrentScore()*first_moment.getCurrentScore()) -
       1.0/number_of_samples;
 
-    argument *= number_of_samples/(number_of_samples-1);
+    argument *= number_of_samples/(number_of_samples-1.);
     
     if( argument < 0.0 )
-      relative_error = QuantityTraits<T>::zero();
+      relative_error = 0.0;
     else
       relative_error = std::sqrt( argument );
   }
   else
-    relative_error = QuantityTraits<T>::zero();
+    relative_error = 0.0;
 
   return relative_error;
 }
@@ -163,40 +199,46 @@ inline double calculateRelativeError( const SampleMoment<1,T>& first_moment,
  * requirement of the Central Limit Theorem. 
  */
 template<typename T>
-double calculateRelativeVOV( const SampleMoment<1,T>& first_moment,
-                             const SampleMoment<2,T>& second_moment,
-                             const SampleMoment<3,T>& third_moment,
-                             const SampleMoment<4,T>& fourth_moment,
-                             const size_t number_of_samples )
+typename QuantityTraits<T>::RawType
+calculateRelativeVOV( const SampleMoment<1,T>& first_moment,
+                      const SampleMoment<2,T>& second_moment,
+                      const SampleMoment<3,T>& third_moment,
+                      const SampleMoment<4,T>& fourth_moment,
+                      const size_t number_of_samples )
 {
   typename SampleMoment<2,T>::ValueType first_moment_score_squared =
     first_moment.getCurrentScore()*first_moment.getCurrentScore();
 
-  const double num_samples_squared = number_of_samples*number_of_samples;
-  const double num_samples_cubed = num_samples_squared*number_of_samples;
+  const typename QuantityTraits<T>::RawType num_samples_squared =
+    number_of_samples*number_of_samples;
+  const typename QuantityTraits<T>::RawType num_samples_cubed =
+    num_samples_squared*number_of_samples;
 
   typename SampleMoment<4,T>::ValueType vov_numerator =
     fourth_moment.getCurrentScore() -
-    4*first_moment.getCurrentScore()*third_moment.getCurrentScore()/
-    number_of_samples +
-    8*second_moment.getCurrentScore()*first_moment_score_squared/
+    4.*first_moment.getCurrentScore()*third_moment.getCurrentScore()/
+    (typename QuantityTraits<T>::RawType)number_of_samples +
+    8.*second_moment.getCurrentScore()*first_moment_score_squared/
     num_samples_squared -
-    4*first_moment_score_squared*first_moment_score_squared/
+    4.*first_moment_score_squared*first_moment_score_squared/
     num_samples_cubed -
     second_moment.getCurrentScore()*second_moment.getCurrentScore()/
-    number_of_samples;
+    (typename QuantityTraits<T>::RawType)number_of_samples;
 
-  typename SampleMoment<4,T>::ValueType vov_denominator =
+  typename SampleMoment<2,T>::ValueType vov_denominator_root =
     second_moment.getCurrentScore() -
-    first_moment_score_squared/number_of_samples;
+    first_moment_score_squared/
+    (typename QuantityTraits<T>::RawType)number_of_samples;
   
-  vov_denominator *= vov_denominator;
+  typename SampleMoment<4,T>::ValueType vov_denominator =
+    vov_denominator_root*vov_denominator_root;
 
-  double vov;
+  typename QuantityTraits<T>::RawType vov;
 
-  if( vov_denominator <= 0.0 )
+  if( vov_denominator <= QuantityTraits<typename SampleMoment<4,T>::ValueType>::one() )
     vov = 0.0;
-  else if( vov_numerator <= 0.0 && vov_denominator > 0.0 )
+  else if( vov_numerator <= QuantityTraits<typename SampleMoment<4,T>::ValueType>::one() &&
+           vov_denominator > QuantityTraits<typename SampleMoment<4,T>::ValueType>::one() )
     vov = 0.0;
   else
     vov = vov_numerator/vov_denominator;
@@ -205,12 +247,17 @@ double calculateRelativeVOV( const SampleMoment<1,T>& first_moment,
 }
 
 // Calculate the figure of merit (FOM)
-inline double calculateFOM( const double relative_error, const double time )
+/*! \details This is a measure commonly used in Monte Carlo calculations that
+ * can be used to determine the efficiency of the calculation.
+ */
+template<typename T>
+inline typename std::enable_if<std::is_floating_point<T>::value,T>::type
+calculateFOM( const T relative_error, const T time )
 {
   // Make sure that the time is valid
   testPrecondition( time > 0.0 );
 
-  double fom;
+  T fom;
 
   if( relative_error > 0.0 )
     fom = 1.0/(relative_error*relative_error*time);
