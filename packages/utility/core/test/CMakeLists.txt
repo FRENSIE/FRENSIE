@@ -478,6 +478,13 @@ TARGET_LINK_LIBRARIES(tstSampleMoment utility_core)
 ADD_TEST(SampleMoment_test tstSampleMoment)
 SET_PROPERTY(TEST SampleMoment_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstSampleMomentCollection
+  tstSampleMomentCollection.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSampleMomentCollection utility_core)
+ADD_TEST(SampleMomentCollection_test tstSampleMomentCollection)
+SET_PROPERTY(TEST SampleMomentCollection_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstMeasurement
   tstMeasurement.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
