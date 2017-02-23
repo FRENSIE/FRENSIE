@@ -83,6 +83,15 @@ public:
   //! Print the discretization
   void print( std::ostream& os ) const;
 
+  //! Print a dimension discretization
+  void print( std::ostream& os,
+              const ObserverPhaseSpaceDimension dimension ) const;
+
+  //! Print a single bin of a dimension discretization
+  void print( std::ostream& os,
+              const ObserverPhaseSpaceDimension dimension,
+              const size_t index ) const;
+  
   //! Export the discretization
   void export( const ParticleHistoryObserver::idType owner_observer_id,
                const EstimatorHDF5FileHandler& hdf5_file ) const;

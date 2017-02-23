@@ -33,7 +33,7 @@
 #include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_Tuple.hpp"
+#include "Utility_SampleMomentCollection.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -44,17 +44,11 @@ class Estimator : public ParticleHistoryObserver
 
 public:
 
-  //! Typedef for tuple of estimator moments (1st,2nd)
-  typedef Utility::Pair<double,double> TwoEstimatorMoments;
+  //! Typedef for the collection of estimator moments
+  typedef Utility::SampleMomentCollection<double,2,1> TwoEstimatorMomentsCollection;
 
-  //! Typedef for tuple of estimator moments (1st,2nd,3rd,4th)
-  typedef Utility::Quad<double,double,double,double> FourEstimatorMoments;
-
-  //! Typedef for the array of estimator moments
-  typedef Teuchos::Array<TwoEstimatorMoments> TwoEstimatorMomentsArray;
-
-  //! Typedef for the array of estimator moments
-  typedef Teuchos::Array<FourEstimatorMoments> FourEstimatorMomentsArray;
+  //! Typedef for the collection of estimator moments
+  typedef Utility::SampleMomentCollection<double,4,3,2,1> FourEstimatorMomentsCollection;
 
   //! Typedef for the response function pointer
   typedef std::shared_ptr<const ResponseFunction> ResponseFunctionPointer;
@@ -125,6 +119,9 @@ public:
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const bool process_data ) const;
 
+  //! Log a summary of the data
+  void logSummary() const;
+
 protected:
 
   //! Assign bins to an estimator dimension
@@ -185,68 +182,49 @@ protected:
   size_t calculateResponseFunctionIndex( const size_t bin_index ) const;
 
   //! Convert first and second moments to mean and relative error
-  void processMoments( const Utility::Pair<double,double>& moments,
+  void processMoments( const TwoEstimatorMomentsCollection& moments,
+                       const size_t index,
 		       const double norm_constant,
 		       double& mean,
 		       double& relative_error ) const;
 
   //! Convert first, second, third, fourth moments to mean, rel. er., vov, fom
-  void processMoments(
-		     const Utility::Quad<double,double,double,double>& moments,
-		     const double norm_constant,
-		     double& mean,
-		     double& relative_error,
-		     double& variance_of_variance,
-		     double& figure_of_merit ) const;
+  void processMoments( const FourEstimatorMomentsCollection& moments,
+                       const size_t index,
+                       const double norm_constant,
+                       double& mean,
+                       double& relative_error,
+                       double& variance_of_variance,
+                       double& figure_of_merit ) const;
 
   //! Print the estimator response function names
   void printEstimatorResponseFunctionNames( std::ostream& os ) const;
 
-  //! Print the estimator bins
-  void printEstimatorBins( std::ostream& os ) const;
+  //! Print the estimator discretization
+  void printEstimatorDiscretization( std::ostream& os ) const;
 
-  //! Print the estimator data stored in an array
+  //! Print the estimator data stored in an collection
   void printEstimatorBinData(
-			 std::ostream& os,
-			 const TwoEstimatorMomentsArray& estimator_moment_data,
-			 const double norm_constant ) const;
+                    std::ostream& os,
+		    const TwoEstimatorMomentsCollection& estimator_moment_data,
+                    const double norm_constant ) const;
 
   //! Print the total estimator data stored in an array
   void printEstimatorTotalData(
-		 std::ostream& os,
-		 const FourEstimatorMomentsArray& total_estimator_moments_data,
-		 const double norm_constant ) const;
+            std::ostream& os,
+	    const FourEstimatorMomentsCollection& total_estimator_moments_data,
+            const double norm_constant ) const;
 
 private:
-
-  // Calculate the mean of a set of contributions
-  double calculateMean( const double first_moment_contributions ) const;
-
-  // Calculate the relative error of a set of contributions
-  double calculateRelativeError(
-			      const double first_moment_contributions,
-			      const double second_moment_contributions ) const;
-
-  // Calculate the variance of the variance (VOV) of a set of contributions
-  double calculateVOV( const double first_moment_contributions,
-		       const double second_moment_contributions,
-		       const double third_moment_contributions,
-		       const double fourth_moment_contributions ) const;
-
-  // Calculate the figure of merit (FOM) of an estimator bin
-  double calculateFOM( const double relative_error ) const;
-
-  // The tolerance used for relative error and vov calculations
-  static double tol;
 
   // The constant multiplier for the estimator
   double d_multiplier;
 
   // Records if there is an uncommitted history contribution
-  Teuchos::Array<unsigned char> d_has_uncommitted_history_contribution;
+  std::vector<unsigned char> d_has_uncommitted_history_contribution;
 
   // The response functions
-  Teuchos::Array<ResponseFunctionPointer> d_response_functions;
+  std::vector<ResponseFunctionPointer> d_response_functions;
 
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;

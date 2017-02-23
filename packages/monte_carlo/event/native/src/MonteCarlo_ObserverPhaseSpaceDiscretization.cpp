@@ -143,6 +143,29 @@ void ObserverPhaseSpaceDiscretization::print( std::ostream& os ) const
   }
 }
 
+// Print a dimension discretization
+void ObserverPhaseSpaceDiscretization::print(
+                            std::ostream& os,
+                            const ObserverPhaseSpaceDimension dimension ) const
+{
+  // Make sure that the dimension is valid
+  testPrecondition( this->doesDimensionHaveDiscretization( dimension ) );
+
+  d_dimension_discretization_map.find( dimension )->second->print( os );
+}
+
+// Print a single bin of a dimension discretization
+void ObserverPhaseSpaceDiscretization::print(
+                                   std::ostream& os,
+                                   const ObserverPhaseSpaceDimension dimension,
+                                   const size_t index ) const
+{
+  // Make sure that the dimension is valid
+  testPrecondition( this->doesDimensionHaveDiscretization( dimension ) );
+  
+  d_dimension_discretization_map.find( dimension )->second->printBoudnariesOfBin( os, dim_bin_index );
+}
+
 // Export the discretization
 void ObserverPhaseSpaceDiscretization::export(
                        const ParticleHistoryObserver::idType owner_observer_id,

@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretization.hpp"
-#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{

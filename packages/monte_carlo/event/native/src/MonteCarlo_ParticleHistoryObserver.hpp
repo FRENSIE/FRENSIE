@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <sstream>
 #include <memory>
 
 // Trilinos Includes
@@ -20,6 +21,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "Utility_HDF5FileHandler.hpp"
+#include "Utility_LoggingMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -76,6 +78,9 @@ public:
   //! Print a summary of the data
   virtual void printSummary( std::ostream& os ) const = 0;
 
+  //! Log a summary of the data
+  virtual void logSummary() const;
+
 protected:
 
   //! Get the number of particle histories observed
@@ -103,6 +108,16 @@ private:
 inline ParticleHistoryObserver::idType ParticleHistoryObserver::getId() const
 {
   return d_id;
+}
+
+// Log a summary of the data
+inline void ParticleHistoryObserver::logSummary() const
+{
+  std::ostringstream oss;
+
+  this->printSummary( oss );
+  
+  FRENSIE_LOG_NOTIFICATION( oss.str() );
 }
 
 //! Stream operator for printing summaries of particle history observers
