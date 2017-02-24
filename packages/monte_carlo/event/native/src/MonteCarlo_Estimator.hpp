@@ -124,8 +124,9 @@ public:
 
 protected:
 
-  //! Assign bins to an estimator dimension
-  virtual void assignBins( const DimensionDiscretizationPointer& bins );
+  //! Assign discretization to an estimator dimension
+  virtual void assignDiscretization(
+                                  const DimensionDiscretizationPointer& bins );
 
   //! Assign response function to the estimator
   virtual void assignResponseFunction(
@@ -139,6 +140,18 @@ protected:
 
   //! Unset the has uncommited history contribution flag
   void unsetHasUncommittedHistoryContribution( const unsigned thread_id );
+
+  //! Reduce a single collection
+  void reduceCollection(
+            const Teucohs::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process,
+            TwoEstimatorMomentsCollection& collection ) const;
+
+  //! Reduce a single collection
+  void reduceCollection(
+            const Teucohs::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process,
+            FourEstimatorMomentsCollection& collection ) const;
 
   //! Return the response function name
   const std::string& getResponseFunctionName(
@@ -216,6 +229,16 @@ protected:
             const double norm_constant ) const;
 
 private:
+
+  // Reduce a single collection and return the reduced moments
+  template<size_t N,
+           typename Collection,
+           template<typename,typename...> class STLCompliantArray>
+  void reduceCollectionAndReturnReducedMoments(
+            const Teucohs::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process,
+            const Collection& collection,
+            STLCompliantArray<double>& reduced_moments ) const;     
 
   // The constant multiplier for the estimator
   double d_multiplier;

@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_ESTIMATOR_HDF5_FILE_HANDLER_DEF_HPP
 #define MONTE_CARLO_ESTIMATOR_HDF5_FILE_HANDLER_DEF_HPP
 
+// FRENSIE Includes
+#include "Utility_SampleMomentCollection.hpp"
+
 namespace MonteCarlo{
 
 // Check if an entity is assigned to an estimator
@@ -330,6 +333,31 @@ void EstimatorHDF5FileHandler::setRawEstimatorEntityBinData(
                            << estimator_id << " in the HDF5 file!" );
 }
 
+// Set the raw estimator bin data for an entity (1st, 2nd moments)
+template<typename EntityIdType, typename Collection>
+void EstimatorHDF5FileHandler::setRawEstimatorEntityBinData(
+                     const InternalEventObserverHandle estimator_id,
+                     const EntityIdType entity_id,
+                     const Collection& raw_bin_data )
+{
+  // Convert the collection to an array of pairs
+  std::vector<std::tuple<double,double> >
+    extracted_moments( raw_bin_data.size() );
+
+  for( size_t i = 0; i < raw_bin_data.size(); ++i )
+  {
+    std::get<0>( extracted_moments[i] ) =
+      Utility::getCurrentScore<1>( raw_bin_data, i );
+
+    std::get<1>( extracted_moments[i] ) =
+      Utility::getCurrentScore<2>( raw_bin_data, i );
+  }
+
+  this->setRawEstimatorEntityBinData( estimator_id,
+                                      entity_id,
+                                      extracted_moments );
+}
+
 // Get the raw estimator bin data for an entity (1st, 2nd moments)
 template<typename EntityIdType,
          template<typename,typename...> class STLCompliantArray,
@@ -522,6 +550,28 @@ void EstimatorHDF5FileHandler::setRawEstimatorTotalBinData(
 			   "Unable to set the raw total bin data for "
                            "estimator " << estimator_id << " in the HDF5 "
                            "file!" );
+}
+
+// Set the raw estimator bin data over all entities (1st, 2nd moments)
+template<typename Collection>
+void EstimatorHDF5FileHandler::setRawEstimatorTotalBinData(
+                                const InternalEventObserverHandle estimator_id,
+                                const Collection& raw_bin_data )
+{
+  // Convert the collection to an array of pairs
+  std::vector<std::tuple<double,double> >
+    extracted_moments( raw_bin_data.size() );
+
+  for( size_t i = 0; i < raw_bin_data.size(); ++i )
+  {
+    std::get<0>( extracted_moments[i] ) =
+      Utility::getCurrentScore<1>( raw_bin_data, i );
+
+    std::get<1>( extracted_moments[i] ) =
+      Utility::getCurrentScore<2>( raw_bin_data, i );
+  }
+
+  this->setRawEstimatorTotalBinData( estimator_id, extracted_moments );
 }
 
 // Get the raw estimator bin data over all entities (1st, 2nd moments)

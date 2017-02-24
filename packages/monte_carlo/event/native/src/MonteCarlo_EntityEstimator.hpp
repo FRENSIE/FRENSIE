@@ -9,9 +9,9 @@
 #ifndef MONTE_CARLO_ENTITY_ESTIMATOR_HPP
 #define MONTE_CARLO_ENTITY_ESTIMATOR_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+// Std Lib Includes
+#include <unordered_map>
+#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_Estimator.hpp"
@@ -26,42 +26,44 @@ class EntityEstimator : public Estimator
 protected:
 
   // Typedef for the map of entity ids and esimator moments array
-  typedef boost::unordered_map<EntityId,TwoEstimatorMomentsArray>
-  EntityEstimatorMomentsArrayMap;
+  typedef std::unordered_map<EntityId,TwoEstimatorMomentsCollection>
+  EntityEstimatorMomentsCollectionMap;
 
   // Typedef for the entity norm constants map
-  typedef boost::unordered_map<EntityId,double> EntityNormConstMap;
+  typedef std::unordered_map<EntityId,double> EntityNormConstMap;
 
 public:
 
-  // Typedef for the set of entity ids
-  typedef boost::unordered_set<EntityId> EntityIdSet;
-
   //! Constructor (for flux estimators)
+  template<template<typename,typename...> class STLCompliantArrayA,
+           template<typename,typename...> class STLCompliantArrayB>
   EntityEstimator( const Estimator::idType id,
 		   const double multiplier,
-		   const Teuchos::Array<EntityId>& entity_ids,
-		   const Teuchos::Array<double>& entity_norm_constants );
+		   const STLCompliantArrayA<EntityId>& entity_ids,
+		   const STLCompliantArrayB<double>& entity_norm_constants );
 
   //! Constructor (for non-flux estimators)
+  template<typename<typename,typename...> class STLCompliantArray>
   EntityEstimator( const Estimator::idType id,
 		   const double multiplier,
-		   const Teuchos::Array<EntityId>& entity_ids );
+		   const STLCompliantArray<EntityId>& entity_ids );
 
   //! Destructor
   virtual ~EntityEstimator()
   { /* ... */ }
 
-  //! Set the response functions
-  virtual void setResponseFunctions(
-                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
-                      response_functions );
-
   //! Return the entity ids associated with this estimator
-  void getEntityIds( EntityIdSet& entity_ids ) const;
+  template<template<typename,typename...> class STLCompliantSet>
+  void getEntityIds( STLCompliantSet<EntityId>& entity_ids ) const;
 
   //! Check if the entity is assigned to this estimator
   bool isEntityAssigned( const EntityId& entity_id ) const;
+
+  //! Return the normalization constant for an entity
+  double getEntityNormConstant( const EntityId& entity_id ) const;
+
+  //! Return the total normalization constant
+  double getTotalNormConstant() const;
 
   //! Reset estimator data
   virtual void resetData();
@@ -79,30 +81,26 @@ public:
 protected:
 
   //! Constructor with no entities (for mesh estimators)
-  EntityEstimator( const Estimator::idType id,
-		   const double multiplier );
+  EntityEstimator( const Estimator::idType id, const double multiplier );
 
   //! Assign entities
-  virtual void assignEntities(
-	       const boost::unordered_map<EntityId,double>& entity_norm_data );
+  virtual void assignEntities( const EntityNormConstMap& entity_norm_data );
 
-  //! Assign bin boundaries to an estimator dimension
-  virtual void assignBinBoundaries(
-     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
+  //! Assign discretization to an estimator dimension
+  virtual void assignDiscretization(
+             const Estimator::DimensionDiscretizationPointer& bin_boundaries );
 
-  //! Return the normalization constant for an entity
-  double getEntityNormConstant( const EntityId& entity_id ) const;
-
-  //! Return the total normalization constant
-  double getTotalNormConstant() const;
+  //! Assign response function to the estimator
+  virtual void assignResponseFunction(
+                 const Estimator::ResponseFunctionPointer& response_function );
 
   //! Commit history contribution to a bin of an entity
   void commitHistoryContributionToBinOfEntity( const EntityId& entity_id,
-					       const unsigned bin_index,
+					       const size_t bin_index,
 					       const double contribution );
 
   //! Commit history contribution to a bin of total
-  void commitHistoryContributionToBinOfTotal( const unsigned bin_index,
+  void commitHistoryContributionToBinOfTotal( const size_t bin_index,
 					      const double contribution );
 
   //! Print the estimator data
@@ -110,35 +108,42 @@ protected:
 				    const std::string& entity_type ) const;
 
   //! Get the total estimator bin data
-  const Estimator::TwoEstimatorMomentsArray& getTotalBinData() const;
+  const Estimator::TwoEstimatorMomentsCollection& getTotalBinData() const;
 
   //! Get the bin data for an entity
-  const Estimator::TwoEstimatorMomentsArray& getEntityBinData(
+  const Estimator::TwoEstimatorMomentsCollection& getEntityBinData(
 					      const EntityId entity_id ) const;
 
 private:
 
   // Initialize entity estimator moments map
+  template<template<typename,typename...> class STLCompliantArray>
   void initializeEntityEstimatorMomentsMap(
-				  const Teuchos::Array<EntityId>& entity_ids );
+                               const STLCompliantArray<EntityId>& entity_ids );
 
   // Initialize entity norm constants map
+  template<template<typename,typename...> class STLCompliantArray>
   void initializeEntityNormConstantsMap(
-			          const Teuchos::Array<EntityId>& entity_ids );
+                               const STLCompliantArray<EntityId>& entity_ids );
 
   // Initialize entity norm constants map
+  template<template<typename,typename...> class STLCompliantArrayA,
+           template<typename,typename...> class STLCompliantArrayB>
   void initializeEntityNormConstantsMap(
-			 const Teuchos::Array<EntityId>& entity_ids,
-			 const Teuchos::Array<double>& entity_norm_constants );
+                     const STLCompliantArrayA<EntityId>& entity_ids,
+                     const STLCompliantArrayB<double>& entity_norm_constants );
 
   // Calculate the total normalization constant
   void calculateTotalNormalizationConstant();
 
-  // Resize the entity estimator moments map arrays
-  void resizeEntityEstimatorMapArrays();
+  // Resize the entity estimator moments map collections
+  void resizeEntityEstimatorMapCollections();
 
-  // Resize the estimator total array
-  void resizeEstimatorTotalArray();
+  // Resize the estimator total collection
+  void resizeEstimatorTotalCollection();
+
+  // Reduce a single collection
+  void reduceCollection( 
 
   // Print the entity ids assigned to the estimator
   void printEntityIds( std::ostream& os,
@@ -155,10 +160,10 @@ private:
   bool d_supplied_norm_constants;
 
   // The estimator moments (1st,2nd) for each bin of the total
-  TwoEstimatorMomentsArray d_estimator_total_bin_data;
+  TwoEstimatorMomentsCollection d_estimator_total_bin_data;
 
   // The estimator moments (1st,2nd) for each bin and each entity
-  EntityEstimatorMomentsArrayMap d_entity_estimator_moments_map;
+  EntityEstimatorMomentsCollectionMap d_entity_estimator_moments_map;
 
   // The entity normalization constants (surface areas or cell volumes)
   EntityNormConstMap d_entity_norm_constants_map;

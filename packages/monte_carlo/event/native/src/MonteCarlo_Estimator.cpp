@@ -95,10 +95,21 @@ void Estimator::logSummary() const
 
   oss.str( "" );
   oss.clear();
+  oss << "\n";
 
   this->printSummary( oss );
 
   FRENSIE_LOG_TAGGED_NOTIFICATION( tag.c_str(), oss.str() );
+}
+
+// Assign discretization to an estimator dimension
+void Estimator::assignDiscretization(
+                           const DimensionDiscretizationPoint& discretization )
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+
+  d_phase_space_discretization.assignDiscretizationToDimension( discretization );
 }
 
 // Assign response function to the estimator
@@ -117,8 +128,8 @@ void Estimator::assignResponseFunction(
 }
 
 // Assign the particle type to the estimator
-/*! \details Override this method in a derived class if response function
- * properties need to be checked before assignment takes place.
+/*! \details Override this method in a derived class if particular particle
+ * types need to be filtered.
  */
 void Estimator::assignParticleType( const ParticleType particle_type )
 {
@@ -126,15 +137,6 @@ void Estimator::assignParticleType( const ParticleType particle_type )
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
   d_particle_types.insert( particle_type );
-}
-
-// Assign bins to an estimator dimension
-void Estimator::assignBins( const DimensionDiscretizationPoint& discretization )
-{
-  // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  d_phase_space_discretization.assignDiscretizationToDimension( discretization );
 }
 
 // Set the has uncommited history contribution flag
@@ -161,6 +163,115 @@ void Estimator::unsetHasUncommittedHistoryContribution(
   testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
 
   d_has_uncommitted_history_contribution[thread_id] = false;
+}
+
+// Reduce a single collection
+void Estimator::reduceCollection(
+            const Teucohs::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process,
+            TwoEstimatorMomentsCollection& collection ) const
+{
+  // Make sure the comm is valid
+  testPrecondition( !comm.is_null() );
+  // Make sure the root process is valid
+  testPrecondition( root_process < comm->getSize() );
+
+  // Reduce the first moments
+  std::vector<double> reduced_first_moments;
+
+  this->reduceCollectionAndReturnReducedMoments<1>( comm,
+                                                    root_process,
+                                                    collection,
+                                                    reduced_first_moments );
+  comm->barrier();
+  
+  // Reduce the second moments
+  std::vector<double> reduced_second_moments;
+      
+  this->reduceCollectionAndReturnReducedMoments<2>( comm,
+                                                    root_process,
+                                                    collection,
+                                                    reduced_second_moments );
+
+  // The root process will store the reduced moments
+  if( comm->getRank() == root_process )
+  {
+    for( size_t i = 0; i < entity_data->second.size(); ++i )
+    {
+      Utility::getCurrentScore<1>( collection, i ) = reduced_first_moments[i];
+      
+      Utility::getCurrentScore<2>( collection, i ) = reduced_second_moments[i];
+    }
+  }
+  else
+    collection.reset();
+
+  comm->barrier();
+}
+
+// Reduce a single collection
+void Estimator::reduceCollection(
+            const Teucohs::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process,
+            FourEstimatorMomentsCollection& collection ) const
+{
+  // Make sure the comm is valid
+  testPrecondition( !comm.is_null() );
+  // Make sure the root process is valid
+  testPrecondition( root_process < comm->getSize() );
+
+  // Reduce the first moments
+  std::vector<double> reduced_first_moments;
+
+  this->reduceCollectionAndReturnReducedMoments<1>( comm,
+                                                    root_process,
+                                                    collection,
+                                                    reduced_first_moments );
+  comm->barrier();
+  
+  // Reduce the second moments
+  std::vector<double> reduced_second_moments;
+      
+  this->reduceCollectionAndReturnReducedMoments<2>( comm,
+                                                    root_process,
+                                                    collection,
+                                                    reduced_second_moments );
+
+  comm->barrier();
+
+  // Reduce the third moments
+  std::vector<double> reduced_third_moments;
+
+  this->reduceCollectionAndReturnReducedMoments<3>( comm,
+                                                    root_process,
+                                                    collection,
+                                                    reduced_third_moments );
+
+  comm->barrier();
+
+  // Reduce the fourth moments
+  std::vector<double> reduced_fourth_moments;
+
+  this->reduceCollectionAndReturnReducedMoments<4>( comm,
+                                                    root_process,
+                                                    collection,
+                                                    reduced_fourth_moments );
+
+  // The root process will store the reduced moments
+  if( comm->getRank() == root_process )
+  {
+    for( size_t i = 0; i < entity_data->second.size(); ++i )
+    {
+      Utility::getCurrentScore<1>( collection, i ) = reduced_first_moments[i];
+      Utility::getCurrentScore<2>( collection, i ) = reduced_second_moments[i];
+      Utility::getCurrentScore<3>( collection, i ) = reduced_third_moments[i];
+      Utility::getCurrentScore<4>( collection, i ) = reduced_fourth_moments[i];
+    }
+  }
+  else
+    collection.reset();
+
+  comm->barrier();
 }
 
 // Return the bin name

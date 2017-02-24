@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <tuple>
 
 // FRENSIE Includes
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
@@ -192,6 +193,13 @@ public:
 	             const STLCompliantArray<STLCompliantPair<double,double> >&
                      raw_bin_data );
 
+  //! Set the raw estimator bin data for an entity (1st, 2nd moments)
+  template<typename EntityIdType, typename Collection>
+  void setRawEstimatorEntityBinData(
+                     const InternalEventObserverHandle estimator_id,
+                     const EntityIdType entity_id,
+                     const Collection& raw_bin_data );           
+
   //! Get the raw estimator bin data for an entity (1st, 2nd moments)
   template<typename EntityIdType,
            template<typename,typename...> class STLCompliantArray,
@@ -276,6 +284,12 @@ public:
                      const InternalEventObserverHandle estimator_id,
 	             const STLCompliantArray<STLCompliantPair<double,double> >&
                      raw_bin_data );
+
+  //! Set the raw estimator bin data over all entities (1st, 2nd moments)
+  template<typename Collection>
+  void setRawEstimatorTotalBinData(
+                                const InternalEventObserverHandle estimator_id,
+                                const Collection& raw_bin_data );
 
   //! Get the raw estimator bin data over all entities (1st, 2nd moments)
   template<template<typename,typename...> class STLCompliantArray,

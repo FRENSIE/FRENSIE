@@ -69,7 +69,17 @@ void SampleMomentCollection<T,N,Ns...>::clear()
   SampleMomentCollection<T,Ns...>::clear();
   
   d_current_scores.clear();
-} 
+}
+
+// Reset the collection (sets all scores to zero)
+template<typename T, size_t N, size_t... Ns>
+void SampleMomentCollection<T,N,Ns...>::reset()
+{
+  SampleMomentCollection<T,Ns...>::reset();
+
+  for( size_t i = 0; i < d_current_scores.size(); ++i )
+    d_current_scores[i] = QuantityTraits<ValueType>::zero();
+}
 
 // Resize the collection
 template<typename T, size_t N, size_t... Ns>
@@ -98,34 +108,6 @@ template<typename T, size_t N, size_t... Ns>
 size_t SampleMomentCollection<T,N,Ns...>::size() const
 {
   return d_current_scores.size();
-}
-
-// Get the raw scores
-template<typename T, size_t N, size_t... Ns>
-auto SampleMomentCollection<T,N,Ns...>::getRawScores() const -> const ValueType*
-{
-  return &d_current_scores[0];
-}
-
-// Get the raw scores
-template<typename T, size_t N, size_t... Ns>
-auto SampleMomentCollection<T,N,Ns...>::getRawScores() -> ValueType*
-{
-  return &d_current_scores[0];
-}
-
-// Return the moment
-/*! \details The returned moment is only a copy of the moment in the 
- * collection.
- */
-template<typename T, size_t N, size_t... Ns>
-SampleMoment<N,T> SampleMomentCollection<T,N,Ns...>::getMoment(
-                                                         const size_t i ) const
-{
-  // Make sure the the index is valid
-  testPrecondition( i < this->size() );
-  
-  return SampleMoment<N,T>( d_current_scores[i] );
 }
 
 // Add a raw score

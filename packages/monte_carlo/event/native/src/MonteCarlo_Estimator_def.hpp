@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_ESTIMATOR_DEF_HPP
 #define MONTE_CARLO_ESTIMATOR_DEF_HPP
 
+// Trilinos Includes
+#include <Teuchos_CommHelpers.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "Utility_ContractException.hpp"
@@ -151,6 +154,36 @@ inline void Estimator::calculateBinIndicesAndWeightsOfRange(
     bin_indices_and_weights[i] +=
       response_function_index*this->getNumberOfBins();
   }
+}
+
+// Reduce a single collection and return the reduced moments
+template<size_t N,
+         typename Collection,
+         template<typename,typename...> class STLCompliantArray>
+void Estimator::reduceCollectionAndReturnReducedMoments(
+            const Teucohs::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process,
+            const Collection& collection,
+            STLCompliantArray<double>& reduced_moments ) const
+{
+  // Make sure the comm is valid
+  testPrecondition( !comm.is_null() );
+  // Make sure the root process is valid
+  testPrecondition( root_process < comm->getSize() );
+
+  // Resize the reduced moments array
+  reduced_moments.resize( collection.size() );
+
+  try{
+    Teuchos::reduceAll( *comm,
+                        Teuchos::REDUCE_SUM,
+                        collection.size(),
+                        Utility::getCurrentScores<N>( collection ),
+                        reduced_first_moments.data() );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "unable to perform mpi reduction over moments of "
+                           "order " << N << "!" );
 }
 
 } // end MonteCarlo namespace
