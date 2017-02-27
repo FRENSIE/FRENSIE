@@ -9,8 +9,12 @@
 #ifndef MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 #define MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 
+// Std Lib Includes
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+
 // Boost Includes
-#include <boost/unordered_set.hpp>
 #include <boost/mpl/vector.hpp>
 
 // FRENSIE Includes
@@ -41,13 +45,11 @@ class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::
 private:
 
   // Typedef for the serial update tracker
-  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-			       double>
+  typedef std::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
   SerialUpdateTracker;
 
   // Typedef for the parallel update tracker
-  typedef Teuchos::Array<SerialUpdateTracker>
-  ParallelUpdateTracker;
+  typedef std::vector<SerialUpdateTracker> ParallelUpdateTracker;
 
 public:
 
@@ -60,51 +62,53 @@ public:
   EventTags;
 
   //! Constructor
+  template<template<typename,typename...> class STLCompliantArray>
   CellPulseHeightEstimator( const Estimator::idType id,
 			    const double multiplier,
-			    const Teuchos::Array<cellIdType>& entity_ids );
+			    const STLCOmpliantArray<cellIdType>& entity_ids );
 
   //! Destructor
   ~CellPulseHeightEstimator()
   { /* ... */ }
 
-  //! Set the response functions
-  void setResponseFunctions(
-                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
-                      response_functions );
-
-  //! Set the particle types that can contribute to the estimator
-  void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
+  //! Add current history estimator contribution
+  void updateFromParticleEnteringCellEvent(
+                                     const ParticleState& particle,
+                                     const cellIdType cell_entering ) override;
 
   //! Add current history estimator contribution
-  void updateFromParticleEnteringCellEvent( const ParticleState& particle,
-					    const cellIdType cell_entering );
-
-  //! Add current history estimator contribution
-  void updateFromParticleLeavingCellEvent( const ParticleState& particle,
-					   const cellIdType cell_leaving );
+  void updateFromParticleLeavingCellEvent(
+                                      const ParticleState& particle,
+                                      const cellIdType cell_leaving ) override;
 
   //! Commit the contribution from the current history to the estimator
-  void commitHistoryContribution();
+  void commitHistoryContribution() override;
 
   //! Print the estimator data summary
-  void printSummary( std::ostream& os ) const;
+  void printSummary( std::ostream& os ) const override;
 
   //! Enable support for multiple threads
-  void enableThreadSupport( const unsigned num_threads );
+  void enableThreadSupport( const unsigned num_threads ) override;
 
   //! Reset the estimator data
-  void resetData();
+  void resetData() override;
 
   //! Export the estimator data
   void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-		   const bool process_data ) const;
+		   const bool process_data ) const override;
 
 private:
 
-  // Assign bin boundaries to an estimator dimension
-  void assignBinBoundaries(
-     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
+  // Assign discretization to an estimator dimension
+  void assignDiscretization(
+              const Estimator::DimensionDiscretizationPointer& bins ) override;
+
+  //! Assign response function to the estimator
+  void assignResponseFunction(
+        const Estimator::ResponseFunctionPointer& response_function ) override;
+
+  //! Assign the particle type to the estimator
+  void assignParticleType( const ParticleType particle_type ) override;
 
   // Calculate the estimator contribution from the entire history
   double calculateHistoryContribution( const double energy_deposition,
@@ -132,7 +136,7 @@ private:
   ParallelUpdateTracker d_update_tracker;
 
   // The generic particle state map (avoids having to make a new map for cont.)
-  Teuchos::Array<Estimator::DimensionValueMap> d_dimension_values;
+  std::vector<Estimator::DimensionValueMap> d_dimension_values;
 };
 
 } // end MonteCarlo namespace

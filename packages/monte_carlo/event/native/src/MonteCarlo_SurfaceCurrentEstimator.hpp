@@ -28,28 +28,30 @@ public:
   typedef StandardSurfaceEstimator::EventTags EventTags;
 
   //! Constructor
+  template<typename<typename,typename...> class STLCompliantArray>
   SurfaceCurrentEstimator(
-   const Estimator::idType id,
-   const double multiplier,
-   const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids);
+              const Estimator::idType id,
+              const double multiplier,
+              const STLCompliantArray<StandardSurfaceEstimator::surfaceIdType>&
+              surface_ids);
 
   //! Destructor
   ~SurfaceCurrentEstimator()
   { /* ... */ }
 
-  //! Set the response functions
-  void setResponseFunctions(
-                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
-                      response_functions );
-
   //! Add current history estimator contribution
   void updateFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
 	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
-	  const double angle_cosine );
+	  const double angle_cosine ) override;
 
   //! Print the estimator data summary
-  void printSummary( std::ostream& os ) const;
+  void printSummary( std::ostream& os ) const override;
+
+private:
+
+  //! Assign the particle type to the estimator
+  void assignParticleType( const ParticleType particle_type ) override;
 };
 
 } // end MonteCarlo namespace

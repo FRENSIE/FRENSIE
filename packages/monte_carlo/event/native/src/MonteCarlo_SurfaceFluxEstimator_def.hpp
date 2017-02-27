@@ -23,11 +23,11 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SurfaceFluxEstimator<WeightAndEnergyMultipl
 // Constructor
 template<typename ContributionMultiplierPolicy>
 SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
-    const Estimator::idType id,
-    const double multiplier,
-    const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas,
-    const double cosine_cutoff )
+                              const Estimator::idType id,
+                              const double multiplier,
+                              const Teuchos::Array<surfaceIdType>& surface_ids,
+                              const Teuchos::Array<double>& surface_areas,
+                              const double cosine_cutoff )
   : StandardSurfaceEstimator( id, multiplier, surface_ids, surface_areas ),
     d_cosine_cutoff( cosine_cutoff )
 { /* ... */ }
@@ -40,14 +40,13 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
  * likely!).
  */
 template<typename ContributionMultiplierPolicy>
-void SurfaceFluxEstimator<
-         ContributionMultiplierPolicy>::updateFromParticleCrossingSurfaceEvent(
-		const ParticleState& particle,
-		const StandardSurfaceEstimator::surfaceIdType surface_crossing,
-		const double angle_cosine )
+void SurfaceFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleCrossingSurfaceEvent(
+                                          const ParticleState& particle,
+                                          const surfaceIdType surface_crossing,
+                                          const double angle_cosine )
 {
   // Make sure the surface is assigned to this estimator
-  testPrecondition( isEntityAssigned( surface_crossing ) );
+  testPrecondition( this->isEntityAssigned( surface_crossing ) );
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine <= 1.0 );
   testPrecondition( angle_cosine >= -1.0 );
@@ -56,10 +55,12 @@ void SurfaceFluxEstimator<
   {
     double contribution;
 
+    double abs_angle_cosine = std::fabs( angle_cosine );
+
     // If the angle cosine is very close to zero, set it to eps/2 to
     // prevent large contributions to the estimator
-    if( ST::magnitude( angle_cosine ) > d_cosine_cutoff )
-      contribution = 1.0/ST::magnitude( angle_cosine );
+    if( abs_angle_cosine > d_cosine_cutoff )
+      contribution = 1.0/abs_angle_cosine;
     else
       contribution = 2.0/d_cosine_cutoff;
 
@@ -68,23 +69,20 @@ void SurfaceFluxEstimator<
     EstimatorParticleStateWrapper particle_state_wrapper( particle );
     particle_state_wrapper.setAngleCosine( angle_cosine );
 
-    StandardEntityEstimator<
-       StandardSurfaceEstimator::surfaceIdType>::addPartialHistoryContribution(
-                                                        surface_crossing,
-							particle_state_wrapper,
-                                                        contribution );
+    this->addPartialHistoryPointContribution( surface_crossing,
+                                              particle_state_wrapper,
+                                              contribution );
   }
 }
 
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
-void SurfaceFluxEstimator<
-		 ContributionMultiplierPolicy>::printSummary(
+void SurfaceFluxEstimator<ContributionMultiplierPolicy>::printSummary(
                                                        std::ostream& os ) const
 {
-  os << "Surface Flux Estimator: " << getId() << std::endl;
+  os << "Surface Flux Estimator: " << this->getId() << std::endl;
 
-  printImplementation( os, "Surface" );
+  this->printImplementation( os, "Surface" );
 }
 
 } // end MonteCarlo namespace

@@ -34,35 +34,32 @@ public:
   EventTags;
 
   //! Constructor
+  template<template<typename,typename...> class STLCompliantArrayA,
+           template<typename,typename...> class STLCompliantArrayB>
   CellTrackLengthFluxEstimator(
-	     const Estimator::idType id,
-	     const double multiplier,
-	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
-	     const Teuchos::Array<double>& cell_volumes );
+                              const Estimator::idType id,
+                              const double multiplier,
+                              const STLCompliantArrayA<cellIdType>& cell_ids,
+	                      const STLCompliantArrayB<double>& cell_volumes );
 
   //! Destructor
   ~CellTrackLengthFluxEstimator()
   { /* ... */ }
 
-  //! Set the response functions
-  void setResponseFunctions(
-                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
-                      response_functions );
-
   //! Add current history estimator contribution
   void updateFromParticleSubtrackEndingInCellEvent(
-		      const ParticleState& particle,
-		      const StandardCellEstimator::cellIdType cell_of_subtrack,
-		      const double track_length );
+                                             const ParticleState& particle,
+		                             const cellIdType cell_of_subtrack,
+                                             const double track_length );
 
   //! Print the estimator data summary
   void printSummary( std::ostream& os ) const;
 
 private:
 
-  // Assign bin boundaries to an estimator dimension
-  void assignBinBoundaries(
-     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
+  //! Assign response function to the estimator
+  void assignResponseFunction(
+        const Estimator::ResponseFunctionPointer& response_function ) override;
 };
 
 } // end MonteCarlo namespace

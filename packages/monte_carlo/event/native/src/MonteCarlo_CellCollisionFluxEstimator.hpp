@@ -34,11 +34,12 @@ public:
   EventTags;
 
   //! Constructor
-  CellCollisionFluxEstimator(
-	     const Estimator::idType id,
-	     const double multiplier,
-	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
-	     const Teuchos::Array<double>& cell_volumes );
+  template<template<typename,typename...> class STLCompliantArrayA,
+           template<typename,typename...> class STLCompliantArrayB>
+  CellCollisionFluxEstimator( const Estimator::idType id,
+                              const double multiplier,
+                              const STLCompliantArrayA<cellIdType>& cell_ids,
+                              const STLCompliantArrayB<double>& cell_volumes );
 
   //! Destructor
   ~CellCollisionFluxEstimator()
@@ -46,12 +47,12 @@ public:
 
   //! Add current history estimator contribution
   void updateFromParticleCollidingInCellEvent(
-		     const ParticleState& particle,
-		     const StandardCellEstimator::cellIdType cell_of_collision,
-		     const double inverse_total_cross_section );
+                           const ParticleState& particle,
+                           const cellIdType cell_of_collision,
+                           const double inverse_total_cross_section ) override;
 
   //! Print the estimator data summary
-  void printSummary( std::ostream& os ) const;
+  void printSummary( std::ostream& os ) const override;
 };
 
 } // end MonteCarlo namespace

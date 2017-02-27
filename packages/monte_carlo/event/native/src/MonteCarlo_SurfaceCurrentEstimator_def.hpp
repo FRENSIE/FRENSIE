@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -24,25 +25,14 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SurfaceCurrentEstimator<WeightAndEnergyMult
 
 // Constructor
 template<typename ContributionMultiplierPolicy>
+template<typename<typename,typename...> class STLCompliantArray>
 SurfaceCurrentEstimator<ContributionMultiplierPolicy>::SurfaceCurrentEstimator(
-   const Estimator::idType id,
-   const double multiplier,
-   const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids )
+              const Estimator::idType id,
+              const double multiplier,
+              const STLCompliantArray<StandardSurfaceEstimator::surfaceIdType>&
+              surface_ids )
   : StandardSurfaceEstimator( id, multiplier, surface_ids )
 { /* ... */ }
-
-// Set the response functions
-template<typename ContributionMultiplierPolicy>
-void SurfaceCurrentEstimator<
-			   ContributionMultiplierPolicy>::setResponseFunctions(
-                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
-                      response_functions )
-{
-  std::cerr << "Warning: Response functions cannot be set for surface current "
-	    << "estimators. The response functions requested for surface "
-	    << "current estimator " << getId() << " will be ignored."
-	    << std::endl;
-}
 
 // Add current history estimator contribution
 /*! \details It is unsafe to call this function directly! This function will
@@ -52,8 +42,7 @@ void SurfaceCurrentEstimator<
  * likely!).
  */
 template<typename ContributionMultiplierPolicy>
-void SurfaceCurrentEstimator<
-         ContributionMultiplierPolicy>::updateFromParticleCrossingSurfaceEvent(
+void SurfaceCurrentEstimator<ContributionMultiplierPolicy>::updateFromParticleCrossingSurfaceEvent(
 		const ParticleState& particle,
 		const StandardSurfaceEstimator::surfaceIdType surface_crossing,
 		const double angle_cosine )
@@ -72,23 +61,31 @@ void SurfaceCurrentEstimator<
     EstimatorParticleStateWrapper particle_state_wrapper( particle );
     particle_state_wrapper.setAngleCosine( angle_cosine );
 
-    StandardEntityEstimator<
-       StandardSurfaceEstimator::surfaceIdType>::addPartialHistoryContribution(
-							surface_crossing,
-						        particle_state_wrapper,
-                                                        contribution );
+    this->addPartialHistoryPointContribution( surface_crossing,
+                                              particle_state_wrapper,
+                                              contribution );
   }
 }
 
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
-void SurfaceCurrentEstimator<
-		 ContributionMultiplierPolicy>::printSummary(
+void SurfaceCurrentEstimator<ContributionMultiplierPolicy>::printSummary(
                                                        std::ostream& os ) const
 {
   os << "Surface Current Estimator: " << getId() << std::endl;
 
-  printImplementation( os, "Surface" );
+  this->printImplementation( os, "Surface" );
+}
+
+// Set the response functions
+template<typename ContributionMultiplierPolicy>
+void SurfaceCurrentEstimator<ContributionMultiplierPolicy>::assignParticleType( const ParticleType particle_type )
+{
+  FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                              "response functions cannot be set for surface "
+                              "current estimators. The response function "
+                              "requested for surface current estimator "
+                              << getId() << " will be ignored." );
 }
 
 } // end MonteCarlo namespace

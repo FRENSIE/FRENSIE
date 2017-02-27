@@ -135,6 +135,9 @@ protected:
   //! Assign the particle type to the estimator
   virtual void assignParticleType( const ParticleType particle_type );
 
+  //! Get the particle types that can contribute to the estimator
+  size_t getNumberOfAssignedParticleTypes() const;
+
   //! Set the has uncommited history contribution flag
   void setHasUncommittedHistoryContribution( const unsigned thread_id );
 

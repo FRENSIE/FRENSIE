@@ -16,6 +16,7 @@
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -26,67 +27,17 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellPulseHeightEstimator<WeightAndEnergyMul
 
 // Constructor
 template<typename ContributionMultiplierPolicy>
-CellPulseHeightEstimator<
-                       ContributionMultiplierPolicy>::CellPulseHeightEstimator(
-       const Estimator::idType id,
-       const double multiplier,
-       const Teuchos::Array<CellPulseHeightEstimator::cellIdType>& entity_ids )
+template<template<typename,typename...> class STLCompliantArray>
+CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator(
+    const Estimator::idType id,
+    const double multiplier,
+    const STLCompliantArray<CellPulseHeightEstimator::cellIdType>& entity_ids )
   : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
     ParticleEnteringCellEventObserver(),
     ParticleLeavingCellEventObserver(),
     d_update_tracker( 1 ),
     d_dimension_values( 1 )
 { /* ... */ }
-
-// Set the response functions
-template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<
-                           ContributionMultiplierPolicy>::setResponseFunctions(
-                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
-                      response_functions )
-{
-  std::cerr << "Warning: Response functions cannot be set for pulse height "
-	    << "estimators. The response functions requested for pulse height "
-	    << "estimator " << this->getId() << " will be ignored."
-	    << std::endl;
-}
-
-// Set the particle types that can contribute to the estimator
-/*! \details Only photons and electrons can contribute to this estimator
- */
-template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
-			   const Teuchos::Array<ParticleType>& particle_types )
-{
-  Teuchos::Array<ParticleType> valid_particle_types;
-
-  bool warning_issued = false;
-
-  for( unsigned i = 0; i < particle_types.size(); ++i )
-  {
-    if( particle_types[i] != PHOTON )
-    {
-      if( !warning_issued )
-      {
-	std::cerr << "Warning: Only photons and charged particles can "
-		  << "contribute to pulse height estimators. The other "
-		  << "particle types requested for pulse height estimator "
-		  << this->getId() << " will be ignored."
-		  << std::endl;
-
-	warning_issued = true;
-      }
-    }
-    else
-      valid_particle_types.push_back( particle_types[i] );
-  }
-
-  Estimator::setParticleTypes( valid_particle_types );
-
-  testPostcondition( !this->isParticleTypeAssigned( NEUTRON ) );
-  testPostcondition( !this->isParticleTypeAssigned( ADJOINT_NEUTRON ) );
-  testPostcondition( !this->isParticleTypeAssigned( ADJOINT_PHOTON ) );
-}
 
 // Add current history estimator contribution
 /*! \details It is unsafe to call this function directly! This function will
@@ -106,10 +57,10 @@ inline void CellPulseHeightEstimator<
 
     double contribution = particle.getWeight()*particle.getEnergy();
 
-    addInfoToUpdateTracker( thread_id, cell_entering, contribution );
+    this->addInfoToUpdateTracker( thread_id, cell_entering, contribution );
 
     // Indicate that there is an uncommitted history contribution
-  this->setHasUncommittedHistoryContribution( thread_id );
+    this->setHasUncommittedHistoryContribution( thread_id );
   }
 }
 
@@ -131,7 +82,7 @@ inline void CellPulseHeightEstimator<
 
     double contribution = -particle.getWeight()*particle.getEnergy();
 
-    addInfoToUpdateTracker( thread_id, cell_leaving, contribution );
+    this->addInfoToUpdateTracker( thread_id, cell_leaving, contribution );
 
     // Indicate that there is an uncommitted history contribution
     this->setHasUncommittedHistoryContribution( thread_id );
@@ -148,7 +99,7 @@ void CellPulseHeightEstimator<
   typename SerialUpdateTracker::const_iterator
     cell_data, end_cell_data;
 
-  getCellIteratorFromUpdateTracker( thread_id, cell_data, end_cell_data );
+  this->getCellIteratorFromUpdateTracker( thread_id, cell_data, end_cell_data );
 
   double energy_deposition_in_all_cells = 0.0;
 
@@ -156,7 +107,7 @@ void CellPulseHeightEstimator<
   double bin_contribution;
 
   Estimator::DimensionValueMap& thread_dimension_values =
-      d_dimension_values[thread_id];
+    d_dimension_values[thread_id];
 
   while( cell_data != end_cell_data )
   {
@@ -191,7 +142,7 @@ void CellPulseHeightEstimator<
   {
     bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
 
-    bin_contribution = calculateHistoryContribution(
+    bin_contribution = this->calculateHistoryContribution(
 					      energy_deposition_in_all_cells,
 					      ContributionMultiplierPolicy() );
 
@@ -200,7 +151,7 @@ void CellPulseHeightEstimator<
   }
 
   // Reset the update tracker
-  resetUpdateTracker( thread_id );
+  this->resetUpdateTracker( thread_id );
 
   // Reset the has uncommitted history contribution boolean
   this->unsetHasUncommittedHistoryContribution( thread_id );
@@ -268,22 +219,51 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::exportData(
 
 // Assign bin boundaries to an estimator dimension
 template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<
-			    ContributionMultiplierPolicy>::assignBinBoundaries(
-      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignDiscretization(
+                        const Estimator::DimensionDiscretizationPointer& bins )
 {
-  if( bin_boundaries->getDimension() == ENERGY_DIMENSION )
-  {
-    EntityEstimator<cellIdType>::assignBinBoundaries( bin_boundaries );
-  }
+  if( bins->getDimension() == ENERGY_DIMENSION )
+    EntityEstimator<cellIdType>::assignDiscretization( bins );
   else
   {
-    std::cerr << "Warning: " << bin_boundaries->getDimensionName()
-	      << " bins cannot be set for pulse height estimators. The bins "
-	      << "requested for pulse height estimator " << this->getId()
-	      << " will be ignored."
-	      << std::endl;
+    FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                                << bin_boundaries->getDimensionName() <<
+                                " bins cannot be set for pulse height "
+                                "estimators. The bins requested for pulse "
+                                "height estimator " << this->getId() <<
+                                " will be ignored." );
   }
+}
+
+// Set the response functions
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignResponseFunction(
+                  const Estimator::ResponseFunctionPointer& response_function )
+{
+  FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                              "response functions cannot be set for pulse "
+                              "height estimators. The response function "
+                              "requested for pulse height estimator "
+                              << this->getId() << " will be ignored." );
+}
+
+// Set the particle types that can contribute to the estimator
+/*! \details Only photons and electrons can contribute to this estimator
+ */
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::assignParticleType( const ParticleType particle_type ) 
+{
+  if( particle_type == PHOTON || particle_type == ELECTRON )
+    Estimator::assignParticleType( particle_type );
+  else
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                                "cannot assign particle type "
+                                << particle_type << " to a pulse height "
+                                "estimators (only photons and electrons can "
+                                "contribute). Pulse height estimator "
+                                << this->getId() << " will ignore this "
+                                "request." );
 }
 
 // Calculate the estimator contribution from the entire history
@@ -292,8 +272,7 @@ void CellPulseHeightEstimator<
  * tags for tag dispatching. This function simply returns 1.0.
  */
 template<typename ContributionMultiplierPolicy>
-inline double CellPulseHeightEstimator<
-		   ContributionMultiplierPolicy>::calculateHistoryContribution(
+inline double CellPulseHeightEstimator<ContributionMultiplierPolicy>::calculateHistoryContribution(
 					        const double energy_deposition,
 						WeightMultiplier )
 {
@@ -307,8 +286,7 @@ inline double CellPulseHeightEstimator<
  * deposited in the cell(s) of interest for the entire history.
  */
 template<typename ContributionMultiplierPolicy>
-inline double CellPulseHeightEstimator<
-		   ContributionMultiplierPolicy>::calculateHistoryContribution(
+inline double CellPulseHeightEstimator<ContributionMultiplierPolicy>::calculateHistoryContribution(
 					        const double energy_deposition,
 						WeightAndEnergyMultiplier )
 {

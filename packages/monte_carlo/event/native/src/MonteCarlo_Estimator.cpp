@@ -89,17 +89,9 @@ void Estimator::logSummary() const
 {
   std::ostringstream oss;
 
-  oss << "Estimator " << this->getId();
-
-  std::string tag = oss.str();
-
-  oss.str( "" );
-  oss.clear();
-  oss << "\n";
-
   this->printSummary( oss );
 
-  FRENSIE_LOG_TAGGED_NOTIFICATION( tag.c_str(), oss.str() );
+  FRENSIE_LOG_NOTIFICATION( oss.str() );
 }
 
 // Assign discretization to an estimator dimension
@@ -137,6 +129,12 @@ void Estimator::assignParticleType( const ParticleType particle_type )
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
   d_particle_types.insert( particle_type );
+}
+
+// Get the particle types that can contribute to the estimator
+size_t Estimator::getNumberOfAssignedParticleTypes() const
+{
+  return d_particle_types.size();
 }
 
 // Set the has uncommited history contribution flag

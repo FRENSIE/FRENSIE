@@ -24,6 +24,12 @@ class StandardSurfaceEstimator : public StandardEntityEstimator<Geometry::Module
 				 public ParticleCrossingSurfaceEventObserver
 {
 
+private:
+
+  // Typedef for the base estimator type
+  typedef StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>
+  BaseEstimatorType;
+
 public:
 
   //! Typedef for the surface id type
@@ -34,29 +40,44 @@ public:
   EventTags;
 
   //! Constructor (for flux estimators)
-  StandardSurfaceEstimator( const Estimator::idType id,
-			    const double multiplier,
-			    const Teuchos::Array<surfaceIdType>& surface_ids,
-			    const Teuchos::Array<double>& surface_areas );
+  template<template<typename,typename...> class STLCompliantArrayA,
+           template<typename,typename...> class STLCompliantArrayB>
+  StandardSurfaceEstimator(
+                          const Estimator::idType id,
+                          const double multiplier,
+			  const STLCompliantArrayA<surfaceIdType>& surface_ids,
+                          const STLCompliantArrayB<double>& surface_areas );
 
   //! Constructor (for non-flux estimators)
-  StandardSurfaceEstimator( const Estimator::idType id,
-			    const double multiplier,
-			    const Teuchos::Array<surfaceIdType>& surface_ids );
+  template<typename<typename,typename...> class STLCompliantArray>
+  StandardSurfaceEstimator(
+                         const Estimator::idType id,
+                         const double multiplier,
+			 const STLCompliantArray<surfaceIdType>& surface_ids );
 
   //! Destructor
   virtual ~StandardSurfaceEstimator()
   { /* ... */ }
 
-  //! Set the particle types that can contribute to the estimator
-  void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
-
   //! Export the estimator data
   void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-		   const bool process_data ) const;
+		   const bool process_data ) const override;
+
+protected:
+
+  //! Assign the particle type to the estimator
+  virtual void assignParticleType( const ParticleType particle_type ) override;
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes.
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_StandardSurfaceEstimator_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_STANDARD_SURFACE_ESTIMATOR_HPP
 

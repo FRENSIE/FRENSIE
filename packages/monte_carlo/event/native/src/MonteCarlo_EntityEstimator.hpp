@@ -66,17 +66,17 @@ public:
   double getTotalNormConstant() const;
 
   //! Reset estimator data
-  virtual void resetData();
+  virtual void resetData() override;
 
   //! Reduce estimator data on all processes and collect on the root process
   virtual void reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-	    const int root_process );
+	    const int root_process ) override;
 
   //! Export the estimator data
   virtual void exportData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-                    const bool process_data ) const;
+                    const bool process_data ) const override;
 
 protected:
 
@@ -88,11 +88,11 @@ protected:
 
   //! Assign discretization to an estimator dimension
   virtual void assignDiscretization(
-             const Estimator::DimensionDiscretizationPointer& bin_boundaries );
+    const Estimator::DimensionDiscretizationPointer& bin_boundaries ) override;
 
   //! Assign response function to the estimator
   virtual void assignResponseFunction(
-                 const Estimator::ResponseFunctionPointer& response_function );
+        const Estimator::ResponseFunctionPointer& response_function ) override;
 
   //! Commit history contribution to a bin of an entity
   void commitHistoryContributionToBinOfEntity( const EntityId& entity_id,
@@ -141,9 +141,6 @@ private:
 
   // Resize the estimator total collection
   void resizeEstimatorTotalCollection();
-
-  // Reduce a single collection
-  void reduceCollection( 
 
   // Print the entity ids assigned to the estimator
   void printEntityIds( std::ostream& os,

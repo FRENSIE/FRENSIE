@@ -137,7 +137,9 @@ void SampleMomentCollection<T,N,Ns...>::addRawScore( const T& raw_score )
 
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SampleMomentCollection<double,1,2> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SampleMomentCollection<double,2,1> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SampleMomentCollection<double,1,2,3,4> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SampleMomentCollection<double,4,3,2,1> ); 
   
 } // end Utility namespace
 

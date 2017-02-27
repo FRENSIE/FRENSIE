@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -24,59 +25,33 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellTrackLengthFluxEstimator<WeightAndEnerg
 
 // Constructor
 template<typename ContributionMultiplierPolicy>
-CellTrackLengthFluxEstimator<
-		   ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator(
-	     const Estimator::idType id,
-	     const double multiplier,
-	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
-	     const Teuchos::Array<double>& cell_volumes )
+CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator(
+                               const Estimator::idType id,
+                               const double multiplier,
+                               const STLCompliantArrayA<cellIdType>& cell_ids,
+	                       const STLCompliantArrayB<double>& cell_volumes )
   : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes ),
     ParticleSubtrackEndingInCellEventObserver()
 { /* ... */ }
 
-// Set the response functions
-template<typename ContributionMultiplierPolicy>
-void CellTrackLengthFluxEstimator<
-			   ContributionMultiplierPolicy>::setResponseFunctions(
-                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
-                      response_functions )
-{
-  for( unsigned i = 0; i < response_functions.size(); ++i )
-  {
-    if( !response_functions[i]->isSpatiallyUniform() )
-    {
-      std::cerr << "Warning: cell track length estimators can only be used "
-		<< "with spatially uniform response functions. Results from "
-		<< "cell track length estimator " << getId()
-		<< "will not be correct." << std::endl;
-    }
-  }
-
-  Estimator::setResponseFunctions( response_functions );
-}
-
 // Add estimator contribution from a portion of the current history
 template<typename ContributionMultiplierPolicy>
-void CellTrackLengthFluxEstimator<
-    ContributionMultiplierPolicy>::updateFromParticleSubtrackEndingInCellEvent(
-		      const ParticleState& particle,
-		      const StandardCellEstimator::cellIdType cell_of_subtrack,
-		      const double track_length )
+void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleSubtrackEndingInCellEvent(
+                                             const ParticleState& particle,
+                                             const cellIdType cell_of_subtrack,
+                                             const double track_length )
 {
   // Make sure the cell is assigned to this estimator
-  testPrecondition( isEntityAssigned( cell_of_subtrack ) );
-  // Make sure the subtrack length is valid
-  testPrecondition( !ST::isnaninf( track_length ) );
-
-  if( isParticleTypeAssigned( particle.getParticleType() ) )
+  testPrecondition( this->isEntityAssigned( cell_of_subtrack ) );
+  
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
-    double contribution = track_length*
+    const double contribution = track_length*
       ContributionMultiplierPolicy::multiplier( particle );
 
     EstimatorParticleStateWrapper particle_state_wrapper( particle );
 
-    StandardEntityEstimator<
-             StandardCellEstimator::cellIdType>::addPartialHistoryContribution(
+    this->addPartialHistoryRangeContribution<OBSERVER_TIME_DIMENSION>(
                                                         cell_of_subtrack,
 							particle_state_wrapper,
                                                         contribution);
@@ -85,31 +60,29 @@ void CellTrackLengthFluxEstimator<
 
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
-void CellTrackLengthFluxEstimator<
-		 ContributionMultiplierPolicy>::printSummary( std::ostream& os ) const
+void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary( std::ostream& os ) const
 {
-  os << "Cell Track Length Flux Estimator: " << getId() << std::endl;
+  os << "Cell Track Length Flux Estimator: " << this->getId() << std::endl;
 
-  printImplementation( os, "Cell" );
+  this->printImplementation( os, "Cell" );
 }
 
-// Assign bin boundaries to an estimator dimension
+// Set the response functions
 template<typename ContributionMultiplierPolicy>
-void CellTrackLengthFluxEstimator<
-                            ContributionMultiplierPolicy>::assignBinBoundaries(
-      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
+void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setResponseFunctions(
+                  const Estimator::ResponseFunctionPointer& response_function )
 {
-  if( bin_boundaries->getDimension() == TIME_DIMENSION )
+  if( !response_function->isSpatiallyUniform() )
   {
-    std::cerr << "Warning: " << bin_boundaries->getDimensionName()
-	      << " bins cannot be set for cell track length flux estimators "
-	      << "yet. The bins requested for cell track length flux "
-	      << "estimator " << this->getId() << " will be ignored."
-	      << std::endl;
+    FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                                "only spatially uniform response functions "
+                                "can be assigned to cell track length "
+                                "estimators. Estimator " << this->getId() <<
+                                " will ignore response function "
+                                << response_function->getName() << "!" );
   }
   else
-    StandardCellEstimator::assignBinBoundaries( bin_boundaries );
-
+    Estimator::setResponseFunctions( response_functions );
 }
 
 } // end MonteCarlo namespace

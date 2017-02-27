@@ -28,12 +28,13 @@ public:
   typedef StandardSurfaceEstimator::EventTags EventTags;
 
   //! Constructor
-  SurfaceFluxEstimator(
-    const Estimator::idType id,
-    const double multiplier,
-    const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas,
-    const double cosine_cutoff = 0.001 );
+  template<template<typename,typename...> class STLCompliantArrayA,
+           template<typename,typename...> class STLCompliantArrayB>
+  SurfaceFluxEstimator( const Estimator::idType id,
+                        const double multiplier,
+                        const STLCompliantArrayA<surfaceIdType>& surface_ids,
+                        const STLCompliantArrayB<double>& surface_areas,
+                        const double cosine_cutoff = 0.001 );
 
   //! Destructor
   ~SurfaceFluxEstimator()
@@ -41,12 +42,12 @@ public:
 
   //! Add estimator contribution from a portion of the current history
   void updateFromParticleCrossingSurfaceEvent(
-		const ParticleState& particle,
-		const StandardSurfaceEstimator::surfaceIdType surface_crossing,
-		const double angle_cosine );
+                                          const ParticleState& particle,
+		                          const surfaceIdType surface_crossing,
+                                          const double angle_cosine ) override;
 
   //! Print the estimator data summary
-  void printSummary( std::ostream& os ) const;
+  void printSummary( std::ostream& os ) const override;
 
 private:
 

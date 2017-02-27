@@ -9,42 +9,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardCellEstimator.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "Utility_LoggingMacros.hpp"
 
 namespace MonteCarlo{
-
-// Constructor
-StandardCellEstimator::StandardCellEstimator(
-	     const Estimator::idType id,
-	     const double multiplier,
-	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
-	     const Teuchos::Array<double>& cell_volumes )
-  : StandardEntityEstimator<cellIdType>(id, multiplier, cell_ids, cell_volumes)
-{ /* ... */ }
-
-// Set the particle types that can contribute to the estimator
-/*! \details Photons, electrons and neutrons (or their adjoint
- * couterparts) can contribute to the estimator. Combinations are not
- * allowed.
- */
-void StandardCellEstimator::setParticleTypes(
-			   const Teuchos::Array<ParticleType>& particle_types )
-{
-  if( particle_types.size() > 1 )
-  {
-    std::cerr << "Warning: Standard cell estimators can only have one "
-	      << "particle type contribute. All but the first particle type "
-	      << "requested in estimator " << this->getId()
-	      << " will be ignored."
-	      << std::endl;
-
-    Teuchos::Array<ParticleType> valid_particle_types( 1 );
-    valid_particle_types[0] = particle_types.front();
-
-    Estimator::setParticleTypes( valid_particle_types );
-  }
-  else
-    Estimator::setParticleTypes( particle_types );
-}
 
 // Export the estimator data
 void StandardCellEstimator::exportData(
@@ -52,9 +19,7 @@ void StandardCellEstimator::exportData(
                     const bool process_data ) const
 {
   // Export the lower level data first
-  StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData(
-								hdf5_file,
-								process_data );
+  BaseEstimatorType::exportData( hdf5_file, process_data );
 
   // Open the estimator hdf5 file
   EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
@@ -63,23 +28,45 @@ void StandardCellEstimator::exportData(
   estimator_hdf5_file.setCellEstimator( this->getId() );
 }
 
-// Assign bin boundaries to an estimator dimension
-/*! \details The MonteCarlo::COSINE_DIMENSION cannot be discretized in standard
- * cell estimators.
+// Assign discretization to an estimator dimension
+/*! \details The MonteCarlo::OBSERVER_COSINE_DIMENSION cannot be discretized in
+ * standard cell estimators.
  */
-void StandardCellEstimator::assignBinBoundaries(
-      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
+void StandardCellEstimator::assignDiscretization(
+                        const Estimator::DimensionDiscretizationPointer& bins )
 {
-  if( bin_boundaries->getDimension() == COSINE_DIMENSION )
+  if( bins->getDimension() == OBSERVER_COSINE_DIMENSION )
   {
-    std::cerr << "Warning: " << bin_boundaries->getDimensionName()
-	      << " bins cannot be set for standard cell estimators. The bins "
-	      << "requested for standard cell estimator " << this->getId()
-	      << " will be ignored."
-	      << std::endl;
+    FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                                bin_boundaries->getDimensionName() <<
+                                " bins cannot be set for standard cell "
+                                "estimators. The bins requested for standard "
+                                "cell estimator " << this->getId() <<
+                                " will be ignored!" );
   }
   else
-    StandardEntityEstimator<cellIdType>::assignBinBoundaries( bin_boundaries );
+    BaseEstimatorType::assignDiscretization( bin_boundaries );
+}
+
+// Assign the particle type to the estimator
+/*! \details Photons, electrons and neutrons (or their adjoint
+ * couterparts) can contribute to the estimator. Combinations are not
+ * allowed.
+ */
+void StandardCellEstimator::assignParticleType(
+                                            const ParticleType& particle_type )
+{
+  if( this->getNumberOfAssignedParticleTypes() != 0 )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "Estimator",
+                                "Standard cell estimators can only have one "
+                                "particle type contribute. Since estimator "
+                                << this->getId() << " already has a particle "
+                                "type assigned the requested particle type of "
+                                << particle_type << " will be ignored!" );
+  }
+  else
+    Estimator::assignParticleType( particle_types);
 }
 
 } // end MonteCarlo namespace
