@@ -20,13 +20,24 @@ namespace Utility{
 namespace Details{
 
 //! The sample moment collection data extractor class
-template<size_t N, typename T, typename Enabled>
-class SampleMomentCollectionDataExtractor
-{ /* ... */ }
+template<size_t N, typename T, typename Enabled = void>
+struct SampleMomentCollectionDataExtractor
+{ /* ... */ };
   
 } // end Details namespace
   
-//! The sample moment collection
+/*! The sample moment collection
+ * \details This represents the empty collection. It cannot be instantiated
+ * directly - only the non-empty collections can instantiate it. Note that
+ * this class is a variadic template class and it designed in a very similar
+ * way to the std::tuple class. The 
+ * Utility::Details::SampleMomentCollectionDataExtractor class is used to
+ * extract the data relating to a specific moment from the collection. This
+ * extractor class should never be used directly. Instead the standalone
+ * getter methods should be used. Properties relating to the entire collection
+ * (e.g. the collection size) and not a specific moment can be accessed 
+ * direclty.
+ */
 template<typename T, size_t... Ns>
 class SampleMomentCollection
 {
@@ -82,13 +93,6 @@ protected:
 
   //! Add a raw score to all moments in the collection
   void addRawScore( const T& raw_score )
-  { /* ... */ }
-  
-  //! Implementation of the reduction method
-  template<typename OrdinalType>
-  void reduceImpl( const Teuchos::RCP<const Teuchos::Comm<OrdinalType> >& comm,
-                   const size_t root_process,
-                   const bool reset_if_not_root )
   { /* ... */ }
 };
 
@@ -169,48 +173,51 @@ namespace Details{
  * for const types
  */
 template<size_t N, typename T>
-class SampleMomentCollectionDataExtractor<N,const T> : public SampleMomentCollectionDataExtractor<N,T>
+struct SampleMomentCollectionDataExtractor<N,const T> : public SampleMomentCollectionDataExtractor<N,T>
 { /* ... */ };
 
 /*! \brief Specialization of the sample moment collection data extractor class
  * for volatile types
  */
 template<size_t N, typename T>
-class SampleMomentCollectionDataExtractor<N,volatile T> : public SampleMomentCollectionDataExtractor<N,T>
+struct SampleMomentCollectionDataExtractor<N,volatile T> : public SampleMomentCollectionDataExtractor<N,T>
 { /* ... */ };
 
 /*! \brief Specialization of the sample moment collection data extractor class
  * for const volatile types
  */
 template<size_t N, typename T>
-class SampleMomentCollectionDataExtractor<N,const volatile T> : public SampleMomentCollectionDataExtractor<N,T>
+struct SampleMomentCollectionDataExtractor<N,const volatile T> : public SampleMomentCollectionDataExtractor<N,T>
 { /* ... */ };
 
 /*! \brief Specialization of sample moment collection data extractor class
  * for SampleMomentCollection types
  */
 template<size_t N, typename T, size_t M, size_t... Ms>
-class SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,typename std::enable_if<N==M>::type>
+struct SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,typename std::enable_if<N==M>::type>
 {
   //! The collection type
-  typename SampleMomentCollection<T,M,Ms...> CollectionType;
+  typedef Utility::SampleMomentCollection<T,M,Ms...> CollectionType;
+
+  //! The sample moment type
+  typedef Utility::SampleMoment<M,T> MomentType;
 
   //! The value type
-  typedef typename CollectionType::ValueType ValueType;
+  typedef typename MomentType::ValueType ValueType;
   
   //! Get the current scores
   static inline const ValueType* getCurrentScores(
-                                       const CollectionType& collection ) const
-  { return collection.d_current_scores[0]; }
+                                             const CollectionType& collection )
+  { return &collection.d_current_scores[0]; }
 
   //! Get the current scores
   static inline ValueType* getCurrentScores( CollectionType& collection )
-  { return collection.d_current_scores[0]; }
+  { return &collection.d_current_scores[0]; }
 
   //! Get the current score
   static inline const ValueType& getCurrentScore(
                                               const CollectionType& collection,
-                                              const size_t i ) const
+                                              const size_t i )
   { return collection.d_current_scores[i]; }
 
   //! Get the current score
@@ -219,29 +226,32 @@ class SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,ty
   { return collection.d_current_scores[i]; }
 
   //! Return the moment
-  static inline SampleMoment<N,T> getMoment( const CollectionType& collection,
-                                             const size_t i ) const
-  { return SampleMoment<N,T>( collection.d_current_scores[i] ); }
+  static inline MomentType getMoment( const CollectionType& collection,
+                                      const size_t i )
+  { return MomentType( collection.d_current_scores[i] ); }
 };
 
 /*! \brief Specialization of sample moment collection data extractor class
  * for SampleMomentCollection types
  */
 template<size_t N, typename T, size_t M, size_t... Ms>
-class SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,typename std::enable_if<N!=M>::type>
+struct SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,typename std::enable_if<N!=M>::type>
 {
   //! The collection type
-  typename SampleMomentCollection<T,M,Ms...> CollectionType;
+  typedef Utility::SampleMomentCollection<T,M,Ms...> CollectionType;
+
+  //! The moment type
+  typedef SampleMoment<N,T> MomentType;
 
   //! The value type
-  typedef typename SampleMoment<N,T>::ValueType ValueType;
+  typedef typename MomentType::ValueType ValueType;
 
   //! The base collection type
-  typedef SampleMomentCollection<T,Ms...> BaseCollectionType;
+  typedef Utility::SampleMomentCollection<T,Ms...> BaseCollectionType;
   
   //! Get the current scores
   static inline const ValueType* getCurrentScores(
-                                       const CollectionType& collection ) const
+                                             const CollectionType& collection )
   { return SampleMomentCollectionDataExtractor<N,BaseCollectionType>::getCurrentScores( collection ); }
 
   //! Get the current scores
@@ -251,7 +261,7 @@ class SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,ty
   //! Get the current score
   static inline const ValueType& getCurrentScore(
                                               const CollectionType& collection,
-                                              const size_t i ) const
+                                              const size_t i )
   { return SampleMomentCollectionDataExtractor<N,BaseCollectionType>::getCurrentScore( collection, i ); }
 
   //! Get the current score
@@ -260,8 +270,8 @@ class SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,ty
   { return SampleMomentCollectionDataExtractor<N,BaseCollectionType>::getCurrentScore( collection, i ); }
 
   //! Return the moment
-  static inline SampleMoment<N,T> getMoment( const CollectionType& collection,
-                                             const size_t i ) const
+  static inline MomentType getMoment( const CollectionType& collection,
+                                      const size_t i )
   { return SampleMomentCollectionDataExtractor<N,BaseCollectionType>::getMoment( collection, i ); }
 };
 
@@ -269,7 +279,7 @@ class SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,ty
 
 //! Get the scores from the collection
 template<size_t N, typename T>
-inline const typename SampleMoment<N,T>::ValueType*
+inline const typename Details::SampleMomentCollectionDataExtractor<N,T>::ValueType*
 getCurrentScores( const T& collection )
 {
   return Details::SampleMomentCollectionDataExtractor<N,T>::getCurrentScores( collection );
@@ -277,7 +287,7 @@ getCurrentScores( const T& collection )
 
 //! Get the scores from the collection
 template<size_t N, typename T>
-inline typename SampleMoment<N,T>::ValueType*
+inline typename Details::SampleMomentCollectionDataExtractor<N,T>::ValueType*
 getCurrentScores( T& collection )
 {
   return Details::SampleMomentCollectionDataExtractor<N,T>::getCurrentScores( collection );
@@ -285,7 +295,7 @@ getCurrentScores( T& collection )
 
 //! Get the desired score from the collection
 template<size_t N, typename T>
-inline const typename SampleMoment<N,T>::ValueType&
+inline const typename Details::SampleMomentCollectionDataExtractor<N,T>::ValueType&
 getCurrentScore( const T& collection, const size_t i )
 {
   return Details::SampleMomentCollectionDataExtractor<N,T>::getCurrentScore( collection, i );
@@ -293,15 +303,16 @@ getCurrentScore( const T& collection, const size_t i )
 
 //! Get the desired score from the collection
 template<size_t N, typename T>
-inline typename SampleMoment<N,T>::ValueType&
-getCurrentScore( const T& collection, const size_t i )
+inline typename Details::SampleMomentCollectionDataExtractor<N,T>::ValueType&
+getCurrentScore( T& collection, const size_t i )
 {
   return Details::SampleMomentCollectionDataExtractor<N,T>::getCurrentScore( collection, i );
 }
 
 //! Get the desired moment from the collection
 template<size_t N, typename T >
-inline SampleMoment<N,T> getMoment( const T& collection, const size_t i )
+inline typename Details::SampleMomentCollectionDataExtractor<N,T>::MomentType
+getMoment( const T& collection, const size_t i )
 {
   return Details::SampleMomentCollectionDataExtractor<N,T>::getMoment( collection, i );
 }
