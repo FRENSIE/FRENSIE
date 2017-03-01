@@ -16,7 +16,6 @@
 #include <boost/serialization/export.hpp>
 
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
@@ -26,7 +25,6 @@
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_PrintableObject.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 

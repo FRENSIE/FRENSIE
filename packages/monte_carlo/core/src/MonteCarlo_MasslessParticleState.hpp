@@ -67,3 +67,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::MasslessParticleState );
 BOOST_CLASS_VERSION( MonteCarlo::MasslessParticleState, 0 );
 
 #endif // end MONTE_CARLO_MASSLESS_PARTICLE_STATE_HPP
+
+//---------------------------------------------------------------------------//
+// end MontCarlo_MasslessParticleState.hpp
+//---------------------------------------------------------------------------//

@@ -16,10 +16,8 @@
 
 // Boost Includes
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/log/detail/config.hpp>
 #include <boost/log/sinks/basic_sink_backend.hpp>
 #include <boost/log/sinks/frontend_requirements.hpp>
-#include <boost/log/detail/header.hpp>
 
 // FRENSIE Includes
 #include "Utility_DynamicOutputFormatter.hpp"

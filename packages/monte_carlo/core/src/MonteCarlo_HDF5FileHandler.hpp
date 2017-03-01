@@ -40,7 +40,7 @@ public:
 
   //! Constructor (file ownership)
   HDF5FileHandler( const std::string& hdf5_file_name,
-                   const FileOps file_op = OVERWRITE_HDF5_FILE );
+                   const FileOps file_op = OVERWRITE_FILE );
 
   //! Constructor (file sharing)
   HDF5FileHandler( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file );

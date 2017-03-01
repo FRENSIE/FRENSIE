@@ -14,7 +14,6 @@
 
 // FRENSIE Includes
 #include "Utility_HDF5TypeTraits.hpp"
-#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 

@@ -38,12 +38,12 @@ HDF5FileHandler::HDF5FileHandler( const std::string& hdf5_file_name,
       d_hdf5_file->openHDF5FileAndAppend( hdf5_file_name );
       break;
     case READ_ONLY_FILE:
-      d_hdf5_file->openHDF5FileAndReadOnly( hd5f_file_name );
+      d_hdf5_file->openHDF5FileAndReadOnly( hdf5_file_name );
       break;
     }
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                           "Error: Unable to open the HDF5 file!" );
+                           "Unable to open the HDF5 file!" );
 }
 
 // Constructor (file sharing)

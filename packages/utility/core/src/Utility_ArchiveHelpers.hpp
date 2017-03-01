@@ -22,10 +22,10 @@
  * automatic registration of the derived class must be done to avoid
  * unnecessary code registration calls (See BOOST_CLASS_EXPORT_KEY(2) - header
  * file, BOOST_CLASS_EXPORT_IMPLEMENT - implementation file). The serialize
- * method is usually a templated on the archive type. Explicit instatiations of
+ * method is usually templated on the archive type. Explicit instatiations of
  * this method with the various archive types must also be created for the
  * automatic registration to work. This macro creates these instantiations.
- * Use it in the global namespace
+ * Use it in the global namespace.
  */
 #define UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( Class ) \
   template void Class::serialize<boost::archive::text_iarchive>( boost::archive::text_iarchive& ar, const unsigned version ); \

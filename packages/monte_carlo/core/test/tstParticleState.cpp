@@ -87,6 +87,17 @@ TEUCHOS_UNIT_TEST( ParticleState, getHistoryNumber )
 }
 
 //---------------------------------------------------------------------------//
+// Set/get the source id that created the particle (history)
+TEUCHOS_UNIT_TEST( ParticleState, setgetSourceId )
+{
+  TestParticleState particle( 1ull );
+
+  particle.setSourceId( 2 );
+
+  TEST_EQUALITY_CONST( particle.getSourceId(), 2 );
+}
+
+//---------------------------------------------------------------------------//
 // Set/get the source cell where the particle (history) started
 TEUCHOS_UNIT_TEST( ParticleState, setgetSourceCell )
 {
@@ -183,151 +194,121 @@ TEUCHOS_UNIT_TEST( ParticleState, rotateDirection )
 {
   TestParticleState particle( 1ull );
 
-  // Set the initial direction
+  // Rotate x direction to neg. x direction
   particle.setDirection( 1.0, 0.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( -1.0, 0.0 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 0.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate x direction to y direction
   particle.setDirection( 1.0, 0.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( 0.0, Utility::PhysicalConstants::pi/2 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 0.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate x direction to neg. y direction
   particle.setDirection( 1.0, 0.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( 0.0, 3*Utility::PhysicalConstants::pi/2 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 0.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate x direction to z direction
   particle.setDirection( 1.0, 0.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( 0.0, Utility::PhysicalConstants::pi );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 1.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate x direction to neg. z direction
   particle.setDirection( 1.0, 0.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( 0.0, 0.0 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), -1.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate y direction to neg. y direction
   particle.setDirection( 0.0, 1.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( -1.0, 0.0 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 0.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate y direction to x direction
   particle.setDirection( 0.0, 1.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( 0.0, 3*Utility::PhysicalConstants::pi/2 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 0.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate y direction to neg. x direction
   particle.setDirection( 0.0, 1.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( 0.0, Utility::PhysicalConstants::pi/2 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 0.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate the y direction to z direction
   particle.setDirection( 0.0, 1.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( 0.0, Utility::PhysicalConstants::pi );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 1.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate the y direction to neg. z direction
   particle.setDirection( 0.0, 1.0, 0.0 );
-
-  // Set the new direction
   particle.rotateDirection( 0.0, 0.0 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), -1.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate the z direction to neg. z direction
   particle.setDirection( 0.0, 0.0, 1.0 );
-
-  // Set the new direction
   particle.rotateDirection( -1.0, 0.0 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), -1.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate z direction to x direction
   particle.setDirection( 0.0, 0.0, 1.0 );
-
-  // Set the new direction
-  particle.rotateDirection( 0.0, Utility::PhysicalConstants::pi/2 );
+  particle.rotateDirection( 0.0, 0.0 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 0.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate z direction to neg. x direction
   particle.setDirection( 0.0, 0.0, 1.0 );
-
-  // Set the new direction
-  particle.rotateDirection( 0.0, 3*Utility::PhysicalConstants::pi/2 );
+  particle.rotateDirection( 0.0, Utility::PhysicalConstants::pi );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 0.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate z direction to y direction
   particle.setDirection( 0.0, 0.0, 1.0 );
-
-  // Set the new direction
-  particle.rotateDirection( 0.0, Utility::PhysicalConstants::pi );
+  particle.rotateDirection( 0.0, Utility::PhysicalConstants::pi/2 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getZDirection(), 0.0, 1e-15 );
 
-  // Set the initial direction
+  // Rotate z direction to neg. y direction
   particle.setDirection( 0.0, 0.0, 1.0 );
-
-  // Set the new direction
-  particle.rotateDirection( 0.0, 0.0 );
+  particle.rotateDirection( 0.0, 3*Utility::PhysicalConstants::pi/2 );
 
   UTILITY_TEST_FLOATING_EQUALITY( particle.getXDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( particle.getYDirection(), -1.0, 1e-15 );
