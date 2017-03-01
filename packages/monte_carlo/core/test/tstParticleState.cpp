@@ -463,6 +463,9 @@ TEUCHOS_UNIT_TEST( ParticleState, archive )
   // Create and archive a particle
   {
     TestParticleState particle( 1ull );
+    particle.setSourceId( 10 );
+    particle.setSourceCell( 1 );
+    particle.setCell( 2 );
     particle.setPosition( 1.0, 1.0, 1.0 );
     particle.setDirection( 0.0, 0.0, 1.0 );
     particle.setSourceEnergy( 2.0 );
@@ -487,6 +490,9 @@ TEUCHOS_UNIT_TEST( ParticleState, archive )
   boost::archive::xml_iarchive ar(ifs);
   ar >> boost::serialization::make_nvp( "particle", loaded_particle );
 
+  TEST_EQUALITY_CONST( loaded_particle.getSourceId(), 10 );
+  TEST_EQUALITY_CONST( loaded_particle.getSourceCell(), 1 );
+  TEST_EQUALITY_CONST( loaded_particle.getCell(), 2 );
   TEST_EQUALITY_CONST( loaded_particle.getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getZPosition(), 1.0 );
@@ -504,12 +510,14 @@ TEUCHOS_UNIT_TEST( ParticleState, archive )
   TEST_EQUALITY_CONST( loaded_particle.getHistoryNumber(), 1ull );
 }
 
-
 //---------------------------------------------------------------------------//
 // Create new particles
 TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
 {
   TestParticleState particle_gen_a( 1ull );
+  particle_gen_a.setSourceId( 10 );
+  particle_gen_a.setSourceCell( 1 );
+  particle_gen_a.setCell( 2 );
   particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
   particle_gen_a.setPosition( 0.0, 0.0, 1.0 );
   particle_gen_a.setSourceEnergy( 2.0 );
@@ -519,12 +527,12 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
   particle_gen_a.incrementCollisionNumber();
   particle_gen_a.setSourceWeight( 1.0 );
   particle_gen_a.setWeight( 0.5 );
-  particle_gen_a.setSourceCell( 1 );
-  particle_gen_a.setCell( 2 );
 
   // Create a second generation particle with the same collision number
   TestParticleState particle_gen_b( particle_gen_a, true );
 
+  TEST_EQUALITY( particle_gen_b.getSourceId(),
+                 particle_gen_a.getSourceId() );
   TEST_EQUALITY( particle_gen_b.getXPosition(),
 		 particle_gen_a.getXPosition() );
   TEST_EQUALITY( particle_gen_b.getYPosition(),
@@ -561,6 +569,8 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
   // Create a third generation particle and reset the collision counter
   TestParticleState particle_gen_c( particle_gen_b, true, true );
 
+  TEST_EQUALITY( particle_gen_c.getSourceId(),
+                 particle_gen_b.getSourceId() );
   TEST_EQUALITY( particle_gen_c.getXPosition(),
 		 particle_gen_b.getXPosition() );
   TEST_EQUALITY( particle_gen_c.getYPosition(),
