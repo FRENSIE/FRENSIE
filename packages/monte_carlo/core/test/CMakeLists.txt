@@ -173,3 +173,10 @@ ADD_EXECUTABLE(tstSimulationPropertiesFactory
 TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
 ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
 SET_PROPERTY(TEST SimulationPropertiesFactory_test PROPERTY LABELS monte_carlo_core)
+
+ADD_EXECUTABLE(tstMonteCarloHDF5FileHandler
+  tstHDF5FileHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstMonteCarloHDF5FileHandler monte_carlo_core)
+ADD_TEST(MonteCarloHDF5FileHandler_test tstMonteCarloHDF5FileHandler)
+SET_PROPERTY(TEST MonteCarloHDF5FileHandler_test PROPERTY LABELS monte_carlo_core )
