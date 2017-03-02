@@ -25,18 +25,18 @@ class ResponseFunction
 public:
 
   //! Constructor
-  ResponseFunction( const unsigned id,
-		    const std::string& name );
+  ResponseFunction()
+  { /* ... */ }
 
   //! Destructor
   virtual ~ResponseFunction()
   { /* ... */ }
 
   //! Return the id
-  unsigned getId() const;
+  virtual unsigned getId() const;
 
   //! Return the name of the response function
-  const std::string& getName() const;
+  virtual const std::string& getName() const;
 
   //! Evaluate the response function at the desired phase space point
   virtual double evaluate( const ParticleState& particle ) const;
@@ -46,14 +46,6 @@ public:
 
   //! Default response function
   static const std::shared_ptr<ResponseFunction> default_response_function;
-
-private:
-
-  // The response function id
-  unsigned d_id;
-
-  // The response function name
-  std::string d_name;
 };
 
 } // end MonteCarlo namespace

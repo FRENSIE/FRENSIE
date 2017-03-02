@@ -1,26 +1,5 @@
 ADD_SUBDIRECTORY(test_files)
 
-ADD_EXECUTABLE(tstResponseFunction
-  tstResponseFunction.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstResponseFunction monte_carlo_estimator_native)
-ADD_TEST(ResponseFunction_test tstResponseFunction)
-SET_PROPERTY(TEST ResponseFunction_test PROPERTY LABELS monte_carlo_estimator_native)
-
-ADD_EXECUTABLE(tstEnergySpaceResponseFunction
-  tstEnergySpaceResponseFunction.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstEnergySpaceResponseFunction monte_carlo_estimator_native)
-ADD_TEST(EnergySpaceResponseFunction_test tstEnergySpaceResponseFunction)
-SET_PROPERTY(TEST EnergySpaceResponseFunction_test PROPERTY LABELS monte_carlo_estimator_native)
-
-ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
-  tstPhaseSpaceResponseFunction.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction monte_carlo_estimator_native)
-ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
-SET_PROPERTY(TEST PhaseSpaceResponseFunction_test PROPERTY LABELS monte_carlo_estimator_native)
-
 ADD_EXECUTABLE(tstEstimatorParticleStateWrapper
   tstEstimatorParticleStateWrapper.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -360,12 +339,6 @@ ADD_EXECUTABLE(tstEventModuleInterface_Native
 TARGET_LINK_LIBRARIES(tstEventModuleInterface_Native monte_carlo_estimator_native ${MOAB})
 ADD_TEST(EventModuleInterface_Native_test tstEventModuleInterface_Native --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 SET_PROPERTY(TEST EventModuleInterface_Native_test PROPERTY LABELS monte_carlo_estimator_native)
-
-ADD_EXECUTABLE(tstResponseFunctionFactory
-  tstResponseFunctionFactory.cpp)
-TARGET_LINK_LIBRARIES(tstResponseFunctionFactory monte_carlo_estimator_native)
-ADD_TEST(ResponseFunctionFactory_test tstResponseFunctionFactory --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml")
-SET_PROPERTY(TEST ResponseFunctionFactory_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(FRENSIE_ENABLE_DAGMC)
   ADD_EXECUTABLE(tstStandardEstimatorFactory_DagMC

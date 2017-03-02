@@ -17,30 +17,20 @@ namespace MonteCarlo{
 
 // Initialize the default response function
 const std::shared_ptr<ResponseFunction>
-ResponseFunction::default_response_function( new ResponseFunction(
-					  std::numeric_limits<unsigned>::max(),
-					  "default" ) );
-
-// Constructor
-ResponseFunction::ResponseFunction( const unsigned id,
-				    const std::string& name )
-  : d_id( id ),
-    d_name( name )
-{
-  // Make sure the name is valid
-  testPrecondition( name.size() > 0 );
-}
+ResponseFunction::default_response_function;
 
 // Return the id
 unsigned ResponseFunction::getId() const
 {
-  return d_id;
+  return std::numeric_limits<size_t>::max();
 }
 
 // Return the name of the response function
 const std::string& ResponseFunction::getName() const
 {
-  return d_name;
+  static std::string default_name( "default" );
+  
+  return default_name;
 }
 
 // Evaluate the response function at the desired phase space point
