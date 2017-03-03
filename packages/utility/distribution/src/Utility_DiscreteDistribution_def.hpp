@@ -183,8 +183,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluatePDF( const
 {
   double raw_pdf = 0.0;
 
-  if( indep_var_value >= d_distribution.front().first &&
-      indep_var_value <= d_distribution.back().first )
+  if( indep_var_value >= Utility::get<FIRST>(d_distribution.front()) &&
+      indep_var_value <= Utility::get<FIRST>(d_distribution.back()) )
   {
     typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin =
       Search::binaryLowerBound<FIRST>( d_distribution.begin(),
@@ -196,18 +196,19 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluatePDF( const
     --prev_bin;
 
     // The same independent variable may appear multiple times
-    while( bin->first == indep_var_value )
+    while( Utility::get<FIRST>(*bin) == indep_var_value )
     {
       if( bin != d_distribution.begin() )
       {
-	raw_pdf += bin->second - prev_bin->second;
+	raw_pdf += Utility::get<SECOND>(*bin) -
+          Utility::get<SECOND>(*prev_bin);
 
 	--bin;
 	--prev_bin;
       }
       else
       {
-	raw_pdf += bin->second;
+	raw_pdf += Utility::get<SECOND>(*bin);
 
 	break;
       }
@@ -225,8 +226,8 @@ double UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluateCDF
 {
   double cdf = 0.0;
 
-  if( indep_var_value >= d_distribution.front().first &&
-      indep_var_value <= d_distribution.back().first )
+  if( indep_var_value >= Utility::get<FIRST>(d_distribution.front()) &&
+      indep_var_value <= Utility::get<FIRST>(d_distribution.back()) )
   {
     typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin =
       Search::binaryLowerBound<FIRST>( d_distribution.begin(),
@@ -234,9 +235,9 @@ double UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluateCDF
 				       indep_var_value );
 
     // The same independent variable may appear multiple times
-    cdf = bin->second;
+    cdf = Utility::get<SECOND>(*bin);
   }
-  else if( indep_var_value < d_distribution.front().first )
+  else if( indep_var_value < Utility::get<FIRST>(d_distribution.front()) )
     cdf = 0.0;
   else
     cdf = 1.0;
@@ -295,7 +296,7 @@ typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuan
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleInSubrange( const typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the max independent variable is valid
-  testPrecondition( max_indep_var >= d_distribution.front().first );
+  testPrecondition( max_indep_var >= Utility::get<FIRST>(d_distribution.front()) );
 
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -320,7 +321,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleImplementati
 					   d_distribution.end(),
 					   random_number );
 
-  return d_distribution[sampled_bin_index].first;
+  return Utility::get<FIRST>(d_distribution[sampled_bin_index]);
 }
 
 // Return a random sample from the distribution at the given CDF value in a subrange
@@ -334,7 +335,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNu
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
   // Make sure the max independent variable is valid
-  testPrecondition( max_indep_var >= d_distribution.front().first );
+  testPrecondition( max_indep_var >= Utility::get<FIRST>(d_distribution.front()) );
 
   // Scale the random number to the cdf at the max indep var
   double scaled_random_number =
@@ -350,7 +351,7 @@ template<typename IndependentUnit,typename DependentUnit>
 typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
-  return d_distribution.back().first;
+  return Utility::get<FIRST>(d_distribution.back());
 }
 
 // Return the lower bound of the independent variable
@@ -358,7 +359,7 @@ template<typename IndependentUnit,typename DependentUnit>
 typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return d_distribution.front().first;
+  return Utility::get<FIRST>(d_distribution.front());
 }
 
 // Return the distribution type
@@ -542,16 +543,20 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   // Assign the distribution
   for( unsigned i = 0; i < cdf_values.size(); ++i )
   {
-    d_distribution[i].first = IndepQuantity( independent_quantities[i] );
+    Utility::get<FIRST>(d_distribution[i]) =
+      IndepQuantity( independent_quantities[i] );
 
-    d_distribution[i].second = cdf_values[i];
+    Utility::get<SECOND>(d_distribution[i]) = cdf_values[i];
   }
 
   // Verify that the CDF is normalized (in event of round-off errors)
   if( cdf_values.back() != 1.0 )
   {
     for( unsigned i = 0; i < d_distribution.size(); ++i )
-      d_distribution[i].second /= d_distribution.back().second;
+    {
+      Utility::get<SECOND>(d_distribution[i]) /=
+        Utility::get<SECOND>(d_distribution.back());
+    }
   }
 
   // Set the normalization constant
@@ -577,12 +582,13 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   // Assign the raw distribution data
   for( unsigned i = 0; i < dependent_values.size(); ++i )
   {
-    d_distribution[i].first = IndepQuantity( independent_values[i] );
+    Utility::get<FIRST>(d_distribution[i]) =
+      IndepQuantity( independent_values[i] );
 
     // Use an explicit cast to desired unit
     DepQuantity dep_quantity( dependent_values[i] );
 
-    d_distribution[i].second = getRawQuantity( dep_quantity );
+    Utility::get<SECOND>(d_distribution[i]) = getRawQuantity( dep_quantity );
 
     d_norm_constant += dep_quantity;
   }
@@ -603,15 +609,19 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    independent_quantities[i] = d_distribution[i].first;
+    independent_quantities[i] = Utility::get<FIRST>(d_distribution[i]);
 
     if( i != 0u )
     {
       dependent_quantities[i] = d_norm_constant*
-	( d_distribution[i].second - d_distribution[i-1].second );
+	(Utility::get<SECOND>(d_distribution[i]) -
+         Utility::get<SECOND>(d_distribution[i-1]));
     }
     else
-      dependent_quantities[i] = d_norm_constant*d_distribution[i].second;
+    {
+      dependent_quantities[i] =
+        d_norm_constant*Utility::get<SECOND>(d_distribution[i]);
+    }
   }
 }
 
@@ -627,17 +637,19 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    independent_values[i] = getRawQuantity( d_distribution[i].first );
+    independent_values[i] =
+      getRawQuantity( Utility::get<FIRST>(d_distribution[i]) );
 
     if( i != 0u )
     {
       dependent_values[i] = getRawQuantity( d_norm_constant )*
-	(d_distribution[i].second - d_distribution[i-1].second);
+	(Utility::get<SECOND>(d_distribution[i]) -
+         Utility::get<SECOND>(d_distribution[i-1]));
     }
     else
     {
-      dependent_values[i] =
-	d_distribution[i].second*getRawQuantity( d_norm_constant );
+      dependent_values[i] = Utility::get<SECOND>(d_distribution[i])*
+        getRawQuantity( d_norm_constant );
     }
   }
 }

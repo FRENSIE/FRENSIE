@@ -66,9 +66,9 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
   while( data_point != end )
   {
     indep_value = DataProcessingPolicy::processIndependentVar(
-					     get<indepMember>( *data_point ) );
+                                    Utility::get<indepMember>( *data_point ) );
     dep_value = DataProcessingPolicy::processDependentVar(
-					       get<depMember>( *data_point ) );
+                                    Utility::get<depMember>( *data_point ) );
 
     set<indepMember>( *data_point, indep_value );
     set<depMember>( *data_point, dep_value );
@@ -120,8 +120,8 @@ void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
   typename Teuchos::Array<Tuple>::size_type max_index = 0;
   while( data_point_2 != end )
   {
-    if( get<member>( *data_point_1 ) < value &&
-	get<member>( *data_point_2 ) <= value )
+    if( Utility::get<member>( *data_point_1 ) < value &&
+	Utility::get<member>( *data_point_2 ) <= value )
       ++max_index;
     else
       break;
@@ -183,8 +183,8 @@ void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
   typename Teuchos::Array<Tuple>::size_type max_index = 0;
   while( data_point_2 != end )
   {
-    if( get<member>( *data_point_1 ) > value &&
-        get<member>( *data_point_2 ) >= value )
+    if( Utility::get<member>( *data_point_1 ) > value &&
+        Utility::get<member>( *data_point_2 ) >= value )
       ++max_index;
     else
       break;
@@ -235,8 +235,10 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
   data_point_3 = data_point_2-1;
   while( data_point_3 != end )
   {
-    if( get<member>( *data_point_1 ) == get<member>( *data_point_2 ) &&
-	get<member>( *data_point_1 ) == get<member>( *data_point_3 ) )
+    if( Utility::get<member>( *data_point_1 ) ==
+        Utility::get<member>( *data_point_2 ) &&
+	Utility::get<member>( *data_point_1 ) ==
+        Utility::get<member>( *data_point_3 ) )
     {
       data_point_1 = data.erase( data_point_1 );
     }
@@ -297,8 +299,10 @@ void DataProcessor::calculateSlopes( Array &data  )
 
   while( data_point_2 != end )
   {
-    slope = (get<depMember>( *data_point_2 )-get<depMember>( *data_point_1 ))/
-      (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 ));
+    slope = (Utility::get<depMember>( *data_point_2 ) -
+             Utility::get<depMember>( *data_point_1 ))/
+      (Utility::get<indepMember>( *data_point_2 ) -
+       Utility::get<indepMember>( *data_point_1 ));
 
     set<slopeMember>( *data_point_1, slope );
     set<slopeMember>( *data_point_2, 0 );
@@ -366,11 +370,14 @@ DataProcessor::calculateContinuousCDF( Array &data,
   // CDF(x) = CDF(x1)+PDF(x1)*(x-x1)+0.5*(PDF(x2)-PDF(x1))/(x2-x1)*(x-x1)^2
   while( data_point_2 != end )
   {
-    cdf_value = get<cdfMember>( *data_point_1 ) +
-      get<pdfMember>( *data_point_1 )*
-      (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 )) +
-      0.5*(get<pdfMember>( *data_point_2 ) - get<pdfMember>( *data_point_1 ))*
-      (get<indepMember>( *data_point_2) - get<indepMember>( *data_point_1 ));
+    cdf_value = Utility::get<cdfMember>( *data_point_1 ) +
+      Utility::get<pdfMember>( *data_point_1 )*
+      (Utility::get<indepMember>( *data_point_2 ) -
+       Utility::get<indepMember>( *data_point_1 )) +
+      0.5*(Utility::get<pdfMember>( *data_point_2 ) -
+           Utility::get<pdfMember>( *data_point_1 ))*
+      (Utility::get<indepMember>( *data_point_2 ) -
+       Utility::get<indepMember>( *data_point_1 ));
 
     set<cdfMember>( *data_point_2, cdf_value );
 
@@ -379,7 +386,7 @@ DataProcessor::calculateContinuousCDF( Array &data,
   }
 
   typename TupleElement<cdfMember,Tuple>::type cdf_max =
-    get<cdfMember>( data.back() );
+    Utility::get<cdfMember>( data.back() );
 
   // Normalize the CDF and PDF
   if( normalize )
@@ -393,11 +400,11 @@ DataProcessor::calculateContinuousCDF( Array &data,
     while( data_point_1 != end )
     {
       cdf_norm_value =
-	get<cdfMember>( *data_point_1 )/getRawQuantity( cdf_max );
+	Utility::get<cdfMember>( *data_point_1 )/getRawQuantity( cdf_max );
       set<cdfMember>( *data_point_1, cdf_norm_value );
 
       pdf_norm_value =
-	get<pdfMember>( *data_point_1 )/getRawQuantity( cdf_max );
+	Utility::get<pdfMember>( *data_point_1 )/getRawQuantity( cdf_max );
       set<pdfMember>( *data_point_1, pdf_norm_value );
 
       ++data_point_1;
@@ -429,9 +436,10 @@ void DataProcessor::calculateContinuousPDF( Array &data )
 
   // Calculate the slope of the cdf
   typename TupleElement<pdfMember,Tuple>::type
-    pdf_value = (get<cdfMember>( *data_point_2 ) -
-		 get<cdfMember>( *data_point_1 ) )/
-    (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 ) );
+    pdf_value = (Utility::get<cdfMember>( *data_point_2 ) -
+		 Utility::get<cdfMember>( *data_point_1 ) )/
+    (Utility::get<indepMember>( *data_point_2 ) -
+     Utility::get<indepMember>( *data_point_1 ));
 
   // Initialize the PDF
   set<pdfMember>( *data_point_1, pdf_value );
@@ -439,9 +447,10 @@ void DataProcessor::calculateContinuousPDF( Array &data )
   // Calculate the PDF (slope of cdf)
   while( data_point_2 != end )
   {
-    pdf_value = (get<cdfMember>( *data_point_2 ) -
-		 get<cdfMember>( *data_point_1 ) )/
-    (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 ) );
+    pdf_value = (Utility::get<cdfMember>( *data_point_2 ) -
+		 Utility::get<cdfMember>( *data_point_1 ) )/
+    (Utility::get<indepMember>( *data_point_2 ) -
+     Utility::get<indepMember>( *data_point_1 ));
 
     set<pdfMember>( *data_point_2, pdf_value );
 
@@ -484,7 +493,7 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
   // Create the discrete CDF
   while( data_point != end )
   {
-    cdf_value += get<pdfMember>( *data_point );
+    cdf_value += Utility::get<pdfMember>( *data_point );
     set<cdfMember>( *data_point, cdf_value );
 
     ++data_point;
@@ -494,7 +503,9 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
   data_point = data.begin();
   while( data_point != end )
   {
-    cdf_value = get<cdfMember>( *data_point )/get<cdfMember>( data.back() );
+    cdf_value = Utility::get<cdfMember>( *data_point )/
+      Utility::get<cdfMember>( data.back() );
+    
     set<cdfMember>( *data_point, cdf_value );
 
     ++data_point;
@@ -549,7 +560,8 @@ void DataProcessor::copyTupleMemberData( const OrigArray &orig_data,
 
   while( orig_data_point != end )
   {
-    set<copyMember>( *copy_data_point, get<origMember>( *orig_data_point ) );
+    set<copyMember>( *copy_data_point,
+                     Utility::get<origMember>( *orig_data_point ) );
 
     ++orig_data_point;
     ++copy_data_point;
@@ -592,8 +604,8 @@ void DataProcessor::swapTupleMemberData( Array &data )
 
   while( data_point != end )
   {
-    copy = get<member1>( *data_point );
-    set<member1>( *data_point, get<member2>( *data_point ) );
+    copy = Utility::get<member1>( *data_point );
+    set<member1>( *data_point, Utility::get<member2>( *data_point ) );
     set<member2>( *data_point, copy );
 
     ++data_point;

@@ -64,8 +64,8 @@ inline Iterator binaryLowerBound(
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
   // The value used for the search must be within the limits of the sorted data
-  testPrecondition( (value >= get<member>( *start )) );
-  testPrecondition( (value <= get<member>( *(true_end) )) );
+  testPrecondition( (value >= Utility::get<member>( *start )) );
+  testPrecondition( (value <= Utility::get<member>( *(true_end) )) );
 
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
@@ -80,7 +80,7 @@ inline Iterator binaryLowerBound(
     mid_point = start;
     std::advance( mid_point, distance/2 );
 
-    if( value >= get<member>( *mid_point ) )
+    if( value >= Utility::get<member>( *mid_point ) )
       start = mid_point;
     else
       end = mid_point;
@@ -206,7 +206,7 @@ inline Iterator binaryUpperBound( Iterator start,
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
   // The value used for the search must be within the limits of the data
-  testPrecondition( (value <= get<member>( *(true_end) ) ) );
+  testPrecondition( (value <= Utility::get<member>( *(true_end) ) ) );
 
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
@@ -221,7 +221,7 @@ inline Iterator binaryUpperBound( Iterator start,
     mid_point = start;
     std::advance( mid_point, distance/2 );
 
-    if( value >= get<member>( *mid_point ) )
+    if( value >= Utility::get<member>( *mid_point ) )
       start = mid_point;
     else
       end = mid_point;
@@ -233,7 +233,7 @@ inline Iterator binaryUpperBound( Iterator start,
   // the value falls in
   if( distance == 1 )
   {
-    if( value > get<member>( *(start) ) )
+    if( value > Utility::get<member>( *(start) ) )
       start = end;
   }
 

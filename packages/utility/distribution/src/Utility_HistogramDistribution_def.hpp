@@ -195,9 +195,9 @@ typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::DepQuant
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::evaluate(
  const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < d_distribution.front().first )
+  if( indep_var_value < Utility::get<FIRST>(d_distribution.front()) )
     return DQT::zero();
-  else if( indep_var_value > d_distribution.back().first )
+  else if( indep_var_value > Utility::get<FIRST>(d_distribution.back()) )
     return DQT::zero();
   else
   {
@@ -206,7 +206,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::evaluate(
                                        d_distribution.end(),
                                        indep_var_value );
 
-    return bin->second;
+    return Utility::get<SECOND>(*bin);
   }
 }
 
@@ -224,9 +224,9 @@ template<typename IndependentUnit, typename DependentUnit>
 double UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::evaluateCDF(
   const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < d_distribution.front().first )
+  if( indep_var_value < Utility::get<FIRST>(d_distribution.front()) )
     return 0.0;
-  else if( indep_var_value >= d_distribution.back().first )
+  else if( indep_var_value >= Utility::get<FIRST>(d_distribution.back()) )
     return 1.0;
   else
   {
@@ -235,9 +235,11 @@ double UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::evaluateCD
                                        d_distribution.end(),
                                        indep_var_value );
 
-    IndepQuantity indep_diff = indep_var_value - lower_bin->first;
+    IndepQuantity indep_diff =
+      indep_var_value - Utility::get<FIRST>(*lower_bin);
 
-    return (lower_bin->third + lower_bin->second*indep_diff)*d_norm_constant;
+    return (Utility::get<THIRD>(*lower_bin) +
+            Utility::get<SECOND>(*lower_bin)*indep_diff)*d_norm_constant;
   }
 }
 
@@ -316,7 +318,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleImplementat
   testPrecondition( random_number <= 1.0 );
 
   UnnormCDFQuantity scaled_random_number =
-    random_number*d_distribution.back().third;
+    random_number*Utility::get<THIRD>(d_distribution.back());
 
   typename DistributionArray::const_iterator bin =
     Search::binaryLowerBound<THIRD>( d_distribution.begin(),
@@ -325,8 +327,9 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleImplementat
 
   sampled_bin_index = std::distance( d_distribution.begin(), bin );
 
-  return bin->first +
-    IndepQuantity((scaled_random_number - bin->third)/bin->second);
+  return Utility::get<FIRST>(*bin) +
+    IndepQuantity((scaled_random_number - Utility::get<THIRD>(*bin))/
+                  Utility::get<SECOND>(*bin));
 }
 
 // Return a sample from the distribution at the given CDF value in a subrange
@@ -356,7 +359,7 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
-  return d_distribution.back().first;
+  return Utility::get<FIRST>(d_distribution.back());
 }
 
 // Return the lower bound of the distribution independent variable
@@ -364,7 +367,7 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return d_distribution.front().first;
+  return Utility::get<FIRST>(d_distribution.front());
 }
 
 // Return the distribution type
@@ -550,27 +553,31 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   d_distribution.resize( bin_boundaries.size() );
 
   // Assign the first cdf value
-  d_distribution[0].first = IndepQuantity( bin_boundaries[0] );
-  setQuantity( d_distribution[0].third, 0.0 );
+  Utility::get<FIRST>(d_distribution[0]) = IndepQuantity( bin_boundaries[0] );
+  setQuantity( Utility::get<THIRD>(d_distribution[0]), 0.0 );
 
     // Assign the distribution
     for( unsigned i = 1; i < bin_boundaries.size(); ++i )
     {
-      d_distribution[i].first = IndepQuantity( bin_boundaries[i] );
-      setQuantity( d_distribution[i].third, cdf_values[i-1] );
+      Utility::get<FIRST>(d_distribution[i]) =
+        IndepQuantity( bin_boundaries[i] );
+      
+      setQuantity( Utility::get<THIRD>(d_distribution[i]), cdf_values[i-1] );
 
       // Calculate the pdf from the cdf
-      d_distribution[i-1].second =
-        DepQuantity( (d_distribution[i].third - d_distribution[i-1].third)/
-		     (d_distribution[i].first - d_distribution[i-1].first) );
+      Utility::get<SECOND>(d_distribution[i-1]) =
+        DepQuantity( (Utility::get<THIRD>(d_distribution[i]) -
+                      Utility::get<THIRD>(d_distribution[i-1]))/
+		     (Utility::get<FIRST>(d_distribution[i]) -
+                      Utility::get<FIRST>(d_distribution[i-1])) );
     }
 
     // Last PDF value is unused and can be assigned to the second to last value
-    d_distribution.back().second =
-      d_distribution[d_distribution.size()-2].second;
+    Utility::get<SECOND>(d_distribution.back()) =
+      Utility::get<SECOND>(d_distribution[d_distribution.size()-2]);
 
     // Set normalization constant
-    d_norm_constant = 1.0/d_distribution.back().third;
+    d_norm_constant = 1.0/Utility::get<THIRD>(d_distribution.back());
 }
 
 // Initialize the distribution
@@ -595,28 +602,31 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   for( unsigned i = 0; i < bin_boundaries.size(); ++i )
   {
     // Assign the min and max bin boundaries (respectively)
-    d_distribution[i].first = IndepQuantity( bin_boundaries[i] );
+    Utility::get<FIRST>(d_distribution[i]) =
+      IndepQuantity( bin_boundaries[i] );
 
     // Assign the bin PDF value
     if( i < bin_boundaries.size() - 1 )
-      d_distribution[i].second = DepQuantity( bin_values[i] );
+      Utility::get<SECOND>(d_distribution[i]) = DepQuantity( bin_values[i] );
     else
-      d_distribution[i].second = DepQuantity( bin_values[i-1] );
+      Utility::get<SECOND>(d_distribution[i]) = DepQuantity( bin_values[i-1] );
 
     // Assign the discrete CDF value
     if( i > 0 )
     {
-      d_distribution[i].third = d_distribution[i-1].third;
+      Utility::get<THIRD>(d_distribution[i]) =
+        Utility::get<THIRD>(d_distribution[i-1]);
 
-      d_distribution[i].third += DepQuantity( bin_values[i-1] )*
-      IndepQuantity( d_distribution[i].first - d_distribution[i-1].first );
+      Utility::get<THIRD>(d_distribution[i]) += DepQuantity( bin_values[i-1] )*
+        IndepQuantity( Utility::get<FIRST>(d_distribution[i]) -
+                       Utility::get<FIRST>(d_distribution[i-1]) );
     }
     else
-      setQuantity( d_distribution[i].third, 0.0 );
+      setQuantity( Utility::get<THIRD>(d_distribution[i]), 0.0 );
   }
 
   // Assign the normalization constant
-  d_norm_constant = 1.0/d_distribution.back().third;
+  d_norm_constant = 1.0/Utility::get<THIRD>(d_distribution.back());
 }
 
 // Reconstruct original distribution
@@ -631,10 +641,10 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    bin_boundaries[i] = d_distribution[i].first;
+    bin_boundaries[i] = Utility::get<THIRD>(d_distribution[i]);
 
     if( i < d_distribution.size() - 1 )
-      bin_values[i] = d_distribution[i].second;
+      bin_values[i] = Utility::get<SECOND>(d_distribution[i]);
   }
 }
 
@@ -650,10 +660,14 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    bin_boundaries[i] = getRawQuantity( d_distribution[i].first );
+    bin_boundaries[i] =
+      getRawQuantity( Utility::get<FIRST>(d_distribution[i]) );
 
     if( i < d_distribution.size() - 1 )
-      bin_values[i] = getRawQuantity( d_distribution[i].second );
+    {
+      bin_values[i] =
+        getRawQuantity( Utility::get<SECOND>(d_distribution[i]) );
+    }
   }
 }
 
@@ -680,7 +694,7 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZ
   
   for( size_t i = 0; i < d_distribution.size(); ++i )
   {
-    if( d_distribution[i].second == DQT::zero() )
+    if( Utility::get<SECOND>(d_distribution[i]) == DQT::zero() )
     {
       possible_zero = true;
 

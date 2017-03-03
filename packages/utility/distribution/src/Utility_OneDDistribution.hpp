@@ -22,7 +22,7 @@
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
 #include "Utility_InterpolationPolicy.hpp"
-#include "Utility_ComparePolicy.hpp"
+#include "Utility_ComparisonTraits.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
@@ -242,11 +242,11 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBou
 	const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const
 {
   return
-    Policy::relError( getRawQuantity( this->getUpperBoundOfIndepVar() ),
-		      getRawQuantity( distribution.getUpperBoundOfIndepVar() ))
+    Utility::relError( getRawQuantity( this->getUpperBoundOfIndepVar() ),
+                       getRawQuantity( distribution.getUpperBoundOfIndepVar()))
     < 1e-9 &&
-    Policy::relError( getRawQuantity( this->getLowerBoundOfIndepVar() ),
-		      getRawQuantity( distribution.getLowerBoundOfIndepVar() ))
+    Utility::relError( getRawQuantity( this->getLowerBoundOfIndepVar() ),
+                       getRawQuantity( distribution.getLowerBoundOfIndepVar()))
     < 1e-9;
 }
 

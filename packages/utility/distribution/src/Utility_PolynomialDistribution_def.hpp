@@ -82,8 +82,8 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
   // Make sure there is at least on term
   testPrecondition( dist_instance.d_coefficients.size() > 0 );
   // Make sure the limits are valid
-  testPrecondition( !QT::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().first ) );
-  testPrecondition( !QT::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().second ) );
+  testPrecondition( !QT::isnaninf( Utility::get<FIRST>(dist_instance.d_indep_limits_to_series_powers_p1.front()) ) );
+  testPrecondition( !QT::isnaninf( Utility::get<SECOND>(dist_instance.d_indep_limits_to_series_powers_p1.front()) ) );
 
   typedef typename UnitAwarePolynomialDistribution<InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
@@ -103,11 +103,11 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
 
   IndepQuantity min_indep_limit(
     QuantityTraits<InputIndepQuantity>::initializeQuantity(
-	    dist_instance.d_indep_limits_to_series_powers_p1.front().first ) );
+          Utility::get<FIRST>(dist_instance.d_indep_limits_to_series_powers_p1.front()) ) );
 
   IndepQuantity max_indep_limit(
     QuantityTraits<InputIndepQuantity>::initializeQuantity(
-	   dist_instance.d_indep_limits_to_series_powers_p1.front().second ) );
+          Utility::get<SECOND>(dist_instance.d_indep_limits_to_series_powers_p1.front()) ) );
 
   this->initializeDistribution( min_indep_limit, max_indep_limit );
 }
@@ -126,8 +126,8 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
   // Make sure there is at least one term
   testPrecondition( dist_instance.d_coefficients.size() > 0 );
   // Make sure the limits are valid
-  testPrecondition( !QT::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().first ) );
-  testPrecondition( !QT::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().second ) );
+  testPrecondition( !QT::isnaninf( Utility::get<0>( dist_instance.d_indep_limits_to_series_powers_p1.front() ) ) );
+  testPrecondition( !QT::isnaninf( Utility::get<1>( dist_instance.d_indep_limits_to_series_powers_p1.front() ) ) );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -154,8 +154,8 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::operator=(
   // Make sure there is at least one term
   testPrecondition( dist_instance.d_coefficients.size() > 0 );
   // Make sure the values are valid
-  testPrecondition( !QT::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().first ) );
-  testPrecondition( !QT::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().second ) );
+  testPrecondition( !QT::isnaninf( Utility::get<FIRST>(dist_instance.d_indep_limits_to_series_powers_p1.front()) ) );
+  testPrecondition( !QT::isnaninf( Utility::get<SECOND>(dist_instance.d_indep_limits_to_series_powers_p1.front()) ) );
 
   if( this != &dist_instance )
   {
@@ -177,10 +177,11 @@ const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::I
 {
   double raw_indep_var_value = getRawQuantity( indep_var_value );
 
-  if( raw_indep_var_value < d_indep_limits_to_series_powers_p1.front().first )
+  if( raw_indep_var_value <
+      Utility::get<FIRST>( d_indep_limits_to_series_powers_p1.front() ) )
     return DQT::zero();
   else if( raw_indep_var_value >
-	   d_indep_limits_to_series_powers_p1.front().second )
+	   Utility::get<SECOND>( d_indep_limits_to_series_powers_p1.front() ) )
     return DQT::zero();
   else
   {
@@ -223,9 +224,9 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::sample() const
 				   random_number_1 );
 
   double argument = RandomNumberGenerator::getRandomNumber<double>()*
-    (d_indep_limits_to_series_powers_p1[sampled_term].second -
-     d_indep_limits_to_series_powers_p1[sampled_term].first) +
-    d_indep_limits_to_series_powers_p1[sampled_term].first;
+    (Utility::get<SECOND>(d_indep_limits_to_series_powers_p1[sampled_term]) -
+     Utility::get<FIRST>(d_indep_limits_to_series_powers_p1[sampled_term]) ) +
+    Utility::get<FIRST>(d_indep_limits_to_series_powers_p1[sampled_term]);
 
   double sample;
 
@@ -254,7 +255,7 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
-  return IQT::initializeQuantity( d_indep_limits_to_series_powers_p1.front().second );
+  return IQT::initializeQuantity( Utility::get<SECOND>(d_indep_limits_to_series_powers_p1.front()) );
 }
 
 // Return the lower bound of the distribution independent variable
@@ -262,7 +263,7 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return IQT::initializeQuantity( d_indep_limits_to_series_powers_p1.front().first );
+  return IQT::initializeQuantity( Utility::get<FIRST>(d_indep_limits_to_series_powers_p1.front()) );
 }
 
 // Return the distribution type
@@ -285,8 +286,8 @@ template<typename IndependentUnit, typename DependentUnit>
 void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
   os << "{" << d_coefficients
-     << "," << d_indep_limits_to_series_powers_p1.front().first
-     << "," << d_indep_limits_to_series_powers_p1.front().second
+     << "," << Utility::get<FIRST>(d_indep_limits_to_series_powers_p1.front())
+     << "," << Utility::get<SECOND>(d_indep_limits_to_series_powers_p1.front())
      << "}";
 }
 
@@ -397,10 +398,10 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isEqual(
  const UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_coefficients == other.d_coefficients &&
-    d_indep_limits_to_series_powers_p1.front().first ==
-    other.d_indep_limits_to_series_powers_p1.front().first &&
-    d_indep_limits_to_series_powers_p1.front().second ==
-    other.d_indep_limits_to_series_powers_p1.front().second;
+    Utility::get<FIRST>(d_indep_limits_to_series_powers_p1.front()) ==
+    Utility::get<FIRST>(other.d_indep_limits_to_series_powers_p1.front()) &&
+    Utility::get<SECOND>(d_indep_limits_to_series_powers_p1.front()) ==
+    Utility::get<SECOND>(other.d_indep_limits_to_series_powers_p1.front());
 }
 
 // Initialize the distribution
@@ -415,9 +416,9 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::initializeD
 
   for( unsigned i = 0; i < d_coefficients.size(); ++i )
   {
-    d_indep_limits_to_series_powers_p1[i].first =
+    Utility::get<FIRST>(d_indep_limits_to_series_powers_p1[i]) =
       min_indep_limit_to_term_power_p1;
-    d_indep_limits_to_series_powers_p1[i].second =
+    Utility::get<SECOND>(d_indep_limits_to_series_powers_p1[i]) =
       max_indep_limit_to_term_power_p2;
 
     min_indep_limit_to_term_power_p1 *= getRawQuantity( max_indep_limit );
@@ -430,8 +431,8 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::initializeD
   for( unsigned i = 0; i < d_coefficients.size(); ++i )
   {
     d_term_sampling_cdf[i] = d_coefficients[i]/(i+1u)*
-      (d_indep_limits_to_series_powers_p1[i].second -
-       d_indep_limits_to_series_powers_p1[i].first);
+      (Utility::get<SECOND>(d_indep_limits_to_series_powers_p1[i]) -
+       Utility::get<FIRST>(d_indep_limits_to_series_powers_p1[i]));
 
     if( i > 0 )
       d_term_sampling_cdf[i] += d_term_sampling_cdf[i-1];
@@ -521,9 +522,9 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::canDepVarBe
 {
   if( d_coefficients[0] == 0 )
   {
-    if( d_indep_limits_to_series_powers_p1.front().first == 0.0 )
+    if( Utility::get<FIRST>(d_indep_limits_to_series_powers_p1.front()) == 0.0 )
       return true;
-    else if( d_indep_limits_to_series_powers_p1.front().second == 0.0 )
+    else if( Utility::get<SECOND>(d_indep_limits_to_series_powers_p1.front()) == 0.0 )
       return true;
     else
       return false;
