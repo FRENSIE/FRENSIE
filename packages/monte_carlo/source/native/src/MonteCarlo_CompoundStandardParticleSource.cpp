@@ -24,7 +24,8 @@ namespace MonteCarlo{
 CompoundStandardParticleSource::CompoundStandardParticleSource(
     const Teuchos::Array<std::shared_ptr<StandardParticleSource> >& sources,
     const Teuchos::Array<double>& source_sampling_weights )
-  : d_sources( sources.size() )
+  : ParticleSource(),
+    d_sources( sources.size() )
 {
   // Make sure that every source has a sampling weight
   testPrecondition( sources.size() == source_sampling_weights.size() );
@@ -32,35 +33,41 @@ CompoundStandardParticleSource::CompoundStandardParticleSource(
   // Create the array of sources
   double total_weight = 0.0;
 
-  for( unsigned i = 0; i < sources.size(); ++i )
+  for( size_t i = 0; i < sources.size(); ++i )
   {
     total_weight += source_sampling_weights[i];
 
-    d_sources[i].first = sources[i];
-    d_sources[i].second = total_weight;
+    Utility::get<0>(d_sources[i]) = sources[i];
+    Utility::get<1>(d_sources[i]) = total_weight;
   }
 
   // Normalize the CDF
-  for( unsigned i = 0; i < sources.size(); ++i )
-    d_sources[i].second /= total_weight;
+  for( size_t i = 0; i < sources.size(); ++i )
+    Utility::get<1>(d_sources[i]) /= total_weight;
 
   // Make sure that the CDF has been normalized correctly
-  testPostcondition( d_sources.back().second == 1.0 );
+  testPostcondition( Utility::get<1>(d_sources.back()) == 1.0 );
+}
+
+// Get the source id
+ModuleTraits::InternalROIHandle CompoundStandardParticleSource::getId() const
+{
+  return ModuleTraits::reserved_internal_roi_handle;
 }
 
 // Enable thread support
 /*! \details Only the master thread should call this method
  */
 void CompoundStandardParticleSource::enableThreadSupport(
-                                                       const unsigned threads )
+                                                         const size_t threads )
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure a valid number of threads has been requested
   testPrecondition( threads > 0 );
 
-  for( unsigned i = 0; i < d_sources.size(); ++i )
-    d_sources[i].first->enableThreadSupport( threads );
+  for( size_t i = 0; i < d_sources.size(); ++i )
+    Utility::get<0>(d_sources[i])->enableThreadSupport( threads );
 }
 
 // Reset the source data
@@ -71,8 +78,8 @@ void CompoundStandardParticleSource::resetData()
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
-  for( unsigned i = 0; i < d_sources.size(); ++i )
-    d_sources[i].first->resetData();
+  for( size_t i = 0; i < d_sources.size(); ++i )
+    Utility::get<0>(d_sources[i])->resetData();
 }
 
 // Reduce the source data
@@ -85,8 +92,8 @@ void CompoundStandardParticleSource::reduceData(
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
-  for( unsigned i = 0; i < d_sources.size(); ++i )
-    d_sources[i].first->reduceData( comm, root_process );
+  for( size_t i = 0; i < d_sources.size(); ++i )
+    Utility::get<0>(d_sources[i])->reduceData( comm, root_process );
 }
 
 // Export the source data
@@ -100,21 +107,8 @@ void CompoundStandardParticleSource::exportData(
   // Make sure the hdf5 file is valid
   testPrecondition( hdf5_file.get() != NULL );
 
-  for( unsigned i = 0; i < d_sources.size(); ++i )
-    d_sources[i].first->exportData( hdf5_file );
-
-  // Open the source hdf5 file
-  SourceHDF5FileHandler source_hdf5_file( hdf5_file );
-
-  // Set the number of trials
-  unsigned long long trials = this->getNumberOfTrials();
-
-  source_hdf5_file.setNumberOfDefaultSourceSamplingTrials( trials );
-
-  // Set the number of samples
-  unsigned long long samples = this->getNumberOfSamples();
-
-  source_hdf5_file.setNumberOfDefaultSourceSamples( samples );
+  for( size_t i = 0; i < d_sources.size(); ++i )
+    Utility::get<0>(d_sources[i])->exportData( hdf5_file );
 }
 
 // Print a summary of the source data
@@ -125,26 +119,9 @@ void CompoundStandardParticleSource::printSummary( std::ostream& os ) const
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
-  // Print the compound source summary
-  this->printStandardSummary( "Compound Standard Source",
-                              this->getNumberOfTrials(),
-                              this->getNumberOfSamples(),
-                              this->getSamplingEfficiency(),
-                              os );
-
   // Print the individual source summaries
-  for( unsigned i = 0; i < d_sources.size(); ++i )
-  {
-    std::ostringstream oss;
-    oss << "Standard Source " << d_sources[i].first->getId();
-
-    // Print the compound source summary
-    this->printStandardSummary( oss.str(),
-                                d_sources[i].first->getNumberOfTrials(),
-                                d_sources[i].first->getNumberOfSamples(),
-                                d_sources[i].first->getSamplingEfficiency(),
-                                os );
-  }
+  for( size_t i = 0; i < d_sources.size(); ++i )
+    Utility::get<0>(d_sources[i])->printSummary( os );
 }
 
 // Sample a particle state from the source
@@ -160,28 +137,48 @@ void CompoundStandardParticleSource::sampleParticleState(
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   // Sample the source that will be sampled from
-  Teuchos::Array<Utility::Pair<std::shared_ptr<StandardParticleSource>,
-			       double> >::iterator
-    selected_source = Utility::Search::binaryUpperBound<Utility::SECOND>(
-							d_sources.begin(),
+  StandardSourceWeightPairArray::iterator selected_source =
+    Utility::Search::binaryUpperBound<Utility::SECOND>( d_sources.begin(),
 							d_sources.end(),
 							random_number );
   // Sample from the source
-  selected_source->first->sampleParticleState( bank, history );
+  Utility::get<0>(*selected_source)->sampleParticleState( bank, history );
 }
 
 // Return the number of sampling trials
 /*! \details Only the master thread should call this method.
  */
-unsigned long long CompoundStandardParticleSource::getNumberOfTrials() const
+ModuleTraits::InternalCounter
+CompoundStandardParticleSource::getNumberOfTrials() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
-  unsigned long long trials = 0ull;
+  ModuleTraits::InternalCounter trials = 0;
 
-  for( unsigned i = 0; i < d_sources.size(); ++i )
-    trials += d_sources[i].first->getNumberOfTrials();
+  for( size_t i = 0; i < d_sources.size(); ++i )
+    trials += Utility::get<0>(d_sources[i])->getNumberOfTrials();
+
+  return trials;
+}
+
+// Return the number of sampling trials in the phase space dimension
+/*! \details Only the master thread should call this method.
+ */
+ModuleTraits::InternalCounter
+CompoundStandardParticleSource::getNumberOfDimensionTrials(
+                                    const PhaseSpaceDimension dimension ) const
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+
+  ModuleTraits::InternalCounter trials = 0;
+
+  for( size_t i = 0; i < d_sources.size(); ++i )
+  {
+    trials +=
+      Utility::get<0>(d_sources[i])->getNumberOfDimensionTrials( dimension );
+  }
 
   return trials;
 }
@@ -189,16 +186,37 @@ unsigned long long CompoundStandardParticleSource::getNumberOfTrials() const
 // Return the number of samples
 /*! \details Only the master thread should call this method.
  */
-unsigned long long
+ModuleTraits::InternalCounter
 CompoundStandardParticleSource::getNumberOfSamples() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
-  unsigned long long samples = 0ull;
+  ModuleTraits::InternalCounter samples = 0;
 
-  for( unsigned i = 0; i < d_sources.size(); ++i )
-    samples += d_sources[i].first->getNumberOfSamples();
+  for( size_t i = 0; i < d_sources.size(); ++i )
+    samples += Utility::get<0>(d_sources[i])->getNumberOfSamples();
+
+  return samples;
+}
+
+// Return the number of samples in the phase space dimension
+/*! \details Only the master thread should call this method.
+ */
+ModuleTraits::InternalCounter
+CompoundStandardParticleSource::getNumberOfDimensionSamples(
+                                    const PhaseSpaceDimension dimension ) const
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+
+  ModuleTraits::InternalCounter samples = 0;
+
+  for( size_t i = 0; i < d_sources.size(); ++i )
+  {
+    samples +=
+      Utility::get<0>(d_sources[i])->getNumberOfDimensionSamples( dimension );
+  }
 
   return samples;
 }
@@ -212,10 +230,29 @@ double CompoundStandardParticleSource::getSamplingEfficiency() const
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
   // Get the number of trials performed by each source
-  unsigned long long trials = this->getNumberOfTrials();
-  unsigned long long samples = this->getNumberOfSamples();
+  ModuleTraits::InternalCounter trials = this->getNumberOfTrials();
+  ModuleTraits::InternalCounter samples = this->getNumberOfSamples();
 
-  if( trials > 0ull )
+  if( trials > 0 )
+    return static_cast<double>( samples )/trials;
+  else
+    return 1.0;
+}
+
+//! Return the sampling efficiency in the phase space dimension
+double CompoundStandardParticleSource::getDimensionSamplingEfficiency(
+                                    const PhaseSpaceDimension dimension ) const
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+
+  // Get the number of trials performed by each source
+  ModuleTraits::InternalCounter trials =
+    this->getNumberOfDimensionTrials( dimension );
+  ModuleTraits::InternalCounter samples =
+    this->getNumberOfDimensionSamples( dimension );
+
+  if( trials > 0 )
     return static_cast<double>( samples )/trials;
   else
     return 1.0;

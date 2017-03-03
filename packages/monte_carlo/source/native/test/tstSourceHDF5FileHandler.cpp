@@ -16,7 +16,6 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_HDF5FileHandler.hpp"
@@ -29,42 +28,6 @@ const std::string hdf5_file_name( "test_source.h5" );
 
 //---------------------------------------------------------------------------//
 // Tests.
-//---------------------------------------------------------------------------//
-// Check that the handler can be constructed
-TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, constructor_ownership_rw )
-{
-  std::shared_ptr<MonteCarlo::SourceHDF5FileHandler> file_handler;
-
-  // Create a handler with Read/Write ops
-  TEST_NOTHROW( file_handler.reset(
-                   new MonteCarlo::SourceHDF5FileHandler( hdf5_file_name ) ) );
-
-  // Make sure setter methods work
-  TEST_NOTHROW( file_handler->setNumberOfSourceSamplingTrials( 0, 0ull ) );
-  TEST_NOTHROW( file_handler->setNumberOfDefaultSourceSamplingTrials( 0ull ) );
-  TEST_NOTHROW( file_handler->setNumberOfSourceSamples( 0, 0ull ) );
-  TEST_NOTHROW( file_handler->setNumberOfDefaultSourceSamples( 0ull ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the handler can be constructed
-TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, constructor_sharing )
-{
-  std::shared_ptr<Utility::HDF5FileHandler> shared_handler(
-                                                new Utility::HDF5FileHandler );
-
-  shared_handler->openHDF5FileAndOverwrite( hdf5_file_name );
-
-  std::shared_ptr<MonteCarlo::SourceHDF5FileHandler> source_file_handler(
-                     new MonteCarlo::SourceHDF5FileHandler( shared_handler ) );
-
-  // Make sure setter methods work
-  TEST_NOTHROW( source_file_handler->setNumberOfSourceSamplingTrials( 0, 0ull ) );
-  TEST_NOTHROW( source_file_handler->setNumberOfDefaultSourceSamplingTrials( 0ull ) );
-  TEST_NOTHROW( source_file_handler->setNumberOfSourceSamples( 0, 0ull ) );
-  TEST_NOTHROW( source_file_handler->setNumberOfDefaultSourceSamples( 0ull ) );
-}
-
 //---------------------------------------------------------------------------//
 // Check that source trials can be set
 TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, setNumberOfSourceSamplingTrials )
@@ -81,20 +44,6 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, setNumberOfSourceSamplingTrials )
 }
 
 //---------------------------------------------------------------------------//
-// Check that default source trials can be set
-TEUCHOS_UNIT_TEST( SourceHDF5FileHandler,
-                   setNumberOfDefaultSourceSamplingTrials )
-{
-  MonteCarlo::SourceHDF5FileHandler file_handler( hdf5_file_name );
-
-  file_handler.setNumberOfDefaultSourceSamplingTrials( 100000ull );
-
-
-  TEST_EQUALITY_CONST( file_handler.getNumberOfDefaultSourceSamplingTrials(),
-                       100000ull );
-}
-
-//---------------------------------------------------------------------------//
 // Check that source samples can be set
 TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, setNumberOfSourceSamples )
 {
@@ -108,16 +57,111 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, setNumberOfSourceSamples )
 }
 
 //---------------------------------------------------------------------------//
-// Check that default source samples can be set
-TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, setNumberOfDefaultSourceSamples )
+// Check that the number of source dimension sampling trials can be set
+TEUCHOS_UNIT_TEST( SourceHDF5FileHandler,
+                   setNumberOfSourceDimensionSamplingTrials )
 {
   MonteCarlo::SourceHDF5FileHandler file_handler( hdf5_file_name );
 
-  file_handler.setNumberOfDefaultSourceSamples( 100001ull );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::PRIMARY_SPATIAL_DIMENSION, 100 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::PRIMARY_SPATIAL_DIMENSION, 101 );
 
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::SECONDARY_SPATIAL_DIMENSION, 200 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::SECONDARY_SPATIAL_DIMENSION, 201 );
 
-  TEST_EQUALITY_CONST( file_handler.getNumberOfDefaultSourceSamples(),
-                       100001ull );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::TERTIARY_SPATIAL_DIMENSION, 300 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::TERTIARY_SPATIAL_DIMENSION, 301 );
+
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION, 400 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION, 401 );
+
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION, 500 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION, 501 );
+
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION, 600 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION, 601 );
+  
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::ENERGY_DIMENSION, 700 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::ENERGY_DIMENSION, 701 );
+
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::TIME_DIMENSION, 800 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::TIME_DIMENSION, 801 );
+
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::WEIGHT_DIMENSION, 900 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::WEIGHT_DIMENSION, 901 );
+  
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 100 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 101 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 200 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 201 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 300 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 301 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 400 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 401 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 500 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 501 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 600 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 601 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::ENERGY_DIMENSION ), 700 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::ENERGY_DIMENSION ), 701 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::TIME_DIMENSION ), 800 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::TIME_DIMENSION ), 801 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::WEIGHT_DIMENSION ), 900 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::WEIGHT_DIMENSION ), 901 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of source dimension samples can be set
+TEUCHOS_UNIT_TEST( SourceHDF5FileHandler,
+                   setNumberOfSourceDimensionSamples )
+{
+  MonteCarlo::SourceHDF5FileHandler file_handler( hdf5_file_name );
+
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::PRIMARY_SPATIAL_DIMENSION, 100 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::PRIMARY_SPATIAL_DIMENSION, 101 );
+
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::SECONDARY_SPATIAL_DIMENSION, 200 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::SECONDARY_SPATIAL_DIMENSION, 201 );
+
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::TERTIARY_SPATIAL_DIMENSION, 300 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::TERTIARY_SPATIAL_DIMENSION, 301 );
+
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION, 400 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION, 401 );
+
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION, 500 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION, 501 );
+
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION, 600 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION, 601 );
+  
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::ENERGY_DIMENSION, 700 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::ENERGY_DIMENSION, 701 );
+
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::TIME_DIMENSION, 800 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::TIME_DIMENSION, 801 );
+
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::WEIGHT_DIMENSION, 900 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::WEIGHT_DIMENSION, 901 );
+  
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 100 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 101 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 200 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 201 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 300 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 301 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 400 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 401 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 500 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 501 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 600 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 601 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::ENERGY_DIMENSION ), 700 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::ENERGY_DIMENSION ), 701 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::TIME_DIMENSION ), 800 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::TIME_DIMENSION ), 801 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::WEIGHT_DIMENSION ), 900 );
+  TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::WEIGHT_DIMENSION ), 901 );
 }
 
 //---------------------------------------------------------------------------//
@@ -126,7 +170,6 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, doesSourceExist )
 {
   MonteCarlo::SourceHDF5FileHandler file_handler( hdf5_file_name );
 
-  // Make sure setter methods work
   file_handler.setNumberOfSourceSamplingTrials( 0, 0ull );
   file_handler.setNumberOfSourceSamples( 0, 0ull );
 
@@ -136,48 +179,28 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, doesSourceExist )
   TEST_ASSERT( file_handler.doesSourceExist( 0 ) );
   TEST_ASSERT( file_handler.doesSourceExist( 1 ) );
   TEST_ASSERT( !file_handler.doesSourceExist( 2 ) );
-
 }
 
 //---------------------------------------------------------------------------//
-// Check that a read-only handler can be constructed
-TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, constructor_ownership_r )
+// Check if a source dimension has data
+TEUCHOS_UNIT_TEST( SourceHDF5FileHandler, doesSourceDimensionExist )
 {
-  std::shared_ptr<MonteCarlo::SourceHDF5FileHandler> file_handler;
+  MonteCarlo::SourceHDF5FileHandler file_handler( hdf5_file_name );
 
-  // Create a handler with Read/Write ops
-  TEST_NOTHROW( file_handler.reset(
-                   new MonteCarlo::SourceHDF5FileHandler( hdf5_file_name ) ) );
+  file_handler.setNumberOfSourceSamplingTrials( 0, 1 );
+  file_handler.setNumberOfSourceSamples( 0, 1 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 0, MonteCarlo::ENERGY_DIMENSION, 10 );
+  file_handler.setNumberOfSourceDimensionSamples( 0, MonteCarlo::ENERGY_DIMENSION, 10 );
 
-  // Make sure setter methods work
-  TEST_NOTHROW( file_handler->setNumberOfSourceSamplingTrials( 0, 0ull ) );
-  TEST_NOTHROW( file_handler->setNumberOfDefaultSourceSamplingTrials( 0ull ) );
-  TEST_NOTHROW( file_handler->setNumberOfSourceSamples( 0, 0ull ) );
-  TEST_NOTHROW( file_handler->setNumberOfDefaultSourceSamples( 0ull ) );
+  file_handler.setNumberOfSourceSamplingTrials( 1, 2 );
+  file_handler.setNumberOfSourceSamples( 1, 2 );
+  file_handler.setNumberOfSourceDimensionSamplingTrials( 1, MonteCarlo::TIME_DIMENSION, 20 );
+  file_handler.setNumberOfSourceDimensionSamples( 1, MonteCarlo::TIME_DIMENSION, 20 );
 
-  file_handler.reset();
-
-  // Create a handler with Read-only ops
-  TEST_NOTHROW( file_handler.reset(
-           new MonteCarlo::SourceHDF5FileHandler( hdf5_file_name, MonteCarlo::SourceHDF5FileHandler::READ_ONLY_SOURCE_HDF5_FILE ) ) );
-
-  // Make sure the file has not been overwritten
-  TEST_ASSERT( file_handler->doesSourceExist( 0u ) );
-
-  // Make sure setters are disabled
-  TEST_THROW( file_handler->setNumberOfSourceSamplingTrials( 1, 0ull ),
-              std::runtime_error );
-  TEST_THROW( file_handler->setNumberOfDefaultSourceSamplingTrials( 0ull ),
-              std::runtime_error );
-  TEST_THROW( file_handler->setNumberOfSourceSamples( 1, 0ull ),
-              std::runtime_error );
-  TEST_THROW( file_handler->setNumberOfDefaultSourceSamples( 0ull ),
-              std::runtime_error );
-
-  file_handler.reset();
-
-  // Reset the file
-  file_handler.reset( new MonteCarlo::SourceHDF5FileHandler( hdf5_file_name ));
+  TEST_ASSERT( file_handler.doesSourceDimensionExist( 0, MonteCarlo::ENERGY_DIMENSION ) );
+  TEST_ASSERT( !file_handler.doesSourceDimensionExist( 0, MonteCarlo::TIME_DIMENSION ) );
+  TEST_ASSERT( !file_handler.doesSourceDimensionExist( 1, MonteCarlo::ENERGY_DIMENSION ) );
+  TEST_ASSERT( file_handler.doesSourceDimensionExist( 1, MonteCarlo::TIME_DIMENSION ) );
 }
 
 //---------------------------------------------------------------------------//

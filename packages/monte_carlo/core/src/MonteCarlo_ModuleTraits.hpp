@@ -44,7 +44,7 @@ struct ModuleTraits
   typedef Utility::DistributionTraits::Counter InternalCounter;
 
   //! The invalid ROI handle value
-  static const InternalROIHandle invalid_internal_roi_handle;
+  static const InternalROIHandle reserved_internal_roi_handle;
 
   //! The invalid estimator handle value
   static const InternalEventObserverHandle invalid_internal_event_observer_handle;

@@ -7,40 +7,40 @@ TARGET_LINK_LIBRARIES(tstSourceHDF5FileHandler monte_carlo_source_native)
 ADD_TEST(SourceHDF5FileHandler_test tstSourceHDF5FileHandler)
 SET_PROPERTY(TEST SourceHDF5FileHandler_test PROPERTY LABELS monte_carlo_source_native)
 
-ADD_EXECUTABLE(tstParticleSourceDimensionClassType
-  tstParticleSourceDimensionClassType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleSourceDimensionClassType monte_carlo_source_native)
-ADD_TEST(ParticleSourceDimensionClassType_test tstParticleSourceDimensionClassType)
-SET_PROPERTY(TEST ParticleSourceDimensionClassType_test PROPERTY LABELS monte_carlo_source_native)
+# ADD_EXECUTABLE(tstParticleSourceDimensionClassType
+#   tstParticleSourceDimensionClassType.cpp
+#   ${FRENSIE_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstParticleSourceDimensionClassType monte_carlo_source_native)
+# ADD_TEST(ParticleSourceDimensionClassType_test tstParticleSourceDimensionClassType)
+# SET_PROPERTY(TEST ParticleSourceDimensionClassType_test PROPERTY LABELS monte_carlo_source_native)
 
-ADD_EXECUTABLE(tstParticleSourceDimensionType
-  tstParticleSourceDimensionType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleSourceDimensionType monte_carlo_source_native)
-ADD_TEST(ParticleSourceDimensionType_test tstParticleSourceDimensionType)
-SET_PROPERTY(TEST ParticleSourceDimensionType_test PROPERTY LABELS monte_carlo_source_native)
+# ADD_EXECUTABLE(tstParticleSourceDimensionType
+#   tstParticleSourceDimensionType.cpp
+#   ${FRENSIE_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstParticleSourceDimensionType monte_carlo_source_native)
+# ADD_TEST(ParticleSourceDimensionType_test tstParticleSourceDimensionType)
+# SET_PROPERTY(TEST ParticleSourceDimensionType_test PROPERTY LABELS monte_carlo_source_native)
 
-ADD_EXECUTABLE(tstParticleSourcePhaseSpacePoint
-  tstParticleSourcePhaseSpacePoint.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleSourcePhaseSpacePoint monte_carlo_source_native)
-ADD_TEST(ParticleSourcePhaseSpacePoint_test tstParticleSourcePhaseSpacePoint)
-SET_PROPERTY(TEST ParticleSourcePhaseSpacePoint_test PROPERTY LABELS monte_carlo_source_native)
+# ADD_EXECUTABLE(tstParticleSourcePhaseSpacePoint
+#   tstParticleSourcePhaseSpacePoint.cpp
+#   ${FRENSIE_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstParticleSourcePhaseSpacePoint monte_carlo_source_native)
+# ADD_TEST(ParticleSourcePhaseSpacePoint_test tstParticleSourcePhaseSpacePoint)
+# SET_PROPERTY(TEST ParticleSourcePhaseSpacePoint_test PROPERTY LABELS monte_carlo_source_native)
 
-ADD_EXECUTABLE(tstParticleSourceDimensionTraits
-  tstParticleSourceDimensionTraits.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleSourceDimensionTraits monte_carlo_source_native)
-ADD_TEST(ParticleSourceDimensionTraits_test tstParticleSourceDimensionTraits)
-SET_PROPERTY(TEST ParticleSourceDimensionTraits_test PROPERTY LABELS monte_carlo_source_native)
+# ADD_EXECUTABLE(tstParticleSourceDimensionTraits
+#   tstParticleSourceDimensionTraits.cpp
+#   ${FRENSIE_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstParticleSourceDimensionTraits monte_carlo_source_native)
+# ADD_TEST(ParticleSourceDimensionTraits_test tstParticleSourceDimensionTraits)
+# SET_PROPERTY(TEST ParticleSourceDimensionTraits_test PROPERTY LABELS monte_carlo_source_native)
 
-ADD_EXECUTABLE(tstResponseFunction
-  tstResponseFunction.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstResponseFunction monte_carlo_estimator_native)
-ADD_TEST(ResponseFunction_test tstResponseFunction)
-SET_PROPERTY(TEST ResponseFunction_test PROPERTY LABELS monte_carlo_estimator_native)
+# ADD_EXECUTABLE(tstResponseFunction
+#   tstResponseFunction.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstResponseFunction monte_carlo_estimator_native)
+# ADD_TEST(ResponseFunction_test tstResponseFunction)
+# SET_PROPERTY(TEST ResponseFunction_test PROPERTY LABELS monte_carlo_estimator_native)
 
 # ADD_EXECUTABLE(tstResponseFunctionFactory
 #   tstResponseFunctionFactory.cpp)
@@ -128,68 +128,68 @@ SET_PROPERTY(TEST ResponseFunction_test PROPERTY LABELS monte_carlo_estimator_na
 #   SET_PROPERTY(TEST DistributedParallelCompoundStandardParticleSource_4_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
 # ENDIF()
 
-ADD_EXECUTABLE(tstCachedStateParticleSource
-  tstCachedStateParticleSource.cpp)
-TARGET_LINK_LIBRARIES(tstCachedStateParticleSource monte_carlo_source_native)
-ADD_TEST(CachedStateParticleSource_test tstCachedStateParticleSource)
-SET_PROPERTY(TEST CachedStateParticleSource_test PROPERTY LABELS monte_carlo_source_native)
+# ADD_EXECUTABLE(tstCachedStateParticleSource
+#   tstCachedStateParticleSource.cpp)
+# TARGET_LINK_LIBRARIES(tstCachedStateParticleSource monte_carlo_source_native)
+# ADD_TEST(CachedStateParticleSource_test tstCachedStateParticleSource)
+# SET_PROPERTY(TEST CachedStateParticleSource_test PROPERTY LABELS monte_carlo_source_native)
 
-IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelCachedStateParticleSource_2_test tstCachedStateParticleSource --threads=2)
-  ADD_TEST(SharedParallelCachedStateParticleSource_4_test tstCachedStateParticleSource --threads=4)
-  SET_PROPERTY(TEST SharedParallelCachedStateParticleSource_2_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
-  SET_PROPERTY(TEST SharedParallelCachedStateParticleSource_4_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
-ENDIF()
+# IF(${FRENSIE_ENABLE_OPENMP})
+#   ADD_TEST(SharedParallelCachedStateParticleSource_2_test tstCachedStateParticleSource --threads=2)
+#   ADD_TEST(SharedParallelCachedStateParticleSource_4_test tstCachedStateParticleSource --threads=4)
+#   SET_PROPERTY(TEST SharedParallelCachedStateParticleSource_2_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
+#   SET_PROPERTY(TEST SharedParallelCachedStateParticleSource_4_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
+# ENDIF()
 
-IF(${FRENSIE_ENABLE_MPI})
-  ADD_EXECUTABLE(tstDistributedParallelCachedStateParticleSource
-  tstDistributedCachedStateParticleSource.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedParallelCachedStateParticleSource monte_carlo_source_native)
-  ADD_TEST(DistributedParallelCachedStateParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedParallelCachedStateParticleSource)
-  ADD_TEST(DistributedParallelCachedStateParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedParallelCachedStateParticleSource)
-  ADD_TEST(DistributedParallelCachedStateParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedParallelCachedStateParticleSource)
-  SET_PROPERTY(TEST DistributedParallelCachedStateParticleSource_1_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
-  SET_PROPERTY(TEST DistributedParallelCachedStateParticleSource_2_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
-  SET_PROPERTY(TEST DistributedParallelCachedStateParticleSource_4_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
-ENDIF()
+# IF(${FRENSIE_ENABLE_MPI})
+#   ADD_EXECUTABLE(tstDistributedParallelCachedStateParticleSource
+#   tstDistributedCachedStateParticleSource.cpp)
+#   TARGET_LINK_LIBRARIES(tstDistributedParallelCachedStateParticleSource monte_carlo_source_native)
+#   ADD_TEST(DistributedParallelCachedStateParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedParallelCachedStateParticleSource)
+#   ADD_TEST(DistributedParallelCachedStateParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedParallelCachedStateParticleSource)
+#   ADD_TEST(DistributedParallelCachedStateParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedParallelCachedStateParticleSource)
+#   SET_PROPERTY(TEST DistributedParallelCachedStateParticleSource_1_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
+#   SET_PROPERTY(TEST DistributedParallelCachedStateParticleSource_2_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
+#   SET_PROPERTY(TEST DistributedParallelCachedStateParticleSource_4_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
+# ENDIF()
 
-IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstStandardParticleSourceFactory_DagMC
-    tstStandardParticleSourceFactory_DagMC.cpp)
-  TARGET_LINK_LIBRARIES(tstStandardParticleSourceFactory_DagMC monte_carlo_source_native geometry_dagmc)
-  ADD_TEST(StandardParticleSourceFactory_DagMC_test tstStandardParticleSourceFactory_DagMC --test_simple_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_simple_source.xml" --test_complex_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_complex_source.xml" --test_compound_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_compound_source.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
-  SET_PROPERTY(TEST StandardParticleSourceFactory_DagMC_test PROPERTY LABELS monte_carlo_source_native dagmc)
-ENDIF()
+# IF(FRENSIE_ENABLE_DAGMC)
+#   ADD_EXECUTABLE(tstStandardParticleSourceFactory_DagMC
+#     tstStandardParticleSourceFactory_DagMC.cpp)
+#   TARGET_LINK_LIBRARIES(tstStandardParticleSourceFactory_DagMC monte_carlo_source_native geometry_dagmc)
+#   ADD_TEST(StandardParticleSourceFactory_DagMC_test tstStandardParticleSourceFactory_DagMC --test_simple_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_simple_source.xml" --test_complex_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_complex_source.xml" --test_compound_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_compound_source.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
+#   SET_PROPERTY(TEST StandardParticleSourceFactory_DagMC_test PROPERTY LABELS monte_carlo_source_native dagmc)
+# ENDIF()
 
-IF(FRENSIE_ENABLE_ROOT)
-  ADD_EXECUTABLE(tstStandardParticleSourceFactory_Root
-    tstStandardParticleSourceFactory_Root.cpp)
-  TARGET_LINK_LIBRARIES(tstStandardParticleSourceFactory_Root monte_carlo_source_native geometry_root)
-  ADD_TEST(StandardParticleSourceFactory_Root_test tstStandardParticleSourceFactory_Root --test_simple_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_simple_source.xml" --test_complex_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_complex_source.xml" --test_compound_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_compound_source.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml")
-  SET_PROPERTY(TEST StandardParticleSourceFactory_Root_test PROPERTY LABELS monte_carlo_source_native root)
-ENDIF()
+# IF(FRENSIE_ENABLE_ROOT)
+#   ADD_EXECUTABLE(tstStandardParticleSourceFactory_Root
+#     tstStandardParticleSourceFactory_Root.cpp)
+#   TARGET_LINK_LIBRARIES(tstStandardParticleSourceFactory_Root monte_carlo_source_native geometry_root)
+#   ADD_TEST(StandardParticleSourceFactory_Root_test tstStandardParticleSourceFactory_Root --test_simple_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_simple_source.xml" --test_complex_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_complex_source.xml" --test_compound_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_compound_source.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml")
+#   SET_PROPERTY(TEST StandardParticleSourceFactory_Root_test PROPERTY LABELS monte_carlo_source_native root)
+# ENDIF()
 
-ADD_EXECUTABLE(tstSourceModuleInterface_Native
-  tstModuleInterface.cpp)
-TARGET_LINK_LIBRARIES(tstSourceModuleInterface_Native monte_carlo_source_native)
-ADD_TEST(SourceModuleInterface_Native_test tstSourceModuleInterface_Native)
-SET_PROPERTY(TEST SourceModuleInterface_Native_test PROPERTY LABELS monte_carlo_source_native)
+# ADD_EXECUTABLE(tstSourceModuleInterface_Native
+#   tstModuleInterface.cpp)
+# TARGET_LINK_LIBRARIES(tstSourceModuleInterface_Native monte_carlo_source_native)
+# ADD_TEST(SourceModuleInterface_Native_test tstSourceModuleInterface_Native)
+# SET_PROPERTY(TEST SourceModuleInterface_Native_test PROPERTY LABELS monte_carlo_source_native)
 
-IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelSourceModuleInterface_Native_2_test tstSourceModuleInterface_Native --threads=2)
-  ADD_TEST(SharedParallelSourceModuleInterface_Native_4_test tstSourceModuleInterface_Native --threads=4)
-  SET_PROPERTY(TEST SharedParallelSourceModuleInterface_Native_2_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
-  SET_PROPERTY(TEST SharedParallelSourceModuleInterface_Native_4_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
-ENDIF()
+# IF(${FRENSIE_ENABLE_OPENMP})
+#   ADD_TEST(SharedParallelSourceModuleInterface_Native_2_test tstSourceModuleInterface_Native --threads=2)
+#   ADD_TEST(SharedParallelSourceModuleInterface_Native_4_test tstSourceModuleInterface_Native --threads=4)
+#   SET_PROPERTY(TEST SharedParallelSourceModuleInterface_Native_2_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
+#   SET_PROPERTY(TEST SharedParallelSourceModuleInterface_Native_4_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
+# ENDIF()
 
-IF(${FRENSIE_ENABLE_MPI})
-  ADD_EXECUTABLE(tstDistributedParallelSourceModuleInterface_Native
-  tstDistributedModuleInterface.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedParallelSourceModuleInterface_Native monte_carlo_source_native)
-  ADD_TEST(DistributedParallelSourceModuleInterface_Native_1_test ${MPIEXEC} -n 1 tstDistributedParallelSourceModuleInterface_Native)
-  ADD_TEST(DistributedParallelSourceModuleInterface_Native_2_test ${MPIEXEC} -n 2 tstDistributedParallelSourceModuleInterface_Native)
-  ADD_TEST(DistributedParallelSourceModuleInterface_Native_4_test ${MPIEXEC} -n 4 tstDistributedParallelSourceModuleInterface_Native)
-  SET_PROPERTY(TEST DistributedParallelSourceModuleInterface_Native_1_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
-  SET_PROPERTY(TEST DistributedParallelSourceModuleInterface_Native_2_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
-  SET_PROPERTY(TEST DistributedParallelSourceModuleInterface_Native_4_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
-ENDIF()
+# IF(${FRENSIE_ENABLE_MPI})
+#   ADD_EXECUTABLE(tstDistributedParallelSourceModuleInterface_Native
+#   tstDistributedModuleInterface.cpp)
+#   TARGET_LINK_LIBRARIES(tstDistributedParallelSourceModuleInterface_Native monte_carlo_source_native)
+#   ADD_TEST(DistributedParallelSourceModuleInterface_Native_1_test ${MPIEXEC} -n 1 tstDistributedParallelSourceModuleInterface_Native)
+#   ADD_TEST(DistributedParallelSourceModuleInterface_Native_2_test ${MPIEXEC} -n 2 tstDistributedParallelSourceModuleInterface_Native)
+#   ADD_TEST(DistributedParallelSourceModuleInterface_Native_4_test ${MPIEXEC} -n 4 tstDistributedParallelSourceModuleInterface_Native)
+#   SET_PROPERTY(TEST DistributedParallelSourceModuleInterface_Native_1_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
+#   SET_PROPERTY(TEST DistributedParallelSourceModuleInterface_Native_2_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
+#   SET_PROPERTY(TEST DistributedParallelSourceModuleInterface_Native_4_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
+# ENDIF()

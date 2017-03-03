@@ -94,9 +94,9 @@ void PhaseSpaceDimensionDistribution::sampleFromDependentDistributions(
 /*! \details The sampling process will cascade to all of the dependent
  * dimensions as well (they will use the value sampled for this dimension).
  */
-void PhaseSpaceDimensionDistribution::sampleAndRecordTrailsWithCascade(
-                                       PhaseSpacePoint& phase_space_sample,
-                                       DimensionTrialCounterMap& trials ) const
+void PhaseSpaceDimensionDistribution::sampleAndRecordTrialsWithCascade(
+                                           PhaseSpacePoint& phase_space_sample,
+                                           DimensionCounterMap& trials ) const
 {
   // Make sure the trial counter map is valid
   testPrecondition( trials.count( this->getDimension() ) );
@@ -112,8 +112,8 @@ void PhaseSpaceDimensionDistribution::sampleAndRecordTrailsWithCascade(
 
 // Sample from all of the dependent dimensions and record trials
 void PhaseSpaceDimensionDistribution::sampleFromDependentDistributionsAndRecordTrials(
-                                       PhaseSpacePoint& phase_space_sample,
-                                       DimensionTrialCounterMap& trials ) const
+                                           PhaseSpacePoint& phase_space_sample,
+                                           DimensionCounterMap& trials ) const
 {
   DimensionDependentDistributionMap::const_iterator dimension_dep_dist_it =
     d_dependent_dimension_distributions.begin();
@@ -174,12 +174,15 @@ void PhaseSpaceDimensionDistribution::sampleFromDependentDistributionsUsingDimen
 }
 
 // Set the dimension value, weight appropriately and record the trials
-void PhaseSpaceDimensionDistribution::sampleAndRecordTrailsWithCascadeUsingDimensionValue(
+void PhaseSpaceDimensionDistribution::sampleAndRecordTrialsWithCascadeUsingDimensionValue(
                                            PhaseSpacePoint& phase_space_sample,
-                                           DimensionTrialCounterMap& trials,
+                                           DimensionCounterMap& trials,
                                            const PhaseSpaceDimension dimension,
                                            const double dimension_value ) const
 {
+  // Make sure the trial counter map is valid
+  testPrecondition( trials.count( this->getDimension() ) );
+  
   // Check if this is the dimension that should use the specified value instead
   // of sampling (a weight will be calculated and applied if so)
   if( this->getDimension() == dimension )
@@ -187,12 +190,13 @@ void PhaseSpaceDimensionDistribution::sampleAndRecordTrailsWithCascadeUsingDimen
     this->setDimensionValueAndApplyWeight( phase_space_sample,
                                            dimension_value );
 
-    this->sampleFromDependentDistributionsAndRecordTrails( phase_space_sample,
+    this->sampleFromDependentDistributionsAndRecordTrials( phase_space_sample,
                                                            trials );
   }
   else
   {
-    this->sampleAndRecordTrailsWithoutCascade( phase_space_sample, trials );
+    this->sampleAndRecordTrialsWithoutCascade(
+               phase_space_sample, trials.find(this->getDimension())->second );
 
     this->sampleFromDependentDistributionsAndRecordTrialsUsingDimensionValue(
                                                             phase_space_sample,
@@ -205,7 +209,7 @@ void PhaseSpaceDimensionDistribution::sampleAndRecordTrailsWithCascadeUsingDimen
 // Sample from all of the dependent dims. and record trials using dim. value
 void PhaseSpaceDimensionDistribution::sampleFromDependentDistributionsAndRecordTrialsUsingDimensionValue(
                                            PhaseSpacePoint& phase_space_sample,
-                                           DimensionTrailCounterMap& trials,
+                                           DimensionCounterMap& trials,
                                            const PhaseSpaceDimension dimension,
                                            const double dimension_value ) const
 {
@@ -233,7 +237,7 @@ void PhaseSpaceDimensionDistribution::addDependentDimension(
   testPrecondition( dependent_dimension->isDependentOnDimension( this->getDimension() ) );
   // Make sure that the dependent dimension is unique
   testPrecondition( this->getDimension() != dependent_dimension->getDimension() );
-  testPrecondition( !d_dependent_dimensions.count( dependent_dimension->getDimension() ) );
+  testPrecondition( !d_dependent_dimension_distributions.count( dependent_dimension->getDimension() ) );
 
   // Add the dependent distribution to the map
   d_dependent_dimension_distributions[dependent_dimension->getDimension()] =

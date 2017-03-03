@@ -13,7 +13,7 @@ namespace MonteCarlo{
 
 // Initialize static member data
 const ModuleTraits::InternalROIHandle
-ModuleTraits::invalid_internal_roi_handle =
+ModuleTraits::reserved_internal_roi_handle =
   std::numeric_limits<ModuleTraits::InternalROIHandle>::max();
 
 const ModuleTraits::InternalEventObserverHandle

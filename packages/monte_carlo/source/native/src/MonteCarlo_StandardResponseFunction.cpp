@@ -22,7 +22,7 @@ StandardResponseFunction::StandardResponseFunction(
 }
 
 // Return the id
-unsigned StandardResponseFunction::getId() const
+ModuleTraits::InternalROIHandle StandardResponseFunction::getId() const
 {
   return d_particle_dist->getId();
 }

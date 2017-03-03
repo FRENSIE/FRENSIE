@@ -67,7 +67,7 @@ PhaseSpaceDimension convertPhaseSpaceDimensionNameToEnum(
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: Dimension name " << dimension_name << " is not "
+                     "Dimension name " << dimension_name << " is not "
                      "supported!" );
   }
 }
@@ -98,7 +98,7 @@ PhaseSpaceDimension convertUnsignedToPhaseSpaceDimensionEnum(
     return WEIGHT_DIMENSION;
   default:
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: Cannot convert " << dimension << " to a "
+                     "Cannot convert " << dimension << " to a "
                      "PhaseSpaceDimension!" );
   }
 }
@@ -129,7 +129,7 @@ std::string convertPhaseSpaceDimensionEnumToString(
     return "Weight Dimension";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: An unknown PhaseSpaceDimension was "
+                     "An unknown PhaseSpaceDimension was "
                      "encountered (" << (unsigned)dimension << ")!" );
   }
 }
@@ -149,9 +149,9 @@ std::string convertPhaseSpaceDimensionEnumToBasicString(
   case PRIMARY_DIRECTIONAL_DIMENSION:
     return PHASE_SPACE_DIMENSION_STRING( PRIMARY_DIRECTIONAL_DIMENSION );
   case SECONDARY_DIRECTIONAL_DIMENSION:
-    return PHASE_SPACE_DIMENSION_STRING( SECONDARY_SPATIAL_DIMENSION );
+    return PHASE_SPACE_DIMENSION_STRING( SECONDARY_DIRECTIONAL_DIMENSION );
   case TERTIARY_DIRECTIONAL_DIMENSION:
-    return PHASE_SPACE_DIMENSION_STRING( TERTIARY_SPATIAL_DIMENSION );
+    return PHASE_SPACE_DIMENSION_STRING( TERTIARY_DIRECTIONAL_DIMENSION );
   case ENERGY_DIMENSION:
     return PHASE_SPACE_DIMENSION_STRING( ENERGY_DIMENSION );
   case TIME_DIMENSION:
@@ -160,8 +160,9 @@ std::string convertPhaseSpaceDimensionEnumToBasicString(
     return PHASE_SPACE_DIMENSION_STRING( WEIGHT_DIMENSION );
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: An unknown PhaseSpaceDimension was "
+                     "An unknown PhaseSpaceDimension was "
                      "encountered (" << (unsigned)dimension << ")!" );
+  }
 }
 
 // Convert the spatial dimension to the equivalent phase space dimension
@@ -194,7 +195,7 @@ PhaseSpaceDimension convertSpatialDimensionToPhaseSpaceDimension(
   else
   {
     THROW_EXCEPTION( std::logic_error,
-                     "Error: An unknown spatial dimension ("
+                     "An unknown spatial dimension ("
                      << (unsigned)spatial_dimension << ") was encountered!" );
   }
 }
@@ -225,7 +226,7 @@ PhaseSpaceDimension convertDirectionalDimensionToPhaseSpaceDimension(
   else
   {
     THROW_EXCEPTION( std::logic_error,
-                     "Error: An unknown directional dimension ("
+                     "An unknown directional dimension ("
                      << (unsigned)directional_dimension <<
                      ") was encountered!" );
   }

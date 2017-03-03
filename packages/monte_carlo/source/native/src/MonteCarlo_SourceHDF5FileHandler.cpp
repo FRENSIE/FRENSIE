@@ -17,7 +17,7 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const std::string SourceHDF5FileHandler::source_group_loc_name( "/Source/" );
+const std::string SourceHDF5FileHandler::source_group_root_loc_name( "/Source/" );
 
 // Constructor (file ownership)
 /*! \details The MonteCarlo::HDF5FileHandler::FileOps enum will determine how 
@@ -25,8 +25,8 @@ const std::string SourceHDF5FileHandler::source_group_loc_name( "/Source/" );
  * set methods will result in an exception.
  */
 SourceHDF5FileHandler::SourceHDF5FileHandler(
-                                             const std::string& hdf5_file_name,
-                                             const SourceHDF5FileOps file_op )
+                           const std::string& hdf5_file_name,
+                           const MonteCarlo::HDF5FileHandler::FileOps file_op )
   : MonteCarlo::HDF5FileHandler( hdf5_file_name, file_op )
 { /* ... */ }
 
@@ -38,16 +38,16 @@ SourceHDF5FileHandler::SourceHDF5FileHandler(
 
 // Check if a source exists
 bool SourceHDF5FileHandler::doesSourceExist(
-                                      const InternalROIHandle source_id ) const
+                        const ModuleTraits::InternalROIHandle source_id ) const
 {
   return this->getHDF5File().doesGroupExist(
                                    this->getSourceGroupLocation( source_id ) );
 }
 
 // Check if a source dimension exists
-bool SourceHDF5FileHandler::doesSourceDimenionExist(
-                                    const InternalROIHandle source_id,
-                                    const PhaseSpaceDimension dimension ) const
+bool SourceHDF5FileHandler::doesSourceDimensionExist(
+                               const ModuleTraits::InternalROIHandle source_id,
+                               const PhaseSpaceDimension dimension ) const
 {
   return this->getHDF5File().doesGroupExist(
                this->getSourceDimensionGroupLocation( source_id, dimension ) );
@@ -55,8 +55,8 @@ bool SourceHDF5FileHandler::doesSourceDimenionExist(
 
 // Set the number of source sampling trials
 void SourceHDF5FileHandler::setNumberOfSourceSamplingTrials(
-                                             const InternalROIHandle source_id,
-                                             const InternalCounter trials )
+                            const ModuleTraits::InternalROIHandle source_id,
+                            const Utility::DistributionTraits::Counter trials )
 {
   std::string group_location =
     this->getSourceGroupLocation( source_id );
@@ -66,24 +66,25 @@ void SourceHDF5FileHandler::setNumberOfSourceSamplingTrials(
                                             trials, group_location, "trials" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the number of trials for "
+			   "Unable to set the number of trials for "
                            "source " << source_id << "!" );
 }
 
 // Get the number of source sampling trials
-TrialCounter SourceHDF5FileHandler::getNumberOfSourceSamplingTrials(
-                                      const InternalROIHandle source_id ) const
+Utility::DistributionTraits::Counter
+SourceHDF5FileHandler::getNumberOfSourceSamplingTrials(
+                        const ModuleTraits::InternalROIHandle source_id ) const
 {
   std::string group_location = this->getSourceGroupLocation( source_id );
 
-  InternalCounter trials;
+  Utility::DistributionTraits::Counter trials;
 
   try{
     this->getHDF5File().readValueFromGroupAttribute(
                                             trials, group_location, "trials" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the number of trials for "
+			   "Unable to get the number of trials for "
                            "source" << source_id << "!" );
 
   return trials;
@@ -92,8 +93,8 @@ TrialCounter SourceHDF5FileHandler::getNumberOfSourceSamplingTrials(
 
 // Set the number of source samples
 void SourceHDF5FileHandler::setNumberOfSourceSamples(
-                                             const InternalROIHandle source_id,
-                                             const InternalCounter samples )
+                           const ModuleTraits::InternalROIHandle source_id,
+                           const Utility::DistributionTraits::Counter samples )
 {
   std::string group_location =
     this->getSourceGroupLocation( source_id );
@@ -103,25 +104,26 @@ void SourceHDF5FileHandler::setNumberOfSourceSamples(
                                           samples, group_location, "samples" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the number of samples for "
+			   "Unable to set the number of samples for "
                            "source " << source_id << "!" );
 }
 
 // Get the number of source samples
-InternalCounter SourceHDF5FileHandler::getNumberOfSourceSamples(
-                                      const InternalROIHandle source_id ) const
+Utility::DistributionTraits::Counter
+SourceHDF5FileHandler::getNumberOfSourceSamples(
+                        const ModuleTraits::InternalROIHandle source_id ) const
 {
   std::string group_location =
     this->getSourceGroupLocation( source_id );
 
-  InternalCounter samples;
+  Utility::DistributionTraits::Counter samples;
 
   try{
     this->getHDF5File().readValueFromGroupAttribute(
                                           samples, group_location, "samples" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the number of samples for "
+			   "Unable to get the number of samples for "
                            "source " << source_id << "!" );
 
   return samples;
@@ -129,9 +131,9 @@ InternalCounter SourceHDF5FileHandler::getNumberOfSourceSamples(
   
 // Set the number of sampling trials in the source phase space dimension
 void SourceHDF5FileHandler::setNumberOfSourceDimensionSamplingTrials(
-                                           const InternalROIHandle source_id,
-                                           const PhaseSpaceDimension dimension,
-                                           const InternalCounter trials )
+                            const ModuleTraits::InternalROIHandle source_id,
+                            const PhaseSpaceDimension dimension,
+                            const Utility::DistributionTraits::Counter trials )
 {
   std::string group_location =
     this->getSourceDimensionGroupLocation( source_id, dimension );
@@ -141,28 +143,28 @@ void SourceHDF5FileHandler::setNumberOfSourceDimensionSamplingTrials(
                                           trials, group_location, "trials" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the number of trials for "
+			   "Unable to set the number of trials for "
                            "source " << source_id << " dimension "
                            << dimension << "!" );
 }
 
 // Get the number of sampling trials in the source phase space dimension
-InternalCounter
+Utility::DistributionTraits::Counter
 SourceHDF5FileHandler::getNumberOfSourceDimensionSamplingTrials(
-                                    const InternalROIHandle source_id,
-                                    const PhaseSpaceDimension dimension ) const
+                               const ModuleTraits::InternalROIHandle source_id,
+                               const PhaseSpaceDimension dimension ) const
 {
   std::string group_location =
     this->getSourceDimensionGroupLocation( source_id, dimension );
 
-  InternalCounter trials;
+  Utility::DistributionTraits::Counter trials;
 
   try{
     this->getHDF5File().readValueFromGroupAttribute(
                                           trials, group_location, "trials" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the number of trials for "
+			   "Unable to get the number of trials for "
                            "source " << source_id << " dimension "
                            << dimension << "!" );
 
@@ -171,9 +173,9 @@ SourceHDF5FileHandler::getNumberOfSourceDimensionSamplingTrials(
                                              
 // Set the number of samples in the phase space dimension
 void SourceHDF5FileHandler::setNumberOfSourceDimensionSamples(
-                                          const InternalROIHandle source_id,
-                                          const PhaseSpaceDimension dimension,
-                                          const InternalCounter samples )
+                           const ModuleTraits::InternalROIHandle source_id,
+                           const PhaseSpaceDimension dimension,
+                           const Utility::DistributionTraits::Counter samples )
 {
   std::string group_location =
     this->getSourceDimensionGroupLocation( source_id, dimension );
@@ -183,27 +185,28 @@ void SourceHDF5FileHandler::setNumberOfSourceDimensionSamples(
                                           samples, group_location, "samples" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to set the number of samples for "
+			   "Unable to set the number of samples for "
                            "source " << source_id << " dimension "
                            << dimension << "!" );
 }
 
 // Get the number of samples in the phase space dimension
-InternalCounter SourceHDF5FileHandler::getNumberOfSourceDimensionSamples(
-                                    const InternalROIHandle source_id,
-                                    const PhaseSpaceDimension dimension ) const
+Utility::DistributionTraits::Counter
+SourceHDF5FileHandler::getNumberOfSourceDimensionSamples(
+                               const ModuleTraits::InternalROIHandle source_id,
+                               const PhaseSpaceDimension dimension ) const
 {
   std::string group_location =
     this->getSourceDimensionGroupLocation( source_id, dimension );
 
-  InternalCounter samples;
+  Utility::DistributionTraits::Counter samples;
 
   try{
     this->getHDF5File().readValueFromGroupAttribute(
                                           samples, group_location, "samples" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Error: Unable to get the number of samples for "
+			   "Unable to get the number of samples for "
                            "source " << source_id << " dimension "
                            << dimension << "!" );
 
@@ -212,10 +215,10 @@ InternalCounter SourceHDF5FileHandler::getNumberOfSourceDimensionSamples(
 
 // Get the source location
 std::string SourceHDF5FileHandler::getSourceGroupLocation(
-                                      const InternalROIHandle source_id ) const
+                        const ModuleTraits::InternalROIHandle source_id ) const
 {
   std::ostringstream oss;
-  oss << SourceHDF5FileHandler::source_group_loc_name;
+  oss << SourceHDF5FileHandler::source_group_root_loc_name;
   oss << source_id << "/";
 
   return oss.str();
@@ -223,10 +226,10 @@ std::string SourceHDF5FileHandler::getSourceGroupLocation(
 
 // Get the source dimension location
 std::string SourceHDF5FileHandler::getSourceDimensionGroupLocation(
-                                    const InternalROIHandle source_id,
-                                    const PhaseSpaceDimension dimension ) const
+                               const ModuleTraits::InternalROIHandle source_id,
+                               const PhaseSpaceDimension dimension ) const
 {
-  std::string location = this->getSourceGroupLocation();
+  std::string location = this->getSourceGroupLocation( source_id );
   
   location += convertPhaseSpaceDimensionEnumToBasicString( dimension );
   location += "/";

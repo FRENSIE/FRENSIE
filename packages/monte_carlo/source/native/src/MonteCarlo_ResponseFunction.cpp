@@ -20,15 +20,15 @@ const std::shared_ptr<ResponseFunction>
 ResponseFunction::default_response_function;
 
 // Return the id
-unsigned ResponseFunction::getId() const
+ModuleTraits::InternalROIHandle ResponseFunction::getId() const
 {
-  return std::numeric_limits<size_t>::max();
+  return std::numeric_limits<ModuleTraits::InternalROIHandle>::max();
 }
 
 // Return the name of the response function
 const std::string& ResponseFunction::getName() const
 {
-  static std::string default_name( "default" );
+  static const std::string default_name( "default" );
   
   return default_name;
 }

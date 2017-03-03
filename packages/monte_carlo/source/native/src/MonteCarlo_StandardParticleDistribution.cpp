@@ -18,17 +18,15 @@ namespace MonteCarlo{
 
 // Constructor
 StandardParticleDistribution::StandardParticleDistribution(
-   const ModuleTraits::InternalSourceHandle id,
+   const ModuleTraits::InternalROIHandle id,
    const std::string& name,
-   const ParticleType particle_type,
    const DimensionSet& independent_dimensions,
    const DimensionDistributionMap& dimension_distributions,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
    directional_coord_conversion_policy )
-  : ParticleDistribution( id, name, particle_type ),
-    d_particle_type( particle_type ),
+  : ParticleDistribution( id, name ),
     d_independent_dimensions( independent_dimensions ),
     d_dimension_distributions( dimension_distributions ),
     d_spatial_coord_conversion_policy( spatial_coord_conversion_policy ),
@@ -146,19 +144,19 @@ bool StandardParticleDistribution::isDirectionallyUniform() const
 {
   // Directional dimension distributions defined in the Cartesian coordinate
   // system cannot be isotropic
-  if( d_spatial_coord_conversion_policy->getLocalSpatialCoordinateSystemType() ==
-      Utility::CARTESIAN_DIRECTIONAL_COORDINATE_SYSTEM )
-    return false;
-  else
+  if( d_directional_coord_conversion_policy->getLocalDirectionalCoordinateSystemType() ==
+      Utility::SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM )
   {
     if( !d_dimension_distributions.find( SECONDARY_DIRECTIONAL_DIMENSION )->second->isUniform() )
       return false;
 
     if( !d_dimension_distributions.find( TERTIARY_DIRECTIONAL_DIMENSION )->second->isUniform() )
       return false;
-  }
 
-  return true;
+    return true;
+  }
+  else
+    return false;
 }
 
 // Evaluate the distribution at the desired phase space point
@@ -190,7 +188,7 @@ double StandardParticleDistribution::evaluate(
 }
 
 // Sample a particle state from the distribution
-void StandardParticleDistribution::sample( ParticleState& particle ) const;
+void StandardParticleDistribution::sample( ParticleState& particle ) const
 {
   // Create the dimension sampling functor
   DimensionSamplingFunction dimension_sample_functor =
@@ -245,7 +243,7 @@ void StandardParticleDistribution::sampleWithDimensionValueAndRecordTrials(
   // Create the dimension sampling functor
   DimensionSamplingFunction dimension_sample_functor =
     std::bind<void>(
-       &PhaseSpaceDimensionDistribution::sampleAndRecordTrailsWithCascadeUsingDimensionValue,
+       &PhaseSpaceDimensionDistribution::sampleAndRecordTrialsWithCascadeUsingDimensionValue,
        std::placeholders::_1,
        std::placeholders::_2,
        std::ref( trials ),

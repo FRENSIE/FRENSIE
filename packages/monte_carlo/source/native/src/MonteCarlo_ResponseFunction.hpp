@@ -14,6 +14,7 @@
 #include <memory>
 
 // FRENSIE Includes
+#include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 
 namespace MonteCarlo{
@@ -33,7 +34,7 @@ public:
   { /* ... */ }
 
   //! Return the id
-  virtual unsigned getId() const;
+  virtual ModuleTraits::InternalROIHandle getId() const;
 
   //! Return the name of the response function
   virtual const std::string& getName() const;

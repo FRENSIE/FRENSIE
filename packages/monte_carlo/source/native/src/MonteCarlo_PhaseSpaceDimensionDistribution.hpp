@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
-#define MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
+#ifndef MONTE_CARLO_PHASE_SPACE_DIMENSION_DISTRIBUTION_HPP
+#define MONTE_CARLO_PHASE_SPACE_DIMENSION_DISTRIBUTION_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -69,7 +69,7 @@ public:
 
   //! Check if the underlying distribution has the form of interest
   virtual bool hasForm(
-                      const OneDDistributionType distribution_type ) const = 0;
+             const Utility::OneDDistributionType distribution_type ) const = 0;
 
   //! Evaluate the dimension distribution with a cascade to the dependent dists
   double evaluateWithCascade( const PhaseSpacePoint& phase_space_point ) const;
@@ -92,8 +92,8 @@ public:
 
   //! Sample a dimension value without a cascade to the dependent dists.
   virtual void sampleAndRecordTrialsWithoutCascade(
-                                           PhaseSpacePoint& phase_space_sample,
-                                           TrialCounter& trials ) const = 0;
+                             PhaseSpacePoint& phase_space_sample,
+                             ModuleTraits::InternalCounter& trials ) const = 0;
 
   //! Sample a dimension value and cascade to the dependent distributions
   void sampleWithCascadeUsingDimensionValue(
@@ -102,7 +102,7 @@ public:
                                         const double dimension_value ) const;
 
   //! Set the dimension value, weight appropriately and record the trials
-  void sampleAndRecordTrailsWithCascadeUsingDimensionValue(
+  void sampleAndRecordTrialsWithCascadeUsingDimensionValue(
                                           PhaseSpacePoint& phase_space_sample,
                                           DimensionCounterMap& trials,
                                           const PhaseSpaceDimension dimension,
@@ -147,13 +147,13 @@ private:
                                           const double dimension_value ) const;
 
   // The dependent dimensions
-  typedef std::map<PhaseSpaceDimension,std::shared_ptr<const PhaseSpaceDimensionDistribution> > DimensionDependentDistributionMap
+  typedef std::map<PhaseSpaceDimension,std::shared_ptr<const PhaseSpaceDimensionDistribution> > DimensionDependentDistributionMap;
   DimensionDependentDistributionMap d_dependent_dimension_distributions;
 };
   
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
+#endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhaseSpaceDimensionDistribution.hpp

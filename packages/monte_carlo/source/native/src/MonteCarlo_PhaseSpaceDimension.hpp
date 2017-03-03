@@ -24,7 +24,7 @@ namespace MonteCarlo{
 enum PhaseSpaceDimension
 {
   PHASE_SPACE_DIMENSION_start = 0,
-  PRIMARY_SPATIAL_DIMENSION = DIMENSION_start,
+  PRIMARY_SPATIAL_DIMENSION = PHASE_SPACE_DIMENSION_start,
   SECONDARY_SPATIAL_DIMENSION,
   TERTIARY_SPATIAL_DIMENSION,
   PRIMARY_DIRECTIONAL_DIMENSION,
@@ -97,7 +97,7 @@ struct HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>
       dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( i );
 
       dimension_name =
-        MonteCarlo::convertPhaseSpaceDimensionToBasicString( dimension );
+        MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( dimension );
 
       hdf5_phase_space_dimension_type.insert( dimension_name.c_str(),
                                               &dimension );
@@ -123,7 +123,7 @@ struct HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>
   {
     return MonteCarlo::PHASE_SPACE_DIMENSION_start;
   }
-}
+};
   
 } // end Utility namespace
 

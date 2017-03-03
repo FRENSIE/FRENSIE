@@ -32,7 +32,7 @@ public:
   //! Constructor (file ownership)
   SourceHDF5FileHandler( const std::string& hdf5_file_name,
                          const MonteCarlo::HDF5FileHandler::FileOps file_op =
-                         OVERWRITE_SOURCE_HDF5_FILE );
+                         MonteCarlo::HDF5FileHandler::OVERWRITE_FILE );
 
   //! Constructor (file sharing)
   SourceHDF5FileHandler(
@@ -43,59 +43,64 @@ public:
   { /* ... */ }
 
   //! Check if a source exists
-  bool doesSourceExist( const InternalROIHandle source_id ) const;
+  bool doesSourceExist(
+                       const ModuleTraits::InternalROIHandle source_id ) const;
 
   //! Check if a source dimension exists
-  bool doesSourceDimenionExist( const InternalROIHandle source_id,
-                                const PhaseSpaceDimension dimension ) const;
+  bool doesSourceDimensionExist(
+                               const ModuleTraits::InternalROIHandle source_id,
+                               const PhaseSpaceDimension dimension ) const;
 
   //! Set the number of source sampling trials
-  void setNumberOfSourceSamplingTrials( const InternalROIHandle source_id,
-                                        const InternalCounter trials );
+  void setNumberOfSourceSamplingTrials(
+                           const ModuleTraits::InternalROIHandle source_id,
+                           const Utility::DistributionTraits::Counter trials );
 
   //! Get the number of source sampling trials
-  InternalCounter getNumberOfSourceSamplingTrials(
-                                     const InternalROIHandle source_id ) const;
+  Utility::DistributionTraits::Counter getNumberOfSourceSamplingTrials(
+                       const ModuleTraits::InternalROIHandle source_id ) const;
 
   //! Set the number of source samples
-  void setNumberOfSourceSamples( const InternalROIHandle source_id,
-                                 const InternalCounter samples );
+  void setNumberOfSourceSamples(
+                          const ModuleTraits::InternalROIHandle source_id,
+                          const Utility::DistributionTraits::Counter samples );
 
   //! Get the number of source samples
-  InternalCounter getNumberOfSourceSamples(
-                                      const InternalROIHandle source_id) const;
+  Utility::DistributionTraits::Counter getNumberOfSourceSamples(
+                        const ModuleTraits::InternalROIHandle source_id) const;
 
   //! Set the number of sampling trials in the source phase space dimension
   void setNumberOfSourceDimensionSamplingTrials(
-                                           const InternalROIHandle source_id,
-                                           const PhaseSpaceDimension dimension,
-                                           const InternalCounter trials );
+                           const ModuleTraits::InternalROIHandle source_id,
+                           const PhaseSpaceDimension dimension,
+                           const Utility::DistributionTraits::Counter trials );
 
   //! Get the number of sampling trials in the source phase space dimension
-  InternalCounter getNumberOfSourceDimensionSamplingTrials(
-                                   const InternalROIHandle source_id,
-                                   const PhaseSpaceDimension dimension ) const;
+  Utility::DistributionTraits::Counter getNumberOfSourceDimensionSamplingTrials(
+                               const ModuleTraits::InternalROIHandle source_id,
+                               const PhaseSpaceDimension dimension ) const;
                                              
   //! Set the number of samples in the phase space dimension
   void setNumberOfSourceDimensionSamples(
-                                         const InternalROIHandle source_id,
-                                         const PhaseSpaceDimension dimension,
-                                         const InternalCounter samples );
+                          const ModuleTraits::InternalROIHandle source_id,
+                          const PhaseSpaceDimension dimension,
+                          const Utility::DistributionTraits::Counter samples );
 
   //! Get the number of samples in the phase space dimension
-  InternalCounter getNumberOfSourceDimensionSamples(
-                                   const InternalROIHandle source_id,
-                                   const PhaseSpaceDimension dimension ) const;
+  Utility::DistributionTraits::Counter getNumberOfSourceDimensionSamples(
+                               const ModuleTraits::InternalROIHandle source_id,
+                               const PhaseSpaceDimension dimension ) const;
   
 private:
 
   // Get the source location
-  std::string getSourceGroupLocation( const InternalROIHandle source_id ) const;
+  std::string getSourceGroupLocation(
+                       const ModuleTraits::InternalROIHandle source_id ) const;
 
   // Get the source dimension location
   std::string getSourceDimensionGroupLocation(
-                                   const InternalROIHandle source_id,
-                                   const PhaseSpaceDimension dimension ) const;
+                               const ModuleTraits::InternalROIHandle source_id,
+                               const PhaseSpaceDimension dimension ) const;
 
   // The source group root location and name
   static const std::string source_group_root_loc_name;

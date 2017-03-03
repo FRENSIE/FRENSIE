@@ -51,9 +51,8 @@ public:
 
   //! Constructor
   StandardParticleDistribution(
-   const ModuleTraits::InternalSourceHandle id,
+   const ModuleTraits::InternalROIHandle id,
    const std::string& name,
-   const ParticleType particle_type,
    const DimensionSet& independent_dimensions,
    const DimensionDistributionMap& dimension_distributions,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
@@ -108,7 +107,8 @@ public:
 private:
 
   // Sample the particle state using the desired sampling functor
-  void sampleImpl( DimensionSamplingFunction dimension_sampling_function,
+  template<typename DimensionSamplingFunctor>
+  void sampleImpl( DimensionSamplingFunctor& dimension_sampling_function,
                    ParticleState& particle ) const;
 
   // Check if the dimension data is valid
@@ -130,10 +130,10 @@ private:
 };
 
 // Sample the particle state using the desired dimension sampling functor
-template<typename DimensionSampleFunctor>
-inline void StandardParticleSource::sampleImpl(
-                        DimensionSamplingFunction& dimension_sampling_function,
-                        ParticleState& particle ) const
+template<typename DimensionSamplingFunctor>
+inline void StandardParticleDistribution::sampleImpl(
+                         DimensionSamplingFunctor& dimension_sampling_function,
+                         ParticleState& particle ) const
 {
   // Initialize a phase space point
   PhaseSpacePoint phase_space_sample( d_spatial_coord_conversion_policy,
@@ -141,7 +141,7 @@ inline void StandardParticleSource::sampleImpl(
 
   // Sample the particle state
   DimensionSet::const_iterator
-    indep_dimension_it = d_independent_dimension.begin();
+    indep_dimension_it = d_independent_dimensions.begin();
 
   // Sample independent dimensions first. We will have the sampling process
   // cascade from the independent dimensions down to all dependent dimensions

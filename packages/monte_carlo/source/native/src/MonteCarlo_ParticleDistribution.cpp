@@ -15,14 +15,12 @@ namespace MonteCarlo{
 // Constructor
 ParticleDistribution::ParticleDistribution(
                                       const ModuleTraits::InternalROIHandle id,
-                                      const std::string& name,
-                                      const ParticleType particle_type )
+                                      const std::string& name )
   : d_id( id ),
-    d_name( name ),
-    d_particle_type( particle_type )
+    d_name( name )
 {
   // Make sure that the id is valid
-  testPrecondition( id != ModuleTraits::invalid_internal_roi_handle );
+  testPrecondition( id != ModuleTraits::reserved_internal_roi_handle );
   // Make sure that the name is valid
   testPrecondition( name.size() > 0 );
 }
@@ -37,12 +35,6 @@ ModuleTraits::InternalROIHandle ParticleDistribution::getId() const
 const std::string& ParticleDistribution::getName() const
 {
   return d_name;
-}
-
-// Return the particle type that this distribution uses
-ParticleType ParticleDistribution::getParticleType() const
-{
-  return d_particle_type;
 }
   
 } // end MonteCarlo namespace

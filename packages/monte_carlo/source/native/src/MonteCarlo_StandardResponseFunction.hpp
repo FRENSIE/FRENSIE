@@ -19,7 +19,7 @@
 namespace MonteCarlo{
 
 //! The standard response function class
-class StandardResponseFunction
+class StandardResponseFunction : public ResponseFunction
 {
 
 public:
@@ -36,7 +36,7 @@ public:
   { /* ... */ }
 
   //! Return the id
-  unsigned getId() const override;
+  ModuleTraits::InternalROIHandle getId() const override;
 
   //! Return the name of the response function
   const std::string& getName() const override;

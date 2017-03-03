@@ -41,8 +41,7 @@ public:
 
   //! Constructor
   ParticleDistribution( const ModuleTraits::InternalROIHandle id,
-                        const std::string& name,
-                        const ParticleType particle_type );
+                        const std::string& name );
 
   //! Destructor
   virtual ~ParticleDistribution()
@@ -53,9 +52,6 @@ public:
 
   //! Return the name of the region of interest
   const std::string& getName() const;
-
-  //! Return the particle type that this distribution uses
-  ParticleType getParticleType() const;
 
   //! Check if a dimension has a distribution defined
   virtual bool doesDimensionHaveDistributionDefined(
@@ -105,9 +101,6 @@ private:
 
   // The distribution name
   std::string d_name;
-
-  // The type of particle emitted
-  ParticleType d_particle_type;
 };
   
 } // end MonteCarlo namespace

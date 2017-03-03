@@ -20,7 +20,7 @@ namespace MonteCarlo{
 ParticleState::ParticleState()
   : d_history_number( 0 ),
     d_particle_type(),
-    d_source_id( MonteCarlo::ModuleTraits::invalid_internal_roi_handle ),
+    d_source_id( MonteCarlo::ModuleTraits::reserved_internal_roi_handle ),
     d_position(),
     d_direction{0.0,0.0,1.0},
     d_source_energy( 0.0 ),
@@ -44,7 +44,7 @@ ParticleState::ParticleState(
 			 const ParticleType type )
   : d_history_number( history_number ),
     d_particle_type( type ),
-    d_source_id( MonteCarlo::ModuleTraits::invalid_internal_roi_handle ),
+    d_source_id( MonteCarlo::ModuleTraits::reserved_internal_roi_handle ),
     d_position(),
     d_direction(),
     d_source_energy( 0.0 ),
@@ -141,7 +141,7 @@ void ParticleState::setSourceId(
                          const MonteCarlo::ModuleTraits::InternalROIHandle id )
 {
   // Make sure that the id is valid
-  testPrecondition( id != MonteCarlo::ModuleTraits::invalid_internal_roi_handle );
+  testPrecondition( id != MonteCarlo::ModuleTraits::reserved_internal_roi_handle );
   
   d_source_id = id;
 }
