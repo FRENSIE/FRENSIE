@@ -50,6 +50,7 @@ void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromParti
       ContributionMultiplierPolicy::multiplier( particle );
 
     EstimatorParticleStateWrapper particle_state_wrapper( particle );
+    particle_state_wrapper.calculateStateTimesUsingParticleTimeAsEndTime( track_length );
 
     this->addPartialHistoryRangeContribution<OBSERVER_TIME_DIMENSION>(
                                                         cell_of_subtrack,
