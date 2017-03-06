@@ -1,5 +1,12 @@
 ADD_SUBDIRECTORY(test_files)
 
+ADD_EXECUTABLE(tstPhaseSpaceDimension
+  tstPhaseSpaceDimension.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhaseSpaceDimension monte_carlo_source_native)
+ADD_TEST(PhaseSpaceDimension_test tstPhaseSpaceDimension)
+SET_PROPERTY(TEST PhaseSpaceDimension_test PROPERTY LABELS monte_carlo_source_native)
+
 ADD_EXECUTABLE(tstSourceHDF5FileHandler
   tstSourceHDF5FileHandler.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

@@ -84,26 +84,7 @@ struct HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>
   //! Return the HDF5 data type
   static inline H5::EnumType dataType()
   {
-    H5::EnumType hdf5_phase_space_dimension_type(
-                                   sizeof( MonteCarlo::PhaseSpaceDimension ) );
-
-    MonteCarlo::PhaseSpaceDimension dimension;
-    std::string dimension_name;
-
-    for( unsigned i = MonteCarlo::PHASE_SPACE_DIMENSION_start;
-         i < MonteCarlo::PHASE_SPACE_DIMENSION_end;
-         ++i )
-    {
-      dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( i );
-
-      dimension_name =
-        MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( dimension );
-
-      hdf5_phase_space_dimension_type.insert( dimension_name.c_str(),
-                                              &dimension );
-    }
-
-    return hdf5_phase_space_dimension_type;
+    return s_data_type;
   }
 
   //! Return the name of the type
@@ -123,6 +104,12 @@ struct HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>
   {
     return MonteCarlo::PHASE_SPACE_DIMENSION_start;
   }
+
+private:
+  
+  static H5::EnumType initializeDataType();
+
+  static H5::EnumType s_data_type;
 };
   
 } // end Utility namespace

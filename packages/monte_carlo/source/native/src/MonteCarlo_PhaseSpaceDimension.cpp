@@ -234,6 +234,39 @@ PhaseSpaceDimension convertDirectionalDimensionToPhaseSpaceDimension(
   
 } // end MonteCarlo namespace
 
+namespace Utility{
+
+// Initialize static member data  
+H5::EnumType HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>::s_data_type =
+  HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>::initializeDataType();
+
+H5::EnumType
+HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>::initializeDataType()
+{
+  H5::EnumType hdf5_phase_space_dimension_type(
+                                   sizeof( MonteCarlo::PhaseSpaceDimension ) );
+
+  MonteCarlo::PhaseSpaceDimension dimension;
+  std::string dimension_name;
+
+  for( unsigned i = MonteCarlo::PHASE_SPACE_DIMENSION_start;
+       i < MonteCarlo::PHASE_SPACE_DIMENSION_end;
+       ++i )
+  {
+    dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( i );
+    
+    dimension_name =
+      MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( dimension );
+    
+    hdf5_phase_space_dimension_type.insert( dimension_name.c_str(),
+                                            &dimension );
+  }
+  
+  return hdf5_phase_space_dimension_type;
+}
+  
+} // end Utility namespace
+
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhaseSpaceDimension.cpp
 //---------------------------------------------------------------------------//
