@@ -89,40 +89,30 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the distribution
-  DepQuantity evaluateExact(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+//  //! Evaluate the distribution
+//  DepQuantity evaluateExact(
+//                const PrimaryIndepQuantity primary_indep_var_value,
+//                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the distribution using weighted interpolation
-  DepQuantity evaluateWeighted(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const;
+//  //! Evaluate the distribution using weighted interpolation
+//  DepQuantity evaluateWeighted(
+//                const PrimaryIndepQuantity primary_indep_var_value,
+//                const double weighted_secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF using unit based interpolation
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the secondary conditional PDF
-  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+//  //! Evaluate the secondary conditional PDF
+//  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
+//                const PrimaryIndepQuantity primary_indep_var_value,
+//                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the secondary conditional PDF using weighted interpolation
-  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFWeighted(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional CDF
-  double evaluateSecondaryConditionalCDFExact(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional CDF using weighted interpolation
-  double evaluateSecondaryConditionalCDFWeighted(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const;
+//  //! Evaluate the secondary conditional PDF using weighted interpolation
+//  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFWeighted(
+//                const PrimaryIndepQuantity primary_indep_var_value,
+//                const double weighted_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
@@ -150,6 +140,14 @@ public:
   SecondaryIndepQuantity getLowerBoundOfConditionalIndepVar(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
 
+  //! Estimate the secondary conditional CDF
+  void evaluateSecondaryConditionalCDFExactImpl(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const SecondaryIndepQuantity secondary_indep_var_value,
+        const typename DistributionType::const_iterator lower_bin_boundary,
+        const typename DistributionType::const_iterator upper_bin_boundary,
+        double& evaluated_cdf ) const;
+
   //! Test if the distribution is continuous in the primary dimension
   bool isPrimaryDimensionContinuous() const;
 
@@ -172,14 +170,18 @@ protected:
                         const ReturnType above_upper_bound_return =
                         QuantityTraits<ReturnType>::zero() ) const;
 
-  //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
-           typename EvaluationMethod>
-  ReturnType evaluateExactImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const SecondaryIndepQuantity secondary_indep_var_value,
-                        EvaluationMethod evaluate ) const;
+//  //! Evaluate the distribution using the desired evaluation method
+//  template<typename LocalTwoDInterpPolicy,
+//           typename ReturnType,
+//           typename EvaluationMethod>
+//  ReturnType evaluateExactImpl(
+//                        const PrimaryIndepQuantity primary_indep_var_value,
+//                        const SecondaryIndepQuantity secondary_indep_var_value,
+//                        EvaluationMethod evaluate,
+//                        const ReturnType below_lower_bound_return =
+//                        QuantityTraits<ReturnType>::zero(),
+//                        const ReturnType above_upper_bound_return =
+//                        QuantityTraits<ReturnType>::zero() ) const;
 
   //! Evaluate the distribution using the desired evaluation method and a weighted interpolation
   template<typename LocalTwoDInterpPolicy,

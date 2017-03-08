@@ -110,9 +110,11 @@ public:
 
   //! Constructor
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
-                                        const DistributionType& distribution,
-                                        const double fuzzy_boundary_tol = 1e-3 )
-    : ParentType( distribution, fuzzy_boundary_tol )
+                            const DistributionType& distribution,
+                            const double fuzzy_boundary_tol = 1e-3,
+                            const double evaluate_relative_error_tol = 1e-6 )
+    : ParentType( distribution, fuzzy_boundary_tol ),
+      d_relative_error_tol( evaluate_relative_error_tol )
   { /* ... */ }
 
   //! Constructor
@@ -121,8 +123,10 @@ public:
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
                    const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                    const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
-                   const double fuzzy_boundary_tol = 1e-3 )
-    : ParentType( primary_indep_grid, secondary_distributions, fuzzy_boundary_tol )
+                   const double fuzzy_boundary_tol = 1e-3,
+                   const double evaluate_relative_error_tol = 1e-6 )
+    : ParentType( primary_indep_grid, secondary_distributions, fuzzy_boundary_tol ),
+      d_relative_error_tol( evaluate_relative_error_tol )
   { /* ... */ }
 
   //! Raw constructor
@@ -132,24 +136,55 @@ public:
            template<typename T, typename... Args> class ArrayC,
            template<typename T, typename... Args> class SubarrayC>
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
-       const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-       const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
-       const ArrayC<SubarrayC<DepQuantity> >& dependent_values,
-       const double fuzzy_boundary_tol = 1e-3 );
+        const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+        const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
+        const ArrayC<SubarrayC<DepQuantity> >& dependent_values,
+        const double fuzzy_boundary_tol = 1e-3,
+        const double evaluate_relative_error_tol = 1e-6 );
 
   //! Destructor
   ~UnitAwareInterpolatedFullyTabularTwoDDistribution()
   { /* ... */ }
+
+  //! Evaluate the distribution
+  DepQuantity evaluateExact(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Evaluate the distribution using weighted interpolation
+  DepQuantity evaluateWeighted(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const double weighted_secondary_indep_var_value ) const;
+
+  //! Evaluate the secondary conditional PDF
+  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Evaluate the secondary conditional PDF using weighted interpolation
+  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFWeighted(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const double weighted_secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-//  //! Evaluate the secondary conditional CDF exact
-//  double evaluateSecondaryConditionalCDFExact(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+  //! Evaluate the secondary conditional CDF
+  double evaluateSecondaryConditionalCDFExact(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Evaluate the secondary conditional CDF using weighted interpolation
+  double evaluateSecondaryConditionalCDFWeighted(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const double weighted_secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF using a weighted interpolation
+  SecondaryIndepQuantity sampleSecondaryConditionalWeighted(
+          const PrimaryIndepQuantity primary_indep_var_value,
+          const SecondaryIndepQuantity secondary_indep_weighting_factor ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
@@ -199,6 +234,37 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+private:
+
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateExactImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluate,
+                        const ReturnType below_lower_bound_return =
+                        QuantityTraits<ReturnType>::zero(),
+                        const ReturnType above_upper_bound_return =
+                        QuantityTraits<ReturnType>::zero() ) const;
+
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateDetailedWeightedImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluate,
+                        const ReturnType below_lower_bound_return =
+                        QuantityTraits<ReturnType>::zero(),
+                        const ReturnType above_upper_bound_return =
+                        QuantityTraits<ReturnType>::zero() ) const;
+
+  // The relative error tolerance for the evaluate impl schemes
+  double d_relative_error_tol;
 };
 
 /*! \brief The interpolated fully tabular two-dimensional distribution 
