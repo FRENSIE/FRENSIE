@@ -87,6 +87,10 @@ public:
                                                double& y_spatial_coord,
                                                double& z_spatial_coord ) const;
 
+  //! Convert spatial coordinates to Cartesian coordinates
+  void convertSpatialCoordinatesToCartesianCoordinates(
+                                              double spatial_coords[3] ) const;
+                                              
   //! Return the weight of all spatial coordinates
   double getWeightOfSpatialCoordinates() const;
 
@@ -131,6 +135,10 @@ public:
                                            double& u_directional_coord,
                                            double& v_directional_coord,
                                            double& w_directional_coord ) const;
+
+  //! Convert directional coordinates to Cartesian coordinates
+  void convertDirectionalCoordinatesToCartesianCoordinates(
+                                          double directional_coords[3] ) const;
 
   //! Return the weight of all directional coordinates
   double getWeightOfDirectionalCoordinates() const;
@@ -232,6 +240,25 @@ private:
   // The weight coordinate
   double d_weight_coord;
 };
+
+// Convert spatial coordinates to Cartesian coordinates
+inline void PhaseSpacePoint::convertSpatialCoordinatesToCartesianCoordinates(
+                                               double spatial_coords[3] ) const
+{
+  this->convertSpatialCoordinatesToCartesianCoordinates( spatial_coords[0],
+                                                         spatial_coords[1],
+                                                         spatial_coords[2] );
+}
+
+// Convert directional coordinates to Cartesian coordinates
+inline void PhaseSpacePoint::convertDirectionalCoordinatesToCartesianCoordinates(
+                                           double directional_coords[3] ) const
+{
+  this->convertDirectionalCoordinatesToCartesianCoordinates(
+                                                       directional_coords[0],
+                                                       directional_coords[1],
+                                                       directional_coords[2] );
+}
   
 } // end MonteCarlo namespace
 

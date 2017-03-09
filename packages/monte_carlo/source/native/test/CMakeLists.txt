@@ -14,6 +14,13 @@ TARGET_LINK_LIBRARIES(tstPhaseSpaceDimensionClass monte_carlo_source_native)
 ADD_TEST(PhaseSpaceDimensionClass_test tstPhaseSpaceDimensionClass)
 SET_PROPERTY(TEST PhaseSpaceDimensionClass_test PROPERTY LABELS monte_carlo_source_native)
 
+ADD_EXECUTABLE(tstPhaseSpacePoint
+  tstPhaseSpacePoint.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhaseSpacePoint monte_carlo_source_native)
+ADD_TEST(PhaseSpacePoint_test tstPhaseSpacePoint)
+SET_PROPERTY(TEST PhaseSpacePoint_test PROPERTY LABELS monte_carlo_source_native)
+
 ADD_EXECUTABLE(tstSourceHDF5FileHandler
   tstSourceHDF5FileHandler.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
