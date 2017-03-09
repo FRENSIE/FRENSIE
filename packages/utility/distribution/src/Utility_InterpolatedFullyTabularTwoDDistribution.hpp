@@ -151,20 +151,24 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the distribution using weighted interpolation
-  DepQuantity evaluateWeighted(
+  //! Evaluate the distribution using normalized interpolation
+  DepQuantity evaluateNormalized(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const;
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const;
 
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the secondary conditional PDF using weighted interpolation
-  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFWeighted(
+  //! Evaluate the secondary conditional PDF using normalized interpolation
+  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFNormalized(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const;
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const;
 
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDF(
@@ -176,15 +180,18 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the secondary conditional CDF using weighted interpolation
-  double evaluateSecondaryConditionalCDFWeighted(
+  //! Evaluate the secondary conditional CDF using normalized interpolation
+  double evaluateSecondaryConditionalCDFNormalized(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const;
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const;
 
-  //! Return a random sample from the secondary conditional PDF using a weighted interpolation
-  SecondaryIndepQuantity sampleSecondaryConditionalWeighted(
-          const PrimaryIndepQuantity primary_indep_var_value,
-          const SecondaryIndepQuantity secondary_indep_weighting_factor ) const;
+  //! Return a random sample from the secondary conditional PDF using a normalized interpolation
+  SecondaryIndepQuantity sampleSecondaryConditionalNormalized(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
@@ -254,9 +261,11 @@ private:
   template<typename LocalTwoDInterpPolicy,
            typename ReturnType,
            typename EvaluationMethod>
-  ReturnType evaluateDetailedWeightedImpl(
+  ReturnType evaluateNormalizedImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         const SecondaryIndepQuantity secondary_indep_var_value,
+                        const SecondaryIndepQuantity min_secondary_indep_var,
+                        const SecondaryIndepQuantity max_secondary_indep_var,
                         EvaluationMethod evaluate,
                         const ReturnType below_lower_bound_return =
                         QuantityTraits<ReturnType>::zero(),

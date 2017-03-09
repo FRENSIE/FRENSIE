@@ -75,19 +75,23 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
                                           &BaseOneDDistributionType::evaluate );
 }
 
-// Evaluate the distribution using weighted interpolation
+// Evaluate the distribution using normalized interpolation
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateWeighted(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const double weighted_secondary_indep_var_value ) const
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateNormalized(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const
   -> DepQuantity
 {
-  return this->template evaluateWeightedImpl<TwoDInterpPolicy,DepQuantity>(
+  return this->template evaluateNormalizedImpl<TwoDInterpPolicy,DepQuantity>(
                                           primary_indep_var_value,
-                                          weighted_secondary_indep_var_value,
+                                          secondary_indep_var_value,
+                                          min_secondary_indep_var,
+                                          max_secondary_indep_var,
                                           &BaseOneDDistributionType::evaluate );
 }
 
@@ -107,20 +111,24 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
                                       &BaseOneDDistributionType::evaluatePDF );
 }
 
-// Evaluate the secondary conditional PDF using weighted interpolation
+// Evaluate the secondary conditional PDF using normalized interpolation
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDFWeighted(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const double weighted_secondary_indep_var_value ) const
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDFNormalized(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const
   ->  InverseSecondaryIndepQuantity
 {
-  return this->template evaluateWeightedImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
-                                          primary_indep_var_value,
-                                          weighted_secondary_indep_var_value,
-                                          &BaseOneDDistributionType::evaluatePDF );
+  return this->template evaluateNormalizedImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
+                                    primary_indep_var_value,
+                                    secondary_indep_var_value,
+                                    min_secondary_indep_var,
+                                    max_secondary_indep_var,
+                                    &BaseOneDDistributionType::evaluatePDF );
 }
 
 // Evaluate the secondary conditional CDF
@@ -162,14 +170,20 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFWeighted(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const double weighted_secondary_indep_var_value ) const
+double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFNormalized(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const
 {
-  return this->template evaluateWeightedImpl<TwoDInterpPolicy,double>(
+  return this->template evaluateNormalizedImpl<TwoDInterpPolicy,double>(
                                       primary_indep_var_value,
-                                      weighted_secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF );
+                                      secondary_indep_var_value,
+                                      min_secondary_indep_var,
+                                      max_secondary_indep_var,
+                                      &BaseOneDDistributionType::evaluateCDF,
+                                      0.0,
+                                      1.0 );
 }
 
 // Return a random sample from the secondary conditional PDF and the index
@@ -483,8 +497,8 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   return this->sampleExactImpl( primary_indep_var_value, sampling_functor );
 }
 
-// Return a random sample from the secondary conditional PDF using a weighted interpolation
-/*! \details A weighted correlated sampling procedure is used. If the primary
+// Return a random sample from the secondary conditional PDF using a normalized interpolation
+/*! \details A normalized correlated sampling procedure is used. If the primary
  * value provided is outside of the primary grid limits the appropriate limiting
  * secondary distribution will be used to create the sample. The alternative
  * to this behavior is to throw an exception unless the distribution has
@@ -495,9 +509,10 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWeighted(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalNormalized(
         const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_weighting_factor ) const
+        const SecondaryIndepQuantity min_secondary_indep_var,
+        const SecondaryIndepQuantity max_secondary_indep_var ) const
   -> SecondaryIndepQuantity
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -509,9 +524,10 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
                              std::placeholders::_1,
                              random_number );
 
-  return this->sampleWeightedImpl( primary_indep_var_value,
-                                   secondary_indep_weighting_factor,
-                                   sampling_functor );
+  return this->sampleNormalizedImpl( primary_indep_var_value,
+                                     min_secondary_indep_var,
+                                     max_secondary_indep_var,
+                                     sampling_functor );
 }
 
 // Evaluate the distribution using the desired evaluation method
@@ -689,9 +705,11 @@ template<typename TwoDInterpPolicy,
 template<typename LocalTwoDInterpPolicy,
          typename ReturnType,
          typename EvaluationMethod>
-inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateDetailedWeightedImpl(
+inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateNormalizedImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         const SecondaryIndepQuantity secondary_indep_var_value,
+                        const SecondaryIndepQuantity min_secondary_indep_var,
+                        const SecondaryIndepQuantity max_secondary_indep_var,
                         EvaluationMethod evaluate,
                         const ReturnType below_lower_bound_return,
                         const ReturnType above_upper_bound_return ) const
@@ -749,6 +767,9 @@ std::cout << "lower sec bound:" << std::setprecision(20) << lower_sec_indep_var_
       return above_upper_bound_return;
     if ( secondary_indep_var_value == lower_sec_indep_var_bound )
     {
+std::cout << "lower min eval:" << std::setprecision(20) << ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getLowerBoundOfIndepVar())
+          << "\tupper min eval:" << std::setprecision(20) << ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getLowerBoundOfIndepVar()) << std::endl;
+
       return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
                 lower_bin_boundary->first,
                 upper_bin_boundary->first,
@@ -758,6 +779,9 @@ std::cout << "lower sec bound:" << std::setprecision(20) << lower_sec_indep_var_
     }
     else if ( secondary_indep_var_value == upper_sec_indep_var_bound )
     {
+std::cout << "lower max eval:" << std::setprecision(20) << ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getUpperBoundOfIndepVar())
+          << "\tupper max eval:" << std::setprecision(20) << ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getUpperBoundOfIndepVar()) << std::endl;
+
       return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
                 lower_bin_boundary->first,
                 upper_bin_boundary->first,
@@ -766,14 +790,39 @@ std::cout << "lower sec bound:" << std::setprecision(20) << lower_sec_indep_var_
                 ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getUpperBoundOfIndepVar()) );
     }
 
+  // Get the min indep value at the upper and lower bin boundary
+  SecondaryIndepQuantity lower_bin_indep_min = 
+    lower_bin_boundary->second->getLowerBoundOfIndepVar();
+  SecondaryIndepQuantity upper_bin_indep_min = 
+    upper_bin_boundary->second->getLowerBoundOfIndepVar();
+
+  // Get the range of the indep value at the upper and lower bin boundary
+  SecondaryIndepQuantity lower_bin_indep_range =
+    lower_bin_boundary->second->getUpperBoundOfIndepVar() - lower_bin_indep_min;
+  SecondaryIndepQuantity upper_bin_indep_range =
+    upper_bin_boundary->second->getUpperBoundOfIndepVar() - upper_bin_indep_min;
+  SecondaryIndepQuantity secondary_indep_range =
+                            max_secondary_indep_var - min_secondary_indep_var;
+
+  // Normalize the sec_indep_var_value
+  double norm_sec_indep_var_value =
+    ( secondary_indep_var_value - min_secondary_indep_var )/secondary_indep_range;
+
+  // Get the sec_indep_var_value normalized to the upper and lower bin boundaries
+  SecondaryIndepQuantity lower_sec_indep_var_value =
+    norm_sec_indep_var_value*lower_bin_indep_range + lower_bin_indep_min;
+
+  SecondaryIndepQuantity upper_sec_indep_var_value =
+    norm_sec_indep_var_value*upper_bin_indep_range + upper_bin_indep_min;
+
     // Evaluate the cdf at the upper and lower bin boundaries
     double lower_bin_eval =
-      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( secondary_indep_var_value );
+      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( lower_sec_indep_var_value );
      double upper_bin_eval =
-      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( secondary_indep_var_value );
+      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( upper_sec_indep_var_value );
 
     // Get the lower and upper boundaries of the evaluated cdf
-    double lower_cdf_bound, upper_cdf_bound;
+    double lower_cdf_bound, upper_cdf_bound ;
     if ( lower_bin_eval <= upper_bin_eval )
     {
       lower_cdf_bound = lower_bin_eval;
@@ -806,13 +855,26 @@ std::cout << "lower bound:" << std::setprecision(20) << lower_cdf_bound
     upper_bin_sample =
       ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
 
+    // Normalized the Sampled values
+    double lower_bin_norm_sample =
+        ( lower_bin_sample - lower_bin_indep_min )/lower_bin_indep_range;
+    double upper_bin_norm_sample =
+        ( upper_bin_sample - upper_bin_indep_min )/upper_bin_indep_range;
+
     // Interpolate using the templated TwoDInterpPolicy::ZXInterpPolicy
-    SecondaryIndepQuantity est_secondary_indep_var_value =
+    double est_norm_secondary_indep_var_value =
       TwoDInterpPolicy::ZXInterpPolicy::interpolate( lower_bin_boundary->first,
                                                      upper_bin_boundary->first,
                                                      primary_indep_var_value,
-                                                     lower_bin_sample,
-                                                     upper_bin_sample );
+                                                     lower_bin_norm_sample,
+                                                     upper_bin_norm_sample );
+
+    // Un-normalized the interpolated estimate secondary indep value
+    SecondaryIndepQuantity
+        est_secondary_indep_var_value = min_secondary_indep_var +
+        secondary_indep_range*est_norm_secondary_indep_var_value;
+
+std::cout << std::setprecision(20) << estimated_cdf << ": (" << lower_bin_norm_sample << ") and (" << upper_bin_norm_sample << ") -> (" << est_norm_secondary_indep_var_value << ") -> (" << est_secondary_indep_var_value << ")" << std::endl;
 
     if ( secondary_indep_var_value == est_secondary_indep_var_value )
         break;
@@ -821,7 +883,7 @@ std::cout << "lower bound:" << std::setprecision(20) << lower_cdf_bound
     if ( est_secondary_indep_var_value < secondary_indep_var_value )
     {
       // Calculate the relative error between the secondary_indep_var_value and the estimate
-      rel_error = 2.0*( secondary_indep_var_value - est_secondary_indep_var_value )/
+      rel_error = ( secondary_indep_var_value - est_secondary_indep_var_value )/
                                                     secondary_indep_var_value;
 
       // If tolerance is met exit loop
@@ -834,7 +896,7 @@ std::cout << "lower bound:" << std::setprecision(20) << lower_cdf_bound
     else
     {
       // Calculate the relative error between the secondary_indep_var_value and the estimate
-      rel_error = 2.0*( est_secondary_indep_var_value - secondary_indep_var_value )/
+      rel_error = ( est_secondary_indep_var_value - secondary_indep_var_value )/
                                                     secondary_indep_var_value;
 
       // If tolerance is met exit loop
@@ -847,7 +909,7 @@ std::cout << "lower bound:" << std::setprecision(20) << lower_cdf_bound
 
 i++;
 std::cout << i << ":(" << std::setprecision(20) << estimated_cdf << "): (" << est_secondary_indep_var_value << ") - (" << secondary_indep_var_value << ") = " << rel_error << std::endl;
-if ( i > 100 )
+if ( i > 50 )
     break;
   }
 

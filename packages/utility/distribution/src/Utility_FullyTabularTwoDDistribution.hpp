@@ -88,20 +88,24 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
-  //! Evaluate the distribution using a weighted interpolation
-  virtual DepQuantity evaluateWeighted(
+  //! Evaluate the distribution using a normalized interpolation
+  virtual DepQuantity evaluateNormalized(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const double weighted_secondary_indep_var_value ) const = 0;
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const SecondaryIndepQuantity min_secondary_indep_var,
+            const SecondaryIndepQuantity max_secondary_indep_var ) const = 0;
 
   //! Evaluate the secondary conditional PDF
   virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
-  //! Evaluate the secondary conditional PDF using a weighted interpolation
-  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFWeighted(
+  //! Evaluate the secondary conditional PDF using a normalized interpolation
+  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFNormalized(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const = 0;
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const = 0;
 
   //! Evaluate the secondary conditional CDF
   virtual double evaluateSecondaryConditionalCDF(
@@ -113,19 +117,22 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
-  //! Evaluate the secondary conditional CDF using a weighted interpolation
-  virtual double evaluateSecondaryConditionalCDFWeighted(
+  //! Evaluate the secondary conditional CDF using a normalized interpolation
+  virtual double evaluateSecondaryConditionalCDFNormalized(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const double weighted_secondary_indep_var_value ) const = 0;
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const SecondaryIndepQuantity min_secondary_indep_var,
+            const SecondaryIndepQuantity max_secondary_indep_var ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF
   virtual SecondaryIndepQuantity sampleSecondaryConditionalExact(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
 
-  //! Return a random sample from the secondary conditional PDF using a weighted interpolation
-  virtual SecondaryIndepQuantity sampleSecondaryConditionalWeighted(
+  //! Return a random sample from the secondary conditional PDF using a normalized interpolation
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalNormalized(
     const PrimaryIndepQuantity primary_indep_var_value,
-    const SecondaryIndepQuantity secondary_indep_weighting_factor ) const = 0;
+    const SecondaryIndepQuantity min_secondary_indep_var,
+    const SecondaryIndepQuantity max_secondary_indep_var ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(

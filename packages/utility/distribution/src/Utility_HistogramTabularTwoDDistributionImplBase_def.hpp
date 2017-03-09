@@ -35,15 +35,17 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateEx
                          secondary_indep_var_value );
 }
 
-// Evaluate the distribution using a weighted interpolation scheme
+// Evaluate the distribution using a normalized interpolation scheme
 template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateWeighted(
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateNormalized(
   const PrimaryIndepQuantity primary_indep_var_value,
-  const double weighted_secondary_indep_var_value ) const -> DepQuantity
+  const SecondaryIndepQuantity secondary_indep_var_value,
+  const SecondaryIndepQuantity min_secondary_indep_var,
+  const SecondaryIndepQuantity max_secondary_indep_var ) const -> DepQuantity
 {
-  return this->evaluateWeightedImpl<DepQuantity>(
+  return this->evaluateNormalizedImpl<DepQuantity>(
                 primary_indep_var_value,
-                weighted_secondary_indep_var_value,
+                secondary_indep_var_value,
                 &BaseOneDDistributionType::evaluate );
 }
 
@@ -71,15 +73,17 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSe
                                                 secondary_indep_var_value );
 }
 
-// Evaluate the secondary conditional PDF using a weighted interpolation scheme
+// Evaluate the secondary conditional PDF using a normalized interpolation scheme
 template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDFWeighted(
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDFNormalized(
   const PrimaryIndepQuantity primary_indep_var_value,
-  const double weighted_secondary_indep_var_value ) const -> InverseSecondaryIndepQuantity
+  const SecondaryIndepQuantity secondary_indep_var_value,
+  const SecondaryIndepQuantity min_secondary_indep_var,
+  const SecondaryIndepQuantity max_secondary_indep_var ) const -> InverseSecondaryIndepQuantity
 {
-  return this->evaluateWeightedImpl<InverseSecondaryIndepQuantity>(
+  return this->evaluateNormalizedImpl<InverseSecondaryIndepQuantity>(
                 primary_indep_var_value,
-                weighted_secondary_indep_var_value,
+                secondary_indep_var_value,
                 &BaseOneDDistributionType::evaluatePDF );
 }
 
@@ -94,16 +98,18 @@ double UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate
                                      &BaseOneDDistributionType::evaluateCDF );
 }
 
-// Evaluate the secondary conditional CDF using weighted interpolation
+// Evaluate the secondary conditional CDF using normalized interpolation
 template<typename Distribution>
-double UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalCDFWeighted(
+double UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalCDFNormalized(
                  const PrimaryIndepQuantity primary_indep_var_value,
-                 const double weighted_secondary_indep_var_value ) const
+                 const SecondaryIndepQuantity secondary_indep_var_value,
+                 const SecondaryIndepQuantity min_secondary_indep_var,
+                 const SecondaryIndepQuantity max_secondary_indep_var ) const
 {
-  return this->evaluateWeightedImpl<double>(
-                                      primary_indep_var_value,
-                                      weighted_secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF );
+  return this->evaluateNormalizedImpl<double>(
+                                    primary_indep_var_value,
+                                    secondary_indep_var_value,
+                                    &BaseOneDDistributionType::evaluateCDF );
 }
 
 // Evaluate the distribution using the desired evaluation method
@@ -135,9 +141,9 @@ inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution
 // Evaluate the distribution using the desired evaluation method
 template<typename Distribution>
 template<typename ReturnType, typename EvaluationMethod>
-inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateWeightedImpl(
+inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateNormalizedImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
-                        const double weighted_secondary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
                         EvaluationMethod evaluate ) const
 {
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
@@ -151,10 +157,6 @@ inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution
   {
     if( this->arePrimaryLimitsExtended() )
     {
-      SecondaryIndepQuantity secondary_indep_var_value =
-        weighted_secondary_indep_var_value*
-        lower_bin_boundary->second->getUpperBoundOfIndepVar();
-
       return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
     }
     else
@@ -162,10 +164,6 @@ inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution
   }
   else
   {
-    SecondaryIndepQuantity secondary_indep_var_value =
-        weighted_secondary_indep_var_value*
-        lower_bin_boundary->second->getUpperBoundOfIndepVar();
-
     return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
   }
 }
@@ -238,11 +236,12 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSeco
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
 }
 
-// Return a random sample from the secondary conditional PDF using a weighted interpolation
+// Return a random sample from the secondary conditional PDF using a normalized interpolation
 template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditionalWeighted(
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditionalNormalized(
         const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_weighting_factor ) const
+        const SecondaryIndepQuantity min_secondary_indep_var,
+        const SecondaryIndepQuantity max_secondary_indep_var ) const
   -> SecondaryIndepQuantity
 {
   // Create the sampling functor

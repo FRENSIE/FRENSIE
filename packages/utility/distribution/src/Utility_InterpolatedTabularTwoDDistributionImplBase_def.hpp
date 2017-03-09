@@ -122,16 +122,16 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
 //                                          &BaseOneDDistributionType::evaluate );
 //}
 
-//// Evaluate the distribution using weighted interpolation
+//// Evaluate the distribution using normalized interpolation
 //template<typename TwoDInterpPolicy, typename Distribution>
-//auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateWeighted(
+//auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateNormalized(
 //                 const PrimaryIndepQuantity primary_indep_var_value,
-//                 const double weighted_secondary_indep_var_value ) const
+//                 const double normalized_secondary_indep_var_value ) const
 //  -> DepQuantity
 //{
-//  return this->evaluateWeightedImpl<TwoDInterpPolicy,DepQuantity>(
+//  return this->evaluateNormalizedImpl<TwoDInterpPolicy,DepQuantity>(
 //                                          primary_indep_var_value,
-//                                          weighted_secondary_indep_var_value,
+//                                          normalized_secondary_indep_var_value,
 //                                          &BaseOneDDistributionType::evaluate );
 //}
 
@@ -162,16 +162,16 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
 //                                      &BaseOneDDistributionType::evaluatePDF );
 //}
 
-//// Evaluate the secondary conditional PDF using weighted interpolation
+//// Evaluate the secondary conditional PDF using normalized interpolation
 //template<typename TwoDInterpPolicy, typename Distribution>
-//auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateSecondaryConditionalPDFWeighted(
+//auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateSecondaryConditionalPDFNormalized(
 //                 const PrimaryIndepQuantity primary_indep_var_value,
-//                 const double weighted_secondary_indep_var_value ) const
+//                 const double normalized_secondary_indep_var_value ) const
 //  ->  InverseSecondaryIndepQuantity
 //{
-//  return this->evaluateWeightedImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
+//  return this->evaluateNormalizedImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
 //                                          primary_indep_var_value,
-//                                          weighted_secondary_indep_var_value,
+//                                          normalized_secondary_indep_var_value,
 //                                          &BaseOneDDistributionType::evaluatePDF );
 //}
 
@@ -296,89 +296,89 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
 //  }
 //}
 
-// Evaluate the distribution using the desired evaluation method and the ratio of the secondary indep variable
-/*! \details The distribution is evaluated with a correlated routine that
- * evaluates the upper and lower distributions using the secondary indepent
- * variable weighted by the max secondary independent variable.
- * This allows the upper and lower distributions with different max secondary
- * indepent variables to be sampled to sampled correctly.
- */
-template<typename TwoDInterpPolicy, typename Distribution>
-template<typename LocalTwoDInterpPolicy,
-         typename ReturnType,
-         typename EvaluationMethod>
-inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateWeightedImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const double weighted_secondary_indep_var_value,
-                        EvaluationMethod evaluate ) const
-{
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+//// Evaluate the distribution using the desired evaluation method and the ratio of the secondary indep variable
+///*! \details The distribution is evaluated with a correlated routine that
+// * evaluates the upper and lower distributions using the secondary indepent
+// * variable normalized by the max secondary independent variable.
+// * This allows the upper and lower distributions with different max secondary
+// * indepent variables to be sampled to sampled correctly.
+// */
+//template<typename TwoDInterpPolicy, typename Distribution>
+//template<typename LocalTwoDInterpPolicy,
+//         typename ReturnType,
+//         typename EvaluationMethod>
+//inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateNormalizedImpl(
+//                        const PrimaryIndepQuantity primary_indep_var_value,
+//                        const double normalized_secondary_indep_var_value,
+//                        EvaluationMethod evaluate ) const
+//{
+//  // Find the bin boundaries
+//  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
 
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
+//  this->findBinBoundaries( primary_indep_var_value,
+//                           lower_bin_boundary,
+//                           upper_bin_boundary );
 
-  // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
-  {
-    if( this->arePrimaryLimitsExtended() )
-    {
-      SecondaryIndepQuantity secondary_indep_var_value =
-        weighted_secondary_indep_var_value*
-        upper_bin_boundary->second->getUpperBoundOfIndepVar();
+//  // Check for a primary value outside of the primary grid limits
+//  if( lower_bin_boundary == upper_bin_boundary )
+//  {
+//    if( this->arePrimaryLimitsExtended() )
+//    {
+//      SecondaryIndepQuantity secondary_indep_var_value =
+//        normalized_secondary_indep_var_value*
+//        upper_bin_boundary->second->getUpperBoundOfIndepVar();
 
-      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-    }
-    else
-      return QuantityTraits<ReturnType>::zero();
-  }
-  else
-  {
-    // Check for a primary value at the primary grid upper limit
-    if( primary_indep_var_value == upper_bin_boundary->first )
-    {
-      SecondaryIndepQuantity secondary_indep_var_value =
-        weighted_secondary_indep_var_value*
-        upper_bin_boundary->second->getUpperBoundOfIndepVar();
+//      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+//    }
+//    else
+//      return QuantityTraits<ReturnType>::zero();
+//  }
+//  else
+//  {
+//    // Check for a primary value at the primary grid upper limit
+//    if( primary_indep_var_value == upper_bin_boundary->first )
+//    {
+//      SecondaryIndepQuantity secondary_indep_var_value =
+//        normalized_secondary_indep_var_value*
+//        upper_bin_boundary->second->getUpperBoundOfIndepVar();
 
-      return ((*upper_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-    }
-    else if( primary_indep_var_value == lower_bin_boundary->first )
-    {
-      SecondaryIndepQuantity secondary_indep_var_value =
-        weighted_secondary_indep_var_value*
-        lower_bin_boundary->second->getUpperBoundOfIndepVar();
+//      return ((*upper_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+//    }
+//    else if( primary_indep_var_value == lower_bin_boundary->first )
+//    {
+//      SecondaryIndepQuantity secondary_indep_var_value =
+//        normalized_secondary_indep_var_value*
+//        lower_bin_boundary->second->getUpperBoundOfIndepVar();
 
-      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-    }
-    else
-    {
-      // Create the grid evaluation functors
-      std::function<ReturnType(const SecondaryIndepQuantity)>
-        evaluate_grid_0_functor =
-        std::bind<ReturnType>( evaluate,
-                               std::cref( *lower_bin_boundary->second ),
-                               std::placeholders::_1 );
+//      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+//    }
+//    else
+//    {
+//      // Create the grid evaluation functors
+//      std::function<ReturnType(const SecondaryIndepQuantity)>
+//        evaluate_grid_0_functor =
+//        std::bind<ReturnType>( evaluate,
+//                               std::cref( *lower_bin_boundary->second ),
+//                               std::placeholders::_1 );
 
-      std::function<ReturnType(const SecondaryIndepQuantity)>
-        evaluate_grid_1_functor =
-        std::bind<ReturnType>( evaluate,
-                               std::cref( *upper_bin_boundary->second ),
-                               std::placeholders::_1 );
+//      std::function<ReturnType(const SecondaryIndepQuantity)>
+//        evaluate_grid_1_functor =
+//        std::bind<ReturnType>( evaluate,
+//                               std::cref( *upper_bin_boundary->second ),
+//                               std::placeholders::_1 );
 
-      return LocalTwoDInterpPolicy::interpolateWeighted(
-                           lower_bin_boundary->first,
-                           upper_bin_boundary->first,
-                           primary_indep_var_value,
-                           weighted_secondary_indep_var_value,
-                           evaluate_grid_0_functor,
-                           evaluate_grid_1_functor,
-                           lower_bin_boundary->second->getUpperBoundOfIndepVar(),
-                           upper_bin_boundary->second->getUpperBoundOfIndepVar() );
-    }
-  }
-}
+//      return LocalTwoDInterpPolicy::interpolateWeighted(
+//                           lower_bin_boundary->first,
+//                           upper_bin_boundary->first,
+//                           primary_indep_var_value,
+//                           normalized_secondary_indep_var_value,
+//                           evaluate_grid_0_functor,
+//                           evaluate_grid_1_functor,
+//                           lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+//                           upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+//    }
+//  }
+//}
 
 // Return a random sample from the secondary conditional PDF
 /*! \details A stochastic sampling procedure is used. If the primary value
@@ -425,8 +425,8 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
 }
 
 
-// Return a random sample from the secondary conditional PDF using a weighted interpolation
-/*! \details A stochastic weighted sampling procedure is used. If the primary
+// Return a random sample from the secondary conditional PDF using a normalized interpolation
+/*! \details A stochastic normalized sampling procedure is used. If the primary
  * value provided is outside of the primary grid limits the appropriate limiting
  * secondary distribution will be used to create the sample. The alternative
  * to this behavior is to throw an exception unless the distribution has
@@ -434,9 +434,10 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
  * this is a performance critical method we decided against this behavior.
  */
 template<typename TwoDInterpPolicy, typename Distribution>
-auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleSecondaryConditionalWeighted(
+auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleSecondaryConditionalNormalized(
         const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_weighting_factor ) const
+        const SecondaryIndepQuantity min_secondary_indep_var,
+        const SecondaryIndepQuantity max_secondary_indep_var ) const
   -> SecondaryIndepQuantity
 {
   // Create the sampling functor
@@ -445,9 +446,10 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
                              &BaseOneDDistributionType::sample,
                              std::placeholders::_1 );
 
-  return this->sampleWeightedImpl( primary_indep_var_value,
-                                   secondary_indep_weighting_factor,
-                                   sampling_functor );
+  return this->sampleNormalizedImpl( primary_indep_var_value,
+                                     min_secondary_indep_var,
+                                     max_secondary_indep_var,
+                                     sampling_functor );
 }
 
 
@@ -608,15 +610,16 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
   }
 }
 
-// Sample from the distribution using the desired sampling functor and a weighted interpolation
-/*! \details This function uses a weighted interpolation and returns the sampled
- * value weighted by the given secondary independent weighting factor.
+// Sample from the distribution using the desired sampling functor and a normalized interpolation
+/*! \details This function uses a normalized interpolation and returns the sampled
+ * value normalized by the given secondary independent weighting factor.
  */
 template<typename TwoDInterpPolicy, typename Distribution>
 template<typename SampleFunctor>
-inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleWeightedDetailedImpl(
+inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleNormalizedDetailedImpl(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_weighting_factor,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var,
                 SampleFunctor sample_functor,
                 SecondaryIndepQuantity& raw_sample,
                 unsigned& primary_bin_index ) const
@@ -670,20 +673,26 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
     {
       // sample the lower and upper distributions
       double raw_sample_0 =
-        sample_functor( *lower_bin_boundary->second )/
-                         lower_bin_boundary->second->getUpperBoundOfIndepVar();
+        ( sample_functor( *lower_bin_boundary->second ) -
+                    lower_bin_boundary->second->getLowerBoundOfIndepVar() )/
+        ( lower_bin_boundary->second->getUpperBoundOfIndepVar() -
+                    lower_bin_boundary->second->getLowerBoundOfIndepVar() );
 
       double raw_sample_1 =
-        sample_functor( *upper_bin_boundary->second )/
-                         upper_bin_boundary->second->getUpperBoundOfIndepVar();
+        ( sample_functor( *upper_bin_boundary->second ) -
+                    upper_bin_boundary->second->getLowerBoundOfIndepVar() )/
+        ( upper_bin_boundary->second->getUpperBoundOfIndepVar() -
+                    upper_bin_boundary->second->getLowerBoundOfIndepVar() );
 
-      raw_sample = secondary_indep_weighting_factor*
-                   TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                           lower_bin_boundary->first,
-                           upper_bin_boundary->first,
-                           primary_indep_var_value,
-                           raw_sample_0,
-                           raw_sample_1 );
+      double norm_sample = TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                                           lower_bin_boundary->first,
+                                           upper_bin_boundary->first,
+                                           primary_indep_var_value,
+                                           raw_sample_0,
+                                           raw_sample_1 );
+
+      raw_sample = (max_secondary_indep_var - min_secondary_indep_var)*
+                                        norm_sample + min_secondary_indep_var;
 
       return raw_sample;
     }
@@ -726,12 +735,13 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
                                         dummy_primary_bin_index );
 }
 
-  //! Sample from the distribution using the desired sampling functor and a weighted interpolation
+  //! Sample from the distribution using the desired sampling functor and a normalized interpolation
 template<typename TwoDInterpPolicy, typename Distribution>
 template<typename SampleFunctor>
-inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleWeightedImpl(
+inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleNormalizedImpl(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_weighting_factor,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var,
                 SampleFunctor sample_functor ) const
   -> SecondaryIndepQuantity
 {
@@ -739,11 +749,12 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
   SecondaryIndepQuantity dummy_raw_sample;
   unsigned dummy_primary_bin_index;
 
-  return this->sampleWeightedDetailedImpl( primary_indep_var_value,
-                                           secondary_indep_weighting_factor,
-                                           sample_functor,
-                                           dummy_raw_sample,
-                                           dummy_primary_bin_index );
+  return this->sampleNormalizedDetailedImpl( primary_indep_var_value,
+                                             min_secondary_indep_var,
+                                             max_secondary_indep_var,
+                                             sample_functor,
+                                             dummy_raw_sample,
+                                             dummy_primary_bin_index );
 }
 
 // Sample the bin boundary that will be used for stochastic sampling

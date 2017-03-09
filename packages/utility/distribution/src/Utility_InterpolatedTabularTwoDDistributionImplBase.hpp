@@ -89,30 +89,30 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-//  //! Evaluate the distribution
-//  DepQuantity evaluateExact(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-//  //! Evaluate the distribution using weighted interpolation
-//  DepQuantity evaluateWeighted(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const double weighted_secondary_indep_var_value ) const;
-
   //! Evaluate the secondary conditional PDF using unit based interpolation
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+//  //! Evaluate the distribution
+//  DepQuantity evaluateExact(
+//                const PrimaryIndepQuantity primary_indep_var_value,
+//                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
 //  //! Evaluate the secondary conditional PDF
 //  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
 //                const PrimaryIndepQuantity primary_indep_var_value,
 //                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-//  //! Evaluate the secondary conditional PDF using weighted interpolation
-//  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFWeighted(
+//  //! Evaluate the distribution using normalized interpolation
+//  DepQuantity evaluateNormalized(
 //                const PrimaryIndepQuantity primary_indep_var_value,
-//                const double weighted_secondary_indep_var_value ) const;
+//                const double normalized_secondary_indep_var_value ) const;
+
+//  //! Evaluate the secondary conditional PDF using normalized interpolation
+//  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFNormalized(
+//                const PrimaryIndepQuantity primary_indep_var_value,
+//                const double normalized_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
@@ -122,10 +122,11 @@ public:
   SecondaryIndepQuantity sampleSecondaryConditionalExact(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
 
-  //! Return a random sample from the secondary conditional PDF using a weighted interpolation
-  SecondaryIndepQuantity sampleSecondaryConditionalWeighted(
-          const PrimaryIndepQuantity primary_indep_var_value,
-          const SecondaryIndepQuantity secondary_indep_weighting_factor ) const;
+  //! Return a random sample from the secondary conditional PDF using a normalized interpolation
+  SecondaryIndepQuantity sampleSecondaryConditionalNormalized(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
@@ -183,14 +184,14 @@ protected:
 //                        const ReturnType above_upper_bound_return =
 //                        QuantityTraits<ReturnType>::zero() ) const;
 
-  //! Evaluate the distribution using the desired evaluation method and a weighted interpolation
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
-           typename EvaluationMethod>
-  ReturnType evaluateWeightedImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const double weighted_secondary_indep_var_value,
-                        EvaluationMethod evaluate ) const;
+//  //! Evaluate the distribution using the desired evaluation method and a normalized interpolation
+//  template<typename LocalTwoDInterpPolicy,
+//           typename ReturnType,
+//           typename EvaluationMethod>
+//  ReturnType evaluateNormalizedImpl(
+//                        const PrimaryIndepQuantity primary_indep_var_value,
+//                        const double normalized_secondary_indep_var_value,
+//                        EvaluationMethod evaluate ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
@@ -210,9 +211,10 @@ protected:
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
-  SecondaryIndepQuantity sampleWeightedDetailedImpl(
+  SecondaryIndepQuantity sampleNormalizedDetailedImpl(
                   const PrimaryIndepQuantity primary_indep_var_value,
-                  const SecondaryIndepQuantity secondary_indep_weighting_factor,
+                  const SecondaryIndepQuantity min_secondary_indep_var,
+                  const SecondaryIndepQuantity max_secondary_indep_var,
                   SampleFunctor sample_functor,
                   SecondaryIndepQuantity& raw_sample,
                   unsigned& primary_bin_index ) const;
@@ -229,11 +231,12 @@ protected:
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const;
 
-  //! Sample from the distribution using the desired sampling functor and a weighted interpolation
+  //! Sample from the distribution using the desired sampling functor and a normalized interpolation
   template<typename SampleFunctor>
-  SecondaryIndepQuantity sampleWeightedImpl(
+  SecondaryIndepQuantity sampleNormalizedImpl(
                   const PrimaryIndepQuantity primary_indep_var_value,
-                  const SecondaryIndepQuantity secondary_indep_weighting_factor,
+                  const SecondaryIndepQuantity min_secondary_indep_var,
+                  const SecondaryIndepQuantity max_secondary_indep_var,
                   SampleFunctor sample_functor ) const;
 
   //! Sample the bin boundary that will be used for stochastic sampling
