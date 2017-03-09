@@ -9,11 +9,14 @@
 #ifndef FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
 #define FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
 
-// Boost Function
-#include <boost/function.hpp>
+// Std Lib Includes
+#include <functional>
 
-// Trilinos Includes
-#include <Teuchos_ParameterList.hpp>
+// Boost Includes
+#include <boost/mpl/find.hpp>
+#include <boost/mpl/deref.hpp>
+#include <boost/mpl/next_prior.hpp>
+#include <boost/mpl/begin_end.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_SourceModuleInterface.hpp"
@@ -27,27 +30,18 @@
 
 namespace MonteCarlo{
 
+namespace Details{
+
+//! The mode initialization helper class
+template<typename BeginParticleIterator, typename EndParticleIterator>
+struct ModeInitializationHelper;
+  
+} // end Details namespace
+
 //! The generic particle simulation manager class
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
+template<ParticleModeType mode>
 class ParticleSimulationManager : public SimulationManager
 {
-
-protected:
-
-  // Typedef for geometry module interface
-  typedef Geometry::ModuleInterface<GeometryHandler> GMI;
-
-  // Typedef for source module interface
-  typedef SourceModuleInterface<SourceHandler> SMI;
-
-  // Typedef for event module interface
-  typedef EventModuleInterface<EstimatorHandler> EMI;
-
-  // Typedef for collision module interface
-  typedef CollisionModuleInterface<CollisionHandler> CMI;
 
 public:
 
@@ -103,21 +97,22 @@ protected:
 
 private:
 
+  // Simulate an unresolved particle
+  void simulateUnresolvedParticle( ParticleState& unresolved_particle,
+                                   ParticleBank& bank ) const;
+
   // Simulate an individual particle
-  template<typename ParticleStateType>
-  void simulateParticle( ParticleStateType& particle,
-                         ParticleBank& particle_bank ) const;
+  template<typename State>
+  void simulateParticle( ParticleState& unresolved_particle,
+                         ParticleBank& bank ) const;
 
-  // Dummy function for ignoring a particle
-  template<typename ParticleStateType>
-  void ignoreParticle( ParticleStateType& particle,
-		       ParticleBank& particle_bank ) const;
+  // Add simulate particle function for particle type
+  template<typename State>
+  void addSimulateParticleFunction();
 
-  // Print lost particle info
-  void printLostParticleInfo( const std::string& file,
-                              const int line,
-                              const std::string& error_message,
-                              const ParticleState& particle ) const;
+  // Add the mode initialization helper as a friend class
+  template<typename T1, typename T2>
+  friend class Details::ModeInitializationHelper;
 
   // The simulation properties
   std::shared_ptr<const SimulationProperties> d_properties;
@@ -143,14 +138,14 @@ private:
   // The simulation end time
   double d_end_time;
 
-  // The neutron simulation function
-  boost::function<void (NeutronState&, ParticleBank&)> d_simulate_neutron;
-
-  // The photon simulation function
-  boost::function<void (PhotonState&, ParticleBank&)> d_simulate_photon;
-
-  // The electron simulation function
-  boost::function<void (ElectronState&, ParticleBank&)> d_simulate_electron;
+  // The simulation functions
+  typedef std::function<void(ParticleState&, ParticleBank&)>
+  SimulateParticleFunction;
+  
+  typedef std::map<ParticleType,SimulatParticleFunction>
+  SimulateParticleFunctionMap;
+  
+  SimulateParticleFunctionMap d_simulate_particle_function_map;
 };
 
 //! Macro for catching a lost particle and breaking a loop
@@ -159,10 +154,16 @@ private:
   {									\
     particle.setAsLost();						\
                                                                         \
-    this->printLostParticleInfo( __FILE__,                              \
-                                 __LINE__,                              \
-                                 exception.what(),                      \
-                                 particle );                            \
+    FRENSIE_LOG_NESTED_ERROR( exception.what() );                       \
+                                                                        \
+    FRENSIE_LOG_TAGGED_WARNING(                                         \
+                   "Lost Particle",                                     \
+                   "history " << particle.getHistoryNumber() <<         \
+                   ", generation " << particle.getGenerationNumber() ); \
+                                                                        \
+    FRENSIE_LOG_TAGGED_NOTIFICATION( "Lost Particle State Dump",        \
+                                     particle );                        \
+                                                                        \
     break;								\
   }
 
@@ -172,10 +173,14 @@ private:
   {									\
     bank.top().setAsLost();                                             \
                                                                         \
-    this->printLostParticleInfo( __FILE__,                              \
-                                 __LINE__,                              \
-                                 exception.what(),                      \
-                                 bank.top() );                          \
+    FRENSIE_LOG_NESTED_ERROR( exception.what() );                       \
+                                                                        \
+    FRENSIE_LOG_TAGGED_WARNING(                                         \
+                       "Lost Source Particle",                          \
+                       "history " << particle.getHistoryNumber() );     \
+                                                                        \
+    FRENSIE_LOG_TAGGED_NOTIFICATION( "Lost Source Particle State Dump", \
+                                     particle );                        \
                                                                         \
     bank.pop();								\
                                                                         \

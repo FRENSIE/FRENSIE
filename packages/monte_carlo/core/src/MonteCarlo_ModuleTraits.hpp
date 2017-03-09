@@ -13,6 +13,7 @@
 #include <limits>
 
 // FRENSIE Includes
+#include "Geometry_ModuleTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
 
 /*! \defgroup module_traits Module Traits
@@ -38,7 +39,7 @@ struct ModuleTraits
   //! The internal event observer handle type
   typedef unsigned long long InternalEventObserverHandle;
   //! The internal material handle type
-  typedef unsigned long long InternalMaterialHandle;
+  typedef Geometry::ModuleTraits::InternalMaterialHandle InternalMaterialHandle;
 
   //! The internal counter type
   typedef Utility::DistributionTraits::Counter InternalCounter;

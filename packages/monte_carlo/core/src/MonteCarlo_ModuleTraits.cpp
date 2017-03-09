@@ -22,7 +22,7 @@ ModuleTraits::invalid_internal_event_observer_handle =
 
 const ModuleTraits::InternalMaterialHandle
 ModuleTraits::invalid_internal_material_handle =
-  std::numeric_limits<ModuleTraits::InternalMaterialHandle>::max();
+  Geometry::ModuleTraits::invalid_internal_material_handle;
 
 } // end MonteCarlo namespace
 

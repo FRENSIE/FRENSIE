@@ -21,6 +21,10 @@ ModuleTraits::invalid_internal_cell_handle = 0;
 const ModuleTraits::InternalSurfaceHandle
 ModuleTraits::invalid_internal_surface_handle = 0;
 
+const ModuleTraits::InternalMaterialHandle
+ModuleTraits::invalid_internal_material_handle =
+  std::numeric_limits<ModuleTraits::InternalMaterialHandle>::max();
+
 } // end Geometry namespace
 
 //---------------------------------------------------------------------------//

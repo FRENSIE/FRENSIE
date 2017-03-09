@@ -17,37 +17,53 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_SourceModuleInterface.hpp"
-#include "MonteCarlo_EventModuleInterface.hpp"
-#include "MonteCarlo_CollisionModuleInterface.hpp"
-#include "MonteCarlo_SimulationGeneralProperties.hpp"
-#include "MonteCarlo_SimulationNeutronProperties.hpp"
-#include "MonteCarlo_SimulationElectronProperties.hpp"
-#include "MonteCarlo_SimulationPhotonProperties.hpp"
-#include "Geometry_ModuleInterface.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ContractException.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-
-
+#include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
+namespace Details{
+
+// The mode initialization helper class
+template<typename BeginParticleIterator, typename EndParticleIterator>
+struct ModeInitializationHelper
+{
+  //! Initialize simulate particle functors map
+  template<typename Manager>
+  static inline void initializeSimulateParticleFunctions(
+                                                       const Manager& manager )
+  {
+    manager.addSimulateParticleFunction<typename boost::mpl::deref<BeginParticleIterator>::type>();
+
+    ModeInitializationHelper<typename boost::mpl::next<BeginParticleIterator>::type,
+                             EndParticleIterator>::initializeSimulateParticleFunctions( manager );
+  }
+};
+
+// End initialization
+template<typename EndParticleIterator>
+struct ModeInitializationHelper
+{
+  //! Initialize simulate particle functors map
+  template<typename Manager>
+  static inline void initializeSimulateParticleFunctions(
+                                                       const Manager& manager )
+  { /* ... */ }
+};
+  
+} // end Details namespace
+  
 // Constructor for multiple threads
 /*! \details If OpenMP is not being used, the number of threads requested will
  * be ignored.
  */
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-ParticleSimulationManager<GeometryHandler,
-			  SourceHandler,
-			  EstimatorHandler,
-			  CollisionHandler>::ParticleSimulationManager(
+template<ParticleModeType mode>
+ParticleSimulationManager<mode>::ParticleSimulationManager(
                   const std::shared_ptr<const SimulationProperties> properties,
                   const unsigned long long start_history,
                   const unsigned long long previously_completed_histories,
@@ -64,94 +80,24 @@ ParticleSimulationManager<GeometryHandler,
   testPrecondition( properties.get() );
   // At least one history must be simulated
   testPrecondition( properties->getNumberOfHistories() > 0 );
+  // Make sure that the modes are consistent
+  testPrecondition( mode == properties->getParticleMode() );
 
   // Increment the history number wall
   d_history_number_wall += properties->getNumberOfHistories();
 
-  // Assign the functions based on the mode
-  switch( d_properties->getParticleMode() )
-  {
-  case NEUTRON_MODE:
-  {
-    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<NeutronState>,
-					    boost::cref( *this ),
-					    _1,
-					    _2 );
-    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PhotonState>,
-					    boost::cref( *this ),
-					    _1,
-					    _2 );
-    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
-					    boost::cref( *this ),
-					    _1,
-					    _2 );
-    break;
-  }
-  case NEUTRON_PHOTON_MODE:
-  {
-    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<NeutronState>,
-                                            boost::cref( *this ),
-                                            _1,
-                                            _2 );
-    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<PhotonState>,
-                                           boost::cref( *this ),
-                                           _1,
-                                           _2 );
-    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
-                                             boost::cref( *this ),
-                                             _1,
-                                             _2 );
-    break;
-  }
-  case PHOTON_MODE:
-  {
-    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<PhotonState>,
-					    boost::cref( *this ),
-					    _1,
-					    _2 );
-    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<NeutronState>,
-					    boost::cref( *this ),
-					    _1,
-					    _2 );
-    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
-					    boost::cref( *this ),
-					    _1,
-					    _2 );
-    break;
-  }
-  case ELECTRON_MODE:
-  {
-    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<ElectronState>,
-					     boost::cref( *this ),
-					     _1,
-					     _2 );
-    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<NeutronState>,
-					    boost::cref( *this ),
-					    _1,
-					    _2 );
-    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PhotonState>,
-					   boost::cref( *this ),
-					   _1,
-					   _2 );
-    break;
-  }
-  default:
-    THROW_EXCEPTION( std::runtime_error,
-   		     "Error: particle mode "
-                     << d_properties->getParticleMode() << " is not currently "
-   		     << "supported by the particle simulation manager." );
-  }
+  // Initialize the simulate particle functions
+  typedef typename boost::mpl::begin<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type
+    BeginParticleIterator;
+  typedef typename boost::mpl::begin<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type
+    EndParticleIterator;
+  
+  ModeInitializationHelper<BeginParticleIterator,EndParticleIterator>::initializeSimulateParticleFunctions( *this );
 }
 
 // Run the simulation set up by the user
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::runSimulation()
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::runSimulation()
 {
   std::cout << "Starting simulation ... ";
   std::cout.flush();
@@ -184,16 +130,10 @@ void ParticleSimulationManager<GeometryHandler,
 }
 
 // Run the simulation batch
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::runSimulationBatch(
-                            const unsigned long long batch_start_history,
-			    const unsigned long long batch_end_history )
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::runSimulationBatch(
+                                  const unsigned long long batch_start_history,
+                                  const unsigned long long batch_end_history )
 {
   // Make sure the history range is valid
   testPrecondition( batch_start_history <= batch_end_history );
@@ -237,28 +177,9 @@ void ParticleSimulationManager<GeometryHandler,
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
 	{
-	  switch( bank.top().getParticleType() )
-	  {
-	  case NEUTRON:
-	    d_simulate_neutron( dynamic_cast<NeutronState&>( bank.top() ),
-				bank );
-	    break;
-	  case PHOTON:
-	    d_simulate_photon( dynamic_cast<PhotonState&>( bank.top() ),
-			       bank );
-	    break;
-	  case ELECTRON:
-	    d_simulate_electron( dynamic_cast<ElectronState&>( bank.top() ),
-	    			 bank );
-	    break;
-	  default:
-	    THROW_EXCEPTION( std::logic_error,
-			     "Error: particle type "
-			     << bank.top().getParticleType() <<
-			     " is not currently supported!" );
-	  }
+	  this->simulateUnresolvedParticle( bank.top(), bank );
 
-	bank.pop();
+          bank.pop();
 	}
 
 	// Commit all observer history contributions
@@ -272,19 +193,33 @@ void ParticleSimulationManager<GeometryHandler,
   }
 }
 
-// Set the number of particle histories to simulate
-template<typename GeometryHandler,
-         typename SourceHandler,
-         typename EstimatorHandler,
-         typename CollisionHandler>
-template<typename ParticleStateType>
-void ParticleSimulationManager<GeometryHandler,
-                               SourceHandler,
-                               EstimatorHandler,
-                               CollisionHandler>::simulateParticle(
-                                                   ParticleStateType& particle,
-						   ParticleBank& bank ) const
+// Simulate an unresolved particle
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::simulateUnresolvedParticle(
+                                            ParticleState& unresolved_particle,
+                                            ParticleBank& bank ) const
 {
+  SimulateParticleFunctionMap::const_iterator simulation_function_it =
+    d_simulate_particle_function_map.find( unresolved_particle.getParticleType() );
+
+  // Only simulate the particle if there is a simulation function associated
+  // with the type
+  if( simulation_function_it != d_simulate_particle_function_map.end() )
+    simulation_function_it->second( unresolved_particle, bank );
+  else
+    unresolved_particle.setAsGone();
+}
+
+// Set the number of particle histories to simulate
+template<ParticleModeType mode>
+template<typename State>
+void ParticleSimulationManager<mode>::simulateParticle(
+                                            ParticleState& unresolved_particle,
+                                            ParticleBank& bank ) const
+{
+  // Resolve the particle state
+  State& particle = dynamic_cast<State&>( unresolved_particle );
+  
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
   double subtrack_start_time;
@@ -468,82 +403,61 @@ void ParticleSimulationManager<GeometryHandler,
   						      particle.getPosition() );
 }
 
+// Add simulate particle function for particle type
+template<ParticleModeType mode> 
+template<typename State>
+void ParticleSimulateManager<mode>::addSimulateParticleFunction()
+{
+  // Make sure that the state is compatible with the mode
+  testPrecondition( isParticleModeCompatible<mode>( State::type ) );
+
+  d_simulate_particle_function_map[State::type] =
+    std::bind<void>( ParticleSimulationManager<mode>::simulateParticle<State>,
+                     std::cref( *this ) );
+}
+
 // Return the number of histories
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-unsigned long long  ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::getNumberOfHistories() const
+template<ParticleModeType mode>
+unsigned long long
+ParticleSimulationManager<mode>::getNumberOfHistories() const
 {
   return d_history_number_wall - d_start_history;
 }
 
 // Return the number of histories completed
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-unsigned long long  ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::getNumberOfHistoriesCompleted() const
+template<ParticleModeType mode>
+unsigned long long
+ParticleSimulationManager<mode>::getNumberOfHistoriesCompleted() const
 {
   return d_histories_completed;
 }
 
 // Increment the number of histories completed
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::incrementHistoriesCompleted(
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::incrementHistoriesCompleted(
 					   const unsigned long long histories )
 {
   d_histories_completed += histories;
 }
 
 // Set the number of histories completed
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::setHistoriesCompleted(
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::setHistoriesCompleted(
 					   const unsigned long long histories )
 {
   d_histories_completed = histories;
 }
 
 // Set the start time
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::setStartTime( const double start_time )
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::setStartTime( const double start_time )
 {
   d_start_time = start_time;
 }
 
 // Set the end time
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::setEndTime( const double end_time )
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::setEndTime( const double end_time )
 {
   // Make sure the end time is valid
   testPrecondition( end_time >= d_start_time );
@@ -551,63 +465,9 @@ void ParticleSimulationManager<GeometryHandler,
   d_end_time = end_time;
 }
 
-// Set the number of particle histories to simulate
-template<typename GeometryHandler,
-         typename SourceHandler,
-         typename EstimatorHandler,
-         typename CollisionHandler>
-template<typename ParticleStateType>
-void ParticleSimulationManager<GeometryHandler,
-                               SourceHandler,
-                               EstimatorHandler,
-                               CollisionHandler>::ignoreParticle(
-                                                   ParticleStateType& particle,
-						   ParticleBank& bank ) const
-{
-  particle.setAsGone();
-}
-
-// Print lost particle info
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::printLostParticleInfo(
-                                       const std::string& file,
-                                       const int line,
-                                       const std::string& error_message,
-                                       const ParticleState& particle ) const
-{
-  #pragma omp critical( lost_particle )
-  {
-    std::cerr << error_message << std::endl
-              << "Particle " << particle.getHistoryNumber() << " (gen "
-              << particle.getGenerationNumber() << ") lost: " << std::endl
-              << "\t File: " << file << std::endl
-              << "\t Line: " << line << std::endl
-              << "\t Cell: " << particle.getCell() << std::endl
-              << "\t Position: " << particle.getXPosition() << " "
-              << particle.getYPosition() << " "
-              << particle.getZPosition() << std::endl
-              << "\t Direction: " << particle.getXDirection() << " "
-              << particle.getYDirection() << " "
-              << particle.getZDirection() << std::endl
-              << "\t Type: " << particle.getParticleType() << std::endl;
-  }
-}
-
 // Print the data in all estimators to the desired stream
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::printSimulationSummary(
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::printSimulationSummary(
 						       std::ostream &os ) const
 {
   os << "Number of histories completed: " << d_histories_completed <<std::endl;
@@ -625,14 +485,8 @@ void ParticleSimulationManager<GeometryHandler,
 }
 
 // Print the data in all estimators to a parameter list
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::exportSimulationData(
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::exportSimulationData(
                                              const std::string& data_file_name,
                                              std::ostream& os ) const
 {
@@ -658,14 +512,8 @@ void ParticleSimulationManager<GeometryHandler,
 }
 
 // Signal handler
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::signalHandler(int signal)
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::signalHandler(int signal)
 {
   // Ask the user what to do
   std::cerr << " Status (s), End (e), Kill (k)" << std::endl;
@@ -687,14 +535,8 @@ void ParticleSimulationManager<GeometryHandler,
 }
 
 // Print simulation state info in collision handler
-template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::printSimulationStateInfo()
+template<ParticleModeType mode>
+void ParticleSimulationManager<mode>::printSimulationStateInfo()
 {
   double time = Utility::GlobalOpenMPSession::getTime();
 

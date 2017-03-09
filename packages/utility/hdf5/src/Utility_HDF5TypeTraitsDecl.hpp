@@ -13,7 +13,6 @@
 #include <H5Cpp.h>
 
 // FRENSIE Includes
-#include "Utility_Empty.hpp"
 #include "Utility_UndefinedTraits.hpp"
 
 /*! \defgroup hdf5_type_traits HDF5 Type Traits
