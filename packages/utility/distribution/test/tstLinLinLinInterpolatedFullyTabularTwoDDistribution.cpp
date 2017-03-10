@@ -6617,7 +6617,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
                                                             distribution_data,
                                                             1e-3,
-                                                            1e-6 ) );
+                                                            1e-7 ) );
     distribution = tab_distribution;
   }
 
@@ -6649,7 +6649,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     primary_bins[3] = 2.0*MeV;
     secondary_dists[3] = secondary_dists[0];
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-6 ) );
+    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
 
     unit_aware_distribution = unit_aware_tab_distribution;
   }

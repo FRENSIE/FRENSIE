@@ -262,7 +262,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
                             energy,
                             properties->getElasticCutoffAngleCosine() );
   inelastic = 6.411260911064270e6;
-  elastic = 1.61118815071382e7*cross_section_ratio + 1.8916841363881219e6;
+  elastic = 1.6111881507138280e+07*cross_section_ratio + 1.8915579090387002e+06;
 
 
   cross_section = atom->getTotalCrossSection( energy );
@@ -367,7 +367,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
                         1.99526e-4,
                         properties->getElasticCutoffAngleCosine() );
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.1309e8*cross_section_ratio + 2.133609331382077e8,
+                          6.1309e8*cross_section_ratio + 5.9201722001973294e+07,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );

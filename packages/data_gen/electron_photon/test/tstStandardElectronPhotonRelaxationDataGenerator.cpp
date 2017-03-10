@@ -2294,6 +2294,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container.getReducedCutoffCrossSectionRatios();
 
   TEST_FLOATING_EQUALITY( reduction_ratio.front(), 0.9500004750002375431, 1e-15 );
+  TEST_FLOATING_EQUALITY( reduction_ratio[50], 9.4750268204999422e-01, 1e-15 );
   TEST_FLOATING_EQUALITY( reduction_ratio.back(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( reduction_ratio.size(), 729-threshold );
 

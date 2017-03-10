@@ -169,7 +169,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.73737676297259e8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.8927529078162849e+07, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
@@ -450,7 +450,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 1.73737676297259e8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.8927529078162849e+07, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );

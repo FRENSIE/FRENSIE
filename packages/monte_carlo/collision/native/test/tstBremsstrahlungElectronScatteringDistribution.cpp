@@ -55,7 +55,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, getMaxEnergy )
 // Check that the distribution can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate )
 {
-  // LinLinLog interpoation used.
+  // LinLinLin interpoation used.
   double pdf = twobs_brem_dist->evaluate( 1.0e-5, 1.0e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.5374950921491210e+05, 1e-12 );
 
@@ -70,7 +70,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate )
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluatePDF )
 {
-  // LinLinLog interpoation used.
+  // LinLinLin interpoation used.
   double pdf = twobs_brem_dist->evaluatePDF( 1.0e-5, 1.0e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.5374950921491210e+05, 1e-12 );
 
@@ -86,7 +86,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluatePDF )
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                    evaluateCDF )
 {
-  // LinLinLog interpoation used.
+  // LinLinLin interpoation used.
   double cdf = twobs_brem_dist->evaluateCDF( 1.0e-5, 1.0e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 4.974034148027E-01, 1e-12 );
 

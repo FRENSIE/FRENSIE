@@ -112,7 +112,7 @@ public:
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
                             const DistributionType& distribution,
                             const double fuzzy_boundary_tol = 1e-3,
-                            const double evaluate_relative_error_tol = 1e-6 )
+                            const double evaluate_relative_error_tol = 1e-7 )
     : ParentType( distribution, fuzzy_boundary_tol ),
       d_relative_error_tol( evaluate_relative_error_tol )
   { /* ... */ }
@@ -124,7 +124,7 @@ public:
                    const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                    const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
                    const double fuzzy_boundary_tol = 1e-3,
-                   const double evaluate_relative_error_tol = 1e-6 )
+                   const double evaluate_relative_error_tol = 1e-7 )
     : ParentType( primary_indep_grid, secondary_distributions, fuzzy_boundary_tol ),
       d_relative_error_tol( evaluate_relative_error_tol )
   { /* ... */ }
@@ -140,7 +140,7 @@ public:
         const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
         const ArrayC<SubarrayC<DepQuantity> >& dependent_values,
         const double fuzzy_boundary_tol = 1e-3,
-        const double evaluate_relative_error_tol = 1e-6 );
+        const double evaluate_relative_error_tol = 1e-7 );
 
   //! Destructor
   ~UnitAwareInterpolatedFullyTabularTwoDDistribution()
@@ -244,18 +244,18 @@ public:
 
 private:
 
-//  //! Evaluate the distribution using the desired evaluation method
-//  template<typename LocalTwoDInterpPolicy,
-//           typename ReturnType,
-//           typename EvaluationMethod>
-//  ReturnType evaluateExactImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        const SecondaryIndepQuantity secondary_indep_var_value,
-//                        EvaluationMethod evaluate,
-//                        const ReturnType below_lower_bound_return =
-//                        QuantityTraits<ReturnType>::zero(),
-//                        const ReturnType above_upper_bound_return =
-//                        QuantityTraits<ReturnType>::zero() ) const;
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateExactImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluate,
+                        const ReturnType below_lower_bound_return =
+                        QuantityTraits<ReturnType>::zero(),
+                        const ReturnType above_upper_bound_return =
+                        QuantityTraits<ReturnType>::zero() ) const;
 
   //! Evaluate the distribution using the desired evaluation method
   template<typename LocalTwoDInterpPolicy,

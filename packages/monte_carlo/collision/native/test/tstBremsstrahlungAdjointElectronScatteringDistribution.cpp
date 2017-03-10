@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check inbetween bins
   pdf = adjoint_brem_dist->evaluate( 1.1e-5, 1.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.51752714054462E-06, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5243196197282512684e-06, 1e-6 );
 
   // Check on highest bin
   pdf = adjoint_brem_dist->evaluate( 20.0, 20.000000101 );
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check inbetween bins
   pdf = adjoint_brem_dist->evaluatePDF( 1.1e-5, 1.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.75850556080705E-06, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.756876895852566831e-06, 1e-6 );
 
   // Check on highest bin
   pdf = adjoint_brem_dist->evaluatePDF( 20.0, 20.000000101 );
@@ -122,7 +122,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check inbetween bins
   cdf = adjoint_brem_dist->evaluateCDF( 1.1e-5, 1.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.99995116578216E-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.99999512363130449444, 1e-6 );
 
   // Check on highest bin
   cdf = adjoint_brem_dist->evaluateCDF( 20.0, 20.1000000505 );
@@ -270,7 +270,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the energy gain function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_gain_function(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
-            function_data ) );
+            function_data,
+            1e-6,
+            1e-6 ) );
 
   // Create the scattering distribution
   adjoint_brem_dist.reset(

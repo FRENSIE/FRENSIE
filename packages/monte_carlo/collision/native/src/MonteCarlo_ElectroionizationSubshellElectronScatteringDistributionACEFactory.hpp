@@ -29,7 +29,8 @@ public:
     const double binding_energy,
     const Teuchos::ArrayView<const double>& raw_electroionization_data,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
-      electroionization_subshell_distribution );
+      electroionization_subshell_distribution,
+    const double evaluation_tol = 1e-6 );
 
 protected:
 
@@ -40,7 +41,8 @@ protected:
     const unsigned number_of_tables,
     const Teuchos::ArrayView<const double>& raw_electroionization_data,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-      subshell_distribution );
+      subshell_distribution,
+    const double evaluation_tol );
 };
 
 } // end MonteCarlo namespace

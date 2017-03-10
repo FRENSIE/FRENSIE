@@ -65,7 +65,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check between two bins
   pdf = native_distribution->evaluate( 1.1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 9.92149101162272E-02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.099077881751118979103, 1e-6 );
 
   // Check the last bin
   pdf = native_distribution->evaluate( 20.0, 20.00002722 );
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check between two bins
   pdf = native_distribution->evaluatePDF( 1.1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 9.93806465491136E-02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.099239837836719829722, 1e-6 );
 
   // Check the last bin
   pdf = native_distribution->evaluatePDF( 20.0, 20.00002722 );
@@ -121,7 +121,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check between two bins
   cdf = native_distribution->evaluateCDF( 1.1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.12681875927748E-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.11267098332560229745, 1e-6 );
 
   // Check the last bin
   cdf = native_distribution->evaluateCDF( 20.0, 20.00002722 );

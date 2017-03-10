@@ -131,13 +131,13 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   scattering_angle_cosine = -0.01;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 1 energy 3
-  TEST_FLOATING_EQUALITY( value, 4.84464576696329E-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 4.8452964167333881569e-07, 1e-6 );
 
 
   scattering_angle_cosine = 0.71;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 2 energy 3
-  TEST_FLOATING_EQUALITY( value, 1.01168130395795E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 1.0119114917618560241e-05, 1e-6 );
 
   scattering_angle_cosine = 0.999999;
   value = distribution->evaluate( energy, scattering_angle_cosine );
@@ -210,24 +210,24 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   double scattering_angle_cosine = -0.01;
 
   double value =
-    distribution->evaluatePDF( energy,    scattering_angle_cosine );
+    distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 1
   TEST_FLOATING_EQUALITY( value, 4.83505995466074E-07, 1e-12 );
 
 
   scattering_angle_cosine = .71;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 1
   TEST_FLOATING_EQUALITY( value, 1.00971999053167E-05, 1e-12 );
 
   scattering_angle_cosine = 0.999999;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 3 energy 1
   TEST_FLOATING_EQUALITY( value, 9.86944990745234E+05, 1e-12 );
 
 
   scattering_angle_cosine = 1.0;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 4 energy 1
   TEST_FLOATING_EQUALITY( value, 9.80579719103748E+23, 1e-12 );
 
@@ -237,24 +237,24 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   energy = 6.625E+01;
 
   scattering_angle_cosine = -0.01;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 2
   TEST_FLOATING_EQUALITY( value, 4.846347658089040E-07, 1e-12 );
 
 
   scattering_angle_cosine = 0.71;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 2
   TEST_FLOATING_EQUALITY( value, 1.012029510954810E-05, 1e-12 );
 
   scattering_angle_cosine = 0.999999;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 3 energy 2
   TEST_FLOATING_EQUALITY( value, 9.847525241359310E+05, 1e-12 );
 
 
   scattering_angle_cosine = 1.0;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 4 energy 2
   TEST_FLOATING_EQUALITY( value, 1.952100794025980E+11, 1e-12 );
 
@@ -262,23 +262,23 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   energy = 2.00E+02;
 
   scattering_angle_cosine = -0.01;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 3
-  TEST_FLOATING_EQUALITY( value, 4.84464377172137E-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 4.8452944220121082286e-07, 1e-6 );
 
 
   scattering_angle_cosine = 0.71;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 3
-  TEST_FLOATING_EQUALITY( value, 1.01168088730521E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 1.0119110752696660311e-05, 1e-6 );
 
   scattering_angle_cosine = 0.999999;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 3 energy 3
   TEST_FLOATING_EQUALITY( value, 9.85083478434198E+05, 1e-9 );
 
   scattering_angle_cosine = 1.0;
-  value = distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 4 energy 3
   TEST_FLOATING_EQUALITY( value, 1.582771389599460E+13, 1e-9 );
 }
@@ -391,12 +391,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 1 energy 3
   scattering_angle_cosine = -0.01;
   value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( value, 1.50737294507791E-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 1.5073724854885435558e-07, 1e-6 );
 
   // Test 2 energy 3
   scattering_angle_cosine = 0.71;
   value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( value, 2.00665263311559E-06, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 2.0066525118587287668e-06, 1e-6 );
 
   // Test 3 energy 3
   scattering_angle_cosine = 0.999999;
@@ -734,13 +734,13 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   scattering_angle_cosine = -0.01;
   value = lin_distribution->evaluate( energy, scattering_angle_cosine );
   // Test 1 energy 3
-  TEST_FLOATING_EQUALITY( value, 4.8463348896143694e-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 4.8463416746395810876e-07, 1e-6 );
 
 
   scattering_angle_cosine = 0.71;
   value = lin_distribution->evaluate( energy, scattering_angle_cosine );
   // Test 2 energy 3
-  TEST_FLOATING_EQUALITY( value, 1.0120269083267666e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 1.0120293081779165389e-05, 1e-6 );
 
   scattering_angle_cosine = 0.999999;
   value = lin_distribution->evaluate( energy, scattering_angle_cosine );
@@ -813,24 +813,24 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   double scattering_angle_cosine = -0.01;
 
   double value =
-    lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+    lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 1
   TEST_FLOATING_EQUALITY( value, 4.83505995466074E-07, 1e-12 );
 
 
   scattering_angle_cosine = .71;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 1
   TEST_FLOATING_EQUALITY( value, 1.00971999053167E-05, 1e-12 );
 
   scattering_angle_cosine = 0.999999;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 3 energy 1
   TEST_FLOATING_EQUALITY( value, 9.86944990745234E+05, 1e-12 );
 
 
   scattering_angle_cosine = 1.0;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 4 energy 1
   TEST_FLOATING_EQUALITY( value, 9.80579719103748E+23, 1e-12 );
 
@@ -840,24 +840,24 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   energy = 6.625E+01;
 
   scattering_angle_cosine = -0.01;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 2
   TEST_FLOATING_EQUALITY( value, 4.846347658089040E-07, 1e-12 );
 
 
   scattering_angle_cosine = 0.71;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 2
   TEST_FLOATING_EQUALITY( value, 1.012029510954810E-05, 1e-12 );
 
   scattering_angle_cosine = 0.999999;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 3 energy 2
   TEST_FLOATING_EQUALITY( value, 9.847525241359310E+05, 1e-12 );
 
 
   scattering_angle_cosine = 1.0;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 4 energy 2
   TEST_FLOATING_EQUALITY( value, 1.952100794025980E+11, 1e-12 );
 
@@ -865,23 +865,22 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   energy = 2.00E+02;
 
   scattering_angle_cosine = -0.01;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 3
-  TEST_FLOATING_EQUALITY( value, 4.8463325507771254e-07, 1e-12 );
-
+  TEST_FLOATING_EQUALITY( value, 4.8463393358077665588e-07, 1e-6 );
 
   scattering_angle_cosine = 0.71;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 3
-  TEST_FLOATING_EQUALITY( value, 1.0120264199234404e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 1.0120288197762642812e-05, 1e-6 );
 
   scattering_angle_cosine = 0.999999;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 3 energy 3
   TEST_FLOATING_EQUALITY( value, 9.8475545850404026e+05, 1e-9 );
 
   scattering_angle_cosine = 1.0;
-  value = lin_distribution->evaluatePDF( energy,    scattering_angle_cosine );
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 4 energy 3
   TEST_FLOATING_EQUALITY( value, 1.5822443474024773e+13, 1e-9 );
 }
@@ -994,12 +993,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 1 energy 3
   scattering_angle_cosine = -0.01;
   value = lin_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( value, 1.5079145561270573e-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 1.5079145517134912672e-07, 1e-6 );
 
   // Test 2 energy 3
   scattering_angle_cosine = 0.71;
   value = lin_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( value, 2.0073427642670258e-06, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 2.0073427638173389808e-06, 1e-6 );
 
   // Test 3 energy 3
   scattering_angle_cosine = 0.999999;
@@ -1324,7 +1323,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the scattering distribution
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
         new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
-            function_data ) );
+            function_data,
+            1e-6,
+            1e-7 ) );
 
     // Create the distribution
     distribution.reset(
@@ -1345,7 +1346,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the scattering distribution
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
         new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
-            function_data ) );
+            function_data,
+            1e-6,
+            1e-7 ) );
 
     // Create the distribution
     lin_distribution.reset(
