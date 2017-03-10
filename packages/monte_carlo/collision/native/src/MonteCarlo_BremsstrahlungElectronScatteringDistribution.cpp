@@ -22,9 +22,9 @@ namespace MonteCarlo{
 // Constructor with simple analytical photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool use_weighted_sampling )
+    const bool use_normalized_interpolation )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
-    d_use_weighted_sampling( use_weighted_sampling )
+    d_use_normalized_interpolation( use_normalized_interpolation )
 {
   // Make sure the array is valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
@@ -36,17 +36,17 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
            std::placeholders::_1,
            std::placeholders::_2 );
 
-  if( d_use_weighted_sampling )
+  if( d_use_normalized_interpolation )
   {
-    // Use weighted sampling
+    // Use normalized sampling
     d_sample_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::sampleWeighted,
+           &BremsstrahlungElectronScatteringDistribution::sampleNormalized,
            std::cref( *this ),
            std::placeholders::_1 );
   }
   else
   {
-    // Don't use weighted sampling
+    // Don't use normalized sampling
     d_sample_func = std::bind<double>(
            &BremsstrahlungElectronScatteringDistribution::sampleExact,
            std::cref( *this ),
@@ -56,12 +56,12 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
 // Constructor with detailed 2BS photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-  const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
   const int atomic_number,
-  const bool use_weighted_sampling )
-  : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
-    d_atomic_number( atomic_number ),
-    d_use_weighted_sampling( use_weighted_sampling )
+  const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+  const bool use_normalized_interpolation )
+  : d_atomic_number( atomic_number ),
+    d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
+    d_use_normalized_interpolation( use_normalized_interpolation )
 {
   // Make sure the arraies are valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
@@ -73,11 +73,11 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
             std::placeholders::_1,
             std::placeholders::_2 );
 
-  if( d_use_weighted_sampling )
+  if( d_use_normalized_interpolation )
   {
     // Use simple analytical photon angular distribution
     d_sample_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::sampleWeighted,
+           &BremsstrahlungElectronScatteringDistribution::sampleNormalized,
            std::cref( *this ),
            std::placeholders::_1 );
   }
@@ -103,10 +103,10 @@ double BremsstrahlungElectronScatteringDistribution::getMaxEnergy() const
   return d_bremsstrahlung_scattering_distribution->getUpperBoundOfPrimaryIndepVar();
 }
 
-// Return if weighted sampling is on
-bool BremsstrahlungElectronScatteringDistribution::isWeightedSamplingOn() const
+// Return if normalized sampling is on
+bool BremsstrahlungElectronScatteringDistribution::isNormalizedSamplingOn() const
 {
-  return d_use_weighted_sampling;
+  return d_use_normalized_interpolation;
 }
 
 // Evaluate the distribution for a given incoming and photon energy
@@ -119,12 +119,14 @@ double BremsstrahlungElectronScatteringDistribution::evaluate(
   testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
 
-  if ( d_use_weighted_sampling )
+  if ( d_use_normalized_interpolation )
   {
-    // evaluate the distribution using a weighted interpolation scheme
-    return d_bremsstrahlung_scattering_distribution->evaluateWeighted(
+    // evaluate the distribution using a normalized interpolation scheme
+    return d_bremsstrahlung_scattering_distribution->evaluateNormalized(
             incoming_energy,
-            photon_energy/incoming_energy );
+            photon_energy,
+            1e-7,
+            incoming_energy );
   }
   else
   {
@@ -146,12 +148,14 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
 
-  if ( d_use_weighted_sampling )
+  if ( d_use_normalized_interpolation )
   {
-  // evaluate the PDF using a weighted interpolation scheme
-  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDFWeighted(
+  // evaluate the PDF using a normalized interpolation scheme
+  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDFNormalized(
             incoming_energy,
-            photon_energy/incoming_energy );
+            photon_energy,
+            1e-7,
+            incoming_energy );
   }
   else
   {
@@ -172,12 +176,14 @@ double BremsstrahlungElectronScatteringDistribution::evaluateCDF(
   testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
 
-  if ( d_use_weighted_sampling )
+  if ( d_use_normalized_interpolation )
   {
-  // evaluate the CDF using a weighted interpolation scheme
-  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDFWeighted(
+  // evaluate the CDF using a normalized interpolation scheme
+  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDFNormalized(
             incoming_energy,
-            photon_energy/incoming_energy );
+            photon_energy,
+            1e-7,
+            incoming_energy );
   }
   else
   {
@@ -259,12 +265,13 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 }
 
 // Sample a secondary energy from the distribution
-double BremsstrahlungElectronScatteringDistribution::sampleWeighted(
+double BremsstrahlungElectronScatteringDistribution::sampleNormalized(
              const double incoming_energy ) const
 {
   // Sample the photon energy
-  return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalWeighted(
+  return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalNormalized(
             incoming_energy,
+            1e-7,
             incoming_energy );
 }
 

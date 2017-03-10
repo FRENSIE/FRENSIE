@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.62322147675252E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.62240683985362E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 }
 
@@ -94,7 +94,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.67317352723636E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.67197635933458E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 }
 
@@ -190,7 +190,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.62322147675252E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.62240683985362E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
 }
@@ -202,8 +202,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
                     *data_container,
-                    twobs_distribution,
                     data_container->getAtomicNumber(),
+                    twobs_distribution,
                     true );
 
   // Set up the random number stream
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 2.07182666246894E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 2.07132641637312E-04, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
 }
 
@@ -237,8 +237,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
                     *data_container,
-                    twobs_distribution,
                     data_container->getAtomicNumber(),
+                    twobs_distribution,
                     true );
 
   // Set up the random number stream
@@ -263,7 +263,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 2.07182666246894E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 2.07132641637312E-04, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
   TEST_EQUALITY_CONST( trials, 1.0 );
 }

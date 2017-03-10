@@ -29,7 +29,8 @@ public:
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
-    const bool use_weighted_interpolation = true );
+    const bool use_weighted_interpolation = true,
+    const double evaluation_tol = 1e-6 );
 
 //protected:
 
@@ -41,7 +42,8 @@ public:
     const std::vector<double> energy_grid,
     const unsigned subshell,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-      subshell_distribution );
+      subshell_distribution,
+    const double evaluation_tol = 1e-6 );
 };
 
 } // end MonteCarlo namespace

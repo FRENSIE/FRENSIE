@@ -84,6 +84,14 @@ public:
   virtual ~UnitAwareInterpolatedTabularTwoDDistributionImplBase()
   { /* ... */ }
 
+  //! Return the upper bound of the secondary independent variable at the primary independent variable
+  SecondaryIndepQuantity getUpperInterpolatedBoundOfSecondaryIndepVar(
+                const PrimaryIndepQuantity primary_indep_var_value ) const;
+
+  //! Return the lower bound of the secondary independent variable at the primary independent variable
+  SecondaryIndepQuantity getLowerInterpolatedBoundOfSecondaryIndepVar(
+                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+
   //! Evaluate the distribution using unit based interpolation
   DepQuantity evaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,
@@ -158,6 +166,18 @@ protected:
   UnitAwareInterpolatedTabularTwoDDistributionImplBase()
   { /* ... */ }
 
+  //! Return the upper bound of the secondary independent variable at the primary independent variable
+  SecondaryIndepQuantity getUpperInterpolatedBoundOfSecondaryIndepVar(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const typename DistributionType::const_iterator lower_bin_boundary,
+        const typename DistributionType::const_iterator upper_bin_boundary ) const;
+
+  //! Return the lower bound of the secondary independent variable at the primary independent variable
+  SecondaryIndepQuantity getLowerInterpolatedBoundOfSecondaryIndepVar(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const typename DistributionType::const_iterator lower_bin_boundary,
+        const typename DistributionType::const_iterator upper_bin_boundary ) const;
+
   //! Evaluate the distribution using the desired evaluation method and unit based interpolation
   template<typename LocalTwoDInterpPolicy,
            typename ReturnType,
@@ -171,27 +191,33 @@ protected:
                         const ReturnType above_upper_bound_return =
                         QuantityTraits<ReturnType>::zero() ) const;
 
-//  //! Evaluate the distribution using the desired evaluation method
-//  template<typename LocalTwoDInterpPolicy,
-//           typename ReturnType,
-//           typename EvaluationMethod>
-//  ReturnType evaluateExactImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        const SecondaryIndepQuantity secondary_indep_var_value,
-//                        EvaluationMethod evaluate,
-//                        const ReturnType below_lower_bound_return =
-//                        QuantityTraits<ReturnType>::zero(),
-//                        const ReturnType above_upper_bound_return =
-//                        QuantityTraits<ReturnType>::zero() ) const;
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateExactImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluate,
+                        const ReturnType below_lower_bound_return =
+                        QuantityTraits<ReturnType>::zero(),
+                        const ReturnType above_upper_bound_return =
+                        QuantityTraits<ReturnType>::zero() ) const;
 
-//  //! Evaluate the distribution using the desired evaluation method and a normalized interpolation
-//  template<typename LocalTwoDInterpPolicy,
-//           typename ReturnType,
-//           typename EvaluationMethod>
-//  ReturnType evaluateNormalizedImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        const double normalized_secondary_indep_var_value,
-//                        EvaluationMethod evaluate ) const;
+  //! Evaluate the distribution using the desired evaluation method and a normalized interpolation
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateNormalizedImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        const SecondaryIndepQuantity min_secondary_indep_var,
+                        const SecondaryIndepQuantity max_secondary_indep_var,
+                        EvaluationMethod evaluate,
+                        const ReturnType below_lower_bound_return =
+                        QuantityTraits<ReturnType>::zero(),
+                        const ReturnType above_upper_bound_return =
+                        QuantityTraits<ReturnType>::zero() ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>

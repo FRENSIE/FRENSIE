@@ -28,7 +28,8 @@ public:
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_interpolation = true );
+    const bool use_weighted_interpolation = true,
+    const double evaluation_tol = 1e-6 );
 
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
@@ -36,26 +37,29 @@ public:
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_interpolation = true );
+    const bool use_weighted_interpolation = true,
+    const double evaluation_tol = 1e-6 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const int atomic_number,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const int atomic_number,
-    const bool use_weighted_interpolation );
+    const bool use_weighted_interpolation = true,
+    const double evaluation_tol = 1e-6 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const int atomic_number,
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const int atomic_number,
-    const bool use_weighted_interpolation );
+    const bool use_weighted_interpolation = true,
+    const double evaluation_tol = 1e-6 );
 
   //! Create the energy loss function
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
@@ -63,7 +67,8 @@ public:
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double> bremsstrahlung_energy_grid,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-        energy_loss_function );
+        energy_loss_function,
+    const double evaluation_tol = 1e-6 );
 };
 
 } // end MonteCarlo namespace

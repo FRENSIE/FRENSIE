@@ -25,7 +25,8 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
-    const bool use_weighted_interpolation )
+    const bool use_weighted_interpolation,
+    const double evaluation_tol )
 {
   // Get the energies for which knock-on sampling tables are given
   std::vector<double> energy_grid =
@@ -38,7 +39,8 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
   createSubshellDistribution<TwoDInterpPolicy>( raw_electroionization_data,
                               energy_grid,
                               subshell,
-                              subshell_distribution );
+                              subshell_distribution,
+                              evaluation_tol );
 
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
@@ -55,7 +57,8 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
     const std::vector<double> energy_grid,
     const unsigned subshell,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-        subshell_distribution )
+        subshell_distribution,
+    const double evaluation_tol )
 {
   // Create the scattering function
   Utility::FullyTabularTwoDDistribution::DistributionType
@@ -85,7 +88,9 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
   // Create the scattering function
   subshell_distribution.reset(
     new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy>(
-            function_data ) );
+            function_data,
+            1e-6,
+            evaluation_tol ) );
 }
 
 } // end MonteCarlo namespace

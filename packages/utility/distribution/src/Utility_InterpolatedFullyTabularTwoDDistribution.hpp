@@ -244,18 +244,18 @@ public:
 
 private:
 
-  //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
-           typename EvaluationMethod>
-  ReturnType evaluateExactImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const SecondaryIndepQuantity secondary_indep_var_value,
-                        EvaluationMethod evaluate,
-                        const ReturnType below_lower_bound_return =
-                        QuantityTraits<ReturnType>::zero(),
-                        const ReturnType above_upper_bound_return =
-                        QuantityTraits<ReturnType>::zero() ) const;
+//  //! Evaluate the distribution using the desired evaluation method
+//  template<typename LocalTwoDInterpPolicy,
+//           typename ReturnType,
+//           typename EvaluationMethod>
+//  ReturnType evaluateExactImpl(
+//                        const PrimaryIndepQuantity primary_indep_var_value,
+//                        const SecondaryIndepQuantity secondary_indep_var_value,
+//                        EvaluationMethod evaluate,
+//                        const ReturnType below_lower_bound_return =
+//                        QuantityTraits<ReturnType>::zero(),
+//                        const ReturnType above_upper_bound_return =
+//                        QuantityTraits<ReturnType>::zero() ) const;
 
   //! Evaluate the distribution using the desired evaluation method
   template<typename LocalTwoDInterpPolicy,

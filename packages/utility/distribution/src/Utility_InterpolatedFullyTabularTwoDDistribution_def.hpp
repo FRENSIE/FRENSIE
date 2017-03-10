@@ -530,172 +530,172 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
                                      sampling_functor );
 }
 
-// Evaluate the distribution using the desired evaluation method
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-template<typename LocalTwoDInterpPolicy,
-         typename ReturnType,
-         typename EvaluationMethod>
-inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExactImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const SecondaryIndepQuantity secondary_indep_var_value,
-                        EvaluationMethod evaluate,
-                        const ReturnType below_lower_bound_return,
-                        const ReturnType above_upper_bound_return ) const
-{
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+//// Evaluate the distribution using the desired evaluation method
+//template<typename TwoDInterpPolicy,
+//         typename PrimaryIndependentUnit,
+//         typename SecondaryIndependentUnit,
+//         typename DependentUnit>
+//template<typename LocalTwoDInterpPolicy,
+//         typename ReturnType,
+//         typename EvaluationMethod>
+//inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExactImpl(
+//                        const PrimaryIndepQuantity primary_indep_var_value,
+//                        const SecondaryIndepQuantity secondary_indep_var_value,
+//                        EvaluationMethod evaluate,
+//                        const ReturnType below_lower_bound_return,
+//                        const ReturnType above_upper_bound_return ) const
+//{
+//  // Find the bin boundaries
+//  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
 
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
+//  this->findBinBoundaries( primary_indep_var_value,
+//                           lower_bin_boundary,
+//                           upper_bin_boundary );
 
-  // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
-  {
-    if( this->arePrimaryLimitsExtended() )
-      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-    else 
-      return QuantityTraits<ReturnType>::zero();
-  }
-  else if( lower_bin_boundary->first == primary_indep_var_value )
-  {
-    return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-  }
-  else if( upper_bin_boundary->first == primary_indep_var_value )
-  {
-    return ((*upper_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-  }
-  else
-  {
-    // Get the lower secondary indep grid limits at the primary value
-    SecondaryIndepQuantity lower_sec_indep_var_bound =
-      TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                      lower_bin_boundary->first,
-                      upper_bin_boundary->first,
-                      primary_indep_var_value,
-                      lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                      upper_bin_boundary->second->getLowerBoundOfIndepVar() );
+//  // Check for a primary value outside of the primary grid limits
+//  if( lower_bin_boundary == upper_bin_boundary )
+//  {
+//    if( this->arePrimaryLimitsExtended() )
+//      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+//    else 
+//      return QuantityTraits<ReturnType>::zero();
+//  }
+//  else if( lower_bin_boundary->first == primary_indep_var_value )
+//  {
+//    return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+//  }
+//  else if( upper_bin_boundary->first == primary_indep_var_value )
+//  {
+//    return ((*upper_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+//  }
+//  else
+//  {
+//    // Get the lower secondary indep grid limits at the primary value
+//    SecondaryIndepQuantity lower_sec_indep_var_bound =
+//      TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+//                      lower_bin_boundary->first,
+//                      upper_bin_boundary->first,
+//                      primary_indep_var_value,
+//                      lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+//                      upper_bin_boundary->second->getLowerBoundOfIndepVar() );
 
-    // Get the upper secondary indep grid limits at the primary value
-    SecondaryIndepQuantity upper_sec_indep_var_bound =
-      TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                      lower_bin_boundary->first,
-                      upper_bin_boundary->first,
-                      primary_indep_var_value,
-                      lower_bin_boundary->second->getUpperBoundOfIndepVar(),
-                      upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+//    // Get the upper secondary indep grid limits at the primary value
+//    SecondaryIndepQuantity upper_sec_indep_var_bound =
+//      TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+//                      lower_bin_boundary->first,
+//                      upper_bin_boundary->first,
+//                      primary_indep_var_value,
+//                      lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+//                      upper_bin_boundary->second->getUpperBoundOfIndepVar() );
 
-    // Check for a seconday indep value outside of the secondary indep grid limits
-    if ( secondary_indep_var_value < lower_sec_indep_var_bound )
-      return below_lower_bound_return;
-    else if ( secondary_indep_var_value > upper_sec_indep_var_bound )
-      return above_upper_bound_return;
-    if ( secondary_indep_var_value == lower_sec_indep_var_bound )
-    {
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                primary_indep_var_value,
-                ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getLowerBoundOfIndepVar()),
-                ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getLowerBoundOfIndepVar()) );
-    }
-    else if ( secondary_indep_var_value == upper_sec_indep_var_bound )
-    {
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                primary_indep_var_value,
-                ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getUpperBoundOfIndepVar()),
-                ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getUpperBoundOfIndepVar()) );
-    }
+//    // Check for a seconday indep value outside of the secondary indep grid limits
+//    if ( secondary_indep_var_value < lower_sec_indep_var_bound )
+//      return below_lower_bound_return;
+//    else if ( secondary_indep_var_value > upper_sec_indep_var_bound )
+//      return above_upper_bound_return;
+//    if ( secondary_indep_var_value == lower_sec_indep_var_bound )
+//    {
+//      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+//                lower_bin_boundary->first,
+//                upper_bin_boundary->first,
+//                primary_indep_var_value,
+//                ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getLowerBoundOfIndepVar()),
+//                ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getLowerBoundOfIndepVar()) );
+//    }
+//    else if ( secondary_indep_var_value == upper_sec_indep_var_bound )
+//    {
+//      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+//                lower_bin_boundary->first,
+//                upper_bin_boundary->first,
+//                primary_indep_var_value,
+//                ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getUpperBoundOfIndepVar()),
+//                ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getUpperBoundOfIndepVar()) );
+//    }
 
-    // Evaluate the cdf at the upper and lower bin boundaries
-    double lower_bin_eval =
-      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( secondary_indep_var_value );
-     double upper_bin_eval =
-      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( secondary_indep_var_value );
+//    // Evaluate the cdf at the upper and lower bin boundaries
+//    double lower_bin_eval =
+//      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( secondary_indep_var_value );
+//     double upper_bin_eval =
+//      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( secondary_indep_var_value );
 
-    // Get the lower and upper boundaries of the evaluated cdf
-    double lower_cdf_bound, upper_cdf_bound;
-    if ( lower_bin_eval <= upper_bin_eval )
-    {
-      lower_cdf_bound = lower_bin_eval;
-      upper_cdf_bound = upper_bin_eval;
-    }
-    else
-    {
-      lower_cdf_bound = upper_bin_eval;
-      upper_cdf_bound = lower_bin_eval;
-    }
+//    // Get the lower and upper boundaries of the evaluated cdf
+//    double lower_cdf_bound, upper_cdf_bound;
+//    if ( lower_bin_eval <= upper_bin_eval )
+//    {
+//      lower_cdf_bound = lower_bin_eval;
+//      upper_cdf_bound = upper_bin_eval;
+//    }
+//    else
+//    {
+//      lower_cdf_bound = upper_bin_eval;
+//      upper_cdf_bound = lower_bin_eval;
+//    }
 
-  // Set the tol
-  double rel_error = 1.0;
+//  // Set the tol
+//  double rel_error = 1.0;
 
-  SecondaryIndepQuantity lower_bin_sample, upper_bin_sample;
+//  SecondaryIndepQuantity lower_bin_sample, upper_bin_sample;
 
-  // Refine the estimated cdf value until it meet the tolerance
-  while ( rel_error > d_relative_error_tol )
-  {
-    // Estimate the cdf as the midpoint of the lower and upper boundaries
-    double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
+//  // Refine the estimated cdf value until it meet the tolerance
+//  while ( rel_error > d_relative_error_tol )
+//  {
+//    // Estimate the cdf as the midpoint of the lower and upper boundaries
+//    double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
 
-    // Get the sampled values at the upper and lower bin for the estimated_cdf
-    lower_bin_sample =
-      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
-    upper_bin_sample =
-      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+//    // Get the sampled values at the upper and lower bin for the estimated_cdf
+//    lower_bin_sample =
+//      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+//    upper_bin_sample =
+//      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
 
-    // Interpolate using the templated TwoDInterpPolicy::ZXInterpPolicy
-    SecondaryIndepQuantity est_secondary_indep_var_value =
-      TwoDInterpPolicy::ZXInterpPolicy::interpolate( lower_bin_boundary->first,
-                                                     upper_bin_boundary->first,
-                                                     primary_indep_var_value,
-                                                     lower_bin_sample,
-                                                     upper_bin_sample );
+//    // Interpolate using the templated TwoDInterpPolicy::ZXInterpPolicy
+//    SecondaryIndepQuantity est_secondary_indep_var_value =
+//      TwoDInterpPolicy::ZXInterpPolicy::interpolate( lower_bin_boundary->first,
+//                                                     upper_bin_boundary->first,
+//                                                     primary_indep_var_value,
+//                                                     lower_bin_sample,
+//                                                     upper_bin_sample );
 
-    if ( secondary_indep_var_value == est_secondary_indep_var_value )
-        break;
+//    if ( secondary_indep_var_value == est_secondary_indep_var_value )
+//        break;
 
-    // Update the estimated_cdf estimate
-    if ( est_secondary_indep_var_value < secondary_indep_var_value )
-    {
-      // Calculate the relative error between the secondary_indep_var_value and the estimate
-      rel_error = 2.0*( secondary_indep_var_value - est_secondary_indep_var_value )/
-                                                    secondary_indep_var_value;
+//    // Update the estimated_cdf estimate
+//    if ( est_secondary_indep_var_value < secondary_indep_var_value )
+//    {
+//      // Calculate the relative error between the secondary_indep_var_value and the estimate
+//      rel_error = 2.0*( secondary_indep_var_value - est_secondary_indep_var_value )/
+//                                                    secondary_indep_var_value;
 
-      // If tolerance is met exit loop
-      if ( rel_error <= d_relative_error_tol )
-        break;
+//      // If tolerance is met exit loop
+//      if ( rel_error <= d_relative_error_tol )
+//        break;
 
-      // Old estimated_cdf estimate is new lower cdf boundary
-      lower_cdf_bound = estimated_cdf;
-    }
-    else
-    {
-      // Calculate the relative error between the secondary_indep_var_value and the estimate
-      rel_error = 2.0*( est_secondary_indep_var_value - secondary_indep_var_value )/
-                                                    secondary_indep_var_value;
+//      // Old estimated_cdf estimate is new lower cdf boundary
+//      lower_cdf_bound = estimated_cdf;
+//    }
+//    else
+//    {
+//      // Calculate the relative error between the secondary_indep_var_value and the estimate
+//      rel_error = 2.0*( est_secondary_indep_var_value - secondary_indep_var_value )/
+//                                                    secondary_indep_var_value;
 
-      // If tolerance is met exit loop
-      if ( rel_error <= d_relative_error_tol )
-        break;
+//      // If tolerance is met exit loop
+//      if ( rel_error <= d_relative_error_tol )
+//        break;
 
-      // Old estimated_cdf estimate is new upper cdf boundary
-      upper_cdf_bound =estimated_cdf;
-    }
-  }
+//      // Old estimated_cdf estimate is new upper cdf boundary
+//      upper_cdf_bound =estimated_cdf;
+//    }
+//  }
 
-  return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                primary_indep_var_value,
-                ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample),
-                ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample) );
-  }
-}
+//  return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+//                lower_bin_boundary->first,
+//                upper_bin_boundary->first,
+//                primary_indep_var_value,
+//                ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample),
+//                ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample) );
+//  }
+//}
 
 // Evaluate the distribution using the desired evaluation method
 template<typename TwoDInterpPolicy,
@@ -714,6 +714,9 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
                         const ReturnType below_lower_bound_return,
                         const ReturnType above_upper_bound_return ) const
 {
+std::cout << "primary_indep_var_value:" << std::setprecision(20) << primary_indep_var_value
+          << "\tsecondary_indep_var_value:"  << secondary_indep_var_value  << std::endl;
+
   // Find the bin boundaries
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
 
@@ -739,33 +742,24 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
   }
   else
   {
-    // Get the lower secondary indep grid limits at the primary value
-    SecondaryIndepQuantity lower_sec_indep_var_bound =
-      TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                      lower_bin_boundary->first,
-                      upper_bin_boundary->first,
-                      primary_indep_var_value,
-                      lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                      upper_bin_boundary->second->getLowerBoundOfIndepVar() );
 
-    // Get the upper secondary indep grid limits at the primary value
-    SecondaryIndepQuantity upper_sec_indep_var_bound =
-      TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                      lower_bin_boundary->first,
-                      upper_bin_boundary->first,
-                      primary_indep_var_value,
-                      lower_bin_boundary->second->getUpperBoundOfIndepVar(),
-                      upper_bin_boundary->second->getUpperBoundOfIndepVar() );
-
-std::cout << "lower sec bound:" << std::setprecision(20) << lower_sec_indep_var_bound
-          << "\tupper sec bound:" << std::setprecision(20) << upper_sec_indep_var_bound << std::endl;
+std::cout << "min sec bound:" << std::setprecision(20) << min_secondary_indep_var
+          << "\tmax sec bound:" << std::setprecision(20) << max_secondary_indep_var << std::endl;
 
     // Check for a seconday indep value outside of the secondary indep grid limits
-    if ( secondary_indep_var_value < lower_sec_indep_var_bound )
+    if ( secondary_indep_var_value < min_secondary_indep_var )
+    {
+std::cout << "Sec var (" << std::setprecision(20) << secondary_indep_var_value
+          << ") is below lower sec bound:" << min_secondary_indep_var << std::endl;
       return below_lower_bound_return;
-    else if ( secondary_indep_var_value > upper_sec_indep_var_bound )
+    }
+    else if ( secondary_indep_var_value > max_secondary_indep_var )
+    {
+std::cout << "Sec var (" << std::setprecision(20) << secondary_indep_var_value
+          << ") is above lower sec bound:" << max_secondary_indep_var << std::endl;
       return above_upper_bound_return;
-    if ( secondary_indep_var_value == lower_sec_indep_var_bound )
+    }
+    if ( secondary_indep_var_value == min_secondary_indep_var )
     {
 std::cout << "lower min eval:" << std::setprecision(20) << ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getLowerBoundOfIndepVar())
           << "\tupper min eval:" << std::setprecision(20) << ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getLowerBoundOfIndepVar()) << std::endl;
@@ -777,7 +771,7 @@ std::cout << "lower min eval:" << std::setprecision(20) << ((*lower_bin_boundary
                 ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getLowerBoundOfIndepVar()),
                 ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getLowerBoundOfIndepVar()) );
     }
-    else if ( secondary_indep_var_value == upper_sec_indep_var_bound )
+    else if ( secondary_indep_var_value == max_secondary_indep_var )
     {
 std::cout << "lower max eval:" << std::setprecision(20) << ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getUpperBoundOfIndepVar())
           << "\tupper max eval:" << std::setprecision(20) << ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getUpperBoundOfIndepVar()) << std::endl;

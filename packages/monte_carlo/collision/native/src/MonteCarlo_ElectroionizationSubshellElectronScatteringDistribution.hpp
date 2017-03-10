@@ -37,7 +37,7 @@ public:
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy,
-    const bool& use_weighted_interpolation = true );
+    const bool& use_normalized_interpolation = true );
 
   //! Destructor
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
@@ -45,6 +45,9 @@ public:
 
   //! Return the binding energy
   double getBindingEnergy() const;
+
+  //! Return the min secondary (knock-on) electron energy for a given incoming electron energy
+  double getMinSecondaryEnergyAtIncomingEnergy( const double energy ) const;
 
   //! Return the max secondary (knock-on) electron energy for a given incoming electron energy
   double getMaxSecondaryEnergyAtIncomingEnergy( const double energy ) const;
@@ -87,7 +90,7 @@ public:
 private:
 
   //! Sample a secondary energy from the distribution
-  double sampleWeighted( const double incoming_energy ) const;
+  double sampleNormalized( const double incoming_energy ) const;
 
   //! Sample a secondary energy from the distribution
   double sampleExact( const double incoming_energy ) const;
@@ -102,8 +105,8 @@ private:
   // Subshell binding energy
   double d_binding_energy;
 
-  // Bool to use a weighted interpolation routine to sample the distribution
-  bool d_use_weighted_interpolation;
+  // Bool to use a normalized interpolation routine to sample the distribution
+  bool d_use_normalized_interpolation;
 
   // The secondary energy function pointer
   std::function<double ( const double )> d_sample_func;

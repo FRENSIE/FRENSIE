@@ -83,6 +83,14 @@ public:
   virtual ~UnitAwareFullyTabularTwoDDistribution()
   { /* ... */ }
 
+  //! Return the upper bound of the secondary independent variable at the primary independent variable
+  virtual SecondaryIndepQuantity getUpperInterpolatedBoundOfSecondaryIndepVar(
+                const PrimaryIndepQuantity primary_indep_var_value ) const = 0;
+
+  //! Return the lower bound of the secondary independent variable at the primary independent variable
+  virtual SecondaryIndepQuantity getLowerInterpolatedBoundOfSecondaryIndepVar(
+                    const PrimaryIndepQuantity primary_indep_var_value ) const = 0;
+
   //! Evaluate the distribution
   virtual DepQuantity evaluateExact(
             const PrimaryIndepQuantity primary_indep_var_value,

@@ -26,21 +26,21 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy,
-    const bool& use_weighted_interpolation )
+    const bool& use_normalized_interpolation )
   : d_electroionization_subshell_scattering_distribution(
       electroionization_subshell_scattering_distribution ),
     d_binding_energy( binding_energy ),
-    d_use_weighted_interpolation( use_weighted_interpolation )
+    d_use_normalized_interpolation( use_normalized_interpolation )
 {
   // Make sure the arraies are valid
   testPrecondition( d_electroionization_subshell_scattering_distribution.use_count() > 0 );
   testPrecondition( binding_energy > 0.0 );
 
-  if( d_use_weighted_interpolation )
+  if( d_use_normalized_interpolation )
   {
     // Use simple analytical photon angular distribution
     d_sample_func = std::bind<double>(
-           &ElectroionizationSubshellElectronScatteringDistribution::sampleWeighted,
+           &ElectroionizationSubshellElectronScatteringDistribution::sampleNormalized,
            std::cref( *this ),
            std::placeholders::_1 );
   }
@@ -58,6 +58,19 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
 double ElectroionizationSubshellElectronScatteringDistribution::getBindingEnergy() const
 {
   return d_binding_energy;
+}
+
+// Return the min secondary (knock-on) electron energy for a given incoming electron energy
+double ElectroionizationSubshellElectronScatteringDistribution::getMinSecondaryEnergyAtIncomingEnergy(
+        const double energy ) const
+{
+  if ( energy > this->getBindingEnergy() )
+  {
+    return d_electroionization_subshell_scattering_distribution->getLowerInterpolatedBoundOfSecondaryIndepVar(
+                energy );
+  }
+  else
+    return 0.0;
 }
 
 // Return the max secondary (knock-on) electron energy for a given incoming electron energy
@@ -91,15 +104,25 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluate(
   if ( outgoing_energy_2 <= 0.0 )
     return 0.0;
 
-  /* Assume the lower of the two outgoing energies is the knock-on electron and
-   * get its ratio to the max knock on energy */
-  double knock_on_energy_ratio = std::min( outgoing_energy_1, outgoing_energy_2 )/
-    this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
+  // Assume the lower of the two outgoing energies is the knock-on electron
+  double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
 
-  // evaluate the distribution using a weighted interpolation scheme
-  return d_electroionization_subshell_scattering_distribution->evaluateWeighted(
+  if ( d_use_normalized_interpolation )
+  {
+    // evaluate the distribution using a normalized interpolation scheme
+    return d_electroionization_subshell_scattering_distribution->evaluateNormalized(
             incoming_energy,
-            knock_on_energy_ratio );
+            knock_on_energy,
+            this->getMinSecondaryEnergyAtIncomingEnergy( incoming_energy ),
+            this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy ) );
+  }
+  else
+  {
+    // evaluate the distribution using an exact interpolation scheme
+    return d_electroionization_subshell_scattering_distribution->evaluateExact(
+            incoming_energy,
+            knock_on_energy );
+  }
 }
 
 // Evaluate the PDF value for a given incoming and outgoing energy
@@ -123,15 +146,25 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   if ( outgoing_energy_2 <= 0.0 )
     return 0.0;
 
-  /* Assume the lower of the two outgoing energies is the knock-on electron and
-   * get its ratio to the max knock on energy */
-  double knock_on_energy_ratio = std::min( outgoing_energy_1, outgoing_energy_2 )/
-    this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
+  // Assume the lower of the two outgoing energies is the knock-on electron
+  double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
 
-  // evaluate the distribution using a weighted interpolation scheme
-  return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalPDFWeighted(
+  if ( d_use_normalized_interpolation )
+  {
+  // evaluate the PDF using a normalized interpolation scheme
+  return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalPDFNormalized(
             incoming_energy,
-            knock_on_energy_ratio );
+            knock_on_energy,
+            this->getMinSecondaryEnergyAtIncomingEnergy( incoming_energy ),
+            this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy ) );
+  }
+  else
+  {
+    // evaluate the PDF using an exact interpolation scheme
+    return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalPDFExact(
+            incoming_energy,
+            knock_on_energy );
+  }
 }
 
 // Evaluate the CDF value for a given incoming and outgoing energy
@@ -155,15 +188,25 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
   if ( outgoing_energy_2 <= 0.0 )
     return 0.0;
 
-  /* Assume the lower of the two outgoing energies is the knock-on electron and
-   * get its ratio to the max knock on energy */
-  double knock_on_energy_ratio = std::min( outgoing_energy_1, outgoing_energy_2 )/
-    this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
+  // Assume the lower of the two outgoing energies is the knock-on electron
+  double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
 
-  // evaluate the distribution using a weighted interpolation scheme
-  return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalCDFWeighted(
+  if ( d_use_normalized_interpolation )
+  {
+  // evaluate the CDF using a normalized interpolation scheme
+  return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalCDFNormalized(
             incoming_energy,
-            knock_on_energy_ratio );
+            knock_on_energy,
+            this->getMinSecondaryEnergyAtIncomingEnergy( incoming_energy ),
+            this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy ) );
+  }
+  else
+  {
+    // evaluate the CDF using an exact interpolation scheme
+    return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalCDFExact(
+            incoming_energy,
+            knock_on_energy );
+  }
 }
 
 // Sample an knock on energy and direction from the distribution
@@ -185,16 +228,17 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
 }
 
 // Sample an knock on energy and direction from the distribution
-double ElectroionizationSubshellElectronScatteringDistribution::sampleWeighted(
+double ElectroionizationSubshellElectronScatteringDistribution::sampleNormalized(
                const double incoming_energy ) const
 {
   testPrecondition( incoming_energy > d_binding_energy );
 
   // Sample knock-on electron energy
   return
-    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalWeighted(
+    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalNormalized(
       incoming_energy,
-      this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy )  );
+      this->getMinSecondaryEnergyAtIncomingEnergy( incoming_energy ),
+      this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy ) );
 }
 
 // Sample an knock on energy and direction from the distribution

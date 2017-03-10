@@ -95,12 +95,120 @@ bool UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
 
   return compatible;
 }
- 
+
+// Return the upper bound of the distribution secondary independent variable using interpolation
+template<typename TwoDInterpPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::getUpperInterpolatedBoundOfSecondaryIndepVar(
+                const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  // Check for a primary value outside of the primary grid limits
+  if( lower_bin_boundary == upper_bin_boundary )
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return lower_bin_boundary->second->getUpperBoundOfIndepVar();
+    else 
+      return QuantityTraits<SecondaryIndepQuantity>::zero();
+  }
+  else if( lower_bin_boundary->first == primary_indep_var_value )
+  {
+    return lower_bin_boundary->second->getUpperBoundOfIndepVar();
+  }
+  else if( upper_bin_boundary->first == primary_indep_var_value )
+  {
+    return upper_bin_boundary->second->getUpperBoundOfIndepVar();
+  }
+  else
+  {
+    return this->getUpperInterpolatedBoundOfSecondaryIndepVar(
+                      primary_indep_var_value,
+                      lower_bin_boundary,
+                      upper_bin_boundary );
+  }
+}
+
+// Return the lower bound of the distribution secondary independent variable using interpolation
+template<typename TwoDInterpPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::getLowerInterpolatedBoundOfSecondaryIndepVar(
+                const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  // Check for a primary value outside of the primary grid limits
+  if( lower_bin_boundary == upper_bin_boundary )
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return lower_bin_boundary->second->getLowerBoundOfIndepVar();
+    else 
+      return QuantityTraits<SecondaryIndepQuantity>::zero();
+  }
+  else if( lower_bin_boundary->first == primary_indep_var_value )
+  {
+    return lower_bin_boundary->second->getLowerBoundOfIndepVar();
+  }
+  else if( upper_bin_boundary->first == primary_indep_var_value )
+  {
+    return upper_bin_boundary->second->getLowerBoundOfIndepVar();
+  }
+  else
+  {
+    return this->getLowerInterpolatedBoundOfSecondaryIndepVar(
+                      primary_indep_var_value,
+                      lower_bin_boundary,
+                      upper_bin_boundary );
+  }
+}
+
+// Return the upper bound of the distribution secondary independent variable using interpolation
+template<typename TwoDInterpPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::getUpperInterpolatedBoundOfSecondaryIndepVar(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const typename DistributionType::const_iterator lower_bin_boundary,
+        const typename DistributionType::const_iterator upper_bin_boundary ) const
+  -> SecondaryIndepQuantity
+{
+    return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                      lower_bin_boundary->first,
+                      upper_bin_boundary->first,
+                      primary_indep_var_value,
+                      lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+                      upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+}
+
+// Return the lower bound of the distribution secondary independent variable using interpolation
+template<typename TwoDInterpPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::getLowerInterpolatedBoundOfSecondaryIndepVar(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const typename DistributionType::const_iterator lower_bin_boundary,
+        const typename DistributionType::const_iterator upper_bin_boundary ) const
+  -> SecondaryIndepQuantity
+{
+    return  TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                      lower_bin_boundary->first,
+                      upper_bin_boundary->first,
+                      primary_indep_var_value,
+                      lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                      upper_bin_boundary->second->getLowerBoundOfIndepVar() );
+}
+
 // Evaluate the distribution using unit based interpolation
 template<typename TwoDInterpPolicy, typename Distribution>
 auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluate(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> DepQuantity
 {
   return this->evaluateImpl<TwoDInterpPolicy,DepQuantity>(
@@ -234,151 +342,148 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
   }
 }
 
-//// Evaluate the distribution using the desired evaluation method
-//template<typename TwoDInterpPolicy, typename Distribution>
-//template<typename LocalTwoDInterpPolicy,
-//         typename ReturnType,
-//         typename EvaluationMethod>
-//inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateExactImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        const SecondaryIndepQuantity secondary_indep_var_value,
-//                        EvaluationMethod evaluate ) const
-//{
-//  // Find the bin boundaries
-//  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+// Evaluate the distribution using the desired evaluation method
+template<typename TwoDInterpPolicy, typename Distribution>
+template<typename LocalTwoDInterpPolicy,
+         typename ReturnType,
+         typename EvaluationMethod>
+inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateExactImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluate,
+                        const ReturnType below_lower_bound_return,
+                        const ReturnType above_upper_bound_return ) const
+{
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
 
-//  this->findBinBoundaries( primary_indep_var_value,
-//                           lower_bin_boundary,
-//                           upper_bin_boundary );
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
 
-//  // Check for a primary value outside of the primary grid limits
-//  if( lower_bin_boundary == upper_bin_boundary )
-//  {
-//    if( this->arePrimaryLimitsExtended() )
-//      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-//    else 
-//      return QuantityTraits<ReturnType>::zero();
-//  }
-//  else
-//  {
-//    // Check for a primary value at the primary grid upper limit
-//    if( primary_indep_var_value == upper_bin_boundary->first )
-//    {
-//      return ((*upper_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-//    }
-//    else if( primary_indep_var_value == lower_bin_boundary->first )
-//    {
-//      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-//    }
-//    else
-//    {
-//      // Create the grid evaluation functors
-//      std::function<ReturnType(const SecondaryIndepQuantity)>
-//        evaluate_grid_0_functor =
-//        std::bind<ReturnType>( evaluate,
-//                               std::cref( *lower_bin_boundary->second ),
-//                               std::placeholders::_1 );
+  // Check for a primary value outside of the primary grid limits
+  if( lower_bin_boundary == upper_bin_boundary )
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+    else 
+      return QuantityTraits<ReturnType>::zero();
+  }
+  else
+  {
+    // Check for a primary value at the primary grid upper limit
+    if( primary_indep_var_value == upper_bin_boundary->first )
+    {
+      return ((*upper_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+    }
+    else if( primary_indep_var_value == lower_bin_boundary->first )
+    {
+      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+    }
+    else
+    {
+      // Create the grid evaluation functors
+      std::function<ReturnType(const SecondaryIndepQuantity)>
+        evaluate_grid_0_functor =
+        std::bind<ReturnType>( evaluate,
+                               std::cref( *lower_bin_boundary->second ),
+                               std::placeholders::_1 );
 
-//      std::function<ReturnType(const SecondaryIndepQuantity)>
-//        evaluate_grid_1_functor =
-//        std::bind<ReturnType>( evaluate,
-//                               std::cref( *upper_bin_boundary->second ),
-//                               std::placeholders::_1 );
+      std::function<ReturnType(const SecondaryIndepQuantity)>
+        evaluate_grid_1_functor =
+        std::bind<ReturnType>( evaluate,
+                               std::cref( *upper_bin_boundary->second ),
+                               std::placeholders::_1 );
 
-//      return LocalTwoDInterpPolicy::interpolate(
-//                           lower_bin_boundary->first,
-//                           upper_bin_boundary->first,
-//                           primary_indep_var_value,
-//                           secondary_indep_var_value,
-//                           evaluate_grid_0_functor,
-//                           evaluate_grid_1_functor );
-//    }
-//  }
-//}
+      return LocalTwoDInterpPolicy::interpolate(
+                           lower_bin_boundary->first,
+                           upper_bin_boundary->first,
+                           primary_indep_var_value,
+                           secondary_indep_var_value,
+                           evaluate_grid_0_functor,
+                           evaluate_grid_1_functor );
+    }
+  }
+}
 
-//// Evaluate the distribution using the desired evaluation method and the ratio of the secondary indep variable
-///*! \details The distribution is evaluated with a correlated routine that
-// * evaluates the upper and lower distributions using the secondary indepent
-// * variable normalized by the max secondary independent variable.
-// * This allows the upper and lower distributions with different max secondary
-// * indepent variables to be sampled to sampled correctly.
-// */
-//template<typename TwoDInterpPolicy, typename Distribution>
-//template<typename LocalTwoDInterpPolicy,
-//         typename ReturnType,
-//         typename EvaluationMethod>
-//inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateNormalizedImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        const double normalized_secondary_indep_var_value,
-//                        EvaluationMethod evaluate ) const
-//{
-//  // Find the bin boundaries
-//  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+// Evaluate the distribution using the desired evaluation method and the ratio of the secondary indep variable
+/*! \details The distribution is evaluated with a correlated routine that
+ * evaluates the upper and lower distributions using the secondary indepent
+ * variable normalized by the max secondary independent variable.
+ * This allows the upper and lower distributions with different max secondary
+ * indepent variables to be sampled to sampled correctly.
+ */
+template<typename TwoDInterpPolicy, typename Distribution>
+template<typename LocalTwoDInterpPolicy,
+         typename ReturnType,
+         typename EvaluationMethod>
+inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distribution>::evaluateNormalizedImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        const SecondaryIndepQuantity min_secondary_indep_var,
+                        const SecondaryIndepQuantity max_secondary_indep_var,
+                        EvaluationMethod evaluate,
+                        const ReturnType below_lower_bound_return,
+                        const ReturnType above_upper_bound_return ) const
+{
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
 
-//  this->findBinBoundaries( primary_indep_var_value,
-//                           lower_bin_boundary,
-//                           upper_bin_boundary );
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
 
-//  // Check for a primary value outside of the primary grid limits
-//  if( lower_bin_boundary == upper_bin_boundary )
-//  {
-//    if( this->arePrimaryLimitsExtended() )
-//    {
-//      SecondaryIndepQuantity secondary_indep_var_value =
-//        normalized_secondary_indep_var_value*
-//        upper_bin_boundary->second->getUpperBoundOfIndepVar();
+  // Check for a primary value outside of the primary grid limits
+  if( lower_bin_boundary == upper_bin_boundary )
+  {
+    if( this->arePrimaryLimitsExtended() )
+    {
+      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+    }
+    else
+      return QuantityTraits<ReturnType>::zero();
+  }
+  else
+  {
+    // Check for a primary value at the primary grid upper limit
+    if( primary_indep_var_value == upper_bin_boundary->first )
+    {
+      return ((*upper_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+    }
+    else if( primary_indep_var_value == lower_bin_boundary->first )
+    {
+      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+    }
+    else
+    {
+      // Create the grid evaluation functors
+      std::function<ReturnType(const SecondaryIndepQuantity)>
+        evaluate_grid_0_functor =
+        std::bind<ReturnType>( evaluate,
+                               std::cref( *lower_bin_boundary->second ),
+                               std::placeholders::_1 );
 
-//      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-//    }
-//    else
-//      return QuantityTraits<ReturnType>::zero();
-//  }
-//  else
-//  {
-//    // Check for a primary value at the primary grid upper limit
-//    if( primary_indep_var_value == upper_bin_boundary->first )
-//    {
-//      SecondaryIndepQuantity secondary_indep_var_value =
-//        normalized_secondary_indep_var_value*
-//        upper_bin_boundary->second->getUpperBoundOfIndepVar();
+      std::function<ReturnType(const SecondaryIndepQuantity)>
+        evaluate_grid_1_functor =
+        std::bind<ReturnType>( evaluate,
+                               std::cref( *upper_bin_boundary->second ),
+                               std::placeholders::_1 );
 
-//      return ((*upper_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-//    }
-//    else if( primary_indep_var_value == lower_bin_boundary->first )
-//    {
-//      SecondaryIndepQuantity secondary_indep_var_value =
-//        normalized_secondary_indep_var_value*
-//        lower_bin_boundary->second->getUpperBoundOfIndepVar();
+      double normalized_secondary_indep_var_value =
+            secondary_indep_var_value/max_secondary_indep_var;
 
-//      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-//    }
-//    else
-//    {
-//      // Create the grid evaluation functors
-//      std::function<ReturnType(const SecondaryIndepQuantity)>
-//        evaluate_grid_0_functor =
-//        std::bind<ReturnType>( evaluate,
-//                               std::cref( *lower_bin_boundary->second ),
-//                               std::placeholders::_1 );
-
-//      std::function<ReturnType(const SecondaryIndepQuantity)>
-//        evaluate_grid_1_functor =
-//        std::bind<ReturnType>( evaluate,
-//                               std::cref( *upper_bin_boundary->second ),
-//                               std::placeholders::_1 );
-
-//      return LocalTwoDInterpPolicy::interpolateWeighted(
-//                           lower_bin_boundary->first,
-//                           upper_bin_boundary->first,
-//                           primary_indep_var_value,
-//                           normalized_secondary_indep_var_value,
-//                           evaluate_grid_0_functor,
-//                           evaluate_grid_1_functor,
-//                           lower_bin_boundary->second->getUpperBoundOfIndepVar(),
-//                           upper_bin_boundary->second->getUpperBoundOfIndepVar() );
-//    }
-//  }
-//}
+      return LocalTwoDInterpPolicy::interpolateWeighted(
+                           lower_bin_boundary->first,
+                           upper_bin_boundary->first,
+                           primary_indep_var_value,
+                           normalized_secondary_indep_var_value,
+                           evaluate_grid_0_functor,
+                           evaluate_grid_1_functor,
+                           lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+                           upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+    }
+  }
+}
 
 // Return a random sample from the secondary conditional PDF
 /*! \details A stochastic sampling procedure is used. If the primary value

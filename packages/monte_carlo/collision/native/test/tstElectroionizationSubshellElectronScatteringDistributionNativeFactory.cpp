@@ -78,17 +78,19 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
                    evaluatePDF )
 {
-  double pdf = native_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
+  double pdf;
+
+  pdf = native_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
-  pdf = native_distribution->evaluatePDF( 8.829e-2 + 2e-8, 1e-8 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.955596962944, 1e-12 );
+  pdf = native_distribution->evaluatePDF( 8.829e-2 + 3e-8, 1.0001e-08 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11110995.37814653106, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 689.2154402763227381, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 662.81827321455386937, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 662.92869138138178187, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5969818328396216955, 1e-12 );
@@ -97,7 +99,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.38239950812861E+00, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0e5, 1.752970E+02 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.986498947129447938e-07, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.98650620153625E-07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

@@ -75,7 +75,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   evaluate )
+                   evaluate_ace )
 {
   double pdf = ace_electroionization_distribution->evaluate( 8.829e-2, 5e-8 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
@@ -84,7 +84,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluate( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.63484458985044512, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.73007680644980155, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluate( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );
@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   evaluatePDF )
+                   evaluatePDF_ace )
 {
   double pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2, 5e-8 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
@@ -108,7 +108,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.63484458985044512, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.73007680644980155, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   evaluateCDF )
+                   evaluateCDF_ace )
 {
   double cdf = ace_electroionization_distribution->evaluateCDF( 8.829e-2, 5e-8 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.0, 1e-12 );
@@ -135,7 +135,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 2.92009701772965E-01, 1e-12 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 2.96911596049771E-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.29450603080524573318, 1e-12 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 7.99240642349262E-01, 1e-12 );
@@ -147,13 +147,13 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.999123864280E-01, 1e-10 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 1e5, 5e4 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-10 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   sample_knock_on )
+                   sample_knock_on_ace )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -211,8 +211,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                                  knock_on_angle_cosine );
 
   // Test knock-on electron at the min random number
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.0477903309458948, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 1.37963213024213E-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.0406872554892572, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 1.0E-07, 1e-12 );
 
   // sample the electron at the max random number
   native_electroionization_distribution->sample( incoming_energy,
@@ -227,7 +227,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   sample )
+                   sample_ace )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -260,7 +260,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   sampleAndRecordTrials )
+                   sampleAndRecordTrials_ace )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -293,7 +293,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   scatterElectron )
+                   scatterElectron_ace )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -430,7 +430,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
-            function_data ) );
+            function_data,
+            1e-6,
+            1e-16 ) );
 
   // Create the distributions
   ace_electroionization_distribution.reset(
@@ -444,7 +446,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   xss_data_extractor.reset();
   }
 
-  // Create ACE distribution
+  // Create Native distribution
   {
   // Create the native data file container
   Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container(
@@ -488,13 +490,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
-            function_data ) );
+            function_data,
+            1e-6,
+            1e-16 ) );
 
   // Create the distributions
   native_electroionization_distribution.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
-                            binding_energy ) );
+                            binding_energy,
+                            true ) );
   }
 
   // Initialize the random number generator

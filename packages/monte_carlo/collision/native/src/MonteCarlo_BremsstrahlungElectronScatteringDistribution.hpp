@@ -34,13 +34,13 @@ public:
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool use_weighted_sampling = true );
+    const bool use_normalized_interpolation = true );
 
   //! Constructor with detailed 2BS photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
     const int atomic_number,
-    const bool use_weighted_sampling );
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const bool use_normalized_interpolation );
 
   //! Destructor
   virtual ~BremsstrahlungElectronScatteringDistribution()
@@ -52,8 +52,8 @@ public:
   //! Return the Max incoming energy
   double getMaxEnergy() const;
 
-  //! Return if weighted sampling is on
-  bool isWeightedSamplingOn() const;
+  //! Return if normalized sampling is on
+  bool isNormalizedSamplingOn() const;
 
   //! Evaluate the distribution for a given incoming and photon energy
   double evaluate( const double incoming_energy,
@@ -86,7 +86,7 @@ public:
 private:
 
   //! Sample a secondary energy from the distribution
-  double sampleWeighted( const double incoming_energy ) const;
+  double sampleNormalized( const double incoming_energy ) const;
 
   //! Sample a secondary energy from the distribution
   double sampleExact( const double incoming_energy ) const;
@@ -117,8 +117,8 @@ private:
   // lower cutoff energy for the condensed-history method
   double d_lower_cutoff_energy;
 
-  // Bool to use a weighted interpolation routine to sample the distribution
-  bool d_use_weighted_sampling;
+  // Bool to use a normalized interpolation routine to sample the distribution
+  bool d_use_normalized_interpolation;
 
   // The outgoing angle function pointer
   std::function<double ( const double, const double )>

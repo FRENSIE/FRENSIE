@@ -14,6 +14,60 @@
 
 namespace Utility{
 
+
+// Return the upper bound of the distribution secondary independent variable using interpolation
+template<typename Distribution>
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getUpperInterpolatedBoundOfSecondaryIndepVar(
+                const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  // Check for a primary value outside of the primary grid limits
+  if( lower_bin_boundary == upper_bin_boundary )
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return lower_bin_boundary->second->getUpperBoundOfIndepVar();
+    else
+      return QuantityTraits<SecondaryIndepQuantity>::zero();
+  }
+  else
+    return lower_bin_boundary->second->getUpperBoundOfIndepVar();
+}
+
+// Return the lower bound of the distribution secondary independent variable using interpolation
+template<typename Distribution>
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getLowerInterpolatedBoundOfSecondaryIndepVar(
+                const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  this->findBinBoundaries( primary_indep_var_value,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  // Check for a primary value outside of the primary grid limits
+  if( lower_bin_boundary == upper_bin_boundary )
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return lower_bin_boundary->second->getLowerBoundOfIndepVar();
+    else
+      return QuantityTraits<SecondaryIndepQuantity>::zero();
+  }
+  else
+    return lower_bin_boundary->second->getLowerBoundOfIndepVar();
+}
+
+
+
+
 // Evaluate the distribution
 template<typename Distribution>
 auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(

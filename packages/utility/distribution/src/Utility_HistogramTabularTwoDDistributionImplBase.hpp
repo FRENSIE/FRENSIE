@@ -80,6 +80,14 @@ public:
   virtual ~UnitAwareHistogramTabularTwoDDistributionImplBase()
   { /* ... */ }
 
+  //! Return the upper bound of the secondary independent variable at the primary independent variable
+  SecondaryIndepQuantity getUpperInterpolatedBoundOfSecondaryIndepVar(
+                const PrimaryIndepQuantity primary_indep_var_value ) const;
+
+  //! Return the lower bound of the secondary independent variable at the primary independent variable
+  SecondaryIndepQuantity getLowerInterpolatedBoundOfSecondaryIndepVar(
+                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+
   //! Evaluate the distribution
   DepQuantity evaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,

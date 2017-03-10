@@ -341,8 +341,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   twobs_scattering_distribution.reset(
    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-        scattering_function,
         xss_data_extractor->extractAtomicNumber(),
+        scattering_function,
         false ) );
 
 

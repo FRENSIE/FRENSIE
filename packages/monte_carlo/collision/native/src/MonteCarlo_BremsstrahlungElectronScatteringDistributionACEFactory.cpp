@@ -56,8 +56,8 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 							  scattering_function );
 
   scattering_distribution.reset(
-   new BremsstrahlungElectronScatteringDistribution( scattering_function,
-                                                     atomic_number,
+   new BremsstrahlungElectronScatteringDistribution( atomic_number,
+                                                     scattering_function,
                                                      false ) );
 }
 
