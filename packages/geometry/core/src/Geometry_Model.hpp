@@ -12,11 +12,11 @@
 // Std Lib Includes
 #include <unordered_set>
 #include <unordered_map>
+#include <memory>
 
 // FRENSIE Includes
-#include "Geometry_PointLocation.hpp"
-#include "Geometry_Ray.hpp"
 #include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Navigator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Geometry{
@@ -47,16 +47,13 @@ public:
   virtual ~Model()
   { /* ... */ }
 
-  //! Enable support for multiple threads
-  virtual void enableThreadSupport( const size_t num_threads ) = 0;
+  //! Get the material ids
+  virtual void getMaterialIds( MaterialIdSet& material_ids ) const = 0;
 
   //! Get the cells
   virtual void getCells( CellSet& cells,
                          const bool include_void_cells,
                          const bool include_termination_cells ) const = 0;
-
-  //! Get the material ids
-  virtual void getMaterialIds( MaterialIdSet& material_ids ) const = 0;
 
   //! Get the cell material ids
   virtual void getCellMaterialIds(
@@ -74,79 +71,15 @@ public:
                        const ModuleTraits::InternalCellHandle cell ) const = 0;
 
   //! Check if a cell is void
-  virtual bool isCellVoid(
+  virtual bool isVoidCell(
                        const ModuleTraits::InternalCellHandle cell ) const = 0;
 
   //! Get the cell volume
   virtual double getCellVolume(
                        const ModuleTraits::InternalCellHandle cell ) const = 0;
 
-  //! Get the location of a cell w.r.t. a given cell
-  virtual PointLocation getPointLocation(
-                       const Ray& ray,
-                       const ModuleTraits::InternalCellHandle cell ) const = 0;
-
-  //! Check if an internal ray has been set
-  virtual bool isInternalRaySet();
-
-  /*! Fire an external ray
-   *
-   * A std::runtime_error (or class derived from it) must be thrown if
-   * an error occurs.
-   */
-  virtual double fireExternalRay(
-                  const Ray& ray,
-                  ModuleTraits::InternalSurfaceHandle& surface_hit ) const = 0;
-
-  /*! Set the internal ray
-   *
-   * A std::runtime_error (or class derived from it) must be thrown if
-   * an error occurs.
-   */
-  virtual void setInternalRay(
-                       const Ray& ray,
-                       const ModuleTraits::InternalCellHandle start_cell ) = 0;
-
-  //! Get the internal ray position
-  virtual const double* getInternalRayPosition() const = 0;
-
-  //! Get the internal ray direction
-  virtual const double* getInternalRayDirection() const = 0;
-
-  /*! Find the cell that contains a given start ray
-   *
-   * A std::runtime_error (or class derived from it) must be thrown
-   * if an error occurs.
-   */
-  virtual ModuleTraits::InternalCellHandle findCellContainingStartRay(
-                                                    const Ray& ray ) const = 0;
-
-  /*! Find the cell that contains the internal ray
-   *
-   * A std::runtime_error (or class derived from it) must be thrown
-   * if an error occurs.
-   */
-  virtual ModuleTraits::InternalCellHandle findCellContainingInternalRay() const = 0;
-
-  /*! Fire the internal ray through the geometry
-   *
-   * A std::runtime_error (or class derived from it) must be thrown
-   * if a ray tracing error occurs.
-   */
-  virtual double fireInternalRay(
-                  ModuleTraits::InternalSurfaceHandle& surface_hit ) const = 0;
-
-  /*! Advance the internal ray to the cell boundary
-   *
-   * If a reflecting surface is hit "true" will be returned.
-   */
-  virtual bool advanceInternalRayToCellBoundary( double surface_normal[3] ) = 0;
-
-  //! Advance the internal ray by a substep (less than distance to boundary)
-  virtual bool advanceInternalRayBySubstep( const double step_size ) = 0;
-
-  //! Change the internal ray direction
-  virtual void changeInternalRayDirection( const double direction[3] ) = 0;
+  //! Create a navigator
+  virtual std::shared_ptr<Navigator> createNavigator() const = 0;
 };
   
 } // end Geometry namespace

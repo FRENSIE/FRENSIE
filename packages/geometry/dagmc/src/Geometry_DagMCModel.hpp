@@ -1,0 +1,250 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   Geometry_DagMCModel.hpp
+//! \author Alex Robinson
+//! \brief  DagMC model class declaration
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef GEOMETRY_DAGMC_MODEL_HPP
+#define GEOMETRY_DAGMC_MODEL_HPP
+
+// Std Lib Includes
+#include <string>
+#include <stdexcept>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#include <iostream>
+#include <memory>
+
+// Moab Includes
+#include <DagMC.hpp>
+
+// FRENSIE Includes
+#include "Geometry_DagMCModelProperties.hpp"
+#include "Geometry_DagMCCellHandler.hpp"
+#include "Geometry_DagMCSurfaceHandler.hpp"
+#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_PointLocation.hpp"
+#include "Geometry_AdvancedModel.hpp"
+#include "Utility_ContractException.hpp"
+
+namespace Geometry{
+
+/*! The DagMC geometry model
+ * \details This class is a singleton since the underlying moab::DagMC object
+ * is also a singleton. Once a DagMC model is initialized cell and surface
+ * properties can be queried and navigators can be created.
+ */
+class DagMCModel : public AdvancedModel
+{
+
+public:
+
+  //! Destructor
+  ~DagMCModel()
+  { /* ... */ }
+
+  //! Get the DagMC model instance
+  static std::shared_ptr<DagMCModel> getInstance();
+
+  //! Check if the DagMC model has been initialized
+  bool isInitialized();
+
+  //! Initialize the DagMC model
+  bool initialize( const DagMCModelProperties& model_properties,
+                   const bool suppress_dagmc_output = true );
+
+  //! Get the model properties
+  const DagMCModelProperties& getModelProperties() const;
+
+  //! Get the material ids
+  void getMaterialIds( MaterialIdSet& material_ids ) const override;
+
+  //! Get the problem cells
+  void getCells( CellSet& cell_set,
+                 const bool include_void_cells,
+                 const bool include_termination_cells ) const override;
+  
+  //! Get the cell material ids
+  void getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const override;
+
+  //! Get the cell densities
+  void getCellDensities( CellDensityMap& cell_id_density_map ) const override;
+
+  //! Get the cell estimator data
+  template<typename IntType,
+           template<typename,typename,typename> class Tuple,
+           template<typename,typename...> class Array,
+           template<typename,typename,typename...> class Map>
+  void getCellEstimatorData( Map<IntType,Tuple<std::string,std::string,Array<ModuleTraits::InternalCellHandle> > >& estimator_id_data_map ) const;
+
+  //! Check if a cell exists
+  bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id ) const override;
+
+  //! Check if the cell is a termination cell
+  bool isTerminationCell( const ModuleTraits::InternalCellHandle cell_id ) const override;
+
+  //! Check if the cell is a void cell
+  bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id ) const override;
+
+  //! Get the cell volume
+  double getCellVolume( const ModuleTraits::InternalCellHandle cell_id ) const override;
+
+  //! Get the surface estimator data
+  template<typename IntType,
+           template<typename,typename,typename> class Tuple,
+           template<typename,typename...> class Array,
+           template<typename,typename,typename...> class Map>
+  void getSurfaceEstimatorData( Map<IntType,Tuple<std::string,std::string,Array<ModuleTraits::InternalSurfaceHandle> > >& estimator_id_data_map ) const;
+
+  //! Check if the surface exists
+  bool doesSurfaceExist( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
+
+  //! Get the problem surfaces
+  void getSurfaces( SurfaceSet& surface_set ) const override;
+
+  //! Get the surface area
+  double getSurfaceArea( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
+
+  //! Check if the surface is a reflecting surface
+  bool isReflectingSurface( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
+
+  //! Create a DagMC navigator
+  std::shared_ptr<DagMCNavigator> createDagMCNavigator() const;
+
+  //! Create a ray tracer
+  std::shared_ptr<Navigator> createNavigator() const override;
+
+private:
+
+  // Constructor
+  DagMCModel();
+
+  // Load the dagmc geometry file
+  void loadDagMCGeometry( const bool suppress_dagmc_output );
+
+  // Validate the properties
+  void validatePropertyNames() const;
+
+  // Parse the properties
+  void parseProperties();
+
+  // Construct the entity handlers
+  void constructEntityHandlers();
+
+  // Extract the termination cells
+  void extractTerminationCells();
+
+  // Extract the reflecting surfaces
+  void extractReflectingSurfaces();
+
+  // Get the property values associated with a property name
+  template<template<typename,typename...> class ArrayType>
+  void getPropertyValues( const std::string& property,
+                          ArrayType<std::string>& values ) const;
+
+  // Get the property values associated with a property name
+  void getPropertyValues( const std::string& property,
+                          std::vector<std::string>& values ) const;
+
+  // Get the cells associated with a property name
+  void getCellsWithProperty( std::vector<moab::EntityHandle>& cells,
+                             const std::string& property,
+                             const std::string* property_value = NULL ) const;
+
+  // Get the surfaces associated with a property name
+  void getSurfacesWithProperty(
+                              std::vector<moab::EntityHandle>& surfaces,
+                              const std::string& property,
+                              const std::string* property_value = NULL ) const;
+
+  // Get the property values associated with a property name and cell id
+  template<template<typename,typename...> class ArrayType,
+           template<typename,typename,typename...> class MapType>
+  void getCellPropertyValues(
+             const std::string& property,
+             MapType<ModuleTraits::InternalCellHandle,ArrayType<std::string> >&
+             cell_id_prop_val_map ) const;
+
+  // Get the cell ids with a property value
+  template<template<typename,typename...> class ArrayType,
+           template<typename,typename,typename...> class MapType>
+  void getCellIdsWithPropertyValue(
+             const std::string& property,
+             MapType<std::string,ArrayType<ModuleTraits::InternalCellHandle> >&
+             prop_val_cell_id_map ) const;
+
+  // Get the property values associated with a property name and surface id
+  template<template<typename,typename...> class ArrayType,
+           template<typename,typename,typename...> class MapType>
+  void getSurfacePropertyValues(
+          const std::string& property,
+          MapType<ModuleTraits::InternalSurfaceHandle,ArrayType<std::string> >&
+          surface_id_prop_val_map ) const;
+
+  // Get the surface ids with a property value
+  template<template<typename,typename...> class ArrayType,
+           template<typename,typename,typename...> class MapType>
+  void getSurfaceIdsWithPropertyValue(
+          const std::string& property,
+          MapType<std::string,ArrayType<ModuleTraits::InternalSurfaceHandle> >&
+          prop_val_surface_id_map ) const;
+
+  // Extract estimator property values
+  void extractEstimatorPropertyValues( const std::string& prop_value,
+                                       unsigned& estimator_id,
+                                       std::string& estimator_type,
+                                       std::string& particle_type ) const;
+
+  // The DagMC model instance
+  static std::shared_ptr<DagMCModel> s_instance;
+  
+  // The raw DagMC instance
+  moab::DagMC* d_dagmc;
+
+  // The DagMC cell handler
+  std::shared_ptr<Geometry::DagMCCellHandler> d_cell_handler;
+
+  // The DagMC surface handle
+  std::shared_ptr<Geometry::DagMCSurfaceHandler> d_surface_handler;
+
+  // The termination cells
+  std::shared_ptr<CellSet> d_termination_cells;
+
+  // The reflecting surfaces
+  typedef DagMCNavigator::ReflectingSurfaceIdHandleMap
+  ReflectingSurfaceIdHandleMap
+  std::shared_ptr<ReflectingSurfaceIdHandleMap> d_reflecting_surfaces;
+
+  // The model properties
+  DagMCModelProperties d_model_properties;
+};
+
+//! The invalid DagMC geometry error
+class InvalidDagMCGeometry : public std::runtime_error
+{
+
+public:
+
+  InvalidDagMCGeometry( const std::string& what_arg )
+    : std::runtime_error( what_arg )
+  { /* ... */ }
+};
+
+} // end Geometry namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Geometry_DagMCModel_def.hpp"
+
+//---------------------------------------------------------------------------//
+
+#endif // end GEOMETRY_DAGMC_MODEL_HPP
+
+//---------------------------------------------------------------------------//
+// end Geometry_DagMCModel.hpp
+//---------------------------------------------------------------------------//
