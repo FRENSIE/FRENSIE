@@ -77,10 +77,8 @@ void DagMCModelProperties::useStandardIdLookup()
 void DagMCModelProperties::setTerminationCellPropertyName(
                                                       const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
 
   d_termination_cell_property = name;
 }
@@ -92,12 +90,26 @@ const std::string& DagMCModelProperties::getTerminationCellPropertyName()
 }
 
 // Set the reflecting surface property name
+void DagMCModelProperties::setReflectingSurfacePropertyName(
+                                                      const std::string& name )
+{
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+
+  d_reflecting_surface_property = name;
+}
+
+// Get the reflecting surface property name
+const std::string& DagMCModelProperties::getReflectingSurfacePropertyName() const
+{
+  return d_reflecting_surface_property;
+}
+
+// Set the reflecting surface property name
 void DagMCModelProperties::setReflectingSurfacePropertyName( const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
 
   d_reflecting_surface_property = name;
 }
@@ -111,10 +123,8 @@ const std::string& DagMCModelProperties::getReflectingSurfacePropertyName()
 // Set the material property name
 void DagMCModelProperties::setMaterialPropertyName( const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
 
   d_material_property = name;
 }
@@ -128,11 +138,9 @@ const std::string& DagMCModelProperties::getMaterialPropertyName()
 // Set the density property name
 void DagMCModelProperties::setDensityPropertyName( const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
-
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
   d_density_property = name;
 }
 
@@ -145,10 +153,8 @@ const std::string& DagMCModelProperties::getDensityPropertyName()
 // Set the estimator property name
 void DagMCModelProperties::setEstimatorPropertyName( const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
 
   d_estimator_property = name;
 }
@@ -175,11 +181,9 @@ void DagMCModelProperties::getPropertyNames( std::vector<std::string>& propertie
 // Set the surface current name
 void DagMCModelProperties::setSurfaceCurrentName( const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
-
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
   d_surface_current_name = name;
 }
 
@@ -192,10 +196,8 @@ const std::string& DagMCModelProperties::getSurfaceCurrentName()
 // Set the surface flux name
 void DagMCModelProperties::setSurfaceFluxName( const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
 
   d_surface_flux_name = name;
 }
@@ -209,11 +211,9 @@ const std::string& DagMCModelProperties::getSurfaceFluxName()
 // Set the cell pulse height name
 void DagMCModelProperties::setCellPulseHeightName( const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
-
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
   d_cell_pulse_height_name = name;
 }
 
@@ -226,11 +226,9 @@ const std::string& DagMCModelProperties::getCellPulseHeightName()
 // Set the cell track-length flux name
 void DagMCModelProperties::setCellTrackLengthFluxName( const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
-
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
   d_cell_track_length_flux_name = name;
 }
 
@@ -243,11 +241,9 @@ const std::string& DagMCModelProperties::getCellTrackLengthFluxName()
 // Set the cell collision flux name
 void DagMCModelProperties::setCellCollisionFluxName( const std::string& name )
 {
-  // Make sure the name is valid
-  TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
-                      std::runtime_error,
-                      "DagMC properties names cannot use the '_' character!" );
-
+  // Make sure that the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
   d_cell_collision_flux_name = name;
 }
 

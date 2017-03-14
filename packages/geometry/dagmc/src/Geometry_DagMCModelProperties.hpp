@@ -51,6 +51,12 @@ public:
   //! Get the termination cell property name
   const std::string& getTerminationCellPropertyName() const;
 
+  //! Set the reflecting surface property name
+  void setReflectingSurfacePropertyName( const std::string& name );
+
+  //! Get the reflecting surface property name
+  const std::string& getReflectingSurfacePropertyName() const;
+
   //! Set the material property name
   void setMaterialPropertyName( const std::string& name );
 

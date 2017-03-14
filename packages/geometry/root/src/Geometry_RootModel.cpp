@@ -12,9 +12,9 @@
 
 // FRENSIE Includes
 #include "Geometry_RootModel.hpp"
+#include "Geometry_RootLoggingMacros.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_LoggingHelpers.hpp"
 
 namespace Geometry{
 
@@ -90,8 +90,7 @@ void RootModel::initialize( const RootModelProperties& model_properties,
 // Load the Root geometry file
 void RootModel::loadRootGeometry( const int root_init_verbosity )
 {
-  FRENSIE_LOG_TAGGED_NOTIFICATION(
-                "Root",
+  FRENSIE_LOG_ROOT_NOTIFICATION(
                 "Loading " << d_model_properties.getModelFileName() << "..." );
   
   // Tell Root to suppress all message below the requested verbosity level
@@ -119,9 +118,8 @@ void RootModel::loadRootGeometry( const int root_init_verbosity )
   // Tell Root to suppress all message below the warning level after this point
   gErrorIgnoreLevel = kWarning;
 
-  FRENSIE_LOG_TAGGED_NOTIFICATION(
-         "Root",
-         "Finished loading " << d_model_properties.getModelFileName() << "!" );
+  FRENSIE_LOG_ROOT_NOTIFICATION(
+        "Finished loading " << d_model_properties.getModelFileName() << "!" );
   FRENSIE_FLUSH_ALL_LOGS();
 }
 
@@ -460,22 +458,20 @@ void RootModel::handleRootError( int level,
   if( level >= gErrorIgnoreLevel )
   {
     if( level == kInfo )
-      FRENSIE_LOG_TAGGED_DETAILS( "Root", msg );
+      FRENSIE_LOG_ROOT_DETAILS( msg );
     else if( level == kWarning )
-      FRENSIE_LOG_TAGGED_WARNING( "Root",
-                                  msg << "\n"
-                                  "  Root Location: " << location );
-    else if( level >= kError )
-      FRENSIE_LOG_TAGGED_ERROR( "Root",
-                                msg << "\n"
+      FRENSIE_LOG_ROOT_WARNING( msg << "\n"
                                 "  Root Location: " << location );
+    else if( level >= kError )
+      FRENSIE_LOG_ROOT_ERROR( msg << "\n"
+                              "  Root Location: " << location );
 
     // Request to abort will instead be sent to the FRENSIE exception handling
     // system
     if( abort )
     {
-      if( gSystem )
-        gSystem->StackTrace();
+      // if( gSystem )
+      //   gSystem->StackTrace();
       
       THROW_EXCEPTION( InvalidRootGeometry,
                        "Request to abort from Root!" );

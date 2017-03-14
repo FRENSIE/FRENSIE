@@ -16,9 +16,9 @@
 #include "Geometry_FastDagMCCellHandler.hpp"
 #include "Geometry_StandardDagMCSurfaceHandler.hpp"
 #include "Geometry_FastDagMCSurfaceHandler.hpp"
+#include "Geometry_DagMCLoggingMacros.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_MOABException.hpp"
-#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -151,10 +151,9 @@ void DagMCModel::validatePropertyNames()
 
   if( invalid_properties.size() > 0 )
   {
-    FRENSIE_LOG_TAGGED_WARNING( "DagMC",
-                                "Unknown properties were detected in the "
-                                "DagMC geometry! Here are the unknown "
-                                "properties: "<< invalid_properties );
+    FRENSIE_LOG_DAGMC_WARNING( "Unknown properties were detected in the "
+                               "DagMC geometry! Here are the unknown "
+                               "properties: " << invalid_properties );
   }
 }
 
@@ -164,8 +163,7 @@ void DagMCModel::loadDagMCGeometry( const bool suppress_dagmc_output )
   // Create a new DagMC instance
   d_dagmc = moab::DagMC::instance();
 
-  FRENSIE_LOG_TAGGED_NOTIFICATION(
-                "DagMC",
+  FRENSIE_LOG_DAGMC_NOTIFICATION(
                 "Loading " << d_model_properties.getModelFileName() << "..." );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -220,8 +218,7 @@ void DagMCModel::loadDagMCGeometry( const bool suppress_dagmc_output )
     cerr.rdbuf( cerr_streambuf );
   }
 
-  FRENSIE_LOG_TAGGED_NOTIFICATION(
-         "DagMC",
+  FRENSIE_LOG_DAGMC_NOTIFICATION(
          "Finished loading " << d_model_properties.getModelFileName() << "!" );
   FRENSIE_FLUSH_ALL_LOGS();
 }
