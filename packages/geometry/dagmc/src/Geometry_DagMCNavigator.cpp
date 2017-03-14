@@ -83,9 +83,13 @@ PointLocation DagMCNavigator::getPointLocation(
 }
 
 // Get the surface normal at a point on the surface
+/*! \details The dot product of the normal and the direction will be 
+ * positive defined.
+ */
 void DagMCNavigator::getSurfaceNormal(
                           const ModuleTraits::InternalSurfaceHandle surface_id,
                           const double position[3],
+                          const double direction[3],
                           double normal[3] ) const
 {
   // Make sure that the surface exists
@@ -94,15 +98,16 @@ void DagMCNavigator::getSurfaceNormal(
   moab::EntityHandle surface_handle =
     d_surface_handler->getSurfaceHandle( surface_id );
 
-  this->getSurfaceHandleNormal( surface_handle, position, normal );
+  this->getSurfaceHandleNormal( surface_handle, position, direction, normal );
 }
 
 // Get the surface normal at a point on the surface
 void DagMCNavigator::getSurfaceHandleNormal(
-                          const moab::EntityHandle surface_handle,
-                          const double position[3],
-                          double normal[3],
-                          const moab::DagMC::RayHistory* history = NULL ) const
+                                 const moab::EntityHandle surface_handle,
+                                 const double position[3],
+                                 const double direction[3],
+                                 double normal[3],
+                                 const moab::DagMC::RayHistory* history ) const
 {
   moab::ErrorCode return_value = d_dagmc->get_angle( surface_handle,
                                                      position,
@@ -112,6 +117,15 @@ void DagMCNavigator::getSurfaceHandleNormal(
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       DagMCGeometryError,
                       moab::ErrorCodeStr[return_value] );
+
+  // Make sure that the dot product of the direction and the surface normal
+  // is positive defined
+  if( Utility::calculateCosineOfAngleBetweenUnitVectors(direction, normal)< 0 )
+  {
+    normal[0] *= -1.0;
+    normal[1] *= -1.0;
+    normal[2] *= -1.0;
+  }
 }
 
 // Get the boundary cell

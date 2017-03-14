@@ -135,15 +135,40 @@ PointLocation RootNavigator::getPointLocation(
 }
 
 // Get the surface normal at a point on the surface
-/*! \details This method is thread safe as long as enableThreadSupport has
- * been called.
+/*! \details The surface id will not be used. The dot product of the normal
+ * and the direction will be positive defined. This method is thread safe as
+ * long as enableThreadSupport has been called.
  */
 void RootNavigator::getSurfaceNormal(
-                          const ModuleTraits::InternalSurfaceHandle surface_id,
+                          const ModuleTraits::InternalSurfaceHandle,
                           const double position[3],
+                          const double direction[3],
                           double normal[3] ) const
 {
+  TGeoNode* node = this->findNodeContainingRay( ray );
+
+  const TGeoNavigator* navigator = this->getNavigator();
   
+  // Note: This is basically a reimplementation of the
+  // TGeoNavigator::GetNormalFast method. Because we want to preserve our
+  // internal ray state this reimplementation is necessary
+  double local_position[3];
+  node->MasterToLocal( position, local_position );
+  
+  double local_direction[3];
+  node->MasterToLocal( direction, local_direction );
+
+  double local_normal[3];
+
+  node->GetVolume()->GetShape()->ComputeNormal( local_position,
+                                                local_direction,
+                                                local_normal );
+
+  node->LocalToMaster( local_direction, normal );
+
+  // Make sure that the normal is a unit vector
+  if( !Utility::isUnitVector( normal ) )
+    Utility::normalizeVector( normal );
 }
 
 // Find the cell that contains the start ray

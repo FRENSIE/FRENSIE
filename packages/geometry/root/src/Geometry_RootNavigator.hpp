@@ -55,6 +55,7 @@ public:
   //! Get the surface normal at a point on the surface
   void getSurfaceNormal( const ModuleTraits::InternalSurfaceHandle surface_id,
                          const double position[3],
+                         const double direction[3],
                          double normal[3] ) const override;
 
   //! Find the cell that contains the start ray

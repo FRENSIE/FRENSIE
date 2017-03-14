@@ -40,10 +40,14 @@ public:
                        const Ray& ray,
                        const ModuleTraits::InternalCellHandle cell ) const = 0;
 
-  //! Get the surface normal at a point on the surface
+  /*! Get the surface normal at a point on the surface
+   *
+   * The dot product of the direction and normal must be positive defined.
+   */
   virtual void getSurfaceNormal(
                           const ModuleTraits::InternalSurfaceHandle surface_id,
                           const double position[3],
+                          const double direction[3],
                           double normal[3] ) const = 0;
 
   /*! Find the cell that contains a given start ray
