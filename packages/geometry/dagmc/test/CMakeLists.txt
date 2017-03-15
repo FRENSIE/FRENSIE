@@ -1,6 +1,13 @@
 # Configure the test files
 ADD_SUBDIRECTORY(test_files)
 
+ADD_EXECUTABLE(tstDagMCEstimatorType
+  tstDagMCEstimatorType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDagMCEstimatorType geometry_dagmc)
+ADD_TEST(DagMCEstimatorType_test tstDagMCEstimatorType)
+SET_PROPERTY(TEST DagMCEstimatorType_test PROPERTY LABELS geometry_dagmc dagmc)
+
 ADD_EXECUTABLE(tstDagMCRay
   tstDagMCRay.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -8,22 +15,30 @@ TARGET_LINK_LIBRARIES(tstDagMCRay geometry_dagmc)
 ADD_TEST(DagMCRay_test tstDagMCRay)
 SET_PROPERTY(TEST DagMCRay_test PROPERTY LABELS geometry_dagmc dagmc)
 
-ADD_EXECUTABLE(tstStandardDagMCCellHandler tstStandardDagMCCellHandler.cpp)
+ADD_EXECUTABLE(tstStandardDagMCCellHandler
+  tstStandardDagMCCellHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStandardDagMCCellHandler geometry_dagmc)
 ADD_TEST(StandardDagMCCellHandler_test tstStandardDagMCCellHandler --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
 SET_PROPERTY(TEST StandardDagMCCellHandler_test PROPERTY LABELS geometry_dagmc dagmc)
 
-ADD_EXECUTABLE(tstFastDagMCCellHandler tstFastDagMCCellHandler.cpp)
+ADD_EXECUTABLE(tstFastDagMCCellHandler
+  tstFastDagMCCellHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstFastDagMCCellHandler geometry_dagmc)
 ADD_TEST(FastDagMCCellHandler_test tstFastDagMCCellHandler --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
 SET_PROPERTY(TEST FastDagMCCellHandler_test PROPERTY LABELS geometry_dagmc dagmc)
 
-ADD_EXECUTABLE(tstStandardDagMCSurfaceHandler tstStandardDagMCSurfaceHandler.cpp)
+ADD_EXECUTABLE(tstStandardDagMCSurfaceHandler
+  tstStandardDagMCSurfaceHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStandardDagMCSurfaceHandler geometry_dagmc)
 ADD_TEST(StandardDagMCSurfaceHandler_test tstStandardDagMCSurfaceHandler --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
 SET_PROPERTY(TEST StandardDagMCSurfaceHandler_test PROPERTY LABELS geometry_dagmc dagmc)
 
-ADD_EXECUTABLE(tstFastDagMCSurfaceHandler tstFastDagMCSurfaceHandler.cpp)
+ADD_EXECUTABLE(tstFastDagMCSurfaceHandler
+  tstFastDagMCSurfaceHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstFastDagMCSurfaceHandler geometry_dagmc)
 ADD_TEST(FastDagMCSurfaceHandler_test tstFastDagMCSurfaceHandler --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
 SET_PROPERTY(TEST FastDagMCSurfaceHandler_test PROPERTY LABELS geometry_dagmc dagmc)

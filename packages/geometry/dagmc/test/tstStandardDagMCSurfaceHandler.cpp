@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "Geometry_StandardDagMCSurfaceHandler.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -1239,55 +1240,51 @@ TEUCHOS_UNIT_TEST( StandardDagMCSurfaceHandler, getSurfaceHandle )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_dagmc_geom_file_name;
+bool suppress_dagmc_output = true;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_dagmc_geom_file_name;
+  clp().setOption( "test_cad_file",
+                   &test_dagmc_geom_file_name,
+                   "Test cad file name" );
+  clp().setOption( "suppress_dagmc_output",
+                   "allow_dagmc_output",
+                   &suppress_dagmc_output,
+                   "Suppress DagMC output" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_cad_file",
-                 &test_dagmc_geom_file_name,
-		 "Test cad file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  // Initialize the global MPI session
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
-  out->setOutputToRootOnly( 0 );
-
-  mpiSession.barrier();
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Initialize dagmc
   moab::DagMC* dagmc_instance = moab::DagMC::instance();
+
+  std::streambuf* cout_streambuf, *cerr_streambuf;
+  
+  if( suppress_dagmc_output )
+  {
+    cout_streambuf = std::cout.rdbuf();
+    cerr_streambuf = std::cerr.rdbuf();
+
+    std::cout.rdbuf( NULL );
+    std::cerr.rdbuf( NULL );
+  }
 
   moab::ErrorCode return_value =
     dagmc_instance->load_file( test_dagmc_geom_file_name.c_str(), 1e-3 );
 
-  // Run the unit tests
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
+  if( suppress_dagmc_output )
+  {
+    std::cout.rdbuf( cout_streambuf );
+    std::cout.rdbuf( cerr_streambuf );
+  }
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstStandardDagMCSurfaceHandler.cpp
