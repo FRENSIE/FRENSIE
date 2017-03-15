@@ -9,9 +9,13 @@
 #ifndef GEOMETRY_NAVIGATOR_HPP
 #define GEOMETRY_NAVIGATOR_HPP
 
+// Std Lib Includes
+#include <set>
+
 // FRENSIE Includes
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_Ray.hpp"
+#include "Geometry_ModuleTraits.hpp"
 
 namespace Geometry{
 
@@ -23,6 +27,9 @@ class Navigator
 {
 
 public:
+
+  //! The cell id set
+  typedef std::set<ModuleTraits::InternalCellHandle> CellIdSet;
   
   //! Constructor
   Navigator()
@@ -56,15 +63,15 @@ public:
    * occurs.
    */
   virtual ModuleTraits::InternalCellHandle findCellContainingStartRay(
-                                         const Ray& ray,
-                                         CellSet& start_cell_cache ) const = 0;
+                                       const Ray& ray,
+                                       CellIdSet& start_cell_cache ) const = 0;
 
   /*! Find the cell that contains a given ray
    *
    * A std::runtime_error (or class derived from it) must be thrown if an error
    * occurs.
    */
-  virtual ModeulTraits::InternalCellHandle findCellContainingRay(
+  virtual ModuleTraits::InternalCellHandle findCellContainingRay(
                                                     const Ray& ray ) const = 0;
 
   /*! Fire the ray through the geometry
@@ -77,7 +84,7 @@ public:
                   ModuleTraits::InternalSurfaceHandle& surface_hit ) const = 0;
 
   //! Check if an internal ray has been set
-  virtual bool isInternalRaySet();
+  virtual bool isInternalRaySet() const = 0;
 
   /*! Set the internal ray with unknown starting cell
    *
@@ -109,6 +116,7 @@ public:
                        const double z_position,
                        const double x_direction,
                        const double y_direction,
+                       const double z_direction,
                        const ModuleTraits::InternalCellHandle start_cell ) = 0;
 
   /*! Set the internal ray with known starting cell
@@ -126,12 +134,12 @@ public:
   //! Get the internal ray direction
   virtual const double* getInternalRayDirection() const = 0;
 
-  /*! Find the cell that contains the internal ray
+  /*! Get the cell that contains the internal ray
    *
    * A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
-  virtual ModuleTraits::InternalCellHandle findCellContainingInternalRay() const = 0;
+  virtual ModuleTraits::InternalCellHandle getCellContainingInternalRay() const = 0;
 
   /*! Fire the internal ray through the geometry
    *
@@ -139,7 +147,7 @@ public:
    * tracing error occurs.
    */
   virtual double fireInternalRay(
-                  ModuleTraits::InternalSurfaceHandle& surface_hit ) const = 0;
+                        ModuleTraits::InternalSurfaceHandle& surface_hit ) = 0;
 
   /*! Advance the internal ray to the cell boundary
    *
@@ -149,7 +157,7 @@ public:
   virtual bool advanceInternalRayToCellBoundary( double* surface_normal ) = 0;
 
   //! Advance the internal ray by a substep (less than distance to boundary)
-  virtual bool advanceInternalRayBySubstep( const double step_size ) = 0;
+  virtual void advanceInternalRayBySubstep( const double step_size ) = 0;
 
   //! Change the internal ray direction
   virtual void changeInternalRayDirection( const double x_direction,
@@ -161,8 +169,8 @@ public:
 };
 
 // Set the internal ray with unknown starting cell
-void Navigator::setInternalRay( const double position[3],
-                                const double direction[3] )
+inline void Navigator::setInternalRay( const double position[3],
+                                       const double direction[3] )
 {
   this->setInternalRay( position[0],
                         position[1],
@@ -173,7 +181,7 @@ void Navigator::setInternalRay( const double position[3],
 }
 
 // Set the internal ray with known starting cell
-void Navigator::setInternalRay(
+inline void Navigator::setInternalRay(
                             const double position[3],
                             const double direction[3],
                             const ModuleTraits::InternalCellHandle start_cell )

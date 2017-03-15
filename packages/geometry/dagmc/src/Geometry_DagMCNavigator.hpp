@@ -35,11 +35,11 @@ public:
 
   //! Constructor
   DagMCNavigator( moab::DagMC* dagmc_instance,
-                  const std::shared_ptr<const Geometry::DagMCCellHandle>&
+                  const std::shared_ptr<const Geometry::DagMCCellHandler>&
                   cell_handler,
                   const std::shared_ptr<const Geometry::DagMCSurfaceHandler>&
                   surface_handler,
-                  const std::shared_ptr<const ReflectinSurfaceIdHandleMap>&
+                  const std::shared_ptr<const ReflectingSurfaceIdHandleMap>&
                   reflecting_surfaces );
 
   //! Destructor
@@ -67,8 +67,8 @@ public:
 
   //! Find the cell that contains the start ray
   ModuleTraits::InternalCellHandle findCellContainingStartRay(
-                                    const Ray& ray,
-                                    CellSet& start_cell_cache ) const override;
+                                  const Ray& ray,
+                                  CellIdSet& start_cell_cache ) const override;
 
   //! Find the cell that contains the ray
   ModuleTraits::InternalCellHandle findCellContainingRay( const Ray& ray ) const override;
@@ -104,8 +104,8 @@ public:
   //! Get the internal DagMC ray direction
   const double* getInternalRayDirection() const override;
 
-  //! Find the cell containing the internal DagMC ray position
-  ModuleTraits::InternalCellHandle findCellContainingInternalRay() override;
+  //! Get the cell containing the internal DagMC ray position
+  ModuleTraits::InternalCellHandle getCellContainingInternalRay() const override;
 
   //! Get the distance from the internal DagMC ray pos. to the nearest boundary
   double fireInternalRay( ModuleTraits::InternalSurfaceHandle& surface_hit ) override;
@@ -165,10 +165,20 @@ private:
                                       const Ray& ray,
                                       const bool boundary_check = true ) const;
 
-  // Find the cell handle that contains the external ray
+  // Find the cell handle that contains the ray
   moab::EntityHandle findCellHandleContainingRay(
                                   const double position[3],
                                   const double direction[3],
+                                  const bool check_on_boundary = false ) const;
+
+  // Find the cell handle that contains the ray
+  moab::EntityHandle findCellHandleContainingRay(
+                                  const double x_position,
+                                  const double y_position,
+                                  const double z_position,
+                                  const double x_direction,
+                                  const double y_direction,
+                                  const double z_direction,
                                   const bool check_on_boundary = false ) const;
 
   // Get the distance from the ray position to the nearest boundary
@@ -204,7 +214,7 @@ private:
   std::shared_ptr<const ReflectingSurfaceIdHandleMap> d_reflecting_surfaces;
 
   // The internal rays
-  std::vector<DagMCRay> s_internal_rays;
+  std::vector<DagMCRay> d_internal_rays;
 };
 
 /*! The DagMC geometry error

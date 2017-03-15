@@ -39,11 +39,16 @@ std::shared_ptr<DagMCModel> DagMCModel::getInstance()
 
 // Constructor
 DagMCModel::DagMCModel()
-  : d_dagmc( NULL )
+  : d_dagmc( NULL ),
+    d_cell_handler(),
+    d_surface_handler(),
+    d_termination_cells(),
+    d_reflecting_surfaces(),
+    d_model_properties()
 { /* ... */ }
 
 // Check if the DagMC model has been initialized
-bool DagMCModel::isInitialized()
+bool DagMCModel::isInitialized() const
 {
   return d_dagmc != NULL;
 }
@@ -57,15 +62,21 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
   
   if( !this->isInitialized() )
   {
+    FRENSIE_LOG_DAGMC_NOTIFICATION( "Loading DagMC model "
+                                    << d_model_properties->getModelFileName()
+                                    << "..." );
+    FRENSIE_FLUSH_ALL_LOGS();
+    
     // Cache the model properties
-    d_model_properties = model_properties;
+    d_model_properties.reset( new DagMCModelProperties( model_properties ) );
 
     try{
       this->loadDagMCGeometry( suppress_dagmc_output );
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to load DagMC geometry file "
-                             << d_model_properties.getModelFileName() << "!" );
+                             << d_model_properties->getModelFileName() <<
+                             "!" );
 
     // Validate the properties in the geometry
     try{
@@ -83,7 +94,7 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     
     // Construct the cell and surface handlers
     try{
-      this->createEntityHandlers();
+      this->constructEntityHandlers();
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to construct the entity handlers!" );
@@ -102,18 +113,25 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to extract the reflecting surfaces!" );
 
-    // Flush all logs
+    FRENSIE_LOG_DAGMC_NOTIFICATION( "Finished loading DagMC model!" );
     FRENSIE_FLUSH_ALL_LOGS();
+  }
+  // A model has already been loaded - ignore new model
+  else
+  {
+    FRENSIE_LOG_DAGMC_WARNING( "Cannot load requested DagMC model ("
+                               << model_properties.getModelFileName() <<
+                               ") because a model has already been loaded!" );
   }
 }
 
 // validate the properties
-void DagMCModel::validatePropertyNames()
+void DagMCModel::validatePropertyNames() const
 {
   // Get the property names in the DagMC geometry
   std::vector<std::string> properties;
 
-  return_value = d_dagmc->detect_available_props( properties );
+  moab::ErrorCode return_value = d_dagmc->detect_available_props( properties );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       InvalidDagMCGeometry,
@@ -121,7 +139,7 @@ void DagMCModel::validatePropertyNames()
   
   // Get the valid property names
   std::vector<std::string> valid_properties;
-  d_model_properties.getPropertyNames( valid_properties );
+  d_model_properties->getPropertyNames( valid_properties );
 
   // Record any invalid property names
   std::string invalid_properties;
@@ -163,32 +181,28 @@ void DagMCModel::loadDagMCGeometry( const bool suppress_dagmc_output )
   // Create a new DagMC instance
   d_dagmc = moab::DagMC::instance();
 
-  FRENSIE_LOG_DAGMC_NOTIFICATION(
-                "Loading " << d_model_properties.getModelFileName() << "..." );
-  FRENSIE_FLUSH_ALL_LOGS();
-
   // Check if DagMC output should be suppressed on initialization
-  std::streambuf* cout_streambuf, cerr_streambuf;
+  std::streambuf* cout_streambuf, *cerr_streambuf;
   
   if( suppress_dagmc_output )
   {
-    cout_streambuf = cout.rdbuf();
-    cerr_streambuf = cerr.rdbuf();
+    cout_streambuf = std::cout.rdbuf();
+    cerr_streambuf = std::cerr.rdbuf();
 
-    cout.rdbuf( NULL );
-    cerr.rdbuf( NULL );
+    std::cout.rdbuf( NULL );
+    std::cerr.rdbuf( NULL );
   }
 
   // Load the geometry
   moab::ErrorCode return_value =
-    d_dagmc->load_file( filename.c_str(),
-                        d_model_properties.getFacetTolerance() );
+    d_dagmc->load_file( d_model_properties->getModelFileName().c_str(),
+                        d_model_properties->getFacetTolerance() );
 
   // Restore cout and cerr if they were suppressed
   if( suppress_dagmc_output )
   {
-    cout.rdbuf( cout_streambuf );
-    cerr.rdbuf( cerr_streambuf );
+    std::cout.rdbuf( cout_streambuf );
+    std::cerr.rdbuf( cerr_streambuf );
   }
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
@@ -197,40 +211,36 @@ void DagMCModel::loadDagMCGeometry( const bool suppress_dagmc_output )
 
   if( suppress_dagmc_output )
   {
-    cout_streambuf = cout.rdbuf();
-    cerr_streambuf = cerr.rdbuf();
+    cout_streambuf = std::cout.rdbuf();
+    cerr_streambuf = std::cerr.rdbuf();
 
-    cout.rdbuf( NULL );
-    cerr.rdbuf( NULL );
+    std::cout.rdbuf( NULL );
+    std::cerr.rdbuf( NULL );
   }
 
   // Initialize the OBB Tree
-  return_value = s_dagmc->init_OBBTree();
-
-  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-		      InvalidDagMCGeometry,
-		      moab::ErrorCodeStr[return_value] );
+  return_value = d_dagmc->init_OBBTree();
 
   // Restore cout and cerr if they were suppressed
   if( suppress_dagmc_output )
   {
-    cout.rdbuf( cout_streambuf );
-    cerr.rdbuf( cerr_streambuf );
+    std::cout.rdbuf( cout_streambuf );
+    std::cerr.rdbuf( cerr_streambuf );
   }
 
-  FRENSIE_LOG_DAGMC_NOTIFICATION(
-         "Finished loading " << d_model_properties.getModelFileName() << "!" );
-  FRENSIE_FLUSH_ALL_LOGS();
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+		      InvalidDagMCGeometry,
+		      moab::ErrorCodeStr[return_value] );
 }
 
 // Parse the properties
-void DagMCModel::parseProperties()
+void DagMCModel::parseProperties() const
 {
   std::vector<std::string> properties;
 
-  d_model_properties.getPropertyNames( properties );
+  d_model_properties->getPropertyNames( properties );
 
-  return_value = d_dagmc->parse_properties( properties );
+  moab::ErrorCode return_value = d_dagmc->parse_properties( properties );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       InvalidDagMCGeometry,
@@ -240,7 +250,7 @@ void DagMCModel::parseProperties()
 // Construct the entity handlers
 void DagMCModel::constructEntityHandlers()
 {
-  if( d_model_properties.isFastIdLookupUsed() )
+  if( d_model_properties->isFastIdLookupUsed() )
   {
     try{
       d_cell_handler.reset( new FastDagMCCellHandler( d_dagmc ) );
@@ -255,9 +265,9 @@ void DagMCModel::constructEntityHandlers()
   else
   {
     try{
-      s_cell_handler.reset( new StandardDagMCCellHandler( d_dagmc ) );
+      d_cell_handler.reset( new StandardDagMCCellHandler( d_dagmc ) );
 
-      s_surface_handler.reset( new StandardDagMCSurfaceHandler( d_dagmc ) );
+      d_surface_handler.reset( new StandardDagMCSurfaceHandler( d_dagmc ) );
     }
     EXCEPTION_CATCH_RETHROW_AS( Utility::MOABException,
                                 InvalidDagMCGeometry,
@@ -273,15 +283,15 @@ void DagMCModel::extractTerminationCells()
 
   try{
     this->getCellsWithProperty(
-                         cells_with_property,
-                         d_model_properties.getTerminationCellPropertyName() );
+                        cells_with_property,
+                        d_model_properties->getTerminationCellPropertyName() );
   }
   EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                            "Unable to parse the termination cells!" );
   
   for( unsigned i = 0; i < cells_with_property.size(); ++i )
   {
-    s_termination_cells.insert(
+    d_termination_cells.insert(
                          d_cell_handler->getCellId( cells_with_property[i] ) );
   }
 
@@ -298,8 +308,8 @@ void DagMCModel::extractReflectingSurfaces()
 
   try{
     this->getSurfacesWithProperty(
-                       surfaces_with_property,
-                       d_model_properties.getReflectingSurfacePropertyName() );
+                      surfaces_with_property,
+                      d_model_properties->getReflectingSurfacePropertyName() );
   }
   EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                            "Unable to parse the reflecting surfaces!" );
@@ -317,58 +327,10 @@ void DagMCModel::extractReflectingSurfaces()
   }
 }
 
-// Extract estimator property values
-// An estimator property is assumed to have the form id.type.ptype
-void DagMCModel::extractEstimatorPropertyValues(
-                                             const std::string& prop_value,
-                                             unsigned& estimator_id,
-                                             std::string& estimator_type,
-                                             std::string& particle_type ) const
+// Get the model properties
+const DagMCModelProperties& DagMCModel::getModelProperties() const
 {
-  unsigned first_pos = prop_value.find_first_of( "." );
-  unsigned last_pos = prop_value.find_last_of( "." );
-
-  // Make sure the estimator property format is valid
-  TEST_FOR_EXCEPTION( first_pos > prop_value.size(),
-                      std::runtime_error,
-                      "the estimator property " << prop_value <<
-                      " found in the .sat file is invalid (the form needs to "
-                      "be id.type.ptype)!" );
-  TEST_FOR_EXCEPTION( last_pos > prop_value.size(),
-                      std::runtime_error,
-                      "the estimator property " << prop_value <<
-                      " found in the .sat file is invalid (the form needs to "
-                      "be id.type.ptype)!" );
-  TEST_FOR_EXCEPTION( first_pos == last_pos,
-                      std::runtime_error,
-                      "the estimator property " << prop_value <<
-                      " found in the .sat file is invalid (the form needs to "
-                      "be id.type.ptype)!" );
-
-  std::string id_string = prop_value.substr( 0, first_pos );
-
-  std::istringstream iss( id_string );
-
-  iss >> estimator_id;
-
-  estimator_type = prop_value.substr( first_pos+1, last_pos-first_pos-1 );
-
-  // Make sure the estimator type is valid
-  TEST_FOR_EXCEPTION(
-                    !d_model_properties.isEstimatorTypeValid( estimator_type ),
-                    InvalidDagMCGeometry,
-                    "estimator " << estimator_id <<
-                    " has an invalid estimator type ("
-                    << estimator_type << ") specified!" );
-
-  particle_type = prop_value.substr( last_pos+1, prop_value.size()-last_pos-1);
-
-  // Make sure the particle type is valid
-  TEST_FOR_EXCEPTION( !d_model_properties.isParticleTypeValid( particle_type ),
-                      InvalidDagMCGeometry,
-                      "estimator " << estimator_id <<
-                      " has an invalid particle type (" << particle_type <<
-                      ") specified (choose n, p or e)!" );
+  return *d_model_properties;
 }
 
 // Get the material ids
@@ -379,7 +341,7 @@ void DagMCModel::getMaterialIds( MaterialIdSet& material_ids ) const
 
   std::vector<std::string> raw_material_ids;
 
-  this->getPropertyValues( d_model_properties.getMaterialPropertyName(),
+  this->getPropertyValues( d_model_properties->getMaterialPropertyName(),
                            raw_material_ids );
 
   // Convert the material names to material ids
@@ -403,7 +365,7 @@ void DagMCModel::getMaterialIds( MaterialIdSet& material_ids ) const
 }
 
 // Get the problem cells
-void DagMCModel::getCells( CellSet& cell_set,
+void DagMCModel::getCells( CellIdSet& cell_set,
                            const bool include_void_cells,
                            const bool include_termination_cells ) const
 {
@@ -452,7 +414,7 @@ void DagMCModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
     cell_id_mat_name_map;
 
   try{
-    this->getCellPropertyValues( d_model_properties.getMaterialPropertyName(),
+    this->getCellPropertyValues( d_model_properties->getMaterialPropertyName(),
                                  cell_id_mat_name_map );
   }
   EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
@@ -478,11 +440,7 @@ void DagMCModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
 
     std::istringstream iss( cell_it->second.front() );
 
-    typename Map::mapped_type material_id;
-
-    iss >> material_id;
-
-    cell_id_mat_id_map[cell_it->first] = material_id;
+    iss >> cell_id_mat_id_map[cell_it->first];
 
     ++cell_it;
   }
@@ -491,25 +449,25 @@ void DagMCModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
 // Get the cell densities
 /*! \details Void and terminal cells will not be added to the map.
  */
-void DagMCModel::getCellDensities( CellDensityMap& cell_id_density_map ) const
+void DagMCModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
 
   // Load a map of the cell ids and density names
-  std::unordered_map<ModuleTraits::InternalCellHandle,std::vector<std::string> >
-    cell_id_density_name_map;
+  typedef std::unordered_map<ModuleTraits::InternalCellHandle,std::vector<std::string> > CellIdDensityNameMap;
+  CellIdDensityNameMap cell_id_density_name_map;
 
   try{
-    this->getCellPropertyValues( d_model_properties.getDensityPropertyName(),
+    this->getCellPropertyValues( d_model_properties->getDensityPropertyName(),
                                  cell_id_density_name_map );
   }
   EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                            "Unable to parse the cell densities!" );
 
   // Convert the material names to material ids
-  std::unordered_map<ModuleTraits::InternalCellHandle,std::vector<std::string> >::const_iterator
-    cell_it = cell_id_density_name_map.begin();
+  CellIdDensityNameMap::const_iterator cell_it =
+    cell_id_density_name_map.begin();
 
   while( cell_it != cell_id_density_name_map.end() )
   {
@@ -527,27 +485,23 @@ void DagMCModel::getCellDensities( CellDensityMap& cell_id_density_map ) const
 
     std::istringstream iss( cell_it->second.front() );
 
-    typename Map::mapped_type density;
-
-    iss >> density;
-
-    cell_id_density_map[cell_it->first] = density;
+    iss >> cell_id_density_map[cell_it->first];
 
     ++cell_it;
   }
 }
 
 // Get the problem surfaces
-void DagMCModel::getSurfaces( SurfaceSet& surface_set )
+void DagMCModel::getSurfaces( SurfaceIdSet& surface_set ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
 
   moab::Range::const_iterator surface_handle_it = d_surface_handler->begin();
 
-  while( surface_handle_it != s_surface_handler->end() )
+  while( surface_handle_it != d_surface_handler->end() )
   {
-    ModuleTraits::InternalCellHandle surface_id =
+    ModuleTraits::InternalSurfaceHandle surface_id =
       d_surface_handler->getSurfaceId( *surface_handle_it );
 
     surface_set.insert( surface_id );
@@ -558,7 +512,7 @@ void DagMCModel::getSurfaces( SurfaceSet& surface_set )
 
 // Check if a cell exists
 bool DagMCModel::doesCellExist(
-                               const ModuleTraits::InternalCellHandle cell_id )
+                         const ModuleTraits::InternalCellHandle cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -568,7 +522,7 @@ bool DagMCModel::doesCellExist(
 
 // Check if the surface exists
 bool DagMCModel::doesSurfaceExist(
-                         const ModuleTraits::InternalSurfaceHandle surface_id )
+                   const ModuleTraits::InternalSurfaceHandle surface_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -578,7 +532,7 @@ bool DagMCModel::doesSurfaceExist(
 
 // Get the cell volume
 double DagMCModel::getCellVolume(
-                               const ModuleTraits::InternalCellHandle cell_id )
+                         const ModuleTraits::InternalCellHandle cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -590,7 +544,7 @@ double DagMCModel::getCellVolume(
   double volume = 0.0;
 
   moab::ErrorCode return_value =
-    s_dagmc->measure_volume( cell_handle, volume );
+   d_dagmc->measure_volume( cell_handle, volume );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      InvalidDagMCGeometry,
@@ -606,7 +560,7 @@ double DagMCModel::getCellVolume(
 
 // Get the surface area
 double DagMCModel::getSurfaceArea(
-                         const ModuleTraits::InternalSurfaceHandle surface_id )
+                   const ModuleTraits::InternalSurfaceHandle surface_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -635,7 +589,7 @@ double DagMCModel::getSurfaceArea(
 
 // Check if the cell is a termination cell
 bool DagMCModel::isTerminationCell(
-                               const ModuleTraits::InternalCellHandle cell_id )
+                         const ModuleTraits::InternalCellHandle cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -647,7 +601,8 @@ bool DagMCModel::isTerminationCell(
 }
 
 // Check if the cell is a void cell
-bool DagMCModel::isVoidCell( const ModuleTraits::InternalCellHandle cell_id )
+bool DagMCModel::isVoidCell(
+                         const ModuleTraits::InternalCellHandle cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -657,12 +612,12 @@ bool DagMCModel::isVoidCell( const ModuleTraits::InternalCellHandle cell_id )
   moab::EntityHandle cell_handle = d_cell_handler->getCellHandle( cell_id );
 
   return !d_dagmc->has_prop( cell_handle,
-                             d_model_properties.getMaterialPropertyName() );
+                             d_model_properties->getMaterialPropertyName() );
 }
 
 // Check if the surface is a reflecting surface
 bool DagMCModel::isReflectingSurface(
-                        const ModuleTraits::InternalSurfaceHandle surface_id )
+                   const ModuleTraits::InternalSurfaceHandle surface_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -692,7 +647,7 @@ std::shared_ptr<Navigator> DagMCModel::createNavigator() const
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
   
-  return this->spawnDagMCNavigator();
+  return this->createDagMCNavigator();
 }
 
 // Get the cells associated with a property name
@@ -701,7 +656,7 @@ std::shared_ptr<Navigator> DagMCModel::createNavigator() const
 void DagMCModel::getCellsWithProperty(
                                   std::vector<moab::EntityHandle>& cells,
                                   const std::string& property,
-                                  const std::string* property_value )
+                                  const std::string* property_value ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -720,7 +675,7 @@ void DagMCModel::getCellsWithProperty(
 void DagMCModel::getSurfacesWithProperty(
                                      std::vector<moab::EntityHandle>& surfaces,
                                      const std::string& property,
-                                     const std::string* property_value )
+                                     const std::string* property_value ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -735,14 +690,14 @@ void DagMCModel::getSurfacesWithProperty(
 
 // Get the property values associated with a property name
 void DagMCModel::getPropertyValues( const std::string& property,
-                                    std::vector<std::string>& values )
+                                    std::vector<std::string>& values ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
 
   // Get all of the property values
   moab::ErrorCode return_value =
-    s_dagmc->get_all_prop_values( property, values );
+    d_dagmc->get_all_prop_values( property, values );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      InvalidDagMCGeometry,

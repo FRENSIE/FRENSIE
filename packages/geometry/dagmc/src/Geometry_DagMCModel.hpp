@@ -25,6 +25,9 @@
 #include "Geometry_DagMCModelProperties.hpp"
 #include "Geometry_DagMCCellHandler.hpp"
 #include "Geometry_DagMCSurfaceHandler.hpp"
+#include "Geometry_DagMCNavigator.hpp"
+#include "Geometry_DagMCEstimatorType.hpp"
+#include "Geometry_DagMCParticleType.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_AdvancedModel.hpp"
@@ -50,10 +53,10 @@ public:
   static std::shared_ptr<DagMCModel> getInstance();
 
   //! Check if the DagMC model has been initialized
-  bool isInitialized();
+  bool isInitialized() const;
 
   //! Initialize the DagMC model
-  bool initialize( const DagMCModelProperties& model_properties,
+  void initialize( const DagMCModelProperties& model_properties,
                    const bool suppress_dagmc_output = true );
 
   //! Get the model properties
@@ -63,7 +66,7 @@ public:
   void getMaterialIds( MaterialIdSet& material_ids ) const override;
 
   //! Get the problem cells
-  void getCells( CellSet& cell_set,
+  void getCells( CellIdSet& cell_set,
                  const bool include_void_cells,
                  const bool include_termination_cells ) const override;
   
@@ -71,14 +74,14 @@ public:
   void getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const override;
 
   //! Get the cell densities
-  void getCellDensities( CellDensityMap& cell_id_density_map ) const override;
+  void getCellDensities( CellIdDensityMap& cell_id_density_map ) const override;
 
   //! Get the cell estimator data
   template<typename IntType,
            template<typename,typename,typename> class Tuple,
            template<typename,typename...> class Array,
            template<typename,typename,typename...> class Map>
-  void getCellEstimatorData( Map<IntType,Tuple<std::string,std::string,Array<ModuleTraits::InternalCellHandle> > >& estimator_id_data_map ) const;
+  void getCellEstimatorData( Map<IntType,Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalCellHandle> > >& estimator_id_data_map ) const;
 
   //! Check if a cell exists
   bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id ) const override;
@@ -92,18 +95,18 @@ public:
   //! Get the cell volume
   double getCellVolume( const ModuleTraits::InternalCellHandle cell_id ) const override;
 
+  //! Get the problem surfaces
+  void getSurfaces( SurfaceIdSet& surface_set ) const override;
+
   //! Get the surface estimator data
   template<typename IntType,
            template<typename,typename,typename> class Tuple,
            template<typename,typename...> class Array,
            template<typename,typename,typename...> class Map>
-  void getSurfaceEstimatorData( Map<IntType,Tuple<std::string,std::string,Array<ModuleTraits::InternalSurfaceHandle> > >& estimator_id_data_map ) const;
+  void getSurfaceEstimatorData( Map<IntType,Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalSurfaceHandle> > >& estimator_id_data_map ) const;
 
   //! Check if the surface exists
   bool doesSurfaceExist( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
-
-  //! Get the problem surfaces
-  void getSurfaces( SurfaceSet& surface_set ) const override;
 
   //! Get the surface area
   double getSurfaceArea( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
@@ -129,7 +132,7 @@ private:
   void validatePropertyNames() const;
 
   // Parse the properties
-  void parseProperties();
+  void parseProperties() const;
 
   // Construct the entity handlers
   void constructEntityHandlers();
@@ -193,10 +196,12 @@ private:
           prop_val_surface_id_map ) const;
 
   // Extract estimator property values
-  void extractEstimatorPropertyValues( const std::string& prop_value,
-                                       unsigned& estimator_id,
-                                       std::string& estimator_type,
-                                       std::string& particle_type ) const;
+  template<typename IntType>
+  void extractEstimatorPropertyValues(
+                                      const std::string& prop_value,
+                                      IntType& estimator_id,
+                                      DagMCEstimatorType& estimator_type,
+                                      DagMCParticleType& particle_type ) const;
 
   // The DagMC model instance
   static std::shared_ptr<DagMCModel> s_instance;
@@ -211,15 +216,15 @@ private:
   std::shared_ptr<Geometry::DagMCSurfaceHandler> d_surface_handler;
 
   // The termination cells
-  std::shared_ptr<CellSet> d_termination_cells;
+  CellIdSet d_termination_cells;
 
   // The reflecting surfaces
   typedef DagMCNavigator::ReflectingSurfaceIdHandleMap
-  ReflectingSurfaceIdHandleMap
+  ReflectingSurfaceIdHandleMap;
   std::shared_ptr<ReflectingSurfaceIdHandleMap> d_reflecting_surfaces;
 
   // The model properties
-  DagMCModelProperties d_model_properties;
+  std::unique_ptr<const DagMCModelProperties> d_model_properties;
 };
 
 //! The invalid DagMC geometry error

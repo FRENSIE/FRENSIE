@@ -24,10 +24,13 @@ const double DagMCNavigator::s_boundary_tol = 1e-5;
 
 // Constructor
 DagMCNavigator::DagMCNavigator(
-      moab::DagMC* dagmc_instance,
-      const std::shared_ptr<Geometry::DagMCCellHandle>& cell_handler,
-      const std::shared_ptr<Geometry::DagMCSurfaceHandler>& surface_handler,
-      const std::shared_ptr<ReflectinSurfaceIdHandleMap>& reflecting_surfaces )
+                    moab::DagMC* dagmc_instance,
+                    const std::shared_ptr<const Geometry::DagMCCellHandler>&
+                    cell_handler,
+                    const std::shared_ptr<const Geometry::DagMCSurfaceHandler>&
+                    surface_handler,
+                    const std::shared_ptr<const ReflectingSurfaceIdHandleMap>&
+                    reflecting_surfaces )
   : d_dagmc( dagmc_instance ),
     d_cell_handler( cell_handler ),
     d_surface_handler( surface_handler ),
@@ -158,11 +161,11 @@ ModuleTraits::InternalCellHandle DagMCNavigator::getBoundaryCell(
 
 // Find the cell that contains the start ray
 ModuleTraits::InternalCellHandle DagMCNavigator::findCellContainingStartRay(
-                                              const Ray& ray,
-                                              CellSet& start_cell_cache ) const
+                                            const Ray& ray,
+                                            CellIdSet& start_cell_cache ) const
 {
   // Test the cells in the cache first
-  CellSet::const_iterator start_cell_cache_it, start_cell_cache_end;
+  CellIdSet::const_iterator start_cell_cache_it, start_cell_cache_end;
   start_cell_cache_it = start_cell_cache.begin();
   start_cell_cache_end = start_cell_cache.end();
 
@@ -204,7 +207,7 @@ ModuleTraits::InternalCellHandle DagMCNavigator::findCellContainingRay(
                                                          const Ray& ray ) const
 {
   moab::EntityHandle cell_handle =
-    this->findCellHandleContainingExternalRay( ray );
+    this->findCellHandleContainingRay( ray );
 
   return d_cell_handler->getCellId( cell_handle );
 }
@@ -215,7 +218,7 @@ DagMCNavigator::findCellContainingRayWithoutBoundaryCheck(
                                                          const Ray& ray ) const
 {
   moab::EntityHandle cell_handle =
-    this->findCellHandleContainingExternalRay( ray, false );
+    this->findCellHandleContainingRay( ray, false );
 
   return d_cell_handler->getCellId( cell_handle );
 }
@@ -317,9 +320,9 @@ const double* DagMCNavigator::getInternalRayDirection() const
   return this->getInternalRay().getDirection();
 }
 
-// Find the cell containing the internal DagMC ray position
+// Get the cell containing the internal DagMC ray position
 ModuleTraits::InternalCellHandle
-DagMCNavigator::findCellContainingInternalRay()
+DagMCNavigator::getCellContainingInternalRay() const
 {
   // Make sure that the ray is set
   testPrecondition( this->isInternalRaySet() );
@@ -356,7 +359,7 @@ double DagMCNavigator::fireInternalRay(
                                                        surface_hit_handle,
                                                        &ray.getHistory() );
 
-    surface_hit = s_surface_handler->getSurfaceId( surface_hit_handle );
+    surface_hit = d_surface_handler->getSurfaceId( surface_hit_handle );
 
     // Cache the surface data in the ray
     ray.setIntersectionSurfaceData( surface_hit_handle, distance_to_surface );
@@ -396,6 +399,7 @@ bool DagMCNavigator::advanceInternalRayToCellBoundary( double* surface_normal )
 
     this->getSurfaceHandleNormal( intersection_surface,
                                   ray.getPosition(),
+                                  ray.getDirection(),
                                   local_surface_normal,
                                   &ray.getHistory() );
 
@@ -413,7 +417,9 @@ bool DagMCNavigator::advanceInternalRayToCellBoundary( double* surface_normal )
                                 reflected_direction );
 
     // This will also fire a ray to fill the new intersection data
-    this->changeInternalRayDirection( reflected_direction );
+    this->changeInternalRayDirection( reflected_direction[0],
+                                      reflected_direction[1],
+                                      reflected_direction[2] );
 
     reflecting_boundary = true;
   }
@@ -430,6 +436,7 @@ bool DagMCNavigator::advanceInternalRayToCellBoundary( double* surface_normal )
     {
       this->getSurfaceHandleNormal( intersection_surface,
                                     ray.getPosition(),
+                                    ray.getDirection(),
                                     surface_normal,
                                     &ray.getHistory() );
     }
@@ -495,8 +502,8 @@ std::string DagMCNavigator::arrayToString( const double data[3] )
 bool DagMCNavigator::isReflectingSurfaceHandle(
                                 const moab::EntityHandle surface_handle ) const
 {
-  return d_reflecting_surfaces.right.find( surface_handle ) !=
-    d_reflecting_surfaces.right.end();
+  return d_reflecting_surfaces->right.find( surface_handle ) !=
+    d_reflecting_surfaces->right.end();
 }
 
 // Get the point location w.r.t. a given cell
@@ -583,8 +590,8 @@ const DagMCRay& DagMCNavigator::getInternalRay() const
 // All of the cells in the geometry will be tested for containment of
 // the ray head. This is an order N search.
 moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
-                                       const Ray& ray,
-                                       const bool boundary_check = true ) const
+                                              const Ray& ray,
+                                              const bool boundary_check ) const
 {
   return this->findCellHandleContainingRay( ray.getPosition(),
                                             ray.getDirection(),
@@ -593,9 +600,9 @@ moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
 
 // Find the cell handle that contains the ray
 moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
-                                   const double position[3],
-                                   const double direction[3],
-                                   const bool check_on_boundary = false ) const
+                                           const double position[3],
+                                           const double direction[3],
+                                           const bool check_on_boundary ) const
 {
   // Make sure that the direction is valid
   testPrecondition( Utility::isUnitVector( direction ) );
@@ -647,7 +654,7 @@ moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
   {
     moab::EntityHandle surface_hit_handle;
 
-    double distance_to_boundary = this->fireExternalRayWithCellHandle(
+    double distance_to_boundary = this->fireRayWithCellHandle(
                                                           position,
                                                           direction,
                                                           cell_handle,
@@ -660,6 +667,25 @@ moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
                                                  surface_hit_handle );
    } 
   }
+}
+
+// Find the cell handle that contains the ray
+moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
+                                           const double x_position,
+                                           const double y_position,
+                                           const double z_position,
+                                           const double x_direction,
+                                           const double y_direction,
+                                           const double z_direction,
+                                           const bool check_on_boundary ) const
+{
+  // Create position and direction arrays
+  const double position[3] = {x_position, y_position, z_position};
+  const double direction[3] = {x_direction, y_direction, z_direction};
+
+  return this->findCellHandleContainingRay( position,
+                                            direction,
+                                            check_on_boundary );
 }
 
 // Get the distance from the ray position to the nearest boundary
@@ -680,7 +706,7 @@ double DagMCNavigator::fireRayWithCellHandle(
                                                     direction,
                                                     surface_hit_handle,
                                                     distance_to_surface,
-                                                    &ray.getHistory() );
+                                                    history );
   
   // Check for a ray misfire which can be caused by a poorly created geometry
   // or by gaps in the surface facets, which can occur for properly created
@@ -694,7 +720,7 @@ double DagMCNavigator::fireRayWithCellHandle(
                    DagMCGeometryError,
                    "DagMC had a ray misfire! Here are the details...\n"
                    "  Current Cell: "
-                   << s_cell_handler->getCellId( current_cell_handle ) << "\n"
+                   << d_cell_handler->getCellId( current_cell_handle ) << "\n"
                    "  Position: "
                    << this->arrayToString( position ) << "\n"
                    "  Direction: "
@@ -705,9 +731,9 @@ double DagMCNavigator::fireRayWithCellHandle(
                DagMCGeometryError,
                "DagMC had a ray misfire! Here are the details...\n"
                "  Current Cell: "
-               << s_cell_handler->getCellId( current_cell_handle ) << "\n"
+               << d_cell_handler->getCellId( current_cell_handle ) << "\n"
                "  Surface Hit: "
-               << s_surface_handler->getSurfaceId( surface_hit_handle ) << "\n"
+               << d_surface_handler->getSurfaceId( surface_hit_handle ) << "\n"
                "  Position: "
                << this->arrayToString( position ) << "\n"
                "  Direction: "
@@ -732,7 +758,9 @@ void DagMCNavigator::setInternalRay(
   DagMCRay& dagmc_ray = this->getInternalRay();
 
   // Set the basic ray info
-  dagmc_ray.set( position, direction, current_cell_handle );
+  dagmc_ray.set( x_position, y_position, z_position,
+                 x_direction, y_direction, z_direction,
+                 current_cell_handle );
 
   // Fire the ray so that the intersection data is set
   ModuleTraits::InternalSurfaceHandle dummy_surface;

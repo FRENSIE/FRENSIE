@@ -31,7 +31,7 @@ public:
   typedef std::unordered_set<ModuleTraits::InternalMaterialHandle> MaterialIdSet;
 
   //! The cell set type
-  typedef std::unordered_set<ModuleTraits::InternalCellHandle> CellSet;
+  typedef std::unordered_set<ModuleTraits::InternalCellHandle> CellIdSet;
 
   //! The cell id material id map type
   typedef std::unordered_map<ModuleTraits::InternalCellHandle,ModuleTraits::InternalMaterialHandle> CellIdMatIdMap;
@@ -51,7 +51,7 @@ public:
   virtual void getMaterialIds( MaterialIdSet& material_ids ) const = 0;
 
   //! Get the cells
-  virtual void getCells( CellSet& cells,
+  virtual void getCells( CellIdSet& cells,
                          const bool include_void_cells,
                          const bool include_termination_cells ) const = 0;
 
@@ -60,7 +60,7 @@ public:
                                 CellIdMatIdMap& cell_id_mat_id_map ) const = 0;
 
   //! Get the cell densities
-  virtual void getCellDensities( CellDensityMap& cell_density_map ) const = 0;
+  virtual void getCellDensities( CellIdDensityMap& cell_density_map ) const = 0;
 
   //! Check if a cell exists
   virtual bool doesCellExist(

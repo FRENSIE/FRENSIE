@@ -17,6 +17,7 @@
 
 namespace MonteCarlo{
 
+//! The particle type enum
 enum ParticleType{
   PHOTON = 0,
   NEUTRON,

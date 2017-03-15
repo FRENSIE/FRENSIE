@@ -21,7 +21,7 @@ class AdvancedModel : public Model
 public:
 
   //! The surface set type
-  typedef std::unordered_set<ModuleTraits::InternalSurfaceHandle> SurfaceSet;
+  typedef std::unordered_set<ModuleTraits::InternalSurfaceHandle> SurfaceIdSet;
 
   //! Constructor
   AdvancedModel()
@@ -36,7 +36,7 @@ public:
               const ModuleTraits::InternalSurfaceHandle surface_id ) const = 0;
 
   //! Get the surfaces
-  virtual void getSurfaces( SurfaceSet& surfaces ) const = 0;
+  virtual void getSurfaces( SurfaceIdSet& surfaces ) const = 0;
 
   //! Get the surface area
   virtual double getSurfaceArea(

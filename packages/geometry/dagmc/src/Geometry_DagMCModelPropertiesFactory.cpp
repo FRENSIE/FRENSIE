@@ -135,7 +135,7 @@ DagMCModelPropertiesFactory::createProperties(
                         "The density property name cannot have an "
                         "underscore character!" );
 
-    model_properties->setDensityPropertyNmae( property_name );
+    model_properties->setDensityPropertyName( property_name );
   }
 
   // Get the estimator property name (optional)
@@ -153,7 +153,7 @@ DagMCModelPropertiesFactory::createProperties(
                         "The estimator property name cannot have an "
                         "underscore character!" );
 
-    model_properties->setDensityPropertyNmae( property_name );
+    model_properties->setDensityPropertyName( property_name );
   }
 
   // Get the surface current name (optional)
@@ -225,7 +225,7 @@ DagMCModelPropertiesFactory::createProperties(
                         "The cell track-length flux name cannot have an "
                         "underscore character!" );
 
-    model_properties->setCellTrackLengthFlux( name );
+    model_properties->setCellTrackLengthFluxName( name );
   }
 
   // Get the cell collision flux name
@@ -243,13 +243,13 @@ DagMCModelPropertiesFactory::createProperties(
                         "The cell collision flux name cannot have an "
                         "underscore character!" );
 
-    model_properties->setCellCollisionFlux( name );
+    model_properties->setCellCollisionFluxName( name );
   }
 
   // Log unused parameters
   std::ostringstream oss;
 
-  geom_rep.unused( oss );
+  properties.unused( oss );
 
   if( oss.str().size() > 0 )
   {

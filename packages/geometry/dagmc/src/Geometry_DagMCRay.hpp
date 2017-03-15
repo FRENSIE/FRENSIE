@@ -37,6 +37,15 @@ public:
             const double direction[3],
             const moab::EntityHandle cell_handle );
 
+  //! Constructor
+  DagMCRay( const double x_position,
+            const double y_position,
+            const double z_position,
+            const double x_direction,
+            const double y_direction,
+            const double z_direction,
+            const moab::EntityHandle cell_handle );
+
   // Copy constructor
   DagMCRay( const DagMCRay& ray );
 
@@ -54,6 +63,15 @@ public:
   void set( const double position[3],
             const double direction[3],
             const moab::EntityHandle cell_handle );
+
+  //! Set the ray (minimum data required)
+  void set( const double x_position,
+            const double y_position,
+            const double z_position,
+            const double x_direction,
+            const double y_direction,
+            const double z_direction,
+            const moab::EntityHandle current_cell_handle );
 
   //! change the direction
   void changeDirection( const double direction[3] );

@@ -11,6 +11,11 @@
 
 // Std Lib Includes
 #include <string>
+#include <vector>
+
+// FRENSIE Includes
+#include "Geometry_DagMCParticleType.hpp"
+#include "Geometry_DagMCEstimatorType.hpp"
 
 namespace Geometry{
 
@@ -99,7 +104,7 @@ public:
   //! Set the cell track-length flux name
   void setCellTrackLengthFluxName( const std::string& name );
 
-  //! Get the cell pulse height name
+  //! Get the cell track-length flux name
   const std::string& getCellTrackLengthFluxName() const;
 
   //! Set the cell collision flux name
@@ -108,17 +113,60 @@ public:
   //! Get the cell collision flux name
   const std::string& getCellCollisionFluxName() const;
 
-  //! Check if the cell estimator type is valid
-  bool isCellEstimatorTypeValid( const std::string& estimator_type ) const;
+  //! Check if the cell estimator name is valid
+  bool isCellEstimatorNameValid( const std::string& estimator_name ) const;
 
-  //! Check if the surface estimator type is valid
-  bool isSurfaceEstimatorTypeValid( const std::string& estimator_type ) const;
+  //! Check if the surface estimator name is valid
+  bool isSurfaceEstimatorNameValid( const std::string& estimator_name ) const;
 
-  //! Check if the estimator type is valid
-  bool isEstimatorTypeValid( const std::string& estimator_type ) const;
+  //! Check if the estimator name is valid
+  bool isEstimatorNameValid( const std::string& estimator_name ) const;
 
-  //! Check if the particle type is valid
-  bool isParticleTypeValid( const std::string& particle_type ) const;
+  //! Get the estimator type
+  DagMCEstimatorType getEstimatorType(
+                                     const std::string& estimator_name ) const;
+
+  //! Set the photon name
+  void setPhotonName( const std::string& name );
+
+  //! Get the photon name
+  const std::string& getPhotonName() const;
+
+  //! Set the neutron name
+  void setNeutronName( const std::string& name );
+
+  //! Get the neutron name
+  const std::string& getNeutronName() const;
+
+  //! Set the electron name
+  void setElectronName( const std::string& name );
+
+  //! Get the electron name
+  const std::string& getElectronName() const;
+
+  //! Set the adjoint photon name
+  void setAdjointPhotonName( const std::string& name );
+
+  //! Get the adjoint photon name
+  const std::string& getAdjointPhotonName() const;
+
+  //! Set the adjoint neutron name
+  void setAdjointNeutronName( const std::string& name );
+
+  //! Get the adjoint neutron name
+  const std::string& getAdjointNeutronName() const;
+
+  //! Set the adjoint electron name
+  void setAdjointElectronName( const std::string& name );
+  
+  //! Get the adjoint electron name
+  const std::string& getAdjointElectronName() const;
+
+  //! Check if the particle name is valid
+  bool isParticleNameValid( const std::string& particle_name ) const;
+
+  //! Get the partile type
+  DagMCParticleType getParticleType( const std::string& particle_name ) const;
 
 private:
 
@@ -160,6 +208,24 @@ private:
 
   // The cell collision flux name
   std::string d_cell_collision_flux_name;
+
+  // The photon name
+  std::string d_photon_name;
+
+  // The neutron name
+  std::string d_neutron_name;
+
+  // The electron name
+  std::string d_electron_name;
+
+  // The adjoint photon name
+  std::string d_adjoint_photon_name;
+
+  // The adjoint neutron name
+  std::string d_adjoint_neutron_name;
+
+  // The adjoint electron name
+  std::string d_adjoint_electron_name;
 };
   
   

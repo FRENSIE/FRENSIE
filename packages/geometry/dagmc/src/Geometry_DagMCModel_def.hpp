@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_Tuple.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
@@ -138,7 +139,7 @@ template<typename IntType,
          template<typename,typename,typename> class Tuple,
          template<typename,typename...> class Array,
          template<typename,typename,typename...> class Map>
-void DagMCModel::getCellEstimatorData( Map<IntType,Tuple<std::string,std::string,Array<ModuleTraits::InternalCellHandle> > >& estimator_id_data_map ) const
+void DagMCModel::getCellEstimatorData( Map<IntType,Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalCellHandle> > >& estimator_id_data_map ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -151,8 +152,8 @@ void DagMCModel::getCellEstimatorData( Map<IntType,Tuple<std::string,std::string
 
   try{
     this->getCellIdsWithPropertyValue(
-                                 d_model_properties.getEstimatorPropertyName(),
-                                 estimator_prop_cell_id_map );
+                                d_model_properties->getEstimatorPropertyName(),
+                                estimator_prop_cell_id_map );
   }
   EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                            "Unable to parse the cell estimator data!" );
@@ -163,9 +164,9 @@ void DagMCModel::getCellEstimatorData( Map<IntType,Tuple<std::string,std::string
   // Loop through all of the cell estimators and extract their information
   while( estimator_it != estimator_prop_cell_id_map.end() )
   {
-    typename IntType id;
-    std::string estimator_type;
-    std::string particle_type;
+    IntType id;
+    DagMCEstimatorType estimator_type;
+    DagMCParticleType particle_type;
 
     try{
       this->extractEstimatorPropertyValues( estimator_it->first,
@@ -186,11 +187,10 @@ void DagMCModel::getCellEstimatorData( Map<IntType,Tuple<std::string,std::string
                         "times!" );
 
     // Make sure the estimator type is valid
-    TEST_FOR_EXCEPTION(
-                !d_model_properties.isCellEstimatorTypeValid( estimator_type ),
-                InvalidDagMCGeometry,
-                "cell estimator " << id << " has estimator "
-                "type " << estimator_type << ", which is an invalid type!" );
+    TEST_FOR_EXCEPTION( !isDagMCCellEstimator( estimator_type ),
+                        InvalidDagMCGeometry,
+                        "cell estimator " << id << " has a surface estimator "
+                        "type specified!" );
 
     // Make sure at least one cell has been assigned to the estimator
     TEST_FOR_EXCEPTION( estimator_it->second.size() == 0,
@@ -198,14 +198,14 @@ void DagMCModel::getCellEstimatorData( Map<IntType,Tuple<std::string,std::string
                         "estimator " << id << " has no cells assigned!" );
 
     // Add the estimator info to the map
-    Tuple<std::string,std::string,Array<ModuleTraits::InternalCellHandle>&
+    Tuple<std::string,std::string,Array<ModuleTraits::InternalCellHandle> >&
           estimator_data_tuple = estimator_id_data_map[id];
 
-    estimator_data_tuple.first = estimator_type;
-    estimator_data_tuple.second = particle_type;
-
-    estimator_data_tuple.third.assign( estimator_it->second.begin(),
-                                       estimator_it->second.end() );
+    // Assign the estimator surface info
+    Utility::get<0>(estimator_data_tuple) = estimator_type;
+    Utility::get<1>(estimator_data_tuple) = particle_type;
+    Utility::get<2>(estimator_data_tuple).assign( estimator_it->second.begin(),
+                                                  estimator_it->second.end() );
 
     ++estimator_it;
   }
@@ -254,7 +254,8 @@ void DagMCModel::getSurfacePropertyValues(
  * an array of ModuleTraits::InternalSurfaceHandle types. This method is
  * thread safe as long as enableThreadSupport has been called.
  */
-template<typename Map>
+template<template<typename,typename...> class ArrayType,
+         template<typename,typename,typename...> class MapType>
 void DagMCModel::getSurfaceIdsWithPropertyValue(
           const std::string& property,
           MapType<std::string,ArrayType<ModuleTraits::InternalSurfaceHandle> >&
@@ -304,15 +305,11 @@ void DagMCModel::getSurfaceIdsWithPropertyValue(
 }
 
 // Get the surface estimator data
-/*! \details The first string value will store the estimator type, the second
- * string will store the particle type and the array will store all of the
- * assigned surfaces.
- */
 template<typename IntType,
          template<typename,typename,typename> class Tuple,
          template<typename,typename...> class Array,
          template<typename,typename,typename...> class Map>
-void DagMCModel::getSurfaceEstimatorData( Map<IntType,Tuple<std::string,std::string,Array<ModuleTraits::InternalSurfaceHandle> > >& estimator_id_data_map ) const
+void DagMCModel::getSurfaceEstimatorData( Map<IntType,Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalSurfaceHandle> > >& estimator_id_data_map ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -325,8 +322,8 @@ void DagMCModel::getSurfaceEstimatorData( Map<IntType,Tuple<std::string,std::str
 
   try{
     this->getSurfaceIdsWithPropertyValue(
-                                 d_model_properties.getEstimatorPropertyName(),
-                                 estimator_prop_surface_id_map );
+                                d_model_properties->getEstimatorPropertyName(),
+                                estimator_prop_surface_id_map );
   }
   EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                            "Unable to parse the surface estimator "
@@ -339,8 +336,8 @@ void DagMCModel::getSurfaceEstimatorData( Map<IntType,Tuple<std::string,std::str
   while( estimator_it != estimator_prop_surface_id_map.end() )
   {
     IntType id;
-    std::string estimator_type;
-    std::string particle_type;
+    DagMCEstimatorType estimator_type;
+    DagMCParticleType particle_type;
 
     try{
       this->extractEstimatorPropertyValues( estimator_it->first,
@@ -360,12 +357,10 @@ void DagMCModel::getSurfaceEstimatorData( Map<IntType,Tuple<std::string,std::str
                         "times!" );
 
     // Make sure the estimator type is valid
-    TEST_FOR_EXCEPTION(
-             !d_model_properties.isSurfaceEstimatorTypeValid( estimator_type ),
-             InvalidDagMCGeometry,
-             "surface estimator " << id << " has estimator "
-             "type " << estimator_type << " specified, which is "
-             "an invalid type!" );
+    TEST_FOR_EXCEPTION( !isDagMCSurfaceEstimator( estimator_type ),
+                        InvalidDagMCGeometry,
+                        "surface estimator " << id << " has a cell estimator "
+                        "type specified!" );
     
     // Make sure at least one surface has been assigned to the estimator
     TEST_FOR_EXCEPTION( estimator_it->second.size() == 0,
@@ -374,17 +369,79 @@ void DagMCModel::getSurfaceEstimatorData( Map<IntType,Tuple<std::string,std::str
                         "assigned!" );
 
     // Add the estimator info to the map
-    Tuple<std::string,std::string,Array<ModuleTraits::InternalCellHandle> >&
+    Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalCellHandle> >&
       estimator_data_tuple = estimator_id_data_map[id];
 
-    estimator_data_tuple.first = estimator_type;
-    estimator_data_tuple.second = particle_type;
-
-    estimator_data_tuple.third.assign( estimator_it->second.begin(),
-                                       estimator_it->second.end() );
+    // Assign the estimator surface info
+    Utility::get<0>(estimator_data_tuple) = estimator_type;
+    Utility::get<1>(estimator_data_tuple) = particle_type;
+    Utility::get<2>(estimator_data_tuple).assign( estimator_it->second.begin(),
+                                                  estimator_it->second.end() );
 
     ++estimator_it;
   }
+}
+
+// Extract estimator property values
+// An estimator property is assumed to have the form id.type.ptype
+template<typename IntType>
+void DagMCModel::extractEstimatorPropertyValues(
+                                       const std::string& prop_value,
+                                       IntType& estimator_id,
+                                       DagMCEstimatorType& estimator_type,
+                                       DagMCParticleType& particle_type ) const
+{
+  size_t first_pos = prop_value.find_first_of( "." );
+  size_t last_pos = prop_value.find_last_of( "." );
+
+  // Make sure the estimator property format is valid
+  TEST_FOR_EXCEPTION( first_pos > prop_value.size(),
+                      std::runtime_error,
+                      "the estimator property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+  TEST_FOR_EXCEPTION( last_pos > prop_value.size(),
+                      std::runtime_error,
+                      "the estimator property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+  TEST_FOR_EXCEPTION( first_pos == last_pos,
+                      std::runtime_error,
+                      "the estimator property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+
+  std::string id_string = prop_value.substr( 0, first_pos );
+
+  std::istringstream iss( id_string );
+
+  iss >> estimator_id;
+
+  std::string estimator_name =
+    prop_value.substr( first_pos+1, last_pos-first_pos-1 );
+
+  // Make sure the estimator type is valid
+  TEST_FOR_EXCEPTION(
+                   !d_model_properties->isEstimatorNameValid( estimator_name ),
+                   InvalidDagMCGeometry,
+                   "estimator " << estimator_id <<
+                   " has an invalid estimator type ("
+                   << estimator_type << ") specified!" );
+
+  estimator_type = d_model_properties->getEstimatorType( estimator_name );
+
+  std::string particle_name =
+    prop_value.substr( last_pos+1, prop_value.size()-last_pos-1);
+
+  // Make sure the particle type is valid
+  TEST_FOR_EXCEPTION(
+                     !d_model_properties->isParticleNameValid( particle_name ),
+                     InvalidDagMCGeometry,
+                     "estimator " << estimator_id <<
+                     " has an invalid particle type (" << particle_type <<
+                     ") specified!" );
+
+  particle_type = d_model_properties->getParticleType( particle_name );
 }
 
 } // end Geometry namespace
