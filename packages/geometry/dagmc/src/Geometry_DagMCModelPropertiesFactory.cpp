@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Geometry_DagMCModelPropertiesFactory.hpp"
 #include "Geometry_DagMCLoggingMacros.hpp"
+#include "Utility_ParameterListHelpers.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -153,7 +154,7 @@ DagMCModelPropertiesFactory::createProperties(
                         "The estimator property name cannot have an "
                         "underscore character!" );
 
-    model_properties->setDensityPropertyName( property_name );
+    model_properties->setEstimatorPropertyName( property_name );
   }
 
   // Get the surface current name (optional)
@@ -246,16 +247,152 @@ DagMCModelPropertiesFactory::createProperties(
     model_properties->setCellCollisionFluxName( name );
   }
 
-  // Log unused parameters
-  std::ostringstream oss;
-
-  properties.unused( oss );
-
-  if( oss.str().size() > 0 )
+  // Get the photon name
+  if( properties.isParameter( "Photon Name" ) )
   {
-    FRENSIE_LOG_DAGMC_WARNING( oss.str() );
-    FRENSIE_FLUSH_ALL_LOGS();
+    const std::string name =
+      properties.get<std::string>( "Photon Name" );
+
+    TEST_FOR_EXCEPTION( name.size() == 0,
+                        std::runtime_error,
+                        "The photon name cannot be empty!" );
+
+    TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                        std::runtime_error,
+                        "The photon name cannot have an underscore "
+                        "character!" );
+
+    TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                        std::runtime_error,
+                        "The photon name cannot have a period character!" );
+
+    model_properties->setPhotonName( name );
   }
+
+  // Get the neutron name
+  if( properties.isParameter( "Neutron Name" ) )
+  {
+    const std::string name =
+      properties.get<std::string>( "Neutron Name" );
+
+    TEST_FOR_EXCEPTION( name.size() == 0,
+                        std::runtime_error,
+                        "The neutron name cannot be empty!" );
+
+    TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                        std::runtime_error,
+                        "The neutron name cannot have an underscore "
+                        "character!" );
+
+    TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                        std::runtime_error,
+                        "The neutron name cannot have a period character!" );
+
+    model_properties->setNeutronName( name );
+  }
+
+  // Get the electron name
+  if( properties.isParameter( "Electron Name" ) )
+  {
+    const std::string name =
+      properties.get<std::string>( "Electron Name" );
+
+    TEST_FOR_EXCEPTION( name.size() == 0,
+                        std::runtime_error,
+                        "The electron name cannot be empty!" );
+
+    TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                        std::runtime_error,
+                        "The electron name cannot have an underscore "
+                        "character!" );
+
+    TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                        std::runtime_error,
+                        "The electron name cannot have a period character!" );
+
+    model_properties->setElectronName( name );
+  }
+  
+  // Get the adjoint photon name
+  if( properties.isParameter( "Adjoint Photon Name" ) )
+  {
+    const std::string name =
+      properties.get<std::string>( "Adjoint Photon Name" );
+
+    TEST_FOR_EXCEPTION( name.size() == 0,
+                        std::runtime_error,
+                        "The adjoint photon name cannot be empty!" );
+
+    TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                        std::runtime_error,
+                        "The adjoint photon name cannot have an underscore "
+                        "character!" );
+
+    TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                        std::runtime_error,
+                        "The adjoint photon name cannot have a period "
+                        "character!" );
+
+    model_properties->setAdjointPhotonName( name );
+  }
+
+  // Get the adjoint neutron name
+  if( properties.isParameter( "Adjoint Neutron Name" ) )
+  {
+    const std::string name =
+      properties.get<std::string>( "Adjoint Neutron Name" );
+
+    TEST_FOR_EXCEPTION( name.size() == 0,
+                        std::runtime_error,
+                        "The adjoint neutron name cannot be empty!" );
+
+    TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                        std::runtime_error,
+                        "The adjoint neutron name cannot have an underscore "
+                        "character!" );
+
+    TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                        std::runtime_error,
+                        "The adjoint neutron name cannot have a period "
+                        "character!" );
+
+    model_properties->setAdjointNeutronName( name );
+  }
+
+  // Get the adjoint electron name
+  if( properties.isParameter( "Adjoint Electron Name" ) )
+  {
+    const std::string name =
+      properties.get<std::string>( "Adjoint Electron Name" );
+
+    TEST_FOR_EXCEPTION( name.size() == 0,
+                        std::runtime_error,
+                        "The adjoint electron name cannot be empty!" );
+
+    TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
+                        std::runtime_error,
+                        "The adjoint electron name cannot have an underscore "
+                        "character!" );
+
+    TEST_FOR_EXCEPTION( name.find( "." ) < name.size(),
+                        std::runtime_error,
+                        "The adjoint electron name cannot have a period "
+                        "character!" );
+
+    model_properties->setAdjointElectronName( name );
+  }
+
+  // Log unused parameters
+  std::vector<std::string> unused_properties;
+
+  Utility::getUnusedParameterWarningMessages( properties, unused_properties );
+  
+  for( size_t i = 0; i < unused_properties.size(); ++i )
+    FRENSIE_LOG_DAGMC_WARNING( unused_properties[i] );
+    
+  FRENSIE_FLUSH_ALL_LOGS();
+
+  return model_properties;
 }
   
 } // end Geometry namespace

@@ -4,6 +4,7 @@
   <Parameter name="CAD File" type="string"
 	     value="${CMAKE_CURRENT_SOURCE_DIR}/test_advanced_geom.sat"/>
   <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
+  <Parameter name="Use Fast Id Lookup" type="bool" value="True"/>
   <Parameter name="Termination Cell Property" type="string" value="graveyard"/>
   <Parameter name="Reflecting Surface Property" type="string"
              value="spec.reflect"/>
@@ -15,6 +16,11 @@
   <Parameter name="Cell Pulse Height Name" type="string" value="c.pulse"/>
   <Parameter name="Cell Track-Length Flux Name" type="string" value="c.tl.f"/>
   <Parameter name="Cell Collision Flux Name" type="string" value="c.c.f"/>
-  <Parameter name="Use Fast Id Lookup" type="bool" value="True"/>
+  <Parameter name="Photon Name" type="string" value="phot"/>
+  <Parameter name="Neutron Name" type="string" value="neut"/>
+  <Parameter name="Electron Name" type="string" value="elec"/>
+  <Parameter name="Adjoint Photon Name" type="string" value="aphot"/>
+  <Parameter name="Adjoint Neutron Name" type="string" value="aneut"/>
+  <Parameter name="Adjoint Electron Name" type="string" value="aelec"/>
 
 </ParameterList>

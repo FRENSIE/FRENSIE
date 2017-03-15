@@ -47,6 +47,12 @@ TEUCHOS_UNIT_TEST( DagMCModelProperties, default_properties )
                        "cell.tl.flux" );
   TEST_EQUALITY_CONST( default_properties.getCellCollisionFluxName(),
                        "cell.c.flux" );
+  TEST_EQUALITY_CONST( default_properties.getPhotonName(), "p" );
+  TEST_EQUALITY_CONST( default_properties.getNeutronName(), "n" );
+  TEST_EQUALITY_CONST( default_properties.getElectronName(), "e" );
+  TEST_EQUALITY_CONST( default_properties.getAdjointPhotonName(), "p*" );
+  TEST_EQUALITY_CONST( default_properties.getAdjointNeutronName(), "n*" );
+  TEST_EQUALITY_CONST( default_properties.getAdjointElectronName(), "e*" );
 }
 
 //---------------------------------------------------------------------------//
