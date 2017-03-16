@@ -39,9 +39,6 @@ public:
   virtual ~Navigator()
   { /* ... */ }
   
-  //! Enable support for multiple threads
-  virtual void enableThreadSupport( const size_t num_threads ) = 0;
-
   //! Get the location of a cell w.r.t. a given cell
   virtual PointLocation getPointLocation(
                        const Ray& ray,
@@ -62,7 +59,7 @@ public:
    * A std::runtime_error (or class derived from it) must be thrown if an error
    * occurs.
    */
-  virtual ModuleTraits::InternalCellHandle findCellContainingStartRay(
+  virtual ModuleTraits::InternalCellHandle findCellContainingRay(
                                        const Ray& ray,
                                        CellIdSet& start_cell_cache ) const = 0;
 
@@ -73,15 +70,6 @@ public:
    */
   virtual ModuleTraits::InternalCellHandle findCellContainingRay(
                                                     const Ray& ray ) const = 0;
-
-  /*! Fire the ray through the geometry
-   *
-   * A std::runtime_error (or class derived from it) must be thrown if a ray
-   * tracing error occurs.
-   */
-  virtual double fireRay(
-                  const Ray& ray,
-                  ModuleTraits::InternalSurfaceHandle& surface_hit ) const = 0;
 
   //! Check if an internal ray has been set
   virtual bool isInternalRaySet() const = 0;
@@ -156,6 +144,13 @@ public:
    */
   virtual bool advanceInternalRayToCellBoundary( double* surface_normal ) = 0;
 
+  /*! Advance the internal ray to the cell boundary
+   *
+   * If a reflecting surface is hit "true" will be returned. Passing NULL
+   * to this function must be allowed.
+   */
+  bool advanceInternalRayToCellBoundary();
+
   //! Advance the internal ray by a substep (less than distance to boundary)
   virtual void advanceInternalRayBySubstep( const double step_size ) = 0;
 
@@ -193,6 +188,12 @@ inline void Navigator::setInternalRay(
                         direction[1],
                         direction[2],
                         start_cell );
+}
+
+// Advance the internal ray to the cell boundary
+inline bool Navigator::advanceInternalRayToCellBoundary()
+{
+  return this->advanceInternalRayToCellBoundary( NULL );
 }
 
 // Change the internal ray direction

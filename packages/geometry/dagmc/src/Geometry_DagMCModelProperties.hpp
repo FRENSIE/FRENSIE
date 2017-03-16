@@ -14,8 +14,8 @@
 #include <vector>
 
 // FRENSIE Includes
-#include "Geometry_DagMCParticleType.hpp"
-#include "Geometry_DagMCEstimatorType.hpp"
+#include "Geometry_ParticleType.hpp"
+#include "Geometry_EstimatorType.hpp"
 
 namespace Geometry{
 
@@ -123,8 +123,7 @@ public:
   bool isEstimatorNameValid( const std::string& estimator_name ) const;
 
   //! Get the estimator type
-  DagMCEstimatorType getEstimatorType(
-                                     const std::string& estimator_name ) const;
+  EstimatorType getEstimatorType( const std::string& estimator_name ) const;
 
   //! Set the photon name
   void setPhotonName( const std::string& name );
@@ -166,7 +165,7 @@ public:
   bool isParticleNameValid( const std::string& particle_name ) const;
 
   //! Get the partile type
-  DagMCParticleType getParticleType( const std::string& particle_name ) const;
+  ParticleType getParticleType( const std::string& particle_name ) const;
 
 private:
 

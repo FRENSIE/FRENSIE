@@ -18,7 +18,7 @@ ModuleTraits::reserved_internal_roi_handle =
 
 const ModuleTraits::InternalEventObserverHandle
 ModuleTraits::invalid_internal_event_observer_handle =
-  std::numeric_limits<ModuleTraits::InternalEventObserverHandle>::max();
+  Geometry::ModuleTraits::invalid_internal_estimator_handle;
 
 const ModuleTraits::InternalMaterialHandle
 ModuleTraits::invalid_internal_material_handle =

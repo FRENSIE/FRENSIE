@@ -1,13 +1,6 @@
 # Configure the test files
 ADD_SUBDIRECTORY(test_files)
 
-ADD_EXECUTABLE(tstDagMCEstimatorType
-  tstDagMCEstimatorType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstDagMCEstimatorType geometry_dagmc)
-ADD_TEST(DagMCEstimatorType_test tstDagMCEstimatorType)
-SET_PROPERTY(TEST DagMCEstimatorType_test PROPERTY LABELS geometry_dagmc dagmc)
-
 ADD_EXECUTABLE(tstDagMCRay
   tstDagMCRay.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -57,19 +50,28 @@ TARGET_LINK_LIBRARIES(tstDagMCModelPropertiesFactory geometry_dagmc)
 ADD_TEST(DagMCModelPropertiesFactory_test tstDagMCModelPropertiesFactory --test_basic_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml" --test_advanced_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_advanced.xml")
 SET_PROPERTY(TEST DagMCModelPropertiesFactory_test PROPERTY LABELS geometry_dagmc dagmc)
 
-# ADD_EXECUTABLE(tstDagMCModel
-#   tstDagMCModel.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstDagMCModel geometry_dagmc)
-# ADD_TEST(DagMCModel_test tstDagMCModel --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
-# SET_PROPERTY(TEST DagMCModel_test PROPERTY LABELS geometry_dagmc dagmc)
+ADD_EXECUTABLE(tstDagMCModel
+  tstDagMCModel.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDagMCModel geometry_dagmc)
+ADD_TEST(DagMCModel_test tstDagMCModel --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+SET_PROPERTY(TEST DagMCModel_test PROPERTY LABELS geometry_dagmc dagmc)
 
-# IF(${FRENSIE_ENABLE_OPENMP})
-#   ADD_EXECUTABLE(tstSharedParallelDagMC tstSharedParallelDagMC.cpp)
-#   TARGET_LINK_LIBRARIES(tstSharedParallelDagMC geometry_dagmc)
-#   ADD_TEST(SharedParallelDagMC_2_test tstSharedParallelDagMC --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat" --threads=2)
-#   ADD_TEST(SharedParallelDagMC_4_test tstSharedParallelDagMC --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat" --threads=4)
-#   SET_PROPERTY(TEST SharedParallelDagMC_2_test PROPERTY LABELS geometry_dagmc dagmc openmp no_threads)
-#   SET_PROPERTY(TEST SharedParallelDagMC_4_test PROPERTY LABELS geometry_dagmc dagmc openmp no_threads)
-# ENDIF()
+ADD_EXECUTABLE(tstDagMCNavigator
+  tstDagMCNavigator.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDagMCNavigator geometry_dagmc)
+ADD_TEST(DagMCNavigator_test tstDagMCNavigator --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+SET_PROPERTY(TEST DagMCNavigator_test PROPERTY LABELS geometry_dagmc dagmc)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_EXECUTABLE(tstSharedParallelDagMCNavigator
+    tstSharedParallelDagMCNavigator.cpp
+    ${FRENSIE_STD_UNIT_TEST_MAIN})
+  TARGET_LINK_LIBRARIES(tstSharedParallelDagMCNavigator geometry_dagmc)
+  ADD_TEST(SharedParallelDagMCNavigator_2_test tstSharedParallelDagMCNavigator --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml" --threads=2)
+  ADD_TEST(SharedParallelDagMCNavigator_4_test tstSharedParallelDagMCNavigator --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml" --threads=4)
+  SET_PROPERTY(TEST SharedParallelDagMCNavigator_2_test PROPERTY LABELS geometry_dagmc dagmc openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelDagMCNavigator_4_test PROPERTY LABELS geometry_dagmc dagmc openmp no_threads)
+ENDIF()
 

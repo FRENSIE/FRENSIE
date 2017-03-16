@@ -46,9 +46,6 @@ public:
   ~DagMCNavigator()
   { /* ... */ }
 
-  //! Enable thread support
-  void enableThreadSupport( const size_t num_threads ) override;
-
   //! Get the point location w.r.t. a given cell
   PointLocation getPointLocation(
                const Ray& ray,
@@ -66,16 +63,12 @@ public:
          const ModuleTraits::InternalSurfaceHandle boundary_surface_id ) const;
 
   //! Find the cell that contains the start ray
-  ModuleTraits::InternalCellHandle findCellContainingStartRay(
+  ModuleTraits::InternalCellHandle findCellContainingRay(
                                   const Ray& ray,
                                   CellIdSet& start_cell_cache ) const override;
 
   //! Find the cell that contains the ray
   ModuleTraits::InternalCellHandle findCellContainingRay( const Ray& ray ) const override;
-
-  //! Fire the ray through the geometry
-  double fireRay( const Ray& ray,
-                  ModuleTraits::InternalSurfaceHandle& surface_hit ) const override;
 
   //! Check if the internal ray is set
   bool isInternalRaySet() const override;
@@ -150,12 +143,6 @@ private:
                       const moab::EntityHandle cell_handle,
                       const moab::EntityHandle boundary_surface_handle ) const;
 
-  // Get the internal DagMC ray
-  DagMCRay& getInternalRay();
-
-  // Get the internal DagMC ray
-  const DagMCRay& getInternalRay() const;
-
   //! Find the cell that contains the ray
   ModuleTraits::InternalCellHandle findCellContainingRayWithoutBoundaryCheck(
                                                         const Ray& ray ) const;
@@ -214,7 +201,7 @@ private:
   std::shared_ptr<const ReflectingSurfaceIdHandleMap> d_reflecting_surfaces;
 
   // The internal rays
-  std::vector<DagMCRay> d_internal_rays;
+  DagMCRay d_internal_ray;
 };
 
 /*! The DagMC geometry error

@@ -279,35 +279,35 @@ TEUCHOS_UNIT_TEST( DagMCModelProperties, getEstimatorType )
 {
   const Geometry::DagMCModelProperties properties( "test.sat" );
 
-  Geometry::DagMCEstimatorType estimator_type =
+  Geometry::EstimatorType estimator_type =
     properties.getEstimatorType( properties.getSurfaceCurrentName() );
 
   TEST_EQUALITY_CONST( estimator_type,
-                       Geometry::DAGMC_SURFACE_CURRENT_ESTIMATOR );
+                       Geometry::SURFACE_CURRENT_ESTIMATOR );
 
   estimator_type =
     properties.getEstimatorType( properties.getSurfaceFluxName() );
 
   TEST_EQUALITY_CONST( estimator_type,
-                       Geometry::DAGMC_SURFACE_FLUX_ESTIMATOR );
+                       Geometry::SURFACE_FLUX_ESTIMATOR );
 
   estimator_type =
     properties.getEstimatorType( properties.getCellPulseHeightName() );
 
   TEST_EQUALITY_CONST( estimator_type,
-                       Geometry::DAGMC_CELL_PULSE_HEIGHT_ESTIMATOR );
+                       Geometry::CELL_PULSE_HEIGHT_ESTIMATOR );
 
   estimator_type =
     properties.getEstimatorType( properties.getCellTrackLengthFluxName() );
 
   TEST_EQUALITY_CONST( estimator_type,
-                       Geometry::DAGMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR );
+                       Geometry::CELL_TRACK_LENGTH_FLUX_ESTIMATOR );
 
   estimator_type =
     properties.getEstimatorType( properties.getCellCollisionFluxName() );
 
   TEST_EQUALITY_CONST( estimator_type,
-                       Geometry::DAGMC_CELL_COLLISION_FLUX_ESTIMATOR );
+                       Geometry::CELL_COLLISION_FLUX_ESTIMATOR );
 }
 
 //---------------------------------------------------------------------------//
@@ -392,33 +392,33 @@ TEUCHOS_UNIT_TEST( DagMCModelProperties, getParticleType )
 {
   const Geometry::DagMCModelProperties properties( "test.sat" );
 
-  Geometry::DagMCParticleType particle_type =
+  Geometry::ParticleType particle_type =
     properties.getParticleType( properties.getPhotonName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::DAGMC_PHOTON );
+  TEST_EQUALITY_CONST( particle_type, Geometry::PHOTON );
 
   particle_type = properties.getParticleType( properties.getNeutronName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::DAGMC_NEUTRON );
+  TEST_EQUALITY_CONST( particle_type, Geometry::NEUTRON );
 
   particle_type = properties.getParticleType( properties.getElectronName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::DAGMC_ELECTRON );
+  TEST_EQUALITY_CONST( particle_type, Geometry::ELECTRON );
 
   particle_type =
     properties.getParticleType( properties.getAdjointPhotonName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::DAGMC_ADJOINT_PHOTON );
+  TEST_EQUALITY_CONST( particle_type, Geometry::ADJOINT_PHOTON );
 
   particle_type =
     properties.getParticleType( properties.getAdjointNeutronName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::DAGMC_ADJOINT_NEUTRON );
+  TEST_EQUALITY_CONST( particle_type, Geometry::ADJOINT_NEUTRON );
 
   particle_type =
     properties.getParticleType( properties.getAdjointElectronName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::DAGMC_ADJOINT_ELECTRON );
+  TEST_EQUALITY_CONST( particle_type, Geometry::ADJOINT_ELECTRON );
 }
 
 //---------------------------------------------------------------------------//

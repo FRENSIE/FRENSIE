@@ -62,13 +62,13 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
   
   if( !this->isInitialized() )
   {
+    // Cache the model properties
+    d_model_properties.reset( new DagMCModelProperties( model_properties ) );
+    
     FRENSIE_LOG_DAGMC_NOTIFICATION( "Loading DagMC model "
                                     << d_model_properties->getModelFileName()
                                     << "..." );
     FRENSIE_FLUSH_ALL_LOGS();
-    
-    // Cache the model properties
-    d_model_properties.reset( new DagMCModelProperties( model_properties ) );
 
     try{
       this->loadDagMCGeometry( suppress_dagmc_output );
@@ -330,7 +330,22 @@ void DagMCModel::extractReflectingSurfaces()
 // Get the model properties
 const DagMCModelProperties& DagMCModel::getModelProperties() const
 {
+  // Make sure DagMC has been initialized
+  testPrecondition( this->isInitialized() );
+  
   return *d_model_properties;
+}
+
+// Check if the model has cell estimator data
+bool DagMCModel::hasCellEstimatorData() const
+{
+  return true;
+}
+
+// Check if the model has surface estimator data
+bool DagMCModel::hasSurfaceEstimatorData() const
+{
+  return true;
 }
 
 // Get the material ids
@@ -491,6 +506,80 @@ void DagMCModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
   }
 }
 
+// Get the cell estimator data
+void DagMCModel::getCellEstimatorData(
+                          CellEstimatorIdDataMap& estimator_id_data_map ) const
+{
+  // Make sure DagMC has been initialized
+  testPrecondition( this->isInitialized() );
+
+  // Load the estimator property cell id map
+  typedef std::unordered_map<std::string,std::vector<ModuleTraits::InternalCellHandle> >
+    EstimatorPropCellIdMap;
+
+  EstimatorPropCellIdMap estimator_prop_cell_id_map;
+
+  try{
+    this->getCellIdsWithPropertyValue(
+                                d_model_properties->getEstimatorPropertyName(),
+                                estimator_prop_cell_id_map );
+  }
+  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                           "Unable to parse the cell estimator data!" );
+
+  EstimatorPropCellIdMap::const_iterator estimator_it =
+    estimator_prop_cell_id_map.begin();
+
+  // Loop through all of the cell estimators and extract their information
+  while( estimator_it != estimator_prop_cell_id_map.end() )
+  {
+    CellEstimatorIdDataMap::key_type id;
+    EstimatorType estimator_type;
+    ParticleType particle_type;
+
+    try{
+      this->extractEstimatorPropertyValues( estimator_it->first,
+                                            id,
+                                            estimator_type,
+                                            particle_type );
+    }
+    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                             "an invalid estimator specification "
+                             "was found (" << estimator_it->first << ")! "
+                             "The correct format is id.type.ptype." );
+
+    // Make sure the id is valid
+    TEST_FOR_EXCEPTION( estimator_id_data_map.find( id ) !=
+                        estimator_id_data_map.end(),
+                        InvalidDagMCGeometry,
+                        "estimator id " << id << " is used multiple "
+                        "times!" );
+
+    // Make sure the estimator type is valid
+    TEST_FOR_EXCEPTION( !isCellEstimator( estimator_type ),
+                        InvalidDagMCGeometry,
+                        "cell estimator " << id << " has a surface estimator "
+                        "type specified!" );
+
+    // Make sure at least one cell has been assigned to the estimator
+    TEST_FOR_EXCEPTION( estimator_it->second.size() == 0,
+                        InvalidDagMCGeometry,
+                        "estimator " << id << " has no cells assigned!" );
+
+    // Add the estimator info to the map
+    CellEstimatorIdDataMap::mapped_type& estimator_data_tuple =
+      estimator_id_data_map[id];
+
+    // Assign the estimator surface info
+    Utility::get<0>(estimator_data_tuple) = estimator_type;
+    Utility::get<1>(estimator_data_tuple) = particle_type;
+    Utility::get<2>(estimator_data_tuple).assign( estimator_it->second.begin(),
+                                                  estimator_it->second.end() );
+
+    ++estimator_it;
+  }
+}
+
 // Get the problem surfaces
 void DagMCModel::getSurfaces( SurfaceIdSet& surface_set ) const
 {
@@ -507,6 +596,81 @@ void DagMCModel::getSurfaces( SurfaceIdSet& surface_set ) const
     surface_set.insert( surface_id );
 
     ++surface_handle_it;
+  }
+}
+
+// Get the surface estimator data
+void DagMCModel::getSurfaceEstimatorData(
+                       SurfaceEstimatorIdDataMap& estimator_id_data_map ) const
+{
+  // Make sure DagMC has been initialized
+  testPrecondition( this->isInitialized() );
+
+  // Load the estimator property surface id map
+  typedef std::unordered_map<std::string,std::vector<ModuleTraits::InternalSurfaceHandle> >
+    EstimatorPropSurfaceIdMap;
+
+  EstimatorPropSurfaceIdMap estimator_prop_surface_id_map;
+
+  try{
+    this->getSurfaceIdsWithPropertyValue(
+                                d_model_properties->getEstimatorPropertyName(),
+                                estimator_prop_surface_id_map );
+  }
+  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                           "Unable to parse the surface estimator "
+                           "properties!" );
+
+  EstimatorPropSurfaceIdMap::const_iterator estimator_it =
+    estimator_prop_surface_id_map.begin();
+
+  // Loop through all of the surface estimators and extract their information
+  while( estimator_it != estimator_prop_surface_id_map.end() )
+  {
+    SurfaceEstimatorIdDataMap::key_type id;
+    EstimatorType estimator_type;
+    ParticleType particle_type;
+
+    try{
+      this->extractEstimatorPropertyValues( estimator_it->first,
+                                            id,
+                                            estimator_type,
+                                            particle_type );
+    }
+    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                             "an invalid estimator specification "
+                             "was found!" );
+
+    // Make sure the id is valid
+    TEST_FOR_EXCEPTION( estimator_id_data_map.find( id ) !=
+                        estimator_id_data_map.end(),
+                        InvalidDagMCGeometry,
+                        "estimator id " << id << " is used multiple "
+                        "times!" );
+
+    // Make sure the estimator type is valid
+    TEST_FOR_EXCEPTION( !isSurfaceEstimator( estimator_type ),
+                        InvalidDagMCGeometry,
+                        "surface estimator " << id << " has a cell estimator "
+                        "type specified!" );
+    
+    // Make sure at least one surface has been assigned to the estimator
+    TEST_FOR_EXCEPTION( estimator_it->second.size() == 0,
+                        InvalidDagMCGeometry,
+                        "estimator " << id << " has no surfaces "
+                        "assigned!" );
+
+    // Add the estimator info to the map
+    SurfaceEstimatorIdDataMap::mapped_type& estimator_data_tuple =
+      estimator_id_data_map[id];
+
+    // Assign the estimator surface info
+    Utility::get<0>(estimator_data_tuple) = estimator_type;
+    Utility::get<1>(estimator_data_tuple) = particle_type;
+    Utility::get<2>(estimator_data_tuple).assign( estimator_it->second.begin(),
+                                                  estimator_it->second.end() );
+
+    ++estimator_it;
   }
 }
 

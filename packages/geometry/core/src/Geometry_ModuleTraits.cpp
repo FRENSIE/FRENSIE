@@ -25,6 +25,10 @@ const ModuleTraits::InternalMaterialHandle
 ModuleTraits::invalid_internal_material_handle =
   std::numeric_limits<ModuleTraits::InternalMaterialHandle>::max();
 
+const ModuleTraits::InternalEstimatorHandle
+ModuleTraits::invalid_internal_estimator_handle =
+  std::numeric_limits<ModuleTraits::InternalEstimatorHandle>::max();
+
 } // end Geometry namespace
 
 //---------------------------------------------------------------------------//

@@ -130,87 +130,6 @@ void DagMCModel::getCellIdsWithPropertyValue(
   }
 }
 
-// Get the cell estimator data
-/*! \details The first string value will store the estimator type, the second
- * string will store the particle type and the array will store all of the
- * assigned cells.
- */
-template<typename IntType,
-         template<typename,typename,typename> class Tuple,
-         template<typename,typename...> class Array,
-         template<typename,typename,typename...> class Map>
-void DagMCModel::getCellEstimatorData( Map<IntType,Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalCellHandle> > >& estimator_id_data_map ) const
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
-  // Load the estimator property cell id map
-  typedef std::unordered_map<std::string,std::vector<ModuleTraits::InternalCellHandle> >
-    EstimatorPropCellIdMap;
-
-  EstimatorPropCellIdMap estimator_prop_cell_id_map;
-
-  try{
-    this->getCellIdsWithPropertyValue(
-                                d_model_properties->getEstimatorPropertyName(),
-                                estimator_prop_cell_id_map );
-  }
-  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                           "Unable to parse the cell estimator data!" );
-
-  EstimatorPropCellIdMap::const_iterator estimator_it =
-    estimator_prop_cell_id_map.begin();
-
-  // Loop through all of the cell estimators and extract their information
-  while( estimator_it != estimator_prop_cell_id_map.end() )
-  {
-    IntType id;
-    DagMCEstimatorType estimator_type;
-    DagMCParticleType particle_type;
-
-    try{
-      this->extractEstimatorPropertyValues( estimator_it->first,
-                                            id,
-                                            estimator_type,
-                                            particle_type );
-    }
-    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                             "an invalid estimator specification "
-                             "was found (" << estimator_it->first << ")! "
-                             "The correct format is id.type.ptype." );
-
-    // Make sure the id is valid
-    TEST_FOR_EXCEPTION( estimator_id_data_map.find( id ) !=
-                        estimator_id_data_map.end(),
-                        InvalidDagMCGeometry,
-                        "estimator id " << id << " is used multiple "
-                        "times!" );
-
-    // Make sure the estimator type is valid
-    TEST_FOR_EXCEPTION( !isDagMCCellEstimator( estimator_type ),
-                        InvalidDagMCGeometry,
-                        "cell estimator " << id << " has a surface estimator "
-                        "type specified!" );
-
-    // Make sure at least one cell has been assigned to the estimator
-    TEST_FOR_EXCEPTION( estimator_it->second.size() == 0,
-                        InvalidDagMCGeometry,
-                        "estimator " << id << " has no cells assigned!" );
-
-    // Add the estimator info to the map
-    Tuple<std::string,std::string,Array<ModuleTraits::InternalCellHandle> >&
-          estimator_data_tuple = estimator_id_data_map[id];
-
-    // Assign the estimator surface info
-    Utility::get<0>(estimator_data_tuple) = estimator_type;
-    Utility::get<1>(estimator_data_tuple) = particle_type;
-    Utility::get<2>(estimator_data_tuple).assign( estimator_it->second.begin(),
-                                                  estimator_it->second.end() );
-
-    ++estimator_it;
-  }
-}
-
 // Get the property values associated with a property name and surface id
 template<template<typename,typename...> class ArrayType,
          template<typename,typename,typename...> class MapType>
@@ -304,92 +223,14 @@ void DagMCModel::getSurfaceIdsWithPropertyValue(
   }
 }
 
-// Get the surface estimator data
-template<typename IntType,
-         template<typename,typename,typename> class Tuple,
-         template<typename,typename...> class Array,
-         template<typename,typename,typename...> class Map>
-void DagMCModel::getSurfaceEstimatorData( Map<IntType,Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalSurfaceHandle> > >& estimator_id_data_map ) const
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-
-  // Load the estimator property surface id map
-  typedef std::unordered_map<std::string,std::vector<ModuleTraits::InternalSurfaceHandle> >
-    EstimatorPropSurfaceIdMap;
-
-  EstimatorPropSurfaceIdMap estimator_prop_surface_id_map;
-
-  try{
-    this->getSurfaceIdsWithPropertyValue(
-                                d_model_properties->getEstimatorPropertyName(),
-                                estimator_prop_surface_id_map );
-  }
-  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                           "Unable to parse the surface estimator "
-                           "properties!" );
-
-  EstimatorPropSurfaceIdMap::const_iterator estimator_it =
-    estimator_prop_surface_id_map.begin();
-
-  // Loop through all of the surface estimators and extract their information
-  while( estimator_it != estimator_prop_surface_id_map.end() )
-  {
-    IntType id;
-    DagMCEstimatorType estimator_type;
-    DagMCParticleType particle_type;
-
-    try{
-      this->extractEstimatorPropertyValues( estimator_it->first,
-                                            id,
-                                            estimator_type,
-                                            particle_type );
-    }
-    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                             "an invalid estimator specification "
-                             "was found!" );
-
-    // Make sure the id is valid
-    TEST_FOR_EXCEPTION( estimator_id_data_map.find( id ) !=
-                        estimator_id_data_map.end(),
-                        InvalidDagMCGeometry,
-                        "estimator id " << id << " is used multiple "
-                        "times!" );
-
-    // Make sure the estimator type is valid
-    TEST_FOR_EXCEPTION( !isDagMCSurfaceEstimator( estimator_type ),
-                        InvalidDagMCGeometry,
-                        "surface estimator " << id << " has a cell estimator "
-                        "type specified!" );
-    
-    // Make sure at least one surface has been assigned to the estimator
-    TEST_FOR_EXCEPTION( estimator_it->second.size() == 0,
-                        InvalidDagMCGeometry,
-                        "estimator " << id << " has no surfaces "
-                        "assigned!" );
-
-    // Add the estimator info to the map
-    Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalCellHandle> >&
-      estimator_data_tuple = estimator_id_data_map[id];
-
-    // Assign the estimator surface info
-    Utility::get<0>(estimator_data_tuple) = estimator_type;
-    Utility::get<1>(estimator_data_tuple) = particle_type;
-    Utility::get<2>(estimator_data_tuple).assign( estimator_it->second.begin(),
-                                                  estimator_it->second.end() );
-
-    ++estimator_it;
-  }
-}
-
 // Extract estimator property values
 // An estimator property is assumed to have the form id.type.ptype
 template<typename IntType>
 void DagMCModel::extractEstimatorPropertyValues(
-                                       const std::string& prop_value,
-                                       IntType& estimator_id,
-                                       DagMCEstimatorType& estimator_type,
-                                       DagMCParticleType& particle_type ) const
+                                            const std::string& prop_value,
+                                            IntType& estimator_id,
+                                            EstimatorType& estimator_type,
+                                            ParticleType& particle_type ) const
 {
   size_t first_pos = prop_value.find_first_of( "." );
   size_t last_pos = prop_value.find_last_of( "." );

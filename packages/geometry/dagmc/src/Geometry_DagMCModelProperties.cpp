@@ -270,22 +270,22 @@ bool DagMCModelProperties::isEstimatorNameValid(
 }
 
 // Get the estimator type
-DagMCEstimatorType DagMCModelProperties::getEstimatorType(
+EstimatorType DagMCModelProperties::getEstimatorType(
                                       const std::string& estimator_name ) const
 {
   // Make sure that the estimator name is valid
   testPrecondition( this->isEstimatorNameValid( estimator_name ) );
 
   if( estimator_name == d_surface_current_name )
-    return DAGMC_SURFACE_CURRENT_ESTIMATOR;
+    return SURFACE_CURRENT_ESTIMATOR;
   else if( estimator_name == d_surface_flux_name )
-    return DAGMC_SURFACE_FLUX_ESTIMATOR;
+    return SURFACE_FLUX_ESTIMATOR;
   else if( estimator_name == d_cell_pulse_height_name )
-    return DAGMC_CELL_PULSE_HEIGHT_ESTIMATOR;
+    return CELL_PULSE_HEIGHT_ESTIMATOR;
   else if( estimator_name == d_cell_track_length_flux_name )
-    return DAGMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR;
+    return CELL_TRACK_LENGTH_FLUX_ESTIMATOR;
   else if( estimator_name == d_cell_collision_flux_name )
-    return DAGMC_CELL_COLLISION_FLUX_ESTIMATOR;
+    return CELL_COLLISION_FLUX_ESTIMATOR;
   else
   {
     THROW_EXCEPTION( std::runtime_error,
@@ -403,24 +403,24 @@ bool DagMCModelProperties::isParticleNameValid(
 }
 
 // Get the partile type
-DagMCParticleType DagMCModelProperties::getParticleType(
+ParticleType DagMCModelProperties::getParticleType(
                                        const std::string& particle_name ) const
 {
   // Make sure the particle name is valid
   testPrecondition( this->isParticleNameValid( particle_name ) );
 
   if( particle_name == d_photon_name )
-    return DAGMC_PHOTON;
+    return PHOTON;
   else if( particle_name == d_neutron_name )
-    return DAGMC_NEUTRON;
+    return NEUTRON;
   else if( particle_name == d_electron_name )
-    return DAGMC_ELECTRON;
+    return ELECTRON;
   else if( particle_name == d_adjoint_photon_name )
-    return DAGMC_ADJOINT_PHOTON;
+    return ADJOINT_PHOTON;
   else if( particle_name == d_adjoint_neutron_name )
-    return DAGMC_ADJOINT_NEUTRON;
+    return ADJOINT_NEUTRON;
   else if( particle_name == d_adjoint_electron_name )
-    return DAGMC_ADJOINT_ELECTRON;
+    return ADJOINT_ELECTRON;
   else
   {
     THROW_EXCEPTION( std::runtime_error,

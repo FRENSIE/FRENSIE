@@ -37,7 +37,7 @@ struct ModuleTraits
   //! The internal region of interest (ROI) handle type
   typedef unsigned int InternalROIHandle;
   //! The internal event observer handle type
-  typedef unsigned long long InternalEventObserverHandle;
+  typedef Geometry::ModuleTraits::InternalEstimatorHandle InternalEventObserverHandle;
   //! The internal material handle type
   typedef Geometry::ModuleTraits::InternalMaterialHandle InternalMaterialHandle;
 

@@ -37,6 +37,8 @@ struct ModuleTraits
   typedef unsigned long long InternalSurfaceHandle;
   //! The internal material handle type
   typedef unsigned long long InternalMaterialHandle;
+  //! The internal estimator handle type
+  typedef unsigned long long InternalEstimatorHandle;
 
   //! The invalid cell handle value
   static const InternalCellHandle invalid_internal_cell_handle;
@@ -46,6 +48,9 @@ struct ModuleTraits
 
   //! The invalid material handle value
   static const InternalMaterialHandle invalid_internal_material_handle;
+
+  //! The invalid estimator handle value
+  static const InternalEstimatorHandle invalid_internal_estimator_handle;
 };
 
 } // end FRENSIE namespace

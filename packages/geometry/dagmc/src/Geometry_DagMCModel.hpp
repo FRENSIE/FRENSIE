@@ -26,8 +26,6 @@
 #include "Geometry_DagMCCellHandler.hpp"
 #include "Geometry_DagMCSurfaceHandler.hpp"
 #include "Geometry_DagMCNavigator.hpp"
-#include "Geometry_DagMCEstimatorType.hpp"
-#include "Geometry_DagMCParticleType.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_AdvancedModel.hpp"
@@ -62,6 +60,12 @@ public:
   //! Get the model properties
   const DagMCModelProperties& getModelProperties() const;
 
+  //! Check if the model has cell estimator data
+  bool hasCellEstimatorData() const override;
+
+  //! Check if the model has surface estimator data
+  bool hasSurfaceEstimatorData() const override;
+
   //! Get the material ids
   void getMaterialIds( MaterialIdSet& material_ids ) const override;
 
@@ -77,11 +81,7 @@ public:
   void getCellDensities( CellIdDensityMap& cell_id_density_map ) const override;
 
   //! Get the cell estimator data
-  template<typename IntType,
-           template<typename,typename,typename> class Tuple,
-           template<typename,typename...> class Array,
-           template<typename,typename,typename...> class Map>
-  void getCellEstimatorData( Map<IntType,Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalCellHandle> > >& estimator_id_data_map ) const;
+  void getCellEstimatorData( CellEstimatorIdDataMap& estimator_id_data_map ) const override;
 
   //! Check if a cell exists
   bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id ) const override;
@@ -99,11 +99,7 @@ public:
   void getSurfaces( SurfaceIdSet& surface_set ) const override;
 
   //! Get the surface estimator data
-  template<typename IntType,
-           template<typename,typename,typename> class Tuple,
-           template<typename,typename...> class Array,
-           template<typename,typename,typename...> class Map>
-  void getSurfaceEstimatorData( Map<IntType,Tuple<DagMCEstimatorType,DagMCParticleType,Array<ModuleTraits::InternalSurfaceHandle> > >& estimator_id_data_map ) const;
+  void getSurfaceEstimatorData( SurfaceEstimatorIdDataMap& estimator_id_data_map ) const;
 
   //! Check if the surface exists
   bool doesSurfaceExist( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
@@ -197,11 +193,10 @@ private:
 
   // Extract estimator property values
   template<typename IntType>
-  void extractEstimatorPropertyValues(
-                                      const std::string& prop_value,
-                                      IntType& estimator_id,
-                                      DagMCEstimatorType& estimator_type,
-                                      DagMCParticleType& particle_type ) const;
+  void extractEstimatorPropertyValues( const std::string& prop_value,
+                                       IntType& estimator_id,
+                                       EstimatorType& estimator_type,
+                                       ParticleType& particle_type ) const;
 
   // The DagMC model instance
   static std::shared_ptr<DagMCModel> s_instance;

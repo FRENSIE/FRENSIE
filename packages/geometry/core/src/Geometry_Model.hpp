@@ -12,11 +12,15 @@
 // Std Lib Includes
 #include <unordered_set>
 #include <unordered_map>
+#include <vector>
 #include <memory>
+#include <tuple>
 
 // FRENSIE Includes
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_Navigator.hpp"
+#include "Geometry_EstimatorType.hpp"
+#include "Geometry_ParticleType.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Geometry{
@@ -39,6 +43,9 @@ public:
   //! The cell id density map type
   typedef std::unordered_map<ModuleTraits::InternalCellHandle,double> CellIdDensityMap;
 
+  //! The cell estimator id data map type
+  typedef std::unordered_map<ModuleTraits::InternalEstimatorHandle,std::tuple<EstimatorType,ParticleType,std::vector<ModuleTraits::InternalCellHandle> > > CellEstimatorIdDataMap;
+
   //! Constructor
   Model()
   { /* ... */ }
@@ -46,6 +53,12 @@ public:
   //! Destructor
   virtual ~Model()
   { /* ... */ }
+
+  //! Check if this is an advanced model
+  virtual bool isAdvanced() const;
+
+  //! Check if the model has cell estimator data
+  virtual bool hasCellEstimatorData() const = 0;
 
   //! Get the material ids
   virtual void getMaterialIds( MaterialIdSet& material_ids ) const = 0;
@@ -61,6 +74,10 @@ public:
 
   //! Get the cell densities
   virtual void getCellDensities( CellIdDensityMap& cell_density_map ) const = 0;
+
+  //! Get the cell estimator data
+  virtual void getCellEstimatorData(
+                CellEstimatorIdDataMap& cell_estimator_id_data_map ) const = 0;
 
   //! Check if a cell exists
   virtual bool doesCellExist(
@@ -81,6 +98,12 @@ public:
   //! Create a navigator
   virtual std::shared_ptr<Navigator> createNavigator() const = 0;
 };
+
+// Check if this is an advanced model
+inline bool Model::isAdvanced() const
+{
+  return false;
+}
   
 } // end Geometry namespace
 
