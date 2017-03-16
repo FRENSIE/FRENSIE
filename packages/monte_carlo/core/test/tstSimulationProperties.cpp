@@ -74,8 +74,9 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_ASSERT( properties.isElectroionizationModeOn() );
   TEST_ASSERT( properties.isBremsstrahlungModeOn() );
   TEST_ASSERT( properties.isAtomicExcitationModeOn() );
-  TEST_ASSERT( properties.isWeightedInterpolationModeOn() );
   TEST_ASSERT( properties.isLinLinLogInterpolationModeOn() );
+  TEST_ASSERT( properties.isCorrelatedSamplingModeOn() );
+  TEST_ASSERT( properties.isUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST(
                      properties.getBremsstrahlungAngularDistributionFunction(),
                      MonteCarlo::TWOBS_DISTRIBUTION );

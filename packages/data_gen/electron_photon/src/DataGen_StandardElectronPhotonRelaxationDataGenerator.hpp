@@ -54,6 +54,12 @@ public:
   ~StandardElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
+  //! Set the FullyTabularTwoDDistribution evaluation tolerance
+  void setTabularEvaluationTolerance( const double evaluation_tolerance );
+
+  //! Get the FullyTabularTwoDDistribution evaluation tolerance
+  double getTabularEvaluationTolerance() const;
+
   //! Set the occupation number evaluation tolerance
   void setOccupationNumberEvaluationTolerance(
                                            const double evaluation_tolerance );
@@ -309,6 +315,9 @@ private:
  
   // The log stream
   std::ostream* d_os_log;
+
+  // The FullyTabularTwoDDistribution evaluation tolerance
+  double d_tabular_evaluation_tol;
 
   // The occupation number evaluation tolerance
   double d_occupation_number_evaluation_tolerance;

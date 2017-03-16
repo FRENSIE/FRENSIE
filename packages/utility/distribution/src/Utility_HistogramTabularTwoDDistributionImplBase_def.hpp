@@ -14,60 +14,6 @@
 
 namespace Utility{
 
-
-// Return the upper bound of the distribution secondary independent variable using interpolation
-template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getUpperInterpolatedBoundOfSecondaryIndepVar(
-                const PrimaryIndepQuantity primary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
-  {
-    if( this->arePrimaryLimitsExtended() )
-      return lower_bin_boundary->second->getUpperBoundOfIndepVar();
-    else
-      return QuantityTraits<SecondaryIndepQuantity>::zero();
-  }
-  else
-    return lower_bin_boundary->second->getUpperBoundOfIndepVar();
-}
-
-// Return the lower bound of the distribution secondary independent variable using interpolation
-template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getLowerInterpolatedBoundOfSecondaryIndepVar(
-                const PrimaryIndepQuantity primary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
-  {
-    if( this->arePrimaryLimitsExtended() )
-      return lower_bin_boundary->second->getLowerBoundOfIndepVar();
-    else
-      return QuantityTraits<SecondaryIndepQuantity>::zero();
-  }
-  else
-    return lower_bin_boundary->second->getLowerBoundOfIndepVar();
-}
-
-
-
-
 // Evaluate the distribution
 template<typename Distribution>
 auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
@@ -81,26 +27,24 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
 
 // Evaluate the distribution
 template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateExact(
-  const PrimaryIndepQuantity primary_indep_var_value,
-  const SecondaryIndepQuantity secondary_indep_var_value ) const -> DepQuantity
-{
-  return this->evaluate( primary_indep_var_value,
-                         secondary_indep_var_value );
-}
-
-// Evaluate the distribution using a normalized interpolation scheme
-template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateNormalized(
+inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::correlatedEvaluate(
   const PrimaryIndepQuantity primary_indep_var_value,
   const SecondaryIndepQuantity secondary_indep_var_value,
   const SecondaryIndepQuantity min_secondary_indep_var,
   const SecondaryIndepQuantity max_secondary_indep_var ) const -> DepQuantity
 {
-  return this->evaluateNormalizedImpl<DepQuantity>(
-                primary_indep_var_value,
-                secondary_indep_var_value,
-                &BaseOneDDistributionType::evaluate );
+  return this->evaluate( primary_indep_var_value,
+                         secondary_indep_var_value );
+}
+
+// Evaluate the distribution
+template<typename Distribution>
+inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateExact(
+  const PrimaryIndepQuantity primary_indep_var_value,
+  const SecondaryIndepQuantity secondary_indep_var_value ) const -> DepQuantity
+{
+  return this->evaluate( primary_indep_var_value,
+                         secondary_indep_var_value );
 }
 
 // Evaluate the secondary conditional PDF
@@ -118,52 +62,25 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSe
 
 // Evaluate the secondary conditional PDF
 template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDFExact(
+inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::correlatedEvaluateSecondaryConditionalPDF(
+  const PrimaryIndepQuantity primary_indep_var_value,
+  const SecondaryIndepQuantity secondary_indep_var_value,
+  const SecondaryIndepQuantity min_secondary_indep_var,
+  const SecondaryIndepQuantity max_secondary_indep_var ) const -> InverseSecondaryIndepQuantity
+{
+  return this->evaluateSecondaryConditionalPDF( primary_indep_var_value,
+                                                secondary_indep_var_value );
+}
+
+// Evaluate the secondary conditional PDF
+template<typename Distribution>
+inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDFExact(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> InverseSecondaryIndepQuantity
 {
   return this->evaluateSecondaryConditionalPDF( primary_indep_var_value,
                                                 secondary_indep_var_value );
-}
-
-// Evaluate the secondary conditional PDF using a normalized interpolation scheme
-template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDFNormalized(
-  const PrimaryIndepQuantity primary_indep_var_value,
-  const SecondaryIndepQuantity secondary_indep_var_value,
-  const SecondaryIndepQuantity min_secondary_indep_var,
-  const SecondaryIndepQuantity max_secondary_indep_var ) const -> InverseSecondaryIndepQuantity
-{
-  return this->evaluateNormalizedImpl<InverseSecondaryIndepQuantity>(
-                primary_indep_var_value,
-                secondary_indep_var_value,
-                &BaseOneDDistributionType::evaluatePDF );
-}
-
-// Evaluate the secondary conditional CDF
-template<typename Distribution>
-double UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalCDFExact(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-{
-  return this->evaluateImpl<double>( primary_indep_var_value,
-                                     secondary_indep_var_value,
-                                     &BaseOneDDistributionType::evaluateCDF );
-}
-
-// Evaluate the secondary conditional CDF using normalized interpolation
-template<typename Distribution>
-double UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalCDFNormalized(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value,
-                 const SecondaryIndepQuantity min_secondary_indep_var,
-                 const SecondaryIndepQuantity max_secondary_indep_var ) const
-{
-  return this->evaluateNormalizedImpl<double>(
-                                    primary_indep_var_value,
-                                    secondary_indep_var_value,
-                                    &BaseOneDDistributionType::evaluateCDF );
 }
 
 // Evaluate the distribution using the desired evaluation method
@@ -190,36 +107,6 @@ inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution
   }
   else
     return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
-}
-
-// Evaluate the distribution using the desired evaluation method
-template<typename Distribution>
-template<typename ReturnType, typename EvaluationMethod>
-inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateNormalizedImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const SecondaryIndepQuantity secondary_indep_var_value,
-                        EvaluationMethod evaluate ) const
-{
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
-  {
-    if( this->arePrimaryLimitsExtended() )
-    {
-      return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
-    }
-    else
-      return QuantityTraits<ReturnType>::zero();
-  }
-  else
-  {
-    return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
-  }
 }
 
 // Sample from the distribution using the desired sampling functor
@@ -279,23 +166,6 @@ inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sam
 template<typename Distribution>
 auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditional(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                                             &BaseOneDDistributionType::sample,
-                                             std::placeholders::_1 );
-
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random sample from the secondary conditional PDF using a normalized interpolation
-template<typename Distribution>
-auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditionalNormalized(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity min_secondary_indep_var,
-        const SecondaryIndepQuantity max_secondary_indep_var ) const
   -> SecondaryIndepQuantity
 {
   // Create the sampling functor

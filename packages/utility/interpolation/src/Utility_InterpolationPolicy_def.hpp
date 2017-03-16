@@ -168,7 +168,7 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar(
 
 // Calculate the unit base independent variable (eta)
 /*! \details It has been found that a tolerance of 1e-3 works best for most 
- * applications. 
+ * applications.
  */
 template<typename ParentInterpolationType>
 template<typename T>

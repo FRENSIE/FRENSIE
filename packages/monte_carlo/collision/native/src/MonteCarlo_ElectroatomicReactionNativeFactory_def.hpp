@@ -178,7 +178,8 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
-    const bool use_weighted_interpolation )
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation )
 {
   // Convert subshell number to enum
   Data::SubshellType subshell_type =
@@ -204,7 +205,9 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
       raw_electroatom_data,
       subshell,
       raw_electroatom_data.getSubshellBindingEnergy( subshell ),
-      electroionization_subshell_distribution );
+      electroionization_subshell_distribution,
+      use_correlated_sampling,
+      use_unit_based_interpolation );
 
 
   // Create the subshell electroelectric reaction
@@ -226,7 +229,8 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
     electroionization_subshell_reactions,
-    const bool use_weighted_interpolation )
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation )
 {
   electroionization_subshell_reactions.clear();
 
@@ -244,7 +248,9 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
       energy_grid,
       grid_searcher,
       *shell,
-      electroionization_subshell_reaction );
+      electroionization_subshell_reaction,
+      use_correlated_sampling,
+      use_unit_based_interpolation );
 
     electroionization_subshell_reactions.push_back(
                       electroionization_subshell_reaction );
@@ -262,7 +268,8 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
-    const bool use_weighted_interpolation )
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -289,7 +296,8 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<SecondInterpPolicy>(
       raw_electroatom_data,
       bremsstrahlung_distribution,
-      use_weighted_interpolation );
+      use_correlated_sampling,
+      use_unit_based_interpolation );
 
   }
   else if( photon_distribution_function = TABULAR_DISTRIBUTION )
@@ -301,9 +309,10 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
   {
     BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<SecondInterpPolicy>(
       raw_electroatom_data,
-      bremsstrahlung_distribution,
       raw_electroatom_data.getAtomicNumber(),
-      use_weighted_interpolation );
+      bremsstrahlung_distribution,
+      use_correlated_sampling,
+      use_unit_based_interpolation );
   }
 
   // Create the bremsstrahlung reaction

@@ -19,9 +19,10 @@ namespace MonteCarlo{
 
 // Create a simple dipole bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-			  scattering_distribution )
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+                                                    scattering_distribution,
+    const double evaluation_tol )
 {
   // Get the number of tables
   double size = raw_electroatom_data.extractBREMIBlock().size()/3;
@@ -30,20 +31,23 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
   BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
-							  raw_electroatom_data,
-							  scattering_function );
+                              raw_electroatom_data,
+                              scattering_function,
+                              evaluation_tol );
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( scattering_function,
+                                                     true,
                                                      false ) );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-		                  scattering_distribution,
-    const int atomic_number )
+    const int atomic_number,
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+                                                        scattering_distribution,
+    const double evaluation_tol )
 {
   // Get the number of tables
   double size = raw_electroatom_data.extractBREMIBlock().size()/3;
@@ -52,24 +56,26 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
   BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
-							  raw_electroatom_data,
-							  scattering_function );
+                              raw_electroatom_data,
+                              scattering_function,
+                              evaluation_tol );
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( atomic_number,
                                                      scattering_function,
+                                                     true,
                                                      false ) );
 }
 
 // Create the energy loss function
 void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
-	   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-       std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-                                                        scattering_function )
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution>& scattering_function,
+    const double evaluation_tol )
 {
   // Extract the bremsstrahlung scattering information data block (BREMI)
   Teuchos::ArrayView<const double> bremi_block(
-				    raw_electroatom_data.extractBREMIBlock() );
+                    raw_electroatom_data.extractBREMIBlock() );
 
   // Extract the number of tabulated distributions
   int N = bremi_block.size()/3;
@@ -95,16 +101,18 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
     function_data[n].first = electron_energy_grid[n];
 
     function_data[n].second.reset(
-	  new Utility::HistogramDistribution(
-	      breme_block( offset[n], table_length[n] ),
-	      breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
+      new Utility::HistogramDistribution(
+          breme_block( offset[n], table_length[n] ),
+          breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
           true ) );
   }
 
   // Create the scattering function
   scattering_function.reset(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
-            function_data ) );
+            function_data,
+            1e-6,
+            evaluation_tol ) );
 }
 
 } // end MonteCarlo namespace

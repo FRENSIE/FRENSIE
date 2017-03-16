@@ -90,7 +90,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 689.2154402763227381, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 662.92869138138178187, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 662.92869138138178187, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5969818328396216955, 1e-12 );
@@ -256,7 +256,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     *data_container,
     *subshells.begin(),
     binding_energy,
-    native_distribution );
+    native_distribution,
+    true,
+    true );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

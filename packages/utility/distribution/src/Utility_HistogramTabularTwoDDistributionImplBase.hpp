@@ -80,30 +80,22 @@ public:
   virtual ~UnitAwareHistogramTabularTwoDDistributionImplBase()
   { /* ... */ }
 
-  //! Return the upper bound of the secondary independent variable at the primary independent variable
-  SecondaryIndepQuantity getUpperInterpolatedBoundOfSecondaryIndepVar(
-                const PrimaryIndepQuantity primary_indep_var_value ) const;
-
-  //! Return the lower bound of the secondary independent variable at the primary independent variable
-  SecondaryIndepQuantity getLowerInterpolatedBoundOfSecondaryIndepVar(
-                    const PrimaryIndepQuantity primary_indep_var_value ) const;
-
   //! Evaluate the distribution
   DepQuantity evaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the distribution
-  DepQuantity evaluateExact(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the distribution using a normalized interpolation scheme
-  DepQuantity evaluateNormalized(
+  DepQuantity correlatedEvaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
                 const SecondaryIndepQuantity max_secondary_indep_var ) const;
+
+  //! Evaluate the distribution
+  DepQuantity evaluateExact(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
@@ -111,34 +103,22 @@ public:
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
+  InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const;
+
+  //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional PDF using a normalized interpolation scheme
-  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFNormalized(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const SecondaryIndepQuantity min_secondary_indep_var,
-                const SecondaryIndepQuantity max_secondary_indep_var ) const;
-
-  //! Evaluate the secondary conditional CDF
-  double evaluateSecondaryConditionalCDFExact(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional CDF using normalized interpolation
-  double evaluateSecondaryConditionalCDFNormalized(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const SecondaryIndepQuantity min_secondary_indep_var,
-                const SecondaryIndepQuantity max_secondary_indep_var ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
 
-  //! Return a random sample from the secondary conditional PDF using a normalized interpolation
+  //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditionalNormalized(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity min_secondary_indep_var,
@@ -173,13 +153,6 @@ protected:
                         const SecondaryIndepQuantity secondary_indep_var_value,
                         EvaluationMethod evaluate ) const;
 
-  //! Evaluate the distribution using the desired evaluation method
-  template<typename ReturnType, typename EvaluationMethod>
-  ReturnType evaluateNormalizedImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const SecondaryIndepQuantity secondary_indep_var_value,
-                        EvaluationMethod evaluate ) const;
-
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
   SecondaryIndepQuantity sampleDetailedImpl(
@@ -193,7 +166,7 @@ protected:
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const;  
 };
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

@@ -36,12 +36,20 @@ public:
   ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double& binding_energy,
-    const bool& use_normalized_interpolation = true );
+    const double binding_energy,
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation );
 
   //! Destructor
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Set the sampling routine
+  void setSamplingRoutine( const bool use_correlated_sampling,
+                           const bool use_unit_based_interpolation );
+
+  //! Set the evalation routines
+  void setEvaluationRoutines( const bool use_unit_based_interpolation );
 
   //! Return the binding energy
   double getBindingEnergy() const;
@@ -89,11 +97,38 @@ public:
 
 private:
 
-  //! Sample a secondary energy from the distribution
-  double sampleNormalized( const double incoming_energy ) const;
+  //! Evaluate the distribution for a given incoming and outgoing energy
+  double correlatedEvaluateUnitBased( const double incoming_energy,
+                                      const double outgoing_energy ) const;
+
+  //! Evaluate the distribution for a given incoming and outgoing energy
+  double correlatedEvaluateExact( const double incoming_energy,
+                                  const double outgoing_energy ) const;
+
+  //! Evaluate the PDF value for a given incoming and outgoing energy
+  double correlatedEvaluatePDFUnitBased( const double incoming_energy,
+                                         const double outgoing_energy ) const;
+
+  //! Evaluate the PDF value for a given incoming and outgoing energy
+  double correlatedEvaluatePDFExact( const double incoming_energy,
+                                     const double outgoing_energy ) const;
+
+  //! Evaluate the CDF value for a given incoming and outgoing energy
+  double correlatedEvaluateCDFUnitBased( const double incoming_energy,
+                                         const double outgoing_energy ) const;
+
+  //! Evaluate the CDF value for a given incoming and outgoing energy
+  double correlatedEvaluateCDFExact( const double incoming_energy,
+                                     const double outgoing_energy ) const;
 
   //! Sample a secondary energy from the distribution
-  double sampleExact( const double incoming_energy ) const;
+  double sampleUnitBased( const double incoming_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double correlatedSampleUnitBased( const double incoming_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double correlatedSampleExact( const double incoming_energy ) const;
 
   // Calculate the outgoing angle cosine
   double outgoingAngle( const double incoming_energy,
@@ -105,11 +140,17 @@ private:
   // Subshell binding energy
   double d_binding_energy;
 
-  // Bool to use a normalized interpolation routine to sample the distribution
-  bool d_use_normalized_interpolation;
-
-  // The secondary energy function pointer
+  // The sample function pointer
   std::function<double ( const double )> d_sample_func;
+
+  // The evaluate function pointer
+  std::function<double ( const double, const double )> d_evaluate_func;
+
+  // The evaluatePDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_pdf_func;
+
+  // The evaluateCDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_cdf_func;
 };
 
 } // end MonteCarlo namespace

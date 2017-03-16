@@ -83,7 +83,8 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   TEST_ASSERT( !parsed_properties->isBremsstrahlungModeOn() );
   TEST_ASSERT( !parsed_properties->isAtomicExcitationModeOn() );
   TEST_ASSERT( !parsed_properties->isLinLinLogInterpolationModeOn() );
-  TEST_ASSERT( !parsed_properties->isWeightedInterpolationModeOn() );
+  TEST_ASSERT( !parsed_properties->isCorrelatedSamplingModeOn() );
+  TEST_ASSERT( !parsed_properties->isUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST(
              parsed_properties->getBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );

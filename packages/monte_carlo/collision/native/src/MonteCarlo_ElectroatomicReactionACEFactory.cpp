@@ -419,9 +419,9 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   {
   // Create bremsstrahlung 2BS distribution
   BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+    raw_electroatom_data.extractAtomicNumber(),
     raw_electroatom_data,
-    bremsstrahlung_distribution,
-    raw_electroatom_data.extractAtomicNumber() );
+    bremsstrahlung_distribution );
   }
   else
   {

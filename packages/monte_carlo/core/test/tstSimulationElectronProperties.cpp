@@ -34,7 +34,8 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
   TEST_ASSERT( properties.isBremsstrahlungModeOn() );
   TEST_ASSERT( properties.isAtomicExcitationModeOn() );
   TEST_ASSERT( properties.isLinLinLogInterpolationModeOn() );
-  TEST_ASSERT( properties.isWeightedInterpolationModeOn() );
+  TEST_ASSERT( properties.isCorrelatedSamplingModeOn() );
+  TEST_ASSERT( properties.isUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST(
                      properties.getBremsstrahlungAngularDistributionFunction(),
                      MonteCarlo::TWOBS_DISTRIBUTION );
@@ -155,18 +156,33 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setLinLinLogInterpolationModeOf
 }
 
 //---------------------------------------------------------------------------//
-// Test that weighted interpolation mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setWeightedInterpolationModeOffOn )
+// Test that correlated sampling mode can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setCorrelatedSamplingModeOffOn )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  properties.setWeightedInterpolationModeOff();
+  properties.setCorrelatedSamplingModeOff();
 
-  TEST_ASSERT( !properties.isWeightedInterpolationModeOn() );
+  TEST_ASSERT( !properties.isCorrelatedSamplingModeOn() );
 
-  properties.setWeightedInterpolationModeOn();
+  properties.setCorrelatedSamplingModeOn();
   
-  TEST_ASSERT( properties.isWeightedInterpolationModeOn() );
+  TEST_ASSERT( properties.isCorrelatedSamplingModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that unit based interpolation mode can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setUnitBasedInterpolationModeOffOn )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  properties.setUnitBasedInterpolationModeOff();
+
+  TEST_ASSERT( !properties.isUnitBasedInterpolationModeOn() );
+
+  properties.setUnitBasedInterpolationModeOn();
+  
+  TEST_ASSERT( properties.isUnitBasedInterpolationModeOn() );
 }
 
 //---------------------------------------------------------------------------//

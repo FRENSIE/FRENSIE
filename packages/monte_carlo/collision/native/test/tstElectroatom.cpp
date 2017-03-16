@@ -1012,8 +1012,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution(
             new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
+                data_container.getAtomicNumber(),
                 b_energy_loss_function,
-                data_container.getAtomicNumber() ) );
+                true,
+                true ) );
 
 
     // Create the bremsstrahlung scattering reaction

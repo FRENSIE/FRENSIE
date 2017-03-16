@@ -52,7 +52,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_detailed_brem )
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::TWOBS_DISTRIBUTION );
   properties.setLinLinLogInterpolationModeOff();
-  properties.setWeightedInterpolationModeOn();
+  properties.setUnitBasedInterpolationModeOn();
   properties.setElasticCutoffAngleCosine( 1.0 );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );
@@ -208,7 +208,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
 
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
-  properties.setWeightedInterpolationModeOff();
+  properties.setUnitBasedInterpolationModeOff();
   properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );

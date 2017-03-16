@@ -43,6 +43,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
     new ElectroionizationSubshellElectronScatteringDistribution(
         subshell_distribution,
         binding_energy,
+        true,
         false ) );
 }
 

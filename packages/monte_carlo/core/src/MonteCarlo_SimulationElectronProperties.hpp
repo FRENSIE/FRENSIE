@@ -103,14 +103,23 @@ public:
   //! Return if secondary electron LinLinLog interpolation mode is on
   bool isLinLinLogInterpolationModeOn() const;
 
-  //! Set weighted interpolation mode to off (on by default)
-  void setWeightedInterpolationModeOff();
+  //! Set correlated sampling mode to off (on by default)
+  void setCorrelatedSamplingModeOff();
 
-  //! Set weighted interpolation mode to on (on by default)
-  void setWeightedInterpolationModeOn();
+  //! Set correlated sampling mode to on (on by default)
+  void setCorrelatedSamplingModeOn();
 
-  //! Return if weighted interpolation mode is on
-  bool isWeightedInterpolationModeOn() const;
+  //! Return if correlated sampling mode is on
+  bool isCorrelatedSamplingModeOn() const;
+
+  //! Set unit based interpolation mode to off (on by default)
+  void setUnitBasedInterpolationModeOff();
+
+  //! Set unit based interpolation mode to on (on by default)
+  void setUnitBasedInterpolationModeOn();
+
+  //! Return if unit based interpolation mode is on
+  bool isUnitBasedInterpolationModeOn() const;
 
   //! Set the bremsstrahlung photon angular distribution function (2BS by default)
   void setBremsstrahlungAngularDistributionFunction(
@@ -165,9 +174,13 @@ private:
    * (true = on - default, false = off) */
   bool d_linlinlog_interpolation_mode_on;
 
-  /* The weighted interpolation mode for bremsstrahlung and electroionization
+  /* The correlated sampling mode for bremsstrahlung and electroionization
    * (true = on - default, false = off) */
-  bool d_weighted_interpolation_mode_on;
+  bool d_correlated_sampling_mode_on;
+
+  /* The unit based interpolation mode for bremsstrahlung and electroionization
+   * (true = on - default, false = off) */
+  bool d_unit_based_interpolation_mode_on;
 
   // The bremsstrahlung photon angular distribution function (default is 2BS)
   BremsstrahlungAngularDistributionType

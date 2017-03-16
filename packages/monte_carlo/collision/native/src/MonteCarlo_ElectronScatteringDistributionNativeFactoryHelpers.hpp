@@ -80,14 +80,18 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const bool use_linlinlog_interpolation,
-    const bool use_weighted_sampling );
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
+    const double evalation_tol = 1e-7 );
 
 //! Create a detailed 2BS bremsstrahlung distribution
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const bool use_linlinlog_interpolation,
-    const bool use_weighted_sampling );
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
+    const double evalation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//
 //      ****ELECTROIONIZATION SUBSHELL DISTRIBUTIONS****
@@ -98,8 +102,10 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
     const double binding_energy,
-    const bool use_linlinlog_interpolation = true,
-    const bool use_weighted_sampling = true );
+    const bool use_linlinlog_interpolation,
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
+    const double evalation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//
 //      ****ATOMIC EXCITATION DISTRIBUTION****

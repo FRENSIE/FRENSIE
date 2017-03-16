@@ -57,13 +57,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate )
 {
   // LinLinLin interpoation used.
   double pdf = twobs_brem_dist->evaluate( 1.0e-5, 1.0e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.5374950921491210e+05, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065521386e5, 1e-12 );
 
   pdf = twobs_brem_dist->evaluate( 9.0e-4, 9.0e-4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.3441621323129615e+02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.64260698105842E+02, 1e-12 );
 
   pdf = twobs_brem_dist->evaluate( 1.0e5, 2.0e4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.363940131180460E-06, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.36394013118046E-06, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -72,13 +72,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluatePDF )
 {
   // LinLinLin interpoation used.
   double pdf = twobs_brem_dist->evaluatePDF( 1.0e-5, 1.0e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.5374950921491210e+05, 1e-12 );
-
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065521386e5, 1e-12 );
+std::cout << std::setprecision(20) << pdf << std::endl;
   pdf = twobs_brem_dist->evaluatePDF( 9.0e-4, 9.0e-4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.3441621323129615e+02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.64260698105842E+02, 1e-12 );
 
   pdf = twobs_brem_dist->evaluatePDF( 1.0e5, 2.0e4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.363940131180460E-06, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.36394013118046E-06, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -89,7 +89,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   // LinLinLin interpoation used.
   double cdf = twobs_brem_dist->evaluateCDF( 1.0e-5, 1.0e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 4.974034148027E-01, 1e-12 );
-
+std::cout << std::setprecision(20) << cdf << std::endl;
   cdf = twobs_brem_dist->evaluateCDF( 9.0e-4, 9.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
 
@@ -372,13 +372,15 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the scattering distributions
   ace_dipole_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-      scattering_distribution,
-      false ) );
+        scattering_distribution,
+        true,
+        false ) );
 
   twobs_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
         xss_data_extractor->extractAtomicNumber(),
         scattering_distribution,
+        true,
         false ) );
 
   // Clear setup data

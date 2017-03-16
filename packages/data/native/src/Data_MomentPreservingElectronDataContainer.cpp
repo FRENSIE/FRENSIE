@@ -167,15 +167,9 @@ void MomentPreservingElectronDataContainer::setNumberOfDiscreteAngles(
 
 // Set the moment preserving discrete angles for an angular energy bin
 void MomentPreservingElectronDataContainer::setMomentPreservingDiscreteAngles(
-		     const unsigned angular_energy_bin,
-		     const std::vector<double>& moment_preserving_elastic_discrete_angles )
-{/*
-std::cout << "angular_energy_bin =\t" << angular_energy_bin << std::endl;
-std::cout << "angular_energy =\t" << d_angular_energy_grid[angular_energy_bin] << std::endl;
-std::cout << "# of angles =\t" << moment_preserving_elastic_discrete_angles.size() << std::endl;
-std::cout << "angle 1 =\t" << moment_preserving_elastic_discrete_angles[0] << std::endl;
-std::cout << "angle 2 =\t" << moment_preserving_elastic_discrete_angles[1] << std::endl;
-*/
+         const unsigned angular_energy_bin,
+         const std::vector<double>& moment_preserving_elastic_discrete_angles )
+{
   // Make sure the angular_energy_bin is valid
   testPrecondition( angular_energy_bin >= 0 );
   testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );

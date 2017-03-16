@@ -25,14 +25,16 @@ public:
   static void createBremsstrahlungDistribution(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-        scattering_distribution );
+        scattering_distribution,
+    const double evaluation_tol = 1e-7 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
+    const int atomic_number,
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const int atomic_number );
+    const double evaluation_tol = 1e-7 );
 
 protected:
 
@@ -40,7 +42,8 @@ protected:
   static void createScatteringFunction(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-        scattering_function );
+        scattering_function,
+    const double evaluation_tol );
 };
 
 } // end MonteCarlo namespace

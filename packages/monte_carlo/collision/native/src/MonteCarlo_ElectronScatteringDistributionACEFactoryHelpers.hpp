@@ -33,12 +33,14 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> c
 
 //! Create a simple dipole bremsstrahlung distribution
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
-    const Data::XSSEPRDataExtractor& raw_electroatom_data );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    const double evalation_tol = 1e-7 );
 
 //! Create a detailed 2BS bremsstrahlung distribution
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
+    const int atomic_number,
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const int atomic_number );
+    const double evalation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//
 //      ****ELECTROIONIZATION SUBSHELL DISTRIBUTIONS****
@@ -47,7 +49,8 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> 
 //! Create a electroionization subshell distribution
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> createElectroionizationSubshellDistribution(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const unsigned subshell );
+    const unsigned subshell,
+    const double evalation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//
 //      ****ATOMIC EXCITATION DISTRIBUTION****

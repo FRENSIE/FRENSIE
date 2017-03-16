@@ -222,28 +222,28 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         1.70425200079801E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 8.98798115483380890e+09, 1e-16 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 8.98798115483380890e+09, 1e-6 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         1.70425200079802E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 8.98798115483345795e+09, 1e-16 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 8.98798115483345795e+09, 1e-6 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         1.98284583249127E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 4.05339545566729546e+08, 1e-16 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 4.05339545566729546e+08, 1e-6 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         2.00191878322064E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 6.84837405212685317e+07, 1e-16 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 6.84837405212685317e+07, 1e-6 );
 
   // Last subshell
   diff_cross_section =
@@ -412,8 +412,8 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
     first_subshell_loc,
     num_tables[first_subshell],
     binding_energies[first_subshell],
-	eion_block,
-	first_subshell_distribution );
+    eion_block,
+    first_subshell_distribution );
 
 
   // Set the max allowed adjoint energy
@@ -489,8 +489,8 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
     last_subshell_loc,
     num_tables[last_subshell],
     binding_energies[last_subshell],
-	eion_block,
-	last_subshell_distribution );
+    eion_block,
+    last_subshell_distribution );
 
   // Create the reaction
   ace_last_subshell_reaction.reset(
@@ -512,7 +512,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
     // Create the native data file container
     std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container;
     data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
-						     test_native_file_name ) );
+                                                    test_native_file_name ) );
 
     // Extract the common electron energy grid
     Teuchos::ArrayRCP<double> energy_grid;
@@ -557,7 +557,10 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
-        electroionization_subshell_distribution );
+        electroionization_subshell_distribution,
+        true,
+        true,
+        1e-7 );
 
 
     // Create the subshell electroelectric reaction
@@ -570,9 +573,9 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
                 subshell_type,
                 electroionization_subshell_distribution ) );
 
-  // For the last subshell
-  shell = data_container->getSubshells().end();
-  --shell;
+    // For the last subshell
+    shell = data_container->getSubshells().end();
+    --shell;
 
     // Convert subshell number to enum
     subshell_type =
@@ -595,7 +598,8 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
         data_container->getSubshellBindingEnergy( *shell ),
         electroionization_subshell_distribution,
         true,
-        1e-6 );
+        true,
+        1e-7 );
 
 
     // Create the subshell electroelectric reaction

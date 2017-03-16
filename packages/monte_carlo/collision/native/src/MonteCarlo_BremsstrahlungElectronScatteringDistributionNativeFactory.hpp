@@ -28,7 +28,8 @@ public:
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_interpolation = true,
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
     const double evaluation_tol = 1e-6 );
 
   //! Create a simple dipole bremsstrahlung distribution
@@ -37,7 +38,8 @@ public:
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_interpolation = true,
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
     const double evaluation_tol = 1e-6 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
@@ -47,7 +49,8 @@ public:
     const int atomic_number,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_interpolation = true,
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
     const double evaluation_tol = 1e-6 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
@@ -58,7 +61,8 @@ public:
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_weighted_interpolation = true,
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
     const double evaluation_tol = 1e-6 );
 
   //! Create the energy loss function

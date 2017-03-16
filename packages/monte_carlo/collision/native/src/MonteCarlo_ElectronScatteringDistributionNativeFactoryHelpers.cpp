@@ -298,7 +298,9 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
 std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const bool use_linlinlog_interpolation,
-    const bool use_weighted_sampling )
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
+    const double evalation_tol )
 {
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
@@ -306,12 +308,20 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
   if (use_linlinlog_interpolation)
   {
   BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
-    data_container, distribution, use_weighted_sampling );
+    data_container,
+    distribution,
+    use_correlated_sampling,
+    use_unit_based_interpolation,
+    evalation_tol );
   }
   else
   {
   BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
-    data_container, distribution, use_weighted_sampling );
+    data_container,
+    distribution,
+    use_correlated_sampling,
+    use_unit_based_interpolation,
+    evalation_tol );
   }
 
   return distribution;
@@ -322,7 +332,9 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
     const bool use_linlinlog_interpolation,
-    const bool use_weighted_sampling )
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
+    const double evalation_tol )
 {
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
@@ -331,17 +343,21 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
   {
   BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
     data_container,
-    distribution,
     data_container.getAtomicNumber(),
-    use_weighted_sampling );
+    distribution,
+    use_correlated_sampling,
+    use_unit_based_interpolation,
+    evalation_tol );
   }
   else
   {
   BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
     data_container,
-    distribution,
     data_container.getAtomicNumber(),
-    use_weighted_sampling );
+    distribution,
+    use_correlated_sampling,
+    use_unit_based_interpolation,
+    evalation_tol );
   }
 
   return distribution;
@@ -357,7 +373,9 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
     const unsigned subshell,
     const double binding_energy,
     const bool use_linlinlog_interpolation,
-    const bool use_weighted_sampling )
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
+    const double evalation_tol )
 {
   std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
     distribution;
@@ -365,12 +383,24 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
   if (use_linlinlog_interpolation)
   {
     ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
-    data_container, subshell, binding_energy, distribution );
+    data_container,
+    subshell,
+    binding_energy,
+    distribution,
+    use_correlated_sampling,
+    use_unit_based_interpolation,
+    evalation_tol );
   }
   else
   {
     ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin>(
-    data_container, subshell, binding_energy, distribution );
+    data_container,
+    subshell,
+    binding_energy,
+    distribution,
+    use_correlated_sampling,
+    use_unit_based_interpolation,
+    evalation_tol );
   }
 
   return distribution;

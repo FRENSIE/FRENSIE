@@ -106,9 +106,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sample_TwoBSBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+                                    xss_data_extractor->extractAtomicNumber(),
                                     *xss_data_extractor,
-                                    twobs_distribution,
-                                    xss_data_extractor->extractAtomicNumber() );
+                                    twobs_distribution );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
@@ -140,9 +140,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials_TwoBSBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+                                    xss_data_extractor->extractAtomicNumber(),
                                     *xss_data_extractor,
-                                    twobs_distribution,
-                                    xss_data_extractor->extractAtomicNumber() );
+                                    twobs_distribution );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );

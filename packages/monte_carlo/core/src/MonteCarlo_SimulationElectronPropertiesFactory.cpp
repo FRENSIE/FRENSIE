@@ -100,11 +100,18 @@ void SimulationElectronPropertiesFactory::initializeProperties(
       electron_properties.setLinLinLogInterpolationModeOff();
   }
 
-  // Get the weighted interpolation mode - optional
-  if( properties.isParameter( "Electron Weighted Interpolation" ) )
+  // Get the correlated sampling mode - optional
+  if( properties.isParameter( "Electron Correlated Sampling" ) )
   {
-    if( !properties.get<bool>( "Electron Weighted Interpolation" ) )
-      electron_properties.setWeightedInterpolationModeOff();
+    if( !properties.get<bool>( "Electron Correlated Sampling" ) )
+      electron_properties.setCorrelatedSamplingModeOff();
+  }
+
+  // Get the unit based interpolation mode - optional
+  if( properties.isParameter( "Electron Unit Based Interpolation" ) )
+  {
+    if( !properties.get<bool>( "Electron Unit Based Interpolation" ) )
+      electron_properties.setUnitBasedInterpolationModeOff();
   }
 
   // Get the bremsstrahlung photon angular distribution function - optional

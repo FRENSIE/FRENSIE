@@ -25,7 +25,8 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
-    const bool use_weighted_interpolation,
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation,
     const double evaluation_tol )
 {
   // Get the energies for which knock-on sampling tables are given
@@ -46,7 +47,8 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
     new ElectroionizationSubshellElectronScatteringDistribution(
             subshell_distribution,
             binding_energy,
-            use_weighted_interpolation ) );
+            use_correlated_sampling,
+            use_unit_based_interpolation ) );
 }
 
 // Create the subshell recoil distribution

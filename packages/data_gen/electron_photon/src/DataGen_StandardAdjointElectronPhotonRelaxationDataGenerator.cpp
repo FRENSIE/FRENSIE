@@ -71,6 +71,9 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_adjoint_electron_grid_convergence_tol( 0.001 ),
     d_adjoint_electron_absolute_diff_tol( 1e-16 ),
     d_adjoint_electron_distance_tol( 1e-8 ),
+    d_electron_evaluation_tol( 1e-8 ),
+    d_electron_correlated_sampling( true ),
+    d_electron_unit_based_interpolation( true ),
     d_adjoint_bremsstrahlung_max_energy_nudge_value( 0.2 ),
     d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value( 1e-7 ),
     d_adjoint_bremsstrahlung_evaluation_tol( 1e-6 ),
@@ -503,6 +506,52 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroio
   return d_adjoint_electroionization_distance_tol;
 }
 
+
+
+
+// Set the electron FullyTabularTwoDDistribution evaluation tolerance
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronEvaluationTolerance(
+                        const double electron_evaluation_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( electron_evaluation_tol < 1.0 );
+  testPrecondition( electron_evaluation_tol > 0.0 );
+
+  d_electron_evaluation_tol = electron_evaluation_tol;
+}
+
+// Get the electron FullyTabularTwoDDistribution evaluation tolerance
+double StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronEvaluationTolerance() const
+{
+  return d_electron_evaluation_tol;
+}
+
+// Set the electron FullyTabularTwoDDistribution correlated sampling
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronCorrelatedSampling(
+                        const bool electron_correlated_sampling )
+{
+  d_electron_correlated_sampling = electron_correlated_sampling;
+}
+
+// Get the electron FullyTabularTwoDDistribution correlated sampling
+bool StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronCorrelatedSampling() const
+{
+  return d_electron_correlated_sampling;
+}
+
+// Set the electron FullyTabularTwoDDistribution unit based interpolation
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronUnitBasedInterpolation(
+                        const bool electron_unit_based_interpolation )
+{
+  d_electron_unit_based_interpolation = electron_unit_based_interpolation;
+}
+
+// Get the electron FullyTabularTwoDDistribution unit based interpolation
+bool StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronUnitBasedInterpolation() const
+{
+  return d_electron_unit_based_interpolation;
+}
+
 // Set the adjoint electron grid convergence tolerance
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronGridConvergenceTolerance(
                         const double adjoint_electron_grid_convergence_tol )
@@ -542,6 +591,8 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectronD
 {
   return d_adjoint_electron_distance_tol;
 }
+
+
 
 // Populate the adjoint electron-photon-relaxation data container
 void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
@@ -2355,7 +2406,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
     forward_electron_energy_grid,
     forward_grid_searcher,
     bremsstrahlung_reaction,
-    MonteCarlo::DIPOLE_DISTRIBUTION );
+    MonteCarlo::DIPOLE_DISTRIBUTION,
+    d_electron_correlated_sampling,
+    d_electron_unit_based_interpolation );
 
   brem_grid_generators.reset(
     new BremsstrahlungGridGenerator(
@@ -2391,7 +2444,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
     forward_electron_energy_grid,
     forward_grid_searcher,
     shell,
-    electroionization_subshell_reaction );
+    electroionization_subshell_reaction,
+    d_electron_correlated_sampling,
+    d_electron_unit_based_interpolation );
 
   /* The max energy nudge value should be greater than the binding energy (a
     * factor of two is used to help with convergence). The energy to outgoing

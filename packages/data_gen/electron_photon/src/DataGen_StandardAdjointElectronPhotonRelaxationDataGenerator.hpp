@@ -173,6 +173,27 @@ public:
   //! Get the adjoint electron distance tolerance
   double getAdjointElectronDistanceTolerance() const;
 
+  //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
+  void setElectronEvaluationTolerance(
+                        const double electron_evaluation_tol );
+
+  //! Get the electron FullyTabularTwoDDistribution evaluation tolerance
+  double getElectronEvaluationTolerance() const;
+
+  //! Set the electron FullyTabularTwoDDistribution correlated sampling
+  void setElectronCorrelatedSampling(
+                        const bool electron_correlated_sampling );
+
+  //! Get the electron FullyTabularTwoDDistribution correlated sampling
+  bool getElectronCorrelatedSampling() const;
+
+  //! Set the electron FullyTabularTwoDDistribution unit based interpolation
+  void setElectronUnitBasedInterpolation(
+                        const bool electron_unit_based_interpolation );
+
+  //! Get the electron FullyTabularTwoDDistribution unit based interpolation
+  bool getElectronUnitBasedInterpolation() const;
+
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
   
@@ -484,6 +505,15 @@ private:
 
   // The adjoint electron distance tolerance
   double d_adjoint_electron_distance_tol;
+
+  // The electron FullyTabularTwoDDistribution evaluation tolerance
+  double d_electron_evaluation_tol;
+
+  // The electron bool to use correlated sampling
+  bool d_electron_correlated_sampling;
+
+  // The electron bool to use unit based interpolation
+  bool d_electron_unit_based_interpolation;
 
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;

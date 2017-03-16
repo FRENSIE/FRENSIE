@@ -28,7 +28,8 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_electroionization_mode_on( true ),
     d_atomic_excitation_mode_on( true ),
     d_linlinlog_interpolation_mode_on( true ),
-    d_weighted_interpolation_mode_on( true ),
+    d_correlated_sampling_mode_on( true ),
+    d_unit_based_interpolation_mode_on( true ),
     d_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_elastic_cutoff_angle_cosine( 1.0 ),
     d_num_electron_hash_grid_bins( 1000 )
@@ -198,22 +199,40 @@ bool SimulationElectronProperties::isLinLinLogInterpolationModeOn() const
   return d_linlinlog_interpolation_mode_on;
 }
 
-// Set weighted interpolation mode to off (on by default)
-void SimulationElectronProperties::setWeightedInterpolationModeOff()
+// Set correlated sampling mode to off (on by default)
+void SimulationElectronProperties::setCorrelatedSamplingModeOff()
 {
-  d_weighted_interpolation_mode_on = false;
+  d_correlated_sampling_mode_on = false;
 }
 
-// Set weighted interpolation mode to on (on by default)
-void SimulationElectronProperties::setWeightedInterpolationModeOn()
+// Set correlated sampling mode to on (on by default)
+void SimulationElectronProperties::setCorrelatedSamplingModeOn()
 {
-  d_weighted_interpolation_mode_on = true;
+  d_correlated_sampling_mode_on = true;
 }
 
-// Return if weighted interpolation mode is on
-bool SimulationElectronProperties::isWeightedInterpolationModeOn() const
+// Return if correlated sampling mode is on
+bool SimulationElectronProperties::isCorrelatedSamplingModeOn() const
 {
-  return d_weighted_interpolation_mode_on;
+  return d_correlated_sampling_mode_on;
+}
+
+// Set unit based interpolation mode to off (on by default)
+void SimulationElectronProperties::setUnitBasedInterpolationModeOff()
+{
+  d_unit_based_interpolation_mode_on = false;
+}
+
+// Set unit based interpolation mode to on (on by default)
+void SimulationElectronProperties::setUnitBasedInterpolationModeOn()
+{
+  d_unit_based_interpolation_mode_on = true;
+}
+
+// Return if unit based interpolation mode is on
+bool SimulationElectronProperties::isUnitBasedInterpolationModeOn() const
+{
+  return d_unit_based_interpolation_mode_on;
 }
 
 // Set the bremsstrahlung photon angular distribution function (2BS by default)

@@ -41,7 +41,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluate(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy > incoming_energy );
 
-  // evaluate the distribution using a weighted interpolation scheme
+  // evaluate the distribution
   return d_ionization_subshell_dist->evaluateExact(
             incoming_energy,
             outgoing_energy );
@@ -56,7 +56,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluateP
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy > incoming_energy );
 
-  // evaluate the distribution using a weighted interpolation scheme
+  // evaluate the distribution
   return d_ionization_subshell_dist->evaluateSecondaryConditionalPDFExact(
             incoming_energy,
             outgoing_energy );
@@ -71,7 +71,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluateC
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy > incoming_energy );
 
-  // evaluate the distribution using a weighted interpolation scheme
+  // evaluate the distribution
   return d_ionization_subshell_dist->evaluateSecondaryConditionalCDFExact(
             incoming_energy,
             outgoing_energy );

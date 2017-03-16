@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
     ace_electroionization_distribution->getBindingEnergy();
 
   // Test original electron
-  TEST_EQUALITY_CONST( binding_energy, 8.829000000000E-02 );
+  TEST_EQUALITY_CONST( binding_energy, 8.8290E-02 );
 }
 
 //---------------------------------------------------------------------------//
@@ -190,7 +190,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 /* Note: This tests a bug that caused electroionization to return non-realistic
- * knock-on energies. A weighted sampling routine was used to fix the problem.
+ * knock-on energies. A unit based sampling routine was used to fix the problem.
  */
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    sample_knock_on_native )
@@ -432,13 +432,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
             function_data,
             1e-6,
-            1e-16 ) );
+            1e-13 ) );
 
   // Create the distributions
   ace_electroionization_distribution.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
                             binding_energies[subshell],
+                            true,
                             false ) );
 
   // Clear setup data
@@ -499,6 +500,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
                             binding_energy,
+                            true,
                             true ) );
   }
 

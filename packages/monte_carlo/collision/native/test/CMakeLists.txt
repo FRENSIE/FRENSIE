@@ -1,11 +1,5 @@
 ADD_SUBDIRECTORY(test_files)
 
-ADD_EXECUTABLE(tstTwoDDistributionHelpers
-  tstTwoDDistributionHelpers.cpp)
-TARGET_LINK_LIBRARIES(tstTwoDDistributionHelpers monte_carlo_collision_native)
-ADD_TEST(TwoDDistributionHelpers_test tstTwoDDistributionHelpers)
-SET_PROPERTY(TEST TwoDDistributionHelpers_test PROPERTY LABELS helpers)
-
 ADD_EXECUTABLE(tstAceLaw1NuclearScatteringEnergyDistribution
   tstAceLaw1NuclearScatteringEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAceLaw1NuclearScatteringEnergyDistribution monte_carlo_collision_native)

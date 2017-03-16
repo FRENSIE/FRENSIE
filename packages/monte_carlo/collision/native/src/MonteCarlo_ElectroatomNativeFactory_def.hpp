@@ -111,7 +111,8 @@ void ElectroatomNativeFactory::createElectroatomCore(
                     grid_searcher,
                     reaction_pointer,
                     properties.getBremsstrahlungAngularDistributionFunction(),
-                    properties.isWeightedInterpolationModeOn() );
+                    properties.isCorrelatedSamplingModeOn(),
+                    properties.isUnitBasedInterpolationModeOn() );
   }
 
   // Create the atomic excitation scattering reaction
@@ -132,12 +133,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
   {
   std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
-  ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction, SecondInterpPolicy>(
+  ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,SecondInterpPolicy>(
                                raw_electroatom_data,
                                energy_grid,
                                grid_searcher,
                                reaction_pointers,
-                               properties.isWeightedInterpolationModeOn() );
+                               properties.isCorrelatedSamplingModeOn(),
+                               properties.isUnitBasedInterpolationModeOn() );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {

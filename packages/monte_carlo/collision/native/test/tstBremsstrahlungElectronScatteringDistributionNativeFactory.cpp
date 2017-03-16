@@ -42,6 +42,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
                                                  *data_container,
                                                  dipole_distribution,
+                                                 true,
                                                  true );
 
   // Set up the random number stream
@@ -74,6 +75,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
                                                  *data_container,
                                                  dipole_distribution,
+                                                 true,
                                                  true );
 
   // Set up the random number stream
@@ -101,11 +103,12 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the sample() function for a dipole distribution
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
-                   sample_no_weighted )
+                   sample_exact )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
                                                  *data_container,
                                                  dipole_distribution,
+                                                 true,
                                                  false );
 
   // Set up the random number stream
@@ -133,11 +136,12 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the sample() function for a dipole distribution
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
-                   sample_LinLinLin_no_weighted )
+                   sample_LinLinLin_exact )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
                                                  *data_container,
                                                  dipole_distribution,
+                                                 true,
                                                  false );
 
   // Set up the random number stream
@@ -170,6 +174,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
                                                  *data_container,
                                                  dipole_distribution,
+                                                 true,
                                                  true );
 
   // Set up the random number stream
@@ -204,6 +209,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                     *data_container,
                     data_container->getAtomicNumber(),
                     twobs_distribution,
+                    true,
                     true );
 
   // Set up the random number stream
@@ -239,6 +245,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                     *data_container,
                     data_container->getAtomicNumber(),
                     twobs_distribution,
+                    true,
                     true );
 
   // Set up the random number stream

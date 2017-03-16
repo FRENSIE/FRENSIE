@@ -34,26 +34,32 @@ public:
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool use_normalized_interpolation = true );
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation );
 
   //! Constructor with detailed 2BS photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const int atomic_number,
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool use_normalized_interpolation );
+    const bool use_correlated_sampling,
+    const bool use_unit_based_interpolation );
 
   //! Destructor
   virtual ~BremsstrahlungElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Set the sampling routine
+  void setSamplingRoutine( const bool use_correlated_sampling,
+                           const bool use_unit_based_interpolation );
+
+  //! Set the evalation routines
+  void setEvaluationRoutines( const bool use_unit_based_interpolation );
 
   //! Return the min incoming energy
   double getMinEnergy() const;
 
   //! Return the Max incoming energy
   double getMaxEnergy() const;
-
-  //! Return if normalized sampling is on
-  bool isNormalizedSamplingOn() const;
 
   //! Evaluate the distribution for a given incoming and photon energy
   double evaluate( const double incoming_energy,
@@ -85,11 +91,38 @@ public:
 
 private:
 
-  //! Sample a secondary energy from the distribution
-  double sampleNormalized( const double incoming_energy ) const;
+  //! Evaluate the distribution for a given incoming and photon energy
+  double correlatedEvaluateUnitBased( const double incoming_energy,
+                                      const double photon_energy ) const;
+
+  //! Evaluate the distribution for a given incoming and photon energy
+  double correlatedEvaluateExact( const double incoming_energy,
+                                  const double photon_energy ) const;
+
+  //! Evaluate the PDF value for a given incoming and photon energy
+  double correlatedEvaluatePDFUnitBased( const double incoming_energy,
+                                         const double photon_energy ) const;
+
+  //! Evaluate the PDF value for a given incoming and photon energy
+  double correlatedEvaluatePDFExact( const double incoming_energy,
+                                     const double photon_energy ) const;
+
+  //! Evaluate the CDF value for a given incoming and photon energy
+  double correlatedEvaluateCDFUnitBased( const double incoming_energy,
+                                         const double photon_energy ) const;
+
+  //! Evaluate the CDF value for a given incoming and photon energy
+  double correlatedEvaluateCDFExact( const double incoming_energy,
+                                     const double photon_energy ) const;
 
   //! Sample a secondary energy from the distribution
-  double sampleExact( const double incoming_energy ) const;
+  double sampleUnitBased( const double incoming_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double correlatedSampleUnitBased( const double incoming_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double correlatedSampleExact( const double incoming_energy ) const;
 
   // Sample the outgoing photon angle from a dipole distribution
   double SampleDipoleAngle(  const double incoming_electron_energy,
@@ -111,21 +144,21 @@ private:
   // bremsstrahlung scattering distribution
   std::shared_ptr<TwoDDist> d_bremsstrahlung_scattering_distribution;
 
-  // upper cutoff energy for the condensed-history method
-  double d_upper_cutoff_energy;
-
-  // lower cutoff energy for the condensed-history method
-  double d_lower_cutoff_energy;
-
-  // Bool to use a normalized interpolation routine to sample the distribution
-  bool d_use_normalized_interpolation;
-
   // The outgoing angle function pointer
   std::function<double ( const double, const double )>
                                         d_angular_distribution_func;
 
   // The sample function pointer
   std::function<double ( const double )> d_sample_func;
+
+  // The evaluate function pointer
+  std::function<double ( const double, const double )> d_evaluate_func;
+
+  // The evaluatePDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_pdf_func;
+
+  // The evaluateCDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_cdf_func;
 
 };
 

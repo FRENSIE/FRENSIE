@@ -36,27 +36,29 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
 
 //! Create a simple dipole bremsstrahlung distribution
 std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
-    const Data::XSSEPRDataExtractor& raw_electroatom_data )
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    const double evalation_tol )
 {
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
 
   BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
-    raw_electroatom_data, distribution );
+    raw_electroatom_data, distribution, evalation_tol );
 
   return distribution;
 }
 
 //! Create a detailed 2BS bremsstrahlung distribution
 std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
+    const int atomic_number,
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const int atomic_number )
+    const double evalation_tol )
 {
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
 
   BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
-    raw_electroatom_data, distribution, atomic_number );
+    atomic_number, raw_electroatom_data, distribution, evalation_tol );
 
   return distribution;
 }
@@ -68,7 +70,8 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
 //! Create a electroionization subshell distribution
 std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> createElectroionizationSubshellDistribution(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const unsigned subshell )
+    const unsigned subshell,
+    const double evalation_tol )
 {
   std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
     distribution;
@@ -130,7 +133,8 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
     num_tables[subshell],
     binding_energies[subshell],
     eion_block,
-    distribution );
+    distribution,
+    evalation_tol );
 
   return distribution;
 }

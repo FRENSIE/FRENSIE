@@ -49,6 +49,7 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
     d_ace_epr_data( ace_epr_data ),
     d_endl_data_container( endl_data_container ),
     d_os_log( os_log ),
+    d_tabular_evaluation_tol( 1e-7 ),
     d_occupation_number_evaluation_tolerance( 1e-3 ),
     d_subshell_incoherent_evaluation_tolerance( 1e-3 ),
     d_photon_threshold_energy_nudge_factor( 1.0001 ),
@@ -150,6 +151,23 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
                         os_log,
                         &std::cerr )
 { /* ... */ }
+
+// Set the FullyTabularTwoDDistribution evaluation tolerance
+void StandardElectronPhotonRelaxationDataGenerator::setTabularEvaluationTolerance(
+    const double evaluation_tolerance )
+{
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tolerance > 0.0 );
+  testPrecondition( evaluation_tolerance < 1.0 );
+
+  d_tabular_evaluation_tol = evaluation_tolerance;
+}
+
+// Get the FullyTabularTwoDDistribution evaluation tolerance
+double StandardElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolerance() const
+{
+  return d_tabular_evaluation_tol;
+}
 
 // Set the occupation number evaluation tolerance
 void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberEvaluationTolerance(
