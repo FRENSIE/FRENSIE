@@ -61,6 +61,9 @@ void RootModel::initialize( const RootModelProperties& model_properties,
     // Cache the model properties
     d_model_properties.reset( new RootModelProperties( model_properties ) );
     
+    FRENSIE_LOG_ROOT_NOTIFICATION( "Loading model "
+                                   << d_model_properties->getModelFileName() <<
+                                   " ..." );
     try{
       this->loadRootGeometry( root_init_verbosity );
     }
@@ -83,17 +86,20 @@ void RootModel::initialize( const RootModelProperties& model_properties,
     EXCEPTION_CATCH_RETHROW( InvalidRootGeometry,
                              "Invalid root geometry detected!" );
 
-    // Flush all logs
+    FRENSIE_LOG_ROOT_NOTIFICATION( "Finished loading model!" );
     FRENSIE_FLUSH_ALL_LOGS();
+  }
+  else
+  {
+    FRENSIE_LOG_ROOT_WARNING( "Cannot load requested model ("
+                              << model_properties.getModelFileName() <<
+                              ") because a model has already been loaded!" );
   }
 }
 
 // Load the Root geometry file
 void RootModel::loadRootGeometry( const int root_init_verbosity )
 {
-  FRENSIE_LOG_ROOT_NOTIFICATION(
-               "Loading " << d_model_properties->getModelFileName() << "..." );
-  
   // Tell Root to suppress all message below the requested verbosity level
   gErrorIgnoreLevel = root_init_verbosity;
 
@@ -117,12 +123,13 @@ void RootModel::loadRootGeometry( const int root_init_verbosity )
   // Lock the geometry so no other geometries can be imported
   TGeoManager::LockGeometry();
 
+  // Set up thread support so that navigators can be constructed and
+  // destructed correctly (the number passed into this method simply needs)
+  // to be greater than 1)
+  d_manager->SetMaxThreads( 2 );
+
   // Tell Root to suppress all message below the warning level after this point
   gErrorIgnoreLevel = kWarning;
-
-  FRENSIE_LOG_ROOT_NOTIFICATION(
-        "Finished loading " << d_model_properties->getModelFileName() << "!" );
-  FRENSIE_FLUSH_ALL_LOGS();
 }
 
 // Create the cell id to unique id map
@@ -383,7 +390,7 @@ bool RootModel::isVoidCell(
   // Make sure the cell exists
   testPrecondition( RootModel::doesCellExist( cell_id ) );
 
-  return this->isTerminationVolume( this->getVolumePtr( cell_id ) );
+  return this->isVoidVolume( this->getVolumePtr( cell_id ) );
 }
 
 // Check if the volume is a void volume

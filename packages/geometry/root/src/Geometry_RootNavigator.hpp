@@ -56,6 +56,12 @@ public:
                          const double direction[3],
                          double normal[3] ) const override;
 
+  //! Find the cell that contains a given ray
+  ModuleTraits::InternalCellHandle findCellContainingRay(
+                                  const double position[3],
+                                  const double direction[3],
+                                  CellIdSet& found_cell_cache ) const override;
+
   //! Find the cell that contains the ray
   ModuleTraits::InternalCellHandle findCellContainingRay(
                                     const double position[3],

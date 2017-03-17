@@ -482,7 +482,7 @@ getArrayView( const Array& array,
 	      const typename ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() )
 {
   // Make sure that the offset is valid
-  testPrecondition( offset < ArrayTraits<Array>::size( array ) - 1 );
+  testPrecondition( offset < ArrayTraits<Array>::size( array ) );
 
   return ArrayTraits<Array>::view( array, offset, size );
 }

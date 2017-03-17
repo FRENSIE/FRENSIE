@@ -65,9 +65,9 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     // Cache the model properties
     d_model_properties.reset( new DagMCModelProperties( model_properties ) );
     
-    FRENSIE_LOG_DAGMC_NOTIFICATION( "Loading DagMC model "
+    FRENSIE_LOG_DAGMC_NOTIFICATION( "Loading model "
                                     << d_model_properties->getModelFileName()
-                                    << "..." );
+                                    << " ..." );
     FRENSIE_FLUSH_ALL_LOGS();
 
     try{
@@ -113,13 +113,13 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to extract the reflecting surfaces!" );
 
-    FRENSIE_LOG_DAGMC_NOTIFICATION( "Finished loading DagMC model!" );
+    FRENSIE_LOG_DAGMC_NOTIFICATION( "Finished loading model!" );
     FRENSIE_FLUSH_ALL_LOGS();
   }
   // A model has already been loaded - ignore new model
   else
   {
-    FRENSIE_LOG_DAGMC_WARNING( "Cannot load requested DagMC model ("
+    FRENSIE_LOG_DAGMC_WARNING( "Cannot load requested model ("
                                << model_properties.getModelFileName() <<
                                ") because a model has already been loaded!" );
   }

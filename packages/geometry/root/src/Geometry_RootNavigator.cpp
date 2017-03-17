@@ -110,11 +110,30 @@ void RootNavigator::getSurfaceNormal(
                                                 local_direction,
                                                 local_normal );
 
-  node->LocalToMaster( local_direction, normal );
+  node->LocalToMaster( local_normal, normal );
 
   // Make sure that the normal is a unit vector
   if( !Utility::isUnitVector( normal ) )
     Utility::normalizeVector( normal );
+}
+
+// Find the cell that contains a given ray
+/*! \details The cache will not be used to speed up the search. The Root
+ * geometry must be traversed in order to find the correct cell when the
+ * ray lies on a cell boundary.
+ */
+ModuleTraits::InternalCellHandle RootNavigator::findCellContainingRay(
+                                            const double position[3],
+                                            const double direction[3],
+                                            CellIdSet& found_cell_cache ) const
+{
+  ModuleTraits::InternalCellHandle found_cell =
+    this->findCellContainingRay( position, direction );
+
+  // Add the new cell to the cache
+  found_cell_cache.insert( found_cell );
+
+  return found_cell;
 }
 
 // Find the cell that contains the ray
@@ -280,6 +299,9 @@ double RootNavigator::fireInternalRay(
 }
 
 // Advance the internal Root ray to the next boundary
+/*! \details Reflecting surfaces cannot be set in Root geometries so this
+ * method will always return false.
+ */
 bool RootNavigator::advanceInternalRayToCellBoundary( double* surface_normal )
 {
   // Make sure that the internal ray is set
@@ -290,6 +312,8 @@ bool RootNavigator::advanceInternalRayToCellBoundary( double* surface_normal )
   // Compute the surface normal at the boundary
   if( surface_normal != NULL )
     this->deepCopy( surface_normal, d_navigator->FindNormal() );
+
+  return false;
 }
 
 // Advance the internal Root ray a substep

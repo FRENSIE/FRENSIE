@@ -295,7 +295,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
 std::string xml_file_name;
-int threads;
+int threads = 1;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {

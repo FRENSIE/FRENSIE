@@ -85,10 +85,10 @@ public:
    * cache. A std::runtime_error (or class derived from it) will be thrown if 
    * an error occurs.
    */
-  ModuleTraits::InternalCellHandle findCellContainingRay(
-                                           const double position[3],
-                                           const double direction[3],
-                                           CellIdSet& found_cell_cache ) const;
+  virtual ModuleTraits::InternalCellHandle findCellContainingRay(
+                                       const double position[3],
+                                       const double direction[3],
+                                       CellIdSet& found_cell_cache ) const = 0;
 
   /*! Find the cell that contains a given ray
    *
@@ -263,38 +263,6 @@ inline void Navigator::getSurfaceNormal(
                           ray.getPosition(),
                           ray.getDirection(),
                           normal );
-}
-
-// Find the cell that contains a given ray
-inline ModuleTraits::InternalCellHandle Navigator::findCellContainingRay(
-                                            const double position[3],
-                                            const double direction[3],
-                                            CellIdSet& found_cell_cache ) const
-{
-  // Test the cells in the cache first
-  CellIdSet::const_iterator cell_cache_it, cell_cache_end;
-  cell_cache_it = found_cell_cache.begin();
-  cell_cache_end = found_cell_cache.end();
-
-  while( cell_cache_it != cell_cache_end )
-  {
-    PointLocation test_point_location =
-      this->getPointLocation( position, direction, *cell_cache_it );
-
-    if( test_point_location == POINT_INSIDE_CELL )
-      return *cell_cache_it;
-
-    ++cell_cache_it;
-  }
-
-  // Check all other cells
-  ModuleTraits::InternalCellHandle found_cell =
-    this->findCellContainingRay( position, direction );
-
-  // Add the new cell to the cache
-  found_cell_cache.insert( found_cell );
-
-  return found_cell;
 }
 
 // Find the cell that contains a given ray
