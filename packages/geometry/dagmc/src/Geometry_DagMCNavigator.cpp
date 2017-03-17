@@ -69,9 +69,9 @@ PointLocation DagMCNavigator::getPointLocation(
                            "Could not determing the location of the "
                            "ray with respect to cell "
                            << cell_id << "! Here are the details...\n  "
-                           "position: "
+                           "  Position: "
                            << this->arrayToString( position ) << "\n"
-                           "direction: "
+                           "  Direction: "
                            << this->arrayToString( direction ) );
 }
 
@@ -401,16 +401,6 @@ void DagMCNavigator::changeInternalRayDirection( const double x_direction,
   Navigator::fireInternalRay();
 }
 
-// Convert an array to a string
-std::string DagMCNavigator::arrayToString( const double data[3] )
-{
-  std::ostringstream oss;
-
-  oss << "{" << data[0] << "," << data[1] << "," << data[2] << "}";
-
-  return oss.str();
-}
-
 // Check if the surface handle is a reflecting surface
 bool DagMCNavigator::isReflectingSurfaceHandle(
                                 const moab::EntityHandle surface_handle ) const
@@ -506,9 +496,9 @@ moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
                              "respect to cell "
                              << d_cell_handler->getCellId( *cell_handle_it ) <<
                              "! Here are the details...\n"
-                             "Position: "
+                             "  Position: "
                              << this->arrayToString( position ) << "\n"
-                             "Direction: "
+                             "  Direction: "
                              << this->arrayToString( direction ) );
 
     if( test_point_location == POINT_INSIDE_CELL )

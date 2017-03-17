@@ -51,31 +51,38 @@ public:
   bool isInitialized() const;
 
   //! Initialize the Root model
-  void initialize( const DagMCModelProperties& model_properties,
+  void initialize( const RootModelProperties& model_properties,
                    const int root_init_verbosity = kWarning );
 
   //! Get the model properties
   const RootModelProperties& getModelProperties() const;
 
+  //! Check if the model has cell estimator data
+  bool hasCellEstimatorData() const override;
+
   //! Get the material ids
   void getMaterialIds( MaterialIdSet& material_ids ) const override;
 
   //! Get the problem cells
-  void getCells( CellSet& cell_set,
+  void getCells( CellIdSet& cell_set,
                  const bool include_void_cells,
                  const bool include_termination_cells ) const override;
 
   //! Get the cell materials
-  template<template<typename,typename,typename...> MapType>
+  template<template<typename,typename,typename...> class MapType>
   void getCellMaterialNames(
                          MapType<ModuleTraits::InternalCellHandle,std::string>&
                          cell_id_mat_name_map ) const;
 
   //! Get the cell material ids
-  void getCellMaterialIds( CelIdMatIdMap& cell_id_mat_id_map ) const override;
+  void getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const override;
 
   //! Get the cell densities
-  void getCellDensities( CellDensityMap& cell_id_density_map ) const override;
+  void getCellDensities( CellIdDensityMap& cell_id_density_map ) const override;
+
+  //! Get the cell estimator data
+  void getCellEstimatorData(
+           CellEstimatorIdDataMap& cell_estimator_id_data_map ) const override;
 
   //! Check if a cell exists
   bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id ) const override;
@@ -136,7 +143,7 @@ private:
   CellIdUidMap d_cell_id_uid_map;
 
   // The model properties
-  RootModelProperties d_model_properties;
+  std::unique_ptr<const RootModelProperties> d_model_properties;
 };
 
 //! The invalid root geometry error
@@ -149,18 +156,6 @@ public:
     : std::runtime_error( what_arg )
   { /* ... */ }
 };
-
-// Get the cell
-inline TGeoVolume* RootModel::getVolumePtr(
-                        const ModuleTraits::InternalCellHandle& cell_id ) const
-{
-  // Make sure root is initialized
-  testPrecondition( this->isInitialized() );
-  // Make sure the cell exists
-  testPrecondition( this->doesCellExist( cell_id ) );
-
-  return s_manager->GetVolume( s_cell_id_uid_map.find( cell_id )->second );
-}
 
 } // end Geometry namespace
 

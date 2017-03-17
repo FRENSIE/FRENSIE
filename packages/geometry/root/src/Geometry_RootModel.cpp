@@ -37,9 +37,9 @@ RootModel::RootModel()
 { /* ... */ }
 
 // Check if root has been initialized
-bool RootModel::isInitialized()
+bool RootModel::isInitialized() const
 {
-  return s_manager != NULL;
+  return d_manager != NULL;
 }
 
 // Initialize the root geometry manager
@@ -59,14 +59,15 @@ void RootModel::initialize( const RootModelProperties& model_properties,
   if( !this->isInitialized() )
   {
     // Cache the model properties
-    d_model_properties = model_properties;
+    d_model_properties.reset( new RootModelProperties( model_properties ) );
     
     try{
       this->loadRootGeometry( root_init_verbosity );
     }
     EXCEPTION_CATCH_RETHROW( InvalidRootGeometry,
                              "Unable to load Root geometry file "
-                             << d_model_properties.getModelFileName() < "!" );
+                             << d_model_properties->getModelFileName() <<
+                             "!" );
 
     // Create the cell id to unique id map
     try{
@@ -91,26 +92,27 @@ void RootModel::initialize( const RootModelProperties& model_properties,
 void RootModel::loadRootGeometry( const int root_init_verbosity )
 {
   FRENSIE_LOG_ROOT_NOTIFICATION(
-                "Loading " << d_model_properties.getModelFileName() << "..." );
+               "Loading " << d_model_properties->getModelFileName() << "..." );
   
   // Tell Root to suppress all message below the requested verbosity level
   gErrorIgnoreLevel = root_init_verbosity;
 
   // Set the custom error handler
-  gErrorHandler = RootModel::handleRootError;
+  SetErrorHandler( RootModel::handleRootError );
 
   try{
-    d_manager = TGeoManager::Import( d_model_properties.getModelFileName() );
+    d_manager =
+      TGeoManager::Import( d_model_properties->getModelFileName().c_str() );
   }
   EXCEPTION_CATCH_RETHROW( InvalidRootGeometry,
                            "Root could not import file "
-                           << d_model_properties.getModelFileName() << "!" );
+                           << d_model_properties->getModelFileName() << "!" );
   
   // Make sure the import was successful
   TEST_FOR_EXCEPTION( d_manager == NULL,
                       InvalidRootGeometry,
                       "Root could not import file "
-                      << d_model_properties.getModelFileName() << "!" );
+                      << d_model_properties->getModelFileName() << "!" );
   
   // Lock the geometry so no other geometries can be imported
   TGeoManager::LockGeometry();
@@ -119,7 +121,7 @@ void RootModel::loadRootGeometry( const int root_init_verbosity )
   gErrorIgnoreLevel = kWarning;
 
   FRENSIE_LOG_ROOT_NOTIFICATION(
-        "Finished loading " << d_model_properties.getModelFileName() << "!" );
+        "Finished loading " << d_model_properties->getModelFileName() << "!" );
   FRENSIE_FLUSH_ALL_LOGS();
 }
 
@@ -149,8 +151,8 @@ void RootModel::createCellIdToUniqueIdMap()
                         << ModuleTraits::invalid_internal_cell_handle <<
                         ") in the input file!" );
     
-    TEST_FOR_EXCEPTION( s_cell_id_uid_map.find( cell->GetUniqueID() ) !=
-                        s_cell_id_uid_map.end(),
+    TEST_FOR_EXCEPTION( d_cell_id_uid_map.find( cell->GetUniqueID() ) !=
+                        d_cell_id_uid_map.end(),
                         InvalidRootGeometry,
                         "Root contains cells with the same id ("
                         << cell->GetUniqueID() << ") in the input file!" );
@@ -164,7 +166,7 @@ void RootModel::createCellIdToUniqueIdMap()
 void RootModel::validateModel() const
 {
   // Verify that at least one termination cell is present
-  size_t num_terminal_cells = 0;
+  size_t num_termination_cells = 0;
   
   CellIdUidMap::const_iterator cell_it, cell_end;
   cell_it = d_cell_id_uid_map.begin();
@@ -187,7 +189,13 @@ void RootModel::validateModel() const
 // Get the model properties
 const RootModelProperties& RootModel::getModelProperties() const
 {
-  return d_model_properties;
+  return *d_model_properties;
+}
+
+// Check if the model has cell estimator data
+bool RootModel::hasCellEstimatorData() const
+{
+  return false;
 }
 
 // Get the material ids
@@ -209,7 +217,7 @@ void RootModel::getMaterialIds( MaterialIdSet& material_ids ) const
 }
 
 // Get the problem cells
-void RootModel::getCells( CellSet& cell_set,
+void RootModel::getCells( CellIdSet& cell_set,
                           const bool include_void_cells,
                           const bool include_termination_cells ) const
 {
@@ -228,16 +236,16 @@ void RootModel::getCells( CellSet& cell_set,
     if( this->isVoidVolume( cell ) )
     {
       if( include_void_cells )
-        cell_set.insert( cell->getUniqueId() );
+        cell_set.insert( cell->GetUniqueID() );
     }
     // Check if it is a termination cell
     else if( this->isTerminationVolume( cell ) )
     {
       if( include_termination_cells )
-        cell_set.insert( cell->getUniqueId() );
+        cell_set.insert( cell->GetUniqueID() );
     }
     else
-      cell_set.insert( cell->getUniqueId() );
+      cell_set.insert( cell->GetUniqueID() );
   }
 }
 
@@ -249,7 +257,7 @@ void RootModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
 
   // Set the material property name plus underscore separator
   std::string material_property_suffix =
-    d_model_properties.getMaterialPropertyName() + "_";
+    d_model_properties->getMaterialPropertyName() + "_";
 
   // Get the cell material names
   typedef std::unordered_map<ModuleTraits::InternalCellHandle,std::string>
@@ -264,8 +272,8 @@ void RootModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
   {
     const std::string& material_name = cell_it->second;
 
-    if( material_name != d_model_properties.getVoidMaterialName() &&
-        material_name != d_model_properties.getTerminalMaterialName() )
+    if( material_name != d_model_properties->getVoidMaterialName() &&
+        material_name != d_model_properties->getTerminalMaterialName() )
     {
       TEST_FOR_EXCEPTION( material_name.find( material_property_suffix ) != 0,
                           InvalidRootGeometry,
@@ -294,7 +302,7 @@ void RootModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
 // Get the cell densities
 /*! \details Void and terminal cells will not be added to the map.
  */
-void RootModel::getCellDensities( CellDensityMap& cell_id_density_map ) const
+void RootModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
 {
   // Make sure that root is initialized
   testPrecondition( this->isInitialized() );
@@ -317,8 +325,8 @@ void RootModel::getCellDensities( CellDensityMap& cell_id_density_map ) const
     std::string mat_name = mat->GetName();
 
     // Add the density to the map
-    if( mat_name != d_model_properties.getVoidMaterialName() &&
-        mat_name != d_model_properties.getTerminalMaterialName() )
+    if( mat_name != d_model_properties->getVoidMaterialName() &&
+        mat_name != d_model_properties->getTerminalMaterialName() )
     {
       TEST_FOR_EXCEPTION( mat->GetDensity() == 0.0,
                           InvalidRootGeometry,
@@ -331,6 +339,12 @@ void RootModel::getCellDensities( CellDensityMap& cell_id_density_map ) const
   }
 }
 
+// Get the cell estimator data
+/*! \details Root models do not store cell estimator data.
+ */
+void RootModel::getCellEstimatorData( CellEstimatorIdDataMap&  ) const
+{ /* ... */ }
+
 // Check if a cell exists
 bool RootModel::doesCellExist(
                          const ModuleTraits::InternalCellHandle cell_id ) const
@@ -338,12 +352,12 @@ bool RootModel::doesCellExist(
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
 
-  return s_cell_id_uid_map.find( cell_id ) !=
-    s_cell_id_uid_map.end();
+  return d_cell_id_uid_map.find( cell_id ) != d_cell_id_uid_map.end();
 }
 
 // Check if the cell is a termination cell
-bool RootModel::isTerminationCell( const ModuleTraits::InternalCellHandle cell_id)
+bool RootModel::isTerminationCell(
+                         const ModuleTraits::InternalCellHandle cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -357,11 +371,12 @@ bool RootModel::isTerminationCell( const ModuleTraits::InternalCellHandle cell_i
 bool RootModel::isTerminationVolume( const TGeoVolume* volume ) const
 {
   return volume->GetMaterial()->GetName() ==
-    d_model_properties.getTerminalMaterialName();
+    d_model_properties->getTerminalMaterialName();
 }
 
 // Check if the cell is a void cell
-bool RootModel::isVoidCell( const ModuleTraits::InternalCellHandle cell_id )
+bool RootModel::isVoidCell(
+                         const ModuleTraits::InternalCellHandle cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( RootModel::isInitialized() );
@@ -375,7 +390,7 @@ bool RootModel::isVoidCell( const ModuleTraits::InternalCellHandle cell_id )
 bool RootModel::isVoidVolume( const TGeoVolume* volume ) const
 {
   return volume->GetMaterial()->GetName() ==
-    d_model_properties.getVoidMaterialName();
+    d_model_properties->getVoidMaterialName();
 }
 
 // Get the cell volume
@@ -431,8 +446,9 @@ std::shared_ptr<RootNavigator> RootModel::createRootNavigator() const
   testPrecondition( this->isInitialized() );
   
   RootNavigator::CellIdToTGeoVolumeFunction cell_id_to_uid_function =
-    std::bind<TGeoVolume*>( RootModel::getVolumePtr,
-                            std::cref( *this ) );
+    std::bind<TGeoVolume*>( &RootModel::getVolumePtr,
+                            std::cref( *this ),
+                            std::placeholders::_1 );
   
   return std::shared_ptr<RootNavigator>(
                                 new RootNavigator( d_manager,
@@ -448,6 +464,18 @@ std::shared_ptr<Navigator> RootModel::createNavigator() const
   return this->createRootNavigator();
 }
 
+// Get the cell
+TGeoVolume* RootModel::getVolumePtr(
+                        const ModuleTraits::InternalCellHandle& cell_id ) const
+{
+  // Make sure root is initialized
+  testPrecondition( this->isInitialized() );
+  // Make sure the cell exists
+  testPrecondition( this->doesCellExist( cell_id ) );
+
+  return d_manager->GetVolume( d_cell_id_uid_map.find( cell_id )->second );
+}
+
 // The custom root error handler
 void RootModel::handleRootError( int level,
                                  Bool_t abort,
@@ -458,13 +486,19 @@ void RootModel::handleRootError( int level,
   if( level >= gErrorIgnoreLevel )
   {
     if( level == kInfo )
+    {
       FRENSIE_LOG_ROOT_DETAILS( msg );
+    }
     else if( level == kWarning )
+    {
       FRENSIE_LOG_ROOT_WARNING( msg << "\n"
                                 "  Root Location: " << location );
+    }
     else if( level >= kError )
+    {
       FRENSIE_LOG_ROOT_ERROR( msg << "\n"
                               "  Root Location: " << location );
+    }
 
     // Request to abort will instead be sent to the FRENSIE exception handling
     // system

@@ -14,7 +14,7 @@ namespace Geometry{
 
 // Constructor
 RootModelProperties::RootModelProperties( const std::string& filename )
-  : d_file_name( file_name ),
+  : d_file_name( filename ),
     d_material_property_name( "mat" ),
     d_void_material_name( "void" ),
     d_terminal_material_name( "graveyard" )
@@ -56,7 +56,7 @@ void RootModelProperties::setVoidMaterialName(
                                         const std::string& void_material_name )
 {
   // Make sure that the void material name is valid
-  testPrecondition( void_property_name.size() > 0 );
+  testPrecondition( void_material_name.size() > 0 );
   
   d_void_material_name = void_material_name;
 }
@@ -72,7 +72,7 @@ void RootModelProperties::setTerminalMaterialName(
                                     const std::string& terminal_material_name )
 {
   // Make sure that the terminal material name is valid
-  testPrecondition( terminal_property_name.size() > 0 );
+  testPrecondition( terminal_material_name.size() > 0 );
   
   d_terminal_material_name = terminal_material_name;
 }

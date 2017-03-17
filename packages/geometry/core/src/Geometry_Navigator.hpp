@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <set>
+#include <sstream>
 
 // FRENSIE Includes
 #include "Geometry_PointLocation.hpp"
@@ -237,6 +238,11 @@ public:
 
   // Change the internal ray direction
   void changeInternalRayDirection( const double direction[3] );
+
+protected:
+
+  // Convert an array to a string
+  static std::string arrayToString( const double data[3] );
 };
 
 // Get the location of a cell w.r.t. a given cell
@@ -367,6 +373,16 @@ inline void Navigator::changeInternalRayDirection( const double direction[3] )
   this->changeInternalRayDirection( direction[0],
                                     direction[1],
                                     direction[2] );
+}
+
+// Convert an array to a string
+inline std::string Navigator::arrayToString( const double data[3] )
+{
+  std::ostringstream oss;
+
+  oss << "{" << data[0] << "," << data[1] << "," << data[2] << "}";
+
+  return oss.str();
 }
   
 } // end Geometry namespace

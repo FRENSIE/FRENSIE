@@ -383,12 +383,14 @@ DagMCModelPropertiesFactory::createProperties(
   }
 
   // Log unused parameters
-  std::vector<std::string> unused_properties;
+  std::vector<std::string> unused_parameters;
 
-  Utility::getUnusedParameterWarningMessages( properties, unused_properties );
+  Utility::getUnusedParameterWarningMessages( properties, unused_parameters );
   
-  for( size_t i = 0; i < unused_properties.size(); ++i )
-    FRENSIE_LOG_DAGMC_WARNING( unused_properties[i] );
+  for( size_t i = 0; i < unused_parameters.size(); ++i )
+  {
+    FRENSIE_LOG_DAGMC_WARNING( unused_parameters[i] );
+  }
     
   FRENSIE_FLUSH_ALL_LOGS();
 

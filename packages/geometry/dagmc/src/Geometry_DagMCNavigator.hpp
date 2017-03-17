@@ -115,9 +115,6 @@ public:
 
 private:
 
-  // Convert an array to a string
-  static std::string arrayToString( const double data[3] );
-
   // Check if the surface handle is a reflecting surface
   bool isReflectingSurfaceHandle(
                                const moab::EntityHandle surface_handle ) const;

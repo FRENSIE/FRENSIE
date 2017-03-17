@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Geometry_RootModelPropertiesFactory.hpp"
 #include "Geometry_RootLoggingMacros.hpp"
+#include "Utility_ParameterListHelpers.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -85,15 +86,18 @@ RootModelPropertiesFactory::createProperties(
   }
 
   // Log unused parameters
-  std::ostringstream oss;
+  std::vector<std::string> unused_parameters;
 
-  geom_rep.unused( oss );
+  Utility::getUnusedParameterWarningMessages( properties, unused_parameters );
 
-  if( oss.str().size() > 0 )
+  for( size_t i = 0; i < unused_parameters.size(); ++i )
   {
-    FRENSIE_LOG_ROOT_WARNING( oss.str() );
-    FRENSIE_FLUSH_ALL_LOGS();
+    FRENSIE_LOG_ROOT_WARNING( unused_parameters[i] );
   }
+
+  FRENSIE_FLUSH_ALL_LOGS();
+
+  return model_properties;
 }
   
 } // end Geometry namespace

@@ -38,18 +38,16 @@ public:
   CellIdToTGeoVolumeFunction;
 
   //! Constructor
-  RootNavigator( const TGeoManager* manager,
+  RootNavigator( TGeoManager* manager,
                  const CellIdToTGeoVolumeFunction& get_volume_ptr );
 
   //! Destructor
   ~RootNavigator();
 
-  //! Enable thread support
-  void enableThreadSupport( const size_t num_threads ) override;
-
   //! Get the point location w.r.t. a given cell
   PointLocation getPointLocation(
-               const Ray& ray,
+               const double position[3],
+               const double direction[3],
                const ModuleTraits::InternalCellHandle cell_id ) const override;
 
   //! Get the surface normal at a point on the surface
@@ -58,17 +56,10 @@ public:
                          const double direction[3],
                          double normal[3] ) const override;
 
-  //! Find the cell that contains the start ray
-  ModuleTraits::InternalCellHandle findCellContainingStartRay(
-                                    const Ray& ray,
-                                    CellSet& start_cell_cache ) const override;
-
   //! Find the cell that contains the ray
-  ModuleTraits::InternalCellHandle findCellContainingRay( const Ray& ray ) const override;
-
-  //! Fire the ray through the geometry
-  double fireRay( const Ray& ray,
-                  ModuleTraits::InternalSurfaceHandle& surface_hit ) const override;
+  ModuleTraits::InternalCellHandle findCellContainingRay(
+                                    const double position[3],
+                                    const double direction[3] ) const override;
 
   //! Check if the internal ray is set
   bool isInternalRaySet() const override;
@@ -83,13 +74,14 @@ public:
                       
                        
   //! Initialize (or reset) an internal Root ray
-  void setInternalRay( const double x_position,
-                       const double y_position,
-                       const double z_position,
-                       const double x_direction,
-                       const double y_direction,
-                       const double z_direction,
-                       const ModuleTraits::InternalCellHandle current_cell ) override;
+  void setInternalRay(
+                const double x_position,
+                const double y_position,
+                const double z_position,
+                const double x_direction,
+                const double y_direction,
+                const double z_direction,
+                const ModuleTraits::InternalCellHandle current_cell ) override;
 
   //! Get the internal Root ray position
   const double* getInternalRayPosition() const override;
@@ -97,11 +89,11 @@ public:
   //! Get the internal Root ray direction
   const double* getInternalRayDirection() const override;
 
-  //! Find the cell containing the internal Root ray position
-  ModuleTraits::InternalCellHandle findCellContainingInternalRay() override;
+  //! Get the cell containing the internal Root ray position
+  ModuleTraits::InternalCellHandle getCellContainingInternalRay() const override;
 
   //! Get the distance from the internal Root ray pos. to the nearest boundary
-  double fireInternalRay( ModuleTraits::InternalSurfaceHandle& surface_hit ) override;
+  double fireInternalRay( ModuleTraits::InternalSurfaceHandle* surface_hit ) override;
 
   //! Advance the internal Root ray to the next boundary
   bool advanceInternalRayToCellBoundary( double* surface_normal ) override;
@@ -120,25 +112,11 @@ private:
   static void deepCopy( double* copy_array, const double* orig_array );
 
   // Find the node containing the point
-  TGeoNode* findNodeContainingRay( const Ray& ray,
-                                   double* distance_to_boundary = NULL ) const;
-
-  // Get the point location w.r.t. a given cell
-  PointLocation getPointLocation(
-                        const double position[3],
-                        const ModuleTraits::InternalCellHandle cell_id ) const;
+  TGeoNode* findNodeContainingRay( const double position[3],
+                                   const double direction[3] ) const;
 
   // Set the internal ray set flag
   void internalRaySet();
-
-  // Get the navigator for the calling thread
-  TGeoNavigator* getNavigator();
-
-  // Get the navigator for the calling thread
-  const TGeoNavigator* getNavigator() const;
-
-  // Delete the navigators
-  void deleteNavigators();
 
   // The tolerance used to determine the location of points within cells
   static const double s_tol;
@@ -150,10 +128,10 @@ private:
   CellIdToTGeoVolumeFunction d_get_volume_ptr;
 
   // Keeps track of whether or not the navigator rays have been set
-  std::vector<bool> d_internal_ray_set;
+  bool d_internal_ray_set;
 
   // The geometry navigators
-  std::vector<TGeoNavigator*> d_navigators;
+  TGeoNavigator* d_navigator;
 };
 
 // Deep copy an array
