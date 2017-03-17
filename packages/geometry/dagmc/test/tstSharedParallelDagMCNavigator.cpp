@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_ray_trace )
     Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
 
     double distance_to_surface_hit =
-      navigator->fireInternalRay( surface_hit );
+      navigator->fireInternalRay( &surface_hit );
 
     Utility::get<0>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
@@ -97,7 +97,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_ray_trace )
       cell;
 
     // Fire the ray
-    distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
     Utility::get<1>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
@@ -114,7 +114,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_ray_trace )
       cell;
 
     // Fire the ray
-    distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
     Utility::get<2>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
@@ -129,7 +129,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_ray_trace )
     navigator->changeInternalRayDirection( 0.0, 0.0, -1.0 );
 
     // Fire the ray
-    distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
     Utility::get<3>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
@@ -208,7 +208,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
     Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
 
     double distance_to_surface_hit =
-      navigator->fireInternalRay( surface_hit );
+      navigator->fireInternalRay( &surface_hit );
 
     Utility::get<0>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
@@ -225,7 +225,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
     Utility::get<1>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       cell;
 
-    distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
     Utility::get<1>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
@@ -242,7 +242,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
     Utility::get<2>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       cell;
 
-    distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
     Utility::get<2>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;

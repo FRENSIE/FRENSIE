@@ -53,7 +53,8 @@ DagMCNavigator::DagMCNavigator(
  * used when it is close to the surface.
  */
 PointLocation DagMCNavigator::getPointLocation(
-                         const Ray& ray,
+                         const double position[3],
+                         const double direction[3],
                          const ModuleTraits::InternalCellHandle cell_id ) const
 {
   // Make sure that the cell exists
@@ -62,15 +63,16 @@ PointLocation DagMCNavigator::getPointLocation(
   moab::EntityHandle cell_handle = d_cell_handler->getCellHandle( cell_id );
  
   try{
-    return this->getPointLocation( ray.getPosition(),
-                                   ray.getDirection(),
-                                   cell_handle );
+    return this->getPointLocation( position, direction, cell_handle );
   }
   EXCEPTION_CATCH_RETHROW( DagMCGeometryError,
                            "Could not determing the location of the "
                            "ray with respect to cell "
                            << cell_id << "! Here are the details...\n  "
-                           "Ray: " << ray  );
+                           "position: "
+                           << this->arrayToString( position ) << "\n"
+                           "direction: "
+                           << this->arrayToString( direction ) );
 }
 
 // Get the surface normal at a point on the surface
@@ -147,67 +149,14 @@ ModuleTraits::InternalCellHandle DagMCNavigator::getBoundaryCell(
   return d_cell_handler->getCellId( boundary_cell_handle );
 }
 
-// Find the cell that contains the start ray
-ModuleTraits::InternalCellHandle DagMCNavigator::findCellContainingRay(
-                                            const Ray& ray,
-                                            CellIdSet& start_cell_cache ) const
-{
-  // Test the cells in the cache first
-  CellIdSet::const_iterator start_cell_cache_it, start_cell_cache_end;
-  start_cell_cache_it = start_cell_cache.begin();
-  start_cell_cache_end = start_cell_cache.end();
-
-  // Check the cache first
-  while( start_cell_cache_it != start_cell_cache_end )
-  {
-    PointLocation test_point_location;
-
-    try{
-      test_point_location =
-        this->getPointLocation( ray, *start_cell_cache_it );
-    }
-    EXCEPTION_CATCH_RETHROW( DagMCGeometryError,
-                             "Could not find the location of the ray!" );
-
-    if( test_point_location == POINT_INSIDE_CELL )
-      return *start_cell_cache_it;
-    
-    ++start_cell_cache_it;
-  }
-  
-  // Check all other cells
-  ModuleTraits::InternalCellHandle found_cell;
-
-  try{
-    found_cell = this->findCellContainingRay( ray );
-  }
-  EXCEPTION_CATCH_RETHROW( DagMCGeometryError,
-                           "Could not find the cell that contains the ray!" );
-
-  // Add the cell to the cache
-  start_cell_cache.insert( found_cell );
-
-  return found_cell;
-}
-
 // Find the cell that contains the ray
 ModuleTraits::InternalCellHandle DagMCNavigator::findCellContainingRay(
-                                                         const Ray& ray ) const
+                                              const double position[3],
+                                              const double direction[3] ) const
 {
   moab::EntityHandle cell_handle =
-    this->findCellHandleContainingRay( ray );
+    this->findCellHandleContainingRay( position, direction );
   
-  return d_cell_handler->getCellId( cell_handle );
-}
-
-// Find the cell that contains the ray
-ModuleTraits::InternalCellHandle
-DagMCNavigator::findCellContainingRayWithoutBoundaryCheck(
-                                                         const Ray& ray ) const
-{
-  moab::EntityHandle cell_handle =
-    this->findCellHandleContainingRay( ray, false );
-
   return d_cell_handler->getCellId( cell_handle );
 }
 
@@ -252,10 +201,13 @@ void DagMCNavigator::setInternalRay(
   // Make sure that the cell exists
   testPrecondition( d_cell_handler->doesCellExist( current_cell ) );
   // Make sure that the cell contains the ray
-  remember( Ray test_ray( x_position, y_position, z_position,
-                          x_direction, y_direction, z_direction ) );
-  testPrecondition( this->findCellContainingRayWithoutBoundaryCheck( test_ray )
-                    == current_cell );
+  remember( moab::EntityHandle test_cell_handle =
+            this->findCellHandleContainingRay(
+                                        x_position, y_position, z_position,
+                                        x_direction, y_direction, z_direction,
+                                        false ) );
+  testPrecondition( d_cell_handler->getCellId( test_cell_handle ) ==
+                    current_cell );
 
   moab::EntityHandle cell_handle =
     d_cell_handler->getCellHandle( current_cell );
@@ -295,7 +247,7 @@ DagMCNavigator::getCellContainingInternalRay() const
 
 // Get the distance from the internal DagMC ray pos. to the nearest boundary
 double DagMCNavigator::fireInternalRay(
-                             ModuleTraits::InternalSurfaceHandle& surface_hit )
+                             ModuleTraits::InternalSurfaceHandle* surface_hit )
 {
   // Make sure that the ray is set
   testPrecondition( this->isInternalRaySet() );
@@ -305,8 +257,11 @@ double DagMCNavigator::fireInternalRay(
   // Check if the ray has already been fired
   if( d_internal_ray.knowsIntersectionSurface() )
   {
-    surface_hit =
-      d_surface_handler->getSurfaceId( d_internal_ray.getIntersectionSurface() );
+    if( surface_hit != NULL )
+    {
+      *surface_hit = d_surface_handler->getSurfaceId(
+                                     d_internal_ray.getIntersectionSurface() );
+    }
 
     distance_to_surface = d_internal_ray.getDistanceToIntersectionSurface();
   }
@@ -321,7 +276,8 @@ double DagMCNavigator::fireInternalRay(
                                                surface_hit_handle,
                                                &d_internal_ray.getHistory() );
 
-    surface_hit = d_surface_handler->getSurfaceId( surface_hit_handle );
+    if( surface_hit != NULL )
+      *surface_hit = d_surface_handler->getSurfaceId( surface_hit_handle );
 
     // Cache the surface data in the ray
     d_internal_ray.setIntersectionSurfaceData( surface_hit_handle,
@@ -406,9 +362,7 @@ bool DagMCNavigator::advanceInternalRayToCellBoundary( double* surface_normal )
   }
 
   // Fire the ray so that the new intersection data is set
-  ModuleTraits::InternalSurfaceHandle dummy_surface;
-
-  double distance = this->fireInternalRay( dummy_surface );
+  Navigator::fireInternalRay();
 
   return reflecting_boundary;
 }
@@ -444,9 +398,7 @@ void DagMCNavigator::changeInternalRayDirection( const double x_direction,
   d_internal_ray.changeDirection( x_direction, y_direction, z_direction );
 
   // Fire the ray so that the new intersection data is set
-  ModuleTraits::InternalSurfaceHandle dummy_surface;
-
-  double distance = this->fireInternalRay( dummy_surface );
+  Navigator::fireInternalRay();
 }
 
 // Convert an array to a string
@@ -525,18 +477,6 @@ moab::EntityHandle DagMCNavigator::getBoundaryCellHandle(
                << d_surface_handler->getSurfaceId( boundary_surface_handle ) );
 
   return boundary_cell_handle;
-}
-
-// Find the cell handle that contains the ray (brute force)
-// All of the cells in the geometry will be tested for containment of
-// the ray head. This is an order N search.
-moab::EntityHandle DagMCNavigator::findCellHandleContainingRay(
-                                              const Ray& ray,
-                                              const bool boundary_check ) const
-{
-  return this->findCellHandleContainingRay( ray.getPosition(),
-                                            ray.getDirection(),
-                                            boundary_check );
 }
 
 // Find the cell handle that contains the ray
@@ -704,9 +644,7 @@ void DagMCNavigator::setInternalRay(
                       current_cell_handle );
 
   // Fire the ray so that the intersection data is set
-  ModuleTraits::InternalSurfaceHandle dummy_surface;
-
-  double distance = this->fireInternalRay( dummy_surface );
+  Navigator::fireInternalRay();
 }
   
 } // end Geometry namespace

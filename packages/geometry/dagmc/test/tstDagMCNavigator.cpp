@@ -269,7 +269,7 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, fireInternalRay )
   // Fire an external ray through the geometry
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
 
-  double distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+  double distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
   TEST_EQUALITY_CONST( surface_hit, 242 );
@@ -297,7 +297,7 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, advanceInternalRayBySubstep )
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
 
   double distance_to_surface_hit =
-    navigator->fireInternalRay( surface_hit );
+    navigator->fireInternalRay( &surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.0, 1e-9 );
   TEST_EQUALITY_CONST( surface_hit, 242 );
@@ -402,7 +402,7 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, ray_trace )
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
 
   double distance_to_surface_hit =
-    navigator->fireInternalRay( surface_hit );
+    navigator->fireInternalRay( &surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
   TEST_EQUALITY_CONST( surface_hit, 242 );
@@ -415,7 +415,7 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, ray_trace )
   TEST_EQUALITY_CONST( cell, 54 );
 
   // Fire the ray
-  distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 2.54, 1e-6 );
   TEST_EQUALITY_CONST( surface_hit, 248 );
@@ -428,7 +428,7 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, ray_trace )
   TEST_EQUALITY_CONST( cell, 55 );
 
   // Fire the ray
-  distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 2.54, 1e-6 );
   TEST_EQUALITY_CONST( surface_hit, 254 );
@@ -440,7 +440,7 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, ray_trace )
   navigator->changeInternalRayDirection( 0.0, 0.0, -1.0 );
 
   // Fire the ray
-  distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.27, 1e-6 );
   TEST_EQUALITY_CONST( surface_hit, 248 );
@@ -466,7 +466,7 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, ray_trace_with_reflection )
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
 
   double distance_to_surface_hit =
-    navigator->fireInternalRay( surface_hit );
+    navigator->fireInternalRay( &surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.474, 1e-6 );
   TEST_EQUALITY_CONST( surface_hit, 394 );
@@ -480,7 +480,7 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, ray_trace_with_reflection )
 
   TEST_EQUALITY_CONST( cell, 83 );
 
-  distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 17.526, 1e-6 );
   TEST_EQUALITY_CONST( surface_hit, 408 );
@@ -500,7 +500,7 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, ray_trace_with_reflection )
 
   TEST_EQUALITY_CONST( cell, 83 );
 
-  distance_to_surface_hit = navigator->fireInternalRay( surface_hit );
+  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 17.526, 1e-6 );
   TEST_EQUALITY_CONST( surface_hit, 394 );

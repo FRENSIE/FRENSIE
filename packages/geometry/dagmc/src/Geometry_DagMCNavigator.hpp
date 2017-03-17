@@ -48,7 +48,8 @@ public:
 
   //! Get the point location w.r.t. a given cell
   PointLocation getPointLocation(
-               const Ray& ray,
+               const double position[3],
+               const double direction[3],
                const ModuleTraits::InternalCellHandle cell_id ) const override;
 
   //! Get the surface normal at a point on the surface
@@ -62,13 +63,10 @@ public:
          const ModuleTraits::InternalCellHandle cell_id,
          const ModuleTraits::InternalSurfaceHandle boundary_surface_id ) const;
 
-  //! Find the cell that contains the start ray
-  ModuleTraits::InternalCellHandle findCellContainingRay(
-                                  const Ray& ray,
-                                  CellIdSet& start_cell_cache ) const override;
-
   //! Find the cell that contains the ray
-  ModuleTraits::InternalCellHandle findCellContainingRay( const Ray& ray ) const override;
+  ModuleTraits::InternalCellHandle findCellContainingRay(
+                                    const double position[3],
+                                    const double direction[3] ) const override;
 
   //! Check if the internal ray is set
   bool isInternalRaySet() const override;
@@ -83,13 +81,14 @@ public:
                       
                        
   //! Initialize (or reset) an internal DagMC ray
-  void setInternalRay( const double x_position,
-                       const double y_position,
-                       const double z_position,
-                       const double x_direction,
-                       const double y_direction,
-                       const double z_direction,
-                       const ModuleTraits::InternalCellHandle current_cell ) override;
+  void setInternalRay(
+                const double x_position,
+                const double y_position,
+                const double z_position,
+                const double x_direction,
+                const double y_direction,
+                const double z_direction,
+                const ModuleTraits::InternalCellHandle current_cell ) override;
 
   //! Get the internal DagMC ray position
   const double* getInternalRayPosition() const override;
@@ -101,7 +100,7 @@ public:
   ModuleTraits::InternalCellHandle getCellContainingInternalRay() const override;
 
   //! Get the distance from the internal DagMC ray pos. to the nearest boundary
-  double fireInternalRay( ModuleTraits::InternalSurfaceHandle& surface_hit ) override;
+  double fireInternalRay( ModuleTraits::InternalSurfaceHandle* surface_hit ) override;
 
   //! Advance the internal DagMC ray to the next boundary
   bool advanceInternalRayToCellBoundary( double* surface_normal ) override;
@@ -142,15 +141,6 @@ private:
   moab::EntityHandle getBoundaryCellHandle(
                       const moab::EntityHandle cell_handle,
                       const moab::EntityHandle boundary_surface_handle ) const;
-
-  //! Find the cell that contains the ray
-  ModuleTraits::InternalCellHandle findCellContainingRayWithoutBoundaryCheck(
-                                                        const Ray& ray ) const;
-
-  // Find the cell handle that contains the ray
-  moab::EntityHandle findCellHandleContainingRay(
-                                      const Ray& ray,
-                                      const bool boundary_check = true ) const;
 
   // Find the cell handle that contains the ray
   moab::EntityHandle findCellHandleContainingRay(
