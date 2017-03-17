@@ -34,10 +34,10 @@ class TestHD : public HD
 public:
   TestHD( const std::shared_ptr<HD::HybridDistribution>& hybrid_distribution,
           const double cutoff_angle_cosine,
-          const bool use_linlinlog_interpolation )
+          const bool linlinlog_interpolation_mode_on )
     : HD( hybrid_distribution,
           cutoff_angle_cosine ,
-          use_linlinlog_interpolation )
+          linlinlog_interpolation_mode_on )
   { /* ... */ }
 
   ~TestHD()

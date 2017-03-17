@@ -923,9 +923,9 @@ void ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles(
 
 // Set electron secondary LinLinLog interpolation mode to on
 void ElectronPhotonRelaxationDataContainer::setElectronLinLinLogInterpolationModeOnOff(
-    const bool use_linlinlog_interpolation )
+    const bool linlinlog_interpolation_mode_on )
 {
-  d_linlinlog_interpolation_mode_on = use_linlinlog_interpolation;
+  d_linlinlog_interpolation_mode_on = linlinlog_interpolation_mode_on;
 }
 
 // Set the union energy grid convergence tolerance

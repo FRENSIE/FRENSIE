@@ -68,6 +68,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                        energy_grid,
                        grid_searcher,
                        reaction_pointer,
+                       properties.getElectronEvaluationTolerance(),
                        properties.isLinLinLogInterpolationModeOn() );
     }
     // Create the moment preserving elastic scattering reaction (no analog elastic scattering)
@@ -81,7 +82,8 @@ void ElectroatomNativeFactory::createElectroatomCore(
                        energy_grid,
                        grid_searcher,
                        reaction_pointer,
-                       properties.getElasticCutoffAngleCosine() );
+                       properties.getElasticCutoffAngleCosine(),
+                       properties.getElectronEvaluationTolerance() );
     }
     // Create the hybrid elastic scattering reaction (if cutoff is within range)
     else
@@ -112,7 +114,8 @@ void ElectroatomNativeFactory::createElectroatomCore(
                     reaction_pointer,
                     properties.getBremsstrahlungAngularDistributionFunction(),
                     properties.isCorrelatedSamplingModeOn(),
-                    properties.isUnitBasedInterpolationModeOn() );
+                    properties.isUnitBasedInterpolationModeOn(),
+                    properties.getElectronEvaluationTolerance() );
   }
 
   // Create the atomic excitation scattering reaction
@@ -134,12 +137,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
   std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
   ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,SecondInterpPolicy>(
-                               raw_electroatom_data,
-                               energy_grid,
-                               grid_searcher,
-                               reaction_pointers,
-                               properties.isCorrelatedSamplingModeOn(),
-                               properties.isUnitBasedInterpolationModeOn() );
+                       raw_electroatom_data,
+                       energy_grid,
+                       grid_searcher,
+                       reaction_pointers,
+                       properties.isCorrelatedSamplingModeOn(),
+                       properties.isUnitBasedInterpolationModeOn(),
+                       properties.getElectronEvaluationTolerance() );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {

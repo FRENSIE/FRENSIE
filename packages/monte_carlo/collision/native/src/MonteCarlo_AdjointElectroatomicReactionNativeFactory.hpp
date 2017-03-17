@@ -43,7 +43,9 @@ public:
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction );
+    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+    const double evalation_tol = 1e-7,
+    const bool correlated_sampling_mode_on = true );
 
   //! Create a hybrid elastic scattering adjoint electroatomic reaction
   static void createHybridElasticReaction(

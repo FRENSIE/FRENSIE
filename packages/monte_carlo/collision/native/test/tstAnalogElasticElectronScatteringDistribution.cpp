@@ -32,11 +32,11 @@ public:
         const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
             elastic_cutoff_distribution,
         const int atomic_number,
-        const bool use_linlinlog_interpolation )
+        const bool linlinlog_interpolation_mode_on )
     : MonteCarlo::AnalogElasticElectronScatteringDistribution(
         elastic_cutoff_distribution,
         atomic_number,
-        use_linlinlog_interpolation )
+        linlinlog_interpolation_mode_on )
   { /* ... */ }
 
   ~TestAnalogElasticElectronScatteringDistribution()

@@ -43,7 +43,7 @@ public:
   HybridElasticElectronScatteringDistribution(
     const std::shared_ptr<HybridDistribution>& hybrid_distribution,
     const double& cutoff_angle_cosine,
-    const bool& use_linlinlog_interpolation = true );
+    const bool& linlinlog_interpolation_mode_on = true );
 
   //! Destructor
   virtual ~HybridElasticElectronScatteringDistribution()
@@ -116,7 +116,7 @@ private:
   double d_cutoff_angle_cosine;
 
   // boolean to for LinLinLog interpolation (true = LinLinLog, false = LinLinLin)
-  bool d_use_linlinlog_interpolation;
+  bool d_linlinlog_interpolation_mode_on;
 
   /* Hybrid distribution ( first = energy, second = 1D cutoff distribution,
    * third = 1D Moment preserving discrete distribution,

@@ -20,10 +20,10 @@ namespace MonteCarlo{
 HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDistribution(
     const std::shared_ptr<HybridDistribution>& hybrid_distribution,
     const double& cutoff_angle_cosine,
-    const bool& use_linlinlog_interpolation )
+    const bool& linlinlog_interpolation_mode_on )
   : d_hybrid_distribution( hybrid_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
-    d_use_linlinlog_interpolation( use_linlinlog_interpolation )
+    d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on )
 {
   // Make sure the arrays are valid
   testPrecondition( d_hybrid_distribution.use_count() > 0 );
@@ -239,7 +239,7 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
       this->sampleBin( upper_bin, random_number, upper_angle );
 
       // Sample an outgoing direction
-      if ( d_use_linlinlog_interpolation )
+      if ( d_linlinlog_interpolation_mode_on )
       {
         // Use LinLinLog interpolation
         scattering_angle_cosine =

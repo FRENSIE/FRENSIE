@@ -174,11 +174,11 @@ public:
   double getAdjointElectronDistanceTolerance() const;
 
   //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
-  void setElectronEvaluationTolerance(
-                        const double electron_evaluation_tol );
+  void setTabularEvaluationTolerance(
+                        const double tabular_evaluation_tol );
 
   //! Get the electron FullyTabularTwoDDistribution evaluation tolerance
-  double getElectronEvaluationTolerance() const;
+  double getTabularEvaluationTolerance() const;
 
   //! Set the electron FullyTabularTwoDDistribution correlated sampling
   void setElectronCorrelatedSampling(
@@ -507,7 +507,7 @@ private:
   double d_adjoint_electron_distance_tol;
 
   // The electron FullyTabularTwoDDistribution evaluation tolerance
-  double d_electron_evaluation_tol;
+  double d_tabular_evaluation_tol;
 
   // The electron bool to use correlated sampling
   bool d_electron_correlated_sampling;

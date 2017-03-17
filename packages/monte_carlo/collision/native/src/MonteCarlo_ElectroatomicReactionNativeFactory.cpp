@@ -21,7 +21,8 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-            const bool use_linlinlog_interpolation )
+            const double evalation_tol,
+            const bool linlinlog_interpolation_mode_on )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -32,20 +33,12 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
   // Create the analog elastic scattering distribution
   std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
 
-  if ( use_linlinlog_interpolation )
-  {
-    // Create the analog elastic scattering distribution that uses LinLinLog interpolation
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<true>(
+  // Create the analog elastic scattering distribution
+  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
     distribution,
-    raw_electroatom_data );
-  }
-  else
-  {
-    // Create the analog elastic scattering distribution that uses LinLinLin interpolation
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<false>(
-    distribution,
-    raw_electroatom_data );
-  }
+    raw_electroatom_data,
+    evalation_tol,
+    linlinlog_interpolation_mode_on );
 
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;
@@ -119,7 +112,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
-    const bool use_linlinlog_interpolation )
+    const bool linlinlog_interpolation_mode_on )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -154,30 +147,16 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
   // Create the hybrid elastic scattering distribution
   std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
 
-  if ( use_linlinlog_interpolation )
-  {
-    // Create the hybrid elastic scattering distribution that uses LinLinLog interpolation
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<true>(
+  // Create the hybrid elastic scattering distribution that uses LinLinLog interpolation
+  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
             distribution,
             grid_searcher,
             energy_grid,
             cutoff_cross_section,
             mp_cross_section,
             raw_electroatom_data,
-            cutoff_angle_cosine );
-  }
-  else
-  {
-    // Create the hybrid elastic scattering distribution that uses LinLinLin interpolation
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<false>(
-            distribution,
-            grid_searcher,
-            energy_grid,
-            cutoff_cross_section,
-            mp_cross_section,
-            raw_electroatom_data,
-            cutoff_angle_cosine );
-  }
+            cutoff_angle_cosine,
+            linlinlog_interpolation_mode_on );
 
   // Calculate the hybrid cross section
   unsigned hybrid_threshold_energy_index =

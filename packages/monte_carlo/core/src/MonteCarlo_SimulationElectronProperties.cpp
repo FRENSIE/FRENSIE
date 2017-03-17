@@ -27,6 +27,7 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_bremsstrahlung_mode_on( true ),
     d_electroionization_mode_on( true ),
     d_atomic_excitation_mode_on( true ),
+    d_evaluation_tol( 1e-7 ),
     d_linlinlog_interpolation_mode_on( true ),
     d_correlated_sampling_mode_on( true ),
     d_unit_based_interpolation_mode_on( true ),
@@ -167,6 +168,27 @@ void SimulationElectronProperties::setAtomicExcitationModeOn()
 bool SimulationElectronProperties::isAtomicExcitationModeOn() const
 {
   return d_atomic_excitation_mode_on;
+}
+
+// Set the electron FullyTabularTwoDDistribution evalation tolerance (default = 1e-7)
+/*! \details The evaluation tolerance is used by the
+ *  InterpolatedFullyTabularTwoDDistribution as the tolerance when performing
+ *  evaluations.
+ */
+void SimulationElectronProperties::setElectronEvaluationTolerance(
+    const double tol )
+{
+  d_evaluation_tol = tol;
+}
+
+// Return the electron FullyTabularTwoDDistribution evalation tolerance (default = 1e-7)
+/*! \details The evaluation tolerance is used by the
+ *  InterpolatedFullyTabularTwoDDistribution as the tolerance when performing
+ *  evaluations.
+ */
+double SimulationElectronProperties::getElectronEvaluationTolerance() const
+{
+  return d_evaluation_tol;
 }
 
 // Set secondary electron LinLinLog interpolation mode to off (on by default)

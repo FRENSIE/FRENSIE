@@ -56,6 +56,7 @@ int main( int argc, char** argv )
   double subshell_incoherent_evaluation_tol = 1e-3;
 
   // Electron options
+  double tabular_evaluation_tol = 1e-7;
   double cutoff_angle_cosine = 1.0;
   int number_of_moment_preserving_angles = 0;
   bool append_moment_preserving_data = false;
@@ -120,6 +121,10 @@ int main( int argc, char** argv )
                                "(0.0<tol<1.0)" );
   
   // Set the electron option names
+  epr_generator_clp.setOption( "tabular_evaluation_tol",
+                               &tabular_evaluation_tol,
+                               "Tabular evaluation tolerance "
+                               "(0.0<tol<1.0)" );
   epr_generator_clp.setOption( "cutoff_angle_cosine",
                                &cutoff_angle_cosine,
                                "Cutoff angle cosine for table "
@@ -233,7 +238,20 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 7.) The cutoff angle cosine must be in the valid range
+  // 7.) The tabular evaluation tolerance must be in the valid range
+  if( tabular_evaluation_tol < -1.0 ||
+      tabular_evaluation_tol > 1.0 )
+  {
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the tabular evaluation tolerance is not valid!"
+              << std::endl;
+
+    epr_generator_clp.printHelpMessage( argv[0], *out );
+
+    return 1;
+  }
+
+  // 8.) The cutoff angle cosine must be in the valid range
   if( cutoff_angle_cosine < -1.0 ||
       cutoff_angle_cosine > 1.0 )
   {
@@ -246,7 +264,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 8.) The number of moment preserving angles must be >= 0
+  // 9.) The number of moment preserving angles must be >= 0
   if( number_of_moment_preserving_angles < 0 )
   {
     std::cerr << Utility::BoldRed( "Error: " )
@@ -258,7 +276,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 9.) The grid convergence tolerance must be in the valid range
+  // 10.) The grid convergence tolerance must be in the valid range
   if( grid_convergence_tol <= 0.0 || grid_convergence_tol >= 1.0 )
   {
     std::cerr << Utility::BoldRed( "Error: " )
@@ -270,7 +288,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 10.) The grid absolute difference tolerance must be in the valid range
+  // 11.) The grid absolute difference tolerance must be in the valid range
   if( grid_absolute_diff_tol <= 0.0 || grid_absolute_diff_tol >= 1.0 )
   {
     std::cerr << Utility::BoldRed( "Error: " )
@@ -282,7 +300,7 @@ int main( int argc, char** argv )
     return 1;
   }
   
-  // 11.) The grid distance tolerance must be in the valid range
+  // 12.) The grid distance tolerance must be in the valid range
   if( grid_distance_tol <= 0.0 || grid_distance_tol >= 1.0 )
   {
     std::cerr << Utility::BoldRed( "Error: " )
@@ -331,6 +349,7 @@ int main( int argc, char** argv )
       try{
         DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
           data_container,
+          tabular_evaluation_tol,
           cutoff_angle_cosine,
           number_of_moment_preserving_angles );
       }
@@ -399,6 +418,7 @@ int main( int argc, char** argv )
                                             occupation_number_evaluation_tol );
         raw_generator->setSubshellIncoherentEvaluationTolerance(
                                           subshell_incoherent_evaluation_tol );
+        raw_generator->setTabularEvaluationTolerance( tabular_evaluation_tol );
         raw_generator->setCutoffAngleCosine( cutoff_angle_cosine );
         raw_generator->setNumberOfMomentPreservingAngles(
                                           number_of_moment_preserving_angles );

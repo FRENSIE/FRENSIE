@@ -428,7 +428,7 @@ protected:
 
   //! Set secondary electron LinLinLog interpolation mode
   void setElectronLinLinLogInterpolationModeOnOff(
-    const bool use_linlinlog_interpolation);
+    const bool linlinlog_interpolation_mode_on);
 
   //! Set the union energy grid convergence tolerance
   void setGridConvergenceTolerance( const double grid_convergence_tol );

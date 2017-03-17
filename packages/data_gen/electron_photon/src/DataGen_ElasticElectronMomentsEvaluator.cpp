@@ -33,11 +33,12 @@ double ElasticElectronMomentsEvaluator::s_rutherford_cutoff_angle_cosine = 0.999
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool use_linlinlog_interpolation )
+    const double tabular_evaluation_tol,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on )
 
   : d_cutoff_elastic_angles( data_container.getCutoffElasticAngles() ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine ),
-    d_use_linlinlog_interpolation( use_linlinlog_interpolation )
+    d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the data is valid
   testPrecondition( cutoff_angle_cosine >= -1.0 );
@@ -49,17 +50,21 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
                                data_container.getElectronEnergyGrid().end() );
 
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
-  if ( d_use_linlinlog_interpolation )
+  if ( linlinlog_interpolation_mode_on )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<true>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
     d_analog_distribution,
-    data_container );
+    data_container,
+    tabular_evaluation_tol,
+    correlated_sampling_mode_on );
   }
   else
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<false>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
     d_analog_distribution,
-    data_container );
+    data_container,
+    tabular_evaluation_tol,
+    correlated_sampling_mode_on );
   }
 
   // Construct the hash-based grid searcher for this atom
@@ -111,8 +116,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const double cutoff_angle_cosine )
   : d_cutoff_elastic_angles( cutoff_elastic_angles ),
     d_analog_distribution( analog_distribution ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine ),
-    d_use_linlinlog_interpolation( true )
+    d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the data is valid
   testPrecondition( cutoff_angle_cosine >= -1.0 );
@@ -383,15 +387,17 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByRecur
  * at the energy using numerical integration */
 void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
             Utility::long_float& rutherford_moment,
-            const double& energy,
-            const int& n ) const
+            const double energy,
+            const int n,
+            const double tolerance,
+            const unsigned number_of_iterations ) const
 {
   // Make sure the energy, anfgular grid and order are valid
   testPrecondition( energy > 0.0 );
   testPrecondition( n >= 0 );
 
   Utility::GaussKronrodIntegrator<Utility::long_float>
-    integrator( 1e-13, 0.0, 1000 );
+    integrator( tolerance, 0.0, number_of_iterations );
 
   // Turn of error and warning messages
   integrator.dontEstimateRoundoff();
@@ -442,8 +448,10 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
 void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
             Utility::long_float& rutherford_moment,
             const Utility::long_float& eta,
-            const double& energy,
-            const int& n ) const
+            const double energy,
+            const int n,
+            const double tolerance,
+            const unsigned number_of_iterations ) const
 {
   // Make sure the energy and order are valid
   testPrecondition( energy > 0.0 );
@@ -453,7 +461,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
   Utility::long_float mu = Utility::long_float(999999)/1000000;
 
   Utility::GaussKronrodIntegrator<Utility::long_float>
-    integrator( 1e-13, 0.0, 1000 );
+    integrator( tolerance, 0.0, number_of_iterations );
 
   // Turn of error and warning messages
   integrator.dontEstimateRoundoff();
@@ -470,11 +478,11 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
                          0 );
 
   integrator.integrateAdaptively<61>(
-					wrapper,
+                    wrapper,
                     mu,
-					Utility::long_float(1),
-					moment_zero,
-					abs_error );
+                    Utility::long_float(1),
+                    moment_zero,
+                    abs_error );
 
   moment_n = moment_zero;
 
@@ -490,11 +498,11 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
                          n );
 
     integrator.integrateAdaptively<61>(
-					wrapper,
+                    wrapper,
                     mu,
-					Utility::long_float(1),
-					moment_n,
-					abs_error );
+                    Utility::long_float(1),
+                    moment_n,
+                    abs_error );
   }
   rutherford_moment = moment_n/moment_zero;
 }

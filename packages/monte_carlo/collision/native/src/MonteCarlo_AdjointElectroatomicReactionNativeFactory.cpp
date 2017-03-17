@@ -38,7 +38,9 @@ void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
                 raw_adjoint_electroatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction )
+            std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+            const double evalation_tol,
+            const bool correlated_sampling_mode_on )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
@@ -51,9 +53,11 @@ void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
   // Create the analog elastic scattering distribution
   std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
     distribution,
-    raw_adjoint_electroatom_data );
+    raw_adjoint_electroatom_data,
+    evalation_tol,
+    correlated_sampling_mode_on );
 
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;

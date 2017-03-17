@@ -94,6 +94,26 @@ void SimulationElectronPropertiesFactory::initializeProperties(
   }
 
   // Get the secondary electron LinLinLog interpolation mode - optional
+  if( properties.isParameter( "Electron Evaluation Tolerance" ) )
+  {
+    double evalation_tol =
+        properties.get<double>( "Electron Evaluation Tolerance" );
+
+    if( evalation_tol > 0.0 && evalation_tol < 1.0 )
+    {
+      electron_properties.setElectronEvaluationTolerance( evalation_tol );
+    }
+    else
+    {
+      std::cerr << "Warning: the electron evalation tolerance must have a "
+                << "value between 0 and 1. The default value of "
+                << electron_properties.getElectronEvaluationTolerance()
+                << " will be used instead of " << evalation_tol << "."
+                << std::endl;
+    }
+  }
+
+  // Get the secondary electron LinLinLog interpolation mode - optional
   if( properties.isParameter( "Electron LinLinLog Interpolation" ) )
   {
     if( !properties.get<bool>( "Electron LinLinLog Interpolation" ) )

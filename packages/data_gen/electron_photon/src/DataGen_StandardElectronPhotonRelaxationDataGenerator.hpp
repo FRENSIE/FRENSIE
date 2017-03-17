@@ -110,16 +110,18 @@ public:
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double max_electron_energy = 20.0,
     const double cutoff_angle_cosine = 0.9,
+    const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
-    const bool use_linlinlog_interpolation = true,
+    const bool linlinlog_interpolation_mode_on = true,
     std::ostream& os_log = std::cout );
 
   //! Repopulate the electron moment preserving data
   static void repopulateMomentPreservingData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double cutoff_angle_cosine = 0.9,
+    const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
-    const bool use_linlinlog_interpolation = true,
+    const bool linlinlog_interpolation_mode_on = true,
     std::ostream& os_log = std::cout );
 
 protected:
@@ -186,7 +188,8 @@ private:
   // Set the moment preserving data
   static void setMomentPreservingData(
     const std::vector<double>& elastic_energy_grid,
-    const bool use_linlinlog_interpolation,
+    const double tabular_evaluation_tol,
+    const bool linlinlog_interpolation_mode_on,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container );
 
   // Extract the average photon heating numbers

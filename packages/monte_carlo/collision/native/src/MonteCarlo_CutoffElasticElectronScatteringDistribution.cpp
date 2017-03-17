@@ -81,7 +81,7 @@ double CutoffElasticElectronScatteringDistribution::evaluateCDF(
 double CutoffElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRatio(
         const double incoming_energy ) const
 {
-  // Get the max angle 
+  // Get the max angle
   double max_angle =
     d_cutoff_distribution->getUpperBoundOfConditionalIndepVar( incoming_energy );
 

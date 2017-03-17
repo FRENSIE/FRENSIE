@@ -26,51 +26,67 @@ namespace MonteCarlo{
 //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool use_linlinlog_interpolation = true );
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evalation_tol );
 
 //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const bool use_linlinlog_interpolation = true );
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evalation_tol );
 
 
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool use_linlinlog_interpolation = true );
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evalation_tol );
 
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool use_linlinlog_interpolation = true );
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evalation_tol );
 
 
 //! Create a cutoff elastic distribution
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 1.0,
-    const bool use_linlinlog_interpolation = true );
+    const double cutoff_angle_cosine,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evalation_tol );
 
 //! Create a cutoff elastic distribution
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 1.0,
-    const bool use_linlinlog_interpolation = true );
+    const double cutoff_angle_cosine,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evalation_tol );
 
 
 //! Create a moment preserving elastic distribution
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 0.9,
-    const bool use_linlinlog_interpolation = true );
+    const double cutoff_angle_cosine,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evalation_tol );
 
 //! Create a moment preserving elastic distribution
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 0.9,
-    const bool use_linlinlog_interpolation = true );
+    const double cutoff_angle_cosine,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evalation_tol );
 
 //----------------------------------------------------------------------------//
 //      ****BREMSSTRAHLUNG DISTRIBUTIONS****
@@ -79,18 +95,18 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 //! Create a simple dipole bremsstrahlung distribution
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool use_linlinlog_interpolation,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evalation_tol = 1e-7 );
 
 //! Create a detailed 2BS bremsstrahlung distribution
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
-    const int atomic_number,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool use_linlinlog_interpolation,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
+    const int atomic_number,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evalation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//
@@ -102,9 +118,9 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
     const double binding_energy,
-    const bool use_linlinlog_interpolation,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evalation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//

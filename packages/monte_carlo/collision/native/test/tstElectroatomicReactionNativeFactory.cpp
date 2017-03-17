@@ -30,6 +30,8 @@ Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 std::shared_ptr<MonteCarlo::ElectroatomicReaction> reaction;
 
+double eval_tol;
+
 //---------------------------------------------------------------------------//
 // LinLinLog Tests.
 //---------------------------------------------------------------------------//
@@ -41,7 +43,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                1e-7,
+                true );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -169,7 +173,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.8927529078162849e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
@@ -216,16 +220,17 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createSubshellElectroelectricReactions )
 {
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
-  bool use_correlated_sampling = true;
-  bool use_unit_based_interpolation = true;
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = true;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
                                *data_container,
                                energy_grid,
                                grid_searcher,
                                reactions,
-                               use_correlated_sampling,
-                               use_unit_based_interpolation );
+                               correlated_sampling_mode_on,
+                               unit_based_interpolation_mode_on,
+                               eval_tol );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
 
@@ -274,8 +279,8 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createBremsstrahlungReaction_dipole )
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
-  bool use_correlated_sampling = true;
-  bool use_unit_based_interpolation = true;
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = true;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
                                *data_container,
@@ -283,8 +288,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                                grid_searcher,
                                reaction,
                                photon_distribution_function,
-                               use_correlated_sampling,
-                               use_unit_based_interpolation );
+                               correlated_sampling_mode_on,
+                               unit_based_interpolation_mode_on,
+                               eval_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -321,8 +327,8 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createBremsstrahlungReaction_2bs )
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
-  bool use_correlated_sampling = true;
-  bool use_unit_based_interpolation = false;
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = false;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
                                *data_container,
@@ -330,8 +336,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                                grid_searcher,
                                reaction,
                                photon_distribution_function,
-                               use_correlated_sampling,
-                               use_unit_based_interpolation );
+                               correlated_sampling_mode_on,
+                               unit_based_interpolation_mode_on,
+                               eval_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -373,6 +380,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                 energy_grid,
                 grid_searcher,
                 reaction,
+                1e-7,
                 false );
 
   // Test reaction properties
@@ -447,7 +455,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                0.9,
+                1e-7 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -461,7 +471,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 6.8927529078162849e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
@@ -477,16 +487,17 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createSubshellElectroionizationReactions_lin )
 {
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
-  bool use_correlated_sampling = true;
-  bool use_unit_based_interpolation = false;
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = false;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
                                reactions,
-                               use_correlated_sampling,
-                               use_unit_based_interpolation );
+                               correlated_sampling_mode_on,
+                               unit_based_interpolation_mode_on,
+                               eval_tol );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
 
@@ -535,8 +546,8 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createBremsstrahlungReaction_dipole_lin )
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
-  bool use_correlated_sampling = true;
-  bool use_unit_based_interpolation = true;
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = true;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
                                *data_container,
@@ -544,8 +555,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                                grid_searcher,
                                reaction,
                                photon_distribution_function,
-                               use_correlated_sampling,
-                               use_unit_based_interpolation );
+                               correlated_sampling_mode_on,
+                               unit_based_interpolation_mode_on,
+                               eval_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -578,8 +590,8 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createBremsstrahlungReaction_2bs_lin )
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
-  bool use_correlated_sampling = true;
-  bool use_unit_based_interpolation = false;
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = false;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
                                *data_container,
@@ -587,8 +599,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                                grid_searcher,
                                reaction,
                                photon_distribution_function,
-                               use_correlated_sampling,
-                               use_unit_based_interpolation );
+                               correlated_sampling_mode_on,
+                               unit_based_interpolation_mode_on,
+                               eval_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -660,6 +673,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
+  eval_tol = 1e-7;
+
   // Create the native data file container
   data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
                              test_native_file_name ) );

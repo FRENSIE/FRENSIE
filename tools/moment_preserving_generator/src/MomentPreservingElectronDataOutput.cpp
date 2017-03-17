@@ -23,7 +23,7 @@
 #include "DataGen_StandardMomentPreservingElectronDataGenerator.hpp"
 
 /*! \details This exec outputs a test file to see the moment preserving data for
- *  Al. It was designed to match that of ITS. To run go to bin and run:
+ *  Al. It was designed to match that of ITS. To run go to bin and execute:
  * ./moment_preserving_test_output --test_native_file="NATIVE_TEST_DATA_SOURCE_DIR/test_epr_13_native.xml"
  * It should output a file called moment_preserving_elastic_data.txt
  */
@@ -35,7 +35,11 @@ class TestElasticElectronMomentsEvaluator : public DataGen::ElasticElectronMomen
 public:
   TestElasticElectronMomentsEvaluator(
         const Data::ElectronPhotonRelaxationDataContainer& data_container )
-    : ElasticElectronMomentsEvaluator( data_container, 0.999999 )
+    : ElasticElectronMomentsEvaluator( data_container,
+                                       0.999999,
+                                       1e-7,
+                                       true,
+                                       true )
   { /* ... */ }
 
   ~TestElasticElectronMomentsEvaluator()
@@ -52,7 +56,7 @@ public:
 // Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data;
+std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data;
 std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> evaluator;
 std::shared_ptr<TestElasticElectronMomentsEvaluator> test_evaluator;
 std::shared_ptr<const DataGen::StandardMomentPreservingElectronDataGenerator> data_generator;
@@ -75,8 +79,8 @@ int main( int argc, char** argv )
 
   mp_data_clp.setDocString( "Moment Preserving AL Test Data Generator\n" );
   mp_data_clp.setOption( "test_native_al_file",
-		                 &test_native_al_file_name,
-		                 "Test Native Al file name",
+                         &test_native_al_file_name,
+                         "Test Native Al file name",
                          true );
 
   mp_data_clp.throwExceptions( false );
@@ -95,29 +99,38 @@ int main( int argc, char** argv )
   {
   // Create the native data file container
   data.reset( new Data::ElectronPhotonRelaxationDataContainer(
-						     test_native_al_file_name ) );
+                             test_native_al_file_name ) );
 
 
   // Create the analog elastic distributions (combined Cutoff and Screened Rutherford)
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
     analog_distribution,
-    *data );
+    *data,
+    1e-16,
+    true );
 
   // Create the moment evaluator
   evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
-                                    *data ) );
+                                    *data,
+                                     0.9,
+                                     1e-7,
+                                     true,
+                                     true ) );
 
   // Create the test moment evaluator
   test_evaluator.reset( new TestElasticElectronMomentsEvaluator(
                                     *data ) );
 
   data_generator.reset(
-		   new DataGen::StandardMomentPreservingElectronDataGenerator(
-				     data->getAtomicNumber(),
-				     data,
-				     0.00001,
-				     20.0,
-				     0.999999 ) );
+           new DataGen::StandardMomentPreservingElectronDataGenerator(
+                     data->getAtomicNumber(),
+                     data,
+                     0.00001,
+                     20.0,
+                     0.999999,
+                     1e-7,
+                     true,
+                     true ) );
   }
 
   std::vector<double> angular_energy_grid =

@@ -141,6 +141,17 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicExcitationModeOffOn )
 }
 
 //---------------------------------------------------------------------------//
+// Test that the electron evalation tolerance can be set
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronEvaluationTolerance )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+  
+  properties.setElectronEvaluationTolerance( 1e-4 );
+
+  TEST_EQUALITY( properties.getElectronEvaluationTolerance(), 1e-4 );
+}
+
+//---------------------------------------------------------------------------//
 // Test that secondary electron LinLinLog interpolation can be turned off
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setLinLinLogInterpolationModeOffOn )
 {

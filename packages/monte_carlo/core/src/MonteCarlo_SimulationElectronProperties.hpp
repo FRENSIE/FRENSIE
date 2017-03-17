@@ -94,6 +94,12 @@ public:
   //! Return if atomic excitation mode is on
   bool isAtomicExcitationModeOn() const;
 
+  //! Set the electron FullyTabularTwoDDistribution evalation tolerance (default = 1e-7)
+  void setElectronEvaluationTolerance( const double tol );
+
+  //! Return the electron FullyTabularTwoDDistribution evalation tolerance (default = 1e-7)
+  double getElectronEvaluationTolerance() const;
+
   //! Set secondary electron LinLinLog interpolation mode to off (on by default)
   void setLinLinLogInterpolationModeOff();
 
@@ -169,6 +175,9 @@ private:
 
   // The atomic excitation electron scattering mode (true = on - default, false = off)
   bool d_atomic_excitation_mode_on;
+
+  // The electron FullyTabularTwoDDistribution evalation tolerance
+  double d_evaluation_tol;
 
   /* The lin-log interpolation mode for secondary distributions
    * (true = on - default, false = off) */

@@ -15,8 +15,118 @@
 namespace MonteCarlo{
 
 //----------------------------------------------------------------------------//
+//      ****FORWARD DATA PUBLIC FUNCTIONS****
+//----------------------------------------------------------------------------//
+
+// Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+        hybrid_elastic_distribution,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on )
+{
+  testPostcondition( data_container.hasMomentPreservingData() );
+
+ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+    hybrid_elastic_distribution,
+    grid_searcher,
+    energy_grid,
+    cutoff_cross_section,
+    data_container.getCutoffElasticAngles(),
+    data_container.getCutoffElasticPDF(),
+    moment_preserving_cross_section,
+    data_container.getMomentPreservingElasticDiscreteAngles(),
+    data_container.getMomentPreservingElasticWeights(),
+    data_container.getElasticAngularEnergyGrid(),
+    cutoff_angle_cosine,
+    linlinlog_interpolation_mode_on,
+    correlated_sampling_mode_on );
+}
+
+//----------------------------------------------------------------------------//
+//      ****ADJOINT DATA PUBLIC FUNCTIONS****
+//----------------------------------------------------------------------------//
+
+// Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+        hybrid_elastic_distribution,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on )
+{
+  testPostcondition( data_container.hasAdjointMomentPreservingData() );
+
+ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+    hybrid_elastic_distribution,
+    grid_searcher,
+    energy_grid,
+    cutoff_cross_section,
+    data_container.getAdjointCutoffElasticAngles(),
+    data_container.getAdjointCutoffElasticPDF(),
+    moment_preserving_cross_section,
+    data_container.getAdjointMomentPreservingElasticDiscreteAngles(),
+    data_container.getAdjointMomentPreservingElasticWeights(),
+    data_container.getAdjointElasticAngularEnergyGrid(),
+    cutoff_angle_cosine,
+    linlinlog_interpolation_mode_on,
+    correlated_sampling_mode_on );
+}
+
+//----------------------------------------------------------------------------//
 //      ****DATA CONTAINER INDEPENDENT PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
+
+// Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+        hybrid_elastic_distribution,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
+    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
+    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
+    const std::map<double,std::vector<double> >& moment_preserving_angles,
+    const std::map<double,std::vector<double> >& moment_preserving_weights,
+    const std::vector<double>& angular_energy_grid,
+    const double cutoff_angle_cosine,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on )
+{
+  // Create the hybrid scattering functions and cross section ratio
+  std::shared_ptr<HybridDistribution> hybrid_function;
+  ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
+    grid_searcher,
+    energy_grid,
+    cutoff_cross_section,
+    cutoff_elastic_angles,
+    cutoff_elastic_pdf,
+    moment_preserving_cross_section,
+    moment_preserving_angles,
+    moment_preserving_weights,
+    angular_energy_grid,
+    cutoff_angle_cosine,
+    hybrid_function );
+
+  // Create hybrid distribution
+  hybrid_elastic_distribution.reset(
+        new HybridElasticElectronScatteringDistribution(
+                hybrid_function,
+                cutoff_angle_cosine,
+                linlinlog_interpolation_mode_on ) );
+}
 
 // Create a screened Rutherford elastic distribution
 void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
@@ -36,8 +146,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
 // Return angle cosine grid for given grid energy bin
 std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
     const std::map<double, std::vector<double> >& raw_cutoff_elastic_angles,
-    const double& energy,
-    const double& cutoff_angle_cosine )
+    const double energy,
+    const double cutoff_angle_cosine )
 {
   testPrecondition( energy >= raw_cutoff_elastic_angles.begin()->first );
   testPrecondition( energy <= raw_cutoff_elastic_angles.rbegin()->first );
@@ -74,7 +184,7 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
 // Return angle cosine grid for the given cutoff angle
 std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
     const std::vector<double>& raw_cutoff_elastic_angles,
-    const double& cutoff_angle_cosine )
+    const double cutoff_angle_cosine )
 {
   // Find the first angle cosine above the cutoff angle cosine
   std::vector<double>::const_iterator start;
@@ -194,7 +304,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
         const std::map<double,std::vector<double> >& elastic_pdf,
         const double energy,
         TwoDFunction& function_data,
-        bool discrete_function )
+        const bool discrete_function )
 {
   // Make sure the energy is valid
   testPrecondition( elastic_angles.count( energy ) );

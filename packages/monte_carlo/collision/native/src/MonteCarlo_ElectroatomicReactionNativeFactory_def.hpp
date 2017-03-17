@@ -38,7 +38,8 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-            const double cutoff_angle_cosine )
+            const double cutoff_angle_cosine,
+            const double evalation_tol )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -52,7 +53,8 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<SecondInterpPolicy>(
     distribution,
     raw_electroatom_data,
-    cutoff_angle_cosine );
+    cutoff_angle_cosine,
+    evalation_tol );
 
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -134,7 +136,8 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-            const double cutoff_angle_cosine )
+            const double cutoff_angle_cosine,
+            const double evalation_tol )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -148,7 +151,8 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
 
   ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<SecondInterpPolicy>(
     distribution,
-    raw_electroatom_data );
+    raw_electroatom_data,
+    evalation_tol );
 
   // Moment preserving elastic cross section
   Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -178,8 +182,9 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation )
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evalation_tol )
 {
   // Convert subshell number to enum
   Data::SubshellType subshell_type =
@@ -206,8 +211,9 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
       subshell,
       raw_electroatom_data.getSubshellBindingEnergy( subshell ),
       electroionization_subshell_distribution,
-      use_correlated_sampling,
-      use_unit_based_interpolation );
+      correlated_sampling_mode_on,
+      unit_based_interpolation_mode_on,
+      evalation_tol );
 
 
   // Create the subshell electroelectric reaction
@@ -229,8 +235,9 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
     electroionization_subshell_reactions,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation )
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evalation_tol )
 {
   electroionization_subshell_reactions.clear();
 
@@ -249,8 +256,9 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
       grid_searcher,
       *shell,
       electroionization_subshell_reaction,
-      use_correlated_sampling,
-      use_unit_based_interpolation );
+      correlated_sampling_mode_on,
+      unit_based_interpolation_mode_on,
+      evalation_tol );
 
     electroionization_subshell_reactions.push_back(
                       electroionization_subshell_reaction );
@@ -268,8 +276,9 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation )
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evalation_tol )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -296,8 +305,9 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<SecondInterpPolicy>(
       raw_electroatom_data,
       bremsstrahlung_distribution,
-      use_correlated_sampling,
-      use_unit_based_interpolation );
+      correlated_sampling_mode_on,
+      unit_based_interpolation_mode_on,
+      evalation_tol );
 
   }
   else if( photon_distribution_function = TABULAR_DISTRIBUTION )
@@ -311,8 +321,9 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
       raw_electroatom_data,
       raw_electroatom_data.getAtomicNumber(),
       bremsstrahlung_distribution,
-      use_correlated_sampling,
-      use_unit_based_interpolation );
+      correlated_sampling_mode_on,
+      unit_based_interpolation_mode_on,
+      evalation_tol );
   }
 
   // Create the bremsstrahlung reaction

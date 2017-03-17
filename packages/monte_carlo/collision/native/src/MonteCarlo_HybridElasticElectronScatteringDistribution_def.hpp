@@ -75,7 +75,7 @@ double HybridElasticElectronScatteringDistribution::evaluateImpl(
     upper_bin = lower_bin;
     ++upper_bin;
 
-    if ( d_use_linlinlog_interpolation )
+    if ( d_linlinlog_interpolation_mode_on )
     {
       // Use LinLinLog interpolation
       return Utility::LinLog::interpolate(

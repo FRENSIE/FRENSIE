@@ -200,8 +200,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
   TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
   TEST_EQUALITY_CONST( evaluated_pdf.size(), 79 );
-  TEST_EQUALITY_CONST( evaluated_pdf.front(), 5.19221420086210804e-08 );
-  TEST_EQUALITY_CONST( evaluated_pdf.back(), 5.06129128916336165e5 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 5.19221275245657547e-08 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 5.06129104868643801e+05 );
 
 
   // Test highest energy bin
@@ -257,8 +257,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
   TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
   TEST_EQUALITY_CONST( evaluated_pdf.size(), 79 );
-  TEST_EQUALITY_CONST( evaluated_pdf.front(), 6.14602999999999988e-08 );
-  TEST_EQUALITY_CONST( evaluated_pdf.back(), 4.33429111111111124e+05 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 6.14602802628500258e-08 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 4.33429072791244427e+05 );
 
 
   // Test highest energy bin
@@ -737,12 +737,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createAnalogElasticDistribution_LinLinLog )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<true>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         native_analog_elastic_distribution,
         data_container->getCutoffElasticAngles(),
         data_container->getCutoffElasticPDF(),
         data_container->getElasticAngularEnergyGrid(),
-        data_container->getAtomicNumber() );
+        data_container->getAtomicNumber(),
+        1e-7,
+        true );
 
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
@@ -824,12 +826,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createAnalogElasticDistribution_LinLinLin )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<false>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         native_analog_elastic_distribution,
         data_container->getCutoffElasticAngles(),
         data_container->getCutoffElasticPDF(),
         data_container->getElasticAngularEnergyGrid(),
-        data_container->getAtomicNumber() );
+        data_container->getAtomicNumber(),
+        1e-7,
+        true );
 
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
@@ -911,12 +915,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createAnalogElasticDistribution_LinLinLog_adjoint )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<true>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         native_analog_elastic_distribution,
         adjoint_data_container->getAdjointCutoffElasticAngles(),
         adjoint_data_container->getAdjointCutoffElasticPDF(),
         adjoint_data_container->getAdjointElasticAngularEnergyGrid(),
-        adjoint_data_container->getAtomicNumber() );
+        adjoint_data_container->getAtomicNumber(),
+        1e-7,
+        true );
 
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
@@ -1000,12 +1006,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createAnalogElasticDistribution_LinLinLin_adjoint )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<false>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         native_analog_elastic_distribution,
         adjoint_data_container->getAdjointCutoffElasticAngles(),
         adjoint_data_container->getAdjointCutoffElasticPDF(),
         adjoint_data_container->getAdjointElasticAngularEnergyGrid(),
-        adjoint_data_container->getAtomicNumber() );
+        adjoint_data_container->getAtomicNumber(),
+        1e-7,
+        true );
 
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
@@ -1114,14 +1122,16 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getMomentPreservingCrossSection().end() );
 
   
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<true>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
         native_hybrid_elastic_distribution,
         grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         *data_container,
-        cutoff_angle_cosine );
+        cutoff_angle_cosine,
+        true,
+        true );
 
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
@@ -1228,14 +1238,16 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getMomentPreservingCrossSection().end() );
 
   
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<false>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
         native_hybrid_elastic_distribution,
         grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         *data_container,
-        cutoff_angle_cosine );
+        cutoff_angle_cosine,
+        false,
+        true );
 
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
@@ -1403,7 +1415,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
-    scattering_function );
+    scattering_function,
+    1e-7,
+    true );
 
   TEST_FLOATING_EQUALITY( scattering_function->getLowerBoundOfPrimaryIndepVar(), 1e-5, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_function->getUpperBoundOfPrimaryIndepVar(), 1e5, 1e-12 );
@@ -1420,7 +1434,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
-    scattering_function );
+    scattering_function,
+    1e-7,
+    true );
 
   TEST_FLOATING_EQUALITY( scattering_function->getLowerBoundOfPrimaryIndepVar(), 1e-5, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_function->getUpperBoundOfPrimaryIndepVar(), 1e5, 1e-12 );

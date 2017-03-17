@@ -38,8 +38,10 @@ public:
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 1.0,
-    const bool use_linlinlog_interpolation = true );
+    const double cutoff_angle_cosine,
+    const double tabular_evaluation_tol,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on );
 
   //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(
@@ -52,7 +54,7 @@ public:
     const unsigned screened_rutherford_threshold_energy_index,
     const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution,
-    const double cutoff_angle_cosine = 1.0 );
+    const double cutoff_angle_cosine );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()
@@ -121,8 +123,10 @@ protected:
    */
   void evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
             Utility::long_float& rutherford_moment,
-            const double& energy,
-            const int& n ) const;
+            const double energy,
+            const int n,
+            const double tolerance = 1e-13,
+            const unsigned number_of_iterations = 1000 ) const;
 
   /* Evaluate the nth PDF moment of the screened Rutherford peak distribution
    * at the energy using numerical integration
@@ -130,8 +134,10 @@ protected:
   void evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
             Utility::long_float& rutherford_moment,
             const Utility::long_float& eta,
-            const double& energy,
-            const int& n ) const;
+            const double energy,
+            const int n,
+            const double tolerance = 1e-13,
+            const unsigned number_of_iterations = 1000 ) const;
 
 private:
 
@@ -157,9 +163,6 @@ private:
 
   // The screened rutherford elastic threshold_energy_index
   unsigned d_screened_rutherford_threshold_energy_index;
-
-  // Boolean for LinLinLog interpolation
-  bool d_use_linlinlog_interpolation;
 
   // The analog distribution
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>

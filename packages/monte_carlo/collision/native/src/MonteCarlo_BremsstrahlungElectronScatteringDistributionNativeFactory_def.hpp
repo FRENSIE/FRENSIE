@@ -21,8 +21,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Create the scattering function
@@ -36,8 +36,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( energy_loss_function,
-                                                     use_correlated_sampling,
-                                                     use_unit_based_interpolation ) );
+                                                     correlated_sampling_mode_on,
+                                                     unit_based_interpolation_mode_on ) );
 }
 
 // Create a simple dipole bremsstrahlung distribution
@@ -46,8 +46,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Get the energy grid for bremsstrahlung energy distributions
@@ -58,8 +58,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     raw_electroatom_data,
     bremsstrahlung_energy_grid,
     scattering_distribution,
-    use_correlated_sampling,
-    use_unit_based_interpolation,
+    correlated_sampling_mode_on,
+    unit_based_interpolation_mode_on,
     evaluation_tol );
 }
 
@@ -71,8 +71,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Create the scattering function
@@ -87,8 +87,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( atomic_number,
                                                      energy_loss_function,
-                                                     use_correlated_sampling,
-                                                     use_unit_based_interpolation ) );
+                                                     correlated_sampling_mode_on,
+                                                     unit_based_interpolation_mode_on ) );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
@@ -98,8 +98,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const int atomic_number,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy>(
@@ -107,8 +107,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     atomic_number,
     raw_electroatom_data.getBremsstrahlungEnergyGrid(),
     scattering_distribution,
-    use_correlated_sampling,
-    use_unit_based_interpolation,
+    correlated_sampling_mode_on,
+    unit_based_interpolation_mode_on,
     evaluation_tol );
 }
 

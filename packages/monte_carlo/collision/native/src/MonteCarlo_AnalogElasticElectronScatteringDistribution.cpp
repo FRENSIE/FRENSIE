@@ -39,10 +39,10 @@ double AnalogElasticElectronScatteringDistribution::s_screening_param1 =
 AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
     const int atomic_number,
-    const bool use_linlinlog_interpolation )
+    const bool linlinlog_interpolation_mode_on )
   : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
     d_atomic_number( atomic_number ),
-    d_use_linlinlog_interpolation( use_linlinlog_interpolation ),
+    d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on ),
     d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
     d_screening_param2( 3.76*s_fine_structure_const_squared*
                               d_atomic_number*d_atomic_number )
@@ -402,7 +402,7 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
     double upper_angle;
     sampleBin( upper_bin, random_number, upper_angle );
 
-    if ( d_use_linlinlog_interpolation )
+    if ( d_linlinlog_interpolation_mode_on )
     {
       // LinLinLog interpolation between energy bins
       scattering_angle_cosine = Utility::LinLog::interpolate(

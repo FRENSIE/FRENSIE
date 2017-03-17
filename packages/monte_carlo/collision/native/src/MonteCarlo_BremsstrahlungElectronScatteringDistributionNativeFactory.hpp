@@ -28,9 +28,9 @@ public:
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
-    const double evaluation_tol = 1e-6 );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol = 1e-7 );
 
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
@@ -38,9 +38,9 @@ public:
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
-    const double evaluation_tol = 1e-6 );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol = 1e-7 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
@@ -49,9 +49,9 @@ public:
     const int atomic_number,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
-    const double evaluation_tol = 1e-6 );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol = 1e-7 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
@@ -61,9 +61,9 @@ public:
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation,
-    const double evaluation_tol = 1e-6 );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol = 1e-7 );
 
   //! Create the energy loss function
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
@@ -72,7 +72,7 @@ public:
     const std::vector<double> bremsstrahlung_energy_grid,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         energy_loss_function,
-    const double evaluation_tol = 1e-6 );
+    const double evaluation_tol = 1e-7 );
 };
 
 } // end MonteCarlo namespace

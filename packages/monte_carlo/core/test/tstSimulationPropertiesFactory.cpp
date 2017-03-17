@@ -82,6 +82,7 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   TEST_ASSERT( !parsed_properties->isElectroionizationModeOn() );
   TEST_ASSERT( !parsed_properties->isBremsstrahlungModeOn() );
   TEST_ASSERT( !parsed_properties->isAtomicExcitationModeOn() );
+  TEST_EQUALITY_CONST( parsed_properties->getElectronEvaluationTolerance(), 1e-5 );
   TEST_ASSERT( !parsed_properties->isLinLinLogInterpolationModeOn() );
   TEST_ASSERT( !parsed_properties->isCorrelatedSamplingModeOn() );
   TEST_ASSERT( !parsed_properties->isUnitBasedInterpolationModeOn() );

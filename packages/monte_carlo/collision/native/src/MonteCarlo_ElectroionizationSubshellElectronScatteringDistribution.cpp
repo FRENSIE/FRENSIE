@@ -26,8 +26,8 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
     const double binding_energy,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation )
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on )
   : d_electroionization_subshell_scattering_distribution(
       electroionization_subshell_scattering_distribution ),
     d_binding_energy( binding_energy )
@@ -36,9 +36,9 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
   testPrecondition( d_electroionization_subshell_scattering_distribution.use_count() > 0 );
   testPrecondition( binding_energy > 0.0 );
 
-  this->setSamplingRoutine( use_correlated_sampling,
-                            use_unit_based_interpolation );
-  this->setEvaluationRoutines( use_unit_based_interpolation );
+  this->setSamplingRoutine( correlated_sampling_mode_on,
+                            unit_based_interpolation_mode_on );
+  this->setEvaluationRoutines( unit_based_interpolation_mode_on );
 }
 
 // Set the sampling routine
@@ -47,12 +47,12 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
  * the sample function pointer to the desired sampling routine.
  */
 void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine(
-                                    const bool use_correlated_sampling,
-                                    const bool use_unit_based_interpolation )
+                                    const bool correlated_sampling_mode_on,
+                                    const bool unit_based_interpolation_mode_on )
 {
-  if( use_unit_based_interpolation )
+  if( unit_based_interpolation_mode_on )
   {
-    if( use_correlated_sampling )
+    if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
       d_sample_func = std::bind<double>(
@@ -86,9 +86,9 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine
  *  correlatedSampleUnitBased respectively.
  */
 void ElectroionizationSubshellElectronScatteringDistribution::setEvaluationRoutines(
-                                    const bool use_unit_based_interpolation )
+                                    const bool unit_based_interpolation_mode_on )
 {
-  if( use_unit_based_interpolation )
+  if( unit_based_interpolation_mode_on )
   {
     // Set the correlated unit based evaluation routines
     d_evaluate_func = std::bind<double>(

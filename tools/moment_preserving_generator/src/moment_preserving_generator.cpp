@@ -26,7 +26,7 @@
 
 int main( int argc, char** argv )
 {
-  Teuchos::RCP<const DataGen::MomentPreservingElectronDataGenerator>
+  std::shared_ptr<const DataGen::MomentPreservingElectronDataGenerator>
     mp_data_generator;
 
   Teuchos::RCP<Teuchos::FancyOStream> out =
@@ -42,32 +42,32 @@ int main( int argc, char** argv )
   bool modify_cs_xml_file = false;
 
   mp_data_generator_clp.setDocString( "Moment Preserving Electron Native Data File"
-				  " Generator\n" );
+                                      " Generator\n" );
   mp_data_generator_clp.setOption( "cross_sec_dir",
-			       &cross_section_directory,
-			       "Directory containing desired cross section "
-			       "tables",
-			       true );
+                                   &cross_section_directory,
+                                   "Directory containing desired cross section "
+                                   "tables",
+                                   true );
   mp_data_generator_clp.setOption( "cross_sec_alias",
-			       &cross_section_alias,
-			       "Photon cross section table alias",
-			       true );
+                                   &cross_section_alias,
+                                   "Photon cross section table alias",
+                                   true );
   mp_data_generator_clp.setOption( "min_electron_energy",
-			       &min_electron_energy,
-			       "Min electron energy for table" );
+                                   &min_electron_energy,
+                                   "Min electron energy for table" );
   mp_data_generator_clp.setOption( "max_electron_energy",
-			       &max_electron_energy,
-			       "Max electron energy for table" );
+                                   &max_electron_energy,
+                                   "Max electron energy for table" );
   mp_data_generator_clp.setOption( "cutoff_angle_cosine",
-			       &cutoff_angle_cosine,
-			       "Cutoff angle cosine for moment preserving elastic data" );
+                                   &cutoff_angle_cosine,
+                                   "Cutoff angle cosine for moment preserving elastic data" );
   mp_data_generator_clp.setOption( "number_of_moment_preserving_angles",
-			       &number_of_moment_preserving_angles,
-			       "Number of discrete moment preserving angles" );
+                                   &number_of_moment_preserving_angles,
+                                   "Number of discrete moment preserving angles" );
   mp_data_generator_clp.setOption( "modify_cs_xml_file",
-			       "do_not_modify_cs_xml_file",
-			       &modify_cs_xml_file,
-			       "Modify the cross_sections.xml file?" );
+                                   "do_not_modify_cs_xml_file",
+                                   &modify_cs_xml_file,
+                                   "Modify the cross_sections.xml file?" );
 
   mp_data_generator_clp.throwExceptions( false );
 
@@ -94,35 +94,38 @@ int main( int argc, char** argv )
   double atomic_weight;
 
   Data::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
-						    cross_section_directory,
-						    cross_section_alias,
-						    *cross_sections_table_info,
-						    data_file_path,
-						    data_file_type,
-						    data_table_name,
-						    data_file_start_line,
-						    atomic_weight );
+                            cross_section_directory,
+                            cross_section_alias,
+                            *cross_sections_table_info,
+                            data_file_path,
+                            data_file_type,
+                            data_table_name,
+                            data_file_start_line,
+                            atomic_weight );
 
   // Create the data generator
   if( data_file_type == "Native" )
   {
-    Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> native_data_container(
+    std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> native_data_container(
         new Data::ElectronPhotonRelaxationDataContainer( data_file_path ) );
 
     atomic_number = native_data_container->getAtomicNumber();
 
     mp_data_generator.reset(
-	    new const DataGen::StandardMomentPreservingElectronDataGenerator(
-					    atomic_number,
-					    native_data_container,
-					    min_electron_energy,
-					    max_electron_energy,
-                        cutoff_angle_cosine ) );
+        new const DataGen::StandardMomentPreservingElectronDataGenerator(
+                        atomic_number,
+                        native_data_container,
+                        min_electron_energy,
+                        max_electron_energy,
+                        cutoff_angle_cosine,
+                        1e-7,
+                        true,
+                        true ) );
   }
   else
   {
     std::cerr << "Error: Electroatomic file type "
-	      << data_file_type << "is not supported!";
+              << data_file_type << "is not supported!";
   }
 
   // Create the new data container
@@ -159,32 +162,32 @@ int main( int argc, char** argv )
         old_table_info.get( Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop, 0.0 );
 
     new_table_info.set(
-	    Data::CrossSectionsXMLProperties::electroatomic_file_path_prop,
-	    oss.str() );
+            Data::CrossSectionsXMLProperties::electroatomic_file_path_prop,
+            oss.str() );
     new_table_info.set(
-	    Data::CrossSectionsXMLProperties::electroatomic_file_type_prop,
-	    Data::CrossSectionsXMLProperties::moment_preserving_file );
+            Data::CrossSectionsXMLProperties::electroatomic_file_type_prop,
+            Data::CrossSectionsXMLProperties::moment_preserving_file );
     new_table_info.set(
       Data::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
       -1 );
     new_table_info.set(
-	   Data::CrossSectionsXMLProperties::electroatomic_table_name_prop,
-	   "" );
+           Data::CrossSectionsXMLProperties::electroatomic_table_name_prop,
+           "" );
     new_table_info.set(
-	   Data::CrossSectionsXMLProperties::atomic_number_prop,
-	   atomic_number );
+           Data::CrossSectionsXMLProperties::atomic_number_prop,
+           atomic_number );
     new_table_info.set(
-	   Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop,
-	   atomic_weight_ratio );
+           Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop,
+           atomic_weight_ratio );
 
     Teuchos::writeParameterListToXmlFile( *cross_sections_table_info,
-					  cross_sections_xml_file );
+                                          cross_sections_xml_file );
   }
   else
     new_file_name = oss.str();
 
   data_container.exportData( new_file_name,
-			     Utility::ArchivableObject::XML_ARCHIVE );
+                             Utility::ArchivableObject::XML_ARCHIVE );
 
   return 0;
 }

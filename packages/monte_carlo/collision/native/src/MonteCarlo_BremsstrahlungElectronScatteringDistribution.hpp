@@ -34,26 +34,26 @@ public:
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on );
 
   //! Constructor with detailed 2BS photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const int atomic_number,
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on );
 
   //! Destructor
   virtual ~BremsstrahlungElectronScatteringDistribution()
   { /* ... */ }
 
   //! Set the sampling routine
-  void setSamplingRoutine( const bool use_correlated_sampling,
-                           const bool use_unit_based_interpolation );
+  void setSamplingRoutine( const bool correlated_sampling_mode_on,
+                           const bool unit_based_interpolation_mode_on );
 
   //! Set the evalation routines
-  void setEvaluationRoutines( const bool use_unit_based_interpolation );
+  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
 
   //! Return the min incoming energy
   double getMinEnergy() const;

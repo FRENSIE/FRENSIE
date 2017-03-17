@@ -311,11 +311,17 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double max_electron_energy,
     const double cutoff_angle_cosine,
+    const double tabular_evaluation_tol,
     const unsigned number_of_moment_preserving_angles,
-    const bool use_linlinlog_interpolation,
+    const bool linlinlog_interpolation_mode_on,
     std::ostream& os_log )
 {
   testPrecondition( max_electron_energy > 0.0 );
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+  testPrecondition( cutoff_angle_cosine > -1.0 );
+  testPrecondition( tabular_evaluation_tol > 0.0 );
+  testPrecondition( tabular_evaluation_tol < 1.0 );
+  testPrecondition( number_of_moment_preserving_angles >= 0 );
 
   // Get the elastic angular energy grid
   std::vector<double> angular_energy_grid(
@@ -340,7 +346,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
       std::vector<double> angles, pdf;
 
       // Get the angular grid and pdf at the max energy
-      if ( use_linlinlog_interpolation )
+      if ( linlinlog_interpolation_mode_on )
       {
         MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
           angles,
@@ -384,8 +390,9 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
   StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,
     cutoff_angle_cosine,
+    tabular_evaluation_tol,
     number_of_moment_preserving_angles,
-    use_linlinlog_interpolation,
+    linlinlog_interpolation_mode_on,
     os_log );
 }
 
@@ -393,19 +400,22 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
 void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
     const double cutoff_angle_cosine,
+    const double tabular_evaluation_tol,
     const unsigned number_of_moment_preserving_angles,
-    const bool use_linlinlog_interpolation,
+    const bool linlinlog_interpolation_mode_on,
     std::ostream& os_log )
 {
   testPrecondition( cutoff_angle_cosine <= 1.0 );
   testPrecondition( cutoff_angle_cosine > -1.0 );
+  testPrecondition( tabular_evaluation_tol > 0.0 );
+  testPrecondition( tabular_evaluation_tol < 1.0 );
   testPrecondition( number_of_moment_preserving_angles >= 0 );
 
   data_container.setCutoffAngleCosine( cutoff_angle_cosine );
   data_container.setNumberOfMomentPreservingAngles( 
     number_of_moment_preserving_angles );
   data_container.setElectronLinLinLogInterpolationModeOnOff(
-    use_linlinlog_interpolation );
+    linlinlog_interpolation_mode_on );
 
   std::vector<double> angular_energy_grid(
     data_container.getElasticAngularEnergyGrid() );
@@ -448,7 +458,8 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
   {
     StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
       angular_energy_grid,
-      use_linlinlog_interpolation,
+      tabular_evaluation_tol,
+      linlinlog_interpolation_mode_on,
       data_container );
     os_log << Utility::BoldGreen( "done." ) << std::endl;
   }
@@ -1417,6 +1428,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   {
     StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         angular_energy_grid,
+        d_tabular_evaluation_tol,
         d_linlinlog_interpolation_mode_on,
         data_container );
     (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
@@ -1825,30 +1837,39 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 // Set the moment preserving data
 void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
     const std::vector<double>& angular_energy_grid,
-    const bool use_linlinlog_interpolation,
+    const double tabular_evaluation_tol,
+    const bool linlinlog_interpolation_mode_on,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container )
 {
+  // Make sure the tolerance is valid
+  testPrecondition( tabular_evaluation_tol > 0.0 );
+  testPrecondition( tabular_evaluation_tol < 1.0 );
+
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution;
 
-  if ( use_linlinlog_interpolation )
+  if ( linlinlog_interpolation_mode_on )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<true>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         analog_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
-        data_container.getAtomicNumber() );
+        data_container.getAtomicNumber(),
+        tabular_evaluation_tol,
+        true );
   }
   else
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<false>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         analog_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
-        data_container.getAtomicNumber() );
+        data_container.getAtomicNumber(),
+        tabular_evaluation_tol,
+        true );
   }
 
   // Construct the hash-based grid searcher for this atom
@@ -1915,7 +1936,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   // Generate a cross section reduction distribution
   std::shared_ptr<const Utility::OneDDistribution> reduction_distribution;
 
-  if ( use_linlinlog_interpolation )
+  if ( linlinlog_interpolation_mode_on )
   {
     // Use LinLog interpoaltion between bins of coarse angular energy grid
     reduction_distribution.reset(

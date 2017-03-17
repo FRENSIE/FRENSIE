@@ -34,7 +34,8 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const bool use_linlinlog_interpolation = true );
+    const double evalation_tol,
+    const bool linlinlog_interpolation_mode_on );
 
   //! Create a hybrid elastic scattering electroatomic reaction
   static void createHybridElasticReaction(
@@ -43,7 +44,7 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine = 0.9,
-    const bool use_linlinlog_interpolation = true );
+    const bool linlinlog_interpolation_mode_on = true );
 
   //! Create an cutoff elastic scattering electroatomic reaction
   template< typename SecondInterpPolicy = Utility::LinLinLog>
@@ -52,7 +53,8 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 1.0 );
+    const double cutoff_angle_cosine = 1.0,
+    const double evalation_tol = 1e-7 );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
   template< typename SecondInterpPolicy = Utility::LinLinLog>
@@ -70,7 +72,8 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 0.9 );
+    const double cutoff_angle_cosine = 0.9,
+    const double evalation_tol = 1e-7 );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
@@ -88,8 +91,9 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evalation_tol );
 
   //! Create the subshell electroionization electroatomic reactions
   template< typename ReactionType = ElectroatomicReaction,
@@ -100,8 +104,9 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
         electroionization_subshell_reactions,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evalation_tol );
 
   //! Create the bremsstrahlung electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
@@ -112,8 +117,9 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
-    const bool use_correlated_sampling,
-    const bool use_unit_based_interpolation );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evalation_tol );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(

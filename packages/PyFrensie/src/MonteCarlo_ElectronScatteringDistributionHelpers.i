@@ -33,11 +33,11 @@ initialize the Frensie Pseudo-Random Number Generator
 (PyFrensie.Utility.initFrensiePrng())"
 
 %feature("autodoc",
-"evaluate(DISTRIBUTION self, const double incoming_energy, const double scattering_angle_cosine ) -> double" )
+"evaluate(DISTRIBUTION self, const double incoming_energy, const double secondary_indep_var_val ) -> double" )
 MonteCarlo::DISTRIBUTION::evaluate;
 
 %feature("autodoc",
-"evaluatePDF(DISTRIBUTION self, const double incoming_energy, const double scattering_angle_cosine ) -> double" )
+"evaluatePDF(DISTRIBUTION self, const double incoming_energy, const double secondary_indep_var_val ) -> double" )
 MonteCarlo::DISTRIBUTION::evaluatePDF;
 
 %feature("autodoc",

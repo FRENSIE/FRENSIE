@@ -71,7 +71,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_adjoint_electron_grid_convergence_tol( 0.001 ),
     d_adjoint_electron_absolute_diff_tol( 1e-16 ),
     d_adjoint_electron_distance_tol( 1e-8 ),
-    d_electron_evaluation_tol( 1e-8 ),
+    d_tabular_evaluation_tol( 1e-8 ),
     d_electron_correlated_sampling( true ),
     d_electron_unit_based_interpolation( true ),
     d_adjoint_bremsstrahlung_max_energy_nudge_value( 0.2 ),
@@ -510,20 +510,20 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroio
 
 
 // Set the electron FullyTabularTwoDDistribution evaluation tolerance
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronEvaluationTolerance(
-                        const double electron_evaluation_tol )
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setTabularEvaluationTolerance(
+                        const double tabular_evaluation_tol )
 {
   // Make sure the tolerance is valid
-  testPrecondition( electron_evaluation_tol < 1.0 );
-  testPrecondition( electron_evaluation_tol > 0.0 );
+  testPrecondition( tabular_evaluation_tol < 1.0 );
+  testPrecondition( tabular_evaluation_tol > 0.0 );
 
-  d_electron_evaluation_tol = electron_evaluation_tol;
+  d_tabular_evaluation_tol = tabular_evaluation_tol;
 }
 
 // Get the electron FullyTabularTwoDDistribution evaluation tolerance
-double StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronEvaluationTolerance() const
+double StandardAdjointElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolerance() const
 {
-  return d_electron_evaluation_tol;
+  return d_tabular_evaluation_tol;
 }
 
 // Set the electron FullyTabularTwoDDistribution correlated sampling
@@ -2036,7 +2036,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     d_forward_epr_data->getCutoffElasticAngles(),
     d_forward_epr_data->getCutoffElasticPDF(),
     d_forward_epr_data->getElasticAngularEnergyGrid(),
-    d_forward_epr_data->getAtomicNumber() );
+    d_forward_epr_data->getAtomicNumber(),
+    d_tabular_evaluation_tol,
+    true );
 
     std::vector<double> reduced_cutoff_cross_section_ratio( energy_grid.size() );
     for( unsigned i = 0; i < energy_grid.size(); i++ )
@@ -2408,7 +2410,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
     bremsstrahlung_reaction,
     MonteCarlo::DIPOLE_DISTRIBUTION,
     d_electron_correlated_sampling,
-    d_electron_unit_based_interpolation );
+    d_electron_unit_based_interpolation,
+    d_tabular_evaluation_tol );
 
   brem_grid_generators.reset(
     new BremsstrahlungGridGenerator(
@@ -2446,7 +2449,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
     shell,
     electroionization_subshell_reaction,
     d_electron_correlated_sampling,
-    d_electron_unit_based_interpolation );
+    d_electron_unit_based_interpolation,
+    d_tabular_evaluation_tol );
 
   /* The max energy nudge value should be greater than the binding energy (a
     * factor of two is used to help with convergence). The energy to outgoing
