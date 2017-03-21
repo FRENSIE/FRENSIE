@@ -520,6 +520,12 @@ void RootModel::handleRootError( int level,
   }
 }
 
+// Get the model name
+std::string RootModel::getName() const
+{
+  return d_model_properties->getModelFileName();
+}
+
 } // end Geoemtry namespace
 
 //---------------------------------------------------------------------------//

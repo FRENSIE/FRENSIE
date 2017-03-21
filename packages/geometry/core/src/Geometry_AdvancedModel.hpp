@@ -20,11 +20,17 @@ class AdvancedModel : public Model
   
 public:
 
-  //! The surface set type
-  typedef std::unordered_set<ModuleTraits::InternalSurfaceHandle> SurfaceIdSet;
+  //! The surface id set type
+  typedef std::set<ModuleTraits::InternalSurfaceHandle> SurfaceIdSet;
+
+  //! The surface id array type
+  typedef std::vector<ModuleTraits::InternalSurfaceHandle> SurfaceIdArray;
+
+  //! The surface estimator data type
+  typedef std::tuple<EstimatorType,ParticleType,SurfaceIdArray> SurfaceEstimatorData;
 
   //! surface estimator id data map type
-  typedef std::unordered_map<ModuleTraits::InternalEstimatorHandle,std::tuple<EstimatorType,ParticleType,std::vector<ModuleTraits::InternalSurfaceHandle> > > SurfaceEstimatorIdDataMap;
+  typedef std::map<ModuleTraits::InternalEstimatorHandle,SurfaceEstimatorData> SurfaceEstimatorIdDataMap;
 
   //! Constructor
   AdvancedModel()

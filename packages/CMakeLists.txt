@@ -22,7 +22,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/utility/core/src
 utility/core/src utility/prng/src utility/hdf5/src utility/interpolation/src utility/distribution/src utility/integrator/src utility/grid/src)
 
 ADD_SUBDIRECTORY(geometry)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/geometry geometry/core/src geometry/dagmc/src geometry/root/src geometry/interface)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/geometry geometry/core/src geometry/factory/src)
 
 ADD_SUBDIRECTORY(data)
 INCLUDE_DIRECTORIES(data/core/src data/ace/src data/endf/src data/endl/src data/native/src)

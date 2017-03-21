@@ -58,29 +58,20 @@ PyFrensie_MAKE_TEST(tstGeometry.Ray)
 ADD_TEST(PyFrensie.Geometry.Ray_test ${PYTHON_EXECUTABLE} tstGeometry.Ray.py)
 SET_PROPERTY(TEST PyFrensie.Geometry.Ray_test PROPERTY LABELS pyfrensie)
 
-# Add the Geometry.DagMC.DagMC unit tests
-IF(FRENSIE_ENABLE_DAGMC)
-  PyFrensie_MAKE_TEST(tstGeometry.DagMC.DagMC)
-  ADD_TEST(PyFrensie.Geometry.DagMC.DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.DagMC.DagMC.py --cadfile=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
-  SET_PROPERTY(TEST PyFrensie.Geometry.DagMC.DagMC_test PROPERTY LABELS pyfrensie dagmc)
+# Add the Geometry.Model unit tests
+IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
+  PyFrensie_MAKE_TEST(tstGeometry.Model)
 
-  # Add the Geometry.DagMC.initializeDagMC unit tests
-  PyFrensie_MAKE_TEST(tstGeometry.DagMC.initializeDagMC)
-  ADD_TEST(PyFrensie.Geometry.DagMC.initializeDagMC_test ${PYTHON_EXECUTABLE} tstGeometry.DagMC.initializeDagMC.py --xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml)
-  SET_PROPERTY(TEST PyFrensie.Geometry.DagMC.initializeDagMC_test PROPERTY LABELS pyfrensie dagmc)
-ENDIF(FRENSIE_ENABLE_DAGMC)
+  IF(FRENSIE_ENABLE_DAGMC)
+    ADD_TEST(PyFrensie.Geometry.Model_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.Model.py --dagmc_xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_dagmc_geom.xml)
+    SET_PROPERTY(TEST PyFrensie.Geometry.Model_DagMC_test PROPERTY LABELS pyfrensie dagmc)
+  ENDIF()
 
-# Add the Geometry.ROOT.Root unit tests
-IF(FRENSIE_ENABLE_ROOT)
-  PyFrensie_MAKE_TEST(tstGeometry.ROOT.Root)
-  ADD_TEST(PyFrensie.Geometry.ROOT.Root_test ${PYTHON_EXECUTABLE} tstGeometry.ROOT.Root.py --rootfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
-  SET_PROPERTY(TEST PyFrensie.Geometry.ROOT.Root_test PROPERTY LABELS pyfrensie root)
-
-  # Add the Geometry.ROOT.initializeRoot unit tests
-  PyFrensie_MAKE_TEST(tstGeometry.ROOT.initializeRoot)
-  ADD_TEST(PyFrensie.Geometry.ROOT.initializeRoot_test ${PYTHON_EXECUTABLE} tstGeometry.ROOT.initializeRoot.py --xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.xml)
-  SET_PROPERTY(TEST PyFrensie.Geometry.ROOT.initializeRoot_test PROPERTY LABELS pyfrensie root)
-ENDIF(FRENSIE_ENABLE_ROOT)
+  IF(FRENSIE_ENABLE_ROOT)
+    ADD_TEST(PyFrensie.Geometry.Model_Root_test ${PYTHON_EXECUTABLE} tstGeometry.Model.py --root_xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.xml)
+    SET_PROPERTY(TEST PyFrensie.Geometry.Model_Root_test PROPERTY LABLES pyfrensie root)
+  ENDIF()
+ENDIF()
 
 # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)

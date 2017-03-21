@@ -20,6 +20,7 @@ namespace PyFrensie{
 
 /*! \brief  This structure defines the traits that are needed to map
  * C++ types to NumPy typecode.
+ * \ingroup numpy_type_traits
  */
 template<typename T>
 struct NumPyTypeTraits
@@ -34,6 +35,7 @@ struct NumPyTypeTraits
 };
 
 /*! This function allows access to the instanceTypecode NumPyTypeTraits method.
+ * \ingroup numpy_type_traits
  */
 template<typename T>
 inline int numpyTypecode( const T instance )

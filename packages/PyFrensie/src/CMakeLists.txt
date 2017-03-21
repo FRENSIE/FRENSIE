@@ -12,7 +12,9 @@ SET(SOURCES "")
 LIST(APPEND HEADERS
   PyFrensie_NumPyTypeTraitsDecl.hpp
   PyFrensie_NumPyTypeTraits.hpp
-  PyFrensie_ArrayConversionHelpers.hpp
+  PyFrensie_PythonTypeTraitsDecl.hpp
+  PyFrensie_PythonTypeTraits.hpp
+  PyFrensie_PythonTypeTraits_def.hpp
   PyFrensie_DistributionHelpers.hpp)
 
 INSTALL(FILES ${HEADERS}
@@ -46,20 +48,20 @@ SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_native ${TEUCH
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.__init__)
 
-SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} geometry_core ${TEUCHOS_CORE} ${PYTRILINOS})
+SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} geometry_core geometry_factory ${TEUCHOS_CORE} ${PYTRILINOS})
 SET(PyFrensie_Geometry_PACKAGES "")
 
-IF(FRENSIE_ENABLE_DAGMC)
-  SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} DagMC)
-  SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
-  SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc)
-ENDIF()
+# IF(FRENSIE_ENABLE_DAGMC)
+#   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} DagMC)
+#   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
+#   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc)
+# ENDIF()
 
-IF(FRENSIE_ENABLE_ROOT)
-  SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} ROOT)
-  SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.ROOT)
-  SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root)
-ENDIF()
+# IF(FRENSIE_ENABLE_ROOT)
+#   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} ROOT)
+#   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.ROOT)
+#   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root)
+# ENDIF()
 
 SET(PyFrensie_Geometry_ALL "__all__ = [")
 FOREACH(PACKAGE ${PyFrensie_Geometry_PACKAGES})

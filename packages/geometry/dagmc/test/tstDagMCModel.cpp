@@ -285,8 +285,6 @@ TEUCHOS_UNIT_TEST( DagMCModel, getCellDensities )
 
   TEST_EQUALITY_CONST( cell_id_density_map.size(), 54 );
 
-  TEST_EQUALITY_CONST( cell_id_density_map.size(), 54 );
-
   TEST_EQUALITY_CONST( cell_id_density_map.find( 9 )->second, -8.027 );
   TEST_EQUALITY_CONST( cell_id_density_map.find( 88 )->second, -8.027 );
 

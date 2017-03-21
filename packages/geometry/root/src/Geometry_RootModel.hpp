@@ -57,6 +57,9 @@ public:
   //! Get the model properties
   const RootModelProperties& getModelProperties() const;
 
+  //! Get the model name
+  std::string getName() const override;
+
   //! Check if the model has cell estimator data
   bool hasCellEstimatorData() const override;
 

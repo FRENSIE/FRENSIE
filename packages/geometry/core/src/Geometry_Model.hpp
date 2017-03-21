@@ -11,10 +11,13 @@
 
 // Std Lib Includes
 #include <unordered_set>
+#include <set>
 #include <unordered_map>
+#include <map>
 #include <vector>
 #include <memory>
 #include <tuple>
+#include <iostream>
 
 // FRENSIE Includes
 #include "Geometry_ModuleTraits.hpp"
@@ -32,19 +35,25 @@ class Model
 public:
 
   //! The material id set type
-  typedef std::unordered_set<ModuleTraits::InternalMaterialHandle> MaterialIdSet;
+  typedef std::set<ModuleTraits::InternalMaterialHandle> MaterialIdSet;
 
-  //! The cell set type
-  typedef std::unordered_set<ModuleTraits::InternalCellHandle> CellIdSet;
+  //! The cell id set type
+  typedef std::set<ModuleTraits::InternalCellHandle> CellIdSet;
 
   //! The cell id material id map type
-  typedef std::unordered_map<ModuleTraits::InternalCellHandle,ModuleTraits::InternalMaterialHandle> CellIdMatIdMap;
+  typedef std::map<ModuleTraits::InternalCellHandle,ModuleTraits::InternalMaterialHandle> CellIdMatIdMap;
 
   //! The cell id density map type
-  typedef std::unordered_map<ModuleTraits::InternalCellHandle,double> CellIdDensityMap;
+  typedef std::map<ModuleTraits::InternalCellHandle,double> CellIdDensityMap;
+
+  //! The cell id array type
+  typedef std::vector<ModuleTraits::InternalCellHandle> CellIdArray;
+
+  //! The cell estimator data type
+  typedef std::tuple<EstimatorType,ParticleType,CellIdArray> CellEstimatorData;
 
   //! The cell estimator id data map type
-  typedef std::unordered_map<ModuleTraits::InternalEstimatorHandle,std::tuple<EstimatorType,ParticleType,std::vector<ModuleTraits::InternalCellHandle> > > CellEstimatorIdDataMap;
+  typedef std::map<ModuleTraits::InternalEstimatorHandle,CellEstimatorData> CellEstimatorIdDataMap;
 
   //! Constructor
   Model()
@@ -53,6 +62,9 @@ public:
   //! Destructor
   virtual ~Model()
   { /* ... */ }
+
+  //! Get the model name
+  virtual std::string getName() const = 0;
 
   //! Check if this is an advanced model
   virtual bool isAdvanced() const;
@@ -96,7 +108,7 @@ public:
                        const ModuleTraits::InternalCellHandle cell ) const = 0;
 
   //! Create a navigator
-  virtual std::shared_ptr<Navigator> createNavigator() const = 0;
+  virtual std::shared_ptr<Geometry::Navigator> createNavigator() const = 0;
 };
 
 // Check if this is an advanced model

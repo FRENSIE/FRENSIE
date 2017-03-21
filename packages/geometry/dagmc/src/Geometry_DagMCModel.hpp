@@ -60,6 +60,9 @@ public:
   //! Get the model properties
   const DagMCModelProperties& getModelProperties() const;
 
+  //! Get the model name
+  std::string getName() const override;
+
   //! Check if the model has cell estimator data
   bool hasCellEstimatorData() const override;
 
@@ -118,6 +121,21 @@ public:
 
 private:
 
+  // The property values type
+  typedef std::vector<std::string> PropertyValuesArray;
+
+  // The cell id property values array map type
+  typedef std::map<ModuleTraits::InternalCellHandle,PropertyValuesArray> CellIdPropertyValuesMap;
+
+  // The property value cell id array map type
+  typedef std::map<std::string,CellIdArray> PropValueCellIdMap;
+
+  // The surface id property values array map type
+  typedef std::map<ModuleTraits::InternalSurfaceHandle,PropertyValuesArray> SurfaceIdPropertyValuesMap;
+
+  // The property value surface id array map type
+  typedef std::map<std::string,SurfaceIdArray> PropValueSurfaceIdMap;
+
   // Constructor
   DagMCModel();
 
@@ -140,13 +158,8 @@ private:
   void extractReflectingSurfaces();
 
   // Get the property values associated with a property name
-  template<template<typename,typename...> class ArrayType>
   void getPropertyValues( const std::string& property,
-                          ArrayType<std::string>& values ) const;
-
-  // Get the property values associated with a property name
-  void getPropertyValues( const std::string& property,
-                          std::vector<std::string>& values ) const;
+                          PropertyValuesArray& values ) const;
 
   // Get the cells associated with a property name
   void getCellsWithProperty( std::vector<moab::EntityHandle>& cells,
@@ -160,36 +173,24 @@ private:
                               const std::string* property_value = NULL ) const;
 
   // Get the property values associated with a property name and cell id
-  template<template<typename,typename...> class ArrayType,
-           template<typename,typename,typename...> class MapType>
   void getCellPropertyValues(
-             const std::string& property,
-             MapType<ModuleTraits::InternalCellHandle,ArrayType<std::string> >&
-             cell_id_prop_val_map ) const;
+                      const std::string& property,
+                      CellIdPropertyValuesMap& cell_id_prop_values_map ) const;
 
   // Get the cell ids with a property value
-  template<template<typename,typename...> class ArrayType,
-           template<typename,typename,typename...> class MapType>
   void getCellIdsWithPropertyValue(
-             const std::string& property,
-             MapType<std::string,ArrayType<ModuleTraits::InternalCellHandle> >&
-             prop_val_cell_id_map ) const;
+                              const std::string& property,
+                              PropValueCellIdMap& prop_val_cell_id_map ) const;
 
   // Get the property values associated with a property name and surface id
-  template<template<typename,typename...> class ArrayType,
-           template<typename,typename,typename...> class MapType>
   void getSurfacePropertyValues(
-          const std::string& property,
-          MapType<ModuleTraits::InternalSurfaceHandle,ArrayType<std::string> >&
-          surface_id_prop_val_map ) const;
-
+                   const std::string& property,
+                   SurfaceIdPropertyValuesMap& surface_id_prop_val_map ) const;
+  
   // Get the surface ids with a property value
-  template<template<typename,typename...> class ArrayType,
-           template<typename,typename,typename...> class MapType>
   void getSurfaceIdsWithPropertyValue(
-          const std::string& property,
-          MapType<std::string,ArrayType<ModuleTraits::InternalSurfaceHandle> >&
-          prop_val_surface_id_map ) const;
+                        const std::string& property,
+                        PropValueSurfaceIdMap& prop_val_surface_id_map ) const;
 
   // Extract estimator property values
   template<typename IntType>

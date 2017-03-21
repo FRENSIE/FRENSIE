@@ -2,7 +2,7 @@
 
   <Parameter name="Handler" type="string" value="DagMC"/>
   <Parameter name="CAD File" type="string"
-	     value="${CMAKE_CURRENT_SOURCE_DIR}/test_geom.sat"/>
+	     value="${CMAKE_CURRENT_SOURCE_DIR}/test_dagmc_geom.sat"/>
   <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
   <Parameter name="Termination Cell Property" type="string" value="graveyard"/>
   <Parameter name="Material Property" type="string" value="mat"/>
