@@ -182,13 +182,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             angular_energy_grid[n] ) );
 
     function_data[n].third.reset(
-	  new const Utility::DiscreteDistribution(
+      new const Utility::DiscreteDistribution(
         discrete_angles,
         weights ) );
     }
 
     double atomic_number = data_container.getAtomicNumber();
     double cutoff_angle_cosine = data_container.getCutoffAngleCosine();
+    double evaluation_tol = 1e-7;
 
     // Create the cutoff scattering function
     std::shared_ptr<MonteCarlo::HybridElasticElectronScatteringDistribution::HybridDistribution>
@@ -201,7 +202,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         hybrid_elastic_distribution(
             new MonteCarlo::HybridElasticElectronScatteringDistribution(
                 hybrid_function,
-                cutoff_angle_cosine ) );
+                cutoff_angle_cosine,
+                evaluation_tol,
+                true ) );
 
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.assign(

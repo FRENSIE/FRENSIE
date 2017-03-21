@@ -23,7 +23,7 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 
-typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
+typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog> 
     NativeFactory;
 
 
@@ -164,6 +164,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex() );
 
   double cutoff_angle_cosine = 0.9;
+  double evaluation_tol = 1e-7;
 
   // Create the distribution
   std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
@@ -172,7 +173,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   NativeFactory::createMomentPreservingElasticDistribution(
         discrete_elastic_distribution,
         data_container,
-        cutoff_angle_cosine );
+        cutoff_angle_cosine,
+        evaluation_tol );
 
   // Create the reaction
   mp_elastic_reaction.reset(

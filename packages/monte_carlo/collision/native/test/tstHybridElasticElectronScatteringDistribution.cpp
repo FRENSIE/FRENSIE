@@ -34,9 +34,11 @@ class TestHD : public HD
 public:
   TestHD( const std::shared_ptr<HD::HybridDistribution>& hybrid_distribution,
           const double cutoff_angle_cosine,
+          const double evaluation_tol,
           const bool linlinlog_interpolation_mode_on )
     : HD( hybrid_distribution,
-          cutoff_angle_cosine ,
+          cutoff_angle_cosine,
+          evaluation_tol,
           linlinlog_interpolation_mode_on )
   { /* ... */ }
 
@@ -1207,7 +1209,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             angular_energy_grid[n] ) );
 
     hybrid_scattering_function[n].third.reset(
-	  new const Utility::DiscreteDistribution( discrete_angles, weights ) );
+      new const Utility::DiscreteDistribution( discrete_angles, weights ) );
 
     unsigned energy_index =
         grid_searcher.findLowerBinIndex( angular_energy_grid[n] );
@@ -1239,20 +1241,22 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       cutoff_cross_section_i*cutoff_cdf/mp_cross_section_i;
   }
 
+    double evaluation_tol = 1e-7;
+
     std::shared_ptr<HD::HybridDistribution> distribution(
         new HD::HybridDistribution( hybrid_scattering_function ) );
 
     hybrid_distribution.reset(
-        new HD( distribution, angle_cosine_cutoff, true ) );
+        new HD( distribution, angle_cosine_cutoff, evaluation_tol, true ) );
 
     lin_hybrid_distribution.reset(
-        new HD( distribution, angle_cosine_cutoff, false ) );
+        new HD( distribution, angle_cosine_cutoff, evaluation_tol, false ) );
 
     test_hybrid_distribution.reset(
-        new TestHD( distribution, angle_cosine_cutoff, true ) );
+        new TestHD( distribution, angle_cosine_cutoff, evaluation_tol, true ) );
 
     test_lin_hybrid_distribution.reset(
-        new TestHD( distribution, angle_cosine_cutoff, false ) );
+        new TestHD( distribution, angle_cosine_cutoff, evaluation_tol, false ) );
   }
 
   // Initialize the random number generator

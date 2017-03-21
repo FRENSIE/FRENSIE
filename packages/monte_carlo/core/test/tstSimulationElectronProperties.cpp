@@ -141,7 +141,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicExcitationModeOffOn )
 }
 
 //---------------------------------------------------------------------------//
-// Test that the electron evalation tolerance can be set
+// Test that the electron evaluation tolerance can be set
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronEvaluationTolerance )
 {
   MonteCarlo::SimulationElectronProperties properties;

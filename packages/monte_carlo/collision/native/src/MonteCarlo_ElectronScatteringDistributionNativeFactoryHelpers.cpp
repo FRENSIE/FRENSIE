@@ -19,29 +19,25 @@ namespace MonteCarlo{
 std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     distribution;
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
         distribution,
         data_container,
-        evalation_tol,
-        correlated_sampling_mode_on );
+        evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
         distribution,
         data_container,
-        evalation_tol,
-        correlated_sampling_mode_on );
+        evaluation_tol );
   }
-
 
   return distribution;
 }
@@ -50,27 +46,24 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
 std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     distribution;
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
         distribution,
         data_container,
-        evalation_tol,
-        correlated_sampling_mode_on );
+        evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
         distribution,
         data_container,
-        evalation_tol,
-        correlated_sampling_mode_on );
+        evaluation_tol );
   }
 
   return distribution;
@@ -81,8 +74,7 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
@@ -119,17 +111,30 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   std::shared_ptr<const HybridElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
-    distribution,
-    grid_searcher,
-    energy_grid,
-    cutoff_cross_section,
-    mp_cross_section,
-    data_container,
-    cutoff_angle_cosine,
-    linlinlog_interpolation_mode_on,
-    correlated_sampling_mode_on );
-
+  if ( linlinlog_interpolation_mode_on )
+  {
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridElasticDistribution(
+        distribution,
+        grid_searcher,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        data_container,
+        cutoff_angle_cosine,
+        evaluation_tol );
+  }
+  else
+  {
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createHybridElasticDistribution(
+        distribution,
+        grid_searcher,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        data_container,
+        cutoff_angle_cosine,
+        evaluation_tol );
+  }
 
   return distribution;
 }
@@ -139,8 +144,7 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
@@ -177,16 +181,30 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   std::shared_ptr<const HybridElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
-    distribution,
-    grid_searcher,
-    energy_grid,
-    cutoff_cross_section,
-    mp_cross_section,
-    data_container,
-    cutoff_angle_cosine,
-    linlinlog_interpolation_mode_on,
-    correlated_sampling_mode_on );
+  if ( linlinlog_interpolation_mode_on )
+  {
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridElasticDistribution(
+        distribution,
+        grid_searcher,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        data_container,
+        cutoff_angle_cosine,
+        evaluation_tol );
+  }
+  else
+  {
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createHybridElasticDistribution(
+        distribution,
+        grid_searcher,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        data_container,
+        cutoff_angle_cosine,
+        evaluation_tol );
+  }
 
   return distribution;
 }
@@ -196,21 +214,20 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     distribution;
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
-      distribution, data_container, cutoff_angle_cosine, evalation_tol );
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
-      distribution, data_container, cutoff_angle_cosine, evalation_tol );
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createCutoffElasticDistribution(
+      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
 
   return distribution;
@@ -221,21 +238,20 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     distribution;
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
-      distribution, data_container, cutoff_angle_cosine, evalation_tol );
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
-      distribution, data_container, cutoff_angle_cosine, evalation_tol );
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createCutoffElasticDistribution(
+      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
 
   return distribution;
@@ -246,25 +262,26 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createMomentPreservingElasticDistribution(
       distribution,
       data_container,
-      cutoff_angle_cosine );
+      cutoff_angle_cosine,
+      evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createMomentPreservingElasticDistribution(
       distribution,
       data_container,
-      cutoff_angle_cosine );
+      cutoff_angle_cosine,
+      evaluation_tol );
   }
 
   return distribution;
@@ -275,21 +292,20 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
-      distribution, data_container, cutoff_angle_cosine );
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createMomentPreservingElasticDistribution(
+      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
-      distribution, data_container, cutoff_angle_cosine );
+    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createMomentPreservingElasticDistribution(
+      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
 
   return distribution;
@@ -305,7 +321,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
@@ -317,7 +333,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
     distribution,
     correlated_sampling_mode_on,
     unit_based_interpolation_mode_on,
-    evalation_tol );
+    evaluation_tol );
   }
   else
   {
@@ -326,7 +342,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
     distribution,
     correlated_sampling_mode_on,
     unit_based_interpolation_mode_on,
-    evalation_tol );
+    evaluation_tol );
   }
 
   return distribution;
@@ -339,7 +355,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
@@ -352,7 +368,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
     distribution,
     correlated_sampling_mode_on,
     unit_based_interpolation_mode_on,
-    evalation_tol );
+    evaluation_tol );
   }
   else
   {
@@ -362,7 +378,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
     distribution,
     correlated_sampling_mode_on,
     unit_based_interpolation_mode_on,
-    evalation_tol );
+    evaluation_tol );
   }
 
   return distribution;
@@ -380,7 +396,7 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
-    const double evalation_tol )
+    const double evaluation_tol )
 {
   std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
     distribution;
@@ -394,7 +410,7 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
     distribution,
     correlated_sampling_mode_on,
     unit_based_interpolation_mode_on,
-    evalation_tol );
+    evaluation_tol );
   }
   else
   {
@@ -405,7 +421,7 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
     distribution,
     correlated_sampling_mode_on,
     unit_based_interpolation_mode_on,
-    evalation_tol );
+    evaluation_tol );
   }
 
   return distribution;

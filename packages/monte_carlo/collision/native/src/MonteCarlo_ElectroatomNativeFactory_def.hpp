@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_SIMULATION_ELECTRON_PROPERTIES_DEF_HPP
-#define MONTE_CARLO_SIMULATION_ELECTRON_PROPERTIES_DEF_HPP
+#ifndef MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_DEF_HPP
+#define MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_DEF_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -63,13 +63,12 @@ void ElectroatomNativeFactory::createElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+      ElectroatomicReactionNativeFactory::createAnalogElasticReaction<SecondInterpPolicy>(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
                        reaction_pointer,
-                       properties.getElectronEvaluationTolerance(),
-                       properties.isLinLinLogInterpolationModeOn() );
+                       properties.getElectronEvaluationTolerance() );
     }
     // Create the moment preserving elastic scattering reaction (no analog elastic scattering)
     else if ( properties.getElasticCutoffAngleCosine() == -1.0 )
@@ -91,13 +90,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createHybridElasticReaction(
+      ElectroatomicReactionNativeFactory::createHybridElasticReaction<SecondInterpPolicy>(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
                        reaction_pointer,
                        properties.getElasticCutoffAngleCosine(),
-                       properties.isLinLinLogInterpolationModeOn() );
+                       properties.getElectronEvaluationTolerance() );
     }
   }
 

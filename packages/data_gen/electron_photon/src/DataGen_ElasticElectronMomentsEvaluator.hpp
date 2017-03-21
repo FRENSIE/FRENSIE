@@ -40,8 +40,7 @@ public:
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on );
+    const bool linlinlog_interpolation_mode_on );
 
   //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(

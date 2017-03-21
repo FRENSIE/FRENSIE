@@ -24,8 +24,6 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularDistribution.hpp"
 
-typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
-    NativeFactory;
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
@@ -175,15 +173,17 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         hybrid_elastic_distribution;
 
     double cutoff_angle_cosine = data_container.getCutoffAngleCosine();
+    double evaluation_tol = 1e-7;
 
-    NativeFactory::createHybridElasticDistribution(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridElasticDistribution(
         hybrid_elastic_distribution,
         grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         data_container,
-        cutoff_angle_cosine );
+        cutoff_angle_cosine,
+        evaluation_tol );
 
   // Calculate the hybrid cross section
   unsigned hybrid_threshold_energy_index =

@@ -32,7 +32,7 @@ class TestElasticElectronMomentsEvaluator : public DataGen::ElasticElectronMomen
 public:
   TestElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container )
-    : ElasticElectronMomentsEvaluator( data_container, -1.0, 1e-7, true, true )
+    : ElasticElectronMomentsEvaluator( data_container, -1.0, 1e-7, true )
   { /* ... */ }
 
   ~TestElasticElectronMomentsEvaluator()
@@ -1051,7 +1051,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   moments[2] = 0.99996009701780611083L;
 
   std::vector<double> angular_grid =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
             al_data->getCutoffElasticAngles(),
             energy,
             -1.0 );
@@ -1110,7 +1110,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   moments[2] = 0.99996009701780611083L*cross_section;
 
   std::vector<double> angular_grid =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
             al_data->getCutoffElasticAngles(),
             energy,
             -1.0 );
@@ -1168,7 +1168,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                     *pb_data,
                                     -1.0,
                                     1e-7,
-                                    true,
                                     true ) );
 
   std::vector<Utility::long_float> total_moments(n+1);
@@ -1233,7 +1232,6 @@ int main( int argc, char** argv )
 
   double cutoff_angle_cosine = 0.9;
   double tabular_evaluation_tol = 1e-15;
-  bool correlated_sampling_mode_on = true;
 
   {
   // Create the native data file container
@@ -1244,14 +1242,13 @@ int main( int argc, char** argv )
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     analog_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
         analog_distribution,
         al_data->getCutoffElasticAngles(),
         al_data->getCutoffElasticPDF(),
         al_data->getElasticAngularEnergyGrid(),
         al_data->getAtomicNumber(),
-        tabular_evaluation_tol,
-        correlated_sampling_mode_on );
+        tabular_evaluation_tol );
 
   // Construct the hash-based grid searcher for this atom
   Teuchos::ArrayRCP<double> energy_grid;
@@ -1305,8 +1302,7 @@ int main( int argc, char** argv )
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
                                                   cutoff_angle_cosine,
                                                   tabular_evaluation_tol,
-                                                  linlinlog_interpolation_mode_on,
-                                                  correlated_sampling_mode_on ) );
+                                                  linlinlog_interpolation_mode_on ) );
 
   linlinlog_interpolation_mode_on = false;
 
@@ -1315,8 +1311,7 @@ int main( int argc, char** argv )
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
                                                   cutoff_angle_cosine,
                                                   tabular_evaluation_tol,
-                                                  linlinlog_interpolation_mode_on,
-                                                  correlated_sampling_mode_on ) );
+                                                  linlinlog_interpolation_mode_on ) );
   }
 
   // Run the unit tests

@@ -22,7 +22,6 @@
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -225,7 +224,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
         elastic_distribution,
         *data_container,
         1.0,

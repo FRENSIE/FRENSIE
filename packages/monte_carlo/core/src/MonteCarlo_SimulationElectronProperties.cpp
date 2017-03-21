@@ -170,7 +170,7 @@ bool SimulationElectronProperties::isAtomicExcitationModeOn() const
   return d_atomic_excitation_mode_on;
 }
 
-// Set the electron FullyTabularTwoDDistribution evalation tolerance (default = 1e-7)
+// Set the electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
 /*! \details The evaluation tolerance is used by the
  *  InterpolatedFullyTabularTwoDDistribution as the tolerance when performing
  *  evaluations.
@@ -181,7 +181,7 @@ void SimulationElectronProperties::setElectronEvaluationTolerance(
   d_evaluation_tol = tol;
 }
 
-// Return the electron FullyTabularTwoDDistribution evalation tolerance (default = 1e-7)
+// Return the electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
 /*! \details The evaluation tolerance is used by the
  *  InterpolatedFullyTabularTwoDDistribution as the tolerance when performing
  *  evaluations.

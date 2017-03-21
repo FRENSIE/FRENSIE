@@ -90,7 +90,7 @@ TEUCHOS_UNIT_TEST( FormFactorEvaluator,
                    getFormFactorSquaredEvaluationWrapper )
 {
   std::function<double(double)> evaluation_wrapper =
-    evaluator->getFormFactorSquaredEvalutionWrapper();
+    evaluator->getFormFactorSquaredEvaluationWrapper();
   
   TEST_FLOATING_EQUALITY( evaluation_wrapper( 0.0 ),
                           82.0*82.0,

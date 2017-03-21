@@ -29,22 +29,23 @@ class ElectroatomicReactionNativeFactory
 public:
 
   //! Create an analog elastic scattering electroatomic reaction
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createAnalogElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const double evalation_tol,
-    const bool linlinlog_interpolation_mode_on );
+    const double evaluation_tol );
 
   //! Create a hybrid elastic scattering electroatomic reaction
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 0.9,
-    const bool linlinlog_interpolation_mode_on = true );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Create an cutoff elastic scattering electroatomic reaction
   template< typename SecondInterpPolicy = Utility::LinLinLog>
@@ -53,8 +54,8 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 1.0,
-    const double evalation_tol = 1e-7 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
   template< typename SecondInterpPolicy = Utility::LinLinLog>
@@ -63,7 +64,8 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 1.0 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Create the moment preserving elastic scattering electroatomic reaction
   template< typename SecondInterpPolicy = Utility::LinLinLog>
@@ -72,8 +74,8 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 0.9,
-    const double evalation_tol = 1e-7 );
+    const double cutoff_angle_cosine ,
+    const double evaluation_tol );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
@@ -93,7 +95,7 @@ public:
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
-    const double evalation_tol );
+    const double evaluation_tol );
 
   //! Create the subshell electroionization electroatomic reactions
   template< typename ReactionType = ElectroatomicReaction,
@@ -106,7 +108,7 @@ public:
         electroionization_subshell_reactions,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
-    const double evalation_tol );
+    const double evaluation_tol );
 
   //! Create the bremsstrahlung electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
@@ -119,7 +121,7 @@ public:
     BremsstrahlungAngularDistributionType photon_distribution_function,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
-    const double evalation_tol );
+    const double evaluation_tol );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(

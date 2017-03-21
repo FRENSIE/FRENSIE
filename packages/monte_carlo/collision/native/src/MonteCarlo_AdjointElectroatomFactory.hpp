@@ -22,6 +22,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatom.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 namespace MonteCarlo{
@@ -37,9 +38,7 @@ public:
     const std::string& cross_sections_xml_directory,
     const Teuchos::ParameterList& cross_section_table_info,
     const std::unordered_set<std::string>& electroatom_aliases,
-    const unsigned hash_grid_bins,
-    const bool use_atomic_relaxation_data = false,
-    const double cutoff_angle_cosine = 1.0,
+    const SimulationProperties& properties,
     std::ostream* os_message = &std::cout );
 
   //! Destructor
@@ -56,11 +55,9 @@ private:
   // Create a adjoint electroatom from a Native table
   void createAdjointElectroatomFromNativeTable(
               const std::string& electroatom_alias,
-              const std::string& ace_file_path,
+              const std::string& native_file_path,
               const double atomic_weight,
-              const unsigned hash_grid_bins,
-              const bool use_atomic_relaxation_data,
-              const double cutoff_angle_cosine = 1.0 );
+              const SimulationProperties& properties );
 
   // The adjoint electroatom map
   std::unordered_map<std::string,Teuchos::RCP<AdjointElectroatom> >

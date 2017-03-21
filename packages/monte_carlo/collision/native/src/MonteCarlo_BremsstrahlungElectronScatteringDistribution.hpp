@@ -52,7 +52,7 @@ public:
   void setSamplingRoutine( const bool correlated_sampling_mode_on,
                            const bool unit_based_interpolation_mode_on );
 
-  //! Set the evalation routines
+  //! Set the evaluation routines
   void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
 
   //! Return the min incoming energy

@@ -19,7 +19,9 @@
 #include "MonteCarlo_AdjointElectroatomCore.hpp"
 #include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
+#include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_TwoDInterpolationPolicy.hpp"
 
 namespace MonteCarlo{
 
@@ -35,12 +37,12 @@ private:
 public:
 
   //! Create an adjoint electroatom core
+  template <typename SecondInterpPolicy = Utility::LinLinLog>
   static void createAdjointElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
-        Teuchos::RCP<AdjointElectroatomCore>& adjoint_electroatom_core,
-        const double cutoff_angle_cosine,
-        const unsigned hash_grid_bins );
+        const SimulationElectronProperties& properties,
+        Teuchos::RCP<AdjointElectroatomCore>& adjoint_electroatom_core );
 
   //! Create an adjoint  electroatom
   static void createAdjointElectroatom(
@@ -48,12 +50,19 @@ public:
             raw_adjoint_electroatom_data,
         const std::string& adjoint_electroatom_name,
         const double atomic_weight,
-        Teuchos::RCP<AdjointElectroatom>& adjoint_electroatom,
-        const double cutoff_angle_cosine,
-        const unsigned hash_grid_bins );
+        const SimulationElectronProperties& properties,
+        Teuchos::RCP<AdjointElectroatom>& adjoint_electroatom );
 };
 
 } // end MonteCarlo
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_AdjointElectroatomNativeFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTROATOM_NATIVE_FACTORY_HPP
 

@@ -348,21 +348,23 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
       // Get the angular grid and pdf at the max energy
       if ( linlinlog_interpolation_mode_on )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGridAndPDF(
           angles,
           pdf,
           elastic_angle,
           elastic_pdf,
-          max_electron_energy );
+          max_electron_energy,
+          tabular_evaluation_tol );
       }
       else
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::getAngularGridAndPDF(
           angles,
           pdf,
           elastic_angle,
           elastic_pdf,
-          max_electron_energy );
+          max_electron_energy,
+          tabular_evaluation_tol );
       }
 
       elastic_angle[max_electron_energy] = angles;
@@ -844,7 +846,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
 
   // Create the evaluation wrapper
     std::function<double(double)> evaluation_wrapper =
-      evaluator->getFormFactorSquaredEvalutionWrapper();
+      evaluator->getFormFactorSquaredEvaluationWrapper();
 
   // Initialize the squared recoil momentum grid
   std::vector<double> squared_recoil_momentum_grid( 2 ), squared_form_factor;
@@ -1368,12 +1370,26 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   end_energy--;
   if( *end_energy != this->getMaxElectronEnergy() )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+    if ( d_linlinlog_interpolation_mode_on )
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGridAndPDF(
         elastic_angle[this->getMaxElectronEnergy()],
         elastic_pdf[this->getMaxElectronEnergy()] ,
         elastic_angle,
         elastic_pdf,
-        this->getMaxElectronEnergy() );
+        this->getMaxElectronEnergy(),
+        d_tabular_evaluation_tol );
+    }
+    else
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::getAngularGridAndPDF(
+        elastic_angle[this->getMaxElectronEnergy()],
+        elastic_pdf[this->getMaxElectronEnergy()] ,
+        elastic_angle,
+        elastic_pdf,
+        this->getMaxElectronEnergy(),
+        d_tabular_evaluation_tol );
+    }
 
     elastic_angle.erase( *end_energy );
     elastic_pdf.erase( *end_energy );
@@ -1851,25 +1867,23 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   if ( linlinlog_interpolation_mode_on )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
         analog_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
-        tabular_evaluation_tol,
-        true );
+        tabular_evaluation_tol );
   }
   else
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
         analog_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
-        tabular_evaluation_tol,
-        true );
+        tabular_evaluation_tol );
   }
 
   // Construct the hash-based grid searcher for this atom

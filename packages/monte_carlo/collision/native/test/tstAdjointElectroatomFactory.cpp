@@ -21,11 +21,11 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Data_CrossSectionsXMLProperties.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_AdjointElectronState.hpp"
-
+#include "MonteCarlo_SimulationProperties.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Data_CrossSectionsXMLProperties.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -33,10 +33,8 @@
 
 std::string cross_sections_xml_directory;
 Teuchos::ParameterList cross_section_table_info;
-std::unordered_set<std::string> electroatom_aliases;
-Teuchos::RCP<MonteCarlo::AdjointElectroatomFactory> electroatom_factory;
-MonteCarlo::BremsstrahlungAngularDistributionType function;
-unsigned hash_grid_bins = 100;
+
+std::shared_ptr<MonteCarlo::SimulationProperties> properties;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -44,19 +42,20 @@ unsigned hash_grid_bins = 100;
 // Check that a adjoint electroatom map can be created (only basic data)
 TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic )
 {
-  // Create the set of adjoint electroatom aliases
-  electroatom_aliases.clear();
+  // Create the set of electroatom aliases
+  std::unordered_set<std::string> electroatom_aliases;
   electroatom_aliases.insert( "H-Native" );
 
-  double cutoff_angle_cosine = 0.9;
+  properties->setElasticCutoffAngleCosine( 0.9 );
+  properties->setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
+  properties->setElectronEvaluationTolerance( 1e-7 );
 
-  electroatom_factory.reset( new MonteCarlo::AdjointElectroatomFactory(
-                                    cross_sections_xml_directory,
-                                    cross_section_table_info,
-                                    electroatom_aliases,
-                                    hash_grid_bins,
-                                    false,
-                                    cutoff_angle_cosine ) );
+  std::shared_ptr<MonteCarlo::AdjointElectroatomFactory> electroatom_factory(
+                    new MonteCarlo::AdjointElectroatomFactory(
+                                                cross_sections_xml_directory,
+                                                cross_section_table_info,
+                                                electroatom_aliases,
+                                                *properties ) );
 
   std::string electroatom_file_path, electroatom_file_type, electroatom_table_name;
   int electroatom_file_start_line;
@@ -80,10 +79,11 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
         cutoff_elastic_distribution,
         *data_container,
-        cutoff_angle_cosine );
+        properties->getElasticCutoffAngleCosine(),
+        properties->getElectronEvaluationTolerance() );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointElectroatom> >
     electroatom_map;
@@ -238,9 +238,6 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
          20.0,
          MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-
-  // Reset the adjoint electroatom factory
-  electroatom_factory.reset();
 }
 
 //---------------------------------------------------------------------------//
@@ -248,19 +245,19 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
 TEUCHOS_UNIT_TEST( AdjointElectroatomFactory,
                    createAdjointElectroatomMap_ionization_subshells )
 {
-  // Create the set of adjoint electroatom aliases
-  electroatom_aliases.clear();
+  // Create the set of electroatom aliases
+  std::unordered_set<std::string> electroatom_aliases;
   electroatom_aliases.insert( "C-Native" );
 
-  double cutoff_angle_cosine = 1.0;
+  properties->setElasticCutoffAngleCosine( 1.0 );
+  properties->setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
 
-  electroatom_factory.reset( new MonteCarlo::AdjointElectroatomFactory(
+  std::shared_ptr<MonteCarlo::AdjointElectroatomFactory> electroatom_factory(
+                    new MonteCarlo::AdjointElectroatomFactory(
                                               cross_sections_xml_directory,
                                               cross_section_table_info,
                                               electroatom_aliases,
-                                              hash_grid_bins,
-                                              false,
-                                              cutoff_angle_cosine ) );
+                                              *properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointElectroatom> >
     electroatom_map;
@@ -412,20 +409,20 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory,
 // Check that tables are not duplicated
 TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, no_duplicate_tables )
 {
-  // Create the set of adjoint electroatom aliases
-  electroatom_aliases.clear();
+  // Create the set of electroatom aliases
+  std::unordered_set<std::string> electroatom_aliases;
   electroatom_aliases.insert( "H-Native" );
   electroatom_aliases.insert( "H-1-Native" );
 
-  double cutoff_angle_cosine = 1.0;
+  properties->setElasticCutoffAngleCosine( 1.0 );
+  properties->setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
 
-  electroatom_factory.reset( new MonteCarlo::AdjointElectroatomFactory(
-        cross_sections_xml_directory,
-        cross_section_table_info,
-        electroatom_aliases,
-        hash_grid_bins,
-        false,
-        cutoff_angle_cosine ) );
+  std::shared_ptr<MonteCarlo::AdjointElectroatomFactory> electroatom_factory(
+                    new MonteCarlo::AdjointElectroatomFactory(
+                                                cross_sections_xml_directory,
+                                                cross_section_table_info,
+                                                electroatom_aliases,
+                                                *properties ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointElectroatom> >
     electroatom_map;
@@ -467,7 +464,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
            Teuchos::inoutArg( cross_section_table_info ) );
   }
 
-  hash_grid_bins = 100;
+  // Create the simulation properties
+  properties.reset( new MonteCarlo::SimulationProperties );
+  properties->setNumberOfElectronHashGridBins( 100 );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();

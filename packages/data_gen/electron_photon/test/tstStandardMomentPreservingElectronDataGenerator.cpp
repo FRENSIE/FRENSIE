@@ -197,7 +197,6 @@ int main( int argc, char** argv )
   double max_energy = 20.0;
   double tabular_evaluation_tol = 1e-7;
   bool linlinlog_interpolation_mode_on = true;
-  bool correlated_sampling_mode_on = true;
 
   {
     // Create the native data file container
@@ -214,8 +213,7 @@ int main( int argc, char** argv )
                      max_energy,
                      cutoff_angle_cosine,
                      tabular_evaluation_tol,
-                     linlinlog_interpolation_mode_on,
-                     correlated_sampling_mode_on ) );
+                     linlinlog_interpolation_mode_on ) );
   }
 
   {
@@ -233,8 +231,7 @@ int main( int argc, char** argv )
                      max_energy,
                      cutoff_angle_cosine,
                      tabular_evaluation_tol,
-                     linlinlog_interpolation_mode_on,
-                     correlated_sampling_mode_on ) );
+                     linlinlog_interpolation_mode_on ) );
   }
 
   {
@@ -252,8 +249,7 @@ int main( int argc, char** argv )
                      max_energy,
                      cutoff_angle_cosine,
                      tabular_evaluation_tol,
-                     linlinlog_interpolation_mode_on,
-                     correlated_sampling_mode_on ) );
+                     linlinlog_interpolation_mode_on ) );
   }
 
   // Run the unit tests

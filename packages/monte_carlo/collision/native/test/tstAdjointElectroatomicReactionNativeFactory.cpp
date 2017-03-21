@@ -38,11 +38,14 @@ std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> reaction;
 TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createAnalogElasticReaction )
 {
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+  double evaluation_tol = 1e-7;
+
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction<Utility::LinLinLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                evaluation_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -51,19 +54,15 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double energy = 1e-5;
-  double cross_section =
-    reaction->getCrossSection( energy );
-
+  double cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
 
   energy = 1e-3;
   cross_section = reaction->getCrossSection( energy );
-
   TEST_FLOATING_EQUALITY( cross_section, 2.80490481543817E+06, 1e-12 );
 
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
-
   TEST_FLOATING_EQUALITY( cross_section, 1.3022122514987E+04, 1e-12 );
 
   // Clear the reaction
@@ -75,11 +74,16 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createCutoffElasticReaction )
 {
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
+  double cutoff_angle_cosine = 1.0;
+  double evaluation_tol = 1e-7;
+
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                cutoff_angle_cosine,
+                evaluation_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -112,11 +116,16 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createScreenedRutherfordElasticReaction )
 {
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
+  double cutoff_angle_cosine = 0.9;
+  double evaluation_tol = 1e-7;
+
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                cutoff_angle_cosine,
+                evaluation_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -149,11 +158,16 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createMomentPreservingElasticReaction )
 {
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
+  double cutoff_angle_cosine = 0.9;
+  double evaluation_tol = 1e-7;
+
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                cutoff_angle_cosine,
+                evaluation_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -220,13 +234,16 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createSubshellElectroelectricReactions )
 {
+  double evaluation_tol = 1e-7;
+
   std::vector<std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> > reactions;
 
   MonteCarlo::AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
        *data_container,
        energy_grid,
        grid_searcher,
-       reactions );
+       reactions,
+       evaluation_tol );
 
   TEST_EQUALITY_CONST( reactions.size(), 1 );
 
@@ -258,11 +275,14 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createBremsstrahlungReaction_dipole )
 {
+  double evaluation_tol = 1e-7;
+
   MonteCarlo::AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
        *data_container,
        energy_grid,
        grid_searcher,
-       reaction );
+       reaction,
+       evaluation_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),

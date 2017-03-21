@@ -42,8 +42,9 @@ public:
   //! Constructor
   HybridElasticElectronScatteringDistribution(
     const std::shared_ptr<HybridDistribution>& hybrid_distribution,
-    const double& cutoff_angle_cosine,
-    const bool& linlinlog_interpolation_mode_on = true );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol,
+    const bool linlinlog_interpolation_mode_on );
 
   //! Destructor
   virtual ~HybridElasticElectronScatteringDistribution()
@@ -82,6 +83,10 @@ public:
                                MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
+  double oldSampleImpl( const double incoming_energy ) const;
+
+  double newSampleImpl( const double incoming_energy ) const;
+
 protected:
 
    //! Sample an outgoing direction from the distribution
@@ -103,17 +108,21 @@ protected:
     EvaluationMethod evaluate ) const;
 
   // Evaluate the distribution using the desired evaluation method
-  template<typename EvaluationMethod>
+  template<typename TwoDInterpPolicy, typename EvaluationMethod>
   double evaluateImpl( const double incoming_energy,
                        const double scattering_angle_cosine,
                        EvaluationMethod evaluate,
-                       double below_lower_limit_return_value = 0.0,
-                       double above_upper_limit_return_value = 0.0  ) const;
+                       const double below_lower_limit_return_value = 0.0,
+                       const double above_upper_limit_return_value = 0.0,
+                       const unsigned max_number_of_iterations = 500  ) const;
 
 private:
 
   // cutoff angle cosine
   double d_cutoff_angle_cosine;
+
+  // The tabular evaluation tolerance
+  double d_evaluation_tol;
 
   // boolean to for LinLinLog interpolation (true = LinLinLog, false = LinLinLin)
   bool d_linlinlog_interpolation_mode_on;

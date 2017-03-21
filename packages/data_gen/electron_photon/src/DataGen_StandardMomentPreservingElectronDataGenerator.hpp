@@ -37,8 +37,7 @@ public:
     const double max_electron_energy,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on );
+    const bool linlinlog_interpolation_mode_on );
 
   //! Destructor
   ~StandardMomentPreservingElectronDataGenerator()
@@ -83,9 +82,6 @@ private:
 
   // The LinLinLog interplation mode
   bool d_linlinlog_interpolation_mode_on;
-
-  // The correlated sampling mode
-  bool d_correlated_sampling_mode_on;
 };
 
 

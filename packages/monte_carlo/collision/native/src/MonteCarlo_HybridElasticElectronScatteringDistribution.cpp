@@ -19,17 +19,19 @@ namespace MonteCarlo{
 // Constructor
 HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDistribution(
     const std::shared_ptr<HybridDistribution>& hybrid_distribution,
-    const double& cutoff_angle_cosine,
-    const bool& linlinlog_interpolation_mode_on )
+    const double cutoff_angle_cosine,
+    const double evaluation_tol,
+    const bool linlinlog_interpolation_mode_on )
   : d_hybrid_distribution( hybrid_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
+    d_evaluation_tol( evaluation_tol ),
     d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on )
 {
   // Make sure the arrays are valid
   testPrecondition( d_hybrid_distribution.use_count() > 0 );
   // Make sure the cutoff angle cosine is valid
-  testPostcondition( d_cutoff_angle_cosine >= -1.0 );
-  testPostcondition( d_cutoff_angle_cosine < 1.0 );
+  testPrecondition( d_cutoff_angle_cosine >= -1.0 );
+  testPrecondition( d_cutoff_angle_cosine < 1.0 );
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
@@ -42,10 +44,20 @@ double HybridElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return this->evaluateImpl<EvaluationMethodType>(
+  if( d_linlinlog_interpolation_mode_on )
+  {
+    return this->evaluateImpl<Utility::LinLinLog,EvaluationMethodType>(
                              incoming_energy,
                              scattering_angle_cosine,
                              &Utility::TabularOneDDistribution::evaluate );
+  }
+  else
+  {
+    return this->evaluateImpl<Utility::LinLinLin,EvaluationMethodType>(
+                             incoming_energy,
+                             scattering_angle_cosine,
+                             &Utility::TabularOneDDistribution::evaluate );
+  }
 }
 
 // Evaluate the PDF at the given energy and scattering angle cosine
@@ -58,10 +70,20 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return this->evaluateImpl<EvaluationMethodType>(
+  if( d_linlinlog_interpolation_mode_on )
+  {
+    return this->evaluateImpl<Utility::LinLinLog,EvaluationMethodType>(
                              incoming_energy,
                              scattering_angle_cosine,
                              &Utility::TabularOneDDistribution::evaluatePDF );
+  }
+  else
+  {
+    return this->evaluateImpl<Utility::LinLinLin,EvaluationMethodType>(
+                             incoming_energy,
+                             scattering_angle_cosine,
+                             &Utility::TabularOneDDistribution::evaluatePDF );
+  }
 }
 
 // Evaluate the CDF
@@ -79,10 +101,20 @@ double HybridElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return this->evaluateImpl<EvaluationMethodType>(
+  if( d_linlinlog_interpolation_mode_on )
+  {
+    return this->evaluateImpl<Utility::LinLinLog,EvaluationMethodType>(
                              incoming_energy,
                              scattering_angle_cosine,
                              &Utility::TabularOneDDistribution::evaluateCDF );
+  }
+  else
+  {
+    return this->evaluateImpl<Utility::LinLinLin,EvaluationMethodType>(
+                             incoming_energy,
+                             scattering_angle_cosine,
+                             &Utility::TabularOneDDistribution::evaluateCDF );
+  }
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -160,6 +192,116 @@ void HybridElasticElectronScatteringDistribution::scatterAdjointElectron(
   // Set the new direction
   adjoint_electron.rotateDirection( scattering_angle_cosine,
                                     this->sampleAzimuthalAngle() );
+}
+
+// The sample impl currently used
+double HybridElasticElectronScatteringDistribution::oldSampleImpl(
+    const double incoming_energy ) const
+{
+  double scattering_angle_cosine;
+  unsigned dummy_trials;
+
+  this->sampleAndRecordTrialsImpl( incoming_energy,
+                                   scattering_angle_cosine,
+                                   dummy_trials );
+
+  return scattering_angle_cosine;
+}
+
+// The sample impl currently that is being tested
+double HybridElasticElectronScatteringDistribution::newSampleImpl(
+    const double incoming_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  if( incoming_energy < d_hybrid_distribution->front().first ||
+      incoming_energy > d_hybrid_distribution->back().first )
+  {
+    return 1.0;
+  }
+  else
+  {
+    double random_number =
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+    // Find the bin boundaries
+    HybridDistribution::const_iterator lower_bin, upper_bin;
+
+    // Find the distribution bin with E_i <= E_in
+    lower_bin = Utility::Search::binaryLowerBound<Utility::FIRST>(
+                            d_hybrid_distribution->begin(),
+                            d_hybrid_distribution->end(),
+                            incoming_energy );
+
+    // Sampling the lower bin if E_i = E_in
+    if ( lower_bin->first == incoming_energy )
+    {
+      double scattering_angle_cosine;
+      this->sampleBin( lower_bin, random_number, scattering_angle_cosine );
+      return scattering_angle_cosine;
+    }
+    else
+    {
+      // Find the upper bin
+      upper_bin = lower_bin;
+      upper_bin++;
+
+      // get the ratio of the cutoff cross section to the moment preserving cross section
+      double cross_section_ratio =
+          Utility::LinLin::interpolate( lower_bin->first,
+                                        upper_bin->first,
+                                        incoming_energy,
+                                        lower_bin->fourth,
+                                        upper_bin->fourth );
+
+      // Scale the random number
+      double scaled_random_number = ( 1.0 + cross_section_ratio )*random_number;
+      double lower_angle, upper_angle;
+
+      if ( scaled_random_number <= cross_section_ratio )
+      {
+        scaled_random_number /= cross_section_ratio;
+
+        // Sample the lower and upper bins
+        lower_angle =
+            lower_bin->second->sampleWithRandomNumberInSubrange(
+                                                    scaled_random_number,
+                                                    d_cutoff_angle_cosine );
+        upper_angle =
+            upper_bin->second->sampleWithRandomNumberInSubrange(
+                                                    scaled_random_number,
+                                                    d_cutoff_angle_cosine );
+
+        // Sample an outgoing direction
+        if ( d_linlinlog_interpolation_mode_on )
+        {
+          return Utility::LinLog::interpolate(
+                  lower_bin->first,
+                  upper_bin->first,
+                  incoming_energy,
+                  lower_angle,
+                  upper_angle );
+        }
+        else
+        {
+          return Utility::LinLin::interpolate(
+                  lower_bin->first,
+                  upper_bin->first,
+                  incoming_energy,
+                  lower_angle,
+                  upper_angle );
+        }
+      }
+      else
+      {
+        scaled_random_number -= cross_section_ratio;
+
+        // Sample the lower discrete bin
+        return lower_bin->third->sampleWithRandomNumber( scaled_random_number );
+      }
+    }
+  }
 }
 
 // Sample an outgoing direction from the given distribution

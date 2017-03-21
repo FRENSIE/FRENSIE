@@ -27,16 +27,14 @@ StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronD
     const double max_electron_energy,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on )
+    const bool linlinlog_interpolation_mode_on )
   : MomentPreservingElectronDataGenerator( atomic_number ),
     d_native_eedl_data( native_eedl_data ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
     d_tabular_evaluation_tol( tabular_evaluation_tol ),
-    d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on ),
-    d_correlated_sampling_mode_on( correlated_sampling_mode_on )
+    d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
@@ -90,8 +88,7 @@ void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronD
                                             *d_native_eedl_data,
                                             d_cutoff_angle_cosine,
                                             d_tabular_evaluation_tol,
-                                            d_linlinlog_interpolation_mode_on,
-                                            d_correlated_sampling_mode_on ) );
+                                            d_linlinlog_interpolation_mode_on ) );
 
   std::vector<double> discrete_angles, weights;
 

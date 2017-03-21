@@ -23,6 +23,7 @@
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_FullyTabularTwoDDistribution.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
+#include "Utility_TwoDInterpolationPolicy.hpp"
 
 namespace MonteCarlo{
 
@@ -38,50 +39,58 @@ private:
 public:
 
   //! Create an analog elastic scattering adjoint electroatomic reaction
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createAnalogElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
-    const double evalation_tol = 1e-7,
-    const bool correlated_sampling_mode_on = true );
+    const double evaluation_tol );
 
   //! Create a hybrid elastic scattering adjoint electroatomic reaction
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 0.9 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Create an cutoff elastic scattering adjoint electroatomic reaction
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 1.0 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Create a screened Rutherford elastic scattering adjoint electroatomic reaction
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createScreenedRutherfordElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 1.0 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Create the moment preserving elastic scattering adjoint electroatomic reaction
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine = 0.9 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Create an atomic excitation scattering adjoint electroatomic reaction
   static void createAtomicExcitationReaction(
@@ -92,30 +101,36 @@ public:
     std::shared_ptr<AdjointElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization adjoint electroatomic reaction
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
-    std::shared_ptr<AdjointElectroatomicReaction>& electroionization_subshell_reaction );
+    std::shared_ptr<AdjointElectroatomicReaction>& electroionization_subshell_reaction,
+    const double evaluation_tol );
 
   //! Create the subshell electroionization adjoint electroatomic reactions
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<AdjointElectroatomicReaction> >&
-        electroionization_subshell_reactions );
+        electroionization_subshell_reactions,
+    const double evaluation_tol );
 
   //! Create the bremsstrahlung adjoint electroatomic reaction
+  template< typename SecondInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction );
+    std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction,
+    const double evaluation_tol );
 
   //! Create the forward total reaction (only used to get the cross section)
   static void createTotalForwardReaction(
@@ -128,6 +143,14 @@ public:
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_AdjointElectroatomicReactionNativeFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTROATOMIC_REACTION_NATIVE_FACTORY_HPP
 

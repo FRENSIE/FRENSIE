@@ -79,7 +79,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine
   }
 }
 
-// Set the evalation routines
+// Set the evaluation routines
 /*! \details This function sets the evalute, evaluatePDF and evaluateCDF
  *  function pointers to either an exact or unit based routine. The exact and
  *  unit based routines are consistent with the correlatedSampleExact and

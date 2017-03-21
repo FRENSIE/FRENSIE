@@ -205,7 +205,7 @@ MonteCarlo::ElectroatomicReactionType reaction;
 TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
 {
   double cutoff_angle_cosine = 0.9;
-  double evalation_tol = 1e-15;
+  double evaluation_tol = 1e-15;
 
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
@@ -213,7 +213,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
   properties.setLinLinLogInterpolationModeOn();
   properties.setCorrelatedSamplingModeOn();
   properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
-  properties.setElectronEvaluationTolerance( evalation_tol );
+  properties.setElectronEvaluationTolerance( evaluation_tol );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );
   Teuchos::RCP<MonteCarlo::Electroatom> atom;
@@ -228,11 +228,11 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
         cutoff_elastic_distribution,
         *data_container,
         1.0,
-        1e-15 );
+        properties.getElectronEvaluationTolerance() );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "Pb-Native" );
@@ -411,6 +411,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_elastic )
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
   properties.setElasticCutoffAngleCosine( 0.9 );
+  properties.setElectronEvaluationTolerance( 1e-7 );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );
   properties.setElasticModeOff();
@@ -427,10 +428,11 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_elastic )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
         cutoff_elastic_distribution,
         *data_container,
-        properties.getElasticCutoffAngleCosine() );
+        1.0,
+        properties.getElectronEvaluationTolerance() );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "Pb-Native" );

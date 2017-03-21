@@ -24,7 +24,7 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
-typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
+typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog> 
     NativeFactory;
 
 //---------------------------------------------------------------------------//
@@ -166,7 +166,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     NativeFactory::createCutoffElasticDistribution(
         cutoff_elastic_distribution,
-        data_container );
+        data_container,
+        1.0,
+        1e-7 );
 
     // Create the screened rutherford distribution
     std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>

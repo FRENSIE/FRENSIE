@@ -24,6 +24,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -36,9 +37,6 @@
 Teuchos::RCP<Data::AdjointElectronPhotonRelaxationDataContainer> data_container;
 std::string electroatom_name;
 double atomic_weight;
-double cutoff_angle_cosine;
-Teuchos::RCP<MonteCarlo::AdjointElectroatom> atom;
-unsigned hash_grid_bins = 100;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -47,13 +45,26 @@ unsigned hash_grid_bins = 100;
 TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
                    createAdjointElectroatom )
 {
+  double cutoff_angle_cosine = 1.0;
+  double evaluation_tol = 1e-7;
+
+  MonteCarlo::SimulationProperties properties;
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
+  properties.setUnitBasedInterpolationModeOff();
+  properties.setLinLinLogInterpolationModeOn();
+  properties.setCorrelatedSamplingModeOn();
+  properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
+  properties.setElectronEvaluationTolerance( evaluation_tol );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
+  properties.setNumberOfElectronHashGridBins( 100 );
+  Teuchos::RCP<MonteCarlo::AdjointElectroatom> atom;
+
   MonteCarlo::AdjointElectroatomNativeFactory::createAdjointElectroatom(
         *data_container,
         electroatom_name,
         atomic_weight,
-        atom,
-        cutoff_angle_cosine,
-        hash_grid_bins );
+        properties,
+        atom );
 
 
   // Test the adjoint electroatom properties
@@ -244,15 +255,26 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
 TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
                    createAdjointElectroatom_cutoff )
 {
-  double new_cutoff_angle_cosine = 0.9;
+  double cutoff_angle_cosine = 0.9;
+  double evaluation_tol = 1e-7;
+
+  MonteCarlo::SimulationProperties properties;
+  properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
+  properties.setUnitBasedInterpolationModeOff();
+  properties.setLinLinLogInterpolationModeOn();
+  properties.setCorrelatedSamplingModeOn();
+  properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
+  properties.setElectronEvaluationTolerance( evaluation_tol );
+  properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
+  properties.setNumberOfElectronHashGridBins( 100 );
+  Teuchos::RCP<MonteCarlo::AdjointElectroatom> atom;
 
   MonteCarlo::AdjointElectroatomNativeFactory::createAdjointElectroatom(
         *data_container,
         electroatom_name,
         atomic_weight,
-        atom,
-        new_cutoff_angle_cosine,
-        hash_grid_bins );
+        properties,
+        atom );
 
   // Test the adjoint electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "H-Native" );
@@ -444,7 +466,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   electroatom_name = "H-Native";
   atomic_weight = 1.00794;
-  cutoff_angle_cosine = 1.0;
 
   {
     // Create the native data file container

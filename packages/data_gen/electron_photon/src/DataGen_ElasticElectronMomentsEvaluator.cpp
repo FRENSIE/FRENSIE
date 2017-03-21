@@ -34,8 +34,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on )
+    const bool linlinlog_interpolation_mode_on )
 
   : d_cutoff_elastic_angles( data_container.getCutoffElasticAngles() ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
@@ -52,19 +51,17 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
   if ( linlinlog_interpolation_mode_on )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
     d_analog_distribution,
     data_container,
-    tabular_evaluation_tol,
-    correlated_sampling_mode_on );
+    tabular_evaluation_tol );
   }
   else
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
     d_analog_distribution,
     data_container,
-    tabular_evaluation_tol,
-    correlated_sampling_mode_on );
+    tabular_evaluation_tol );
   }
 
   // Construct the hash-based grid searcher for this atom
@@ -227,7 +224,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   if ( d_cutoff_angle_cosine < s_rutherford_cutoff_angle_cosine )
   {
     angular_grid =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
             d_cutoff_elastic_angles,
             energy,
             d_cutoff_angle_cosine );
@@ -559,7 +556,7 @@ void ElasticElectronMomentsEvaluator::getAngularIntegrationPoints(
   if( d_cutoff_elastic_angles.count( energy ) > 0 )
   {
     angular_integration_points =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
             d_cutoff_elastic_angles.find( energy )->second,
             d_cutoff_angle_cosine );
   }
@@ -573,14 +570,14 @@ void ElasticElectronMomentsEvaluator::getAngularIntegrationPoints(
     if ( energy - lower_bin->first <= upper_bin->first - energy )
     {
       angular_integration_points =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
             lower_bin->second,
             d_cutoff_angle_cosine );
     }
     else
     {
       angular_integration_points =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
             upper_bin->second,
             d_cutoff_angle_cosine );
     }

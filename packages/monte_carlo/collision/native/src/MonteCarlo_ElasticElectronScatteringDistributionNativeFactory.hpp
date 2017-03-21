@@ -25,6 +25,7 @@
 namespace MonteCarlo{
 
 //! The elastic scattering distribution factory class that uses Native data
+template <typename TwoDInterpPolicy = Utility::LinLinLog>
 class ElasticElectronScatteringDistributionNativeFactory
 {
 
@@ -49,13 +50,11 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double evalation_tol,
-    const bool correlated_sampling_mode_on );
+    const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
   static void createHybridElasticDistribution(
@@ -67,39 +66,34 @@ public:
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on = true,
-    const bool correlated_sampling_mode_on = true );
+    const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 1.0,
-    const double evalation_tol = 1e-7 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Create a moment preserving elastic distribution
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 0.9,
-    const double evalation_tol = 1e-7 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
 //      ****ADJOINT DATA PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double evalation_tol,
-    const bool correlated_sampling_mode_on = true );
+    const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
   static void createHybridElasticDistribution(
@@ -111,33 +105,29 @@ public:
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on = true,
-    const bool correlated_sampling_mode_on = true );
+    const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 1.0,
-    const double evalation_tol = 1e-7 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Create a moment preserving elastic distribution
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 0.9,
-    const double evalation_tol = 1e-7 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
 //      ****DATA CONTAINER INDEPENDENT PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
@@ -145,8 +135,7 @@ public:
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const unsigned atomic_number,
-    const double evalation_tol,
-    const bool correlated_sampling_mode_on = true );
+    const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
   static void createHybridElasticDistribution(
@@ -162,11 +151,9 @@ public:
     const std::map<double,std::vector<double> >& moment_preserving_weights,
     const std::vector<double>& angular_energy_grid,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on = true,
-    const bool correlated_sampling_mode_on = true );
+    const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -174,7 +161,7 @@ public:
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const double cutoff_angle_cosine,
-    const double evalation_tol );
+    const double evaluation_tol );
 
   //! Create a screened Rutherford elastic distribution
   static void createScreenedRutherfordElasticDistribution(
@@ -185,25 +172,23 @@ public:
     const unsigned atomic_number );
 
   //! Create a moment preserving elastic distribution
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
     const std::vector<double> angular_energy_grid,
     const std::map<double,std::vector<double> >& discrete_angles,
     const std::map<double,std::vector<double> >& discrete_weights,
-    const double cutoff_angle_cosine = 0.9,
-    const double evalation_tol = 1e-7 );
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Return angle cosine grid with the evaluated pdf for the given cutoff angle
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void getAngularGridAndPDF(
     std::vector<double>& angular_grid,
     std::vector<double>& evaluated_pdf,
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,
     const double energy,
-    const double evalation_tol = 1e-7 );
+    const double evaluation_tol );
 
   //! Return angle cosine grid for the given cutoff angle
   static std::vector<double> getAngularGrid(
@@ -247,13 +232,12 @@ protected:
     HybridFunction& hybrid_function );
 
   //! Create the cutoff elastic scattering function
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createScatteringFunction(
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,
     const std::vector<double>& energy_grid,
     std::shared_ptr<TwoDDist>& scattering_function,
-    const double evalation_tol,
+    const double evaluation_tol,
     const bool discrete_function = false );
 
   //! Create the cutoff elastic scattering function

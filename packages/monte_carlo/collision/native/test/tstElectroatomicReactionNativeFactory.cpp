@@ -39,13 +39,12 @@ double eval_tol;
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createAnalogElasticReaction )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction<Utility::LinLinLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
                 reaction,
-                1e-7,
-                true );
+                1e-7 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -78,11 +77,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCutoffElasticReaction )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                1.0,
+                1e-7 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -91,19 +92,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double energy = 1.0e-5;
-  double cross_section =
-    reaction->getCrossSection( energy );
-
+  double cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 2.48924e9, 1e-12 );
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-
   TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e8, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
-
   TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2, 1e-12 );
 
   // Clear the reaction
@@ -115,11 +112,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createScreenedRutherfordElasticReaction )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                0.9,
+                1e-7 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -156,7 +155,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                0.9,
+                1e-7 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -375,13 +376,12 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createAnalogElasticReaction_lin )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction<Utility::LinLinLin>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
                 reaction,
-                1e-7,
-                false );
+                1e-7 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -418,7 +418,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                1.0,
+                1e-7 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -427,19 +429,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double energy = 1.0e-5;
-  double cross_section =
-    reaction->getCrossSection( energy );
-
+  double cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 2.48924e9, 1e-12 );
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-
   TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e8, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
-
   TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2, 1e-12 );
 
   // Clear the reaction

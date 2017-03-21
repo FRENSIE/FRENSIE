@@ -23,9 +23,7 @@ AdjointElectroatomFactory::AdjointElectroatomFactory(
     const std::string& cross_sections_xml_directory,
     const Teuchos::ParameterList& cross_section_table_info,
     const std::unordered_set<std::string>& electroatom_aliases,
-    const unsigned hash_grid_bins,
-    const bool use_atomic_relaxation_data,
-    const double cutoff_angle_cosine,
+    const SimulationProperties& properties,
     std::ostream* os_message )
   :d_os_message( os_message )
 {
@@ -39,7 +37,7 @@ AdjointElectroatomFactory::AdjointElectroatomFactory(
   std::string electroatom_file_path, electroatom_file_type, electroatom_table_name;
   int electroatom_file_start_line;
   double atomic_weight;
-std::cout << "***electroatom_file_path = " << electroatom_file_path << std::endl;
+
   while( electroatom_name != electroatom_aliases.end() )
   {
     Data::CrossSectionsXMLProperties::extractInfoFromAdjointElectroatomTableInfoParameterList(
@@ -52,17 +50,13 @@ std::cout << "***electroatom_file_path = " << electroatom_file_path << std::endl
                           electroatom_file_start_line,
                           atomic_weight );
 
-std::cout << "***electroatom_file_path = " << electroatom_file_path << std::endl;
-
     if( electroatom_file_type == Data::CrossSectionsXMLProperties::native_file )
     {
       createAdjointElectroatomFromNativeTable(
                 *electroatom_name,
                 electroatom_file_path,
                 atomic_weight,
-                hash_grid_bins,
-                use_atomic_relaxation_data,
-                cutoff_angle_cosine );
+                properties );
     }
     else
     {
@@ -98,9 +92,7 @@ void AdjointElectroatomFactory::createAdjointElectroatomFromNativeTable(
     const std::string& electroatom_alias,
     const std::string& native_file_path,
     const double atomic_weight,
-    const unsigned hash_grid_bins,
-    const bool use_atomic_relaxation_data,
-    const double cutoff_angle_cosine )
+    const SimulationProperties& properties )
 {
   std::cout << "Loading native adjoint electroatomic cross section table "
             << electroatom_alias << " ... ";
@@ -109,38 +101,33 @@ void AdjointElectroatomFactory::createAdjointElectroatomFromNativeTable(
   if( d_electroatomic_table_name_map.find( native_file_path ) ==
       d_electroatomic_table_name_map.end() )
   {
-std::cout << "start " << std::endl;
     // Create the native data container
     Data::AdjointElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
-std::cout << "table loaded " << std::endl;
+
     // Create the atomic relaxation model
     Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model(
         new MonteCarlo::VoidAtomicRelaxationModel );;
-std::cout << "relaxation done " << std::endl;
+
     // Initialize the new adjoint electroatom
     Teuchos::RCP<AdjointElectroatom>& electroatom = d_electroatom_name_map[electroatom_alias];
-std::cout << "electroatom initialized " << std::endl;
+
     // Create the new adjoint electroatom
     AdjointElectroatomNativeFactory::createAdjointElectroatom( data_container,
                                                  native_file_path,
                                                  atomic_weight,
-                                                 electroatom,
-                                                 cutoff_angle_cosine,
-                                                 hash_grid_bins );
-std::cout << "electroatom done " << std::endl;
+                                                 properties,
+                                                 electroatom );
+
     // Cache the new adjoint electroatom in the table name map
     d_electroatomic_table_name_map[native_file_path] = electroatom;
   }
   // The table has already been loaded
   else
   {
-std::cout << "wrong start " << std::endl;
     d_electroatom_name_map[electroatom_alias] =
       d_electroatomic_table_name_map[native_file_path];
   }
-
-  std::cout << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace
