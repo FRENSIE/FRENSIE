@@ -20,6 +20,9 @@
 
 // Trilinos Includes
 #include <Teuchos_ArrayRCP.hpp>
+
+// FRENSIE Includes
+#include "PyFrensie_PythonTypeTraits.hpp"
 %}
 
 // Include the std::vector class
@@ -41,48 +44,48 @@
 
 %typemap(out) std::vector<TYPE>
 {
-  npy_intp dims[1] = { (npy_intp)$1.size() };
-  $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) &($1[0]));
+  $result = PyFrensie::convertToPython( $1 );
+
   if( !$result )
     SWIG_fail;
 }
 
 %typemap(out) const std::vector<TYPE>&
 {
-  npy_intp dims[1] = { (npy_intp)$1->size() };
-  $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) &((*$1)[0]));
+  $result = PyFrensie::convertToPython( $1 );
+  
   if( !$result )
     SWIG_fail;
 }
 
 %typemap(out) Teuchos::ArrayRCP<TYPE>
 {
-  npy_intp dims[1] = { $1.size() };
-  $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) $1.getRawPtr());
+  $result = PyFrensie::convertToPython( $1 );
+  
   if( !$result )
     SWIG_fail;
 }
 
 %typemap(out) const Teuchos::ArrayRCP<TYPE>&
 {
-  npy_intp dims[1] = { $1->size() };
-  $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) $1->getRawPtr());
+  $result = PyFrensie::convertToPython( $1 );
+  
   if( !$result )
     SWIG_fail;
 }
 
 %typemap(out) Teuchos::ArrayRCP<const TYPE>
 {
-  npy_intp dims[1] = { $1.size() };
-  $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) $1.getRawPtr());
+  $result = PyFrensie::convertToPython( $1 );
+  
   if( !$result )
     SWIG_fail;
 }
 
 %typemap(out) const Teuchos::ArrayRCP<const TYPE>&
 {
-  npy_intp dims[1] = { $1->size() };
-  $result = PyArray_SimpleNewFromData(1, dims, TYPECODE, (void*) $1->getRawPtr());
+  $result = PyFrensie::convertToPython( $1 );
+
   if( !$result )
     SWIG_fail;
 }

@@ -24,15 +24,15 @@ ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/testutil.py
 ADD_CUSTOM_TARGET(testingHelpers ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/testutil.py)
 
-# Add the Utility.Distribution unit tests
-PyFrensie_MAKE_TEST(tstUtility.Distribution.OneDDistribution)
-ADD_TEST(PyFrensie.Utility.Distribution.OneDDistribution_test ${PYTHON_EXECUTABLE} tstUtility.Distribution.OneDDistribution.py)
-SET_PROPERTY(TEST PyFrensie.Utility.Distribution.OneDDistribution_test PROPERTY LABELS pyfrensie)
-
 # Add the Utility.Prng unit tests
 PyFrensie_MAKE_TEST(tstUtility.Prng)
 ADD_TEST(PyFrensie.Utility.Prng_test ${PYTHON_EXECUTABLE} tstUtility.Prng.py)
 SET_PROPERTY(TEST PyFrensie.Utility.Prng_test PROPERTY LABELS pyfrensie)
+
+# Add the Utility.Distribution unit tests
+PyFrensie_MAKE_TEST(tstUtility.Distribution.OneDDistribution)
+ADD_TEST(PyFrensie.Utility.Distribution.OneDDistribution_test ${PYTHON_EXECUTABLE} tstUtility.Distribution.OneDDistribution.py)
+SET_PROPERTY(TEST PyFrensie.Utility.Distribution.OneDDistribution_test PROPERTY LABELS pyfrensie)
 
 # Add the Data.ACE.ACEFileHandler unit tests
 PyFrensie_MAKE_TEST(tstData.ACE.ACEFileHandler)

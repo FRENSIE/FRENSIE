@@ -30,7 +30,7 @@ Prng.RandomNumberGenerator proxy class.
 #include <sstream>
 
 // Frensie Includes
-#include "PyFrensie_ArrayConversionHelpers.hpp"
+#include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 %}
 
@@ -187,7 +187,7 @@ that the original random number stream state will be reset as well.
 // the fake stream
 %typemap(in) const std::vector<double>& fake_stream (std::vector<double> temp)
 {
-  PyFrensie::copyNumPyToVectorWithCheck( $input, temp );
+  temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
 
   $1 = &temp;
 }

@@ -8,6 +8,8 @@
 
 %{
 // FRENSIE Includes
+#include "PyFrensie_PythonTypeTraits.hpp"
+#include "Utility_DistributionTraits.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
@@ -24,7 +26,9 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_WattDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
-#include "PyFrensie_ArrayConversionHelpers.hpp"
+
+// Add the Utility namespace to the global lookup scope
+using namespace Utility;
 %}
 
 // Include std::string support
@@ -33,22 +37,22 @@
 // Include typemaps support
 %include <typemaps.i>
 
-// Import the PyFrensie Teuchos Array conversion helpers
-%import "PyFrensie_ArrayConversionHelpers.hpp"
-
 // Import the explicit template instantiation helpers
 %import "Utility_ExplicitTemplateInstantiationMacros.hpp"
+
+// Import the distribution traits class
+%import "Utility_DistributionTraits.hpp"
 
 // Include the 1D distribution helpers
 %include "Utility_OneDDistributionHelpers.i"
 
 // Add a few general typemaps
-%apply unsigned& INOUT { unsigned& trials };
+%apply Utility::DistributionTraits::Counter& INOUT { Utility::DistributionTraits::Counter& trials };
 %apply unsigned& OUTPUT { unsigned& sampled_bin_index };
 
 %typemap(in) const Teuchos::Array<double>& (Teuchos::Array<double> temp)
 {
-  PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp );
+  temp = PyFrensie::convertFromPython<Teuchos::Array<double> >( $input );
 
   $1 = &temp;
 }
@@ -149,7 +153,7 @@ The dependent values can represent the CDF instead of the distribution (pass in
 //---------------------------------------------------------------------------//
 // Ignore the static methods
 %ignore Utility::UnitAwareEvaporationDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity, const IndepQuantity );
-%ignore Utility::UnitAwareEvaporationDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, const IndepQuantity, unsigned& );
+%ignore Utility::UnitAwareEvaporationDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, const IndepQuantity, DistributionTraits::Counter& );
 
 // Import the Evaporation Distribution
 %import "Utility_EvaporationDistribution.hpp"
@@ -220,7 +224,7 @@ The bin values can represent the CDF instead of the distribution (pass in
 //---------------------------------------------------------------------------//
 // Ignore the static methods
 %ignore Utility::UnitAwareMaxwellFissionDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity, const IndepQuantity );
-%ignore Utility::UnitAwareMaxwellFissionDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, const IndepQuantity, unsigned& );
+%ignore Utility::UnitAwareMaxwellFissionDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, const IndepQuantity, DistributionTraits::Counter& );
 
 // Import the MaxwellFission Distribution
 %import "Utility_MaxwellFissionDistribution.hpp"
@@ -250,7 +254,7 @@ input parameter are the following:
 //---------------------------------------------------------------------------//
 // Ignore the static methods
 %ignore Utility::UnitAwareNormalDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity, const IndepQuantity, const IndepQuantity );
-%ignore Utility::UnitAwareNormalDistribution<void,void>::sampleAndRecordTrials(  unsigned&, const IndepQuantity, const IndepQuantity, const IndepQuantity, const IndepQuantity );
+%ignore Utility::UnitAwareNormalDistribution<void,void>::sampleAndRecordTrials(  DistributionTraits::Counter&, const IndepQuantity, const IndepQuantity, const IndepQuantity, const IndepQuantity );
 
 // Import the Normal Distribution
 %import "Utility_NormalDistribution.hpp"
@@ -387,7 +391,7 @@ Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabul
 //---------------------------------------------------------------------------//
 // Ignore the static methods
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity );
-%ignore Utility::UnitAwareUniformDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, unsigned& );
+%ignore Utility::UnitAwareUniformDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, DistributionTraits::Counter& );
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sampleWithRandomNumber( const IndepQuantity, const IndepQuantity, const double );
 
 // Import the Uniform Distribution
@@ -418,7 +422,7 @@ Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabul
 //---------------------------------------------------------------------------//
 // Ignore the static methods
 %ignore Utility::UnitAwareWattDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity, const InverseIndepQuantity, const IndepQuantity );
-%ignore Utility::UnitAwareWattDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, const InverseIndepQuantity, const IndepQuantity, unsigned& );
+%ignore Utility::UnitAwareWattDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, const InverseIndepQuantity, const IndepQuantity, DistributionTraits::Counter& );
 
 // Import the Watt Distribution
 %import "Utility_WattDistribution.hpp"

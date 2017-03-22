@@ -26,7 +26,7 @@ and extracting data blocks from the XSS array.
 #include "numpy_include.hpp"
 
 // FRENSIE Includes
-#include "PyFrensie_ArrayConversionHelpers.hpp"
+#include "PyFrensie_PythonTypeTraits.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -37,9 +37,6 @@ and extracting data blocks from the XSS array.
 %include <stl.i>
 %include <std_string.i>
 %include <std_except.i>
-
-// Import the PyFrensie Teuchos Array conversion helpers
-%import "PyFrensie_ArrayConversionHelpers.hpp"
 
 // Include the Teuchos::ArrayRCP support
 %include "PyFrensie_Array.i"
@@ -146,17 +143,14 @@ shown below:
              PyObject* jxs_py_array,
              PyObject* xss_py_array )
   {
-    Teuchos::Array<int> nxs_array;
+    Teuchos::Array<int> nxs_array = 
+      PyFrensie::convertFromPython<Teuchos::Array<int> >( nxs_py_array );
 
-    PyFrensie::copyNumPyToTeuchosWithCheck( nxs_py_array, nxs_array );
+    Teuchos::Array<int> jxs_array = 
+      PyFrensie::convertFromPython<Teuchos::Array<int> >( jxs_py_array );
 
-    Teuchos::Array<int> jxs_array;
-
-    PyFrensie::copyNumPyToTeuchosWithCheck( jxs_py_array, jxs_array );
-
-    Teuchos::ArrayRCP<double> xss_array;
-
-    PyFrensie::copyNumPyToTeuchosWithCheck( xss_py_array, xss_array );
+    Teuchos::ArrayRCP<double> xss_array =
+      PyFrensie::convertFromPython<Teuchos::ArrayRCP<double> >( xss_py_array );
 
     return new Data::EXTRACTOR( nxs_array(),
                                 jxs_array(),
