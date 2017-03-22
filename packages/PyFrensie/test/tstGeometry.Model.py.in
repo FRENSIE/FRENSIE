@@ -502,13 +502,111 @@ class DagMCModelTestCase(unittest.TestCase):
 class RootModelTestCase(unittest.TestCase):
     "TestCase class for Goemetry.Model class using a Root geometry"
 
-    def setUp(self):
-        self.model = Geometry.createModel( options.root_xmlfile )
-
+    @classmethod
+    def setUpClass(cls):
+        cls.model = Geometry.createModel( options.root_xmlfile )
+        
     def testHasCellEstimatorData(self):
         "*Test Geometry.Model hasCellEstimatorData"
         self.assertFalse( self.model.hasCellEstimatorData() )
 
+    def testGetMaterialIds(self):
+        "*Test Geometry.Model getMaterialIds"
+        material_ids = self.model.getMaterialIds()
+
+        self.assertEqual( len(material_ids), 1 )
+        self.assertTrue( 1 in material_ids )
+
+    def testGetCells(self):
+        "*Test Geometry.Model getCells"
+        # Get all cells
+        cells = self.model.getCells( True, True )
+
+        self.assertEqual( len(cells), 3 )
+        self.assertTrue( 1 in cells )
+        self.assertTrue( 2 in cells )
+        self.assertTrue( 3 in cells )
+
+        # Get all cells except for termination cells
+        cells = self.model.getCells( True, False )
+
+        self.assertEqual( len(cells), 2 )
+        self.assertTrue( 1 in cells )
+        self.assertTrue( 2 in cells )
+        self.assertTrue( 3 not in cells )
+
+        # Get all cells except for void cells
+        cells = self.model.getCells( False, True )
+
+        self.assertEqual( len(cells), 2 )
+        self.assertTrue( 1 not in cells )
+        self.assertTrue( 2 in cells )
+        self.assertTrue( 3 in cells )
+
+        # Get all cells except for void and termination cells
+        cells = self.model.getCells( False, False )
+
+        self.assertEqual( len(cells), 1 )
+        self.assertTrue( 1 not in cells )
+        self.assertTrue( 2 in cells )
+        self.assertTrue( 3 not in cells )
+
+    def testGetCellMaterialIds(self):
+        "*Test Geometry.Model getCellMaterialIds"
+        cell_id_mat_id_map = self.model.getCellMaterialIds()
+
+        self.assertEqual( len(cell_id_mat_id_map), 1 )
+        self.assertTrue( 2 in cell_id_mat_id_map )
+        self.assertEqual( cell_id_mat_id_map[2], 1 )
+
+    def testGetCellDensities(self):
+        "*Test Geometry.Model getCellDensities"
+        cell_id_density_map = self.model.getCellDensities()
+
+        self.assertEqual( len(cell_id_density_map), 1 )
+        self.assertTrue( 2 in cell_id_density_map )
+        self.assertEqual( cell_id_density_map[2], 1.0 )
+
+    def testGetCellEstimatorData(self):
+        "*Test Geometry.Model getCellEstimatorData"
+        cell_estimator_id_data_map = self.model.getCellEstimatorData()
+
+        self.assertEqual( len(cell_estimator_id_data_map), 0 )
+
+    def testDoesCellExist(self):
+        "*Test Geometry.Model doesCellExist"
+
+        self.assertTrue( self.model.doesCellExist( 1 ) )
+        self.assertTrue( self.model.doesCellExist( 2 ) )
+        self.assertTrue( self.model.doesCellExist( 3 ) )
+        self.assertFalse( self.model.doesCellExist( 4 ) )
+
+    def testIsTerminationCell(self):
+        "*Test Geometry.Model isTerminationCell"
+
+        self.assertFalse( self.model.isTerminationCell( 1 ) )
+        self.assertFalse( self.model.isTerminationCell( 2 ) )
+        self.assertTrue( self.model.isTerminationCell( 3 ) )
+
+    def testIsVoidCell(self):
+        "*Test Geometry.Model isVoidCell"
+
+        self.assertTrue( self.model.isVoidCell( 1 ) )
+        self.assertFalse( self.model.isVoidCell( 2 ) )
+        self.assertFalse( self.model.isVoidCell( 3 ) )
+
+    def testGetCellVolume(self):
+        "*Test Geometry.Model getCellVolume"
+
+        self.assertAlmostEqual( self.model.getCellVolume( 1 ), 934.550153050213, delta=1e-6 )
+        self.assertAlmostEqual( self.model.getCellVolume( 2 ), 65.4498469497874, delta=1e-6 )
+        self.assertAlmostEqual( self.model.getCellVolume( 3 ), 1744.0, delta=1e-6 )
+
+    def testCreateNavigator(self):
+        "*Test Geometry.Model createNavigator"
+
+        # If this fails an error will be thrown
+        navigator = self.model.createNavigator()
 
 #-----------------------------------------------------------------------------#
 # Custom main
@@ -523,7 +621,7 @@ if __name__ == "__main__":
         suite.addTest(unittest.makeSuite(DagMCModelTestCase))
 
     if len(options.root_xmlfile) > 0:
-        suite.addTest(unittests.makeSuite(RootModelTestCase))
+        suite.addTest(unittest.makeSuite(RootModelTestCase))
 
     print >>sys.stderr, \
         "\n**************************************\n" + \

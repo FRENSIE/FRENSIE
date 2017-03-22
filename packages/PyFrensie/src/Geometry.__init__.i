@@ -460,6 +460,18 @@ A NumPy array will be returned.
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
+%typemap(in,numinputs=0) double normal[3] (std::vector<double> temp)
+{
+  temp.resize( 3 );
+  $1 = temp.data();
+}
+
+%typemap(argout) double normal[3] {
+  Teuchos::ArrayView<const double> output_view( $1, 3 );
+
+  %append_output(PyFrensie::convertToPython( output_view ));
+}
+
 %typemap(in,numinputs=0) double* surface_normal (std::vector<double> temp)
 {
   temp.resize( 3 );
