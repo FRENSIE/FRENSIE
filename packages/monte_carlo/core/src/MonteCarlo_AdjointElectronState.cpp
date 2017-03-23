@@ -48,27 +48,6 @@ AdjointElectronState::AdjointElectronState(
                           reset_collision_number )
 { /* ... */ }
 
-
-// Probe constructor
-AdjointElectronState::AdjointElectronState(
-			 const ParticleState::historyNumberType history_number,
-			 const ParticleType probe_type )
-  : MassiveParticleState( history_number, probe_type )
-{ /* ... */ }
-
-// Probe copy constructor
-AdjointElectronState::AdjointElectronState(
-				     const ParticleState& existing_base_state,
-				     const ParticleType probe_type,
-				     const bool increment_generation_number,
-				     const bool reset_collision_number )
-  : MassiveParticleState( existing_base_state,
-                          probe_type,
-                          Utility::PhysicalConstants::electron_rest_mass_energy,
-                          increment_generation_number,
-                          reset_collision_number )
-{ /* ... */ }
-
 // Check if this is a probe
 bool AdjointElectronState::isProbe() const
 {

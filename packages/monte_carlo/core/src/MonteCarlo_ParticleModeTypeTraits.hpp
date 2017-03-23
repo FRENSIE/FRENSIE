@@ -14,6 +14,8 @@
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_AdjointPhotonState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 
 namespace MonteCarlo{
 
@@ -98,22 +100,7 @@ struct ParticleModeTypeTraits<NEUTRON_PHOTON_ELECTRON_MODE>
 
   //! Check if the particle type is compatible with the mode
   static inline bool isParticleTypeCompatible( const ParticleType type )
-  { return (type == NEUTRON || type == PHOTON || type == ELECTRON) ? true : false); }
-  }
-};
-
-/*! Specialization of ParticleModeTypeTraits for ADJOINT_NEUTRON_MODE
- * \ingroup particle_mode_type_traits
- */
-template<>
-struct ParticleModeTypeTraits<ADJOINT_NEUTRON_MODE>
-{
-  //! The active particles
-  typedef boost::mpl::set<AdjointNeutronState> ActiveParticles;
-
-  //! Check if the particle type is compatible with the mode
-  static inline bool isParticleTypeCompatible( const ParticleType type )
-  { return (type == ADJOINT_NEUTRON ? true : false); }
+  { return (type == NEUTRON || type == PHOTON || type == ELECTRON ? true : false); }
 };
 
 /*! Specialization of ParticleModeTypeTrais for ADJOINT_PHOTON_MODE

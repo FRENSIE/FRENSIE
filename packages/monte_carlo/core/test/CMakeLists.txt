@@ -1,3 +1,10 @@
+ADD_EXECUTABLE(tstParticleType
+  tstParticleType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstParticleType monte_carlo_core)
+ADD_TEST(ParticleType_test tstParticleType)
+SET_PROPERTY(TEST ParticleType_test PROPERTY LABELS monte_carlo_core)
+
 ADD_EXECUTABLE(tstParticleState
   tstParticleState.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -89,6 +96,13 @@ ADD_EXECUTABLE(tstParticleModeType
 TARGET_LINK_LIBRARIES(tstParticleModeType monte_carlo_core)
 ADD_TEST(ParticleModeType_test tstParticleModeType)
 SET_PROPERTY(TEST ParticleModeType_test PROPERTY LABELS monte_carlo_core)
+
+ADD_EXECUTABLE(tstParticleModeTypeTraits
+  tstParticleModeTypeTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstParticleModeTypeTraits monte_carlo_core)
+ADD_TEST(ParticleModeTypeTraits_test tstParticleModeTypeTraits)
+SET_PROPERTY(TEST ParticleModeTypeTraits_test PROPERTY LABELS monte_carlo_core)
 
 ADD_EXECUTABLE(tstSimulationGeneralProperties
   tstSimulationGeneralProperties.cpp

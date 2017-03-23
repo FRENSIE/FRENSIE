@@ -46,25 +46,6 @@ AdjointPhotonState::AdjointPhotonState(
 			   reset_collision_number )
 { /* ... */ }
 
-// Probe constructor
-AdjointPhotonState::AdjointPhotonState(
-			 const ParticleState::historyNumberType history_number,
-			 const ParticleType probe_type )
-  : MasslessParticleState( history_number, probe_type )
-{ /* ... */ }
-
-// Probe copy constructor
-AdjointPhotonState::AdjointPhotonState(
-				     const ParticleState& existing_base_state,
-				     const ParticleType probe_type,
-				     const bool increment_generation_number,
-				     const bool reset_collision_number )
-  : MasslessParticleState( existing_base_state,
-			   probe_type,
-			   increment_generation_number,
-			   reset_collision_number )
-{ /* ... */ }
-
 // Check if this is a probe
 bool AdjointPhotonState::isProbe() const
 {

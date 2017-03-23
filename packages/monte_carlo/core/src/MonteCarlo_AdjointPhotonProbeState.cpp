@@ -22,7 +22,7 @@ AdjointPhotonProbeState::AdjointPhotonProbeState()
 // Constructor
 AdjointPhotonProbeState::AdjointPhotonProbeState(
 		       const ParticleState::historyNumberType history_number )
-  : AdjointPhotonState( history_number, ADJOINT_PHOTON_PROBE ),
+  : AdjointPhotonState( history_number ),
     d_active( false )
 { /* ... */ }
 
@@ -32,7 +32,6 @@ AdjointPhotonProbeState::AdjointPhotonProbeState(
 				      const bool increment_generation_number,
 				      const bool reset_collision_number )
   : AdjointPhotonState( existing_base_state,
-			ADJOINT_PHOTON_PROBE,
 			increment_generation_number,
 			reset_collision_number ),
     d_active( false )
@@ -44,7 +43,6 @@ AdjointPhotonProbeState::AdjointPhotonProbeState(
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
   : AdjointPhotonState( existing_base_state,
-			ADJOINT_PHOTON_PROBE,
 			increment_generation_number,
 			reset_collision_number ),
     d_active( false )

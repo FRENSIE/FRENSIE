@@ -13,6 +13,7 @@
 #include <H5Cpp.h>
 
 // FRENSIE Includes
+#include "Geometry_ParticleType.hpp"
 #include "Utility_HDF5TypeTraits.hpp"
 
 namespace MonteCarlo{
@@ -23,25 +24,21 @@ enum ParticleType{
   NEUTRON,
   ELECTRON,
   ADJOINT_PHOTON,
-  ADJOINT_PHOTON_PROBE,
   ADJOINT_NEUTRON,
-  ADJOINT_NEUTRON_PROBE,
   ADJOINT_ELECTRON,
-  ADJOINT_ELECTRON_PROBE,
-  UNKNOWN_PARTICLE,
   PARTICLE_end
 };
 
 //! Test if the particle type name is valid
 bool isValidParticleTypeName( const std::string& particle_type_name );
 
-//! Convert shorthand particle type name to verbose particle type name
-std::string convertShortParticleTypeNameToVerboseParticleTypeName(
-				 const std::string& short_particle_type_name );
-
 //! Convert the particle type name to a ParticleType enum
 ParticleType convertParticleTypeNameToParticleTypeEnum(
 				       const std::string& particle_type_name );
+
+//! Convert the geometry particle type enum to a ParticleType enum
+ParticleType convertGeometryParticleTypeEnumToParticleTypeEnum(
+                                  const Geometry::ParticleType particle_type );
 
 //! Convert the ParticleType enum to a string
 std::string convertParticleTypeEnumToString( const ParticleType particle_type);

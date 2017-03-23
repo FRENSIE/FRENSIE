@@ -30,7 +30,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, getParticleType )
   MonteCarlo::AdjointPhotonProbeState particle( 1ull );
 
   TEST_EQUALITY_CONST( particle.getParticleType(),
-		       MonteCarlo::ADJOINT_PHOTON_PROBE );
+		       MonteCarlo::ADJOINT_PHOTON );
 }
 
 //---------------------------------------------------------------------------//
@@ -156,7 +156,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, clone )
   TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
   TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 0ull );
   TEST_EQUALITY_CONST( particle_clone->getParticleType(),
-		       MonteCarlo::ADJOINT_PHOTON_PROBE );
+		       MonteCarlo::ADJOINT_PHOTON );
 }
 
 //---------------------------------------------------------------------------//
@@ -188,7 +188,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, clone_new_hist )
   TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
   TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 10ull );
   TEST_EQUALITY_CONST( particle_clone->getParticleType(),
-		       MonteCarlo::ADJOINT_PHOTON_PROBE );
+		       MonteCarlo::ADJOINT_PHOTON );
 }
 
 //---------------------------------------------------------------------------//
@@ -234,7 +234,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, archive )
   TEST_EQUALITY_CONST( loaded_particle.getHistoryNumber(), 1ull );
   TEST_ASSERT( loaded_particle.isActive() );
   TEST_EQUALITY_CONST( loaded_particle.getParticleType(),
-		       MonteCarlo::ADJOINT_PHOTON_PROBE );
+		       MonteCarlo::ADJOINT_PHOTON );
 }
 
 //---------------------------------------------------------------------------//

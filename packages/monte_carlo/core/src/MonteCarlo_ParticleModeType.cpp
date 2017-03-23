@@ -19,111 +19,26 @@ namespace MonteCarlo{
 // Test if the particle mode type name is valid
 bool isValidParticleModeTypeName( const std::string& particle_mode_type_name )
 {
-  if( particle_mode_type_name == "NEUTRON_MODE" )
+  if( particle_mode_type_name == "Neutron Mode" )
     return true;
-  else if( particle_mode_type_name == "PHOTON_MODE" )
+  else if( particle_mode_type_name == "Photon Mode" )
     return true;
-  else if( particle_mode_type_name == "ELECTRON_MODE" )
+  else if( particle_mode_type_name == "Electron Mode" )
     return true;
-  else if( particle_mode_type_name == "NEUTRON_PHOTON_MODE" )
+  else if( particle_mode_type_name == "Neutron-Photon Mode" )
     return true;
-  else if( particle_mode_type_name == "PHOTON_ELECTRON_MODE" )
+  else if( particle_mode_type_name == "Photon-Electron Mode" )
     return true;
-  else if( particle_mode_type_name == "NEUTRON_PHOTON_ELECTRON_MODE" )
+  else if( particle_mode_type_name == "Neutron-Photon-Electron Mode" )
     return true;
-  else if( particle_mode_type_name == "ADJOINT_NEUTRON_MODE" )
+  else if( particle_mode_type_name == "Adjoint Neutron Mode" )
     return true;
-  else if( particle_mode_type_name == "ADJOINT_PHOTON_MODE" )
+  else if( particle_mode_type_name == "Adjoint Photon Mode" )
     return true;
-  else if( particle_mode_type_name == "ADJOINT_ELECTRON_MODE" )
+  else if( particle_mode_type_name == "Adjoint Electron Mode" )
     return true;
   else
     return false;
-}
-
-// Test if the source particle type is compatible with the particle mode type
-bool isParticleModeTypeCompatible( const ParticleModeType particle_mode,
-				   const ParticleType particle_type )
-{
-  switch( particle_mode )
-  {
-  case NEUTRON_MODE:
-    {
-      if( particle_type == NEUTRON )
-        return true;
-      else
-        return false;
-    }
-  case PHOTON_MODE:
-    {
-      if( particle_type == PHOTON )
-        return true;
-      else
-        return false;
-    }
-  case ELECTRON_MODE:
-    {
-      if( particle_type == ELECTRON )
-        return true;
-      else
-        return false;
-    }
-  case NEUTRON_PHOTON_MODE:
-    {
-      if( particle_type == NEUTRON )
-        return true;
-      else if( particle_type == PHOTON )
-        return true;
-      else
-        return false;
-    }
-  case PHOTON_ELECTRON_MODE:
-    {
-      if( particle_type == PHOTON )
-        return true;
-      else if( particle_type == ELECTRON )
-        return true;
-      else
-        return false;
-    }
-  case NEUTRON_PHOTON_ELECTRON_MODE:
-    {
-      if( particle_type == NEUTRON )
-        return true;
-      else if( particle_type == PHOTON )
-        return true;
-      else if( particle_type == ELECTRON )
-        return true;
-      else
-        return false;
-    }
-  case ADJOINT_NEUTRON_MODE:
-    {
-      if( particle_type == ADJOINT_NEUTRON )
-        return true;
-      else
-        return false;
-    }
-  case ADJOINT_PHOTON_MODE:
-    {
-      if( particle_type == ADJOINT_PHOTON )
-        return true;
-      else
-        return false;
-    }
-  case ADJOINT_ELECTRON_MODE:
-    {
-      if( particle_type == ADJOINT_ELECTRON )
-        return true;
-      else
-        return false;
-    }
-  default:
-    THROW_EXCEPTION( std::logic_error,
-		     "Error: ParticleModeType " << particle_mode <<
-		     " and ParticleType " << particle_type <<
-	 	     " are not compatible!" );
-  }
 }
 
 // Convert the particle mode type name to a ParticleModeType enum
@@ -133,23 +48,23 @@ ParticleModeType convertParticleModeTypeNameToParticleModeTypeEnum(
   // Make sure the particle mode type name is valid
   testPrecondition( isValidParticleModeTypeName( particle_mode_type_name ) );
 
-  if( particle_mode_type_name == "NEUTRON_MODE" )
+  if( particle_mode_type_name == "Neutron Mode" )
     return NEUTRON_MODE;
-  else if( particle_mode_type_name == "PHOTON_MODE" )
+  else if( particle_mode_type_name == "Photon Mode" )
     return PHOTON_MODE;
-  else if( particle_mode_type_name == "ELECTRON_MODE" )
+  else if( particle_mode_type_name == "Electron Mode" )
     return ELECTRON_MODE;
-  else if( particle_mode_type_name == "NEUTRON_PHOTON_MODE" )
+  else if( particle_mode_type_name == "Neutron-Photon Mode" )
     return NEUTRON_PHOTON_MODE;
-  else if( particle_mode_type_name == "PHOTON_ELECTRON_MODE" )
+  else if( particle_mode_type_name == "Photon-Electron Mode" )
     return PHOTON_ELECTRON_MODE;
-  else if( particle_mode_type_name == "NEUTRON_PHOTON_ELECTRON_MODE" )
+  else if( particle_mode_type_name == "Neutron-Photon-Electron Mode" )
     return NEUTRON_PHOTON_ELECTRON_MODE;
-  else if( particle_mode_type_name == "ADJOINT_NEUTRON_MODE" )
+  else if( particle_mode_type_name == "Adjoint Neutron Mode" )
     return ADJOINT_NEUTRON_MODE;
-  else if( particle_mode_type_name == "ADJOINT_PHOTON_MODE" )
+  else if( particle_mode_type_name == "Adjoint Photon Mode" )
     return ADJOINT_PHOTON_MODE;
-  else if( particle_mode_type_name == "ADJOINT_ELECTRON_MODE" )
+  else if( particle_mode_type_name == "Adjoint Electron Mode" )
     return ADJOINT_ELECTRON_MODE;
   else
   {

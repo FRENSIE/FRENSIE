@@ -22,7 +22,7 @@ AdjointElectronProbeState::AdjointElectronProbeState()
 // Constructor
 AdjointElectronProbeState::AdjointElectronProbeState(
 		       const ParticleState::historyNumberType history_number )
-  : AdjointElectronState( history_number, ADJOINT_ELECTRON_PROBE ),
+  : AdjointElectronState( history_number ),
     d_active( false )
 { /* ... */ }
 
@@ -32,9 +32,8 @@ AdjointElectronProbeState::AdjointElectronProbeState(
 				      const bool increment_generation_number,
 				      const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-			ADJOINT_ELECTRON_PROBE,
-			increment_generation_number,
-			reset_collision_number ),
+                          increment_generation_number,
+                          reset_collision_number ),
     d_active( false )
 { /* ... */ }
 
@@ -44,9 +43,8 @@ AdjointElectronProbeState::AdjointElectronProbeState(
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-			ADJOINT_ELECTRON_PROBE,
-			increment_generation_number,
-			reset_collision_number ),
+                          increment_generation_number,
+                          reset_collision_number ),
     d_active( false )
 { /* ... */ }
 
