@@ -81,48 +81,6 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
   }
 }
 
-// SWIG will not parse typedefs. Create some typemaps that map the typedefs
-// to their true type
-// %typemap(in) ModuleTraits::InternalCellHandle
-// {
-//   $1 = PyInt_AsLong($input);
-// }
-
-// %typemap(in) ModuleTraits::InternalSurfaceHandle
-// {
-//   $1 = PyInt_AsLong($input);
-// }
-
-// %typemap(out) ModuleTraits::InternalCellHandle
-// {
-//   $result = PyInt_FromLong($1);
-// }
-
-// %typemap(out) ModuleTraits::InternalSurfaceHandle
-// {
-//   $result = PyInt_AsLong($1);
-// }
-
-// %typemap(in) ModuleTraits::InternalMaterialHandle
-// {
-//   $1 = PyInt_AsLong($input);
-// }
-
-// %typemap(out) ModuleTraits::InternalMaterialHandle
-// {
-//   $result = PyInt_AsLong($1);
-// }
-
-// %typemap(in) ModuleTraits::InternalEstimatorHandle
-// {
-//   $1 = PyInt_AsLong($input);
-// }
-
-// %typemap(out) ModuleTraits::InternalEstimatorHandle
-// {
-//   $result = PyInt_AsLong($1);
-// }
-
 //---------------------------------------------------------------------------//
 // Add support for the ModuleTraits
 //---------------------------------------------------------------------------//
@@ -154,8 +112,48 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 %feature("docstring")
 Geometry::Model
 "
+The Model class stores a geometric model, which can be from a CAD (.sat) file
+or a Root (.root) file. It can be used for querying properties of the geometry
+and for creating navigators, which can be used to traverse the geometry.
+A brief usage tutorial for this class is shown below:
 
+   import PyFrensie.Geometry, numpy
+
+   model = PyFrensie.Geometry.createModel( 'my_geom.xml' )
+   
+   cells = model.getCells( True, True )
+   materials = model.getMaterialIds()
+   cell_materials = model.getCellMaterialIds()
+   cell_densities = model.getCellDensities()
+   cell_estimator_data = model.getCellEstimatorData()
+   navigator = model.createNavigator()
 "
+
+%feature("autodoc", "getMaterialIds(Model self) -> set[material_id]" )
+Geometry::Model::getMaterialIds;
+
+%feature("autodoc", "getCells(Model self, bool include_void_cells, bool include_termination_cells) -> set[cell_id]")
+Geometry::Model::getCells;
+
+%feature("autodoc","getCellMaterialIds(Model self) -> dictionary[cell_id,material_id]" )
+Geometry::Model::getCellMaterialIds;
+   
+%feature("autodoc", "getCellDensities(Model self) -> dictionary[cell_id,density(float)]" )
+Geometry::Model::getCellDensities;
+
+%feature("autodoc",
+"getCellEstimatorData(Model self) -> dictionary[estimator_id,estimator_data]
+
+The mapped value (estimator_data) is a tuple of size three with the following 
+elements:
+   1. Estimator type (e.g. Geometry.CELL_TRACK_LENGTH_FLUX_ESTIMATOR)
+   2. Particle type (e.g. Geometry.NEUTRON)
+   3. Numpy array of cells assigned to this estimator
+" )
+Geometry::Model::getCellEstimatorData;
+
+%feature("autodoc", "createNavigator(Model self) -> Navigator" )
+Geometry::Model::createNavigator;
 
 // Allow shared pointers of Model objects
 %shared_ptr(Geometry::Model);
@@ -229,6 +227,58 @@ Geometry::Model
 //---------------------------------------------------------------------------//
 // Add support for the AdvancedModel class
 //---------------------------------------------------------------------------//
+// Add more detailed docstrings for the AdvancedModel class
+%feature("docstring")
+Geometry::AdvancedModel
+"
+The AdvancedModel class extends the Model class with surface querying methods. 
+Currently, only CAD geometries can be stored as AdvancedModels since they are
+the only types of geometries that keep track of surfaces independently of 
+cells. There are two ways to create an advanced model. The first is by
+simply loading your geometry as an advanced model, as shown below:
+
+   import PyFrensie.Geometry, numpy
+   model = PyFrensie.Geometry.createAdvancedModel( 'my_cad_geom.xml' )
+
+The second is by converting your model to an advanced model, as shown below:
+
+   import PyFrensie.Geometry, numpy
+   model = PyFrensie.Geometry.createModel( 'my_cad_geom.xml' )
+   model = PyFrensie.Geometry.makeModelAdvanced( model )
+
+Note that if your geometry does not support the AdvancedModel interface 
+attempting to load it as an advanced model or attempting to convert it to
+an advanced model will result in an exception.
+
+An brief usage tutorial for this class is shown below:
+
+   import PyFrensie.Geometry, numpy
+   model = PyFrensie.Geometry.createAdvancedModel( 'my_cad_geom.xml' )
+
+   cells = model.getCells( True, True )
+   materials = model.getMaterialIds()
+   cell_materials = model.getCellMaterialIds()
+   cell_densities = model.getCellDensities()
+   cell_estimator_data = model.getCellEstimatorData()
+
+   surfaces = model.getSurfaces()
+   surface_estimator_data = model.getSurfaceEstimatorData()
+
+   navigator = model.createNavigator()
+"
+
+%feature("autodoc", "getSurfaces(Model self) -> set[surface_id]" )
+Geometry::AdvancedModel::getSurfaces;
+
+%feature("autodoc",
+"getSurfaceEstimatorData(Model self) -> dictionary[estimator_id,estimator_data]
+The mapped value (estimator_data) is a tuple of size three with the following
+elements:
+   1. Estimator type (e.g. Geometry.SURFACE_FLUX_ESTIMATOR)
+   2. Particle type (e.g. Geometry.NEUTRON)
+   3. Numpy array of surfaces assigned to this estimator
+" )
+Geometry::AdvancedModel::getSurfaceEstimatorData;
 
 // Allow shared pointers of AdvancedModel objects
 %shared_ptr(Geometry::AdvancedModel);
@@ -275,6 +325,39 @@ Geometry::Model
 // Import the ModelFactory class
 %import "Geometry_ModelFactory.hpp"
 
+%feature("autodoc",
+"
+createModel(String geometry_xml_file) -> Model
+
+The string must be the file name (with path) of the xml file that describes
+the geometry. Refer to the FRENSIE documentation regarding the proper way
+to constuct this xml file
+" )
+createModel;
+
+%feature("autodoc",
+"
+createAdvancedModel(String geometry_xml_file) -> AdvancedModel
+
+The string must be the file name (with path) of the xml file that describes
+the geometry. Refer to the FRENSIE documentation regarding the proper way
+to constuct this xml file. If the geometry does not support the AdvancedModel
+interface an exception will be thrown.
+" )
+createAdvancedModel;
+
+%feature("autodoc",
+"
+makeModelAdvanced(Model model) -> AdvancedModel
+
+If the geometry does not support the AdvancedModel
+interface an exception will be thrown.
+" )
+makeModelAdvanced;
+
+%feature("autodoc", "makeModelBasic(AdvancedModel model) -> Model" )
+makeModelBasic;
+
 %inline %{
 std::shared_ptr<const Geometry::Model> createModel(
                                         const std::string& geom_rep_file_name )
@@ -316,9 +399,8 @@ std::shared_ptr<const Geometry::Model> makeModelBasic(
 %feature("docstring")
 Geometry::Ray
 "
-The Ray stores the state of a ray object (position and direction). It is
-primarily used for ray tracing. A brief usage tutorial for this class is
-shown below:
+The Ray stores the state of a ray object (position and direction). A brief 
+usage tutorial for this class is shown below:
 
    import PyFrensie.Geometry, numpy
 
@@ -441,6 +523,116 @@ A NumPy array will be returned.
 //---------------------------------------------------------------------------//
 // Add support for the Navigator class
 //---------------------------------------------------------------------------//
+%feature("docstring")
+Geometry::Navigator
+"
+The Navigator class is primarily used to traverse a Model. Some geometric data,
+such as the surface normal at a point on a surface or the relationship between 
+a point and a cell, can also be queried. A brief useage tutorial for this
+class is shown below:
+
+   import PyFrensie.Geometry, numpy
+   model = PyFrensie.Geometry.createModel( 'my_geom.xml' )
+   navigator = model.createNavigator()
+
+   navigator.setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+   distance_to_surface_hit = navigator.fireInternalRay()
+   navigator.advanceInternalRayToCellBoundary()
+
+   ray_position = navigator.getInternalRayPosition()
+   ray_cell = navigator.getCellContainingInternalRay()
+ 
+   distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
+   reflected = navigator.advanceInternalRayToCellBoundary()
+   if( reflected ):
+      print 'Surface ', surface_hit, ' reflected ray.'
+
+   distance_to_surface_hit = navigator.fireInternalRay()
+   navigator.advanceInternalRayBySubstep( 0.5*distance_to_surface_hit )
+   navigator.changeInternalRayDirection( 0.0, 0.0, -1.0 )
+
+   navigator.fireInternalRay()
+   reflected, normal = navigator.advanceInternalRayToCellBoundaryAndGetSurfaceNormal()
+"
+
+%feature("autodoc",
+"getPointLocation(Navigator self, Sequence position, Sequence direction, Long cell_id ) -> PointLocation
+getPointLocation(Navigator self, Ray ray, Long cell_id) -> PointLocation
+
+The position and direction sequences must have a size of three. The point
+location returned can be one of three values:
+   1. PyFrensie.Geometry.POINT_INSIDE_CELL
+   2. PyFrensie.Geometry.POINT_ON_CELL
+   3. PyFrensie.Geometry.POINT_OUTSIDE_CELL
+" )
+Geometry::Navigator::getPointLocation;
+
+%feature("autodoc",
+"getSurfaceNormal(Navigator self, Long surface_id, Sequence position, Sequence direction) -> Numpy Array
+getSurfaceNormal(Navigator self, Long surface_id, Ray ray) -> Numpy Array
+
+The position and direction sequences must have a size of three. The returned
+value is a Numpy Array of size three.
+" )
+Geometry::Navigator::getSurfaceNormal;
+
+%feature("autodoc",
+"findCellContainingRay(Navigator self, Sequence position, Sequence direction) -> cell_id(Long)
+findCellContainingRay(Navigator self, Ray ray) -> cell_id(Long)
+
+The position and direction sequences must have a size of three.
+" )
+Geometry::Navigator::findCellContainingRay;
+
+%feature("autodoc",
+"setInternalRay(Navigator self, Float x_position, Float y_position, Float z_position, Float x_direction, Float y_direction, Float z_direction)
+setInternalRay(Navigator self, Sequence position, Sequence direction)
+setInternalRay(Navigator self, Ray ray)
+
+setInternalRay(Navigator self, Float x_position, Float y_position, Float z_position, Float x_direction, Float y_direction, Float z_direction, Long cell_id)
+setInternalRay(Navigator self, Sequence position, Sequence direction, Long cell_id)
+setInternalRay(Navigator self, Ray ray, Long cell_id)
+
+The position and direction sequences must have a size of three.
+" )
+Geometry::Navigator::setInternalRay;
+
+%feature("autodoc", "getInternalRayPosition(Navigator self) -> Numpy Array")
+Geometry::Navigator::getInternalRayPosition;
+
+%feature("autodoc", "getInternalRayDirection(Navigator self) -> Numpy Array")
+Geometry::Navigator::getInternalRayDirection;
+
+%feature("docstring")
+Geometry::Navigator::fireInternalRay
+"
+The distance to the surface that was hit will be returned.
+"
+
+%feature("autdoc",
+"fireInternalRayAndGetSurfaceHit(Navigator self) -> [distance_to_surface(Float), surface_hit(Long)]
+" )
+Geometry::Navigator::fireInternalRayAndGetSurfaceHit;
+
+%feature("docstring")
+Geometry::Navigator::advanceInternalRayToCellBoundary
+"
+If a reflecting surface was encountered at the cell boundary True will be
+returned. False will be returned if a normal surface was encountered.
+"
+
+%feature("autodoc",
+"advanceInternalRayToCellBoundaryAndGetSurfaceNormal(Navigator self) -> [reflecting_surface(Bool),surface_normal(Numpy Array)]
+" )
+Geometry::Navigator::advanceInternalRayToCellBoundaryAndGetSurfaceNormal;
+
+%feature("autodoc",
+"changeInternalRayDirection(Navigator self, Float x_direction, Float y_direction, Float z_direction)
+changeInternalRayDirection(Navigator self, Sequence direction)
+
+The direction sequence must have a size of three.
+" )
+Geometry::Navigator::changeInternalRayDirection;
 
 // Allow shared pointers of Navigator objects
 %shared_ptr(Geometry::Navigator);
