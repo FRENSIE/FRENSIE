@@ -12,12 +12,6 @@
 // Std Lib Includes
 #include <functional>
 
-// Boost Includes
-#include <boost/mpl/find.hpp>
-#include <boost/mpl/deref.hpp>
-#include <boost/mpl/next_prior.hpp>
-#include <boost/mpl/begin_end.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_SourceModuleInterface.hpp"
 #include "MonteCarlo_EventModuleInterface.hpp"
@@ -26,7 +20,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SimulationManager.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
-#include "Geometry_ModuleInterface.hpp"
+#include "Geometry_Model.hpp"
 
 namespace MonteCarlo{
 
@@ -48,6 +42,7 @@ public:
   //! Constructor
   ParticleSimulationManager(
                 const std::shared_ptr<const SimulationProperties> properties,
+                const std::shared_ptr<const Geometry::Model>& model,
 		const unsigned long long start_history = 0ull,
 		const unsigned long long previously_completed_histories = 0ull,
 		const double previous_run_time = 0.0 );
@@ -97,25 +92,57 @@ protected:
 
 private:
 
-  // Simulate an unresolved particle
-  void simulateUnresolvedParticle( ParticleState& unresolved_particle,
-                                   ParticleBank& bank ) const;
-
-  // Simulate an individual particle
-  template<typename State>
-  void simulateParticle( ParticleState& unresolved_particle,
-                         ParticleBank& bank ) const;
+  // Initialize the simulate particle functions
+  void initializeSimulateParticleFunctions();
 
   // Add simulate particle function for particle type
   template<typename State>
   void addSimulateParticleFunction();
 
+  // Simulate an unresolved particle
+  void simulateUnresolvedParticle( ParticleState& unresolved_particle,
+                                   ParticleBank& bank,
+                                   Geometry::Navigator& navigator ) const;
+
+  // Simulate an individual particle
+  template<typename State>
+  void simulateParticle( ParticleState& unresolved_particle,
+                         ParticleBank& bank,
+                         Geometry::Navigator& navigator ) const;
+
+  // Simulate an individual particle track of the desired optical path length
+  template<typename State>
+  void simulateParticleTrack( State& particle,
+                              Geometry::Navigator& navigator,
+                              const double optical_path ) const;
+
+  // Advance a particle to the cell boundary
+  template<typename State>
+  void advanceParticleToCellBoundary( State& particle,
+                                      Geometry::Navigator& navigator,
+                                      const double distance_to_surface,
+                                      const double subtrack_start_time ) const;
+
+  // Advance a particle to a collision site
+  template<typename State>
+  void advanceParticleToCollisionSite(
+                                  State& particle,
+                                  Geometry::Navigator& navigator,
+                                  const double op_to_collision_site,
+                                  const double cell_total_macro_cross_section,
+                                  const double subtrack_start_time,
+                                  const double track_start_time,
+                                  const double track_start_position[3] ) const;
+                                      
   // Add the mode initialization helper as a friend class
   template<typename T1, typename T2>
   friend class Details::ModeInitializationHelper;
 
   // The simulation properties
   std::shared_ptr<const SimulationProperties> d_properties;
+
+  // The geometry model
+  std::shared_ptr<const Geometry::Model> d_model;
 
   // Starting history
   unsigned long long d_start_history;
@@ -139,7 +166,7 @@ private:
   double d_end_time;
 
   // The simulation functions
-  typedef std::function<void(ParticleState&, ParticleBank&)>
+  typedef std::function<void(ParticleState&, ParticleBank&, Geometry::Navigator&)>
   SimulateParticleFunction;
   
   typedef std::map<ParticleType,SimulatParticleFunction>
