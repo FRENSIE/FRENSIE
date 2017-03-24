@@ -10,14 +10,15 @@
 #define MONTE_CARLO_SOURCE_UNIT_TEST_HARNESS_EXTENSIONS_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 /*! \brief A macros for the Teuchos Unit Test Harness for creating a 
- * template unit test on a MonteCarlo::ParticleSourceDimensionType enum.
+ * template unit test on a MonteCarlo::PhaseSpaceDimension enum.
  * \ingroup unit_test_harness_extensions
  */
-#define MC_UNIT_TEST_PSDT_TEMPLATE_1_DECL(TEST_GROUP, TEST_NAME, PSDT_VALUE) \
-template<MonteCarlo::ParticleSourceDimensionType PSDT_VALUE> \
+#define MC_UNIT_TEST_PSD_TEMPLATE_1_DECL(TEST_GROUP, TEST_NAME, PSD_VALUE) \
+template<MonteCarlo::PhaseSpaceDimension PSD_VALUE> \
 class TEST_GROUP##_##TEST_NAME##_UnitTest : public Teuchos::UnitTestBase \
 {                                                                     \
  public:                                                              \
@@ -29,9 +30,9 @@ class TEST_GROUP##_##TEST_NAME##_UnitTest : public Teuchos::UnitTestBase \
   virtual long int unitTestFileLineNumber() const{ return __LINE__; }   \
 };                                                                      \
                                                                         \
-template<MonteCarlo::ParticleSourceDimensionType PSDT_VALUE>           \
-void TEST_GROUP##_##TEST_NAME##_UnitTest<PSDT_VALUE>::runUnitTestImpl( \
-                      Techos::FancyOStream& out, bool& success ) const \
+template<MonteCarlo::PhaseSpaceDimension PSD_VALUE>           \
+void TEST_GROUP##_##TEST_NAME##_UnitTest<PSD_VALUE>::runUnitTestImpl( \
+                      Teuchos::FancyOStream& out, bool& success ) const \
 
 
 #endif // end MONTE_CARLO_SOURCE_UNIT_TEST_HARNESS_EXTENSIONS_HPP

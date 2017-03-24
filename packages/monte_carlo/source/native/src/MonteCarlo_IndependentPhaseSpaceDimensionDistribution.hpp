@@ -49,7 +49,7 @@ public:
 
   //! Check if the dimension is dependent on the dimension of interest
   bool isDependentOnDimension(
-                          const PhaseSpaceDimension dimension ) const override;
+                    const PhaseSpaceDimension other_dimension ) const override;
 
   //! Check if the dimension distribution is continuous
   bool isContinuous() const override;
@@ -61,7 +61,7 @@ public:
   bool isUniform() const;
 
   //! Check if the underlying distribution has the form of interest
-  bool hasForm( const OneDDistributionType distribution_type ) const override;
+  bool hasForm( const Utility::OneDDistributionType distribution_type ) const override;
 
   //! Evaluate the dimension distribution without cascade to dependent dists.
   double evaluateWithoutCascade(

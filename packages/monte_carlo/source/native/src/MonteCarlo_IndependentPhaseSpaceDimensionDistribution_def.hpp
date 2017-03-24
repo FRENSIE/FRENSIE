@@ -61,7 +61,7 @@ bool IndependentPhaseSpaceDimensionDistribution<dimension>::isIndependent() cons
 // Check if the dimension is dependent on the dimension of interest
 template<PhaseSpaceDimension dimension>
 bool IndependentPhaseSpaceDimensionDistribution<dimension>::isDependentOnDimension(
-                                    const PhaseSpaceDimension dimension ) const
+                              const PhaseSpaceDimension other_dimension ) const
 {
   return false;
 }
@@ -90,7 +90,7 @@ bool IndependentPhaseSpaceDimensionDistribution<dimension>::isUniform() const
 // Check if the underlying distribution has the form of interest
 template<PhaseSpaceDimension dimension>
 bool IndependentPhaseSpaceDimensionDistribution<dimension>::hasForm(
-                           const OneDDistributionType distribution_type ) const
+                  const Utility::OneDDistributionType distribution_type ) const
 {
   return d_dimension_distribution->getDistributionType() ==
     distribution_type;
