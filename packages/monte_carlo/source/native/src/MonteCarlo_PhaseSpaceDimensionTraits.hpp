@@ -18,259 +18,283 @@ namespace MonteCarlo{
  * \ingroup phase_space_dimension_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<PRIMARY_SPATIAL_PS_DIMENSION>
+struct PhaseSpaceDimensionTraits<PRIMARY_SPATIAL_DIMENSION>
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
 
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
-  { return SPATIAL_PS_DIMENSION_CLASS; }
+  { return SPATIAL_DIMENSION_CLASS; }
 
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getPrimarySpatialCoordinate(); }
 
   //! Set the coordinate value
-  static inline double setCoordinate( PhaseSpacePoint& point,
-                                      const double coord_value )
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
   { point.setPrimarySpatialCoordinate( coord_value ); }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   { point.getPrimarySpatialCoordinateWeight(); }
 
   //! Set the coordinate weight
-  static inline double setCoordinateWeight( PhaseSpacePoint& point,
-                                            const double coord_weight )
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
   { point.setPrimarySpatialCoordinateWeight( coord_weight ); }
 };
 
-/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::SECONDARY_SPATIAL_PS_DIMENSION
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::SECONDARY_SPATIAL_DIMENSION
  * \ingroup phase_space_dimension_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<SECONDARY_SPATIAL_PS_DIMENSION>
+struct PhaseSpaceDimensionTraits<SECONDARY_SPATIAL_DIMENSION>
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
 
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
-  { return SPATIAL_PS_DIMENSION_CLASS; }
+  { return SPATIAL_DIMENSION_CLASS; }
 
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getSecondarySpatialCoordinate(); }
 
   //! Set the coordinate value
-  static inline double setCoordinate( PhaseSpacePoint& point,
-                                      const double coord_value )
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
   { point.setSecondarySpatialCoordinate( coord_value ); }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   { point.getSecondarySpatialCoordinateWeight(); }
 
   //! Set the coordinate weight
-  static inline double setCoordinateWeight( PhaseSpacePoint& point,
-                                            const double coord_weight )
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
   { point.setSecondarySpatialCoordinateWeight( coord_weight ); }
 };
 
-/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::TERTIARY_SPATIAL_PS_DIMENSION
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::TERTIARY_SPATIAL_DIMENSION
  * \ingroup phase_space_dimension_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<TERTIARY_SPATIAL_PS_DIMENSION>
+struct PhaseSpaceDimensionTraits<TERTIARY_SPATIAL_DIMENSION>
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
 
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
-  { return SPATIAL_PS_DIMENSION_CLASS; }
+  { return SPATIAL_DIMENSION_CLASS; }
 
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getTertiarySpatialCoordinate(); }
 
   //! Set the coordinate value
-  static inline double setCoordinate( PhaseSpacePoint& point,
-                                      const double coord_value )
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
   { point.setTertiarySpatialCoordinate( coord_value ); }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   { point.getTertiarySpatialCoordinateWeight(); }
 
   //! Set the coordinate weight
-  static inline double setCoordinateWeight( PhaseSpacePoint& point,
-                                            const double coord_weight )
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
   { point.setTertiarySpatialCoordinateWeight( coord_weight ); }
 };
 
-/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::PRIMARY_DIRECTIONAL_PS_DIMENSION
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION
  * \ingroup phase_space_dimension_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<PRIMARY_DIRECTIONAL_PS_DIMENSION>
+struct PhaseSpaceDimensionTraits<PRIMARY_DIRECTIONAL_DIMENSION>
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
 
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
-  { return DIRECTIONAL_PS_DIMENSION_CLASS; }
+  { return DIRECTIONAL_DIMENSION_CLASS; }
 
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getPrimaryDirectionalCoordinate(); }
 
   //! Set the coordinate value
-  static inline double setCoordinate( PhaseSpacePoint& point,
-                                      const double coord_value )
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
   { point.setPrimaryDirectionalCoordinate( coord_value ); }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   { point.getPrimaryDirectionalCoordinateWeight(); }
 
   //! Set the coordinate weight
-  static inline double setCoordinateWeight( PhaseSpacePoint& point,
-                                            const double coord_weight )
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
   { point.setPrimaryDirectionalCoordinateWeight( coord_weight ); }
 };
 
-/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::SECONDARY_DIRECTIONAL_PS_DIMENSION
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION
  * \ingroup phase_space_dimension_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<SECONDARY_DIRECTIONAL_PS_DIMENSION>
+struct PhaseSpaceDimensionTraits<SECONDARY_DIRECTIONAL_DIMENSION>
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
 
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
-  { return DIRECTIONAL_PS_DIMENSION_CLASS; }
+  { return DIRECTIONAL_DIMENSION_CLASS; }
 
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getSecondaryDirectionalCoordinate(); }
 
   //! Set the coordinate value
-  static inline double setCoordinate( PhaseSpacePoint& point,
-                                      const double coord_value )
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
   { point.setSecondaryDirectionalCoordinate( coord_value ); }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   { point.getSecondaryDirectionalCoordinateWeight(); }
 
   //! Set the coordinate weight
-  static inline double setCoordinateWeight( PhaseSpacePoint& point,
-                                            const double coord_weight )
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
   { point.setSecondaryDirectionalCoordinateWeight( coord_weight ); }
 };
 
-/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::TERTIARY_DIRECTIONAL_PS_DIMENSION
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION
  * \ingroup phase_space_dimension_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<TERTIARY_DIRECTIONAL_PS_DIMENSION>
+struct PhaseSpaceDimensionTraits<TERTIARY_DIRECTIONAL_DIMENSION>
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
 
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
-  { return DIRECTIONAL_PS_DIMENSION_CLASS; }
+  { return DIRECTIONAL_DIMENSION_CLASS; }
 
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getTertiaryDirectionalCoordinate(); }
 
   //! Set the coordinate value
-  static inline double setCoordinate( PhaseSpacePoint& point,
-                                      const double coord_value )
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
   { point.setTertiaryDirectionalCoordinate( coord_value ); }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   { point.getTertiaryDirectionalCoordinateWeight(); }
 
   //! Set the coordinate weight
-  static inline double setCoordinateWeight( PhaseSpacePoint& point,
-                                            const double coord_weight )
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
   { point.setTertiaryDirectionalCoordinateWeight( coord_weight ); }
 };
 
-/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::ENERGY_PS_DIMENSION
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::ENERGY_DIMENSION
  * \ingroup phase_space_dimension_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<ENERGY_PS_DIMENSION>
+struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
 
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
-  { return ENERGY_PS_DIMENSION_CLASS; }
+  { return ENERGY_DIMENSION_CLASS; }
 
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getEnergyCoordinate(); }
 
   //! Set the coordinate value
-  static inline double setCoordinate( PhaseSpacePoint& point,
-                                      const double coord_value )
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
   { point.setEnergyCoordinate( coord_value ); }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   { point.getEnergyCoordinateWeight(); }
 
   //! Set the coordinate weight
-  static inline double setCoordinateWeight( PhaseSpacePoint& point,
-                                            const double coord_weight )
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
   { point.setEnergyCoordinateWeight( coord_weight ); }
 };
 
-/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::TIME_PS_DIMENSION
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::TIME_DIMENSION
  * \ingroup phase_space_dimension_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<TIME_PS_DIMENSION>
+struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
 
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
-  { return TIME_PS_DIMENSION_CLASS; }
+  { return TIME_DIMENSION_CLASS; }
 
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getTimeCoordinate(); }
 
   //! Set the coordinate value
-  static inline double setCoordinate( PhaseSpacePoint& point,
-                                      const double coord_value )
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
   { point.setTimeCoordinate( coord_value ); }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   { point.getTimeCoordinateWeight(); }
 
   //! Set the coordinate weight
-  static inline double setCoordinateWeight( PhaseSpacePoint& point,
-                                            const double coord_weight )
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
   { point.setTimeCoordinateWeight( coord_weight ); }
 };
 
-/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::WEIGHT_PS_DIMENSION
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::WEIGHT_DIMENSION
  *
  * Note that the weight dimension does not have an additional weight associated
  * with it (the set/get coordinate weight methods call the same 
@@ -279,31 +303,34 @@ struct PhaseSpaceDimensionTraits<TIME_PS_DIMENSION>
  * \ingroup phase_space_dimension_traits
  */
 template<>
-struct PhaseSpaceDimensionTraits<WEIGHT_PS_DIMENSION>
+struct PhaseSpaceDimensionTraits<WEIGHT_DIMENSION>
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
 
   //! Get the dimension class type
   static inline PhaseSpaceDimensionClass getClass()
-  { return WEIGHT_PS_DIMENSION_CLASS; }
+  { return WEIGHT_DIMENSION_CLASS; }
 
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   { return point.getWeightCoordinate(); }
 
   //! Set the coordinate value
-  static inline double setCoordinate( PhaseSpacePoint& point,
-                                      const double coord_value )
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
   { point.setWeightCoordinate( coord_value ); }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   { point.getWeightCoordinate(); }
 
   //! Set the coordinate weight
-  static inline double setCoordinateWeight( PhaseSpacePoint& point,
-                                            const double coord_weight )
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
   { point.setWeightCoordinate( coord_weight ); }
 };
 

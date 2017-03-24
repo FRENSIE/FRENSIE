@@ -21,19 +21,19 @@ TARGET_LINK_LIBRARIES(tstPhaseSpacePoint monte_carlo_source_native)
 ADD_TEST(PhaseSpacePoint_test tstPhaseSpacePoint)
 SET_PROPERTY(TEST PhaseSpacePoint_test PROPERTY LABELS monte_carlo_source_native)
 
+ADD_EXECUTABLE(tstPhaseSpaceDimensionTraits
+  tstPhaseSpaceDimensionTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhaseSpaceDimensionTraits monte_carlo_source_native)
+ADD_TEST(PhaseSpaceDimensionTraits_test tstPhaseSpaceDimensionTraits)
+SET_PROPERTY(TEST PhaseSpaceDimensionTraits_test PROPERTY LABELS monte_carlo_source_native)
+
 ADD_EXECUTABLE(tstSourceHDF5FileHandler
   tstSourceHDF5FileHandler.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSourceHDF5FileHandler monte_carlo_source_native)
 ADD_TEST(SourceHDF5FileHandler_test tstSourceHDF5FileHandler)
 SET_PROPERTY(TEST SourceHDF5FileHandler_test PROPERTY LABELS monte_carlo_source_native)
-
-# ADD_EXECUTABLE(tstParticleSourcePhaseSpacePoint
-#   tstParticleSourcePhaseSpacePoint.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstParticleSourcePhaseSpacePoint monte_carlo_source_native)
-# ADD_TEST(ParticleSourcePhaseSpacePoint_test tstParticleSourcePhaseSpacePoint)
-# SET_PROPERTY(TEST ParticleSourcePhaseSpacePoint_test PROPERTY LABELS monte_carlo_source_native)
 
 # ADD_EXECUTABLE(tstResponseFunction
 #   tstResponseFunction.cpp

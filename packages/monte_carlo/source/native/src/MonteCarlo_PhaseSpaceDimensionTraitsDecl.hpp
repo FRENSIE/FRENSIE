@@ -31,6 +31,9 @@ namespace MonteCarlo{
 template<typename T, PhaseSpaceDimension dimension>
 struct UndefinedPhaseSpaceDimensionTraits
 {
+  //! This type should be used as the defalut value of typedefs
+  struct DesiredTypeIsMissingSpecialization{};
+  
   //! This function should not compile if there is any attempt to instantiate
   static inline double notDefined() { return T::desired_dimension_is_missing_specialization(); }
 };
@@ -49,40 +52,43 @@ template<PhaseSpaceDimension dimension>
 struct PhaseSpaceDimensionTraits
 {
   //! The type associated with this dimension
-  typedef double DimensionType;
+  typedef typename UndefinedPhaseSpaceDimensionTraits<double,dimension>::DesiredTypeIsMissingSpecialization DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef typename UndefinedPhaseSpaceDimensionTraits<double,dimension>::DesiredTypeIsMissingSpecialization DimensionWeightType;
 
   //! Get the dimension class type
-  static inline ParticleSourceDimensionClassType getClass()
+  static inline PhaseSpaceDimensionClass getClass()
   {
-    UndefinedPhaseSpaceDimensionTraits<double,dimension>::notDefined();
+    UndefinedPhaseSpaceDimensionTraits<DimensionValueType,dimension>::notDefined();
   }
   
   //! Get the coordinate value
-  static inline double getCoordinate( const PhaseSpacePoint& point )
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   {
-    UndefinedPhaseSpaceDimensionTraits<double,dimension>::notDefined();
+    UndefinedPhaseSpaceDimensionTraits<DimensionValueType,dimension>::notDefined();
     return 0;
   }
 
   //! Set the coordinate value
   static inline void setCoordinate( PhaseSpacePoint& point,
-                                    const double coord_value )
+                                    const DimensionValueType coord_value )
   {
-    UndefinedPhaseSpaceDimensionTraits<double,dimension>::notDefined();
+    UndefinedPhaseSpaceDimensionTraits<DimensionValueType,dimension>::notDefined();
   }
 
   //! Get the coordinate weight
-  static inline double getCoordinateWeight( const PhaseSpacePoint& point )
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
   {
-    UndefinedPhaseSpaceDimensionTraits<double,dimension>::notDefined();
+    UndefinedPhaseSpaceDimensionTraits<DimensionWeightType,dimension>::notDefined();
     return 0;
   }
 
   //! Set the coordinate weight
   static inline void setCoordinateWeight( PhaseSpacePoint& point,
-                                          const double coord_weight )
+                                          const DimensionWeightType coord_weight )
   {
-    UndefinedPhaseSpaceDimensionTraits<double,dimension>::notDefined();
+    UndefinedPhaseSpaceDimensionTraits<DimensionWeightType,dimension>::notDefined();
   }
 };
 
@@ -90,7 +96,8 @@ struct PhaseSpaceDimensionTraits
  * \ingroup phase_space_dimension_traits
  */
 template<PhaseSpaceDimension dimension>
-inline double getCoordinate( const PhaseSpacePoint& point )
+inline typename PhaseSpaceDimensionTraits<dimension>::DimensionValueType
+getCoordinate( const PhaseSpacePoint& point )
 {
   return PhaseSpaceDimensionTraits<dimension>::getCoordinate( point );
 }
@@ -100,7 +107,7 @@ inline double getCoordinate( const PhaseSpacePoint& point )
  */
 template<PhaseSpaceDimension dimension>
 inline void setCoordinate( PhaseSpacePoint& point,
-                           const double coord_value )
+                           const typename PhaseSpaceDimensionTraits<dimension>::DimensionValueType coord_value )
 {
   PhaseSpaceDimensionTraits<dimension>::setCoordinate( point, coord_value );
 }
@@ -109,7 +116,8 @@ inline void setCoordinate( PhaseSpacePoint& point,
  * \ingroup phase_space_dimension_traits
  */
 template<PhaseSpaceDimension dimension>
-inline double getCoordinateWeight( const PhaseSpacePoint& point )
+inline typename PhaseSpaceDimensionTraits<dimension>::DimensionWeightType
+getCoordinateWeight( const PhaseSpacePoint& point )
 {
   return PhaseSpaceDimensionTraits<dimension>::getCoordinateWeight( point );
 }
@@ -119,7 +127,7 @@ inline double getCoordinateWeight( const PhaseSpacePoint& point )
  */
 template<PhaseSpaceDimension dimension>
 inline void setCoordinateWeight( PhaseSpacePoint& point,
-                                 const double coord_weight )
+                                 const typename PhaseSpaceDimensionTraits<dimension>::DimensionWeightType coord_weight )
 {
   PhaseSpaceDimensionTraits<dimension>::setCoordinateWeight( point, coord_weight );
 }  
