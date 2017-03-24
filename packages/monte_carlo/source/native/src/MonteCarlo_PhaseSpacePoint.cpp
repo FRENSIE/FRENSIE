@@ -64,7 +64,7 @@ PhaseSpacePoint::PhaseSpacePoint(
     d_energy_coord_weight( 1.0 ),
     d_time_coord( particle.getTime() ),
     d_time_coord_weight( 1.0 ),
-    d_weight_coord( particle.getWeight() )    
+    d_weight_coord( particle.getWeight() )
 {
   // Convert the particle's Cartesian spatial coordinates to the spatial
   // coordinates of the phase space
@@ -421,8 +421,9 @@ double PhaseSpacePoint::getWeightOfCoordinates() const
 }
 
 // Set a particle state
-void PhaseSpacePoint::setParticleState(
-                                                ParticleState& particle ) const
+/*! \details The particle source states will also be set by this method.
+ */
+void PhaseSpacePoint::setParticleState( ParticleState& particle ) const
 {
   double cartesian_spatial_coords[3];
 
