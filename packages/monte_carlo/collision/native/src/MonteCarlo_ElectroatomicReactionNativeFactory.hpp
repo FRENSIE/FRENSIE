@@ -29,7 +29,7 @@ class ElectroatomicReactionNativeFactory
 public:
 
   //! Create an analog elastic scattering electroatomic reaction
-  template< typename SecondInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createAnalogElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -38,7 +38,7 @@ public:
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering electroatomic reaction
-  template< typename SecondInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -48,7 +48,7 @@ public:
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering electroatomic reaction
-  template< typename SecondInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -58,7 +58,7 @@ public:
     const double evaluation_tol );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
-  template< typename SecondInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createScreenedRutherfordElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -68,7 +68,7 @@ public:
     const double evaluation_tol );
 
   //! Create the moment preserving elastic scattering electroatomic reaction
-  template< typename SecondInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -86,7 +86,7 @@ public:
 
   //! Create the subshell electroionization electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
-            typename SecondInterpPolicy = Utility::LinLinLog>
+            typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -99,7 +99,7 @@ public:
 
   //! Create the subshell electroionization electroatomic reactions
   template< typename ReactionType = ElectroatomicReaction,
-            typename SecondInterpPolicy = Utility::LinLinLog>
+            typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -112,7 +112,7 @@ public:
 
   //! Create the bremsstrahlung electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
-            typename SecondInterpPolicy = Utility::LinLinLog>
+            typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,

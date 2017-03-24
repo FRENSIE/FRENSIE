@@ -9,229 +9,641 @@
 #ifndef MONTE_CARLO_HYBRID_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_DEF_HPP
 #define MONTE_CARLO_HYBRID_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_DEF_HPP
 
+// FRENSIE Includes
+#include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_SearchAlgorithms.hpp"
+#include "Utility_DirectionHelpers.hpp"
+#include "Utility_KinematicHelpers.hpp"
+#include "Utility_PhysicalConstants.hpp"
+
 namespace MonteCarlo{
 
-// Evaluate the distribution using the desired evaluation method
-template<typename EvaluationMethod>
-double HybridElasticElectronScatteringDistribution::evaluateBin(
-    const HybridDistribution::const_iterator& distribution_bin,
-    const double scattering_angle_cosine,
-    EvaluationMethod evaluate ) const
+// Constructor
+template<typename TwoDInterpPolicy>
+HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::HybridElasticElectronScatteringDistribution(
+    const std::shared_ptr<TwoDDist>& continuous_distribution,
+    const std::shared_ptr<TwoDDist>& discrete_distribution,
+    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol )
+  : d_continuous_distribution( continuous_distribution ),
+    d_discrete_distribution( discrete_distribution ),
+    d_cross_section_ratios( cross_section_ratios ),
+    d_cutoff_angle_cosine( cutoff_angle_cosine ),
+    d_evaluation_tol( evaluation_tol )
 {
+  // Make sure the pointers are valid
+  testPrecondition( d_continuous_distribution.use_count() > 0 );
+  testPrecondition( d_discrete_distribution.use_count() > 0 );
+  testPrecondition( d_cross_section_ratios.use_count() > 0 );
+  // Make sure the cutoff angle cosine is valid
+  testPrecondition( d_cutoff_angle_cosine >= -1.0 );
+  testPrecondition( d_cutoff_angle_cosine < 1.0 );
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( d_evaluation_tol > 0.0 );
+  testPrecondition( d_evaluation_tol < 1.0 );
+}
+
+// Evaluate the distribution at the given energy and scattering angle cosine
+template<typename TwoDInterpPolicy>
+double HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::evaluate(
+        const double incoming_energy,
+        const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
   // get the ratio of the cutoff cross section to the moment preserving cross section
-  double cross_section_ratio = distribution_bin->fourth;
-  double cutoff_cdf = distribution_bin->second->evaluateCDF( d_cutoff_angle_cosine );
+  double cross_section_ratio =
+                    d_cross_section_ratios->evaluate( incoming_energy );
+
+  double cutoff_cdf =
+        d_continuous_distribution->evaluateSecondaryConditionalCDFExact(
+                                    incoming_energy, d_cutoff_angle_cosine );
+  double ratio_over_cutoff_cdf = cross_section_ratio/cutoff_cdf;
+
+  if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
+  {
+    double unormalized_eval = d_continuous_distribution->evaluate(
+                                    incoming_energy, scattering_angle_cosine);
+
+    return unormalized_eval*ratio_over_cutoff_cdf/( cross_section_ratio + 1.0 );
+  }
+  else
+  {
+    double unormalized_eval = d_discrete_distribution->evaluate(
+                                    incoming_energy, scattering_angle_cosine);
+
+    return unormalized_eval/( cross_section_ratio + 1.0 );
+  }
+}
+
+// Evaluate the PDF at the given energy and scattering angle cosine
+template<typename TwoDInterpPolicy>
+double HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::evaluatePDF(
+        const double incoming_energy,
+        const double scattering_angle_cosine ) const
+{
+  // Make sure the energy, eta and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // get the ratio of the cutoff cross section to the moment preserving cross section
+  double cross_section_ratio =
+                    d_cross_section_ratios->evaluate( incoming_energy );
+
+  double cutoff_cdf =
+        d_continuous_distribution->evaluateSecondaryConditionalCDFExact(
+                                    incoming_energy, d_cutoff_angle_cosine );
   double ratio_over_cutoff_cdf = cross_section_ratio/cutoff_cdf;
 
   if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
   {
     double unormalized_eval =
-      ((*distribution_bin->second).*evaluate)(scattering_angle_cosine);
+      d_continuous_distribution->evaluateSecondaryConditionalPDFExact(
+                                    incoming_energy, scattering_angle_cosine);
 
     return unormalized_eval*ratio_over_cutoff_cdf/( cross_section_ratio + 1.0 );
   }
   else
   {
     double unormalized_eval =
-      ((*distribution_bin->third).*evaluate)(scattering_angle_cosine);
+      d_discrete_distribution->evaluateSecondaryConditionalPDFExact(
+                                    incoming_energy, scattering_angle_cosine);
 
-    // Check if evaluating cdf or not
-    if ( ((*distribution_bin->second).*evaluate)(d_cutoff_angle_cosine) == cutoff_cdf )
-      return (unormalized_eval + cross_section_ratio)/( cross_section_ratio + 1.0 );
-    else
-     return unormalized_eval/( cross_section_ratio + 1.0 );
+    return unormalized_eval/( cross_section_ratio + 1.0 );
   }
 }
 
-// Evaluate the distribution using the desired evaluation method
-template<typename TwoDInterpPolicy, typename EvaluationMethod>
-double HybridElasticElectronScatteringDistribution::evaluateImpl(
+// Evaluate the CDF
+template<typename TwoDInterpPolicy>
+double HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::evaluateCDF(
         const double incoming_energy,
-        const double scattering_angle_cosine,
-        EvaluationMethod evaluate,
-        const double below_lower_limit_return_value,
-        const double above_upper_limit_return_value,
-        const unsigned max_number_of_iterations ) const
+        const double scattering_angle_cosine ) const
 {
-  // Find the bin boundaries
-  HybridDistribution::const_iterator lower_bin, upper_bin;
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if( incoming_energy < d_hybrid_distribution->front().first )
-    return below_lower_limit_return_value;
-  else if( incoming_energy > d_hybrid_distribution->back().first )
-    return above_upper_limit_return_value;
+  // get the ratio of the cutoff cross section to the moment preserving cross section
+  double cross_section_ratio =
+                    d_cross_section_ratios->evaluate( incoming_energy );
+
+  if ( scattering_angle_cosine < d_cutoff_angle_cosine )
+  {
+    double cutoff_cdf =
+      d_continuous_distribution->evaluateSecondaryConditionalCDFExact(
+                                    incoming_energy, d_cutoff_angle_cosine );
+
+    double ratio_over_cutoff_cdf = cross_section_ratio/cutoff_cdf;
+
+    double unormalized_eval =
+      d_continuous_distribution->evaluateSecondaryConditionalCDFExact(
+                                    incoming_energy, scattering_angle_cosine);
+
+    return unormalized_eval*ratio_over_cutoff_cdf/( cross_section_ratio + 1.0 );
+  }
+  else if ( scattering_angle_cosine == d_cutoff_angle_cosine )
+    return cross_section_ratio/( cross_section_ratio + 1.0 );
   else
   {
-    lower_bin = d_hybrid_distribution->begin();
-    upper_bin = d_hybrid_distribution->end();
+    double unormalized_eval =
+      d_discrete_distribution->evaluateSecondaryConditionalCDFExact(
+                                    incoming_energy, scattering_angle_cosine);
 
-    lower_bin = Utility::Search::binaryLowerBound<Utility::FIRST>(
-                            lower_bin,
-                            upper_bin,
-                            incoming_energy );
+    return unormalized_eval/( cross_section_ratio + 1.0 );
+  }
+}
 
-    if( lower_bin->first == incoming_energy )
-      return this->evaluateBin( lower_bin, scattering_angle_cosine, evaluate );
+// Sample an outgoing energy and direction from the distribution
+template<typename TwoDInterpPolicy>
+void HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::sample(
+                     const double incoming_energy,
+                     double& outgoing_energy,
+                     double& scattering_angle_cosine ) const
+{
+  // The outgoing energy is always equal to the incoming energy
+  outgoing_energy = incoming_energy;
 
-    upper_bin = lower_bin;
-    ++upper_bin;
+  unsigned trial_dummy;
 
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( incoming_energy,
+                                   scattering_angle_cosine,
+                                   trial_dummy );
+}
 
-    if ( scattering_angle_cosine == -1.0 )
+// Sample an outgoing energy and direction and record the number of trials
+template<typename TwoDInterpPolicy>
+void HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::sampleAndRecordTrials(
+                        const double incoming_energy,
+                        double& outgoing_energy,
+                        double& scattering_angle_cosine,
+                        unsigned& trials ) const
+{
+  // The outgoing energy is always equal to the incoming energy
+  outgoing_energy = incoming_energy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( incoming_energy,
+                                   scattering_angle_cosine,
+                                   trials );
+}
+
+// Randomly scatter the electron
+template<typename TwoDInterpPolicy>
+void HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::scatterElectron(
+                     ElectronState& electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
+{
+  double scattering_angle_cosine;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( electron.getEnergy(),
+                                   scattering_angle_cosine,
+                                   trial_dummy );
+
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
+
+  // Set the new direction
+  electron.rotateDirection( scattering_angle_cosine,
+              this->sampleAzimuthalAngle() );
+}
+
+// Randomly scatter the adjoint electron
+template<typename TwoDInterpPolicy>
+void HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::scatterAdjointElectron(
+                     AdjointElectronState& adjoint_electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
+{
+  double scattering_angle_cosine;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
+                                   scattering_angle_cosine,
+                                   trial_dummy );
+
+  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
+
+  // Set the new direction
+  adjoint_electron.rotateDirection( scattering_angle_cosine,
+                                    this->sampleAzimuthalAngle() );
+}
+
+//// The sample impl currently used
+//template<typename TwoDInterpPolicy>
+//double HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::oldSampleImpl(
+//    const double incoming_energy ) const
+//{
+//  double scattering_angle_cosine;
+//  unsigned dummy_trials;
+
+//  this->sampleAndRecordTrialsImpl( incoming_energy,
+//                                   scattering_angle_cosine,
+//                                   dummy_trials );
+
+//  return scattering_angle_cosine;
+//}
+
+//// The sample impl currently that is being tested
+//template<typename TwoDInterpPolicy>
+//double HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::newSampleImpl(
+//    const double incoming_energy ) const
+//{
+//  // Make sure the incoming energy is valid
+//  testPrecondition( incoming_energy > 0.0 );
+
+//  if( incoming_energy < d_hybrid_distribution->front().first ||
+//      incoming_energy > d_hybrid_distribution->back().first )
+//  {
+//    return 1.0;
+//  }
+//  else
+//  {
+//    double random_number =
+//      Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+//    // Find the bin boundaries
+//    HybridDistribution::const_iterator lower_bin, upper_bin;
+
+//    // Find the distribution bin with E_i <= E_in
+//    lower_bin = Utility::Search::binaryLowerBound<Utility::FIRST>(
+//                            d_hybrid_distribution->begin(),
+//                            d_hybrid_distribution->end(),
+//                            incoming_energy );
+
+//    // Sampling the lower bin if E_i = E_in
+//    if ( lower_bin->first == incoming_energy )
+//    {
+//      double scattering_angle_cosine;
+//      this->sampleBin( lower_bin, random_number, scattering_angle_cosine );
+//      return scattering_angle_cosine;
+//    }
+//    else
+//    {
+//      // Find the upper bin
+//      upper_bin = lower_bin;
+//      upper_bin++;
+
+//      // get the ratio of the cutoff cross section to the moment preserving cross section
+//      double cross_section_ratio =
+//          Utility::LinLin::interpolate( lower_bin->first,
+//                                        upper_bin->first,
+//                                        incoming_energy,
+//                                        lower_bin->fourth,
+//                                        upper_bin->fourth );
+
+//      // Scale the random number
+//      double scaled_random_number = ( 1.0 + cross_section_ratio )*random_number;
+//      double lower_angle, upper_angle;
+
+//      if ( scaled_random_number <= cross_section_ratio )
+//      {
+//        scaled_random_number /= cross_section_ratio;
+
+//        // Sample the lower and upper bins
+//        lower_angle =
+//            lower_bin->second->sampleWithRandomNumberInSubrange(
+//                                                    scaled_random_number,
+//                                                    d_cutoff_angle_cosine );
+//        upper_angle =
+//            upper_bin->second->sampleWithRandomNumberInSubrange(
+//                                                    scaled_random_number,
+//                                                    d_cutoff_angle_cosine );
+
+//        // Sample an outgoing direction
+//        if ( d_linlinlog_interpolation_mode_on )
+//        {
+//          return Utility::LinLog::interpolate(
+//                  lower_bin->first,
+//                  upper_bin->first,
+//                  incoming_energy,
+//                  lower_angle,
+//                  upper_angle );
+//        }
+//        else
+//        {
+//          return Utility::LinLin::interpolate(
+//                  lower_bin->first,
+//                  upper_bin->first,
+//                  incoming_energy,
+//                  lower_angle,
+//                  upper_angle );
+//        }
+//      }
+//      else
+//      {
+//        scaled_random_number -= cross_section_ratio;
+
+//        // Sample the lower discrete bin
+//        return lower_bin->third->sampleWithRandomNumber( scaled_random_number );
+//      }
+//    }
+//  }
+//}
+
+//// The sample impl currently that is being tested
+//template<typename TwoDInterpPolicy>
+//double HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::newSampleImpl2(
+//    const double incoming_energy ) const
+//{
+//  // Make sure the incoming energy is valid
+//  testPrecondition( incoming_energy > 0.0 );
+
+//  if( incoming_energy < d_continuous_distribution->front().first ||
+//      incoming_energy > d_continuous_distribution->back().first )
+//  {
+//    return 1.0;
+//  }
+//  else
+//  {
+//    double random_number =
+//      Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+//    // Find the bin boundaries
+//    HybridDistribution::const_iterator lower_bin, upper_bin;
+
+//    // Find the distribution bin with E_i <= E_in
+//    lower_bin = Utility::Search::binaryLowerBound<Utility::FIRST>(
+//                            d_hybrid_distribution->begin(),
+//                            d_hybrid_distribution->end(),
+//                            incoming_energy );
+
+//    // Sampling the lower bin if E_i = E_in
+//    if ( lower_bin->first == incoming_energy )
+//    {
+//      double scattering_angle_cosine;
+//      this->sampleBin( lower_bin, random_number, scattering_angle_cosine );
+//      return scattering_angle_cosine;
+//    }
+//    else
+//    {
+//      // Find the upper bin
+//      upper_bin = lower_bin;
+//      upper_bin++;
+
+//      // get the ratio of the cutoff cross section to the moment preserving cross section
+//      double cross_section_ratio;
+
+//        // Sample an outgoing direction
+//        if ( d_linlinlog_interpolation_mode_on )
+//        {
+//          cross_section_ratio =
+//              Utility::LinLog::interpolate( lower_bin->first,
+//                                            upper_bin->first,
+//                                            incoming_energy,
+//                                            lower_bin->fourth,
+//                                            upper_bin->fourth );
+//        }
+//        else
+//        {
+//          cross_section_ratio =
+//              Utility::LinLin::interpolate( lower_bin->first,
+//                                            upper_bin->first,
+//                                            incoming_energy,
+//                                            lower_bin->fourth,
+//                                            upper_bin->fourth );
+//        }
+
+//      // Scale the random number
+//      double scaled_random_number = ( 1.0 + cross_section_ratio )*random_number;
+//      double lower_angle, upper_angle;
+
+//      if ( scaled_random_number <= cross_section_ratio )
+//      {
+//        scaled_random_number /= cross_section_ratio;
+
+//        // Sample the lower and upper bins
+//        lower_angle =
+//            lower_bin->second->sampleWithRandomNumberInSubrange(
+//                                                    scaled_random_number,
+//                                                    d_cutoff_angle_cosine );
+//        upper_angle =
+//            upper_bin->second->sampleWithRandomNumberInSubrange(
+//                                                    scaled_random_number,
+//                                                    d_cutoff_angle_cosine );
+
+//        // Sample an outgoing direction
+//        if ( d_linlinlog_interpolation_mode_on )
+//        {
+//          return Utility::LinLog::interpolate(
+//                  lower_bin->first,
+//                  upper_bin->first,
+//                  incoming_energy,
+//                  lower_angle,
+//                  upper_angle );
+//        }
+//        else
+//        {
+//          return Utility::LinLin::interpolate(
+//                  lower_bin->first,
+//                  upper_bin->first,
+//                  incoming_energy,
+//                  lower_angle,
+//                  upper_angle );
+//        }
+//      }
+//      else
+//      {
+//        scaled_random_number -= cross_section_ratio;
+
+//        // Sample the lower discrete bin
+//        lower_angle = lower_bin->third->sampleWithRandomNumber( scaled_random_number );
+//        upper_angle = upper_bin->third->sampleWithRandomNumber( scaled_random_number );
+
+//        // Sample an outgoing direction
+//        if ( d_linlinlog_interpolation_mode_on )
+//        {
+//          return Utility::LinLog::interpolate(
+//                  lower_bin->first,
+//                  upper_bin->first,
+//                  incoming_energy,
+//                  lower_angle,
+//                  upper_angle );
+//        }
+//        else
+//        {
+//          return Utility::LinLin::interpolate(
+//                  lower_bin->first,
+//                  upper_bin->first,
+//                  incoming_energy,
+//                  lower_angle,
+//                  upper_angle );
+//        }
+//      }
+//    }
+//  }
+//}
+
+//// Sample an outgoing direction from the given distribution
+//template<typename TwoDInterpPolicy>
+//void HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::sampleBin(
+//        const HybridDistribution::const_iterator& distribution_bin,
+//        const double& random_number,
+//        double& scattering_angle_cosine ) const
+//{
+//  // get the ratio of the cutoff cross section to the moment preserving cross section
+//  double cross_section_ratio =
+//                        d_cross_section_ratios->evaluate( incoming_energy );
+
+//  // Scale the random number
+//  double scaled_random_number = ( 1.0 + cross_section_ratio )*random_number;
+
+//  if ( scaled_random_number <= cross_section_ratio )
+//  {
+//    scaled_random_number /= cross_section_ratio;
+
+//    scattering_angle_cosine =
+//        distribution_bin->second->sampleWithRandomNumberInSubrange(
+//            scaled_random_number, d_cutoff_angle_cosine );
+//  }
+//  else
+//  {
+//    scaled_random_number -= cross_section_ratio;
+
+//    scattering_angle_cosine =
+//        distribution_bin->third->sampleWithRandomNumber( scaled_random_number );
+//  }
+//}
+
+// Sample an outgoing direction from the distribution
+template<typename TwoDInterpPolicy>
+void HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::sampleAndRecordTrialsImpl(
+                                                const double incoming_energy,
+                                                double& scattering_angle_cosine,
+                                                unsigned& trials ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  // Increment the number of trials
+  ++trials;
+
+  if( incoming_energy < d_continuous_distribution->getLowerBoundOfPrimaryIndepVar() ||
+      incoming_energy > d_continuous_distribution->getUpperBoundOfPrimaryIndepVar() )
+  {
+    scattering_angle_cosine = 1.0;
+  }
+  else
+  {
+    double random_number =
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+    // get the ratio of the cutoff cross section to the moment preserving cross section
+    double cross_section_ratio =
+                    d_cross_section_ratios->evaluate( incoming_energy );
+
+    // Scale the random number
+    double scaled_random_number = ( 1.0 + cross_section_ratio )*random_number;
+
+    if ( scaled_random_number <= cross_section_ratio )
     {
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                            lower_bin->first,
-                            upper_bin->first,
-                            incoming_energy,
-                            this->evaluateBin( lower_bin, -1.0, evaluate ),
-                            this->evaluateBin( upper_bin, -1.0, evaluate ) );
+      scaled_random_number /= cross_section_ratio;
+
+      scattering_angle_cosine =
+        d_continuous_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+            incoming_energy, scaled_random_number, d_cutoff_angle_cosine );
     }
-    else if ( scattering_angle_cosine == d_cutoff_angle_cosine )
+    else
     {
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                            lower_bin->first,
-                            upper_bin->first,
-                            incoming_energy,
-                            this->evaluateBin( lower_bin, d_cutoff_angle_cosine, evaluate ),
-                            this->evaluateBin( upper_bin, d_cutoff_angle_cosine, evaluate ) );
+      scaled_random_number -= cross_section_ratio;
+
+      scattering_angle_cosine =
+        d_discrete_distribution->sampleSecondaryConditionalExactWithRandomNumber(
+            incoming_energy, scaled_random_number );
     }
-    else if ( scattering_angle_cosine > d_cutoff_angle_cosine )
-    {
-      double unormalized_eval = TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                    lower_bin->first,
-                    upper_bin->first,
-                    incoming_energy,
-                    ((*lower_bin->third).*evaluate)(scattering_angle_cosine),
-                    ((*upper_bin->third).*evaluate)(scattering_angle_cosine) );
+  }
 
-//      double cutoff_cdf = TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-//                    lower_bin->first,
-//                    upper_bin->first,
-//                    incoming_energy,
-//                    lower_bin->second->evaluateCDF( d_cutoff_angle_cosine ),
-//                    upper_bin->second->evaluateCDF( d_cutoff_angle_cosine ) );
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
+}
 
+//// Evaluate the distribution using the desired evaluation method
+//template<typename TwoDInterpPolicy>
+//template<typename EvaluationMethod>
+//double HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::evaluateBin(
+//    const HybridDistribution::const_iterator& distribution_bin,
+//    const double scattering_angle_cosine,
+//    EvaluationMethod evaluate ) const
+//{
 //  // get the ratio of the cutoff cross section to the moment preserving cross section
 //  double cross_section_ratio = distribution_bin->fourth;
 //  double cutoff_cdf = distribution_bin->second->evaluateCDF( d_cutoff_angle_cosine );
 //  double ratio_over_cutoff_cdf = cross_section_ratio/cutoff_cdf;
 
-//          double unormalized_eval =
+//  if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
+//  {
+//    double unormalized_eval =
+//      ((*distribution_bin->second).*evaluate)(scattering_angle_cosine);
+
+//    return unormalized_eval*ratio_over_cutoff_cdf/( cross_section_ratio + 1.0 );
+//  }
+//  else
+//  {
+//    double unormalized_eval =
 //      ((*distribution_bin->third).*evaluate)(scattering_angle_cosine);
 
-      double cross_section_ratio = TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                    lower_bin->first,
-                    upper_bin->first,
-                    incoming_energy,
-                    lower_bin->fourth,
-                    upper_bin->fourth );
+//    // Check if evaluating cdf or not
+//    if ( ((*distribution_bin->second).*evaluate)(d_cutoff_angle_cosine) == cutoff_cdf )
+//      return (unormalized_eval + cross_section_ratio)/( cross_section_ratio + 1.0 );
+//    else
+//     return unormalized_eval/( cross_section_ratio + 1.0 );
+//  }
+//}
 
-    // Check if evaluating cdf or not
-    if ( ((*lower_bin->second).*evaluate)(d_cutoff_angle_cosine) ==
-                    lower_bin->second->evaluateCDF(d_cutoff_angle_cosine) )
-      return (unormalized_eval + cross_section_ratio)/( cross_section_ratio + 1.0 );
-    else
-     return unormalized_eval/( cross_section_ratio + 1.0 );
-    }
+//// Evaluate the distribution using the desired evaluation method
+//template<typename TwoDInterpPolicy>
+//template<typename EvaluationMethod>
+//double HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::evaluateImpl(
+//        const double incoming_energy,
+//        const double scattering_angle_cosine,
+//        EvaluationMethod evaluate,
+//        const double below_lower_limit_return_value,
+//        const double above_upper_limit_return_value,
+//        const unsigned max_number_of_iterations ) const
+//{
+//  // get the ratio of the cutoff cross section to the moment preserving cross section
+//  double cross_section_ratio =
+//                    d_cross_section_ratios->evaluate( incoming_energy );
 
-    // Evaluate the cdf at the upper and lower bin boundaries
-    double lower_bin_eval =
-      this->evaluateBin( lower_bin,
-                         scattering_angle_cosine,
-                         &Utility::TabularOneDDistribution::evaluateCDF );
-     double upper_bin_eval =
-      this->evaluateBin( upper_bin,
-                         scattering_angle_cosine,
-                         &Utility::TabularOneDDistribution::evaluateCDF );
+//  double cutoff_cdf =
+//            d_continuous_distribution->evaluateSecondaryConditionalCDFExact(
+//                                    incoming_energy, d_cutoff_angle_cosine );
+//  double ratio_over_cutoff_cdf = cross_section_ratio/cutoff_cdf;
 
-    // Get the lower and upper boundaries of the evaluated cdf
-    double lower_cdf_bound, upper_cdf_bound;
-    if ( lower_bin_eval <= upper_bin_eval )
-    {
-      lower_cdf_bound = lower_bin_eval;
-      upper_cdf_bound = upper_bin_eval;
-    }
-    else
-    {
-      lower_cdf_bound = upper_bin_eval;
-      upper_cdf_bound = lower_bin_eval;
-    }
+//  if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
+//  {
+//    double unormalized_eval =
+//      ((*d_continuous_distribution).*evaluate)(incoming_energy, scattering_angle_cosine);
 
-    unsigned number_of_iterations = 0;
-    double rel_error = 1.0;
-    double lower_bin_sample, upper_bin_sample;
+//    return unormalized_eval*ratio_over_cutoff_cdf/( cross_section_ratio + 1.0 );
+//  }
+//  else
+//  {
+//    double unormalized_eval =
+//      ((*d_discrete_distribution).*evaluate)(incoming_energy, scattering_angle_cosine);
 
-    // Refine the estimated cdf value until it meet the tolerance
-    while ( rel_error > d_evaluation_tol )
-    {
-      // Estimate the cdf as the midpoint of the lower and upper boundaries
-      double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
+//    // Check if evaluating cdf or not
+//    if ( ((*d_continuous_distribution).*evaluate)(incoming_energy,d_cutoff_angle_cosine) == cutoff_cdf )
+//      return (unormalized_eval + cross_section_ratio)/( cross_section_ratio + 1.0 );
+//    else
+//     return unormalized_eval/( cross_section_ratio + 1.0 );
+//  }
 
-      // Get the sampled values at the upper and lower bin for the estimated_cdf
-      this->sampleBin( lower_bin, estimated_cdf, lower_bin_sample );
-      this->sampleBin( upper_bin, estimated_cdf, upper_bin_sample );
-
-
-      // Interpolate using the templated TwoDInterpPolicy::ZXInterpPolicy
-      double est_scattering_angle_cosine =
-        TwoDInterpPolicy::ZXInterpPolicy::interpolate( lower_bin->first,
-                                                       upper_bin->first,
-                                                       incoming_energy,
-                                                       lower_bin_sample,
-                                                       upper_bin_sample );
-
-      if ( scattering_angle_cosine == est_scattering_angle_cosine )
-        break;
-
-      // Calculate the relative error between the secondary_indep_var_value and the estimate
-      rel_error = (scattering_angle_cosine - est_scattering_angle_cosine )/
-                                                    (scattering_angle_cosine);
-
-      // Make sure the relative error is positive
-      rel_error = rel_error < 0 ? -rel_error : rel_error;
-
-      // Update the number of iterations
-      ++number_of_iterations;
-
-      // If tolerance is met exit loop
-      if ( rel_error <= d_evaluation_tol )
-        break;
-
-      // Update the estimated_cdf estimate
-      if ( est_scattering_angle_cosine < scattering_angle_cosine )
-      {
-        // Old estimated_cdf estimate is new lower cdf boundary
-        lower_cdf_bound = estimated_cdf;
-      }
-      else
-      {
-        // Old estimated_cdf estimate is new upper cdf boundary
-        upper_cdf_bound = estimated_cdf;
-      }
-
-      // Check for the max number of iterations
-      if ( number_of_iterations > max_number_of_iterations )
-      {
-        THROW_EXCEPTION( std::logic_error,
-                       "Error: The evaluation could not be completed. "
-                       "The max number of iterations ("
-                       << max_number_of_iterations
-                       << ") was reached before the relative error ("
-                       << rel_error
-                       << ") reached the evaluation tolerance ("
-                       << d_evaluation_tol
-                       << ")." );
-      }
-    }
-    // Return the interpolated evaluation
-    return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                lower_bin->first,
-                upper_bin->first,
-                incoming_energy,
-                this->evaluateBin(lower_bin, lower_bin_sample, evaluate),
-                this->evaluateBin(upper_bin, upper_bin_sample, evaluate) );
-  }
-}
+//  testPrecondition( scattering_angle_cosine >= -1.0 );
+//  testPrecondition( scattering_angle_cosine <= 1.0 );
+//}
 
 #endif // end MONTE_CARLO_HYBRID_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_DEF_HPP
 

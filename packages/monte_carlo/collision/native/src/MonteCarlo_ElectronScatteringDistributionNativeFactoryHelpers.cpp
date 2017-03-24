@@ -26,14 +26,14 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         distribution,
         data_container,
         evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         distribution,
         data_container,
         evaluation_tol );
@@ -53,14 +53,14 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         distribution,
         data_container,
         evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         distribution,
         data_container,
         evaluation_tol );
@@ -70,7 +70,61 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
 }
 
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
+std::shared_ptr<const HybridElasticElectronScatteringDistribution<Utility::LinLinLog> > createHybridElasticDistributionLinLinLog(
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol )
+{
+  // Extract the common energy grid used for this atom
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
+                      data_container.getElectronEnergyGrid().end() );
+
+  // Construct the hash-based grid searcher for this atom
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+                             energy_grid,
+                             100 ) );
+
+  // Cutoff elastic cross section
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
+    data_container.getCutoffElasticCrossSection().begin(),
+    data_container.getCutoffElasticCrossSection().end() );
+
+  // Cutoff elastic cross section threshold energy bin index
+  unsigned cutoff_threshold_energy_index =
+    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
+
+  // Moment preserving elastic cross section
+  Teuchos::ArrayRCP<double> mp_cross_section;
+  mp_cross_section.assign(
+    data_container.getMomentPreservingCrossSection().begin(),
+    data_container.getMomentPreservingCrossSection().end() );
+
+  // Moment preserving elastic cross section threshold energy bin index
+  unsigned mp_threshold_energy_index =
+    data_container.getMomentPreservingCrossSectionThresholdEnergyIndex();
+
+  // Create the hybrid elastic scattering distribution
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution<Utility::LinLinLog> >
+    distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
+        distribution,
+        grid_searcher,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        data_container,
+        cutoff_angle_cosine,
+        evaluation_tol );
+
+  return distribution;
+}
+
+//! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+std::shared_ptr<const HybridElasticElectronScatteringDistribution<Utility::LinLinLin> > createHybridElasticDistributionLinLinLin(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
@@ -108,12 +162,10 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
     data_container.getMomentPreservingCrossSectionThresholdEnergyIndex();
 
   // Create the hybrid elastic scattering distribution
-  std::shared_ptr<const HybridElasticElectronScatteringDistribution>
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution<Utility::LinLinLin> >
     distribution;
 
-  if ( linlinlog_interpolation_mode_on )
-  {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin>(
         distribution,
         grid_searcher,
         energy_grid,
@@ -122,25 +174,12 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
         data_container,
         cutoff_angle_cosine,
         evaluation_tol );
-  }
-  else
-  {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createHybridElasticDistribution(
-        distribution,
-        grid_searcher,
-        energy_grid,
-        cutoff_cross_section,
-        mp_cross_section,
-        data_container,
-        cutoff_angle_cosine,
-        evaluation_tol );
-  }
 
   return distribution;
 }
 
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
+std::shared_ptr<const HybridElasticElectronScatteringDistribution<Utility::LinLinLog> > createHybridElasticDistributionLinLinLog(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
@@ -178,12 +217,10 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
     data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex();
 
   // Create the hybrid elastic scattering distribution
-  std::shared_ptr<const HybridElasticElectronScatteringDistribution>
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution<Utility::LinLinLog> >
     distribution;
 
-  if ( linlinlog_interpolation_mode_on )
-  {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         distribution,
         grid_searcher,
         energy_grid,
@@ -192,10 +229,53 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
         data_container,
         cutoff_angle_cosine,
         evaluation_tol );
-  }
-  else
-  {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createHybridElasticDistribution(
+
+  return distribution;
+}
+
+//! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+std::shared_ptr<const HybridElasticElectronScatteringDistribution<Utility::LinLinLin> > createHybridElasticDistributionLinLinLin(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const double cutoff_angle_cosine,
+    const bool linlinlog_interpolation_mode_on,
+    const double evaluation_tol )
+{
+  // Extract the common energy grid used for this atom
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign( data_container.getAdjointElectronEnergyGrid().begin(),
+                      data_container.getAdjointElectronEnergyGrid().end() );
+
+  // Construct the hash-based grid searcher for this atom
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+                             energy_grid,
+                             100 ) );
+
+  // Cutoff elastic cross section
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
+    data_container.getAdjointCutoffElasticCrossSection().begin(),
+    data_container.getAdjointCutoffElasticCrossSection().end() );
+
+  // Cutoff elastic cross section threshold energy bin index
+  unsigned cutoff_threshold_energy_index =
+    data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
+
+  // Moment preserving elastic cross section
+  Teuchos::ArrayRCP<double> mp_cross_section;
+  mp_cross_section.assign(
+    data_container.getAdjointMomentPreservingCrossSection().begin(),
+    data_container.getAdjointMomentPreservingCrossSection().end() );
+
+  // Moment preserving elastic cross section threshold energy bin index
+  unsigned mp_threshold_energy_index =
+    data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex();
+
+  // Create the hybrid elastic scattering distribution
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution<Utility::LinLinLin> >
+    distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin>(
         distribution,
         grid_searcher,
         energy_grid,
@@ -204,7 +284,6 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
         data_container,
         cutoff_angle_cosine,
         evaluation_tol );
-  }
 
   return distribution;
 }
@@ -221,12 +300,12 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
       distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createCutoffElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
       distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
 
@@ -245,12 +324,12 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
       distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createCutoffElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
       distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
 
@@ -269,7 +348,7 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createMomentPreservingElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
       distribution,
       data_container,
       cutoff_angle_cosine,
@@ -277,7 +356,7 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createMomentPreservingElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
       distribution,
       data_container,
       cutoff_angle_cosine,
@@ -299,12 +378,12 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createMomentPreservingElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
       distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createMomentPreservingElasticDistribution(
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
       distribution, data_container, cutoff_angle_cosine, evaluation_tol );
   }
 

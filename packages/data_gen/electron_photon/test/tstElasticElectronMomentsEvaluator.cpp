@@ -1051,7 +1051,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   moments[2] = 0.99996009701780611083L;
 
   std::vector<double> angular_grid =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
             al_data->getCutoffElasticAngles(),
             energy,
             -1.0 );
@@ -1110,7 +1110,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   moments[2] = 0.99996009701780611083L*cross_section;
 
   std::vector<double> angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
             al_data->getCutoffElasticAngles(),
             energy,
             -1.0 );
@@ -1242,7 +1242,7 @@ int main( int argc, char** argv )
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     analog_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         analog_distribution,
         al_data->getCutoffElasticAngles(),
         al_data->getCutoffElasticPDF(),

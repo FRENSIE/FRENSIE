@@ -21,7 +21,7 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog> 
+typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
     NativeFactory;
 
 //---------------------------------------------------------------------------//

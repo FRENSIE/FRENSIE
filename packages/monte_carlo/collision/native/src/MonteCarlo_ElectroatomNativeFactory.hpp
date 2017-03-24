@@ -30,7 +30,7 @@ class ElectroatomNativeFactory
 public:
 
   //! Create a electroatom core (using the provided atomic relaxation model)
-  template <typename SecondInterpPolicy = Utility::LinLinLog>
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createElectroatomCore(
        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,

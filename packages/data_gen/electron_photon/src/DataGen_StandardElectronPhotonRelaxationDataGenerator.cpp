@@ -348,7 +348,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
       // Get the angular grid and pdf at the max energy
       if ( linlinlog_interpolation_mode_on )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGridAndPDF(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
           angles,
           pdf,
           elastic_angle,
@@ -358,7 +358,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
       }
       else
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::getAngularGridAndPDF(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
           angles,
           pdf,
           elastic_angle,
@@ -1372,7 +1372,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   {
     if ( d_linlinlog_interpolation_mode_on )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGridAndPDF(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
         elastic_angle[this->getMaxElectronEnergy()],
         elastic_pdf[this->getMaxElectronEnergy()] ,
         elastic_angle,
@@ -1382,7 +1382,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
     }
     else
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::getAngularGridAndPDF(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
         elastic_angle[this->getMaxElectronEnergy()],
         elastic_pdf[this->getMaxElectronEnergy()] ,
         elastic_angle,
@@ -1867,7 +1867,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   if ( linlinlog_interpolation_mode_on )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         analog_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
@@ -1877,7 +1877,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   }
   else
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         analog_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
@@ -2682,9 +2682,9 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCros
 
   for( unsigned i = begin; i < cutoff_cross_sections.size(); i++ )
   {
-    double cutoff_cdf = analog_distribution->evaluateCDF(
-        electron_energy_grid[i],
-        cutoff_angle_cosine );
+    double cutoff_cdf =
+                analog_distribution->evaluateCDF( electron_energy_grid[i],
+                                                  cutoff_angle_cosine );
 
     reduced_cutoff_cross_section_ratio[i] = cutoff_cdf;
 

@@ -14,7 +14,7 @@ namespace MonteCarlo{
 
 // Create an adjoint electroatom core
 //! \details Currently no atomic relaxation model will be used with the core.
-template <typename SecondInterpPolicy>
+template <typename TwoDInterpPolicy>
 void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -44,7 +44,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-    AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction<SecondInterpPolicy>(
+    AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction<TwoDInterpPolicy>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -59,7 +59,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-    AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<SecondInterpPolicy>(
+    AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -75,7 +75,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<SecondInterpPolicy>(
+    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy>(
                        raw_adjoint_electroatom_data,
                        energy_grid,
                        grid_searcher,
@@ -101,7 +101,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION];
 
-    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<SecondInterpPolicy>(
+    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<TwoDInterpPolicy>(
                          raw_adjoint_electroatom_data,
                          energy_grid,
                          grid_searcher,
@@ -126,7 +126,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   std::vector<std::shared_ptr<AdjointElectroatomicReaction> >
     electroionization_reactions;
 
-  AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<SecondInterpPolicy>(
+  AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<TwoDInterpPolicy>(
                                raw_adjoint_electroatom_data,
                                energy_grid,
                                grid_searcher,

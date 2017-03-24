@@ -31,7 +31,7 @@
 namespace MonteCarlo{
 
 // Create the analog elastic scattering adjoint electroatomic reactions
-template<typename SecondInterpPolicy>
+template<typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -51,7 +51,7 @@ void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
   // Create the analog elastic scattering distribution
   std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory<SecondInterpPolicy>::createAnalogElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<TwoDInterpPolicy>(
     distribution,
     raw_adjoint_electroatom_data,
     evaluation_tol );
@@ -122,7 +122,7 @@ void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 }
 
 // Create a hybrid elastic scattering adjoint electroatomic reaction
-template< typename SecondInterpPolicy>
+template< typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
                 raw_adjoint_electroatom_data,
@@ -165,9 +165,9 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     raw_adjoint_electroatom_data.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex();
 
   // Create the hybrid elastic scattering distribution
-  std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> > distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory<SecondInterpPolicy>::createHybridElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<TwoDInterpPolicy>(
     distribution,
     grid_searcher,
     energy_grid,
@@ -216,7 +216,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
 
   // Create the hybrid elastic reaction
   elastic_reaction.reset(
-    new HybridElasticAdjointElectroatomicReaction<Utility::LinLin>(
+    new HybridElasticAdjointElectroatomicReaction<TwoDInterpPolicy,Utility::LinLin>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,
@@ -226,7 +226,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
 }
 
 // Create the cutoff elastic scattering adjoint electroatomic reactions
-template<typename SecondInterpPolicy>
+template<typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -247,7 +247,7 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   // Create the cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory<SecondInterpPolicy>::createCutoffElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
     distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -273,7 +273,7 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 }
 
 // Create the screened Rutherford elastic scattering adjoint electroatomic reaction
-template<typename SecondInterpPolicy>
+template<typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -295,7 +295,7 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     cutoff_distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory<SecondInterpPolicy>::createCutoffElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
     cutoff_distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -306,7 +306,7 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
   std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory<SecondInterpPolicy>::createScreenedRutherfordElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
     distribution,
     cutoff_distribution,
     raw_adjoint_electroatom_data.getAtomicNumber() );
@@ -332,7 +332,7 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
 }
 
 // Create the moment preserving elastic scattering adjoint electroatomic reaction
-template< typename SecondInterpPolicy>
+template< typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -354,7 +354,7 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory<SecondInterpPolicy>::createMomentPreservingElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy>(
     distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -381,7 +381,7 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
 }
 
 // Create the subshell electroionization electroatomic reactions
-template< typename SecondInterpPolicy>
+template< typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -429,7 +429,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
 }
 
 // Create the subshell electroionization electroatomic reactions
-template< typename SecondInterpPolicy>
+template< typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
            const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
            const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -449,7 +449,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
 
   for( shell; shell != subshells.end(); ++shell )
   {
-    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<SecondInterpPolicy>(
+    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<TwoDInterpPolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,
       grid_searcher,
@@ -466,7 +466,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
 }
 
 // Create a bremsstrahlung electroatomic reactions
-template< typename SecondInterpPolicy>
+template< typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,

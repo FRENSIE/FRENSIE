@@ -28,7 +28,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLin> >
+Teuchos::RCP<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLinLog,Utility::LinLin> >
     hybrid_elastic_reaction;
 
 //---------------------------------------------------------------------------//
@@ -169,13 +169,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                  100 ) );
 
     // Create the Hybrid Distribution
-    std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
+    std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLog> >
         hybrid_elastic_distribution;
 
     double cutoff_angle_cosine = data_container.getCutoffAngleCosine();
     double evaluation_tol = 1e-7;
 
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridElasticDistribution(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         hybrid_elastic_distribution,
         grid_searcher,
         energy_grid,
@@ -226,7 +226,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the reaction
     hybrid_elastic_reaction.reset(
-      new MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLin>(
+      new MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLinLog,Utility::LinLin>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,

@@ -20,7 +20,9 @@
 namespace MonteCarlo{
 
 //! The hybrid elastic electroatomic reaction class
-template<typename InterpPolicy, bool processed_cross_section = false>
+template<typename TwoDInterpPolicy,
+         typename InterpPolicy,
+         bool processed_cross_section = false>
 class HybridElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
 
@@ -38,7 +40,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const double cutoff_angle_cosine,
-    const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+    const std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
             hybrid_distribution );
 
   //! Constructor
@@ -48,7 +50,7 @@ public:
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const double cutoff_angle_cosine,
-    const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+    const std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
             hybrid_distribution );
 
 
@@ -73,7 +75,7 @@ public:
 private:
 
   // The hybrid elastic scattering distribution
-  std::shared_ptr<const HybridElasticElectronScatteringDistribution>
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >
     d_hybrid_distribution;
 };
 

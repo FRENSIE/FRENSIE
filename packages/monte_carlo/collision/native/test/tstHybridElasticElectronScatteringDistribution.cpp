@@ -27,34 +27,44 @@
 // Testing Structs.
 //---------------------------------------------------------------------------//
 
-typedef MonteCarlo::HybridElasticElectronScatteringDistribution HD;
-
-class TestHD : public HD
+template<typename TwoDInterpPolicy>
+class TestHybridElasticElectronScatteringDistribution : public MonteCarlo::HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>
 {
 public:
-  TestHD( const std::shared_ptr<HD::HybridDistribution>& hybrid_distribution,
-          const double cutoff_angle_cosine,
-          const double evaluation_tol,
-          const bool linlinlog_interpolation_mode_on )
-    : HD( hybrid_distribution,
-          cutoff_angle_cosine,
-          evaluation_tol,
-          linlinlog_interpolation_mode_on )
+
+  typedef typename MonteCarlo::HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::TwoDDist
+            TwoDDist;
+
+  TestHybridElasticElectronScatteringDistribution(
+    const std::shared_ptr<TwoDDist>& continuous_distribution,
+    const std::shared_ptr<TwoDDist>& discrete_distribution,
+    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol )
+    : MonteCarlo::HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>(
+                            continuous_distribution,
+                            discrete_distribution,
+                            cross_section_ratios,
+                            cutoff_angle_cosine,
+                            evaluation_tol )
   { /* ... */ }
 
-  ~TestHD()
+  ~TestHybridElasticElectronScatteringDistribution()
   { /* ... */ }
 
   // Allow public access to the HybridElasticElectronScatteringDistribution protected member functions
-  using HD::sampleAndRecordTrialsImpl;
+  using MonteCarlo::HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>::sampleAndRecordTrialsImpl;
 };
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
+typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
-std::shared_ptr<HD> hybrid_distribution, lin_hybrid_distribution;
-std::shared_ptr<TestHD> test_hybrid_distribution, test_lin_hybrid_distribution;
+std::shared_ptr<MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLog> > hybrid_distribution;
+std::shared_ptr<MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLin> > lin_hybrid_distribution;
+std::shared_ptr<TestHybridElasticElectronScatteringDistribution<Utility::LinLinLog> > test_hybrid_distribution;
+std::shared_ptr<TestHybridElasticElectronScatteringDistribution<Utility::LinLinLin> > test_lin_hybrid_distribution;
 
 double angle_cosine_cutoff = 0.9;
 
@@ -1125,7 +1135,6 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 
 }
 
-
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
@@ -1148,18 +1157,18 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Data::ElectronPhotonRelaxationDataContainer data_container =
     Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign(
+  Teuchos::ArrayRCP<double> raw_energy_grid;
+  raw_energy_grid.assign(
     data_container.getElectronEnergyGrid().begin(),
     data_container.getElectronEnergyGrid().end() );
 
   // Construct the grid searcher
   Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false> 
     grid_searcher(
-       energy_grid,
-       energy_grid[0],
-       energy_grid[energy_grid.size()-1],
-       energy_grid.size()/10+1 );
+       raw_energy_grid,
+       raw_energy_grid[0],
+       raw_energy_grid[raw_energy_grid.size()-1],
+       raw_energy_grid.size()/10+1 );
 
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
@@ -1178,13 +1187,15 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Get size of paramters
   int size = angular_energy_grid.size();
 
-  // Create the scattering function
-  HD::HybridDistribution hybrid_scattering_function( size );
+  // Get the distribution data
+  TwoDDist::DistributionType continuous_function_data( size );
+  TwoDDist::DistributionType discrete_function_data( size );
 
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
   {
-    // Create the cutoff elastic scattering function
-    hybrid_scattering_function[n].first = angular_energy_grid[n];
+    // Get the energy
+    continuous_function_data[n].first = angular_energy_grid[n];
+    discrete_function_data[n].first = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     Teuchos::Array<double> angles(
@@ -1194,7 +1205,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Teuchos::Array<double> pdf(
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
-    hybrid_scattering_function[n].second.reset(
+    continuous_function_data[n].second.reset(
       new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
 
 
@@ -1208,55 +1219,119 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getMomentPreservingElasticWeights(
             angular_energy_grid[n] ) );
 
-    hybrid_scattering_function[n].third.reset(
-      new const Utility::DiscreteDistribution( discrete_angles, weights ) );
-
-    unsigned energy_index =
-        grid_searcher.findLowerBinIndex( angular_energy_grid[n] );
-
-    // Get the moment preserving cross section at the given energy
-    double mp_cross_section_i =
-        Utility::LinLin::interpolate(
-            energy_grid[energy_index],
-            energy_grid[energy_index+1],
-            angular_energy_grid[n],
-            mp_cross_section[energy_index],
-            mp_cross_section[energy_index+1] );
-
-    // Get the cutoff cross section at the given energy
-    double cutoff_cross_section_i =
-        Utility::LinLin::interpolate(
-            energy_grid[energy_index],
-            energy_grid[energy_index+1],
-            angular_energy_grid[n],
-            cutoff_cross_section[energy_index],
-            cutoff_cross_section[energy_index+1] );
-
-    // Get the cutoff cdf value at the angle cosine cutoff
-    double cutoff_cdf =
-      hybrid_scattering_function[n].second->evaluateCDF( angle_cosine_cutoff );
-
-    // Get the ratio of the cutoff cross section to the moment preserving cross section
-    hybrid_scattering_function[n].fourth =
-      cutoff_cross_section_i*cutoff_cdf/mp_cross_section_i;
+    discrete_function_data[n].second.reset(
+      new const Utility::DiscreteDistribution( discrete_angles, weights, false, true ) );
   }
 
     double evaluation_tol = 1e-7;
+    double cutoff_angle_cosine = 0.9;
 
-    std::shared_ptr<HD::HybridDistribution> distribution(
-        new HD::HybridDistribution( hybrid_scattering_function ) );
+    // LinLinLog
+    {
+    // Set the continuous scattering function
+    std::shared_ptr<TwoDDist> continuous_function(
+        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+          continuous_function_data,
+          1e-6,
+          evaluation_tol ) );
+
+    // Set the discrete scattering function
+    std::shared_ptr<TwoDDist> discrete_function(
+        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+          discrete_function_data,
+          1e-6,
+          evaluation_tol ) );
+
+    std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
+    std::vector<double> cross_section_ratio( energy_grid.size() );
+    for( unsigned n = 0; n < energy_grid.size(); ++n )
+    {
+      // Get the cutoff cdf value at the angle cosine cutoff
+      double cutoff_cdf =
+              continuous_function->evaluateSecondaryConditionalCDFExact(
+                                                          energy_grid[n],
+                                                          cutoff_angle_cosine );
+
+      // Get the ratio of the cutoff cross section to the moment preserving cross section
+      cross_section_ratio[n] =
+        cutoff_cross_section[n]*cutoff_cdf/mp_cross_section[n];
+    }
+
+    // Create cross section ratios
+    std::shared_ptr<const Utility::OneDDistribution> cross_section_ratios(
+        new const Utility::TabularDistribution<Utility::LinLin>(
+                                        energy_grid, cross_section_ratio ) );
+
 
     hybrid_distribution.reset(
-        new HD( distribution, angle_cosine_cutoff, evaluation_tol, true ) );
-
-    lin_hybrid_distribution.reset(
-        new HD( distribution, angle_cosine_cutoff, evaluation_tol, false ) );
+        new MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLog>(
+            continuous_function,
+            discrete_function,
+            cross_section_ratios,
+            angle_cosine_cutoff,
+            evaluation_tol ) );
 
     test_hybrid_distribution.reset(
-        new TestHD( distribution, angle_cosine_cutoff, evaluation_tol, true ) );
+        new TestHybridElasticElectronScatteringDistribution<Utility::LinLinLog>(
+            continuous_function,
+            discrete_function,
+            cross_section_ratios,
+            angle_cosine_cutoff,
+            evaluation_tol ) );
+    }
+
+    // LinLinLin
+    {
+    // Set the continuous scattering function
+    std::shared_ptr<TwoDDist> continuous_function(
+        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+          continuous_function_data,
+          1e-6,
+          evaluation_tol ) );
+
+    // Set the discrete scattering function
+    std::shared_ptr<TwoDDist> discrete_function(
+        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+          discrete_function_data,
+          1e-6,
+          evaluation_tol ) );
+
+    std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
+    std::vector<double> cross_section_ratio( energy_grid.size() );
+    for( unsigned n = 0; n < energy_grid.size(); ++n )
+    {
+      // Get the cutoff cdf value at the angle cosine cutoff
+      double cutoff_cdf =
+              continuous_function->evaluateSecondaryConditionalCDFExact(
+                                                          energy_grid[n],
+                                                          cutoff_angle_cosine );
+
+      // Get the ratio of the cutoff cross section to the moment preserving cross section
+      cross_section_ratio[n] =
+        cutoff_cross_section[n]*cutoff_cdf/mp_cross_section[n];
+    }
+
+    // Create cross section ratios
+    std::shared_ptr<const Utility::OneDDistribution> cross_section_ratios(
+        new const Utility::TabularDistribution<Utility::LinLin>(
+                                        energy_grid, cross_section_ratio ) );
+
+    lin_hybrid_distribution.reset(
+        new MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLin>(
+            continuous_function,
+            discrete_function,
+            cross_section_ratios,
+            angle_cosine_cutoff,
+            evaluation_tol ) );
 
     test_lin_hybrid_distribution.reset(
-        new TestHD( distribution, angle_cosine_cutoff, evaluation_tol, false ) );
+        new TestHybridElasticElectronScatteringDistribution<Utility::LinLinLin>(
+            continuous_function,
+            discrete_function,
+            cross_section_ratios,
+            angle_cosine_cutoff,
+            evaluation_tol ) );
+    }
   }
 
   // Initialize the random number generator

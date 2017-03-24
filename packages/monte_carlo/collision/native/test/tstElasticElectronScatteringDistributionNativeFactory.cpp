@@ -24,19 +24,19 @@
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-template<typename TwoDInterpPolicy>
-class TestElasticElectronScatteringDistributionNativeFactory : public MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<TwoDInterpPolicy>
+class TestElasticElectronScatteringDistributionNativeFactory : public MonteCarlo::ElasticElectronScatteringDistributionNativeFactory
 {
 public:
 
   // Allow public access to the protected member functions
-  using MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<TwoDInterpPolicy>::createHybridScatteringFunction;
-  using MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<TwoDInterpPolicy>::createScatteringFunction;
+  using MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCrossSectionRatios;
+  using MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction;
 };
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
 std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container;
 std::shared_ptr<Data::AdjointElectronPhotonRelaxationDataContainer>
@@ -49,8 +49,6 @@ std::shared_ptr< const MonteCarlo::MomentPreservingElasticElectronScatteringDist
   native_mp_elastic_distribution;
 std::shared_ptr< const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   native_analog_elastic_distribution;
-std::shared_ptr< const MonteCarlo::HybridElasticElectronScatteringDistribution>
-  native_hybrid_elastic_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -63,7 +61,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = -1.0;
   double energy = 1.0e-5;
   std::vector<double> angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                     data_container->getCutoffElasticAngles(),
                     energy,
                     cutoff_angle_cosine );
@@ -74,7 +72,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   energy = 1.001e-5;
   angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                     data_container->getCutoffElasticAngles(),
                     energy,
                     cutoff_angle_cosine );
@@ -88,7 +86,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   cutoff_angle_cosine = 0.9;
   energy = 1.0e-5;
   angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                     data_container->getCutoffElasticAngles(),
                     energy,
                     cutoff_angle_cosine );
@@ -102,7 +100,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   cutoff_angle_cosine = -1.0;
   energy = 1.0e+5;
   angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                     data_container->getCutoffElasticAngles(),
                     energy,
                     cutoff_angle_cosine );
@@ -114,7 +112,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   cutoff_angle_cosine = -1.0;
   energy = 9.0e+4;
   angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                     data_container->getCutoffElasticAngles(),
                     energy,
                     cutoff_angle_cosine );
@@ -129,7 +127,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   std::vector<double> raw_grid = 
     data_container->getCutoffElasticAngles( energy );
   angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                                                 raw_grid,
                                                 cutoff_angle_cosine );
   // Test
@@ -141,7 +139,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   cutoff_angle_cosine = 0.9;
   angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                                                 raw_grid,
                                                 cutoff_angle_cosine );
   // Test
@@ -155,7 +153,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   energy = 1.0e+5;
   raw_grid = data_container->getCutoffElasticAngles( energy );
   angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                                                 raw_grid,
                                                 cutoff_angle_cosine );
   // Test
@@ -175,7 +173,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGridAndPDF(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -192,7 +190,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test inbetween energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGridAndPDF(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -210,7 +208,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test highest energy bin
   energy = 1.0e+5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGridAndPDF(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -236,7 +234,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::getAngularGridAndPDF(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -253,7 +251,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test inbetween energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::getAngularGridAndPDF(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -271,7 +269,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test highest energy bin
   energy = 1.0e5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::getAngularGridAndPDF(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -295,7 +293,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
@@ -346,7 +344,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
@@ -397,7 +395,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
         native_cutoff_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
@@ -442,7 +440,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
         native_cutoff_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
@@ -487,13 +485,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
         evaluation_tol );
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createScreenedRutherfordElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
         native_sr_elastic_distribution,
         native_cutoff_elastic_distribution,
         data_container->getAtomicNumber() );
@@ -546,13 +544,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
         native_cutoff_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
         evaluation_tol );
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createScreenedRutherfordElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
         native_sr_elastic_distribution,
         native_cutoff_elastic_distribution,
         data_container->getAtomicNumber() );
@@ -605,7 +603,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createMomentPreservingElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
         native_mp_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
@@ -651,7 +649,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createMomentPreservingElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
         native_mp_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
@@ -697,7 +695,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createMomentPreservingElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
         native_mp_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
@@ -743,7 +741,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createMomentPreservingElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
         native_mp_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
@@ -788,7 +786,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 {
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         native_analog_elastic_distribution,
         data_container->getCutoffElasticAngles(),
         data_container->getCutoffElasticPDF(),
@@ -878,7 +876,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 {
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         native_analog_elastic_distribution,
         data_container->getCutoffElasticAngles(),
         data_container->getCutoffElasticPDF(),
@@ -968,7 +966,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 {
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         native_analog_elastic_distribution,
         adjoint_data_container->getAdjointCutoffElasticAngles(),
         adjoint_data_container->getAdjointCutoffElasticPDF(),
@@ -1060,7 +1058,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 {
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         native_analog_elastic_distribution,
         adjoint_data_container->getAdjointCutoffElasticAngles(),
         adjoint_data_container->getAdjointCutoffElasticPDF(),
@@ -1175,8 +1173,11 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getMomentPreservingCrossSection().begin(),
     data_container->getMomentPreservingCrossSection().end() );
 
+  std::shared_ptr< const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLog> >
+    native_hybrid_elastic_distribution;
+
   
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         native_hybrid_elastic_distribution,
         grid_searcher,
         energy_grid,
@@ -1291,8 +1292,11 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getMomentPreservingCrossSection().begin(),
     data_container->getMomentPreservingCrossSection().end() );
 
+  std::shared_ptr< const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLin>>
+      native_hybrid_elastic_distribution;
+
   
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createHybridElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin>(
         native_hybrid_elastic_distribution,
         grid_searcher,
         energy_grid,
@@ -1407,8 +1411,11 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     adjoint_data_container->getAdjointMomentPreservingCrossSection().begin(),
     adjoint_data_container->getAdjointMomentPreservingCrossSection().end() );
 
+  std::shared_ptr< const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLog>>
+    native_hybrid_elastic_distribution;
+
   
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         native_hybrid_elastic_distribution,
         grid_searcher,
         energy_grid,
@@ -1468,7 +1475,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
-  TestElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createScatteringFunction(
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLog>(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
@@ -1488,7 +1495,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
-  TestElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createScatteringFunction(
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin>(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
@@ -1502,21 +1509,15 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the hybrid distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   createHybridScatteringFunction )
+                   createCrossSectionRatios )
 {
   double cutoff_angle_cosine = 0.9;
+  double evaluation_tol = 1e-7;
 
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.assign(
     data_container->getElectronEnergyGrid().begin(),
     data_container->getElectronEnergyGrid().end() );
-
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(   
-    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-                 energy_grid,
-                 energy_grid[0],
-                 energy_grid[energy_grid.size()-1],
-                 100 ) );
 
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
@@ -1528,25 +1529,29 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getMomentPreservingCrossSection().begin(),
     data_container->getMomentPreservingCrossSection().end() );
 
-  std::shared_ptr<MonteCarlo::HybridElasticElectronScatteringDistribution::HybridDistribution>
-    hybrid_function;
-
-  TestElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridScatteringFunction(
-    grid_searcher,
-    energy_grid,
-    cutoff_cross_section,
+  std::shared_ptr<TwoDDist> cutoff_scattering_function;
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin>(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
-    mp_cross_section,
-    data_container->getMomentPreservingElasticDiscreteAngles(),
-    data_container->getMomentPreservingElasticWeights(),
     data_container->getElasticAngularEnergyGrid(),
-    cutoff_angle_cosine,
-    hybrid_function );
+    cutoff_scattering_function,
+    evaluation_tol );
 
-  TEST_EQUALITY_CONST( hybrid_function->size(), 14 );
-  TEST_FLOATING_EQUALITY( hybrid_function->front().first, 1e-5, 1e-12 );
-  TEST_FLOATING_EQUALITY( hybrid_function->back().first, 1e5, 1e-12 );
+  std::shared_ptr<const Utility::OneDDistribution> cross_section_ratios;
+  TestElasticElectronScatteringDistributionNativeFactory::createCrossSectionRatios<Utility::LinLinLog>(
+    energy_grid,
+    cutoff_cross_section,
+    mp_cross_section,
+    cutoff_scattering_function,
+    cutoff_angle_cosine,
+    cross_section_ratios );
+
+  TEST_FLOATING_EQUALITY( cross_section_ratios->getLowerBoundOfIndepVar(),
+                          1e-5,
+                          1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section_ratios->getUpperBoundOfIndepVar(),
+                          1e-5,
+                          1e-12 );
 }
 
 //---------------------------------------------------------------------------//

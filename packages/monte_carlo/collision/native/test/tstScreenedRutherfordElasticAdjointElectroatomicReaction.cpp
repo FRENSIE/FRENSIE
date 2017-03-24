@@ -24,7 +24,7 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
-typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog> 
+typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
     NativeFactory;
 
 //---------------------------------------------------------------------------//

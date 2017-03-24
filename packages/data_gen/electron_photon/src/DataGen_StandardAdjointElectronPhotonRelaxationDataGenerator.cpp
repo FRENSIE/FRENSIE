@@ -2031,7 +2031,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     // Calcualte the reduced cutoff elastic cross section ratio
     std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
     analog_distribution,
     d_forward_epr_data->getCutoffElasticAngles(),
     d_forward_epr_data->getCutoffElasticPDF(),

@@ -16,13 +16,15 @@
 namespace MonteCarlo{
 
 // Basic Constructor
-template<typename InterpPolicy, bool processed_cross_section>
-HybridElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticAdjointElectroatomicReaction(
+template<typename TwoDInterpPolicy,
+         typename InterpPolicy,
+         bool processed_cross_section>
+HybridElasticAdjointElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::HybridElasticAdjointElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const double cutoff_angle_cosine,
-      const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+      const std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
             hybrid_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -46,14 +48,16 @@ HybridElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>:
 }
 
 // Constructor
-template<typename InterpPolicy, bool processed_cross_section>
-HybridElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticAdjointElectroatomicReaction(
+template<typename TwoDInterpPolicy,
+         typename InterpPolicy,
+         bool processed_cross_section>
+HybridElasticAdjointElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::HybridElasticAdjointElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const double cutoff_angle_cosine,
-      const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+      const std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
             hybrid_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -82,29 +86,37 @@ HybridElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>:
 // Return the number of photons emitted from the rxn at the given energy
 /*! \details This does not include photons from atomic relaxation.
  */
-template<typename InterpPolicy, bool processed_cross_section>
-unsigned HybridElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+template<typename TwoDInterpPolicy,
+         typename InterpPolicy,
+         bool processed_cross_section>
+unsigned HybridElasticAdjointElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
-template<typename InterpPolicy, bool processed_cross_section>
-unsigned HybridElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+template<typename TwoDInterpPolicy,
+         typename InterpPolicy,
+         bool processed_cross_section>
+unsigned HybridElasticAdjointElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the reaction type
-template<typename InterpPolicy, bool processed_cross_section>
-AdjointElectroatomicReactionType HybridElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+template<typename TwoDInterpPolicy,
+         typename InterpPolicy,
+         bool processed_cross_section>
+AdjointElectroatomicReactionType HybridElasticAdjointElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::getReactionType() const
 {
   return HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction
-template<typename InterpPolicy, bool processed_cross_section>
-void HybridElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+template<typename TwoDInterpPolicy,
+         typename InterpPolicy,
+         bool processed_cross_section>
+void HybridElasticAdjointElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::react(
          AdjointElectronState& electron,
          ParticleBank& bank,
          Data::SubshellType& shell_of_interaction ) const

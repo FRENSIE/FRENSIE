@@ -14,9 +14,9 @@
 
 namespace MonteCarlo{
 
-////----------------------------------------------------------------------------//
-////      ****FORWARD DATA PUBLIC FUNCTIONS****
-////----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//      ****FORWARD DATA PUBLIC FUNCTIONS****
+//----------------------------------------------------------------------------//
 
 //// Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 //void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
@@ -49,9 +49,9 @@ namespace MonteCarlo{
 //    correlated_sampling_mode_on );
 //}
 
-////----------------------------------------------------------------------------//
-////      ****ADJOINT DATA PUBLIC FUNCTIONS****
-////----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//      ****ADJOINT DATA PUBLIC FUNCTIONS****
+//----------------------------------------------------------------------------//
 
 //// Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 //void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
@@ -84,9 +84,9 @@ namespace MonteCarlo{
 //    correlated_sampling_mode_on );
 //}
 
-////----------------------------------------------------------------------------//
-////      ****DATA CONTAINER INDEPENDENT PUBLIC FUNCTIONS****
-////----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//      ****DATA CONTAINER INDEPENDENT PUBLIC FUNCTIONS****
+//----------------------------------------------------------------------------//
 
 //// Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 //void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
@@ -129,80 +129,80 @@ namespace MonteCarlo{
 //                linlinlog_interpolation_mode_on ) );
 //}
 
-//// Create a screened Rutherford elastic distribution
-//void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
-//    std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-//        screened_rutherford_elastic_distribution,
-//    const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
-//        cutoff_elastic_distribution,
-//    const unsigned atomic_number )
-//{
-//  // Create the screened Rutherford distribution
-//  screened_rutherford_elastic_distribution.reset(
-//        new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-//                cutoff_elastic_distribution,
-//                atomic_number ) );
-//}
+// Create a screened Rutherford elastic distribution
+void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
+    std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+        screened_rutherford_elastic_distribution,
+    const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
+        cutoff_elastic_distribution,
+    const unsigned atomic_number )
+{
+  // Create the screened Rutherford distribution
+  screened_rutherford_elastic_distribution.reset(
+        new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
+                cutoff_elastic_distribution,
+                atomic_number ) );
+}
 
-//// Return angle cosine grid for given grid energy bin
-//std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-//    const std::map<double, std::vector<double> >& raw_cutoff_elastic_angles,
-//    const double energy,
-//    const double cutoff_angle_cosine )
-//{
-//  testPrecondition( energy >= raw_cutoff_elastic_angles.begin()->first );
-//  testPrecondition( energy <= raw_cutoff_elastic_angles.rbegin()->first );
+// Return angle cosine grid for given grid energy bin
+std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+    const std::map<double, std::vector<double> >& raw_cutoff_elastic_angles,
+    const double energy,
+    const double cutoff_angle_cosine )
+{
+  testPrecondition( energy >= raw_cutoff_elastic_angles.begin()->first );
+  testPrecondition( energy <= raw_cutoff_elastic_angles.rbegin()->first );
 
-//  // Get the angular grid
-//  std::vector<double> raw_grid;
-//  if( raw_cutoff_elastic_angles.count( energy ) > 0 )
-//  {
-//    raw_grid = raw_cutoff_elastic_angles.at( energy );
-//  }
-//  else
-//  {
-//    std::map<double,std::vector<double>>::const_iterator lower_bin, upper_bin;
-//    upper_bin = raw_cutoff_elastic_angles.upper_bound( energy );
-//    lower_bin = upper_bin;
-//    --lower_bin;
+  // Get the angular grid
+  std::vector<double> raw_grid;
+  if( raw_cutoff_elastic_angles.count( energy ) > 0 )
+  {
+    raw_grid = raw_cutoff_elastic_angles.at( energy );
+  }
+  else
+  {
+    std::map<double,std::vector<double>>::const_iterator lower_bin, upper_bin;
+    upper_bin = raw_cutoff_elastic_angles.upper_bound( energy );
+    lower_bin = upper_bin;
+    --lower_bin;
 
-//    // Use the angular grid for the energy bin closes to the energy
-//    if ( energy - lower_bin->first <= upper_bin->first - energy )
-//    {
-//      raw_grid = lower_bin->second;
-//    }
-//    else
-//    {
-//      raw_grid = upper_bin->second;
-//    }
-//  }
+    // Use the angular grid for the energy bin closes to the energy
+    if ( energy - lower_bin->first <= upper_bin->first - energy )
+    {
+      raw_grid = lower_bin->second;
+    }
+    else
+    {
+      raw_grid = upper_bin->second;
+    }
+  }
 
-//  return ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-//            raw_grid,
-//            cutoff_angle_cosine );
-//}
+  return ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+            raw_grid,
+            cutoff_angle_cosine );
+}
 
-//// Return angle cosine grid for the given cutoff angle
-//std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-//    const std::vector<double>& raw_cutoff_elastic_angles,
-//    const double cutoff_angle_cosine )
-//{
-//  // Find the first angle cosine above the cutoff angle cosine
-//  std::vector<double>::const_iterator start;
-//  for ( start = raw_cutoff_elastic_angles.begin(); start != raw_cutoff_elastic_angles.end(); start++ )
-//  {
-//    if ( *start > cutoff_angle_cosine )
-//    {
-//      break;
-//    }
-//  }
+// Return angle cosine grid for the given cutoff angle
+std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+    const std::vector<double>& raw_cutoff_elastic_angles,
+    const double cutoff_angle_cosine )
+{
+  // Find the first angle cosine above the cutoff angle cosine
+  std::vector<double>::const_iterator start;
+  for ( start = raw_cutoff_elastic_angles.begin(); start != raw_cutoff_elastic_angles.end(); start++ )
+  {
+    if ( *start > cutoff_angle_cosine )
+    {
+      break;
+    }
+  }
 
-//  std::vector<double> grid( start, raw_cutoff_elastic_angles.end() );
+  std::vector<double> grid( start, raw_cutoff_elastic_angles.end() );
 
-//   grid.insert( grid.begin(), cutoff_angle_cosine );
+   grid.insert( grid.begin(), cutoff_angle_cosine );
 
-//  return grid;
-//}
+  return grid;
+}
 
 //// Create the hybrid elastic scattering functions
 //void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
@@ -295,42 +295,42 @@ namespace MonteCarlo{
 //  function_data.fourth = cutoff_cross_section_i*cutoff_cdf/mp_cross_section_i;
 //}
 
-//// Create the scattering function at the given energy
-///*! \details This function has been overloaded so it can be called without using
-// *  the native data container. This functionality is neccessary for generating
-// *  native moment preserving data without first creating native data files.
-// */
-//void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
-//        const std::map<double,std::vector<double> >& elastic_angles,
-//        const std::map<double,std::vector<double> >& elastic_pdf,
-//        const double energy,
-//        TwoDFunction& function_data,
-//        const bool discrete_function )
-//{
-//  // Make sure the energy is valid
-//  testPrecondition( elastic_angles.count( energy ) );
+// Create the scattering function at the given energy
+/*! \details This function has been overloaded so it can be called without using
+ *  the native data container. This functionality is neccessary for generating
+ *  native moment preserving data without first creating native data files.
+ */
+void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
+        const std::map<double,std::vector<double> >& elastic_angles,
+        const std::map<double,std::vector<double> >& elastic_pdf,
+        const double energy,
+        TwoDFunction& function_data,
+        const bool discrete_function )
+{
+  // Make sure the energy is valid
+  testPrecondition( elastic_angles.count( energy ) );
 
-//  // Get the incoming energy
-//  function_data.first = energy;
+  // Get the incoming energy
+  function_data.first = energy;
 
-//  // Create the distribution at the energy
-//  if ( discrete_function )
-//  {
-//    // Create discrete distribution
-//    function_data.second.reset(
-//      new const DiscreteDist( elastic_angles.find( energy )->second,
-//                              elastic_pdf.find( energy )->second,
-//                              false,
-//                              true ) );
-//  }
-//  else
-//  {
-//    // Create tabular distribution
-//    function_data.second.reset(
-//      new const TabularDist( elastic_angles.find( energy )->second,
-//                             elastic_pdf.find( energy )->second ) );
-//  }
-//}
+  // Create the distribution at the energy
+  if ( discrete_function )
+  {
+    // Create discrete distribution
+    function_data.second.reset(
+      new const DiscreteDist( elastic_angles.find( energy )->second,
+                              elastic_pdf.find( energy )->second,
+                              false,
+                              true ) );
+  }
+  else
+  {
+    // Create tabular distribution
+    function_data.second.reset(
+      new const TabularDist( elastic_angles.find( energy )->second,
+                             elastic_pdf.find( energy )->second ) );
+  }
+}
 
 } // end MonteCarlo namespace
 

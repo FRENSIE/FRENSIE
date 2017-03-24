@@ -29,7 +29,7 @@ namespace MonteCarlo{
  * requested, a electroionization reaction for each subshell will be created.
  * Otherwize a single total electroionization reaction will be created.
  */
-template <typename SecondInterpPolicy>
+template <typename TwoDInterpPolicy>
 void ElectroatomNativeFactory::createElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -63,7 +63,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createAnalogElasticReaction<SecondInterpPolicy>(
+      ElectroatomicReactionNativeFactory::createAnalogElasticReaction<TwoDInterpPolicy>(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
@@ -76,7 +76,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<SecondInterpPolicy>(
+      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy>(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
@@ -90,7 +90,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createHybridElasticReaction<SecondInterpPolicy>(
+      ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy>(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
@@ -106,7 +106,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction, SecondInterpPolicy>(
+    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction, TwoDInterpPolicy>(
                     raw_electroatom_data,
                     energy_grid,
                     grid_searcher,
@@ -135,7 +135,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   {
   std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
-  ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,SecondInterpPolicy>(
+  ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,TwoDInterpPolicy>(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,

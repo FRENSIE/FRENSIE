@@ -25,7 +25,6 @@
 namespace MonteCarlo{
 
 //! The elastic scattering distribution factory class that uses Native data
-template <typename TwoDInterpPolicy = Utility::LinLinLog>
 class ElasticElectronScatteringDistributionNativeFactory
 {
 
@@ -34,12 +33,6 @@ public:
   typedef Utility::Pair<double, std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<void, void> > > TwoDFunction;
 
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
-
-  typedef HybridElasticElectronScatteringDistribution::HybridFunction
-            HybridFunction;
-
-  typedef HybridElasticElectronScatteringDistribution::HybridDistribution
-            HybridDistribution;
 
   typedef Utility::TabularDistribution<Utility::LinLin> TabularDist;
 
@@ -50,6 +43,7 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
@@ -57,8 +51,9 @@ public:
     const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createHybridElasticDistribution(
-    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
@@ -69,6 +64,7 @@ public:
     const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -77,6 +73,7 @@ public:
     const double evaluation_tol );
 
   //! Create a moment preserving elastic distribution
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -89,6 +86,7 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
@@ -96,8 +94,9 @@ public:
     const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createHybridElasticDistribution(
-    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
@@ -108,6 +107,7 @@ public:
     const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -116,6 +116,7 @@ public:
     const double evaluation_tol );
 
   //! Create a moment preserving elastic distribution
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -128,6 +129,7 @@ public:
 //----------------------------------------------------------------------------//
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
@@ -138,8 +140,9 @@ public:
     const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createHybridElasticDistribution(
-    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
@@ -154,6 +157,7 @@ public:
     const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -172,6 +176,7 @@ public:
     const unsigned atomic_number );
 
   //! Create a moment preserving elastic distribution
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -182,6 +187,7 @@ public:
     const double evaluation_tol );
 
   //! Return angle cosine grid with the evaluated pdf for the given cutoff angle
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void getAngularGridAndPDF(
     std::vector<double>& angular_grid,
     std::vector<double>& evaluated_pdf,
@@ -203,35 +209,18 @@ public:
 
 protected:
 
-  //! Create the hybrid elastic scattering functions
-  static void createHybridScatteringFunction(
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+  //! Create the cutoff to moment preserving cross section ratios
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
+  static void createCrossSectionRatios(
     const Teuchos::ArrayRCP<const double> energy_grid,
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
-    const std::map<double,std::vector<double> >& moment_preserving_angles,
-    const std::map<double,std::vector<double> >& moment_preserving_weights,
-    const std::vector<double>& angular_energy_grid,
+    const std::shared_ptr<TwoDDist>& cutoff_scattering_function,
     const double cutoff_angle_cosine,
-    std::shared_ptr<HybridDistribution>& hybrid_function );
-
-  //! Create the hybrid elastic scattering function at the given energy
-  static void createHybridScatteringFunction(
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::ArrayRCP<const double> energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
-    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
-    const std::map<double,std::vector<double> >& moment_preserving_angles,
-    const std::map<double,std::vector<double> >& moment_preserving_weights,
-    const double energy,
-    const double cutoff_angle_cosine,
-    HybridFunction& hybrid_function );
+    std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios );
 
   //! Create the cutoff elastic scattering function
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createScatteringFunction(
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,

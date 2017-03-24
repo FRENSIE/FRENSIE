@@ -41,7 +41,7 @@ namespace MonteCarlo{
 //  // Create the analog elastic scattering distribution
 //  std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
 
-//  ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
+//  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
 //    distribution,
 //    raw_adjoint_electroatom_data,
 //    evaluation_tol );
@@ -155,7 +155,7 @@ namespace MonteCarlo{
 //  // Create the hybrid elastic scattering distribution
 //  std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
 
-//  ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createHybridElasticDistribution(
+//  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
 //    distribution,
 //    grid_searcher,
 //    energy_grid,
@@ -233,7 +233,7 @@ namespace MonteCarlo{
 //  // Create the cutoff elastic scattering distribution
 //  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
-//  ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+//  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
 //    distribution,
 //    raw_adjoint_electroatom_data,
 //    cutoff_angle_cosine,
@@ -280,7 +280,7 @@ namespace MonteCarlo{
 //  std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
 //    cutoff_distribution;
 
-//  ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+//  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
 //    cutoff_distribution,
 //    raw_adjoint_electroatom_data,
 //    cutoff_angle_cosine,
@@ -291,7 +291,7 @@ namespace MonteCarlo{
 //  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
 //    distribution;
 
-//  ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createScreenedRutherfordElasticDistribution(
+//  ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
 //    distribution,
 //    cutoff_distribution,
 //    raw_adjoint_electroatom_data.getAtomicNumber() );
@@ -337,7 +337,7 @@ namespace MonteCarlo{
 //  std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
 //    distribution;
 
-//  ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createMomentPreservingElasticDistribution(
+//  ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
 //    distribution,
 //    raw_adjoint_electroatom_data,
 //    cutoff_angle_cosine,

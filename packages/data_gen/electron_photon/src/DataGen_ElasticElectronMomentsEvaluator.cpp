@@ -51,14 +51,14 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
   if ( linlinlog_interpolation_mode_on )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createAnalogElasticDistribution(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
     d_analog_distribution,
     data_container,
     tabular_evaluation_tol );
   }
   else
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLin>::createAnalogElasticDistribution(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
     d_analog_distribution,
     data_container,
     tabular_evaluation_tol );
@@ -224,7 +224,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   if ( d_cutoff_angle_cosine < s_rutherford_cutoff_angle_cosine )
   {
     angular_grid =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
             d_cutoff_elastic_angles,
             energy,
             d_cutoff_angle_cosine );
@@ -556,7 +556,7 @@ void ElasticElectronMomentsEvaluator::getAngularIntegrationPoints(
   if( d_cutoff_elastic_angles.count( energy ) > 0 )
   {
     angular_integration_points =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
             d_cutoff_elastic_angles.find( energy )->second,
             d_cutoff_angle_cosine );
   }
@@ -570,14 +570,14 @@ void ElasticElectronMomentsEvaluator::getAngularIntegrationPoints(
     if ( energy - lower_bin->first <= upper_bin->first - energy )
     {
       angular_integration_points =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
             lower_bin->second,
             d_cutoff_angle_cosine );
     }
     else
     {
       angular_integration_points =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
             upper_bin->second,
             d_cutoff_angle_cosine );
     }

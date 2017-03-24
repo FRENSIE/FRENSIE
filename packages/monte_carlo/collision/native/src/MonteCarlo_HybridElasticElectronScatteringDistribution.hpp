@@ -18,33 +18,30 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
+template<typename TwoDInterpPolicy = Utility::LinLinLog>
 class HybridElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
     public AdjointElectronScatteringDistribution
 {
 
 public:
 
-  //! Typedef for the elastic discrete function
-  typedef Utility::Quad<double,
-                        std::shared_ptr<const Utility::TabularOneDDistribution>,
-                        std::shared_ptr<const Utility::TabularOneDDistribution>,
-                        double> HybridFunction;
-
-  //! Typedef for the elastic discrete distribution
-  typedef std::vector<HybridFunction> HybridDistribution;
+  //! Typedef for the two d distributions
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   typedef double (Utility::TabularOneDDistribution::*EvaluationMethodType)(double) const;
 
   //! Constructor
   HybridElasticElectronScatteringDistribution(
-    const std::shared_ptr<HybridDistribution>& hybrid_distribution,
+    const std::shared_ptr<TwoDDist>& continuous_distribution,
+    const std::shared_ptr<TwoDDist>& discrete_distribution,
+    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const double cutoff_angle_cosine,
-    const double evaluation_tol,
-    const bool linlinlog_interpolation_mode_on );
+    const double evaluation_tol );
 
   //! Destructor
   virtual ~HybridElasticElectronScatteringDistribution()
@@ -83,9 +80,9 @@ public:
                                MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
-  double oldSampleImpl( const double incoming_energy ) const;
-
-  double newSampleImpl( const double incoming_energy ) const;
+//  double oldSampleImpl( const double incoming_energy ) const;
+//  double newSampleImpl( const double incoming_energy ) const;
+//  double newSampleImpl2( const double incoming_energy ) const;
 
 protected:
 
@@ -94,27 +91,27 @@ protected:
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
 
-  // Sample an outgoing direction from the given distribution
-  void sampleBin(
-        const HybridDistribution::const_iterator& distribution_bin,
-        const double& random_number,
-        double& scattering_angle_cosine ) const;
+//  // Sample an outgoing direction from the given distribution
+//  void sampleBin(
+//        const HybridDistribution::const_iterator& distribution_bin,
+//        const double& random_number,
+//        double& scattering_angle_cosine ) const;
 
-  //! Evaluate the PDF
-  template<typename EvaluationMethod>
-  double evaluateBin( 
-    const HybridDistribution::const_iterator& distribution_bin,
-    const double scattering_angle_cosine,
-    EvaluationMethod evaluate ) const;
+//  //! Evaluate the PDF
+//  template<typename EvaluationMethod>
+//  double evaluateBin( 
+//    const HybridDistribution::const_iterator& distribution_bin,
+//    const double scattering_angle_cosine,
+//    EvaluationMethod evaluate ) const;
 
-  // Evaluate the distribution using the desired evaluation method
-  template<typename TwoDInterpPolicy, typename EvaluationMethod>
-  double evaluateImpl( const double incoming_energy,
-                       const double scattering_angle_cosine,
-                       EvaluationMethod evaluate,
-                       const double below_lower_limit_return_value = 0.0,
-                       const double above_upper_limit_return_value = 0.0,
-                       const unsigned max_number_of_iterations = 500  ) const;
+//  // Evaluate the distribution using the desired evaluation method
+//  template<typename EvaluationMethod>
+//  double evaluateImpl( const double incoming_energy,
+//                       const double scattering_angle_cosine,
+//                       EvaluationMethod evaluate,
+//                       const double below_lower_limit_return_value = 0.0,
+//                       const double above_upper_limit_return_value = 0.0,
+//                       const unsigned max_number_of_iterations = 500  ) const;
 
 private:
 
@@ -124,14 +121,15 @@ private:
   // The tabular evaluation tolerance
   double d_evaluation_tol;
 
-  // boolean to for LinLinLog interpolation (true = LinLinLog, false = LinLinLin)
-  bool d_linlinlog_interpolation_mode_on;
+  // The continuous elastic cutoff distribution
+  std::shared_ptr<TwoDDist> d_continuous_distribution;
 
-  /* Hybrid distribution ( first = energy, second = 1D cutoff distribution,
-   * third = 1D Moment preserving discrete distribution,
-   * fourth = sampling ratio bewteen the distributions )
-   */
-  std::shared_ptr<HybridDistribution> d_hybrid_distribution;
+  // The discrete elastic moment preserving distribution
+  std::shared_ptr<TwoDDist> d_discrete_distribution;
+
+  // The ratios of the cutoff to the moment preserving cross section
+  std::shared_ptr<const Utility::OneDDistribution> d_cross_section_ratios;
+
 };
 
 } // end MonteCarlo namespace

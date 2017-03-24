@@ -224,7 +224,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory<Utility::LinLinLog>::createCutoffElasticDistribution(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
         elastic_distribution,
         *data_container,
         1.0,
