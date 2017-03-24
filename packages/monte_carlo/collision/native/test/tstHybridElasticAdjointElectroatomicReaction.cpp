@@ -169,7 +169,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                  100 ) );
 
     // Create the Hybrid Distribution
-    std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLog> >
+    std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
     double cutoff_angle_cosine = data_container.getCutoffAngleCosine();

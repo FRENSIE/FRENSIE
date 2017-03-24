@@ -165,7 +165,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     raw_adjoint_electroatom_data.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex();
 
   // Create the hybrid elastic scattering distribution
-  std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> > distribution;
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
 
   ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<TwoDInterpPolicy>(
     distribution,

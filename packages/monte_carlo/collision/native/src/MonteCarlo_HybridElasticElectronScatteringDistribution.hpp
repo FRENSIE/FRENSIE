@@ -23,7 +23,6 @@
 namespace MonteCarlo{
 
 //! The scattering distribution base class
-template<typename TwoDInterpPolicy = Utility::LinLinLog>
 class HybridElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
     public AdjointElectronScatteringDistribution
 {
@@ -46,6 +45,12 @@ public:
   //! Destructor
   virtual ~HybridElasticElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Return the cutoff to moment preserving cross section ratio
+  double getCrossSectionRatio( const double incoming_energy ) const;
+
+  //! Return the sampling ratio at the given incoming energy
+  double getSamplingRatio( const double incoming_energy ) const;
 
   //! Evaluate the PDF
   double evaluate( const double incoming_energy,
@@ -91,29 +96,11 @@ protected:
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
 
-//  // Sample an outgoing direction from the given distribution
-//  void sampleBin(
-//        const HybridDistribution::const_iterator& distribution_bin,
-//        const double& random_number,
-//        double& scattering_angle_cosine ) const;
-
-//  //! Evaluate the PDF
-//  template<typename EvaluationMethod>
-//  double evaluateBin( 
-//    const HybridDistribution::const_iterator& distribution_bin,
-//    const double scattering_angle_cosine,
-//    EvaluationMethod evaluate ) const;
-
-//  // Evaluate the distribution using the desired evaluation method
-//  template<typename EvaluationMethod>
-//  double evaluateImpl( const double incoming_energy,
-//                       const double scattering_angle_cosine,
-//                       EvaluationMethod evaluate,
-//                       const double below_lower_limit_return_value = 0.0,
-//                       const double above_upper_limit_return_value = 0.0,
-//                       const unsigned max_number_of_iterations = 500  ) const;
-
 private:
+
+  // Normalized the cutoff eval to the entire distribution
+  double normalizeEvalution( const double incoming_energy,
+                             const double unormalized_eval ) const;
 
   // cutoff angle cosine
   double d_cutoff_angle_cosine;
@@ -133,14 +120,6 @@ private:
 };
 
 } // end MonteCarlo namespace
-
-//---------------------------------------------------------------------------//
-// Template inludes.
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_HybridElasticElectronScatteringDistribution_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_HYBRID_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 

@@ -26,33 +26,25 @@ namespace MonteCarlo{
 //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const bool linlinlog_interpolation_mode_on,
     const double evaluation_tol );
 
 //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const bool linlinlog_interpolation_mode_on,
     const double evaluation_tol );
 
+
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLog> > createHybridElasticDistributionLinLinLog(
+std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
+    const bool linlinlog_interpolation_mode_on,
     const double evaluation_tol );
 
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLin> > createHybridElasticDistributionLinLinLin(
-    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine,
-    const double evaluation_tol );
-
-//! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLin> > createHybridElasticDistributionLinLinLin(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine,
-    const double evaluation_tol );
-
-//! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLog> > createHybridElasticDistributionLinLinLog(
+std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,

@@ -40,7 +40,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const double cutoff_angle_cosine,
-    const std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+    const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution );
 
   //! Constructor
@@ -50,7 +50,7 @@ public:
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const double cutoff_angle_cosine,
-    const std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+    const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution );
 
 
@@ -75,7 +75,7 @@ public:
 private:
 
   // The hybrid elastic scattering distribution
-  std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution>
     d_hybrid_distribution;
 };
 

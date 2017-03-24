@@ -24,7 +24,7 @@ HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const double cutoff_angle_cosine,
-      const std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+      const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -57,7 +57,7 @@ HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const double cutoff_angle_cosine,
-      const std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+      const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,

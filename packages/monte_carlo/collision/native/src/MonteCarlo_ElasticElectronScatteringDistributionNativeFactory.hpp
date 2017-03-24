@@ -53,7 +53,7 @@ public:
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
   template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createHybridElasticDistribution(
-    std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
@@ -96,7 +96,7 @@ public:
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
   template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createHybridElasticDistribution(
-    std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
@@ -142,7 +142,7 @@ public:
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
   template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createHybridElasticDistribution(
-    std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,

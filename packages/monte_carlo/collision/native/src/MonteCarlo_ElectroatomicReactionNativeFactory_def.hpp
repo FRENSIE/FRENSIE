@@ -161,7 +161,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     raw_electroatom_data.getMomentPreservingCrossSectionThresholdEnergyIndex();
 
   // Create the hybrid elastic scattering distribution
-  std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> > distribution;
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
 
   // Create the hybrid elastic scattering distribution that uses LinLinLog interpolation
   ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<TwoDInterpPolicy>(

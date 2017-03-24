@@ -47,7 +47,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
 // Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 template<typename TwoDInterpPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
-    std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
@@ -136,7 +136,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
 // Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 template<typename TwoDInterpPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
-    std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
@@ -262,7 +262,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
 // Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 template<typename TwoDInterpPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
-    std::shared_ptr<const HybridElasticElectronScatteringDistribution<TwoDInterpPolicy> >&
+    std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
@@ -308,7 +308,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
 
   // Create hybrid distribution
   hybrid_elastic_distribution.reset(
-        new HybridElasticElectronScatteringDistribution<TwoDInterpPolicy>(
+        new HybridElasticElectronScatteringDistribution(
                 continuous_function,
                 discrete_function,
                 cross_section_ratios,

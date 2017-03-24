@@ -213,7 +213,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                combined_cross_section.end() );
 
   // Create hybrid distribution
-  std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution<Utility::LinLinLog> >
+  std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
