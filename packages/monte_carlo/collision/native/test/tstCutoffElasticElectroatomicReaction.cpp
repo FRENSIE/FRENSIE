@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getReactionType_ace )
 TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getThresholdEnergy_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getThresholdEnergy(),
-                       1.000000000000E-05 );
+                       1e-5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -89,20 +89,14 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedPhotons
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getCrossSection_ace )
 {
-  double cross_section =
-    ace_elastic_reaction->getCrossSection( 1.0E-05 );
+  double cross_section = ace_elastic_reaction->getCrossSection( 1.0E-05 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924E+09, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09, 1e-12 );
+  cross_section = ace_elastic_reaction->getCrossSection( 1.0E-03 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.90281E+08, 1e-12 );
 
-  cross_section =
-    ace_elastic_reaction->getCrossSection( 1.0E-03 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08, 1e-12 );
-
-  cross_section =
-    ace_elastic_reaction->getCrossSection( 1.0E+05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 8.830510000000E-02, 1e-12 );
+  cross_section = ace_elastic_reaction->getCrossSection( 1.0E+05 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.83051E-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

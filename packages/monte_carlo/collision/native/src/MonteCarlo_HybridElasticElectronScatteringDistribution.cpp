@@ -136,8 +136,15 @@ double HybridElasticElectronScatteringDistribution::evaluateCDF(
 
     return this->normalizeEvalution( incoming_energy,unormalized_eval );
   }
-  else
+  else if( incoming_energy <
+                d_continuous_distribution->getLowerBoundOfPrimaryIndepVar() ||
+           incoming_energy >
+                d_continuous_distribution->getUpperBoundOfPrimaryIndepVar() )
+  {
     return 0.0;
+  }
+  else
+    return 1.0;
 }
 
 // Sample an outgoing energy and direction from the distribution

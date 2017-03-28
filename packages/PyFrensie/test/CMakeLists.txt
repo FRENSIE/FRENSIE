@@ -85,3 +85,10 @@ ENDIF(FRENSIE_ENABLE_ROOT)
 # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
 ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)
+
+# Add the MonteCarlo.Collision.ElectronScatteringDistribution unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ElectronScatteringDistribution)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.ElectronScatteringDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ElectronScatteringDistribution.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml --adjointfile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
+SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.ElectronScatteringDistribution_test PROPERTY LABELS pyfrensie electron adjoint)
+
+

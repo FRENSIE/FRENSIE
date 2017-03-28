@@ -137,6 +137,8 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );
   testPostcondition( cross_section_ratio <= 1.0 );
+  // Make sure the cross section is valid
+  testPostcondition( cross_section >= 0.0 );
 
   return cross_section*cross_section_ratio;
 }

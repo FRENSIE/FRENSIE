@@ -276,12 +276,12 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test: On bin
   energy = 1e-3;
@@ -294,12 +294,12 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test on highest bin
   energy = 1e5;
@@ -312,12 +312,12 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 2: at 1st discrete angle
   scattering_angle_cosine = 0.9001;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test: above highest bin
   energy = 1e6;
@@ -836,12 +836,12 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test: On bin
   energy = 1e-3;
@@ -854,12 +854,12 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test on highest bin
   energy = 1e5;
@@ -872,12 +872,12 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test: above highest bin
   energy = 1e6;

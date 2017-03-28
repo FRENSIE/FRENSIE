@@ -386,7 +386,7 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
                           incoming_electron_energy ) );
 
   double scaled_random_number =
-    2.0 * Utility::RandomNumberGenerator::getRandomNumber<double>();
+            2.0 * Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   double parameter = -( 1.0 + beta );
 
