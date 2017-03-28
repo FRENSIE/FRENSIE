@@ -349,16 +349,16 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
     unsigned number_of_iterations = 0;
     SecondaryIndepQuantity lower_bin_sample, upper_bin_sample;
     double rel_error = 1.0;
-    double error_norm_constant = secondary_indep_var_value;
+    SecondaryIndepQuantity error_norm_constant = secondary_indep_var_value;
     double tolerance = d_relative_error_tol;
 
     /*! \detials If the secondary indep var value is zero the relative error
      *  will always zero or inf. When this is the case the error tolerance will
      *  be used instead of the relative error tolerance.
      */
-     if ( secondary_indep_var_value == 0.0 )
+     if ( secondary_indep_var_value == QuantityTraits<SecondaryIndepQuantity>::zero() )
      {
-        error_norm_constant = 1.0;
+        error_norm_constant = QuantityTraits<SecondaryIndepQuantity>::one();
         tolerance = d_error_tol;
      }
 
@@ -415,7 +415,9 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
       if ( number_of_iterations > max_number_of_iterations )
       {
         // Get error in estimate
-        double error = secondary_indep_var_value - est_secondary_indep_var_value;
+        double error =
+            (secondary_indep_var_value - est_secondary_indep_var_value )/
+                                QuantityTraits<SecondaryIndepQuantity>::one();
         error = error < 0 ? -error : error;
 
         // If error meets error tolerance accept estimate
@@ -569,16 +571,17 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
     unsigned number_of_iterations = 0;
     SecondaryIndepQuantity lower_bin_sample, upper_bin_sample;
     double rel_error = 1.0;
-    double error_norm_constant = secondary_indep_var_value;
+    SecondaryIndepQuantity error_norm_constant = secondary_indep_var_value;
     double tolerance = d_relative_error_tol;
 
     /*! \detials If the secondary indep var value is zero the relative error
      *  will always zero or inf. When this is the case the error tolerance will
      *  be used instead of the relative error tolerance.
      */
-     if ( secondary_indep_var_value == 0.0 )
+     if ( secondary_indep_var_value ==
+                                QuantityTraits<SecondaryIndepQuantity>::zero() )
      {
-        error_norm_constant = 1.0;
+        error_norm_constant = QuantityTraits<SecondaryIndepQuantity>::one();
         tolerance = d_error_tol;
      }
 
@@ -647,7 +650,9 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
       if ( number_of_iterations > max_number_of_iterations )
       {
         // Get error in estimate
-        double error = secondary_indep_var_value - est_secondary_indep_var_value;
+        double error =
+            (secondary_indep_var_value - est_secondary_indep_var_value )/
+                                QuantityTraits<SecondaryIndepQuantity>::one();
         error = error < 0 ? -error : error;
 
         // If error meets error tolerance accept estimate
