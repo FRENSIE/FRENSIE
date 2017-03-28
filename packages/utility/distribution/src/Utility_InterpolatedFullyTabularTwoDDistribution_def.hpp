@@ -33,8 +33,10 @@ UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndepe
         const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
         const ArrayC<SubarrayC<DepQuantity> >& dependent_values,
         const double fuzzy_boundary_tol,
-        const double evaluate_relative_error_tol )
-  : d_relative_error_tol( evaluate_relative_error_tol )
+        const double evaluate_relative_error_tol,
+        const double evaluate_error_tol )
+  : d_relative_error_tol( evaluate_relative_error_tol ),
+    d_error_tol( evaluate_error_tol )
 {
   // Make sure the grids are valid
   testPrecondition( Sort::isSortedAscending( primary_indep_grid.begin(),
@@ -235,10 +237,13 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,Primar
 }
 
 // Evaluate the distribution using the desired evaluation method
-/*! \details This method performs a type of binary search using a unit based
+/*! \details This method performs a type of binary search using an exact
  *  correlated sampling to estimate the CDF to a relative error tolerance to
- *  find the proper interpolation for the evaluation method. The result is
- *  consistent with the sampleSecondaryConditionalExact methods.
+ *  find the proper interpolation for the evaluation method. If the realtive
+ *  error tolerance is not met after the max number of iterations but the error
+ *  tolerance is met then the estimated value will be returned, otherwise an
+ *  error message will be thrown. The estimated result is consistent with the
+ *  sampleSecondaryConditionalExact methods.
  */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -342,11 +347,23 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
     }
 
     unsigned number_of_iterations = 0;
-    double rel_error = 1.0;
     SecondaryIndepQuantity lower_bin_sample, upper_bin_sample;
+    double rel_error = 1.0;
+    double error_norm_constant = secondary_indep_var_value;
+    double tolerance = d_relative_error_tol;
+
+    /*! \detials If the secondary indep var value is zero the relative error
+     *  will always zero or inf. When this is the case the error tolerance will
+     *  be used instead of the relative error tolerance.
+     */
+     if ( secondary_indep_var_value == 0.0 )
+     {
+        error_norm_constant = 1.0;
+        tolerance = d_error_tol;
+     }
 
     // Refine the estimated cdf value until it meet the tolerance
-    while ( rel_error > d_relative_error_tol )
+    while ( rel_error > tolerance )
     {
       // Estimate the cdf as the midpoint of the lower and upper boundaries
       double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
@@ -370,7 +387,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
 
       // Calculate the relative error between the secondary_indep_var_value and the estimate
       rel_error = (secondary_indep_var_value - est_secondary_indep_var_value )/
-                                                    (secondary_indep_var_value);
+                                                            error_norm_constant;
 
       // Make sure the relative error is positive
       rel_error = rel_error < 0 ? -rel_error : rel_error;
@@ -379,7 +396,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
       ++number_of_iterations;
 
       // If tolerance is met exit loop
-      if ( rel_error <= d_relative_error_tol )
+      if ( rel_error <= tolerance )
         break;
 
       // Update the estimated_cdf estimate
@@ -397,6 +414,15 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
       // Check for the max number of iterations
       if ( number_of_iterations > max_number_of_iterations )
       {
+        // Get error in estimate
+        double error = secondary_indep_var_value - est_secondary_indep_var_value;
+        error = error < 0 ? -error : error;
+
+        // If error meets error tolerance accept estimate
+        if ( error < d_error_tol )
+            break;
+        else
+        {
         THROW_EXCEPTION( std::logic_error,
                        "Error: The evaluation could not be completed. "
                        "The max number of iterations ("
@@ -406,6 +432,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
                        << ") reached the evaluation tolerance ("
                        << d_relative_error_tol
                        << ")." );
+        }
       }
     }
     // Return the interpolated evaluation
@@ -421,8 +448,11 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
 // Evaluate the distribution using the desired evaluation method
 /*! \details This method performs a type of binary search using a unit based
  *  correlated sampling to estimate the CDF to a relative error tolerance to
- *  find the proper interpolation for the evaluation method. The result is
- *  consistent with the correlatedSampleSecondaryConditional methods.
+ *  find the proper interpolation for the evaluation method. If the realtive
+ *  error tolerance is not met after the max number of iterations but the error
+ *  tolerance is met then the estimated value will be returned, otherwise an
+ *  error message will be thrown. The estimated result is consistent with the
+ *  sampleSecondaryConditionalExact methods.
  */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -535,12 +565,25 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
       upper_cdf_bound = lower_bin_eval;
     }
 
+
     unsigned number_of_iterations = 0;
-    double rel_error = 1.0;
     SecondaryIndepQuantity lower_bin_sample, upper_bin_sample;
+    double rel_error = 1.0;
+    double error_norm_constant = secondary_indep_var_value;
+    double tolerance = d_relative_error_tol;
+
+    /*! \detials If the secondary indep var value is zero the relative error
+     *  will always zero or inf. When this is the case the error tolerance will
+     *  be used instead of the relative error tolerance.
+     */
+     if ( secondary_indep_var_value == 0.0 )
+     {
+        error_norm_constant = 1.0;
+        tolerance = d_error_tol;
+     }
 
     // Refine the estimated cdf value until it meet the tolerance
-    while ( rel_error > d_relative_error_tol )
+    while ( rel_error > tolerance )
     {
       // Estimate the cdf as the midpoint of the lower and upper boundaries
       double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
@@ -579,13 +622,13 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
 
       // Calculate the relative error between the secondary_indep_var_value and the estimate
       rel_error = (secondary_indep_var_value - est_secondary_indep_var_value )/
-                                                    (secondary_indep_var_value);
+                                                            error_norm_constant;
 
       // Make sure the relative error is positive
       rel_error = rel_error < 0 ? -rel_error : rel_error;
 
       // If tolerance is met exit loop
-      if ( rel_error <= d_relative_error_tol )
+      if ( rel_error <= tolerance )
         break;
 
       // Update the estimated_cdf estimate
@@ -597,12 +640,21 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
       else
       {
         // Old estimated_cdf estimate is new upper cdf boundary
-        upper_cdf_bound =estimated_cdf;
+        upper_cdf_bound = estimated_cdf;
       }
 
       // Check for the max number of iterations
       if ( number_of_iterations > max_number_of_iterations )
       {
+        // Get error in estimate
+        double error = secondary_indep_var_value - est_secondary_indep_var_value;
+        error = error < 0 ? -error : error;
+
+        // If error meets error tolerance accept estimate
+        if ( error < d_error_tol )
+            break;
+        else
+        {
         THROW_EXCEPTION( std::logic_error,
                        "Error: The evaluation could not be completed. "
                        "The max number of iterations ("
@@ -612,6 +664,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
                        << ") reached the evaluation tolerance ("
                        << d_relative_error_tol
                        << ")." );
+        }
       }
     }
     // Return the interpolated evaluation

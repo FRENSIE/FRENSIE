@@ -81,7 +81,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 1 energy 1
   TEST_FLOATING_EQUALITY( value, 4.83505999999999E-07, 1e-12 );
 
-
   scattering_angle_cosine = 0.71;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 2 energy 1
@@ -106,7 +105,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 1 energy 2
   TEST_FLOATING_EQUALITY( value, 4.846349999999990E-07, 1e-12 );
-
 
   scattering_angle_cosine = 0.71;
   value = distribution->evaluate( energy, scattering_angle_cosine );
@@ -133,21 +131,24 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 1 energy 3
   TEST_FLOATING_EQUALITY( value, 4.8452964167333881569e-07, 1e-6 );
 
+  scattering_angle_cosine = 0.0;
+  value = distribution->evaluate( energy, scattering_angle_cosine );
+  // Test 2 energy 3
+  TEST_FLOATING_EQUALITY( value, 5.0288950473772263006e-07, 1e-6 );
 
   scattering_angle_cosine = 0.71;
   value = distribution->evaluate( energy, scattering_angle_cosine );
-  // Test 2 energy 3
+  // Test 3 energy 3
   TEST_FLOATING_EQUALITY( value, 1.0119114917618560241e-05, 1e-6 );
 
   scattering_angle_cosine = 0.999999;
   value = distribution->evaluate( energy, scattering_angle_cosine );
-  // Test 3 energy 3
+  // Test 4 energy 3
   TEST_FLOATING_EQUALITY( value, 9.85083883863282E+05, 1e-9 );
-
 
   scattering_angle_cosine = 1.0;
   value = distribution->evaluate( energy, scattering_angle_cosine );
-  // Test 4 energy 3
+  // Test 5 energy 3
   TEST_FLOATING_EQUALITY( value, 1.582772041017910E+13, 1e-9 );
   }
 }
@@ -169,7 +170,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                         energy,
                         scattering_angle_cosine,
                         eta );
-
 
   // Test energy 1
   TEST_FLOATING_EQUALITY( pdf_value, 9.80579728298825E+23, tol );
@@ -214,7 +214,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 1 energy 1
   TEST_FLOATING_EQUALITY( value, 4.83505995466074E-07, 1e-12 );
 
-
   scattering_angle_cosine = .71;
   value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 1
@@ -225,13 +224,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 3 energy 1
   TEST_FLOATING_EQUALITY( value, 9.86944990745234E+05, 1e-12 );
 
-
   scattering_angle_cosine = 1.0;
   value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 4 energy 1
   TEST_FLOATING_EQUALITY( value, 9.80579719103748E+23, 1e-12 );
-
-
 
   // Test with a different energy
   energy = 6.625E+01;
@@ -240,7 +236,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   value = distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 2
   TEST_FLOATING_EQUALITY( value, 4.846347658089040E-07, 1e-12 );
-
 
   scattering_angle_cosine = 0.71;
   value = distribution->evaluatePDF( energy, scattering_angle_cosine );
@@ -266,6 +261,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 1 energy 3
   TEST_FLOATING_EQUALITY( value, 4.8452944220121082286e-07, 1e-6 );
 
+  scattering_angle_cosine = 0.0;
+  value = distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // Test 1 energy 3
+  TEST_FLOATING_EQUALITY( value, 5.0288929770839855144e-07, 1e-6 );
 
   scattering_angle_cosine = 0.71;
   value = distribution->evaluatePDF( energy, scattering_angle_cosine );
@@ -299,7 +298,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                         energy,
                         scattering_angle_cosine,
                         eta );
-
 
   // Test energy 1
   TEST_FLOATING_EQUALITY( pdf_value, 9.80579719103748E+23, tol );
@@ -359,8 +357,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   value = distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 9.83757207759616E+08, 1e-12 );
 
-
-
   // Test with a different energy
   energy = 6.625E+01;
 
@@ -384,7 +380,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   value = distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 4.39444544314946E+02, 1e-12 );
 
-
   // Test inbetween the two energies
   energy = 2.00E+02;
 
@@ -392,6 +387,11 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   scattering_angle_cosine = -0.01;
   value = distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 1.5073724854885435558e-07, 1e-6 );
+
+  // Test 1 energy 3
+  scattering_angle_cosine = 0.0;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 1.55674018468224071e-07, 1e-6 );
 
   // Test 2 energy 3
   scattering_angle_cosine = 0.71;
@@ -431,7 +431,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test energy 1
   TEST_FLOATING_EQUALITY( cdf_value, 9.83757207759616E+08, tol );
 
-
   // Test with a different energy
   energy = 6.625E+01;
   eta = test_distribution->evaluateMoliereScreeningConstant( energy );
@@ -443,7 +442,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
   // Test energy 2
   TEST_FLOATING_EQUALITY( cdf_value, 4.39444544314946E+02, tol );
-
 
   // Test with a different energy
   energy = 2.00E+02;
@@ -558,7 +556,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
   // sampleAndRecordTrialsImpl from distribution
   distribution->sample( electron.getEnergy(),
-                                          outgoing_energy,       scattering_angle_cosine );
+                        outgoing_energy,
+                        scattering_angle_cosine );
 
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999775901926569E-01, 1e-12 );
@@ -695,7 +694,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 3 energy 1
   TEST_FLOATING_EQUALITY( value, 9.86945000000000E+05, 1e-12 );
 
-
   scattering_angle_cosine = 1.0;
   value = lin_distribution->evaluate( energy, scattering_angle_cosine );
   // Test 4 energy 1
@@ -709,7 +707,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   value = lin_distribution->evaluate( energy, scattering_angle_cosine );
   // Test 1 energy 2
   TEST_FLOATING_EQUALITY( value, 4.846349999999990E-07, 1e-12 );
-
 
   scattering_angle_cosine = 0.71;
   value = lin_distribution->evaluate( energy, scattering_angle_cosine );
@@ -736,6 +733,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 1 energy 3
   TEST_FLOATING_EQUALITY( value, 4.8463416746395810876e-07, 1e-6 );
 
+  scattering_angle_cosine = 0.0;
+  value = lin_distribution->evaluate( energy, scattering_angle_cosine );
+  // Test 1 energy 3
+  TEST_FLOATING_EQUALITY( value, 5.0306513196139206712e-07, 1e-6 );
 
   scattering_angle_cosine = 0.71;
   value = lin_distribution->evaluate( energy, scattering_angle_cosine );
@@ -773,7 +774,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                         scattering_angle_cosine,
                         eta );
 
-
   // Test energy 1
   TEST_FLOATING_EQUALITY( pdf_value, 9.80579728298825E+23, tol );
 
@@ -788,7 +788,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
   // Test energy 2
   TEST_FLOATING_EQUALITY( pdf_value, 1.952101737343830E+11, tol );
-
 
   // Test with a different energy
   energy = 2.00E+02;
@@ -817,8 +816,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 1 energy 1
   TEST_FLOATING_EQUALITY( value, 4.83505995466074E-07, 1e-12 );
 
-
-  scattering_angle_cosine = .71;
+  scattering_angle_cosine = 0.71;
   value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 1
   TEST_FLOATING_EQUALITY( value, 1.00971999053167E-05, 1e-12 );
@@ -834,8 +832,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 4 energy 1
   TEST_FLOATING_EQUALITY( value, 9.80579719103748E+23, 1e-12 );
 
-
-
   // Test with a different energy
   energy = 6.625E+01;
 
@@ -843,7 +839,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 1 energy 2
   TEST_FLOATING_EQUALITY( value, 4.846347658089040E-07, 1e-12 );
-
 
   scattering_angle_cosine = 0.71;
   value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
@@ -854,7 +849,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 3 energy 2
   TEST_FLOATING_EQUALITY( value, 9.847525241359310E+05, 1e-12 );
-
 
   scattering_angle_cosine = 1.0;
   value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
@@ -869,6 +863,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 1 energy 3
   TEST_FLOATING_EQUALITY( value, 4.8463393358077665588e-07, 1e-6 );
 
+  scattering_angle_cosine = 0.0;
+  value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // Test 2 energy 3
+  TEST_FLOATING_EQUALITY( value, 5.0306488918343780226e-07, 1e-6 );
   scattering_angle_cosine = 0.71;
   value = lin_distribution->evaluatePDF( energy, scattering_angle_cosine );
   // Test 2 energy 3
@@ -902,7 +900,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                         scattering_angle_cosine,
                         eta );
 
-
   // Test energy 1
   TEST_FLOATING_EQUALITY( pdf_value, 9.80579719103748E+23, tol );
 
@@ -917,7 +914,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
   // Test energy 2
   TEST_FLOATING_EQUALITY( pdf_value, 1.952100794025980E+11, tol );
-
 
   // Test with a different energy
   energy = 2.00E+02;
@@ -961,8 +957,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   value = lin_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 9.83757207759616E+08, 1e-12 );
 
-
-
   // Test with a different energy
   energy = 6.625E+01;
 
@@ -986,7 +980,6 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   value = lin_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 4.39444544314946E+02, 1e-12 );
 
-
   // Test inbetween the two energies
   energy = 2.00E+02;
 
@@ -996,16 +989,21 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( value, 1.5079145517134912672e-07, 1e-6 );
 
   // Test 2 energy 3
+  scattering_angle_cosine = 0.0;
+  value = lin_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 1.5572994587058386904e-07, 1e-6 );
+
+  // Test 3 energy 3
   scattering_angle_cosine = 0.71;
   value = lin_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 2.0073427638173389808e-06, 1e-6 );
 
-  // Test 3 energy 3
+  // Test 4 energy 3
   scattering_angle_cosine = 0.999999;
   value = lin_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 1.0, 1e-12 );
 
-  // Test 4 energy 3
+  // Test 5 energy 3
   scattering_angle_cosine = 1.0;
   value = lin_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( value, 3.9483076367080416e+03, 1e-12 );

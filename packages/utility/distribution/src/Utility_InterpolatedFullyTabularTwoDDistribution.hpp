@@ -112,9 +112,11 @@ public:
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
                             const DistributionType& distribution,
                             const double fuzzy_boundary_tol = 1e-3,
-                            const double evaluate_relative_error_tol = 1e-7 )
+                            const double evaluate_relative_error_tol = 1e-7,
+                            const double evaluate_error_tol = 1e-16 )
     : ParentType( distribution, fuzzy_boundary_tol ),
-      d_relative_error_tol( evaluate_relative_error_tol )
+      d_relative_error_tol( evaluate_relative_error_tol ),
+      d_error_tol( evaluate_error_tol )
   { /* ... */ }
 
   //! Constructor
@@ -124,9 +126,11 @@ public:
                    const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                    const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
                    const double fuzzy_boundary_tol = 1e-3,
-                   const double evaluate_relative_error_tol = 1e-7 )
+                   const double evaluate_relative_error_tol = 1e-7,
+                   const double evaluate_error_tol = 1e-16 )
     : ParentType( primary_indep_grid, secondary_distributions, fuzzy_boundary_tol ),
-      d_relative_error_tol( evaluate_relative_error_tol )
+      d_relative_error_tol( evaluate_relative_error_tol ),
+      d_error_tol( evaluate_error_tol )
   { /* ... */ }
 
   //! Raw constructor
@@ -140,7 +144,8 @@ public:
         const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
         const ArrayC<SubarrayC<DepQuantity> >& dependent_values,
         const double fuzzy_boundary_tol = 1e-3,
-        const double evaluate_relative_error_tol = 1e-7 );
+        const double evaluate_relative_error_tol = 1e-7,
+        const double evaluate_error_tol = 1e-16 );
 
   //! Destructor
   ~UnitAwareInterpolatedFullyTabularTwoDDistribution()
@@ -310,6 +315,9 @@ private:
 
   // The relative error tolerance for the evaluate impl schemes
   double d_relative_error_tol;
+
+  // The error tolerance for the evaluate impl schemes
+  double d_error_tol;
 };
 
 /*! \brief The interpolated fully tabular two-dimensional distribution 
