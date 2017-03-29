@@ -18,8 +18,8 @@ AdjointElectronPhotonRelaxationVolatileDataContainer::AdjointElectronPhotonRelax
 
 // Constructor (from saved archive)
 AdjointElectronPhotonRelaxationVolatileDataContainer::AdjointElectronPhotonRelaxationVolatileDataContainer(
-		    const std::string& archive_name,
-		    const Utility::ArchivableObject::ArchiveType archive_type )
+            const std::string& archive_name,
+            const Utility::ArchivableObject::ArchiveType archive_type )
   : AdjointElectronPhotonRelaxationDataContainer( archive_name, archive_type )
 { /* ... */ }
 

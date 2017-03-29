@@ -32,10 +32,12 @@ public:
   //! Constructor
   StandardMomentPreservingElectronDataGenerator(
     const unsigned atomic_number,
-    const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
+    const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const double min_electron_energy,
     const double max_electron_energy,
-    const double cutoff_angle_cosine );
+    const double cutoff_angle_cosine,
+    const double tabular_evaluation_tol,
+    const bool linlinlog_interpolation_mode_on );
 
   //! Destructor
   ~StandardMomentPreservingElectronDataGenerator()
@@ -55,7 +57,7 @@ protected:
 
   // Generate elastic discrete angle cosines and weights
   void evaluateDisceteAnglesAndWeights(
-    const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_discrete_angles,
     std::vector<double>& discrete_angles,
@@ -64,7 +66,7 @@ protected:
 private:
 
   // The EEDL data
-  Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer> d_native_eedl_data;
+  std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer> d_native_eedl_data;
 
   // The min electron energy
   double d_min_electron_energy;
@@ -72,8 +74,14 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
-  // The cutoff angle cosine between moment preserving and hard elastic collisions
+  // The cutoff angle cosine between moment preserving and analog elastic collisions
   double d_cutoff_angle_cosine;
+
+  // The FullyTabularTwoDDistribution evaluation tolerance
+  double d_tabular_evaluation_tol;
+
+  // The LinLinLog interplation mode
+  bool d_linlinlog_interpolation_mode_on;
 };
 
 

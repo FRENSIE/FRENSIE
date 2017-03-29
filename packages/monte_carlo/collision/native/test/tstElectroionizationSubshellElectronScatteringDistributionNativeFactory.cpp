@@ -78,17 +78,19 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
                    evaluatePDF )
 {
-  double pdf = native_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
+  double pdf;
+
+  pdf = native_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
-  pdf = native_distribution->evaluatePDF( 8.829e-2 + 2e-8, 1e-8 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111033.955596962944, 1e-12 );
+  pdf = native_distribution->evaluatePDF( 8.829e-2 + 3e-8, 1.0001e-08 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11110995.37814653106, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 689.2154402763227381, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 662.81827321455386937, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 662.92869138138178187, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5969818328396216955, 1e-12 );
@@ -97,7 +99,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.38239950812861E+00, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0e5, 1.752970E+02 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.986498947129447938e-07, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.98650620153625E-07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -223,34 +225,26 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.056721346111550E-02, 1e-12 );
 
 }
+
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_file_name;
+  clp().setOption( "test_native_file",
+                   &test_native_file_name,
+                   "Test Native file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
-  {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create the native data file container
   data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
-						     test_native_file_name ) );
+                             test_native_file_name ) );
 
   // Set binding energy
   double binding_energy = 8.829E-02;
@@ -262,25 +256,15 @@ int main( int argc, char** argv )
     *data_container,
     *subshells.begin(),
     binding_energy,
-	native_distribution );
+    native_distribution,
+    true,
+    true );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElectroionizationSubshellElectronScatteringDistributionNativeFactory.cpp

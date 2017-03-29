@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_SIMULATION_ADJOINT_PHOTON_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_ADJOINT_PHOTON_PROPERTIES_HPP
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
 
@@ -20,93 +23,74 @@ class SimulationAdjointPhotonProperties
 
 public:
 
+  //! Constructor
+  SimulationAdjointPhotonProperties();
+
+  //! Destructor
+  virtual ~SimulationAdjointPhotonProperties()
+  { /* ... */ }
+
   //! Set the minimum adjoint photon energy (MeV)
-  static void setMinAdjointPhotonEnergy( const double energy );
+  void setMinAdjointPhotonEnergy( const double energy );
 
   //! Return the minimum adjoint photon energy (MeV)
-  static double getMinAdjointPhotonEnergy();
+  double getMinAdjointPhotonEnergy() const;
 
   //! Return the absolute minimum adjoint photon energy (MeV)
   static double getAbsoluteMinAdjointPhotonEnergy();
 
   //! Set the maximum adjoint photon energy (MeV)
-  static void setMaxAdjointPhotonEnergy( const double energy );
+  void setMaxAdjointPhotonEnergy( const double energy );
 
   //! Return the maximum adjoint photon energy (MeV)
-  static double getMaxAdjointPhotonEnergy();
+  double getMaxAdjointPhotonEnergy() const;
 
   //! Return the absolute maximum adjoint photon energy (MeV)
   static double getAbsoluteMaxAdjointPhotonEnergy();
 
   //! Set the number of adjoint photon hash grid bins
-  static void setNumberOfAdjointPhotonHashGridBins( const unsigned bins );
+  void setNumberOfAdjointPhotonHashGridBins( const unsigned bins );
 
   //! Get the number of adjoint photon hash grid bins
-  static unsigned getNumberOfAdjointPhotonHashGridBins();
+  unsigned getNumberOfAdjointPhotonHashGridBins() const;
 
   //! Set the incoherent adjoint model type
-  static void setIncoherentAdjointModelType(
+  void setIncoherentAdjointModelType(
                                       const IncoherentAdjointModelType model );
 
   //! Return the incoherent adjoint model type
-  static IncoherentAdjointModelType getIncoherentAdjointModelType();
+  IncoherentAdjointModelType getIncoherentAdjointModelType() const;
+
+  //! Set the critical line energies
+  void setCriticalAdjointPhotonLineEnergies(
+                        const Teuchos::Array<double>& critical_line_energies );
+
+  //! Get the critical line energies
+  const Teuchos::Array<double>& getCriticalAdjointPhotonLineEnergies() const;
 
 private:
 
   // The absolute mimimum adjoint photon energy (MeV)
   static const double s_absolute_min_adjoint_photon_energy;
 
-  // The minimum adjoint photon energy (MeV)
-  static double s_min_adjoint_photon_energy;
-
-  // The maximum adjoint photon energy (MeV)
-  static double s_max_adjoint_photon_energy;
-
   // The absolume maximum adjoint photon energy (MeV)
   static const double s_absolute_max_adjoint_photon_energy;
 
+  // The minimum adjoint photon energy (MeV)
+  double d_min_adjoint_photon_energy;
+
+  // The maximum adjoint photon energy (MeV)
+  double d_max_adjoint_photon_energy;
+
   // The number of adjoint photon hash grid bins
-  static unsigned s_num_adjoint_photon_hash_grid_bins;
+  unsigned d_num_adjoint_photon_hash_grid_bins;
 
   // The incoherent adjoint model
-  static IncoherentAdjointModelType s_incoherent_adjoint_model_type;
+  IncoherentAdjointModelType d_incoherent_adjoint_model_type;
+
+  // The critical line energies
+  Teuchos::Array<double> d_critical_line_energies;
 };
-
-// Return the minimum adjoint photon energy (MeV)
-inline double SimulationAdjointPhotonProperties::getMinAdjointPhotonEnergy()
-{
-  return s_min_adjoint_photon_energy;
-}
-
-// Return the absolute minimum adjoint photon energy (MeV)
-inline double SimulationAdjointPhotonProperties::getAbsoluteMinAdjointPhotonEnergy()
-{
-  return s_absolute_min_adjoint_photon_energy;
-}
-
-// Return the maximum adjoint photon energy (MeV)
-inline double SimulationAdjointPhotonProperties::getMaxAdjointPhotonEnergy()
-{
-  return s_max_adjoint_photon_energy;
-}
-
-// Return the absolute maximum adjoint photon energy (MeV)
-inline double SimulationAdjointPhotonProperties::getAbsoluteMaxAdjointPhotonEnergy()
-{
-  return s_absolute_max_adjoint_photon_energy;
-}
-
-// Get the number of adjoint photon hash grid bins
-inline unsigned SimulationAdjointPhotonProperties::getNumberOfAdjointPhotonHashGridBins()
-{
-  return s_num_adjoint_photon_hash_grid_bins;
-}
-
-// Return the incoherent adjoint model type
-inline IncoherentAdjointModelType SimulationAdjointPhotonProperties::getIncoherentAdjointModelType()
-{
-  return s_incoherent_adjoint_model_type;
-}
   
 } // end MonteCarlo namespace
 

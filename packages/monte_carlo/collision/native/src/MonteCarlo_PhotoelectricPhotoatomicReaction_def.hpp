@@ -20,10 +20,9 @@ PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::Photoele
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const unsigned threshold_energy_index )
-  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-						       incoming_energy_grid,
-						       cross_section,
-						       threshold_energy_index )
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -45,11 +44,10 @@ PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::Photoele
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
-  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-						       incoming_energy_grid,
-						       cross_section,
-						       threshold_energy_index,
-						       grid_searcher )
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );

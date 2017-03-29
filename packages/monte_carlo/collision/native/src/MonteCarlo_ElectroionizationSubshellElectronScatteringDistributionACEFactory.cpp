@@ -23,9 +23,10 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
         const unsigned table_location,
         const unsigned number_of_tables,
         const double binding_energy,
-	const Teuchos::ArrayView<const double>& raw_electroionization_data,
-	std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
-	  electroionization_subshell_distribution )
+        const Teuchos::ArrayView<const double>& raw_electroionization_data,
+        std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
+          electroionization_subshell_distribution,
+        const double evaluation_tol )
 {
   // Subshell distribution
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
@@ -34,13 +35,16 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
   createSubshellDistribution( table_info_location,
                               table_location,
                               number_of_tables,
-	                      raw_electroionization_data,
-	                      subshell_distribution );
+                              raw_electroionization_data,
+                              subshell_distribution,
+                              evaluation_tol );
 
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
         subshell_distribution,
-        binding_energy ) );
+        binding_energy,
+        true,
+        false ) );
 }
 
 // Create the scattering function
@@ -50,7 +54,8 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
     const unsigned number_of_tables,
     const Teuchos::ArrayView<const double>& raw_electroionization_data,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-            subshell_distribution )
+            subshell_distribution,
+    const double evaluation_tol )
 {
   // Extract the energies for which knock-on sampling tables are given
   Teuchos::Array<double> table_energy_grid( raw_electroionization_data(
@@ -86,7 +91,9 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
   // Create the scattering function
   subshell_distribution.reset(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
-            function_data ) );
+            function_data,
+            1e-6,
+            evaluation_tol ) );
 }
 
 } // end MonteCarlo namespace

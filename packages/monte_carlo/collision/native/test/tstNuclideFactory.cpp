@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -17,51 +18,56 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 std::string test_cross_sections_xml_directory;
 
-Teuchos::RCP<MonteCarlo::NuclideFactory> nuclide_factory;
+Teuchos::ParameterList cross_section_table_info;
+
+std::shared_ptr<const MonteCarlo::SimulationProperties> properties;
 
 //---------------------------------------------------------------------------//
-// Testing Functions.
+// Tests.
 //---------------------------------------------------------------------------//
-void initializeNuclideFactory()
+// Check that a factory can be constructed
+TEUCHOS_UNIT_TEST( NuclideFactory, constructor )
 {
-  // Assign the name of the cross_sections.xml file with path
-  std::string cross_section_xml_file = test_cross_sections_xml_directory;
-  cross_section_xml_file += "/cross_sections.xml";
-
-  // Read in the xml file storing the cross section table information
-  Teuchos::ParameterList cross_section_table_info;
-  Teuchos::updateParametersFromXmlFile(
-			         cross_section_xml_file,
-			         Teuchos::inoutArg(cross_section_table_info) );
-
   std::unordered_set<std::string> nuclide_aliases;
   nuclide_aliases.insert( "H-1_293.6K" );
   nuclide_aliases.insert( "H-1_300K" );
   nuclide_aliases.insert( "H-1_900K" );
 
-  nuclide_factory.reset( new MonteCarlo::NuclideFactory(
-					     test_cross_sections_xml_directory,
-					     cross_section_table_info,
-					     nuclide_aliases,
-					     false,
-					     true ) );
+  std::shared_ptr<MonteCarlo::NuclideFactory> factory;
+
+  TEST_NOTHROW( factory.reset( new MonteCarlo::NuclideFactory(
+                                             test_cross_sections_xml_directory,
+                                             cross_section_table_info,
+                                             nuclide_aliases,
+                                             *properties ) ) );
 }
 
-//---------------------------------------------------------------------------//
-// Tests.
 //---------------------------------------------------------------------------//
 // Check that a nuclide map can be created
 TEUCHOS_UNIT_TEST( NuclideFactory, createNuclideMap )
 {
+  std::unordered_set<std::string> nuclide_aliases;
+  nuclide_aliases.insert( "H-1_293.6K" );
+  nuclide_aliases.insert( "H-1_300K" );
+  nuclide_aliases.insert( "H-1_900K" );
+
+  std::shared_ptr<MonteCarlo::NuclideFactory> factory(
+                                      new MonteCarlo::NuclideFactory(
+                                             test_cross_sections_xml_directory,
+                                             cross_section_table_info,
+                                             nuclide_aliases,
+                                             *properties ) );
+  
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > nuclide_map;
 
-  nuclide_factory->createNuclideMap( nuclide_map );
+  factory->createNuclideMap( nuclide_map );
 
   TEST_EQUALITY_CONST( nuclide_map.size(), 3 );
   TEST_ASSERT( nuclide_map.count( "H-1_293.6K" ) );
@@ -73,44 +79,33 @@ TEUCHOS_UNIT_TEST( NuclideFactory, createNuclideMap )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_cross_sections_xml_directory",
-		 &test_cross_sections_xml_directory,
-		 "Test cross_sections.xml file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  // Initialize the nuclide factory
-  initializeNuclideFactory();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
+  clp().setOption( "test_cross_sections_xml_directory",
+                   &test_cross_sections_xml_directory,
+                   "Test cross_sections.xml file name" );
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  // Assign the name of the cross_sections.xml file with path
+  std::string cross_section_xml_file = test_cross_sections_xml_directory;
+  cross_section_xml_file += "/cross_sections.xml";
+
+  // Read in the xml file storing the cross section table information
+  Teuchos::updateParametersFromXmlFile(
+			         cross_section_xml_file,
+			         Teuchos::inoutArg(cross_section_table_info) );
+
+  // Create the simulation properties
+  properties.reset( new MonteCarlo::SimulationProperties );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNuclideFactory.cpp

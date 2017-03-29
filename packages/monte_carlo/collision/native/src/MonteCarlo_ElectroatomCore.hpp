@@ -43,12 +43,12 @@ public:
 
   //! Typedef for the reaction map
   typedef boost::unordered_map<ElectroatomicReactionType,
-			       std::shared_ptr<ElectroatomicReaction> >
+                   std::shared_ptr<ElectroatomicReaction> >
   ReactionMap;
 
   //! Typedef for the const reaction map
   typedef boost::unordered_map<ElectroatomicReactionType,
-			       std::shared_ptr<const ElectroatomicReaction> >
+                   std::shared_ptr<const ElectroatomicReaction> >
   ConstReactionMap;
 
   // Reactions that should be treated as scattering
@@ -65,12 +65,12 @@ public:
   //! Basic constructor
   template<typename InterpPolicy>
   ElectroatomCore(
-	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const ReactionMap& standard_scattering_reactions,
-	  const ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
-	  const bool processed_atomic_cross_sections,
-	  const InterpPolicy policy );
+      const Teuchos::ArrayRCP<double>& energy_grid,
+      const ReactionMap& standard_scattering_reactions,
+      const ReactionMap& standard_absorption_reactions,
+      const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
+      const bool processed_atomic_cross_sections,
+      const InterpPolicy policy );
 
   //! Advanced constructor
   ElectroatomCore(
@@ -118,16 +118,16 @@ private:
   // Create the total absorption reaction
   template<typename InterpPolicy>
   static void createTotalAbsorptionReaction(
-		const Teuchos::ArrayRCP<double>& energy_grid,
-		const ConstReactionMap& absorption_reactions,
-		std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction );
+        const Teuchos::ArrayRCP<double>& energy_grid,
+        const ConstReactionMap& absorption_reactions,
+        std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction );
 
   // Create the processed total absorption reaction
   template<typename InterpPolicy>
   static void createProcessedTotalAbsorptionReaction(
-		const Teuchos::ArrayRCP<double>& energy_grid,
-		const ConstReactionMap& absorption_reactions,
-		std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction );
+        const Teuchos::ArrayRCP<double>& energy_grid,
+        const ConstReactionMap& absorption_reactions,
+        std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction );
 
   // Create the total reaction
   template<typename InterpPolicy>

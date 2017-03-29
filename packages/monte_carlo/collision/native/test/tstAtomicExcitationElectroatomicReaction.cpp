@@ -101,14 +101,14 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectroatomicReaction, getCrossSection_ace )
 TEUCHOS_UNIT_TEST( AtomicExcitationElectroatomicReaction, react_ace )
 {
   MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.000000000000e-03 );
+  electron.setEnergy( 1e-3 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
 
   Data::SubshellType shell_of_interaction;
 
-  double final_energy = (electron.getEnergy() - 9.32298000000E-06);
+  double final_energy = electron.getEnergy() - 9.32298e-6;
 
   ace_excitation_reaction->react( electron, bank, shell_of_interaction );
 
@@ -119,42 +119,33 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectroatomicReaction, react_ace )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  clp().setOption( "test_ace_file",
+                   &test_ace_file_name,
+                   "Test ACE file name" );
+  clp().setOption( "test_ace_table",
+                   &test_ace_table_name,
+                   "Test ACE table name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+     new Data::ACEFileHandler( test_ace_file_name,
+                               test_ace_table_name,
+                               1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+    new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
+                                   ace_file_handler->getTableJXSArray(),
+                                   ace_file_handler->getTableXSSArray() ) );
 
   // Extract the energy grid and cross section
   Teuchos::ArrayRCP<double> energy_grid;
@@ -176,7 +167,7 @@ int main( int argc, char** argv )
 
   // Extract the atomic excitation information data block (EXCIT)
   Teuchos::ArrayView<const double> excit_block(
-				      xss_data_extractor->extractEXCITBlock() );
+                  xss_data_extractor->extractEXCITBlock() );
 
   // Extract the number of tabulated energies
   int size = excit_block.size()/2;
@@ -192,7 +183,7 @@ int main( int argc, char** argv )
 
   energy_loss_function.reset(
   new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
-		                                     excitation_energy_loss ) );
+                                                     excitation_energy_loss ) );
 
   std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
                       excitation_energy_loss_distribution;
@@ -206,10 +197,10 @@ int main( int argc, char** argv )
   // Create the reaction
   ace_excitation_reaction.reset(
     new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-				      energy_grid,
-				      excitation_cross_section,
-				      excitation_threshold_index,
-				      excitation_energy_loss_distribution ) );
+          energy_grid,
+          excitation_cross_section,
+          excitation_threshold_index,
+          excitation_energy_loss_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -217,21 +208,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAtomicExcitationElectroatomicReaction.cpp

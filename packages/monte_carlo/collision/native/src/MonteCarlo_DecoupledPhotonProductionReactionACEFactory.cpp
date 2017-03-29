@@ -36,18 +36,20 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
 		 const double atomic_weight_ratio,
 		 const double temperature,
 		 const Teuchos::ArrayRCP<const double>& energy_grid,
+                 const SimulationProperties& properties,
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data )
 		 : NuclearReactionACEFactory( table_name,
 		                              atomic_weight_ratio,
 		                              temperature,
 		                              energy_grid,
+                                              properties,
 		                              raw_nuclide_data )
 {
   // Create the scattering distribution factory
   PhotonProductionNuclearScatteringDistributionACEFactory
     photon_production_dist_factory( table_name,
-			                              atomic_weight_ratio,
-			                              raw_nuclide_data );
+                                    atomic_weight_ratio,
+                                    raw_nuclide_data );
 
   // Extract the required blocks
   Teuchos::ArrayView<const double> mtrp_block =
@@ -105,17 +107,19 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
 
   // Create the yield based photon production reactions
   initializeYieldBasedPhotonProductionReactions( base_reaction_type_map,
-	                                               temperature,
-	                                               yield_energy_map,
-	                                               base_reaction_map,
-	                                               photon_production_dist_factory );
+                                                 temperature,
+                                                 yield_energy_map,
+                                                 base_reaction_map,
+                                                 properties,
+                                                 photon_production_dist_factory );
 
 	// Create the cross section based photon production reactions
   initializeCrossSectionBasedPhotonProductionReactions( base_reaction_type_map,
-	                                                      temperature,
-	                                                      threshold_energy_map,
-	                                                      xs_based_map,
+                                                        temperature,
+                                                        threshold_energy_map,
+                                                        xs_based_map,
                                                         energy_grid,
+                                                        properties,
                                                         photon_production_dist_factory );
 }
 
@@ -204,6 +208,7 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
 	  else if ( static_cast<unsigned>( sigp_block[cs_index] ) == 12u  ||
 	            static_cast<unsigned>( sigp_block[cs_index] ) == 16u )
 	  {
+	  
 	    TEST_FOR_EXCEPTION( static_cast<unsigned>( sigp_block[cs_index + 2u] ) != 0,
 	                        std::runtime_error,
 	                        "Error: multiple interpolation regions were defined "
@@ -310,10 +315,11 @@ void DecoupledPhotonProductionReactionACEFactory::constructMTYieldArrays(
 // Initialize the yield based photon production reactions
 void DecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProductionReactions(
        const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-	     const double temperature,
-	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
-	     const boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
-	     PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory )
+       const double temperature,
+       const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
+       const boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
+       const SimulationProperties& properties,
+       PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory )
 {
   boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >::const_iterator
     iter_reaction, end_reaction;
@@ -332,6 +338,7 @@ void DecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProd
 
     photon_production_dist_factory.createScatteringDistribution(
 						     reaction_type,
+                                                     properties,
 						     photon_production_distribution );
 
     reaction.reset( new DecoupledYieldBasedPhotonProductionReaction(
@@ -356,6 +363,7 @@ void DecoupledPhotonProductionReactionACEFactory::initializeCrossSectionBasedPho
   const boost::unordered_map<unsigned,unsigned>& threshold_energy_map,
   const boost::unordered_map<unsigned,Teuchos::ArrayRCP<double> >& xs_based_map,
   const Teuchos::ArrayRCP<const double>& energy_grid,
+  const SimulationProperties& properties,
   PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory )
 {
   boost::unordered_map<unsigned,unsigned>::const_iterator
@@ -375,6 +383,7 @@ void DecoupledPhotonProductionReactionACEFactory::initializeCrossSectionBasedPho
 
     photon_production_dist_factory.createScatteringDistribution(
 						     reaction_type,
+                                                     properties,
 						     photon_production_distribution );
 
     reaction.reset( new DecoupledCrossSectionBasedPhotonProductionReaction(

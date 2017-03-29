@@ -298,7 +298,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
     for( int j = 0; j < number_points_distribution; j++ )
     {
       // Location of the angular data tables
-      double angular_data_loc = angle_locations_array[j];
+      double angular_data_loc = angle_locations_array[j] - 
+        dlw_block_array_start_index;
       
       // Check if tabular data exists
       if( angular_data_loc != 0 )

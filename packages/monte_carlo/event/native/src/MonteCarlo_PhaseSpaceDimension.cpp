@@ -26,8 +26,12 @@ std::string convertPhaseSpaceDimensionToStringBasic(
   {
   case COSINE_DIMENSION:
     return PHASE_SPACE_DIMENSION_STRING( COSINE_DIMENSION );
+  case SOURCE_ENERGY_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( SOURCE_ENERGY_DIMENSION );
   case ENERGY_DIMENSION:
     return PHASE_SPACE_DIMENSION_STRING( ENERGY_DIMENSION );
+  case SOURCE_TIME_DIMENSION:
+    return PHASE_SPACE_DIMENSION_STRING( SOURCE_TIME_DIMENSION );
   case TIME_DIMENSION:
     return PHASE_SPACE_DIMENSION_STRING( TIME_DIMENSION );
   case COLLISION_NUMBER_DIMENSION:
@@ -47,8 +51,12 @@ std::string convertPhaseSpaceDimensionToString(
   {
   case COSINE_DIMENSION:
     return PhaseSpaceDimensionTraits<COSINE_DIMENSION>::name();
+  case SOURCE_ENERGY_DIMENSION:
+    return PhaseSpaceDimensionTraits<SOURCE_ENERGY_DIMENSION>::name();
   case ENERGY_DIMENSION:
     return PhaseSpaceDimensionTraits<ENERGY_DIMENSION>::name();
+  case SOURCE_TIME_DIMENSION:
+    return PhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>::name();
   case TIME_DIMENSION:
     return PhaseSpaceDimensionTraits<TIME_DIMENSION>::name();
   case COLLISION_NUMBER_DIMENSION:
@@ -68,8 +76,12 @@ PhaseSpaceDimension convertUnsignedToPhaseSpaceDimensionEnum(
   {
   case (unsigned)COSINE_DIMENSION:
     return COSINE_DIMENSION;
+  case (unsigned)SOURCE_ENERGY_DIMENSION:
+    return SOURCE_ENERGY_DIMENSION;
   case (unsigned)ENERGY_DIMENSION:
     return ENERGY_DIMENSION;
+  case (unsigned)SOURCE_TIME_DIMENSION:
+    return SOURCE_TIME_DIMENSION;
   case (unsigned)TIME_DIMENSION:
     return TIME_DIMENSION;
   case (unsigned)COLLISION_NUMBER_DIMENSION:

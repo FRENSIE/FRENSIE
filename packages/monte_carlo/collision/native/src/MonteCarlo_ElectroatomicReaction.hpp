@@ -37,22 +37,23 @@ public:
 
   //! Simulate the reaction
   virtual void react( ElectronState& electron,
-		      ParticleBank& bank,
-		      Data::SubshellType& shell_of_interaction ) const = 0;
+                      ParticleBank& bank,
+                      Data::SubshellType& shell_of_interaction ) const = 0;
 
   //! Simulate the reaction and track the number of sampling trials
   virtual void react( ElectronState& electron,
-		      ParticleBank& bank,
-		      Data::SubshellType& shell_of_interaction,
-		      unsigned& trials ) const;
+                      ParticleBank& bank,
+                      Data::SubshellType& shell_of_interaction,
+                      unsigned& trials ) const;
 
 };
 
 // Simulate the reaction and track the number of sampling trials
-inline void ElectroatomicReaction::react( ElectronState& electron,
-					ParticleBank& bank,
-					Data::SubshellType& shell_of_interaction,
-					unsigned& trials ) const
+inline void ElectroatomicReaction::react(
+                ElectronState& electron,
+                ParticleBank& bank,
+                Data::SubshellType& shell_of_interaction,
+                unsigned& trials ) const
 {
   ++trials;
 

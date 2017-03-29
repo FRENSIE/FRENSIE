@@ -40,12 +40,77 @@ double CutoffElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
+  if ( scattering_angle_cosine > d_cutoff_angle_cosine )
+    return 0.0;
+
+  double max_cdf = d_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+                        incoming_energy,
+                        d_cutoff_angle_cosine );
+
   return d_cutoff_distribution->evaluateExact( incoming_energy,
-                                               scattering_angle_cosine );
+                                               scattering_angle_cosine )/max_cdf;
 }
 
 // Evaluate the PDF
 double CutoffElasticElectronScatteringDistribution::evaluatePDF(
+                            const double incoming_energy,
+                            const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  if ( scattering_angle_cosine > d_cutoff_angle_cosine )
+    return 0.0;
+
+  double max_cdf = d_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+                        incoming_energy,
+                        d_cutoff_angle_cosine );
+
+  return d_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+                        incoming_energy,
+                        scattering_angle_cosine )/max_cdf;
+}
+
+// Evaluate the CDF
+double CutoffElasticElectronScatteringDistribution::evaluateCDF(
+                            const double incoming_energy,
+                            const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  if ( scattering_angle_cosine >= d_cutoff_angle_cosine )
+    return 1.0;
+
+  double max_cdf = d_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+                        incoming_energy,
+                        d_cutoff_angle_cosine );
+
+  return d_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+                        incoming_energy,
+                        scattering_angle_cosine )/max_cdf;
+}
+
+// Evaluate the unormalized distribution
+double CutoffElasticElectronScatteringDistribution::evaluateUnormalized(
+    const double incoming_energy,
+    const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  return d_cutoff_distribution->evaluateExact( incoming_energy,
+                                               scattering_angle_cosine );
+}
+
+// Evaluate the unormalized PDF
+double CutoffElasticElectronScatteringDistribution::evaluateUnormalizedPDF(
                             const double incoming_energy,
                             const double scattering_angle_cosine ) const
 {
@@ -59,8 +124,8 @@ double CutoffElasticElectronScatteringDistribution::evaluatePDF(
                         scattering_angle_cosine );
 }
 
-// Evaluate the CDF
-double CutoffElasticElectronScatteringDistribution::evaluateCDF(
+// Evaluate the unormalized CDF
+double CutoffElasticElectronScatteringDistribution::evaluateUnormalizedCDF(
                             const double incoming_energy,
                             const double scattering_angle_cosine ) const
 {
@@ -81,27 +146,7 @@ double CutoffElasticElectronScatteringDistribution::evaluateCDF(
 double CutoffElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRatio(
         const double incoming_energy ) const
 {
-  // Get the max angle 
-  double max_angle =
-    d_cutoff_distribution->getUpperBoundOfConditionalIndepVar( incoming_energy );
-
-  // Get the max cdf value (aka the CDF at an angle cosine of 0.999999 )
-  double max_cdf = evaluateCDF( incoming_energy, max_angle );
-
-  /* Get the cdf at the cutoff angle cosine
-   * Note: the cutoff cdf represents the unormalized ratio of the distribution within
-   * the cutoff value
-   */
-  double cutoff_cdf = evaluateCDF( incoming_energy, d_cutoff_angle_cosine );
-
-  // Make sure the cdf values are valid
-  testPostcondition( max_cdf >= cutoff_cdf );
-  testPostcondition( cutoff_cdf >= 0.0 );
-
-  if ( max_cdf > 0.0 ) // normalize the cross_section_ratio by the max_cdf value
-   return cutoff_cdf/max_cdf;
-  else
-   return 0.0;
+   return this->evaluateUnormalizedCDF( incoming_energy, d_cutoff_angle_cosine );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -195,7 +240,9 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
   // sample the scattering angle cosine
   scattering_angle_cosine =
-    d_cutoff_distribution->sampleSecondaryConditionalExact( incoming_energy );
+    d_cutoff_distribution->sampleSecondaryConditionalExactInSubrange(
+                                                        incoming_energy,
+                                                        d_cutoff_angle_cosine );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );

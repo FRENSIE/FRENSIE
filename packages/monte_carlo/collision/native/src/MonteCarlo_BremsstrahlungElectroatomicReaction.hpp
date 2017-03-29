@@ -13,7 +13,8 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
@@ -21,8 +22,14 @@ namespace MonteCarlo{
 
 //! The bremsstrahlung electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class BremsstrahlungElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
+class BremsstrahlungElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
+
+private:
+
+  // Typedef for the base class type
+typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+    BaseType;
 
 public:
 
@@ -63,8 +70,8 @@ public:
 
   //! Simulate the reaction
   void react( ElectronState& electron,
-	      ParticleBank& bank,
-	      Data::SubshellType& shell_of_interaction ) const;
+              ParticleBank& bank,
+              Data::SubshellType& shell_of_interaction ) const;
 
 private:
 

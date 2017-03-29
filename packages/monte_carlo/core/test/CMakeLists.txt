@@ -62,6 +62,13 @@ TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)
 ADD_TEST(ParticleBank_test tstParticleBank)
 SET_PROPERTY(TEST ParticleBank_test PROPERTY LABELS monte_carlo_core)
 
+ADD_EXECUTABLE(tstPhotoatomicReactionTypeHelpers
+  tstPhotoatomicReactionTypeHelpers.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhotoatomicReactionTypeHelpers monte_carlo_core)
+ADD_TEST(PhotoatomicReactionTypeHelpers_test tstPhotoatomicReactionTypeHelpers)
+SET_PROPERTY(TEST PhotoatomicReactionTypeHelpers_test PROPERTY LABELS monte_carlo_core)
+
 ADD_EXECUTABLE(tstIncoherentAdjointModelTypeHelpers
   tstIncoherentAdjointModelTypeHelpers.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -69,16 +76,30 @@ TARGET_LINK_LIBRARIES(tstIncoherentAdjointModelTypeHelpers monte_carlo_core)
 ADD_TEST(IncoherentAdjointModelTypeHelpers_test tstIncoherentAdjointModelTypeHelpers)
 SET_PROPERTY(TEST IncoherentAdjointModelTypeHelpers_test PROPERTY LABELS monte_carlo_core)
 
+ADD_EXECUTABLE(tstAdjointPhotoatomicReactionTypeHelpers
+  tstAdjointPhotoatomicReactionTypeHelpers.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotoatomicReactionTypeHelpers monte_carlo_core)
+ADD_TEST(AdjointPhotoatomicReactionTypeHelpers_test tstAdjointPhotoatomicReactionTypeHelpers)
+SET_PROPERTY(TEST AdjointPhotoatomicReactionTypeHelpers_test PROPERTY LABELS monte_carlo_core)
+
+ADD_EXECUTABLE(tstParticleModeType
+  tstParticleModeType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstParticleModeType monte_carlo_core)
+ADD_TEST(ParticleModeType_test tstParticleModeType)
+SET_PROPERTY(TEST ParticleModeType_test PROPERTY LABELS monte_carlo_core)
+
 ADD_EXECUTABLE(tstSimulationGeneralProperties
   tstSimulationGeneralProperties.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSimulationGeneralProperties monte_carlo_core)
 ADD_TEST(SimulationGeneralProperties_test tstSimulationGeneralProperties)
 SET_PROPERTY(TEST SimulationGeneralProperties_test PROPERTY LABELS monte_carlo_core)
 
 ADD_EXECUTABLE(tstSimulationNeutronProperties
   tstSimulationNeutronProperties.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSimulationNeutronProperties monte_carlo_core)
 ADD_TEST(SimulationNeutronProperties_test tstSimulationNeutronProperties)
 SET_PROPERTY(TEST SimulationNeutronProperties_test PROPERTY LABELS monte_carlo_core neutron)
@@ -99,44 +120,56 @@ SET_PROPERTY(TEST SimulationAdjointPhotonProperties_test PROPERTY LABELS monte_c
 
 ADD_EXECUTABLE(tstSimulationElectronProperties
   tstSimulationElectronProperties.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSimulationElectronProperties monte_carlo_core)
 ADD_TEST(SimulationElectronProperties_test tstSimulationElectronProperties)
 SET_PROPERTY(TEST SimulationElectronProperties_test PROPERTY LABELS monte_carlo_core electron)
 
-ADD_EXECUTABLE(tstSimulationPropertiesFactory
-  tstSimulationPropertiesFactory.cpp)
-TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
-SET_PROPERTY(TEST SimulationPropertiesFactory_test PROPERTY LABELS monte_carlo_core)
+ADD_EXECUTABLE(tstSimulationProperties
+  tstSimulationProperties.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationProperties monte_carlo_core)
+ADD_TEST(SimulationProperties_test tstSimulationProperties)
+SET_PROPERTY(TEST SimulationProperties_test PROPERTY LABELS monte_carlo_core electron)
 
 ADD_EXECUTABLE(tstSimulationGeneralPropertiesFactory
-  tstSimulationGeneralPropertiesFactory.cpp)
+  tstSimulationGeneralPropertiesFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSimulationGeneralPropertiesFactory monte_carlo_core)
 ADD_TEST(SimulationGeneralPropertiesFactory_test tstSimulationGeneralPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
 SET_PROPERTY(TEST SimulationGeneralPropertiesFactory_test PROPERTY LABELS monte_carlo_core)
 
 ADD_EXECUTABLE(tstSimulationNeutronPropertiesFactory
-  tstSimulationNeutronPropertiesFactory.cpp)
+  tstSimulationNeutronPropertiesFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSimulationNeutronPropertiesFactory monte_carlo_core)
 ADD_TEST(SimulationNeutronPropertiesFactory_test tstSimulationNeutronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
 SET_PROPERTY(TEST SimulationNeutronPropertiesFactory_test PROPERTY LABELS monte_carlo_core neutron)
 
 ADD_EXECUTABLE(tstSimulationPhotonPropertiesFactory
-  tstSimulationPhotonPropertiesFactory.cpp)
+  tstSimulationPhotonPropertiesFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSimulationPhotonPropertiesFactory monte_carlo_core)
 ADD_TEST(SimulationPhotonPropertiesFactory_test tstSimulationPhotonPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
 SET_PROPERTY(TEST SimulationPhotonPropertiesFactory_test PROPERTY LABELS monte_carlo_core photon)
 
+ADD_EXECUTABLE(tstSimulationAdjointPhotonPropertiesFactory
+  tstSimulationAdjointPhotonPropertiesFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationAdjointPhotonPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationAdjointPhotonPropertiesFactory_test tstSimulationAdjointPhotonPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+SET_PROPERTY(TEST SimulationAdjointPhotonPropertiesFactory_test PROPERTY LABELS monte_carlo_core photon)
+
 ADD_EXECUTABLE(tstSimulationElectronPropertiesFactory
-  tstSimulationElectronPropertiesFactory.cpp)
+  tstSimulationElectronPropertiesFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSimulationElectronPropertiesFactory monte_carlo_core)
 ADD_TEST(SimulationElectronPropertiesFactory_test tstSimulationElectronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
 SET_PROPERTY(TEST SimulationElectronPropertiesFactory_test PROPERTY LABELS monte_carlo_core electron)
 
-ADD_EXECUTABLE(tstParticleModeType
-  tstParticleModeType.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleModeType monte_carlo_core)
-ADD_TEST(ParticleModeType_test tstParticleModeType)
-SET_PROPERTY(TEST ParticleModeType_test PROPERTY LABELS monte_carlo_core)
+ADD_EXECUTABLE(tstSimulationPropertiesFactory
+  tstSimulationPropertiesFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+SET_PROPERTY(TEST SimulationPropertiesFactory_test PROPERTY LABELS monte_carlo_core)

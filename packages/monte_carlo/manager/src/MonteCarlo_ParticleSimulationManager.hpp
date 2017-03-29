@@ -22,15 +22,16 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SimulationManager.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Geometry_ModuleInterface.hpp"
 
 namespace MonteCarlo{
 
 //! The generic particle simulation manager class
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
 class ParticleSimulationManager : public SimulationManager
 {
 
@@ -52,10 +53,10 @@ public:
 
   //! Constructor
   ParticleSimulationManager(
-		const unsigned long long number_of_histories,
-		const unsigned long long start_history = 0ull,
-		const unsigned long long previously_completed_histories = 0ull,
-		const double previous_run_time = 0.0 );
+                const std::shared_ptr<const SimulationProperties> properties,
+                const unsigned long long start_history = 0ull,
+                const unsigned long long previously_completed_histories = 0ull,
+                const double previous_run_time = 0.0 );
 
   //! Destructor
   virtual ~ParticleSimulationManager()
@@ -78,7 +79,7 @@ protected:
 
   //! Run the simulation batch
   void runSimulationBatch( const unsigned long long start_history,
-			   const unsigned long long end_history );
+                           const unsigned long long end_history );
 
   //! Return the number of histories
   unsigned long long getNumberOfHistories() const;
@@ -110,7 +111,7 @@ private:
   // Dummy function for ignoring a particle
   template<typename ParticleStateType>
   void ignoreParticle( ParticleStateType& particle,
-		       ParticleBank& particle_bank ) const;
+                       ParticleBank& particle_bank ) const;
 
   // Print lost particle info
   void printLostParticleInfo( const std::string& file,
@@ -118,6 +119,8 @@ private:
                               const std::string& error_message,
                               const ParticleState& particle ) const;
 
+  // The simulation properties
+  std::shared_ptr<const SimulationProperties> d_properties;
 
   // Starting history
   unsigned long long d_start_history;

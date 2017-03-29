@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
 #define MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 
@@ -58,8 +55,8 @@ public:
 
   //! Simulate the reaction
   void react( ElectronState& electron,
-		      ParticleBank& bank,
-		      Data::SubshellType& shell_of_interaction ) const;
+              ParticleBank& bank,
+              Data::SubshellType& shell_of_interaction ) const;
 
 protected:
 

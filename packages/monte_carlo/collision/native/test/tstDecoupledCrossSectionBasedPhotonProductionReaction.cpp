@@ -95,12 +95,15 @@ void initializeDecoupledCrossSectionBasedPhotonProductionReaction(Teuchos::RCP<M
   // Create the photon production nuclear scattering distribution ACE factory
   MonteCarlo::PhotonProductionNuclearScatteringDistributionACEFactory
     photon_production_dist_factory( test_basic_ace_file_name,
-			                              ace_file_handler->getTableAtomicWeightRatio(),
-			                              *xss_data_extractor );
+                                    ace_file_handler->getTableAtomicWeightRatio(),
+                                    *xss_data_extractor );
+
+  MonteCarlo::SimulationProperties properties;
 
   // Create the photon production nuclear scattering distribution
   photon_production_dist_factory.createScatteringDistribution(
 					     reaction_type,
+                                             properties,
 					     photon_production_distribution );;
 
   Teuchos::ArrayRCP<double> energy_grid;

@@ -22,7 +22,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_Electroatom.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
-#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 
 namespace MonteCarlo{
 
@@ -38,12 +38,8 @@ public:
     const Teuchos::ParameterList& cross_section_table_info,
     const std::unordered_set<std::string>& electroatom_aliases,
     const Teuchos::RCP<AtomicRelaxationModelFactory>&
-        atomic_relaxation_model_factory,
-    const unsigned hash_grid_bins,
-    const BremsstrahlungAngularDistributionType
-        photon_distribution_function,
-    const bool use_atomic_relaxation_data,
-    const double cutoff_angle_cosine = 1.0,
+    atomic_relaxation_model_factory,
+    const SimulationProperties& properties,
     std::ostream* os_message = &std::cout );
 
   //! Destructor
@@ -52,38 +48,30 @@ public:
 
   //! Create the map of electroatoms
   void createElectroatomMap(
-		    std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
-		    electroatom_map ) const;
+            std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
+            electroatom_map ) const;
 
 private:
 
   // Create a electroatom from an ACE table
   void createElectroatomFromACETable(
-			  const std::string& electroatom_alias,
-			  const std::string& ace_file_path,
-			  const std::string& electroatomic_table_name,
-			  const int electroatomic_file_start_line,
-			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
-			    atomic_relaxation_model_factory,
-			  const unsigned hash_grid_bins,
-              const BremsstrahlungAngularDistributionType
-                photon_distribution_function,
-              const bool use_atomic_relaxation_data,
-              const double cutoff_angle_cosine = 1.0 );
+              const std::string& electroatom_alias,
+              const std::string& ace_file_path,
+              const std::string& electroatomic_table_name,
+              const int electroatomic_file_start_line,
+              const double atomic_weight,
+              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                          atomic_relaxation_model_factory,
+              const SimulationProperties& properties );
 
   // Create a electroatom from a Native table
   void createElectroatomFromNativeTable(
-			  const std::string& electroatom_alias,
-			  const std::string& ace_file_path,
-			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
-			    atomic_relaxation_model_factory,
-			  const unsigned hash_grid_bins,
-              const BremsstrahlungAngularDistributionType
-                photon_distribution_function,
-              const bool use_atomic_relaxation_data,
-              const double cutoff_angle_cosine = 1.0 );
+              const std::string& electroatom_alias,
+              const std::string& ace_file_path,
+              const double atomic_weight,
+              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                          atomic_relaxation_model_factory,
+              const SimulationProperties& properties );
 
   // The electroatom map
   std::unordered_map<std::string,Teuchos::RCP<Electroatom> >

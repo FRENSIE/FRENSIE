@@ -19,18 +19,17 @@ namespace MonteCarlo{
 
 // Create a atomic excitation distribution
 void AtomicExcitationAdjointElectronScatteringDistributionACEFactory::createAtomicExcitationAdjointDistribution(
-      const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      Teuchos::RCP<const AtomicExcitationAdjointElectronScatteringDistribution>&
-        energy_gain_distribution )
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>&
+      energy_gain_distribution )
 {
   // Create the energy gain function
   AtomicExcitationAdjointElectronScatteringDistribution::AtomicDistribution
                                                            energy_gain_function;
 
   AtomicExcitationAdjointElectronScatteringDistributionACEFactory::createEnergyGainFunction(
-							 raw_electroatom_data,
-							 energy_gain_function );
-
+     raw_electroatom_data,
+     energy_gain_function );
 
   energy_gain_distribution.reset(
     new AtomicExcitationAdjointElectronScatteringDistribution(
@@ -42,11 +41,11 @@ void AtomicExcitationAdjointElectronScatteringDistributionACEFactory::createAtom
 void AtomicExcitationAdjointElectronScatteringDistributionACEFactory::createEnergyGainFunction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       AtomicExcitationAdjointElectronScatteringDistribution::AtomicDistribution&
-                                                          energy_gain_function )
+        energy_gain_function )
 {
    // Extract the atomic excitation scattering information data block (EXCIT)
   Teuchos::ArrayView<const double> excit_block(
-				      raw_electroatom_data.extractEXCITBlock() );
+                  raw_electroatom_data.extractEXCITBlock() );
 
   // Extract the number of tabulated energies
   int size = excit_block.size()/2;
@@ -69,7 +68,7 @@ void AtomicExcitationAdjointElectronScatteringDistributionACEFactory::createEner
 
   energy_gain_function.reset(
     new Utility::TabularDistribution<Utility::LinLin>(
-                    adjoint_excitation_energy_grid,
+            adjoint_excitation_energy_grid,
 		    energy_loss ) );
 }
 

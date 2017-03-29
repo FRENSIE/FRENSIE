@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="11">
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Wed Aug 31 15:09:16 MDT 2016. It is for testing only!</notes>
+	<notes>This table was generated on Fri Mar 17 13:58:48 CDT 2017. It is for testing only!</notes>
 	<atomic_number>6</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -13,6 +13,7 @@
 	<photon_threshold_energy_nudge_factor>1.00009999999999999e+00</photon_threshold_energy_nudge_factor>
 	<cutoff_angle_cosine>1.00000000000000000e+00</cutoff_angle_cosine>
 	<number_of_moment_preserving_angles>0.00000000000000000e+00</number_of_moment_preserving_angles>
+	<linlinlog_interpolation_mode_on>1</linlinlog_interpolation_mode_on>
 	<grid_convergence_tol>1.00000000000000002e-03</grid_convergence_tol>
 	<grid_absolute_diff_tol>9.99999999999999996e-71</grid_absolute_diff_tol>
 	<grid_distance_tol>1.00000000000000007e-18</grid_distance_tol>
@@ -37484,6 +37485,10 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_elastic_weights>
+	<reduced_cutoff_cross_section_ratios>
+		<count>0</count>
+		<item_version>0</item_version>
+	</reduced_cutoff_cross_section_ratios>
 	<electroionization_energy_grid>
 		<count>4</count>
 		<item_version>0</item_version>
@@ -45187,7 +45192,7 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_elastic_cross_section>
-	<moment_preserving_elastic_cross_section_threshold_index>3286845712</moment_preserving_elastic_cross_section_threshold_index>
+	<moment_preserving_elastic_cross_section_threshold_index>10788928</moment_preserving_elastic_cross_section_threshold_index>
 	<electroionization_subshell_cross_section>
 		<count>4</count>
 		<item_version>0</item_version>

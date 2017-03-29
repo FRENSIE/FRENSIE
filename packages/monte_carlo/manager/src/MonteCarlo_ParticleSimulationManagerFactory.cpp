@@ -60,9 +60,10 @@ ParticleSimulationManagerFactory::createManager(
   else
     out.reset( &std::cerr, false );
 
-  // Initialize the simulation properties
-  SimulationPropertiesFactory::initializeSimulationProperties( simulation_info,
-							       out.get() );
+  // Create the simulation properties
+  std::shared_ptr<const SimulationProperties> properties =
+    SimulationPropertiesFactory::createProperties( simulation_info,
+                                                   out.get() );
 
   // Determine which geometry handler has been requested
   TEST_FOR_EXCEPTION( !geom_def.isParameter( "Handler" ),
@@ -83,6 +84,7 @@ ParticleSimulationManagerFactory::createManager(
                                                   cross_sections_table_info,
                                                   cross_sections_xml_directory,
                                                   comm,
+                                                  properties,
                                                   out.get() );
 
   }
@@ -97,6 +99,7 @@ ParticleSimulationManagerFactory::createManager(
                                                   cross_sections_table_info,
                                                   cross_sections_xml_directory,
                                                   comm,
+                                                  properties,
                                                   out.get() );
   }
   else
@@ -118,6 +121,7 @@ ParticleSimulationManagerFactory::createManagerWithDagMC(
             const Teuchos::ParameterList& cross_sections_table_info,
             const std::string& cross_sections_xml_directory,
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const std::shared_ptr<const SimulationProperties>& properties,
             std::ostream* os_warn )
 {
 #ifdef HAVE_FRENSIE_DAGMC
@@ -135,9 +139,10 @@ ParticleSimulationManagerFactory::createManagerWithDagMC(
                                                   material_def,
                                                   cross_sections_table_info,
                                                   cross_sections_xml_directory,
+                                                  properties,
                                                   os_warn );
   // Create the manager
-  return ParticleSimulationManagerFactory::createManager<Geometry::DagMC,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
+  return ParticleSimulationManagerFactory::createManager<Geometry::DagMC,ParticleSource,EventHandler,CollisionHandler>( properties, comm, 0 );
 
 #else
   THROW_EXCEPTION( InvalidSimulationInfo,
@@ -158,6 +163,7 @@ ParticleSimulationManagerFactory::createManagerWithRoot(
             const Teuchos::ParameterList& cross_sections_table_info,
             const std::string& cross_sections_xml_directory,
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const std::shared_ptr<const SimulationProperties>& properties,
             std::ostream* os_warn )
 {
 #ifdef HAVE_FRENSIE_ROOT
@@ -175,9 +181,10 @@ ParticleSimulationManagerFactory::createManagerWithRoot(
                                                   material_def,
                                                   cross_sections_table_info,
                                                   cross_sections_xml_directory,
+                                                  properties,
                                                   os_warn );
   // Create the manager
-  return ParticleSimulationManagerFactory::createManager<Geometry::Root,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
+  return ParticleSimulationManagerFactory::createManager<Geometry::Root,ParticleSource,EventHandler,CollisionHandler>( properties, comm, 0 );
 
 #else
   THROW_EXCEPTION( InvalidSimulationInfo,

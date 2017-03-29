@@ -16,7 +16,8 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardPhotoatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSPhotoatomicDataExtractor.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -41,14 +42,14 @@ bool notEqualZero( double value )
 // Testing Structs.
 //---------------------------------------------------------------------------//
 template<typename InterpPolicy, bool processed_cross_section>
-class TestPhotoatomicReaction : public MonteCarlo::StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>
+class TestPhotoatomicReaction : public MonteCarlo::StandardGenericAtomicReaction<MonteCarlo::PhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
 public:
   TestPhotoatomicReaction(
         const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
         const Teuchos::ArrayRCP<const double>& cross_section,
         const double threshold_energy )
-    : MonteCarlo::StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>( incoming_energy_grid, cross_section, threshold_energy )
+    : MonteCarlo::StandardGenericAtomicReaction<MonteCarlo::PhotoatomicReaction,InterpPolicy,processed_cross_section>( incoming_energy_grid, cross_section, threshold_energy )
   { /* ... */ }
 
   ~TestPhotoatomicReaction()

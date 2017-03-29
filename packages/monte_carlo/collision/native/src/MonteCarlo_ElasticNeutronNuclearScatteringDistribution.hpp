@@ -31,6 +31,7 @@ public:
   //! Constructor
   ElasticNeutronNuclearScatteringDistribution(
 		     const double atomic_weight_ratio,
+                     const double free_gas_threshold,
                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		     angular_scattering_distribution );
 
@@ -69,6 +70,9 @@ private:
   // Sample the speed of the target nucleus
   double sampleTargetSpeed( const ParticleState& neutron,
 			    const double temperature ) const;
+
+  // The free gas threshold
+  double d_free_gas_threshold;
 
   // The incoming energy dependent angular scattering distribution
   Teuchos::RCP<NuclearScatteringAngularDistribution>

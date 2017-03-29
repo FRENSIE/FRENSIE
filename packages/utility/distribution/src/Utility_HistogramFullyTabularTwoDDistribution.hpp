@@ -87,11 +87,17 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Return a random sample from the secondary conditional PDF and the index
-  SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const;
+  //! Evaluate the secondary conditional CDF
+  double correlatedEvaluateSecondaryConditionalCDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const;
+
+  //! Evaluate the secondary conditional CDF
+  double evaluateSecondaryConditionalCDFExact(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
@@ -108,6 +114,12 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF and the index
+  SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const;
 };
 
 /*! The histogram fully tabular two-dimensional distribution (unit-agnostic)

@@ -18,7 +18,7 @@ namespace MonteCarlo{
 
 // Convert a BremsstrahlungAngularDistributionType enum to a string
 std::string convertBremsstrahlungAngularDistributionEnumToString(
-				       const BremsstrahlungAngularDistributionType reaction )
+                       const BremsstrahlungAngularDistributionType reaction )
 {
   switch( reaction )
   {
@@ -30,8 +30,8 @@ std::string convertBremsstrahlungAngularDistributionEnumToString(
     return "2BS Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: cannot convert the Bremsstrahlung angular distribution "
-		     "type to a string!" );
+                     "Error: cannot convert the Bremsstrahlung angular "
+                     "distribution type to a string!" );
   }
 }
 

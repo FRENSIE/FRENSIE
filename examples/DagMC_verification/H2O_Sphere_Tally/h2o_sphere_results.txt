@@ -1,0 +1,14 @@
+root: 
+#  Estimators/1/processed_total_bin_data :
+0.00105960177841 0.000880587425464
+
+dag:
+#  Estimators/1/processed_total_bin_data :
+0.00106135557984 0.000879527821406
+
+MCNP5:
+#  Hopefully output
+(1.05898E-03 0.0006) 
+
+
+

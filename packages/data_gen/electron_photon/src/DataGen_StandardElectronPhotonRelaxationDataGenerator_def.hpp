@@ -17,16 +17,16 @@ namespace DataGen{
 // Extract the average photon heating numbers
 template<typename InterpPolicy>
 void StandardElectronPhotonRelaxationDataGenerator::extractPhotonCrossSection(
-	   Teuchos::ArrayView<const double> raw_energy_grid,
-	   Teuchos::ArrayView<const double> raw_cross_section,
-	   std::shared_ptr<const Utility::OneDDistribution>& cross_section,
+           Teuchos::ArrayView<const double> raw_energy_grid,
+           Teuchos::ArrayView<const double> raw_cross_section,
+           std::shared_ptr<const Utility::OneDDistribution>& cross_section,
            const bool processed_raw_data ) const
 {
   // Find the first non-zero cross section value
   Teuchos::ArrayView<const double>::iterator start =
     std::find_if( raw_cross_section.begin(),
-		  raw_cross_section.end(),
-		  notEqualZero );
+                  raw_cross_section.end(),
+                  notEqualZero );
 
   Teuchos::Array<double> processed_cross_section;
   processed_cross_section.assign( start, raw_cross_section.end() );
@@ -54,8 +54,8 @@ void StandardElectronPhotonRelaxationDataGenerator::extractPhotonCrossSection(
   }
 
   cross_section.reset( new Utility::TabularDistribution<InterpPolicy>(
-						   energy_grid,
-						   processed_cross_section ) );
+                                                   energy_grid,
+                                                   processed_cross_section ) );
 }
 
 // Extract electron cross section
@@ -63,11 +63,11 @@ template<typename InterpPolicy>
 void StandardElectronPhotonRelaxationDataGenerator::extractElectronCrossSection(
        const std::vector<double>& raw_energy_grid,
        const std::vector<double>& raw_cross_section,
-	   std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const
+           std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const
 {
   cross_section.reset( new Utility::TabularDistribution<InterpPolicy>(
-						   raw_energy_grid,
-						   raw_cross_section ) );
+                                                   raw_energy_grid,
+                                                   raw_cross_section ) );
 }
 
 } // end DataGen namespace

@@ -22,11 +22,15 @@ ParticleState::ParticleState()
     d_particle_type(),
     d_position(),
     d_direction{0.0,0.0,1.0},
+    d_source_energy( 0.0 ),
     d_energy( 0.0 ),
+    d_source_time( 0.0 ),
     d_time( 0.0 ),
     d_collision_number( 0 ),
     d_generation_number( 0 ),
+    d_source_weight( 1.0 ),
     d_weight( 1.0 ),
+    d_source_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
     d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
     d_lost( false ),
     d_gone( false ),
@@ -41,11 +45,15 @@ ParticleState::ParticleState(
     d_particle_type( type ),
     d_position(),
     d_direction(),
+    d_source_energy( 0.0 ),
     d_energy( 0.0 ),
+    d_source_time( 0.0 ),
     d_time( 0.0 ),
     d_collision_number( 0 ),
     d_generation_number( 0 ),
+    d_source_weight( 1.0 ),
     d_weight( 1.0 ),
+    d_source_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
     d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
     d_lost( false ),
     d_gone( false ),
@@ -68,11 +76,15 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
     d_direction{existing_base_state.d_direction[0],
 	        existing_base_state.d_direction[1],
 	        existing_base_state.d_direction[2]},
+    d_source_energy( existing_base_state.d_source_energy ),
     d_energy( existing_base_state.d_energy ),
+    d_source_time( existing_base_state.d_source_time ),
     d_time( existing_base_state.d_time ),
     d_collision_number( existing_base_state.d_collision_number ),
     d_generation_number( existing_base_state.d_generation_number ),
+    d_source_weight( existing_base_state.d_source_weight ),
     d_weight( existing_base_state.d_weight ),
+    d_source_cell( existing_base_state.d_source_cell ),
     d_cell( existing_base_state.d_cell ),
     d_lost( false ),
     d_gone( false ),
@@ -113,6 +125,26 @@ ParticleState::historyNumberType ParticleState::getHistoryNumber() const
 ParticleType ParticleState::getParticleType() const
 {
   return d_particle_type;
+}
+
+// Return the cell handle for the cell where the particle (history) started
+Geometry::ModuleTraits::InternalCellHandle ParticleState::getSourceCell() const
+{
+  return d_source_cell;
+}
+
+// Set the cell where the particle (history) started
+/*! \details This method should only be called when the particle history
+ * is first started (particle with generation number 0).
+ */
+void ParticleState::setSourceCell(
+                        const Geometry::ModuleTraits::InternalCellHandle cell )
+{
+  // Make sure the cell handle is valid
+  testPrecondition( cell !=
+                    Geometry::ModuleTraits::invalid_internal_cell_handle );
+
+  d_source_cell = cell;
 }
 
 // Return the cell handle for the cell containing the particle
@@ -258,6 +290,19 @@ void ParticleState::advance( const double distance )
   d_time += calculateTraversalTime( distance );
 }
 
+// Set the source (starting) energy of the particle (history) (MeV)
+/*! \details This method should only be called when the particle history
+ * is first started (particle with generation number 0).
+ */
+void ParticleState::setSourceEnergy( const energyType energy )
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+
+  d_source_energy = energy;
+}
+
 // Set the energy of the particle
 /*! The default implementation is only valid for massless particles (It is
  * assumed that the speed of the particle does not change with the energy).
@@ -269,6 +314,21 @@ void ParticleState::setEnergy( const ParticleState::energyType energy )
   testPrecondition( energy > 0.0 );
 
   d_energy = energy;
+}
+
+// Return the source (starting) time of the particle (history) (s)
+ParticleState::timeType ParticleState::getSourceTime() const
+{
+  return d_source_time;
+}
+
+// Set the source (starting) time of the particle (history) (s)
+/*! \details This method should only be called when the particle history
+ * is first started (particle with generation number 0).
+ */
+void ParticleState::setSourceTime( const timeType time )
+{
+  d_source_time = time;
 }
 
 // Return the time state of the particle
@@ -316,6 +376,24 @@ void ParticleState::incrementGenerationNumber()
   ++d_generation_number;
 }
 
+// Return the source (starting) weight of the particle (history)
+double ParticleState::getSourceWeight() const
+{
+  return d_source_weight;
+}
+
+// Set the source (starting) weight of the particle (history)
+/*! \details This method should only be called when the particle history
+ * is first started (particle with generation number 0).
+ */
+void ParticleState::setSourceWeight( const double weight )
+{
+  // Make sure the weight is valid
+  testPrecondition( weight > 0.0 );
+
+  d_source_weight = weight;
+}
+
 // Return the weight of the particle
 double ParticleState::getWeight() const
 {
@@ -325,6 +403,9 @@ double ParticleState::getWeight() const
 // Set the weight of the particle
 void ParticleState::setWeight( const double weight )
 {
+  // Make sure that the current weight is valid
+  testPrecondition( weight > 0.0 );
+  
   d_weight = weight;
 }
 

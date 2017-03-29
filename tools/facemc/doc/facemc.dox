@@ -953,9 +953,9 @@
  *      <ul>
  *       <li>\code
  *           <ParameterList name="Spatial Distribution">
- *             <Parameter name="X Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
- *             <Parameter name="Y Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
- *             <Parameter name="Z Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
+ *             <Parameter name="X Distribution" type="Uniform Distribution" value="{-10,10}"/>
+ *             <Parameter name="Y Distribution" type="Uniform Distribution" value="{-10,10}"/>
+ *             <Parameter name="Z Distribution" type="Uniform Distribution" value="{-10,10}"/>
  *           </ParameterList>
  *           \endcode</li>
  *       <li>Three parameters are required for this distribution: the "X
@@ -1347,7 +1347,9 @@
  *      the estimator. The phase space bins that can currently be specified are
  *      the following:
  *      <ul>
+ *       <li>Source Energy Bins</li>
  *       <li>Energy Bins</li>
+ *       <li>Source Time Bins</li>
  *       <li>Time Bins</li>
  *       <li>Cosine Bins</li>
  *       <li>Collision Number Bins</li>
@@ -1356,7 +1358,9 @@
  *      The order that the different phase space bins are specified in is
  *      important. The first bins specified will run the fastest (they will be
  *      added to all of the later bins specified). \ref interval_operators
- *      "Interval operators" can be used when specifying estimator bins.
+ *      "Interval operators" can be used when specifying estimator bins. Note
+ *      that the "Source" bins are for the starting state of the particle
+ *      history (generation zero).
  *      <ul>
  *       <li>\code
  *        <ParameterList name="Bins">

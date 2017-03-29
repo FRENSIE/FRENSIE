@@ -30,13 +30,13 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer>
+std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer>
   native_h_data, native_pb_data, native_al_data;
-Teuchos::RCP<const DataGen::StandardMomentPreservingElectronDataGenerator>
+std::shared_ptr<const DataGen::StandardMomentPreservingElectronDataGenerator>
   data_generator_h, data_generator_pb, data_generator_al;
 
 int number_of_discrete_angles = 3;
-/*
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -76,47 +76,50 @@ TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
                        number_of_discrete_angles+1 );
 
   data_container.exportData( "test_h_moment_preserving.xml",
-			     Utility::ArchivableObject::XML_ARCHIVE );
+                 Utility::ArchivableObject::XML_ARCHIVE );
 }
 
-//---------------------------------------------------------------------------//
-// Check that a data container can be populated
-TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
-                   populateMomentPreservingDataContainer_pb )
-{
-  Data::MomentPreservingElectronVolatileDataContainer data_container;
+/*  NOTE: These tests can be added but they are time consuming and the other
+ *  tests are sufficient.
+ */
+////---------------------------------------------------------------------------//
+//// Check that a data container can be populated
+//TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
+//                   populateMomentPreservingDataContainer_pb )
+//{
+//  Data::MomentPreservingElectronVolatileDataContainer data_container;
 
-  data_generator_pb->populateMomentPreservingDataContainer( data_container, 3 );
+//  data_generator_pb->populateMomentPreservingDataContainer( data_container, 3 );
 
-  std::vector<double> angular_grid =
-    data_container.getElasticAngularEnergyGrid();
+//  std::vector<double> angular_grid =
+//    data_container.getElasticAngularEnergyGrid();
 
-  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 82 );
-  TEST_EQUALITY_CONST( angular_grid[0], 1.0e-5 );
-  TEST_EQUALITY_CONST( angular_grid[1], 1.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[2], 2.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[3], 4.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[4], 8.0e-3 );
-  TEST_EQUALITY_CONST( angular_grid[5], 1.6e-2 );
-  TEST_EQUALITY_CONST( angular_grid[6], 3.2e-2 );
-  TEST_EQUALITY_CONST( angular_grid[7], 6.4e-2 );
-  TEST_EQUALITY_CONST( angular_grid[8], 1.28e-1 );
-  TEST_EQUALITY_CONST( angular_grid[9], 2.56e-1 );
-  TEST_EQUALITY_CONST( angular_grid[10], 1.0e+1 );
-  TEST_EQUALITY_CONST( angular_grid[11], 3.25e+1 );
-  TEST_EQUALITY_CONST( angular_grid[12], 5.5e+1 );
-  TEST_EQUALITY_CONST( angular_grid[13], 1.0e+5 );
-  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
-                       number_of_discrete_angles+1 );
-  TEST_EQUALITY_CONST( data_container.getMomentPreservingDiscreteAngles(1).size(),
-                       number_of_discrete_angles+1 );
-  TEST_EQUALITY_CONST( data_container.getMomentPreservingWeights(1).size(),
-                       number_of_discrete_angles+1 );
+//  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 82 );
+//  TEST_EQUALITY_CONST( angular_grid[0], 1.0e-5 );
+//  TEST_EQUALITY_CONST( angular_grid[1], 1.0e-3 );
+//  TEST_EQUALITY_CONST( angular_grid[2], 2.0e-3 );
+//  TEST_EQUALITY_CONST( angular_grid[3], 4.0e-3 );
+//  TEST_EQUALITY_CONST( angular_grid[4], 8.0e-3 );
+//  TEST_EQUALITY_CONST( angular_grid[5], 1.6e-2 );
+//  TEST_EQUALITY_CONST( angular_grid[6], 3.2e-2 );
+//  TEST_EQUALITY_CONST( angular_grid[7], 6.4e-2 );
+//  TEST_EQUALITY_CONST( angular_grid[8], 1.28e-1 );
+//  TEST_EQUALITY_CONST( angular_grid[9], 2.56e-1 );
+//  TEST_EQUALITY_CONST( angular_grid[10], 1.0e+1 );
+//  TEST_EQUALITY_CONST( angular_grid[11], 3.25e+1 );
+//  TEST_EQUALITY_CONST( angular_grid[12], 5.5e+1 );
+//  TEST_EQUALITY_CONST( angular_grid[13], 1.0e+5 );
+//  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
+//                       number_of_discrete_angles+1 );
+//  TEST_EQUALITY_CONST( data_container.getMomentPreservingDiscreteAngles(1).size(),
+//                       number_of_discrete_angles+1 );
+//  TEST_EQUALITY_CONST( data_container.getMomentPreservingWeights(1).size(),
+//                       number_of_discrete_angles+1 );
 
-  data_container.exportData( "test_pb_moment_preserving.xml",
-			     Utility::ArchivableObject::XML_ARCHIVE );
-}
-*/
+//  data_container.exportData( "test_pb_moment_preserving.xml",
+//                 Utility::ArchivableObject::XML_ARCHIVE );
+//}
+
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
 TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
@@ -155,7 +158,7 @@ TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
                        2 );
 
   data_container.exportData( "test_al_moment_preserving.xml",
-			     Utility::ArchivableObject::XML_ARCHIVE );
+                 Utility::ArchivableObject::XML_ARCHIVE );
 }
 
 //---------------------------------------------------------------------------//
@@ -170,14 +173,14 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_h_native_file",
-		 &test_h_native_file_name,
-		 "Test NATIVE H file name" );
+         &test_h_native_file_name,
+         "Test NATIVE H file name" );
   clp.setOption( "test_pb_native_file",
-		 &test_pb_native_file_name,
-		 "Test NATIVE Pb file name" );
+         &test_pb_native_file_name,
+         "Test NATIVE Pb file name" );
   clp.setOption( "test_al_native_file",
-		 &test_al_native_file_name,
-		 "Test NATIVE Al file name" );
+         &test_al_native_file_name,
+         "Test NATIVE Al file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -190,46 +193,63 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
+  double min_energy = 0.00001;
+  double max_energy = 20.0;
+  double tabular_evaluation_tol = 1e-7;
+  bool linlinlog_interpolation_mode_on = true;
+
   {
     // Create the native data file container
     native_h_data.reset( new Data::ElectronPhotonRelaxationDataContainer(
-						     test_h_native_file_name ) );
+                             test_h_native_file_name ) );
+
+    double cutoff_angle_cosine = 0.9;
 
     data_generator_h.reset(
-		   new DataGen::StandardMomentPreservingElectronDataGenerator(
-				     native_h_data->getAtomicNumber(),
-				     native_h_data,
-				     0.00001,
-				     20.0,
-				     0.9 ) );
+           new DataGen::StandardMomentPreservingElectronDataGenerator(
+                     native_h_data->getAtomicNumber(),
+                     native_h_data,
+                     min_energy,
+                     max_energy,
+                     cutoff_angle_cosine,
+                     tabular_evaluation_tol,
+                     linlinlog_interpolation_mode_on ) );
   }
 
   {
     // Create the native data file container
     native_pb_data.reset( new Data::ElectronPhotonRelaxationDataContainer(
-						     test_pb_native_file_name ) );
+                             test_pb_native_file_name ) );
+
+    double cutoff_angle_cosine = 0.9;
 
     data_generator_pb.reset(
-		   new DataGen::StandardMomentPreservingElectronDataGenerator(
-				     native_pb_data->getAtomicNumber(),
-				     native_pb_data,
-				     0.00001,
-				     20.0,
-				     0.9 ) );
+           new DataGen::StandardMomentPreservingElectronDataGenerator(
+                     native_pb_data->getAtomicNumber(),
+                     native_pb_data,
+                     min_energy,
+                     max_energy,
+                     cutoff_angle_cosine,
+                     tabular_evaluation_tol,
+                     linlinlog_interpolation_mode_on ) );
   }
 
   {
     // Create the native data file container
     native_al_data.reset( new Data::ElectronPhotonRelaxationDataContainer(
-						     test_al_native_file_name ) );
+                             test_al_native_file_name ) );
+
+    double cutoff_angle_cosine = 0.999999;
 
     data_generator_al.reset(
-		   new DataGen::StandardMomentPreservingElectronDataGenerator(
-				     native_al_data->getAtomicNumber(),
-				     native_al_data,
-				     0.00001,
-				     20.0,
-				     0.999999 ) );
+           new DataGen::StandardMomentPreservingElectronDataGenerator(
+                     native_al_data->getAtomicNumber(),
+                     native_al_data,
+                     min_energy,
+                     max_energy,
+                     cutoff_angle_cosine,
+                     tabular_evaluation_tol,
+                     linlinlog_interpolation_mode_on ) );
   }
 
   // Run the unit tests

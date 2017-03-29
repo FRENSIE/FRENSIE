@@ -248,7 +248,7 @@ Photoatom::getNuclearAbsorptionCrossSection( const double energy ) const
   return 0.0;
 }
 
-// Return the crosss ection for a specific photonuclear reaction
+// Return the cross section for a specific photonuclear reaction
 /*! \details By default, photonuclear reactions are not considered.
  */
 inline double Photoatom::getReactionCrossSection(
@@ -264,7 +264,7 @@ inline const PhotoatomCore& Photoatom::getCore() const
   return d_core;
 }
 
-// Return the total cross section from atomic interactions with a bin index
+// Return the scatt. cross section from atomic interactions with a bin index
 inline double Photoatom::getAtomicScatteringCrossSection(
 					 const double energy,
 				         const unsigned energy_grid_bin ) const

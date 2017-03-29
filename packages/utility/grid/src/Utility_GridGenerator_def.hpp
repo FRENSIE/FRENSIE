@@ -500,7 +500,8 @@ bool GridGenerator<InterpPolicy>::hasGridConverged(
   {
     std::ostringstream oss;
     oss.precision( 18 );
-    oss << "distance tolerance hit before convergence - "
+    oss << "distance tolerance (" << d_distance_tol
+        << ") hit before convergence (" << d_convergence_tol << ")- "
         << "relError(x0,x1) = relError(" << lower_grid_point << ","
         << upper_grid_point << ") = " << relative_distance
         << ", relError(ym,ym_exact) = relError(" << y_mid_estimated

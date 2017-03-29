@@ -23,18 +23,18 @@ public:
 
   //! Create a cutoff elastic distribution
   static void createCutoffElasticDistribution(
-	std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
+    std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const double upper_cutoff_angle_cosine = 1.0 );
 
 protected:
 
   //! Create the elastic scattering function
   static void createScatteringFunction(
-        const Data::XSSEPRDataExtractor& raw_electroatom_data,
-        std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-            scattering_function );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+        scattering_function );
 };
 
 } // end MonteCarlo namespace

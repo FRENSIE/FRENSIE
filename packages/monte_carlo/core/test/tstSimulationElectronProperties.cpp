@@ -22,126 +22,223 @@
 // Test the simulation properties defaults
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
 {
+  MonteCarlo::SimulationElectronProperties properties;
+  
+  TEST_EQUALITY_CONST( properties.getAbsoluteMinElectronEnergy(), 1.5e-5 );
+  TEST_EQUALITY_CONST( properties.getMinElectronEnergy(), 1.5e-5 );
+  TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( properties.getAbsoluteMaxElectronEnergy(), 1.0e5 );
+  TEST_ASSERT( properties.isAtomicRelaxationModeOn() );
+  TEST_ASSERT( properties.isElasticModeOn() );
+  TEST_ASSERT( properties.isElectroionizationModeOn() );
+  TEST_ASSERT( properties.isBremsstrahlungModeOn() );
+  TEST_ASSERT( properties.isAtomicExcitationModeOn() );
+  TEST_ASSERT( properties.isLinLinLogInterpolationModeOn() );
+  TEST_ASSERT( properties.isCorrelatedSamplingModeOn() );
+  TEST_ASSERT( properties.isUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST(
-	MonteCarlo::SimulationElectronProperties::getAbsoluteMinElectronEnergy(),
-	1.5e-5 );
-  TEST_EQUALITY_CONST(
-	MonteCarlo::SimulationElectronProperties::getMinElectronEnergy(),
-	1.5e-5 );
-  TEST_EQUALITY_CONST(
-	MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy(),
-	20.0 );
-  TEST_EQUALITY_CONST(
-	MonteCarlo::SimulationElectronProperties::getAbsoluteMaxElectronEnergy(),
-	1.0e5 );
-  TEST_ASSERT(
-	MonteCarlo::SimulationElectronProperties::isAtomicRelaxationModeOn() );
-  TEST_EQUALITY_CONST(
-	MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-	MonteCarlo::TWOBS_DISTRIBUTION );
-  TEST_EQUALITY_CONST(
-	MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
-	1.0 );
+                     properties.getBremsstrahlungAngularDistributionFunction(),
+                     MonteCarlo::TWOBS_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(),
+                       1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the min electron energy can be set
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setMinElectronEnergy )
 {
-  double default_value =
-    MonteCarlo::SimulationElectronProperties::getMinElectronEnergy();
+  MonteCarlo::SimulationElectronProperties properties;
+  
+  properties.setMinElectronEnergy( 1e-2 );
 
-  MonteCarlo::SimulationElectronProperties::setMinElectronEnergy( 1e-2 );
-
-  TEST_ASSERT( MonteCarlo::SimulationElectronProperties::getMinElectronEnergy() !=
-	       default_value );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationElectronProperties::getMinElectronEnergy(),
-		      1e-2 );
-
-  // Reset the default value
-  MonteCarlo::SimulationElectronProperties::setMinElectronEnergy( default_value );
+  TEST_EQUALITY_CONST( properties.getMinElectronEnergy(), 1e-2 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the max electron energy can be set
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setMaxElectronEnergy )
 {
-  double default_value =
-    MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy();
+  MonteCarlo::SimulationElectronProperties properties;
+  
+  properties.setMaxElectronEnergy( 15.0 );
 
-  MonteCarlo::SimulationElectronProperties::setMaxElectronEnergy( 15.0 );
-
-  TEST_ASSERT( MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy() !=
-	       default_value );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy(),
-		      15.0 );
-
-  // Reset the default value
-  MonteCarlo::SimulationElectronProperties::setMaxElectronEnergy( default_value );
+  TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 15.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that atomic relaxation mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicRelaxationModeOff )
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicRelaxationModeOffOn )
 {
-  TEST_ASSERT( MonteCarlo::SimulationElectronProperties::isAtomicRelaxationModeOn() );
+  MonteCarlo::SimulationElectronProperties properties;
 
-  MonteCarlo::SimulationElectronProperties::setAtomicRelaxationModeOff();
+  properties.setAtomicRelaxationModeOff();
 
-  TEST_ASSERT( !MonteCarlo::SimulationElectronProperties::isAtomicRelaxationModeOn() );
+  TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
+
+  properties.setAtomicRelaxationModeOn();
+  
+  TEST_ASSERT( properties.isAtomicRelaxationModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that elastic mode can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticModeOffOn )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  properties.setElasticModeOff();
+
+  TEST_ASSERT( !properties.isElasticModeOn() );
+
+  properties.setElasticModeOn();
+  
+  TEST_ASSERT( properties.isElasticModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that electroionization mode can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectroionizationModeOffOn )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  properties.setElectroionizationModeOff();
+
+  TEST_ASSERT( !properties.isElectroionizationModeOn() );
+
+  properties.setElectroionizationModeOn();
+  
+  TEST_ASSERT( properties.isElectroionizationModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that bremsstrahlung mode can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungModeOffOn )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  properties.setBremsstrahlungModeOff();
+
+  TEST_ASSERT( !properties.isBremsstrahlungModeOn() );
+
+  properties.setBremsstrahlungModeOn();
+  
+  TEST_ASSERT( properties.isBremsstrahlungModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that atomic excitation mode can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicExcitationModeOffOn )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  properties.setAtomicExcitationModeOff();
+
+  TEST_ASSERT( !properties.isAtomicExcitationModeOn() );
+
+  properties.setAtomicExcitationModeOn();
+  
+  TEST_ASSERT( properties.isAtomicExcitationModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the electron evaluation tolerance can be set
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronEvaluationTolerance )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+  
+  properties.setElectronEvaluationTolerance( 1e-4 );
+
+  TEST_EQUALITY( properties.getElectronEvaluationTolerance(), 1e-4 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that secondary electron LinLinLog interpolation can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setLinLinLogInterpolationModeOffOn )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  properties.setLinLinLogInterpolationModeOff();
+
+  TEST_ASSERT( !properties.isLinLinLogInterpolationModeOn() );
+
+  properties.setLinLinLogInterpolationModeOn();
+  
+  TEST_ASSERT( properties.isLinLinLogInterpolationModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that correlated sampling mode can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setCorrelatedSamplingModeOffOn )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  properties.setCorrelatedSamplingModeOff();
+
+  TEST_ASSERT( !properties.isCorrelatedSamplingModeOn() );
+
+  properties.setCorrelatedSamplingModeOn();
+  
+  TEST_ASSERT( properties.isCorrelatedSamplingModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that unit based interpolation mode can be turned off
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setUnitBasedInterpolationModeOffOn )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  properties.setUnitBasedInterpolationModeOff();
+
+  TEST_ASSERT( !properties.isUnitBasedInterpolationModeOn() );
+
+  properties.setUnitBasedInterpolationModeOn();
+  
+  TEST_ASSERT( properties.isUnitBasedInterpolationModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the bremsstrahlung angular distribution function can be turned to Dipole
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungAngularDistributionFunction_Dipole )
+TEUCHOS_UNIT_TEST( SimulationElectronProperties,
+                   setBremsstrahlungAngularDistributionFunction_Dipole )
 {
-  TEST_EQUALITY_CONST(
-    MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-	MonteCarlo::TWOBS_DISTRIBUTION );
-
+  MonteCarlo::SimulationElectronProperties properties;
+  
   MonteCarlo::BremsstrahlungAngularDistributionType function;
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  MonteCarlo::SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
-                          function );
+  properties.setBremsstrahlungAngularDistributionFunction( function );
 
   TEST_EQUALITY_CONST(
-    MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-	MonteCarlo::DIPOLE_DISTRIBUTION );
+                     properties.getBremsstrahlungAngularDistributionFunction(),
+                     MonteCarlo::DIPOLE_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the bremsstrahlung angular distribution function can be turned to Tabular
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungAngularDistributionFunction_Tabular )
+TEUCHOS_UNIT_TEST( SimulationElectronProperties,
+                   setBremsstrahlungAngularDistributionFunction_Tabular )
 {
-  TEST_EQUALITY_CONST(
-    MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-	MonteCarlo::DIPOLE_DISTRIBUTION );
-
+  MonteCarlo::SimulationElectronProperties properties;
+  
   MonteCarlo::BremsstrahlungAngularDistributionType function;
   function = MonteCarlo::TABULAR_DISTRIBUTION;
 
-  MonteCarlo::SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
-                          function );
+  properties.setBremsstrahlungAngularDistributionFunction( function );
 
   TEST_EQUALITY_CONST(
-    MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-	MonteCarlo::TABULAR_DISTRIBUTION );
+                     properties.getBremsstrahlungAngularDistributionFunction(),
+                     MonteCarlo::TABULAR_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the elastic cutoff angle cosine can be set
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticCutoffAngleCosine )
 {
-  TEST_EQUALITY(
-        MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
-        1.0 );
+  MonteCarlo::SimulationElectronProperties properties;
+  
+  properties.setElasticCutoffAngleCosine( 0.9 );
 
-  MonteCarlo::SimulationElectronProperties::setElasticCutoffAngleCosine( 0.9 );
-
-  TEST_EQUALITY(
-        MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
-        0.9 );
+  TEST_EQUALITY( properties.getElasticCutoffAngleCosine(), 0.9 );
 }
 
 //---------------------------------------------------------------------------//

@@ -32,7 +32,8 @@ public:
   //! Constructor
   AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
-    const int atomic_number );
+    const int atomic_number,
+    const bool linlinlog_interpolation_mode_on = true );
 
   //! Destructor
   virtual ~AnalogElasticElectronScatteringDistribution()
@@ -62,13 +63,13 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-                        ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
   //! Randomly scatter the adjoint electron
-  void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
-                               ParticleBank& bank,
+  void scatterAdjointElectron( MonteCarlo::AdjointElectronState& adjoint_electron,
+                               MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
   //! Evaluate Moliere's atomic screening constant at the given electron energy
@@ -111,6 +112,7 @@ protected:
    //! Sample an outgoing direction from the distribution
   void sampleBin(
             const TwoDDist::DistributionType::const_iterator& distribution_bin,
+            const double random_number,
             double& scattering_angle_cosine ) const;
 
    //! Sample an outgoing direction from the distribution
@@ -134,6 +136,9 @@ private:
 
   // Atomic number (Z) of the target atom
   int d_atomic_number;
+
+  // Bool for linLinLog 2-D interpoaltion (true = LinLinLog, false = LinLinLin).
+  bool d_linlinlog_interpolation_mode_on;
 
   // Atomic number (Z) of the target atom to the 2/3 power (Z^2/3)
   double d_Z_two_thirds_power;

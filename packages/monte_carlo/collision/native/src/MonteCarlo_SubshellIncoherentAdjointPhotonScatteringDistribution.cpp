@@ -102,7 +102,7 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluate(
 }
 
 // Evaluate the integrated cross section (b)
-double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection(
+double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSectionImpl(
                                                  const double incoming_energy,
                                                  const double max_energy,
                                                  const double precision ) const

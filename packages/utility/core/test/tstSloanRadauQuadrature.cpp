@@ -598,9 +598,6 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
         Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
         *weights[i];
     }
-std::cout <<  "i          =\t" << i << std::endl;
-std::cout << std::setprecision(20) << "nodes[i]   =\t" << nodes[i] << std::endl;
-std::cout << std::setprecision(20) << "weights[i] =\t" << weights[i] << std::endl;
   }
 
   TEST_FLOATING_EQUALITY( legendres[0].convert_to<double>(), test_legendre[0].convert_to<double>(), tol);
@@ -791,11 +788,6 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     new Utility::SloanRadauQuadrature( l_moments ) );
 
   test->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
-
-std::cout << std::setprecision(20)<< " weights[0] =\t " <<weights[0] <<std::endl;
-std::cout << std::setprecision(20)<< " weights[1] =\t " <<weights[1] <<std::endl;
-std::cout << std::setprecision(20)<< " nodes[0] =\t " <<nodes[0] <<std::endl;
-std::cout << std::setprecision(20)<< " nodes[1] =\t " <<nodes[1] <<std::endl;
 
   node[0] = -7.684804997909467E-08L;
   node[1] = 1.000000000000000E+00L;

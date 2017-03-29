@@ -45,10 +45,14 @@ std::shared_ptr<MonteCarlo::EstimatorFactory> estimator_factory;
 // Check that the factory can be constructed
 TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, constructor )
 {
+  std::shared_ptr<MonteCarlo::SimulationGeneralProperties> properties(
+                                 new MonteCarlo::SimulationGeneralProperties );
+  
   TEST_NOTHROW( estimator_factory =
                 MonteCarlo::getEstimatorFactoryInstance<Geometry::Root>(
                                                   event_handler,
-                                                  response_function_id_map ) );
+                                                  response_function_id_map,
+                                                  properties ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -147,7 +151,18 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, createAndRegisterEstimator )
   Teuchos::Array<MonteCarlo::PhaseSpaceDimension> dimension_ordering;
   hdf5_file_handler.getEstimatorDimensionOrdering( 12, dimension_ordering );
 
-  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( dimension_ordering[0],
+                       MonteCarlo::SOURCE_ENERGY_DIMENSION );
+
+  Teuchos::Array<double> energy_bins;
+  
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::SOURCE_ENERGY_DIMENSION>(
+                                                             12, energy_bins );
+
+  TEST_EQUALITY_CONST( energy_bins.size(), 14 );
+  TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
+  TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
 
   std::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
     cell_id_vols;
@@ -173,7 +188,14 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, createAndRegisterEstimator )
   dimension_ordering.clear();
   hdf5_file_handler.getEstimatorDimensionOrdering( 13, dimension_ordering );
 
-  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  Teuchos::Array<double> time_bins;
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::SOURCE_TIME_DIMENSION>(
+                                                               13, time_bins );
+
+  TEST_EQUALITY_CONST( time_bins.size(), 5 );
+  TEST_EQUALITY_CONST( time_bins.front(), 0.0 );
+  TEST_EQUALITY_CONST( time_bins.back(), 1.0 );
 
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 13, cell_id_vols );

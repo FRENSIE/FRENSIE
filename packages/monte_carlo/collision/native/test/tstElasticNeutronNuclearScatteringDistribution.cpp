@@ -30,10 +30,12 @@ class TestElasticNeutronScatteringDistribution : public MonteCarlo::ElasticNeutr
 public:
   TestElasticNeutronScatteringDistribution(
 	 const double atomic_weight_ratio,
+         const double free_gas_threshold,
 	 const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	 angular_scattering_distribution )
     : MonteCarlo::ElasticNeutronNuclearScatteringDistribution(
 					      atomic_weight_ratio,
+                                              free_gas_threshold,
 					      angular_scattering_distribution )
   { /* ... */ }
 
@@ -77,7 +79,7 @@ void initializeScatteringDistribution(
                          new MonteCarlo::NuclearScatteringAngularDistribution(
 					       raw_scattering_distribution ) );
 
-  scattering_dist.reset( new DistType( atomic_weight_ratio, angular_dist ) );
+  scattering_dist.reset( new DistType( atomic_weight_ratio, 400, angular_dist ) );
 }
 
 //---------------------------------------------------------------------------//

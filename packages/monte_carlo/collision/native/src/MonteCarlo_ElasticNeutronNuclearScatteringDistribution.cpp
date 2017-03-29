@@ -23,13 +23,17 @@ namespace MonteCarlo{
 // Constructor
 ElasticNeutronNuclearScatteringDistribution::ElasticNeutronNuclearScatteringDistribution(
 		     const double atomic_weight_ratio,
+                     const double free_gas_threshold,
 		     const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		     angular_scattering_distribution )
   : NuclearScatteringDistribution( atomic_weight_ratio ),
+    d_free_gas_threshold( free_gas_threshold ),
     d_angular_scattering_distribution( angular_scattering_distribution )
 {
   // Make sure the atomic weight ratio is valid
   testPrecondition( atomic_weight_ratio > 0.0 );
+  // Make sure the free gas threshold is valid
+  testPrecondition( free_gas_threshold > 0.0 );
   // Make sure the angular distribution pointer is valid
   testPrecondition( !angular_scattering_distribution.is_null() );
 }
@@ -46,8 +50,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 					const double temperature ) const
 {
   // Use the target-at-rest kinematics
-  if( incoming_neutron.getEnergy() >
-      SimulationNeutronProperties::getFreeGasThreshold()*temperature &&
+  if( incoming_neutron.getEnergy() > d_free_gas_threshold*temperature &&
       this->getAtomicWeightRatio() > 1.0 )
   {
     double A = this->getAtomicWeightRatio();

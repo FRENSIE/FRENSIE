@@ -18,11 +18,14 @@
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
+
+typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
+    NativeFactory;
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -30,15 +33,6 @@
 
 std::shared_ptr<MonteCarlo::ElectroatomicReaction>
     rutherford_elastic_reaction;
-double cutoff_angle_cosine = 1.0;
-
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-bool notEqualZero( double value )
-{
-  return value != 0.0;
-}
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -123,88 +117,55 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectroatomicReaction, react )
   rutherford_elastic_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
-  TEST_ASSERT( electron.getZDirection() < 2.0 );
+  TEST_ASSERT( electron.getZDirection() < 1.0 );
   TEST_ASSERT( electron.getZDirection() > 0.0 );
   TEST_ASSERT( bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_file_name;
+  clp().setOption( "test_native_file",
+                   &test_native_file_name,
+                   "Test Native file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test Native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create reaction
   {
     // Get native data container
     Data::ElectronPhotonRelaxationDataContainer data_container =
         Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-    // Get the energy grid
-    std::vector<double> angular_energy_grid =
-        data_container.getElasticAngularEnergyGrid();
-
-    // Get size of paramters
-    int size = angular_energy_grid.size();
-
-    // Create the scattering function
-    Utility::FullyTabularTwoDDistribution::DistributionType function_data(size);
-
-    for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
-    {
-    function_data[n].first = angular_energy_grid[n];
-
-    // Get the cutoff elastic scattering angles at the energy
-    Teuchos::Array<double> angles(
-        data_container.getCutoffElasticAngles( angular_energy_grid[n] ) );
-
-    // Get the cutoff elastic scatering pdf at the energy
-    Teuchos::Array<double> pdf(
-        data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
-
-    function_data[n].second.reset(
-      new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
-    }
-
-    // Create the scattering function
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
-        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
-                function_data ) );
-
     // Create cutoff distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_elastic_distribution(
-            new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-                scattering_function,
-                cutoff_angle_cosine ) );
+        cutoff_elastic_distribution;
 
-    double atomic_number = data_container.getAtomicNumber();
+    double cutoff_angle_cosine = 0.9;
+    double evaluation_tol = 1e-7;
 
+    NativeFactory::createCutoffElasticDistribution(
+        cutoff_elastic_distribution,
+        data_container,
+        cutoff_angle_cosine,
+        evaluation_tol );
+
+    // Create the screened rutherford distribution
     std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
-        rutherford_elastic_distribution(
-            new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                cutoff_elastic_distribution,
-                atomic_number ) );
+        rutherford_elastic_distribution;
 
+    NativeFactory::createScreenedRutherfordElasticDistribution(
+        rutherford_elastic_distribution,
+        cutoff_elastic_distribution,
+        data_container.getAtomicNumber() );
 
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.assign(
@@ -230,21 +191,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCutoffElasticElectroatomicReaction.cpp

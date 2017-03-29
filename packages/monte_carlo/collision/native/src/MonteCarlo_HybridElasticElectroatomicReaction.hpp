@@ -13,15 +13,24 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The hybrid elastic electroatomic reaction class
-template<typename InterpPolicy, bool processed_cross_section = false>
-class HybridElasticElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
+template<typename TwoDInterpPolicy,
+         typename InterpPolicy,
+         bool processed_cross_section = false>
+class HybridElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
+
+private:
+
+  // Typedef for the base class type
+typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+    BaseType;
 
 public:
 

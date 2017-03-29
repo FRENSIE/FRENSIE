@@ -104,8 +104,8 @@ double Electroatom::getSurvivalProbability( const double energy ) const
 
 // Return the cross section for a specific electroatomic reaction
 double Electroatom::getReactionCrossSection(
-			        const double energy,
-			        const ElectroatomicReactionType reaction ) const
+                    const double energy,
+                    const ElectroatomicReactionType reaction ) const
 {
   switch( reaction )
   {
@@ -177,10 +177,10 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
   double survival_prob = scattering_cross_section/total_cross_section;
 
   sampleScatteringReaction(
-	 	     Utility::RandomNumberGenerator::getRandomNumber<double>()*
-		     scattering_cross_section,
-		     electron,
-		     bank );
+             Utility::RandomNumberGenerator::getRandomNumber<double>()*
+             scattering_cross_section,
+             electron,
+             bank );
 
   if( survival_prob < 1.0 )
   {
@@ -194,10 +194,10 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
       electron.multiplyWeight( survival_prob );
 
       sampleScatteringReaction(
-	 	     Utility::RandomNumberGenerator::getRandomNumber<double>()*
-		     scattering_cross_section,
-		     electron,
-		     bank );
+             Utility::RandomNumberGenerator::getRandomNumber<double>()*
+             scattering_cross_section,
+             electron,
+             bank );
 
       electron_copy.multiplyWeight( 1.0 - survival_prob );
 
@@ -246,7 +246,7 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
     electroatomic_reaction = d_core.getAbsorptionReactions().begin();
 
     std::advance( electroatomic_reaction,
-		  d_core.getAbsorptionReactions().size()-1 );
+                  d_core.getAbsorptionReactions().size()-1 );
   }
 
   // Make sure a reaction was selected
@@ -295,7 +295,7 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
     electroatomic_reaction = d_core.getScatteringReactions().begin();
 
     std::advance( electroatomic_reaction,
-		  d_core.getScatteringReactions().size()-1 );
+                  d_core.getScatteringReactions().size()-1 );
   }
 
   // Make sure the reaction was found

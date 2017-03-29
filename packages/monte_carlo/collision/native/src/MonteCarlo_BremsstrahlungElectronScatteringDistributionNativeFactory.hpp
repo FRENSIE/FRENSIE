@@ -22,44 +22,70 @@ class BremsstrahlungElectronScatteringDistributionNativeFactory
 public:
 
   //! Create a simple dipole bremsstrahlung distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungDistribution(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double>& bremsstrahlung_energy_grid,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-		        	  scattering_distribution );
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+        scattering_distribution,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol = 1e-7 );
 
   //! Create a simple dipole bremsstrahlung distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungDistribution(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-		        	  scattering_distribution );
-
-  //! Create a detailed 2BS bremsstrahlung distribution
-  static void createBremsstrahlungDistribution(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const int atomic_number );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol = 1e-7 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createBremsstrahlungDistribution(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const int atomic_number,
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+        scattering_distribution,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol = 1e-7 );
+
+  //! Create a detailed 2BS bremsstrahlung distribution
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
+  static void createBremsstrahlungDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const int atomic_number,
     const std::vector<double>& bremsstrahlung_energy_grid,
-	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
+    std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const int atomic_number );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol = 1e-7 );
 
   //! Create the energy loss function
+  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createEnergyLossFunction(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double> bremsstrahlung_energy_grid,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-        energy_loss_function );
+        energy_loss_function,
+    const double evaluation_tol = 1e-7 );
 };
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_BREMSSTRAHLUNG__ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
+
+#endif // end MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp

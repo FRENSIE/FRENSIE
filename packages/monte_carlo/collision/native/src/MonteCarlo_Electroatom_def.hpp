@@ -17,15 +17,15 @@ namespace MonteCarlo{
 // Constructor
 template<typename InterpPolicy>
 Electroatom::Electroatom(
-	  const std::string& name,
-	  const unsigned atomic_number,
-	  const double atomic_weight,
-	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const Electroatom::ReactionMap& standard_scattering_reactions,
-	  const Electroatom::ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_cross_sections,
-	  const InterpPolicy policy )
+      const std::string& name,
+      const unsigned atomic_number,
+      const double atomic_weight,
+      const Teuchos::ArrayRCP<double>& energy_grid,
+      const Electroatom::ReactionMap& standard_scattering_reactions,
+      const Electroatom::ReactionMap& standard_absorption_reactions,
+      const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+      const bool processed_cross_sections,
+      const InterpPolicy policy )
   : d_name( name ),
     d_atomic_number( atomic_number ),
     d_atomic_weight( atomic_weight ),

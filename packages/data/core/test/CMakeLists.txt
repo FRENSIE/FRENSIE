@@ -3,3 +3,10 @@ ADD_EXECUTABLE(tstCrossSectionsXMLProperties
 TARGET_LINK_LIBRARIES(tstCrossSectionsXMLProperties data_core)
 ADD_TEST(CrossSectionsXMLProperties_test tstCrossSectionsXMLProperties --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
 SET_PROPERTY(TEST CrossSectionsXMLProperties_test PROPERTY LABELS data_core)
+
+ADD_EXECUTABLE(tstSubshellTypeHelpers
+  tstSubshellTypeHelpers.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSubshellTypeHelpers data_core)
+ADD_TEST(SubshellTypeHelpers_test tstSubshellTypeHelpers)
+SET_PROPERTY(TEST SubshellTypeHelpers_test PROPERTY LABELS data_core)

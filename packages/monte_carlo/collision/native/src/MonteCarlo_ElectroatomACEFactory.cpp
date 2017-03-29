@@ -27,12 +27,8 @@ namespace MonteCarlo{
 void ElectroatomACEFactory::createElectroatomCore(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-    Teuchos::RCP<ElectroatomCore>& electroatom_core,
-    const unsigned hash_grid_bins,
-    const BremsstrahlungAngularDistributionType
-        photon_distribution_function,
-    const bool use_atomic_relaxation_data,
-    const double cutoff_angle_cosine )
+    const SimulationElectronProperties& properties,
+    Teuchos::RCP<ElectroatomCore>& electroatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -48,23 +44,28 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create a hash based energy grid seacher
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-						     energy_grid,
-						     hash_grid_bins ) );
+                              energy_grid,
+                  properties.getNumberOfElectronHashGridBins() ) );
 
-  // Create the cutoff elastic scattering reaction
+  // Create the elastic scattering reaction
+  if ( properties.isElasticModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
+    // Create the cutoff elastic scattering reaction
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createCutoffElasticReaction(
+      ElectroatomicReactionACEFactory::createCutoffElasticReaction(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction_pointer,
-        cutoff_angle_cosine );
+        properties.getElasticCutoffAngleCosine() );
+    }
   }
 
   // Create the bremsstrahlung scattering reaction
+  if ( properties.isBremsstrahlungModeOn() )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
@@ -74,10 +75,11 @@ void ElectroatomACEFactory::createElectroatomCore(
         energy_grid,
         grid_searcher,
         reaction_pointer,
-        photon_distribution_function );
+        properties.getBremsstrahlungAngularDistributionFunction() );
   }
 
   // Create the atomic excitation scattering reaction
+  if ( properties.isAtomicExcitationModeOn() )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
@@ -89,7 +91,8 @@ void ElectroatomACEFactory::createElectroatomCore(
         reaction_pointer );
   }
 
-  // Create the electroionization reaction(s)
+  // Create the subshell electroionization reaction(s)
+  if ( properties.isElectroionizationModeOn() )
   {
     std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
@@ -123,16 +126,12 @@ void ElectroatomACEFactory::createElectroatomCore(
  * Otherwise a single total electroionization reaction will be created.
  */
 void ElectroatomACEFactory::createElectroatom(
-	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	    const std::string& electroatom_name,
-        const double atomic_weight,
-	    const unsigned hash_grid_bins,
-	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	    Teuchos::RCP<Electroatom>& electroatom,
-        const BremsstrahlungAngularDistributionType
-                photon_distribution_function,
-	    const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine )
+            const Data::XSSEPRDataExtractor& raw_electroatom_data,
+            const std::string& electroatom_name,
+            const double atomic_weight,
+            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+            const SimulationElectronProperties& properties,
+            Teuchos::RCP<Electroatom>& electroatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -141,13 +140,10 @@ void ElectroatomACEFactory::createElectroatom(
 
   Teuchos::RCP<ElectroatomCore> core;
 
-  ElectroatomACEFactory::createElectroatomCore(raw_electroatom_data,
-                                               atomic_relaxation_model,
-                                               core,
-                                               hash_grid_bins,
-                                               photon_distribution_function,
-                                               use_atomic_relaxation_data,
-                                               cutoff_angle_cosine );
+  ElectroatomACEFactory::createElectroatomCore( raw_electroatom_data,
+                                                atomic_relaxation_model,
+                                                properties,
+                                                core );
 
   // Create the electroatom
   electroatom.reset(

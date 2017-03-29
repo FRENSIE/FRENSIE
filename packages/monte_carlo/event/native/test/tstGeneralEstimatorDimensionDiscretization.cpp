@@ -28,8 +28,10 @@
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name )				\
   using namespace MonteCarlo;						\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SOURCE_ENERGY_DIMENSION ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, ENERGY_DIMENSION )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, COSINE_DIMENSION )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SOURCE_TIME_DIMENSION ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, TIME_DIMENSION )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, COLLISION_NUMBER_DIMENSION ) \
 
@@ -285,7 +287,9 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     MonteCarlo::NeutronState particle( 0ull );
     MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
 
+    particle.setSourceEnergy( 1e-15 );
     particle.setEnergy( 1e-15 );
+    particle.setSourceTime( 0.0 );
     particle.setTime( 0.0 );
     particle_wrapper.setAngleCosine( 0.0 );
 
@@ -294,112 +298,144 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 0u );
 
+    particle.setSourceEnergy( 5e-6 );
     particle.setEnergy( 5e-6 );
+    particle.setSourceTime( 5e-6 );
     particle.setTime( 5e-6 );
     particle_wrapper.setAngleCosine( 5e-6 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 0u );
 
+    particle.setSourceEnergy( 1e-5 );
     particle.setEnergy( 1e-5 );
+    particle.setSourceTime( 1e-5 );
     particle.setTime( 1e-5 );
     particle_wrapper.setAngleCosine( 1e-5 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 0u );
 
+    particle.setSourceEnergy( 5e-5 );
     particle.setEnergy( 5e-5 );
+    particle.setSourceTime( 5e-5 );
     particle.setTime( 5e-5 );
     particle_wrapper.setAngleCosine( 5e-5 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 1u );
 
+    particle.setSourceEnergy( 1e-4 );
     particle.setEnergy( 1e-4 );
+    particle.setSourceTime( 1e-4 );
     particle.setTime( 1e-4 );
     particle_wrapper.setAngleCosine( 1e-4 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 1u );
 
+    particle.setSourceEnergy( 5e-4 );
     particle.setEnergy( 5e-4 );
+    particle.setSourceTime( 5e-4 );
     particle.setTime( 5e-4 );
     particle_wrapper.setAngleCosine( 5e-4 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 2u );
 
+    particle.setSourceEnergy( 9.9999999999999e-4 ); 
     particle.setEnergy( 9.9999999999999e-4 );
+    particle.setSourceTime( 9.9999999999999e-4 ); 
     particle.setTime( 9.9999999999999e-4 );
     particle_wrapper.setAngleCosine( 9.9999999999999e-4 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 2u );
 
+    particle.setSourceEnergy( 1e-3 );
     particle.setEnergy( 1e-3 );
+    particle.setSourceTime( 1e-3 );
     particle.setTime( 1e-3 );
     particle_wrapper.setAngleCosine( 1e-3 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 3u );
 
+    particle.setSourceEnergy( 1.0000000000001e-3 );
     particle.setEnergy( 1.0000000000001e-3 );
+    particle.setSourceTime( 1.0000000000001e-3 ); 
     particle.setTime( 1.0000000000001e-3 );
     particle_wrapper.setAngleCosine( 1.0000000000001e-3 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 4u );
 
+    particle.setSourceEnergy( 5e-3 );
     particle.setEnergy( 5e-3 );
+    particle.setSourceTime( 5e-3 );
     particle.setTime( 5e-3 );
     particle_wrapper.setAngleCosine( 5e-3 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 4u );
 
+    particle.setSourceEnergy( 1e-2 );
     particle.setEnergy( 1e-2 );
+    particle.setSourceTime( 1e-2 );
     particle.setTime( 1e-2 );
     particle_wrapper.setAngleCosine( 1e-2 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 4u );
 
+    particle.setSourceEnergy( 5e-2 );
     particle.setEnergy( 5e-2 );
+    particle.setSourceTime( 5e-2 );
     particle.setTime( 5e-2 );
     particle_wrapper.setAngleCosine( 5e-2 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 5u );
 
+    particle.setSourceEnergy( 9.999999999999e-2 );
     particle.setEnergy( 9.999999999999e-2 );
+    particle.setSourceTime( 9.999999999999e-2 );
     particle.setTime( 9.999999999999e-2 );
     particle_wrapper.setAngleCosine( 9.999999999999e-2 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 5u );
 
+    particle.setSourceEnergy( 1e-1 );
     particle.setEnergy( 1e-1 );
+    particle.setSourceTime( 1e-1 );
     particle.setTime( 1e-1 );
     particle_wrapper.setAngleCosine( 1e-1 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 6u );
 
+    particle.setSourceEnergy( 1.000000000001e-1 );
     particle.setEnergy( 1.000000000001e-1 );
+    particle.setSourceTime( 1.000000000001e-1 ); 
     particle.setTime( 1.000000000001e-1 );
     particle_wrapper.setAngleCosine( 1.000000000001e-1 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 7u );
 
+    particle.setSourceEnergy( 5e-1 );
     particle.setEnergy( 5e-1 );
+    particle.setSourceTime( 5e-1 );
     particle.setTime( 5e-1 );
     particle_wrapper.setAngleCosine( 5e-1 );
 
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex(
                                                       particle_wrapper ), 7u );
 
+    particle.setSourceEnergy( 1.0 );
     particle.setEnergy( 1.0 );
+    particle.setSourceTime( 1.0 );
     particle.setTime( 1.0 );
     particle_wrapper.setAngleCosine( 1.0 );
 

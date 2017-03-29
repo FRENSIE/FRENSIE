@@ -32,7 +32,8 @@ public:
     const Estimator::idType id,
     const double multiplier,
     const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas );
+    const Teuchos::Array<double>& surface_areas,
+    const double cosine_cutoff = 0.001 );
 
   //! Destructor
   ~SurfaceFluxEstimator()
@@ -46,6 +47,11 @@ public:
 
   //! Print the estimator data summary
   void printSummary( std::ostream& os ) const;
+
+private:
+
+  // The cosine cutoff
+  double d_cosine_cutoff;
 };
 
 } // end MonteCarlo namespace

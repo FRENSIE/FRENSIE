@@ -50,9 +50,11 @@ EstimatorFactory::EstimatorFactory(
        const std::shared_ptr<EventHandler>& event_handler,
        const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
        response_function_id_map,
+       const std::shared_ptr<const SimulationGeneralProperties>& properties,
        std::ostream* os_warn )
   : d_event_handler( event_handler ),
     d_response_function_id_map( response_function_id_map ),
+    d_properties( properties ),
     d_os_warn( os_warn )
 {
   // Make sure the warning output stream is valid
@@ -977,18 +979,20 @@ void EstimatorFactory::createAndRegisterSurfaceFluxEstimator(
   if( energy_multiplication )
   {
     estimator.reset( new SurfaceFluxEstimator<WeightAndEnergyMultiplier>(
-							      id,
-							      multiplier,
-							      surfaces,
-							      surface_areas ) );
+                  id,
+                  multiplier,
+                  surfaces,
+                  surface_areas,
+                  d_properties->getSurfaceFluxEstimatorAngleCosineCutoff() ) );
   }
   else
   {
     estimator.reset( new SurfaceFluxEstimator<WeightMultiplier>(
-							      id,
-							      multiplier,
-							      surfaces,
-							      surface_areas ) );
+                  id,
+                  multiplier,
+                  surfaces,
+                  surface_areas,
+                  d_properties->getSurfaceFluxEstimatorAngleCosineCutoff() ) );
   }
 
   // Set the particle type
@@ -1131,18 +1135,20 @@ void EstimatorFactory::createAndRegisterTetMeshTrackLengthFluxEstimator(
   if( energy_multiplication )
   {
     estimator.reset( new TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier>(
-						     id,
-						     multiplier,
-						     mesh_file_name,
-						     output_mesh_file_name ) );
+                                           id,
+                                           multiplier,
+                                           mesh_file_name,
+                                           output_mesh_file_name,
+                                           d_properties->displayWarnings() ) );
   }
   else
   {
     estimator.reset( new TetMeshTrackLengthFluxEstimator<WeightMultiplier>(
-						     id,
-						     multiplier,
-						     mesh_file_name,
-						     output_mesh_file_name ) );
+                                           id,
+                                           multiplier,
+                                           mesh_file_name,
+                                           output_mesh_file_name,
+                                           d_properties->displayWarnings() ) );
   }
 
   // Set the particle type
@@ -1331,7 +1337,33 @@ void EstimatorFactory::assignBinsToEstimator(
 
   while( it != bins.end() )
   {
-    if( bins.name( it ) == "Energy Bins" )
+    if( bins.name( it ) == "Source Energy Bins" )
+    {
+      const Utility::ArrayString& array_string =
+        Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+
+      Teuchos::Array<double> source_energy_bins;
+
+      try{
+        source_energy_bins = array_string.getConcreteArray<double>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the source energy bins requested "
+                                  "for estimator " << estimator->getId() <<
+				  " are not valid!" );
+
+      TEST_FOR_EXCEPTION(!Utility::Sort::isSortedAscending(source_energy_bins.begin(),
+							   source_energy_bins.end() ),
+                         InvalidEstimatorRepresentation,
+                         "Error: the source energy bins requested for "
+                         "estimator " << estimator->getId() << " are not "
+                         "sorted from lowest to highest!" );
+
+      estimator->setBinBoundaries<SOURCE_ENERGY_DIMENSION>( source_energy_bins );
+    }
+    
+    else if( bins.name( it ) == "Energy Bins" )
     {
       const Utility::ArrayString& array_string =
 	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
@@ -1357,6 +1389,32 @@ void EstimatorFactory::assignBinsToEstimator(
       estimator->setBinBoundaries<ENERGY_DIMENSION>( energy_bins );
     }
 
+    else if( bins.name( it ) == "Source Time Bins" )
+    {
+      const Utility::ArrayString& array_string =
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+
+      Teuchos::Array<double> source_time_bins;
+
+      try{
+	source_time_bins = array_string.getConcreteArray<double>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the source time bins requested for "
+				  "estimator " << estimator->getId() <<
+				  " are not valid!" );
+
+      TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( source_time_bins.begin(),
+							     source_time_bins.end() ),
+			  InvalidEstimatorRepresentation,
+			  "Error: the source time bins requested for "
+                          "estimator " << estimator->getId() << " are not "
+                          "sorted from lowest to highest!" );
+
+      estimator->setBinBoundaries<SOURCE_TIME_DIMENSION>( source_time_bins );
+    }
+    
     else if( bins.name( it ) == "Time Bins" )
     {
       const Utility::ArrayString& array_string =

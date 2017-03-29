@@ -38,7 +38,8 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 		                      const Estimator::idType id,
 				      const double multiplier,
 				      const std::string input_mesh_file_name,
-		                      const std::string output_mesh_file_name )
+		                      const std::string output_mesh_file_name,
+                                      const bool display_warnings )
   : StandardEntityEstimator<moab::EntityHandle>( id, multiplier ),
     d_moab_interface( new moab::Core ),
     d_tet_meshset(),
@@ -46,7 +47,8 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
     d_kd_tree_root(),
     d_tet_barycentric_transform_matrices(),
     d_tet_reference_vertices(),
-    d_output_mesh_name( output_mesh_file_name )
+    d_output_mesh_name( output_mesh_file_name ),
+    d_display_warnings( display_warnings )
 {
   // Create empty MOAB meshset
   moab::EntityHandle d_tet_meshset;
@@ -504,7 +506,7 @@ moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
   }
 
   // Make sure the tet has been found
-  if( tet_handle == 0 && SimulationGeneralProperties::displayWarnings() )
+  if( tet_handle == 0 && d_display_warnings )
   {
     #pragma omp critical( point_in_tet_warning_message )
     {

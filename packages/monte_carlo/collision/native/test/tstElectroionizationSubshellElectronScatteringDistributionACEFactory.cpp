@@ -48,6 +48,36 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 }
 
 //---------------------------------------------------------------------------//
+// Check that the min secondary (knock-on) electron energy can be returned
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+                   getMinSecondaryEnergyAtIncomingEnergy )
+{
+  // Get min energy
+  double min_energy =
+    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy(
+                                                                      8.829E-02 );
+
+  // Test original electron
+  TEST_EQUALITY_CONST( min_energy, 0.0 );
+
+  // Get min energy
+  min_energy =
+    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy(
+                                                                      1e5 );
+
+  // Test original electron
+  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
+
+  // Get min energy
+  min_energy =
+    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy(
+                                                                      2.0 );
+
+  // Test original electron
+  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the max secondary (knock-on) electron energy can be returned
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    getMaxSecondaryEnergyAtIncomingEnergy )
@@ -80,20 +110,20 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-		           evaluatePDF )
+                   evaluatePDF )
 {
   double pdf;
   pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
-  pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 2e-8, 1e-8 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11111035.20724850148, 1e-12 );
+  pdf = ace_electroionization_distribution->evaluatePDF( 8.829e-2 + 3e-8, 1.0001e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11110997.25531722419, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.63484458985044512, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.64832262108575378, 1e-6 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );
@@ -229,44 +259,35 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.105262105768E-02, 1e-12 );
 
 }
+
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  clp().setOption( "test_ace_file",
+                   &test_ace_file_name,
+                   "Test ACE file name" );
+  clp().setOption( "test_ace_table",
+                   &test_ace_table_name,
+                   "Test ACE table name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
-  {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+        new Data::ACEFileHandler( test_ace_file_name,
+                                  test_ace_table_name,
+                                  1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+        new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
+                                       ace_file_handler->getTableJXSArray(),
+                                       ace_file_handler->getTableXSSArray() ) );
 
   // Extract the cross sections energy grid
   Teuchos::ArrayView<const double> energy_grid =
@@ -328,8 +349,9 @@ int main( int argc, char** argv )
     subshell_loc,
     num_tables[subshell],
     binding_energies[subshell],
-	eion_block,
-	ace_electroionization_distribution );
+    eion_block,
+    ace_electroionization_distribution,
+    1e-6 );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -337,21 +359,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElectroionizationSubshellElectronScatteringDistributionACEFactory.cpp

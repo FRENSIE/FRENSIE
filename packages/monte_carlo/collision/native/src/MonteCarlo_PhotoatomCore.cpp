@@ -224,7 +224,7 @@ bool PhotoatomCore::hasSharedEnergyGrid() const
 
   reaction_it = d_absorption_reactions.begin();
 
-  while( reaction_it != d_scattering_reactions.end() )
+  while( reaction_it != d_absorption_reactions.end() )
   {
     if( !d_total_reaction->isEnergyGridShared( *reaction_it->second ) )
       return false;

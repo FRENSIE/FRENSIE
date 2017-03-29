@@ -173,6 +173,27 @@ public:
   //! Get the adjoint electron distance tolerance
   double getAdjointElectronDistanceTolerance() const;
 
+  //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
+  void setTabularEvaluationTolerance(
+                        const double tabular_evaluation_tol );
+
+  //! Get the electron FullyTabularTwoDDistribution evaluation tolerance
+  double getTabularEvaluationTolerance() const;
+
+  //! Set the electron FullyTabularTwoDDistribution correlated sampling
+  void setElectronCorrelatedSampling(
+                        const bool electron_correlated_sampling );
+
+  //! Get the electron FullyTabularTwoDDistribution correlated sampling
+  bool getElectronCorrelatedSampling() const;
+
+  //! Set the electron FullyTabularTwoDDistribution unit based interpolation
+  void setElectronUnitBasedInterpolation(
+                        const bool electron_unit_based_interpolation );
+
+  //! Get the electron FullyTabularTwoDDistribution unit based interpolation
+  bool getElectronUnitBasedInterpolation() const;
+
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
   
@@ -409,7 +430,13 @@ private:
   void initializeAdjointElectronUnionEnergyGrid(
      const Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
- 
+
+  // Create the inelastic cross section distribution
+  void createForwardInelasticElectronCrossSectionDistribution(
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    std::shared_ptr<const Utility::OneDDistribution>&
+        forward_inelastic_electron_cross_section_distribution ) const;
+
   // Create the adjoint atomic excitation cross section distribution
   void createAdjointAtomicExcitationCrossSectionDistribution(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
@@ -478,6 +505,15 @@ private:
 
   // The adjoint electron distance tolerance
   double d_adjoint_electron_distance_tol;
+
+  // The electron FullyTabularTwoDDistribution evaluation tolerance
+  double d_tabular_evaluation_tol;
+
+  // The electron bool to use correlated sampling
+  bool d_electron_correlated_sampling;
+
+  // The electron bool to use unit based interpolation
+  bool d_electron_unit_based_interpolation;
 
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;

@@ -44,10 +44,10 @@ public:
     return 0.0;
   }
 
-  //! Evaluate the integrated cross section (cm^2)
-  double evaluateIntegratedCrossSection( const double incoming_energy,
-					 const double max_energy,
-					 const double precision ) const
+  //! Evaluate the integrated cross section (b)
+  double evaluateIntegratedCrossSectionImpl( const double incoming_energy,
+                                             const double max_energy,
+                                             const double precision ) const
   {
     return 1.0;
   }

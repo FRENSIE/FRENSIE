@@ -28,12 +28,8 @@ namespace MonteCarlo{
 void PhotoatomACEFactory::createPhotoatomCore(
             const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	    Teuchos::RCP<PhotoatomCore>& photoatom_core,
-	    const unsigned hash_grid_bins,
-	    const IncoherentModelType incoherent_model,
-	    const double kahn_sampling_cutoff_energy,
-	    const bool use_detailed_pair_production_data,
-	    const bool use_atomic_relaxation_data )
+            const SimulationPhotonProperties& properties,
+	    Teuchos::RCP<PhotoatomCore>& photoatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -48,8 +44,8 @@ void PhotoatomACEFactory::createPhotoatomCore(
 
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, true>(
-						     energy_grid,
-						     hash_grid_bins ) );
+                                energy_grid,
+                                properties.getNumberOfPhotonHashGridBins() ) );
 
   // Create the incoherent scattering reaction
   {
@@ -57,12 +53,12 @@ void PhotoatomACEFactory::createPhotoatomCore(
       scattering_reactions[TOTAL_INCOHERENT_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionACEFactory::createIncoherentReaction(
-						 raw_photoatom_data,
-						 energy_grid,
-						 grid_searcher,
-						 reaction_pointer,
-						 incoherent_model,
-						 kahn_sampling_cutoff_energy );
+                                    raw_photoatom_data,
+                                    energy_grid,
+                                    grid_searcher,
+                                    reaction_pointer,
+                                    properties.getIncoherentModelType(),
+                                    properties.getKahnSamplingCutoffEnergy() );
   }
 
   // Create the coherent scattering reaction
@@ -82,15 +78,15 @@ void PhotoatomACEFactory::createPhotoatomCore(
       scattering_reactions[PAIR_PRODUCTION_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionACEFactory::createPairProductionReaction(
-					   raw_photoatom_data,
-					   energy_grid,
-					   grid_searcher,
-					   reaction_pointer,
-					   use_detailed_pair_production_data );
+                                 raw_photoatom_data,
+                                 energy_grid,
+                                 grid_searcher,
+                                 reaction_pointer,
+                                 properties.isDetailedPairProductionModeOn() );
   }
 
   // Create the photoelectric reaction(s)
-  if( use_atomic_relaxation_data )
+  if( properties.isAtomicRelaxationModeOn() )
   {
     Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> > reaction_pointers;
 
@@ -149,12 +145,8 @@ void PhotoatomACEFactory::createPhotoatom(
 	    const std::string& photoatom_name,
 	    const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	    Teuchos::RCP<Photoatom>& photoatom,
-	    const unsigned hash_grid_bins,
-	    const IncoherentModelType incoherent_model,
-	    const double kahn_sampling_cutoff_energy,
-	    const bool use_detailed_pair_production_data,
-	    const bool use_atomic_relaxation_data )
+            const SimulationPhotonProperties& properties,
+	    Teuchos::RCP<Photoatom>& photoatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -165,12 +157,8 @@ void PhotoatomACEFactory::createPhotoatom(
 
   PhotoatomACEFactory::createPhotoatomCore( raw_photoatom_data,
 					    atomic_relaxation_model,
-					    core,
-					    hash_grid_bins,
-					    incoherent_model,
-					    kahn_sampling_cutoff_energy,
-					    use_detailed_pair_production_data,
-					    use_atomic_relaxation_data );
+                                            properties,
+					    core );
 
   // Create the photoatom
   photoatom.reset( new Photoatom( photoatom_name,

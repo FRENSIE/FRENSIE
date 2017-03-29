@@ -39,11 +39,6 @@ public:
 		   const double max_energy,
 		   const double scattering_angle_cosine ) const;
 
-  //! Evaluate the integrated cross section (b)
-  virtual double evaluateIntegratedCrossSection(const double incoming_energy,
-						const double max_energy,
-						const double precision ) const;
-
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
 	       double& outgoing_energy,
@@ -66,6 +61,11 @@ protected:
   bool isEnergyAboveScatteringWindow( const double energy_of_interest,
 				      const double initial_energy ) const;
 
+  // Evaluate the integrated cross section (b) default implementation
+  double evaluateIntegratedCrossSectionImpl( const double incoming_energy,
+                                             const double max_energy,
+                                             const double precision ) const;
+  
 private:
 
   // Evaluate the scattering function

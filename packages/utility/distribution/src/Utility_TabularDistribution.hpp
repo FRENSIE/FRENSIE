@@ -26,10 +26,10 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 class UnitAwareTabularDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-				     public ParameterListCompatibleObject<UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
+                                     public ParameterListCompatibleObject<UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
 {
 
 private:
@@ -80,14 +80,14 @@ public:
 
   //! Basic constructor (potentially dangerous)
   UnitAwareTabularDistribution(
-			const Teuchos::Array<double>& independent_values,
-			const Teuchos::Array<double>& dependent_values );
+                        const Teuchos::Array<double>& independent_values,
+                        const Teuchos::Array<double>& dependent_values );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareTabularDistribution(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<InputDepQuantity>& dependent_values );
+                  const Teuchos::Array<InputIndepQuantity>& independent_values,
+                  const Teuchos::Array<InputDepQuantity>& dependent_values );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -98,7 +98,7 @@ public:
 
   //! Assignment operator
   UnitAwareTabularDistribution& operator=(
-			   const UnitAwareTabularDistribution& dist_instance );
+                           const UnitAwareTabularDistribution& dist_instance );
 
   //! Destructor
   ~UnitAwareTabularDistribution()
@@ -130,8 +130,8 @@ public:
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
   IndepQuantity sampleWithRandomNumberInSubrange(
-				     const double random_number,
-				     const IndepQuantity max_indep_var ) const;
+                                     const double random_number,
+                                     const IndepQuantity max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
@@ -183,38 +183,38 @@ private:
   // Initialize the distribution
   void initializeDistributionFromRawData(
                               const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values );
+                              const Teuchos::Array<double>& dependent_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
   void initializeDistribution(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<InputDepQuantity>& dependent_values );
+                  const Teuchos::Array<InputIndepQuantity>& independent_values,
+                  const Teuchos::Array<InputDepQuantity>& dependent_values );
 
   // Reconstruct original distribution
   void reconstructOriginalDistribution(
-			 Teuchos::Array<IndepQuantity>& independent_values,
-			 Teuchos::Array<DepQuantity>& dependent_values ) const;
+                         Teuchos::Array<IndepQuantity>& independent_values,
+                         Teuchos::Array<DepQuantity>& dependent_values ) const;
 
   // Reconstruct original distribution w/o units
   void reconstructOriginalUnitlessDistribution(
-			      Teuchos::Array<double>& independent_values,
-			      Teuchos::Array<double>& dependent_values ) const;
+                              Teuchos::Array<double>& independent_values,
+                              Teuchos::Array<double>& dependent_values ) const;
 
   // Convert the unitless values to the correct units
   template<typename Quantity>
   static void convertUnitlessValues(
-		                 const Teuchos::Array<double>& unitless_values,
-				 Teuchos::Array<Quantity>& quantitites );
+                                 const Teuchos::Array<double>& unitless_values,
+                                 Teuchos::Array<Quantity>& quantitites );
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
-				      unsigned& sampled_bin_index ) const;
+                                      unsigned& sampled_bin_index ) const;
 
   // All possible instantiations are friends
   template<typename FriendInterpolationPolicy,
-	   typename FriendIndepUnit,
-	   typename FriendDepUnit>
+           typename FriendIndepUnit,
+           typename FriendDepUnit>
   friend class UnitAwareTabularDistribution;
 
   // The distribution type
@@ -257,7 +257,7 @@ public:
     return iss.str();
   }
   static std::string concreteName(
-	    const Utility::TabularDistribution<InterpolationPolicy>& instance )
+            const Utility::TabularDistribution<InterpolationPolicy>& instance )
   {
     return name();
   }
@@ -277,9 +277,9 @@ class TypeNameTraits<Utility::UnitAwareTabularDistribution<InterpolationPolicy,U
   {
     std::ostringstream iss;
     iss << "Unit-Aware Tabular " << InterpolationPolicy::name()
-	<< " Distribution ("
-	<< Utility::UnitTraits<U>::symbol() << ","
-	<< Utility::UnitTraits<V>::symbol() << ")";
+        << " Distribution ("
+        << Utility::UnitTraits<U>::symbol() << ","
+        << Utility::UnitTraits<V>::symbol() << ")";
 
     return iss.str();
   }

@@ -30,7 +30,7 @@ ADD_EXECUTABLE(tstGeometryModuleInterface_Root
   tstModuleInterface.cpp)
 TARGET_LINK_LIBRARIES(tstGeometryModuleInterface_Root geometry_root)
 ADD_TEST(GeometryModuleInterface_Root_test tstGeometryModuleInterface_Root --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml")
-SET_PROPERTY(TEST GeometryModuleInterface_Root_test PROPERTY LABELS geometry_root root)
+SET_PROPERTY(TEST GeometryModuleInterface_Root_test PROPERTY LABELS geometry_root root no_threads)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_EXECUTABLE(tstSharedParallelGeometryModuleInterface_Root tstSharedParallelModuleInterface.cpp)

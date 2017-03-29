@@ -19,6 +19,7 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -28,7 +29,13 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLin> >
+  typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::TwoDFunction
+            TwoDFunction;
+
+  typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::TwoDDist
+            TwoDDist;
+
+  Teuchos::RCP<MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLinLog,Utility::LinLin> >
     hybrid_elastic_reaction;
 
 //---------------------------------------------------------------------------//
@@ -86,19 +93,13 @@ TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction,
                    getCrossSection )
 {
 
-  double cross_section =
-    hybrid_elastic_reaction->getCrossSection( 1.0E-05 );
-
+  double cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E-05 );
   TEST_FLOATING_EQUALITY( cross_section, 3444568722.2843613625 + 1.611494138359350E+08, 1e-12 );
 
-  cross_section =
-    hybrid_elastic_reaction->getCrossSection( 1.0E-03 );
-
+  cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E-03 );
   TEST_FLOATING_EQUALITY( cross_section, 18557880.33652209118 + 5.730253976136980E+07, 1e-12 );
 
-  cross_section =
-    hybrid_elastic_reaction->getCrossSection( 1.0E+05 );
-
+  cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E+05 );
   TEST_FLOATING_EQUALITY( cross_section, 1.9264754607947520206e-08 + 6.808061009771560E-05, 1e-12 );
 }
 
@@ -124,105 +125,51 @@ TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, react )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_file_name;
+  clp().setOption( "test_native_file",
+                   &test_native_file_name,
+                   "Test Native file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  double evaluation_tol = 1e-7;
 
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test Native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  // Create reaction
-  {
-    // Get native data container
-    Data::ElectronPhotonRelaxationDataContainer data_container =
+  // Get native data container
+  Data::ElectronPhotonRelaxationDataContainer data_container =
         Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-    // Get the energy grid
-    std::vector<double> angular_energy_grid =
-        data_container.getElasticAngularEnergyGrid();
-
-    // Get size of paramters
-    int size = angular_energy_grid.size();
-
-    // Create the scattering function
-    MonteCarlo::HybridElasticElectronScatteringDistribution::HybridDistribution
-        function_data( size );
-
-    for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
-    {
-    function_data[n].first = angular_energy_grid[n];
-
-    // Get the cutoff elastic scattering angles at the energy
-    Teuchos::Array<double> angles(
-        data_container.getCutoffElasticAngles( angular_energy_grid[n] ) );
-
-    // Get the cutoff elastic scatering pdf at the energy
-    Teuchos::Array<double> pdf(
-        data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
-
-    function_data[n].second.reset(
-      new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
-
-    // Get the moment preserving elastic scattering angle cosines at the energy
-    std::vector<double> discrete_angles(
-        data_container.getMomentPreservingElasticDiscreteAngles(
-            angular_energy_grid[n] ) );
-
-    // Get the cutoff elastic scatering pdf at the energy
-    std::vector<double> weights(
-        data_container.getMomentPreservingElasticWeights(
-            angular_energy_grid[n] ) );
-
-    function_data[n].third.reset(
-	  new const Utility::DiscreteDistribution(
-        discrete_angles,
-        weights ) );
-    }
-
-    double atomic_number = data_container.getAtomicNumber();
-    double cutoff_angle_cosine = data_container.getCutoffAngleCosine();
-
-    // Create the cutoff scattering function
-    std::shared_ptr<MonteCarlo::HybridElasticElectronScatteringDistribution::HybridDistribution>
-      hybrid_function(
-        new MonteCarlo::HybridElasticElectronScatteringDistribution::HybridDistribution(
-            function_data ) );
-
-    // Create hybrid distribution
-    std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
-        hybrid_elastic_distribution(
-            new MonteCarlo::HybridElasticElectronScatteringDistribution(
-                hybrid_function,
-                cutoff_angle_cosine ) );
-
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.assign(
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign(
         data_container.getElectronEnergyGrid().begin(),
         data_container.getElectronEnergyGrid().end() );
 
-    Teuchos::ArrayRCP<double> cutoff_cross_section;
-    cutoff_cross_section.assign(
+  // Construct the grid searcher
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+                    energy_grid,
+                    energy_grid[0],
+                    energy_grid[energy_grid.size()-1],
+                    energy_grid.size()/10+1 ) );
+
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
         data_container.getCutoffElasticCrossSection().begin(),
         data_container.getCutoffElasticCrossSection().end() );
 
-    Teuchos::ArrayRCP<double> mp_cross_section;
-    mp_cross_section.assign(
+  // Reduced cutoff elastic cross section ratio
+  std::vector<double> reduced_cutoff_ratio =
+    data_container.getReducedCutoffCrossSectionRatios();
+
+  Teuchos::ArrayRCP<double> mp_cross_section;
+  mp_cross_section.assign(
         data_container.getMomentPreservingCrossSection().begin(),
         data_container.getMomentPreservingCrossSection().end() );
 
@@ -235,7 +182,7 @@ int main( int argc, char** argv )
     data_container.getMomentPreservingCrossSectionThresholdEnergyIndex() -
     hybrid_threshold_energy_index;
   unsigned cutoff_threshold_diff =
-    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() - 
+    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() -
     hybrid_threshold_energy_index;
 
   Teuchos::Array<double> combined_cross_section(
@@ -247,10 +194,7 @@ int main( int argc, char** argv )
 
     if ( i < mp_threshold_diff )
     {
-      double cutoff_cdf =
-        hybrid_elastic_distribution->evaluateCDF( energy, cutoff_angle_cosine );
-
-      combined_cross_section[i] = cutoff_cross_section[i]*cutoff_cdf;
+      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio[i];
     }
     else if ( i < cutoff_threshold_diff )
     {
@@ -258,11 +202,8 @@ int main( int argc, char** argv )
     }
     else
     {
-      double cutoff_cdf =
-        hybrid_elastic_distribution->evaluateCDF( energy, cutoff_angle_cosine );
-
       combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff]*cutoff_cdf + 
+        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio[i] +
         mp_cross_section[i-mp_threshold_diff];
     }
   }
@@ -271,33 +212,34 @@ int main( int argc, char** argv )
   hybrid_cross_section.assign( combined_cross_section.begin(),
                                combined_cross_section.end() );
 
-    // Create the reaction
-    hybrid_elastic_reaction.reset(
-      new MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLin>(
+  // Create hybrid distribution
+  std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
+        hybrid_elastic_distribution;
+
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
+        hybrid_elastic_distribution,
+        grid_searcher,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        data_container,
+        data_container.getCutoffAngleCosine(),
+        evaluation_tol );
+
+  // Create the reaction
+  hybrid_elastic_reaction.reset(
+    new MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLinLog,Utility::LinLin>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,
-            cutoff_angle_cosine,
+            data_container.getCutoffAngleCosine(),
             hybrid_elastic_distribution ) );
-  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstHybridElasticElectroatomicReaction.cpp

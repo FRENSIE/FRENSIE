@@ -86,14 +86,16 @@ public:
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the distribution
+  DepQuantity correlatedEvaluate(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const;
+
+  //! Evaluate the distribution
   DepQuantity evaluateExact(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the distribution using a weighted interpolation scheme
-  DepQuantity evaluateWeighted(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
@@ -101,28 +103,26 @@ public:
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
+  InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var,
+                const SecondaryIndepQuantity max_secondary_indep_var ) const;
+
+  //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the secondary conditional PDF using a weighted interpolation scheme
-  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFWeighted(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional CDF
-  double evaluateSecondaryConditionalCDFExact(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional CDF using weighted interpolation
-  double evaluateSecondaryConditionalCDFWeighted(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const double weighted_secondary_indep_var_value ) const;
-
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF
+  SecondaryIndepQuantity sampleSecondaryConditionalNormalized(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const SecondaryIndepQuantity min_secondary_indep_var,
+        const SecondaryIndepQuantity max_secondary_indep_var ) const;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
@@ -153,13 +153,6 @@ protected:
                         const SecondaryIndepQuantity secondary_indep_var_value,
                         EvaluationMethod evaluate ) const;
 
-  //! Evaluate the distribution using the desired evaluation method
-  template<typename ReturnType, typename EvaluationMethod>
-  ReturnType evaluateWeightedImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const double weighted_secondary_indep_var_value,
-                        EvaluationMethod evaluate ) const;
-
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
   SecondaryIndepQuantity sampleDetailedImpl(
@@ -173,7 +166,7 @@ protected:
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const;  
 };
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

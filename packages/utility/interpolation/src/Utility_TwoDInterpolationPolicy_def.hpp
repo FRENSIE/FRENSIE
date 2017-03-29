@@ -188,7 +188,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                         const T indep_var_x_1,
                         const T indep_var_x,
                         const T indep_var_y,
-                                    YIterator start_indep_y_grid_0,
+                        YIterator start_indep_y_grid_0,
                         YIterator end_indep_y_grid_0,
                         ZIterator start_dep_grid_0,
                         ZIterator end_dep_grid_0,
@@ -283,7 +283,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                         const T indep_var_x_1,
                         const T indep_var_x,
                         const T indep_var_y,
-                                    Iterator start_grid_0,
+                        Iterator start_grid_0,
                         Iterator end_grid_0,
                         Iterator start_grid_1,
                         Iterator end_grid_1 )
@@ -342,281 +342,6 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                                              start_dep_grid_1,
                                              end_dep_grid_1 );
 }
-
-
-
-
-
-//! Conduct the interpolation between two grids
-/*! \details The y_0_functor and y_1_functor will be evaluated with the
- * weighted_indep_var_y multipled by the appropriate weighting factor
- * weighting_factor_y_0 or weighting_factor_y_1.
- */
-template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<typename FirstIndepType,
-         typename SecondIndepType,
-         typename ZYLowerFunctor,
-         typename ZYUpperFunctor>
-inline typename ZYLowerFunctor::result_type TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateWeighted(
-                            const FirstIndepType indep_var_x_0,
-                            const FirstIndepType indep_var_x_1,
-                            const FirstIndepType indep_var_x,
-                            const double weighted_indep_var_y,
-                            const ZYLowerFunctor& evaluate_z_with_y_0_functor,
-                            const ZYUpperFunctor& evaluate_z_with_y_1_functor,
-                            const SecondIndepType weighting_factor_y_0,
-                            const SecondIndepType weighting_factor_y_1 )
-{
-  // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
-  // All types must be a floating point type
-  testStaticPrecondition( (QuantityTraits<FirstIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<SecondIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYLowerFunctor::result_type>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYUpperFunctor::result_type>::is_floating_point::value) );
-  // Make sure the first independent variables are valid
-  testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_0) );
-  testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_1) );
-  testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf( indep_var_x ) );
-  testPrecondition( ThisType::isFirstIndepVarInValidRange( indep_var_x_0 ) );
-  testPrecondition( indep_var_x_0 < indep_var_x_1 );
-  testPrecondition( indep_var_x >= indep_var_x_0 );
-  testPrecondition( indep_var_x <= indep_var_x_1 );
-  // Make sure the second independent variable is valid
-  testPrecondition( !QuantityTraits<double>::isnaninf(weighted_indep_var_y) );
-  testPrecondition( ThisType::isSecondIndepVarInValidRange(
-    weighted_indep_var_y*weighting_factor_y_0 ) );
-  testPrecondition( ThisType::isSecondIndepVarInValidRange(
-    weighted_indep_var_y*weighting_factor_y_1 ) );
-
-  // Conduct the ZY interpolation on the y grids
-  const auto dep_var_0 = evaluate_z_with_y_0_functor(
-    weighted_indep_var_y*weighting_factor_y_0 );
-
-  const auto dep_var_1 = evaluate_z_with_y_1_functor(
-    weighted_indep_var_y*weighting_factor_y_1 );
-  
-  // Process the dependent values
-  const auto processed_dep_var_0 = ThisType::processDepVar( dep_var_0 );
-
-  const auto processed_dep_var_1 = ThisType::processDepVar( dep_var_1 );
-
-  // Conduct the ZX interpolation
-  const auto processed_indep_var_x_0 =
-    ThisType::processFirstIndepVar( indep_var_x_0 );
-
-  const auto processed_indep_var_x_1 =
-    ThisType::processFirstIndepVar( indep_var_x_1 );
-
-  const auto processed_indep_var_x =
-    ThisType::processFirstIndepVar( indep_var_x );
-
-  const auto processed_slope = (processed_dep_var_1 - processed_dep_var_0)/
-    (processed_indep_var_x_1 - processed_indep_var_x_0);
-
-  return QuantityTraits<typename ZYUpperFunctor::result_type>::initializeQuantity(
-                          ZXInterpPolicy::interpolate( processed_indep_var_x_0,
-                                                       processed_indep_var_x,
-                                                       processed_dep_var_0,
-                                                       processed_slope ) );
-}
-
-// Conduct the interpolation between two grids
-/*! \details The y_0_functor and y_1_functor will be evaluated with the
- * weighted_indep_var_y multipled by the appropriate weighting factor
- * weighting_factor_y_0 or weighting_factor_y_1.
- * Make sure that the y variable lies inside of both grids - this
- * policy does not do extrapolation.
- */
-template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename YIterator,
-     typename ZIterator,
-     typename T >
-inline T
-TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateWeighted(
-                        const T indep_var_x_0,
-                        const T indep_var_x_1,
-                        const T indep_var_x,
-                        const T weighted_indep_var_y,
-                        YIterator start_indep_y_grid_0,
-                        YIterator end_indep_y_grid_0,
-                        ZIterator start_dep_grid_0,
-                        ZIterator end_dep_grid_0,
-                        YIterator start_indep_y_grid_1,
-                        YIterator end_indep_y_grid_1,
-                        ZIterator start_dep_grid_1,
-                        ZIterator end_dep_grid_1,
-                        const T weighting_factor_y_0,
-                        const T weighting_factor_y_1 )
-{
-  // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
-  // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
-  // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType,T>::value) );
-  // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleMemberTraits<typename std::iterator_traits<ZIterator>::value_type,DepMember>::tupleMemberType,T>::value) );
-  // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x ) );
-  testPrecondition( ThisType::isFirstIndepVarInValidRange( indep_var_x_0 ) );
-  testPrecondition( indep_var_x_0 < indep_var_x_1 );
-  testPrecondition( indep_var_x >= indep_var_x_0 );
-  testPrecondition( indep_var_x <= indep_var_x_1 );
-  // Make sure the second independent variables are valid
-  testPrecondition( start_indep_y_grid_0 != end_indep_y_grid_0 );
-  testPrecondition( Sort::isSortedAscending<YIndepMember>(start_indep_y_grid_0,
-                              end_indep_y_grid_0));
-  testPrecondition( ThisType::isSecondIndepVarInValidRange(
-                get<YIndepMember>( *start_indep_y_grid_0 ) ) );
-  testPrecondition( start_indep_y_grid_1 != end_indep_y_grid_1 );
-  testPrecondition( Sort::isSortedAscending<YIndepMember>(start_indep_y_grid_1,
-                              end_indep_y_grid_1));
-  testPrecondition( ThisType::isSecondIndepVarInValidRange(
-                get<YIndepMember>( *start_indep_y_grid_1 ) ) );
-  // Make sure the right type of interpolation is being used
-  // Note: if this fails - use unit base interpolation
-  testPrecondition( weighted_indep_var_y*weighting_factor_y_0 >=
-                    get<YIndepMember>( *start_indep_y_grid_0 ));
-  remember( YIterator true_end_indep_y_grid_0 = end_indep_y_grid_0 );
-  remember( --true_end_indep_y_grid_0 );
-  testPrecondition( weighted_indep_var_y*weighting_factor_y_0 <=
-                    get<YIndepMember>(*true_end_indep_y_grid_0));
-  testPrecondition( weighted_indep_var_y >= get<YIndepMember>( *start_indep_y_grid_0 ));
-  remember( YIterator true_end_indep_y_grid_1 = end_indep_y_grid_1 );
-  remember( --true_end_indep_y_grid_1 );
-  testPrecondition( weighted_indep_var_y*weighting_factor_y_1 <=
-                    get<YIndepMember>(*true_end_indep_y_grid_1));
-  testPrecondition( weighted_indep_var_y*weighting_factor_y_1 >=
-                    get<YIndepMember>( *start_indep_y_grid_1 ));
-  // Make sure the dependent variables are valid
-  testPrecondition( start_dep_grid_0 != end_dep_grid_0 );
-  testPrecondition( start_dep_grid_1 != end_dep_grid_1 );
-  testPrecondition( std::distance( start_indep_y_grid_0, end_indep_y_grid_0 )==
-            std::distance( start_dep_grid_0, end_dep_grid_0 ) );
-  testPrecondition( std::distance( start_indep_y_grid_1, end_indep_y_grid_1 )==
-            std::distance( start_dep_grid_1, end_dep_grid_1 ) );
-
-  // Create the grid interpolation functors
-  std::function<T(T)> interpolate_grid_0_functor =
-    std::bind<T>( &ThisType::interpolateOnYGrid<YIndepMember,DepMember,YIterator,ZIterator,T>,
-                       std::placeholders::_1,
-                       start_indep_y_grid_0,
-                       end_indep_y_grid_0,
-                       start_dep_grid_0,
-                       end_dep_grid_0 );
-
-  std::function<T(T)> interpolate_grid_1_functor =
-    std::bind<T>( &ThisType::interpolateOnYGrid<YIndepMember,DepMember,YIterator,ZIterator,T>,
-                       std::placeholders::_1,
-                       start_indep_y_grid_1,
-                       end_indep_y_grid_1,
-                       start_dep_grid_1,
-                       end_dep_grid_1 );
-  
-  return ThisType::interpolateWeighted( indep_var_x_0,
-                                        indep_var_x_1,
-                                        indep_var_x,
-                                        weighted_indep_var_y,
-                                        interpolate_grid_0_functor,
-                                        interpolate_grid_1_functor,
-                                        weighting_factor_y_0,
-                                        weighting_factor_y_1 );
-}
-
-// Conduct the interpolation between two grids
-/*! \details Make sure that the y variable lies inside of both grids - this
- * policy does not do extrapolation.
- */
-template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-     TupleMember DepMember,
-     typename Iterator,
-     typename T >
-inline T
-TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateWeighted(
-                        const T indep_var_x_0,
-                        const T indep_var_x_1,
-                        const T indep_var_x,
-                        const T weighted_indep_var_y,
-                        Iterator start_grid_0,
-                        Iterator end_grid_0,
-                        Iterator start_grid_1,
-                        Iterator end_grid_1,
-                        const T weighting_factor_y_0,
-                        const T weighting_factor_y_1 )
-{
-  // Make sure the tuple members are valid
-  testStaticPrecondition( YIndepMember != DepMember );
-
-  return ThisType::interpolateWeighted<YIndepMember,DepMember>(
-                                indep_var_x_0,
-                                indep_var_x_1,
-                                indep_var_x,
-                                weighted_indep_var_y,
-                                start_grid_0,
-                                end_grid_0,
-                                start_grid_0,
-                                end_grid_0,
-                                start_grid_1,
-                                end_grid_1,
-                                start_grid_1,
-                                end_grid_1,
-                                weighting_factor_y_0,
-                                weighting_factor_y_1 );
-}
-
-// Conduct the interpolation between two grids (no tuples)
-/*! \details Make sure that the y variable lies inside of both grids - this
- * policy does not do extrapolation.
- */
-template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<typename YIterator, typename ZIterator, typename T>
-inline T
-TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateWeighted(
-                        const T indep_var_x_0,
-                        const T indep_var_x_1,
-                        const T indep_var_x,
-                        const T weighted_indep_var_y,
-                        YIterator start_indep_y_grid_0,
-                        YIterator end_indep_y_grid_0,
-                        ZIterator start_dep_grid_0,
-                        ZIterator end_dep_grid_0,
-                        YIterator start_indep_y_grid_1,
-                        YIterator end_indep_y_grid_1,
-                        ZIterator start_dep_grid_1,
-                        ZIterator end_dep_grid_1,
-                        const T weighting_factor_y_0,
-                        const T weighting_factor_y_1 )
-{
-  // Make sure no tuples are being used
-  testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
-
-  return ThisType::interpolateWeighted<FIRST,FIRST>( indep_var_x_0,
-                                                     indep_var_x_1,
-                                                     indep_var_x,
-                                                     weighted_indep_var_y,
-                                                     start_indep_y_grid_0,
-                                                     end_indep_y_grid_0,
-                                                     start_dep_grid_0,
-                                                     end_dep_grid_0,
-                                                     start_indep_y_grid_1,
-                                                     end_indep_y_grid_1,
-                                                     start_dep_grid_1,
-                                                     end_dep_grid_1,
-                                                     weighting_factor_y_0,
-                                                     weighting_factor_y_1 );
-}
-
-
-
-
-
-
 
 // Conduct unit base interpolation
 /*! \details If indep_var_y is outside of the bounds of the intermediate grid
@@ -1077,9 +802,9 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
     (processed_indep_var_x_1 - processed_indep_var_x_0);
 
   return ZXInterpPolicy::interpolate( processed_indep_var_x_0,
-                      processed_indep_var_x,
-                      processed_dep_var_0,
-                      processed_slope );
+                                      processed_indep_var_x,
+                                      processed_dep_var_0,
+                                      processed_slope );
 }
 
 // Conduct the interpolation between two processed grids
@@ -1367,11 +1092,11 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolateProcessedUnitBase<FIRST,FIRST>(
-                            processed_indep_var_x_0,
+                        processed_indep_var_x_0,
                         processed_indep_var_x_1,
                         processed_indep_var_x,
                         processed_indep_var_y,
-                            start_processed_indep_y_grid_0,
+                        start_processed_indep_y_grid_0,
                         end_processed_indep_y_grid_0,
                         start_processed_dep_grid_0,
                         end_processed_dep_grid_0,
@@ -1407,9 +1132,9 @@ template<typename IndepType, typename LengthType>
 inline LengthType
 TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIntermediateGridLength(
                            const IndepType indep_var_x_0,
-                                               const IndepType indep_var_x_1,
-                                               const IndepType indep_var_x,
-                                               const LengthType grid_0_length,
+                           const IndepType indep_var_x_1,
+                           const IndepType indep_var_x,
+                           const LengthType grid_0_length,
                            const LengthType grid_1_length )
 {
   // Make sure the first independent variables are valid
@@ -1429,10 +1154,10 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIntermediat
                     QuantityTraits<LengthType>::zero() );
 
   return LXInterpPolicy::interpolate( indep_var_x_0,
-                      indep_var_x_1,
-                      indep_var_x,
-                      grid_0_length,
-                      grid_1_length );
+                                      indep_var_x_1,
+                                      indep_var_x,
+                                      grid_0_length,
+                                      grid_1_length );
 }
 
 // Calculate the min value of an intermediate grid
@@ -1459,10 +1184,10 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIntermediat
   testPrecondition( ThisType::isSecondIndepVarInValidRange( grid_1_y_limit ) );
 
   return YMinXInterpPolicy::interpolate( indep_var_x_0,
-                     indep_var_x_1,
-                     indep_var_x,
-                     grid_0_y_limit,
-                     grid_1_y_limit );
+                                         indep_var_x_1,
+                                         indep_var_x,
+                                         grid_0_y_limit,
+                                         grid_1_y_limit );
 }
 
 // Calculate the length of an intermediate grid

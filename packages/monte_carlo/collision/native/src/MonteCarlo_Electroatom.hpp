@@ -52,21 +52,21 @@ public:
   //! Constructor
   template<typename InterpPolicy>
   Electroatom(
-	  const std::string& name,
-	  const unsigned atomic_number,
-	  const double atomic_weight,
-	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const ReactionMap& standard_scattering_reactions,
-	  const ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_cross_sections,
-	  const InterpPolicy policy );
+      const std::string& name,
+      const unsigned atomic_number,
+      const double atomic_weight,
+      const Teuchos::ArrayRCP<double>& energy_grid,
+      const ReactionMap& standard_scattering_reactions,
+      const ReactionMap& standard_absorption_reactions,
+      const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+      const bool processed_cross_sections,
+      const InterpPolicy policy );
 
   //! Constructor (from a core)
   Electroatom( const std::string& name,
-	     const unsigned atomic_number,
-	     const double atomic_weight,
-	     const ElectroatomCore& core );
+         const unsigned atomic_number,
+         const double atomic_weight,
+         const ElectroatomCore& core );
 
   //! Destructor
   virtual ~Electroatom()
@@ -104,16 +104,16 @@ public:
 
   //! Return the cross section for a specific electroatomic reaction
   double getReactionCrossSection(
-			        const double energy,
-			        const ElectroatomicReactionType reaction ) const;
+                    const double energy,
+                    const ElectroatomicReactionType reaction ) const;
 
   //! Collide with a electron
   virtual void collideAnalogue( ElectronState& electron,
-				                ParticleBank& bank ) const;
+                                ParticleBank& bank ) const;
 
   //! Collide with a electron and survival bias
   virtual void collideSurvivalBias( ElectronState& electron,
-				                    ParticleBank& bank ) const;
+                                    ParticleBank& bank ) const;
 
   //! Return the core
   const ElectroatomCore& getCore() const;

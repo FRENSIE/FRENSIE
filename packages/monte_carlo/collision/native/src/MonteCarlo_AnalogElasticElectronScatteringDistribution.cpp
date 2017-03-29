@@ -38,9 +38,11 @@ double AnalogElasticElectronScatteringDistribution::s_screening_param1 =
 // Constructor
 AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
-    const int atomic_number )
+    const int atomic_number,
+    const bool linlinlog_interpolation_mode_on )
   : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
     d_atomic_number( atomic_number ),
+    d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on ),
     d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
     d_screening_param2( 3.76*s_fine_structure_const_squared*
                               d_atomic_number*d_atomic_number )
@@ -258,9 +260,9 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCD
 
 // Sample an outgoing energy and direction from the distribution
 void AnalogElasticElectronScatteringDistribution::sample(
-				     const double incoming_energy,
-				     double& outgoing_energy,
-				     double& scattering_angle_cosine ) const
+         const double incoming_energy,
+         double& outgoing_energy,
+         double& scattering_angle_cosine ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -275,10 +277,10 @@ void AnalogElasticElectronScatteringDistribution::sample(
 
 // Sample an outgoing energy and direction and record the number of trials
 void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrials(
-					    const double incoming_energy,
-					    double& outgoing_energy,
-					    double& scattering_angle_cosine,
-					    unsigned& trials ) const
+        const double incoming_energy,
+        double& outgoing_energy,
+        double& scattering_angle_cosine,
+        unsigned& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -291,9 +293,9 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the electron
 void AnalogElasticElectronScatteringDistribution::scatterElectron(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+         ElectronState& electron,
+         ParticleBank& bank,
+         Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -301,21 +303,21 @@ void AnalogElasticElectronScatteringDistribution::scatterElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   electron.rotateDirection( scattering_angle_cosine,
-			  this->sampleAzimuthalAngle() );
+                            this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron
 void AnalogElasticElectronScatteringDistribution::scatterAdjointElectron(
-				     AdjointElectronState& adjoint_electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+         AdjointElectronState& adjoint_electron,
+         ParticleBank& bank,
+         Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -323,14 +325,14 @@ void AnalogElasticElectronScatteringDistribution::scatterAdjointElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   adjoint_electron.rotateDirection( scattering_angle_cosine,
-				                    this->sampleAzimuthalAngle() );
+                                    this->sampleAzimuthalAngle() );
 }
 
 // Evaluate Moliere's atomic screening constant (modified by Seltzer) at the given electron energy
@@ -378,31 +380,48 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                     lower_bin,
                                                     upper_bin );
 
+  // Get a random number
+  double random_number =
+            Utility::RandomNumberGenerator::getRandomNumber<double>();
+
   if ( lower_bin->first == incoming_energy )
   {
-    sampleBin( lower_bin, scattering_angle_cosine );
+    sampleBin( lower_bin, random_number, scattering_angle_cosine );
   }  
   else if ( upper_bin->first == incoming_energy )
   {
-    sampleBin( upper_bin, scattering_angle_cosine );
+    sampleBin( upper_bin, random_number, scattering_angle_cosine );
   }
   else if ( lower_bin != upper_bin )
   {
     // Sample lower bin
     double lower_angle;
-    sampleBin( lower_bin, lower_angle );
+    sampleBin( lower_bin, random_number, lower_angle );
 
     // Sample upper bin
     double upper_angle;
-    sampleBin( upper_bin, upper_angle );
+    sampleBin( upper_bin, random_number, upper_angle );
 
-    // Interpolate
-    scattering_angle_cosine = Utility::LinLog::interpolate(
-                                lower_bin->first,
-                                upper_bin->first,
-                                incoming_energy,
-                                lower_angle,
-                                upper_angle );
+    if ( d_linlinlog_interpolation_mode_on )
+    {
+      // LinLinLog interpolation between energy bins
+      scattering_angle_cosine = Utility::LinLog::interpolate(
+                                  lower_bin->first,
+                                  upper_bin->first,
+                                  incoming_energy,
+                                  lower_angle,
+                                  upper_angle );
+    }
+    else
+    {
+      // LinLinLin interpolation between energy bins
+      scattering_angle_cosine = Utility::LinLin::interpolate(
+                                  lower_bin->first,
+                                  upper_bin->first,
+                                  incoming_energy,
+                                  lower_angle,
+                                  upper_angle );
+    }
   }
   else
   {
@@ -415,8 +434,13 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 }
 
 // Sample an outgoing direction from the given distribution
+/*! \details Due to roundoff error, that algorithm used to calculate the
+ *  scattering angle cosine can sometimes return a number slightly greater that
+ *  1.0. If this is the case, the scattering angle cosine is set to 1.0.
+ */
 void AnalogElasticElectronScatteringDistribution::sampleBin(
         const TwoDDist::DistributionType::const_iterator& distribution_bin,
+        const double random_number,
         double& scattering_angle_cosine ) const
 {
   // Get the bin energy
@@ -425,9 +449,6 @@ void AnalogElasticElectronScatteringDistribution::sampleBin(
   double eta = evaluateMoliereScreeningConstant( energy );
   // Get maximum CDF at the bin energy
   double max_cdf = evaluateScreenedRutherfordCDF( energy, 1.0, eta );
-  // Get a random number scaled to the max cdf
-  double random_number =
-            Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   if ( max_cdf*random_number > 1.0 ) // Sample screened Rutherford
   {
@@ -435,9 +456,9 @@ void AnalogElasticElectronScatteringDistribution::sampleBin(
     double var = s_cutoff_delta_mu*random_number;
 
     // calculate the screened Rutherford scattering angle
-    scattering_angle_cosine = 
+    scattering_angle_cosine = std::min( 1.0,
         ( var*( 1.0 + eta ) + eta*s_cutoff_mu )/
-        ( var + eta );
+        ( var + eta ) );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine >= s_cutoff_mu );

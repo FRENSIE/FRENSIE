@@ -22,24 +22,34 @@ namespace DataGen{
 // Constructor
 StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronDataGenerator(
     const unsigned atomic_number,
-    const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
+    const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const double min_electron_energy,
     const double max_electron_energy,
-    const double cutoff_angle_cosine )
+    const double cutoff_angle_cosine,
+    const double tabular_evaluation_tol,
+    const bool linlinlog_interpolation_mode_on )
   : MomentPreservingElectronDataGenerator( atomic_number ),
     d_native_eedl_data( native_eedl_data ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine )
+    d_cutoff_angle_cosine( cutoff_angle_cosine ),
+    d_tabular_evaluation_tol( tabular_evaluation_tol ),
+    d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
   testPrecondition( atomic_number == native_eedl_data->getAtomicNumber() );
   // Make sure the endl data is valid
-  testPrecondition( !native_eedl_data.is_null() );
+  testPrecondition( native_eedl_data.use_count() > 0 );
   // Make sure the electron energy limits are valid
   testPrecondition( min_electron_energy > 0.0 );
   testPrecondition( min_electron_energy < max_electron_energy );
+  // Make sure the cutoff angle is valid
+  testPrecondition( cutoff_angle_cosine >= -1.0 );
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( tabular_evaluation_tol >= -1.0 );
+  testPrecondition( tabular_evaluation_tol <= 1.0 );
 }
 
 // Populate the moment preserving electron data container
@@ -72,10 +82,13 @@ void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronD
   data_container.setElasticAngularEnergyGrid( angular_energy_grid );
 
   // Create the moment evaluator of the elastic scattering distribution
-  Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
+  std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
   moments_evaluator.reset(
-    new DataGen::ElasticElectronMomentsEvaluator( *d_native_eedl_data,
-                                                  d_cutoff_angle_cosine ) );
+    new DataGen::ElasticElectronMomentsEvaluator(
+                                            *d_native_eedl_data,
+                                            d_cutoff_angle_cosine,
+                                            d_tabular_evaluation_tol,
+                                            d_linlinlog_interpolation_mode_on ) );
 
   std::vector<double> discrete_angles, weights;
 
@@ -97,7 +110,7 @@ void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronD
 
 // Generate elastic discrete angle cosines and weights
 void StandardMomentPreservingElectronDataGenerator::evaluateDisceteAnglesAndWeights(
-    const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_discrete_angles,
     std::vector<double>& discrete_angles,
@@ -115,7 +128,7 @@ void StandardMomentPreservingElectronDataGenerator::evaluateDisceteAnglesAndWeig
                                             precision );
 
   // Use radau quadrature to find the discrete angles and weights from the moments
-  Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
+  std::shared_ptr<Utility::SloanRadauQuadrature> radau_quadrature(
       new Utility::SloanRadauQuadrature( legendre_moments ) );
 
   radau_quadrature->getRadauNodesAndWeights( discrete_angles,

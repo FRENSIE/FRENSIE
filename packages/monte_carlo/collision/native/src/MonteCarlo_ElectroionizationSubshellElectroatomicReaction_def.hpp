@@ -29,10 +29,9 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
-  : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                       incoming_energy_grid,
-                                                       cross_section,
-                                                       threshold_energy_index ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index ),
     d_interaction_subshell( interaction_subshell ),
     d_electroionization_subshell_distribution( electroionization_subshell_distribution ),
     d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum(
@@ -57,11 +56,10 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
-  : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
-            incoming_energy_grid,
-            cross_section,
-            threshold_energy_index,
-            grid_searcher ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
     d_interaction_subshell( interaction_subshell ),
     d_electroionization_subshell_distribution(
             electroionization_subshell_distribution ),
@@ -109,9 +107,9 @@ double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cro
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+     ElectronState& electron,
+     ParticleBank& bank,
+     Data::SubshellType& shell_of_interaction ) const
 {
   d_electroionization_subshell_distribution->scatterElectron(
                                                electron,

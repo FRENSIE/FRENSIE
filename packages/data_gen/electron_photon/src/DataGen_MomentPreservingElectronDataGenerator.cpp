@@ -23,8 +23,8 @@ MomentPreservingElectronDataGenerator::MomentPreservingElectronDataGenerator(
 
 // Set the atomic number
 void MomentPreservingElectronDataGenerator::setAtomicNumber(
-			   Data::MomentPreservingElectronVolatileDataContainer&
-			   data_container ) const
+               Data::MomentPreservingElectronVolatileDataContainer&
+               data_container ) const
 {
   data_container.setAtomicNumber( d_atomic_number );
 }

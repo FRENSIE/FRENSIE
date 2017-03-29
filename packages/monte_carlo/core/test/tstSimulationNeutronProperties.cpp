@@ -21,73 +21,63 @@
 // Test the simulation properties defaults
 TEUCHOS_UNIT_TEST( SimulationNeutronProperties, defaults )
 {
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold(),
-                       400.0 );
-  TEST_EQUALITY_CONST(
-               MonteCarlo::SimulationNeutronProperties::getAbsoluteMinNeutronEnergy(),
-               1e-11 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy(),
-                       1e-11 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy(),
-                       20.0 );
-  TEST_EQUALITY_CONST(
-               MonteCarlo::SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy(),
-               20.0 );
-}
-
-
-//---------------------------------------------------------------------------//
-// Test that the free gas thermal treatment temp threshold can be set
-TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setFreeGasThreshold )
-{
-  double default_value =
-    MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold();
-
-  MonteCarlo::SimulationNeutronProperties::setFreeGasThreshold( 1000.0 );
-
-  TEST_ASSERT( MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold(),
-		       1000.0 );
-
-  // Reset to the default
-  MonteCarlo::SimulationNeutronProperties::setFreeGasThreshold( default_value );
+  MonteCarlo::SimulationNeutronProperties properties;
+  
+  TEST_EQUALITY_CONST( properties.getAbsoluteMinNeutronEnergy(), 1e-11 );
+  TEST_EQUALITY_CONST( properties.getMinNeutronEnergy(), 1e-11 );
+  TEST_EQUALITY_CONST( properties.getMaxNeutronEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( properties.getFreeGasThreshold(), 400.0 );
+  TEST_ASSERT( properties.isUnresolvedResonanceProbabilityTableModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the min neutron energy can be set
 TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setMinNeutronEnergy )
 {
-  double default_value =
-    MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy();
+  MonteCarlo::SimulationNeutronProperties properties;
+  
+  properties.setMinNeutronEnergy( 1e-8 );
 
-  MonteCarlo::SimulationNeutronProperties::setMinNeutronEnergy( 1e-8 );
-
-  TEST_ASSERT( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy(),
-		       1e-8 );
-
-  // Reset the default
-  MonteCarlo::SimulationNeutronProperties::setMinNeutronEnergy( default_value );
+  TEST_EQUALITY_CONST( properties.getMinNeutronEnergy(), 1e-8 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the max neutron energy can be set
 TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setMaxNeutronEnergy )
 {
-  double default_value =
-    MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy();
+  MonteCarlo::SimulationNeutronProperties properties;
+  
+  properties.setMaxNeutronEnergy( 15.0 );
 
-  MonteCarlo::SimulationNeutronProperties::setMaxNeutronEnergy( 15.0 );
+  TEST_EQUALITY_CONST( properties.getMaxNeutronEnergy(), 15.0 );
+}
 
-  TEST_ASSERT( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy(),
-		       15.0 );
+//---------------------------------------------------------------------------//
+// Test that the free gas thermal treatment temp threshold can be set
+TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setFreeGasThreshold )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+  
+  properties.setFreeGasThreshold( 1000.0 );
 
-  // Reset the default
-  MonteCarlo::SimulationNeutronProperties::setMaxNeutronEnergy( default_value );
+  TEST_EQUALITY_CONST( properties.getFreeGasThreshold(), 1000.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the unresolved resonance probability table mode can be toggled
+TEUCHOS_UNIT_TEST( SimulationNeutronProperties,
+                   setUnresolvedResonanceProbabilityTableModeOn_Off )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+
+  properties.setUnresolvedResonanceProbabilityTableModeOff();
+
+  TEST_ASSERT( !properties.isUnresolvedResonanceProbabilityTableModeOn() );
+
+  properties.setUnresolvedResonanceProbabilityTableModeOn();
+
+  TEST_ASSERT( properties.isUnresolvedResonanceProbabilityTableModeOn() );
 }
 
 //---------------------------------------------------------------------------//

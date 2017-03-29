@@ -40,17 +40,29 @@ public:
   virtual ~CutoffElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the PDF
+  //! Evaluate the distribution
   double evaluate( const double incoming_energy,
                    const double scattering_angle_cosine ) const;
 
-  //! Evaluate the distribution
+  //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
+
+  //! Evaluate the unormalized distribution
+  double evaluateUnormalized( const double incoming_energy,
+                              const double scattering_angle_cosine ) const;
+
+  //! Evaluate the unormalized PDF
+  double evaluateUnormalizedPDF( const double incoming_energy,
+                                 const double scattering_angle_cosine ) const;
+
+  //! Evaluate the unormalized CDF
+  double evaluateUnormalizedCDF( const double incoming_energy,
+                                 const double scattering_angle_cosine ) const;
 
   //! Evaluate the cross section ratio for the cutoff angle cosine
   double evaluateCutoffCrossSectionRatio( const double incoming_energy ) const;
@@ -67,13 +79,13 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-                        ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
   //! Randomly scatter the adjoint electron
-  void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
-                               ParticleBank& bank,
+  void scatterAdjointElectron( MonteCarlo::AdjointElectronState& adjoint_electron,
+                               MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
 protected:

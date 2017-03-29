@@ -13,6 +13,7 @@
     <Parameter name="Free Gas Threshold" type="double" value="600.0"/>
     <Parameter name="Min Neutron Energy" type="double" value="1e-2"/>
     <Parameter name="Max Neutron Energy" type="double" value="10.0"/>
+    <Parameter name="Unresolved Resonance Probability Table" type="bool" value="false"/>
   </ParameterList>
 
   <ParameterList name="Photon Properties">
@@ -26,10 +27,26 @@
     <Parameter name="Photonuclear Interaction" type="bool" value="true"/>
   </ParameterList>
 
+  <ParameterList name="Adjoint Photon Properties">
+    <Parameter name="Min Adjoint Photon Energy" type="double" value="1e-2"/>
+    <Parameter name="Max Adjoint Photon Energy" type="double" value="10.0"/>
+    <Parameter name="Adjoint Photon Hash Grid Bins" type="unsigned int" value="500"/>
+    <Parameter name="Incoherent Adjoint Photon Scattering Model" type="string" value="Klein-Nishina Adjoint Model"/>
+    <Parameter name="Critical Adjoint Photon Line Energies" type="Array" value="{0.1, 1.0, 10.0}"/>
+  </ParameterList>
+
   <ParameterList name="Electron Properties">
     <Parameter name="Min Electron Energy" type="double" value="1e-2"/>
     <Parameter name="Max Electron Energy" type="double" value="10.0"/>
     <Parameter name="Electron Atomic Relaxation" type="bool" value="false"/>
+    <Parameter name="Electron Elastic" type="bool" value="false"/>
+    <Parameter name="Electron Electroionization" type="bool" value="false"/>
+    <Parameter name="Electron Bremsstrahlung" type="bool" value="false"/>
+    <Parameter name="Electron Atomic Excitation" type="bool" value="false"/>
+    <Parameter name="Electron Evaluation Tolerance" type="double" value="1e-5"/>
+    <Parameter name="Electron LinLinLog Interpolation" type="bool" value="false"/>
+    <Parameter name="Electron Correlated Sampling" type="bool" value="false"/>
+    <Parameter name="Electron Unit Based Interpolation" type="bool" value="false"/>
     <Parameter name="Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
     <Parameter name="Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
   </ParameterList>

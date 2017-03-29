@@ -87,6 +87,17 @@ TEUCHOS_UNIT_TEST( ParticleState, getHistoryNumber )
 }
 
 //---------------------------------------------------------------------------//
+// Set/get the source cell where the particle (history) started
+TEUCHOS_UNIT_TEST( ParticleState, setgetSourceCell )
+{
+  TestParticleState particle( 1ull );
+
+  particle.setSourceCell( 1 );
+
+  TEST_EQUALITY_CONST( particle.getSourceCell(), 1 );
+}
+
+//---------------------------------------------------------------------------//
 // Set/get the cell containing a particle
 TEUCHOS_UNIT_TEST( ParticleState, setgetCell )
 {
@@ -324,6 +335,17 @@ TEUCHOS_UNIT_TEST( ParticleState, rotateDirection )
 }
 
 //---------------------------------------------------------------------------//
+// Set/get the source energy of a particle
+TEUCHOS_UNIT_TEST( ParticleState, setgetSourceEnergy )
+{
+  TestParticleState particle( 1ull );
+
+  particle.setSourceEnergy( 1.0 );
+
+  TEST_EQUALITY_CONST( particle.getSourceEnergy(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Set/get the enegy of a particle
 TEUCHOS_UNIT_TEST( ParticleState, setgetEnergy )
 {
@@ -332,6 +354,17 @@ TEUCHOS_UNIT_TEST( ParticleState, setgetEnergy )
   particle.setEnergy( 1.0 );
 
   TEST_EQUALITY_CONST( particle.getEnergy(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Set/get the source time of a particle
+TEUCHOS_UNIT_TEST( ParticleState, setgetSourceTime )
+{
+  TestParticleState particle( 1ull );
+
+  particle.setSourceTime( 1.0 );
+
+  TEST_EQUALITY_CONST( particle.getSourceTime(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -364,6 +397,17 @@ TEUCHOS_UNIT_TEST( ParticleState, getGenerationNumber )
   TestParticleState particle( 1ull );
 
   TEST_EQUALITY_CONST( particle.getGenerationNumber(), 0u );
+}
+
+//---------------------------------------------------------------------------//
+// Set/get the source weight of the particle
+TEUCHOS_UNIT_TEST( ParticleState, setgetSourceWeight )
+{
+  TestParticleState particle( 1ull );
+
+  particle.setSourceWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle.getSourceWeight(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -440,9 +484,12 @@ TEUCHOS_UNIT_TEST( ParticleState, archive )
     TestParticleState particle( 1ull );
     particle.setPosition( 1.0, 1.0, 1.0 );
     particle.setDirection( 0.0, 0.0, 1.0 );
+    particle.setSourceEnergy( 2.0 );
     particle.setEnergy( 1.0 );
+    particle.setSourceTime( 0.0 );
     particle.setTime( 0.5 );
     particle.incrementCollisionNumber();
+    particle.setSourceWeight( 1.0 );
     particle.setWeight( 0.25 );
 
     std::ofstream ofs( "test_particle_state_archive.xml" );
@@ -465,10 +512,13 @@ TEUCHOS_UNIT_TEST( ParticleState, archive )
   TEST_EQUALITY_CONST( loaded_particle.getXDirection(), 0.0 );
   TEST_EQUALITY_CONST( loaded_particle.getYDirection(), 0.0 );
   TEST_EQUALITY_CONST( loaded_particle.getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getSourceEnergy(), 2.0 );
   TEST_EQUALITY_CONST( loaded_particle.getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getSourceTime(), 0.0 );
   TEST_EQUALITY_CONST( loaded_particle.getTime(), 0.5 );
   TEST_EQUALITY_CONST( loaded_particle.getCollisionNumber(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getGenerationNumber(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getSourceWeight(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getWeight(), 0.25 );
   TEST_EQUALITY_CONST( loaded_particle.getHistoryNumber(), 1ull );
 }
@@ -481,10 +531,15 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
   TestParticleState particle_gen_a( 1ull );
   particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
   particle_gen_a.setPosition( 0.0, 0.0, 1.0 );
+  particle_gen_a.setSourceEnergy( 2.0 );
   particle_gen_a.setEnergy( 1.0 );
+  particle_gen_a.setSourceTime( 0.0 );
   particle_gen_a.setTime( 1.0 );
   particle_gen_a.incrementCollisionNumber();
+  particle_gen_a.setSourceWeight( 1.0 );
   particle_gen_a.setWeight( 0.5 );
+  particle_gen_a.setSourceCell( 1 );
+  particle_gen_a.setCell( 2 );
 
   // Create a second generation particle with the same collision number
   TestParticleState particle_gen_b( particle_gen_a, true );
@@ -501,16 +556,26 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
 		 particle_gen_a.getYDirection() );
   TEST_EQUALITY( particle_gen_b.getZDirection(),
 		 particle_gen_a.getZDirection() );
+  TEST_EQUALITY( particle_gen_b.getSourceEnergy(),
+                 particle_gen_a.getSourceEnergy() );
   TEST_EQUALITY( particle_gen_b.getEnergy(),
 		 particle_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_b.getSourceTime(),
+                 particle_gen_a.getSourceTime() );
   TEST_EQUALITY( particle_gen_b.getTime(),
 		 particle_gen_a.getTime() );
   TEST_EQUALITY( particle_gen_b.getCollisionNumber(),
 		 particle_gen_a.getCollisionNumber() );
   TEST_EQUALITY( particle_gen_b.getGenerationNumber(),
 		 particle_gen_a.getGenerationNumber()+1u );
+  TEST_EQUALITY( particle_gen_b.getSourceWeight(),
+                 particle_gen_a.getSourceWeight() );
   TEST_EQUALITY( particle_gen_b.getWeight(),
 		 particle_gen_a.getWeight() );
+  TEST_EQUALITY( particle_gen_b.getSourceCell(),
+                 particle_gen_a.getSourceCell() );
+  TEST_EQUALITY( particle_gen_b.getCell(),
+                 particle_gen_a.getCell() );
 
   // Create a third generation particle and reset the collision counter
   TestParticleState particle_gen_c( particle_gen_b, true, true );
@@ -527,15 +592,25 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
 		 particle_gen_b.getYDirection() );
   TEST_EQUALITY( particle_gen_c.getZDirection(),
 		 particle_gen_b.getZDirection() );
+  TEST_EQUALITY( particle_gen_c.getSourceEnergy(),
+		 particle_gen_b.getSourceEnergy() );
   TEST_EQUALITY( particle_gen_c.getEnergy(),
 		 particle_gen_b.getEnergy() );
+  TEST_EQUALITY( particle_gen_c.getSourceTime(),
+		 particle_gen_b.getSourceTime() );
   TEST_EQUALITY( particle_gen_c.getTime(),
 		 particle_gen_b.getTime() );
   TEST_EQUALITY_CONST( particle_gen_c.getCollisionNumber(), 0u );
   TEST_EQUALITY( particle_gen_c.getGenerationNumber(),
 		 particle_gen_b.getGenerationNumber()+1u );
+  TEST_EQUALITY( particle_gen_c.getSourceWeight(),
+		 particle_gen_b.getSourceWeight() );
   TEST_EQUALITY( particle_gen_c.getWeight(),
 		 particle_gen_b.getWeight() );
+  TEST_EQUALITY( particle_gen_c.getSourceCell(),
+		 particle_gen_b.getSourceCell() );
+  TEST_EQUALITY( particle_gen_c.getCell(),
+		 particle_gen_b.getCell() );
 
   // Create a second third generation particle after the second gen particle
   // has been set to gone

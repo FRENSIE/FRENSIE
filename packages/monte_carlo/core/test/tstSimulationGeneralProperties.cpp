@@ -21,74 +21,67 @@
 // Test the simulation properties defaults
 TEUCHOS_UNIT_TEST( SimulationGeneralProperties, defaults )
 {
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  TEST_EQUALITY_CONST( properties.getParticleMode(),
                        MonteCarlo::NEUTRON_MODE );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getNumberOfHistories(),
-                      0 );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
-		      0.001 );
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::displayWarnings() );
-  TEST_ASSERT( !MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );
-
+  TEST_EQUALITY_CONST( properties.getNumberOfHistories(), 0 );
+  TEST_EQUALITY_CONST( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
+		       0.001 );
+  TEST_ASSERT( properties.displayWarnings() );
+  TEST_ASSERT( !properties.isImplicitCaptureModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the particle mode can be set
 TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setParticleMode )
 {
-  MonteCarlo::ParticleModeType default_mode =
-    MonteCarlo::SimulationGeneralProperties::getParticleMode();
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  properties.setParticleMode( MonteCarlo::NEUTRON_MODE );
 
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::NEUTRON_MODE);
+  TEST_EQUALITY_CONST( properties.getParticleMode(),
+                       MonteCarlo::NEUTRON_MODE );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_MODE );
+  properties.setParticleMode( MonteCarlo::PHOTON_MODE );
 
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::PHOTON_MODE );
+  TEST_EQUALITY_CONST( properties.getParticleMode(), MonteCarlo::PHOTON_MODE );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::PHOTON_MODE );
+  properties.setParticleMode( MonteCarlo::ELECTRON_MODE );
 
-  MonteCarlo::SimulationGeneralProperties::setParticleMode(
-						   MonteCarlo::ELECTRON_MODE );
-
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
+  TEST_EQUALITY_CONST( properties.getParticleMode(),
 		       MonteCarlo::ELECTRON_MODE );
 
-  MonteCarlo::SimulationGeneralProperties::setParticleMode(
-					     MonteCarlo::NEUTRON_PHOTON_MODE );
+  properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
+  TEST_EQUALITY_CONST( properties.getParticleMode(),
 		       MonteCarlo::NEUTRON_PHOTON_MODE );
 
-  MonteCarlo::SimulationGeneralProperties::setParticleMode(
-					    MonteCarlo::PHOTON_ELECTRON_MODE );
+  properties.setParticleMode( MonteCarlo::PHOTON_ELECTRON_MODE );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
+  TEST_EQUALITY_CONST( properties.getParticleMode(),
 		       MonteCarlo::PHOTON_ELECTRON_MODE );
 
-  MonteCarlo::SimulationGeneralProperties::setParticleMode(
-				    MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
+  properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
+  TEST_EQUALITY_CONST( properties.getParticleMode(),
 		       MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( default_mode );
+  properties.setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
+
+  TEST_EQUALITY_CONST( properties.getParticleMode(),
+                       MonteCarlo::ADJOINT_PHOTON_MODE );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the number of histories to run can be set
 TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
 {
-  unsigned long long default_value =
-    MonteCarlo::SimulationGeneralProperties::getNumberOfHistories();
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  properties.setNumberOfHistories( 1000000000 );
 
-  MonteCarlo::SimulationGeneralProperties::setNumberOfHistories( 1000000000 );
-
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::getNumberOfHistories() !=
-	       default_value );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getNumberOfHistories(),
-		      1000000000 );
+  TEST_EQUALITY_CONST(properties.getNumberOfHistories(), 1000000000 );
 }
 
 //---------------------------------------------------------------------------//
@@ -96,114 +89,53 @@ TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
 TEUCHOS_UNIT_TEST( SimulationGeneralProperties,
 		   setSurfaceFluxEstimatorAngleCosineCutoff )
 {
-  double default_value =
-    MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
 
-  MonteCarlo::SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
-
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
+  TEST_EQUALITY_CONST( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
 		       0.1 );
-
-  // Reset to the default
-  MonteCarlo::SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff( default_value );
 }
 
 //---------------------------------------------------------------------------//
-// Test that the min particle energy can be returned
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, getMinParticleEnergy )
+// Test that warnings can be disabled/enabled
+TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setWarningsOnOff )
 {
-  double default_value_neutron =
-    MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy();
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  properties.setWarningsOff();
 
-  MonteCarlo::SimulationNeutronProperties::setMinNeutronEnergy( 1e-8 );
+  TEST_ASSERT( !properties.displayWarnings() );
 
-  double default_value_photon =
-    MonteCarlo::SimulationPhotonProperties::getMinPhotonEnergy();
+  properties.setWarningsOn();
 
-  MonteCarlo::SimulationPhotonProperties::setMinPhotonEnergy( 1e-2 );
-
-  double default_value_electron =
-    MonteCarlo::SimulationElectronProperties::getMinElectronEnergy();
-
-  MonteCarlo::SimulationElectronProperties::setMinElectronEnergy( 1e-2 );
-
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMinParticleEnergy<MonteCarlo::NeutronState>(),
-		 1e-8 );
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMinParticleEnergy<MonteCarlo::PhotonState>(),
-		 1e-2 );
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMinParticleEnergy<MonteCarlo::ElectronState>(),
-		 1e-2 );
-
-  // Reset the default values
-  MonteCarlo::SimulationNeutronProperties::setMinNeutronEnergy( default_value_neutron );
-  MonteCarlo::SimulationPhotonProperties::setMinPhotonEnergy( default_value_photon );
-  MonteCarlo::SimulationElectronProperties::setMinElectronEnergy( default_value_electron );
+  TEST_ASSERT( properties.displayWarnings() );
 }
 
 //---------------------------------------------------------------------------//
-// Test that the max particle energy can be returned
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, getMaxParticleEnergy )
+// Test that implicit capture mode can be turned on/off
+TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setImplicitCaptureModeOnOff )
 {
-  double default_value_neutron =
-    MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy();
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  properties.setImplicitCaptureModeOn();
 
-  MonteCarlo::SimulationNeutronProperties::setMaxNeutronEnergy( 15.0 );
+  TEST_ASSERT( properties.isImplicitCaptureModeOn() );
 
-  double default_value_photon =
-    MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy();
+  properties.setAnalogueCaptureModeOn();
 
-  MonteCarlo::SimulationPhotonProperties::setMaxPhotonEnergy( 15.0 );
-
-  double default_value_electron =
-    MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy();
-
-  MonteCarlo::SimulationElectronProperties::setMaxElectronEnergy( 15.0 );
-
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMaxParticleEnergy<MonteCarlo::NeutronState>(),
-		 15.0 );
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMaxParticleEnergy<MonteCarlo::PhotonState>(),
-		 15.0 );
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMaxParticleEnergy<MonteCarlo::ElectronState>(),
-		 15.0 );
-
-  // Reset the default values
-  MonteCarlo::SimulationNeutronProperties::setMaxNeutronEnergy( default_value_neutron );
-  MonteCarlo::SimulationPhotonProperties::setMaxPhotonEnergy( default_value_photon );
-  MonteCarlo::SimulationElectronProperties::setMaxElectronEnergy( default_value_electron );
-}
-
-//---------------------------------------------------------------------------//
-// Test that warnings can be disabled
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setWarningsOff )
-{
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::displayWarnings() );
-
-  MonteCarlo::SimulationGeneralProperties::setWarningsOff();
-
-  TEST_ASSERT( !MonteCarlo::SimulationGeneralProperties::displayWarnings() );
-}
-
-//---------------------------------------------------------------------------//
-// Test that implicit capture mode can be turned on
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setImplicitCaptureModeOn )
-{
-  TEST_ASSERT( !MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );
-
-  MonteCarlo::SimulationGeneralProperties::setImplicitCaptureModeOn();
-
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );
+  TEST_ASSERT( !properties.isImplicitCaptureModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the number of batches per processor can be set
 TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setNumberOfBatchesPerProcessor )
 {
-  MonteCarlo::SimulationGeneralProperties::setNumberOfBatchesPerProcessor( 25 );
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  properties.setNumberOfBatchesPerProcessor( 25 );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getNumberOfBatchesPerProcessor(),
-    25 );
+  TEST_EQUALITY_CONST( properties.getNumberOfBatchesPerProcessor(), 25 );
 }
 
 //---------------------------------------------------------------------------//

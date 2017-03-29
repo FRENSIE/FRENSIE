@@ -58,7 +58,8 @@ public:
 		     const Estimator::idType id,
 		     const double multiplier,
 		     const std::string input_mesh_file_name,
-		     const std::string output_mesh_file_name = "tetmesh.h5m" );
+		     const std::string output_mesh_file_name = "tetmesh.h5m",
+                     const bool display_warnings = true );
 
   //! Destructor
   ~TetMeshTrackLengthFluxEstimator()
@@ -126,6 +127,9 @@ private:
 
   // The output mesh file name
   std::string d_output_mesh_name;
+
+  // Display warnings
+  bool d_display_warnings;
 };
 
 } // end MonteCarlo namespace

@@ -9,33 +9,33 @@
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_SimulationElectronPropertiesFactory.hpp"
-#include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 //! Initialize the simulation properties
-void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties(
-				      const Teuchos::ParameterList& properties,
-				      std::ostream* os_warn )
+void SimulationElectronPropertiesFactory::initializeProperties(
+                             const Teuchos::ParameterList& properties,
+                             SimulationElectronProperties& electron_properties,
+                             std::ostream* os_warn )
 {
   // Get the min electron energy - optional
   if( properties.isParameter( "Min Electron Energy" ) )
   {
     double min_energy = properties.get<double>( "Min Electron Energy" );
 
-    if( min_energy >= SimulationElectronProperties::getAbsoluteMinElectronEnergy() )
-      SimulationElectronProperties::setMinElectronEnergy( min_energy );
+    if( min_energy >= electron_properties.getAbsoluteMinElectronEnergy() )
+      electron_properties.setMinElectronEnergy( min_energy );
     else
     {
-      SimulationElectronProperties::setMinElectronEnergy(
-			SimulationElectronProperties::getAbsoluteMinElectronEnergy() );
+      electron_properties.setMinElectronEnergy(
+                          electron_properties.getAbsoluteMinElectronEnergy() );
 
       *os_warn << "Warning: the lowest supported electron energy is "
-		<< SimulationElectronProperties::getAbsoluteMinElectronEnergy()
-		<< ". This value will be used instead of "
-		<< min_energy << "." << std::endl;
+               << electron_properties.getAbsoluteMinElectronEnergy()
+               << ". This value will be used instead of "
+               << min_energy << "." << std::endl;
     }
   }
 
@@ -44,17 +44,17 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
   {
     double max_energy = properties.get<double>( "Max Electron Energy" );
 
-    if( max_energy <= SimulationElectronProperties::getAbsoluteMaxElectronEnergy() )
-      SimulationElectronProperties::setMaxElectronEnergy( max_energy );
+    if( max_energy <= electron_properties.getAbsoluteMaxElectronEnergy() )
+      electron_properties.setMaxElectronEnergy( max_energy );
     else
     {
-      SimulationElectronProperties::setMaxElectronEnergy(
-			SimulationElectronProperties::getAbsoluteMaxElectronEnergy() );
+      electron_properties.setMaxElectronEnergy(
+                          electron_properties.getAbsoluteMaxElectronEnergy() );
 
       *os_warn << "Warning: the highest supported electron energy is "
-		<< SimulationElectronProperties::getAbsoluteMaxElectronEnergy()
-		<< ". This value will be used instead of "
-		<< max_energy << "." << std::endl;
+               << electron_properties.getAbsoluteMaxElectronEnergy()
+               << ". This value will be used instead of "
+               << max_energy << "." << std::endl;
     }
   }
 
@@ -62,52 +62,121 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
   if( properties.isParameter( "Electron Atomic Relaxation" ) )
   {
     if( !properties.get<bool>( "Electron Atomic Relaxation" ) )
-      SimulationElectronProperties::setAtomicRelaxationModeOff();
+      electron_properties.setAtomicRelaxationModeOff();
+  }
+
+  // Get the elastic scattering reaction mode - optional
+  if( properties.isParameter( "Electron Elastic" ) )
+  {
+    if( !properties.get<bool>( "Electron Elastic" ) )
+      electron_properties.setElasticModeOff();
+  }
+
+  // Get the electroionization scattering reaction mode - optional
+  if( properties.isParameter( "Electron Electroionization" ) )
+  {
+    if( !properties.get<bool>( "Electron Electroionization" ) )
+      electron_properties.setElectroionizationModeOff();
+  }
+
+  // Get the bremsstrahlung reaction mode - optional
+  if( properties.isParameter( "Electron Bremsstrahlung" ) )
+  {
+    if( !properties.get<bool>( "Electron Bremsstrahlung" ) )
+      electron_properties.setBremsstrahlungModeOff();
+  }
+
+  // Get the atomic excitation scattering reaction mode - optional
+  if( properties.isParameter( "Electron Atomic Excitation" ) )
+  {
+    if( !properties.get<bool>( "Electron Atomic Excitation" ) )
+      electron_properties.setAtomicExcitationModeOff();
+  }
+
+  // Get the secondary electron LinLinLog interpolation mode - optional
+  if( properties.isParameter( "Electron Evaluation Tolerance" ) )
+  {
+    double evaluation_tol =
+        properties.get<double>( "Electron Evaluation Tolerance" );
+
+    if( evaluation_tol > 0.0 && evaluation_tol < 1.0 )
+    {
+      electron_properties.setElectronEvaluationTolerance( evaluation_tol );
+    }
+    else
+    {
+      std::cerr << "Warning: the electron evaluation tolerance must have a "
+                << "value between 0 and 1. The default value of "
+                << electron_properties.getElectronEvaluationTolerance()
+                << " will be used instead of " << evaluation_tol << "."
+                << std::endl;
+    }
+  }
+
+  // Get the secondary electron LinLinLog interpolation mode - optional
+  if( properties.isParameter( "Electron LinLinLog Interpolation" ) )
+  {
+    if( !properties.get<bool>( "Electron LinLinLog Interpolation" ) )
+      electron_properties.setLinLinLogInterpolationModeOff();
+  }
+
+  // Get the correlated sampling mode - optional
+  if( properties.isParameter( "Electron Correlated Sampling" ) )
+  {
+    if( !properties.get<bool>( "Electron Correlated Sampling" ) )
+      electron_properties.setCorrelatedSamplingModeOff();
+  }
+
+  // Get the unit based interpolation mode - optional
+  if( properties.isParameter( "Electron Unit Based Interpolation" ) )
+  {
+    if( !properties.get<bool>( "Electron Unit Based Interpolation" ) )
+      electron_properties.setUnitBasedInterpolationModeOff();
   }
 
   // Get the bremsstrahlung photon angular distribution function - optional
   if( properties.isParameter( "Bremsstrahlung Angular Distribution" ) )
   {
     std::string raw_function =
-           properties.get<std::string>( "Bremsstrahlung Angular Distribution" );
+      properties.get<std::string>( "Bremsstrahlung Angular Distribution" );
 
      MonteCarlo::BremsstrahlungAngularDistributionType function;
 
     if( raw_function == "Dipole" || raw_function == "dipole" || raw_function == "DIPOLE" )
       function = MonteCarlo::DIPOLE_DISTRIBUTION;
     else if( raw_function == "Tabular" || raw_function == "tabular" || raw_function == "TABULAR" )
-      function = MonteCarlo::DIPOLE_DISTRIBUTION;
+      function = MonteCarlo::TABULAR_DISTRIBUTION;
     else if( raw_function == "2BS" || raw_function == "2bs" || raw_function == "twobs" )
       function = MonteCarlo::TWOBS_DISTRIBUTION;
     else
     {
       THROW_EXCEPTION( std::runtime_error,
-		       "Error: bremsstrahlung angular distribution " << raw_function <<
-               " is not currently supported!" );
+                       "Error: bremsstrahlung angular distribution "
+                       << raw_function <<
+                       " is not currently supported!" );
     }
 
-     SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
-                                                                     function );
+     electron_properties.setBremsstrahlungAngularDistributionFunction(
+                                                                    function );
   }
 
   // Get the elastic cutoff angle cosine - optional
   if( properties.isParameter( "Elastic Cutoff Angle Cosine" ) )
   {
     double cutoff_angle_cosine =
-            properties.get<double>( "Elastic Cutoff Angle Cosine" );
+      properties.get<double>( "Elastic Cutoff Angle Cosine" );
 
     if( cutoff_angle_cosine >= -1.0 && cutoff_angle_cosine <= 1.0 )
     {
-      SimulationElectronProperties::setElasticCutoffAngleCosine(
-        cutoff_angle_cosine );
+      electron_properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
     }
     else
     {
       std::cerr << "Warning: the elastic cutoff angle cosine must have a "
-		<< "value between -1 and 1. The default value of "
-		<< SimulationElectronProperties::getElasticCutoffAngleCosine()
-		<< " will be used instead of " << cutoff_angle_cosine << "."
-		<< std::endl;
+                << "value between -1 and 1. The default value of "
+                << electron_properties.getElasticCutoffAngleCosine()
+                << " will be used instead of " << cutoff_angle_cosine << "."
+                << std::endl;
     }
   }
 
@@ -116,7 +185,7 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
   {
     unsigned bins = properties.get<unsigned>( "Electron Hash Grid Bins" );
 
-    SimulationElectronProperties::setNumberOfElectronHashGridBins( bins );
+    electron_properties.setNumberOfElectronHashGridBins( bins );
   }
 
   properties.unused( *os_warn );

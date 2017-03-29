@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <sstream>
+#include <cstdio>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
@@ -735,7 +736,7 @@ int main( int argc, char** argv )
     double atomic_weight;
 
     try{
-      Data::CrossSectionsXMLProperties::extractInfoFromAdjointPhotoatomTableInfoParameterList(
+      Data::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
 						    cross_section_directory,
 						    cross_section_alias,
 						    *cross_sections_table_info,
@@ -766,29 +767,33 @@ int main( int argc, char** argv )
   int atomic_number;
   
   {
-    // Recalculate the moment preserving data with the desired parameters
+  // Export the temp data to an XML file
+  std::string temp_forward_file_name = "epr_native_temp.xml";
+
+    // Recalculate the elastic electron data with the desired parameters
     {
       Data::ElectronPhotonRelaxationVolatileDataContainer temp_data_container(
             data_file_path,
             Utility::ArchivableObject::XML_ARCHIVE );
       
       try{
-        DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
+        DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
           temp_data_container,
+          max_electron_energy,
           cutoff_angle_cosine,
           number_of_moment_preserving_angles );
       }
       EXCEPTION_CATCH_AND_EXIT( std::exception,
-                                "Error: Unable to repopulate the moment "
-                                "preserving data!" );
+                                "Error: Unable to repopulate the elastic "
+                                "electron data!" );
 
-      temp_data_container.exportData( data_file_path,
+      temp_data_container.exportData( temp_forward_file_name,
                                       Utility::ArchivableObject::XML_ARCHIVE );
     }
 
     std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
       forward_data_container( new Data::ElectronPhotonRelaxationDataContainer(
-                                                            data_file_path ) );
+                                                     temp_forward_file_name ) );
 
     atomic_number = forward_data_container->getAtomicNumber();
 
@@ -842,6 +847,10 @@ int main( int argc, char** argv )
     // Add the notes to the data container
     if( table_notes.size() > 0 )
       data_container.setNotes( table_notes );
+
+    const char *cstr = temp_forward_file_name.c_str();
+
+    std::remove( cstr );
   }
 
   // Export the generated data to an XML file

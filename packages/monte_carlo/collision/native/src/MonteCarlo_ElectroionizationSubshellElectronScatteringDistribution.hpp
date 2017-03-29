@@ -36,14 +36,26 @@ public:
   ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double& binding_energy );
+    const double binding_energy,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on );
 
   //! Destructor
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Set the sampling routine
+  void setSamplingRoutine( const bool correlated_sampling_mode_on,
+                           const bool unit_based_interpolation_mode_on );
+
+  //! Set the evaluation routines
+  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
+
   //! Return the binding energy
   double getBindingEnergy() const;
+
+  //! Return the min secondary (knock-on) electron energy for a given incoming electron energy
+  double getMinSecondaryEnergyAtIncomingEnergy( const double energy ) const;
 
   //! Return the max secondary (knock-on) electron energy for a given incoming electron energy
   double getMaxSecondaryEnergyAtIncomingEnergy( const double energy ) const;
@@ -79,11 +91,48 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-	                    ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
 private:
+
+  //! Evaluate the distribution for a given incoming and outgoing energy
+  double correlatedEvaluateUnitBased( const double incoming_energy,
+                                      const double outgoing_energy ) const;
+
+  //! Evaluate the distribution for a given incoming and outgoing energy
+  double correlatedEvaluateExact( const double incoming_energy,
+                                  const double outgoing_energy ) const;
+
+  //! Evaluate the PDF value for a given incoming and outgoing energy
+  double correlatedEvaluatePDFUnitBased( const double incoming_energy,
+                                         const double outgoing_energy ) const;
+
+  //! Evaluate the PDF value for a given incoming and outgoing energy
+  double correlatedEvaluatePDFExact( const double incoming_energy,
+                                     const double outgoing_energy ) const;
+
+  //! Evaluate the CDF value for a given incoming and outgoing energy
+  double correlatedEvaluateCDFUnitBased( const double incoming_energy,
+                                         const double outgoing_energy ) const;
+
+  //! Evaluate the CDF value for a given incoming and outgoing energy
+  double correlatedEvaluateCDFExact( const double incoming_energy,
+                                     const double outgoing_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double sampleUnitBased( const double incoming_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double correlatedSampleUnitBased( const double incoming_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double correlatedSampleExact( const double incoming_energy ) const;
+
+  // Calculate the outgoing angle cosine
+  double outgoingAngle( const double incoming_energy,
+                        const double outgoing_energy ) const;
 
   // electroionization subshell scattering cross sections
   std::shared_ptr<TwoDDist> d_electroionization_subshell_scattering_distribution;
@@ -91,10 +140,17 @@ private:
   // Subshell binding energy
   double d_binding_energy;
 
-  // Calculate the outgoing angle cosine
-  double outgoingAngle( const double incoming_energy,
-                        const double outgoing_energy ) const;
+  // The sample function pointer
+  std::function<double ( const double )> d_sample_func;
 
+  // The evaluate function pointer
+  std::function<double ( const double, const double )> d_evaluate_func;
+
+  // The evaluatePDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_pdf_func;
+
+  // The evaluateCDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_cdf_func;
 };
 
 } // end MonteCarlo namespace

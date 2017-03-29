@@ -9,10 +9,6 @@
 #ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
@@ -37,23 +33,27 @@ public:
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution );
-
-  //! Constructor with detailed tabular photon angular distribution
-  BremsstrahlungElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
-    const double lower_cutoff_energy,
-    const double upper_cutoff_energy );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on );
 
   //! Constructor with detailed 2BS photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
+    const int atomic_number,
     const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const int atomic_number );
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on );
 
   //! Destructor
   virtual ~BremsstrahlungElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Set the sampling routine
+  void setSamplingRoutine( const bool correlated_sampling_mode_on,
+                           const bool unit_based_interpolation_mode_on );
+
+  //! Set the evaluation routines
+  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
 
   //! Return the min incoming energy
   double getMinEnergy() const;
@@ -85,30 +85,44 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-	                    ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
 private:
 
-  // atomic number (Z)
-  double d_atomic_number;
+  //! Evaluate the distribution for a given incoming and photon energy
+  double correlatedEvaluateUnitBased( const double incoming_energy,
+                                      const double photon_energy ) const;
 
-  // bremsstrahlung scattering distribution
-  std::shared_ptr<TwoDDist> d_bremsstrahlung_scattering_distribution;
+  //! Evaluate the distribution for a given incoming and photon energy
+  double correlatedEvaluateExact( const double incoming_energy,
+                                  const double photon_energy ) const;
 
-  // upper cutoff energy for the condensed-history method
-  double d_upper_cutoff_energy;
+  //! Evaluate the PDF value for a given incoming and photon energy
+  double correlatedEvaluatePDFUnitBased( const double incoming_energy,
+                                         const double photon_energy ) const;
 
-  // lower cutoff energy for the condensed-history method
-  double d_lower_cutoff_energy;
+  //! Evaluate the PDF value for a given incoming and photon energy
+  double correlatedEvaluatePDFExact( const double incoming_energy,
+                                     const double photon_energy ) const;
 
-  // bremsstrahlung angular distribution of generated photons
-  std::shared_ptr<Utility::OneDDistribution> d_angular_distribution;
+  //! Evaluate the CDF value for a given incoming and photon energy
+  double correlatedEvaluateCDFUnitBased( const double incoming_energy,
+                                         const double photon_energy ) const;
 
-  // Sample the outgoing photon angle from a tabular distribution
-  double SampleTabularAngle(  const double incoming_electron_energy,
-                              const double photon_energy ) const ;
+  //! Evaluate the CDF value for a given incoming and photon energy
+  double correlatedEvaluateCDFExact( const double incoming_energy,
+                                     const double photon_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double sampleUnitBased( const double incoming_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double correlatedSampleUnitBased( const double incoming_energy ) const;
+
+  //! Sample a secondary energy from the distribution
+  double correlatedSampleExact( const double incoming_energy ) const;
 
   // Sample the outgoing photon angle from a dipole distribution
   double SampleDipoleAngle(  const double incoming_electron_energy,
@@ -124,9 +138,27 @@ private:
                                 const double parameter1,
                                 const double x ) const;
 
-  // The doppler broadening function pointer
-  boost::function<double ( const double, const double )>
+  // atomic number (Z)
+  double d_atomic_number;
+
+  // bremsstrahlung scattering distribution
+  std::shared_ptr<TwoDDist> d_bremsstrahlung_scattering_distribution;
+
+  // The outgoing angle function pointer
+  std::function<double ( const double, const double )>
                                         d_angular_distribution_func;
+
+  // The sample function pointer
+  std::function<double ( const double )> d_sample_func;
+
+  // The evaluate function pointer
+  std::function<double ( const double, const double )> d_evaluate_func;
+
+  // The evaluatePDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_pdf_func;
+
+  // The evaluateCDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_cdf_func;
 
 };
 
