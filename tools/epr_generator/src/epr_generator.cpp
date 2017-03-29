@@ -60,6 +60,7 @@ int main( int argc, char** argv )
   double cutoff_angle_cosine = 1.0;
   int number_of_moment_preserving_angles = 0;
   bool append_moment_preserving_data = false;
+  bool linlinlog_interpolation_mode_on = true;
 
   // General grid generation options
   double grid_convergence_tol = 0.001;
@@ -133,10 +134,14 @@ int main( int argc, char** argv )
                                &number_of_moment_preserving_angles,
                                "Number of moment preserving angles for table "
                                "(angles>=0)" );
+  epr_generator_clp.setOption( "linlinlog_interp_on",
+                               "linlinlin_interp_on",
+                               &linlinlog_interpolation_mode_on,
+                               "The electron 2D interpolation mode" );
   epr_generator_clp.setOption( "append_moment_preserving_data",
                                "do_not_append_moment_preserving_data",
                                &append_moment_preserving_data,
-                               "Append a native data file with new moment preserving data" );
+                               "Append a native data file with new moment preserving data?" );
 
   // Set the grid generation option names
   epr_generator_clp.setOption( "grid_convergence_tol",
@@ -351,7 +356,8 @@ int main( int argc, char** argv )
           data_container,
           tabular_evaluation_tol,
           cutoff_angle_cosine,
-          number_of_moment_preserving_angles );
+          number_of_moment_preserving_angles,
+          linlinlog_interpolation_mode_on );
       }
       EXCEPTION_CATCH_AND_EXIT( std::exception,
                                 "Error: Unable to repopulate the moment "
@@ -427,7 +433,9 @@ int main( int argc, char** argv )
         raw_generator->setDefaultGridAbsoluteDifferenceTolerance(
                                                       grid_absolute_diff_tol );
         raw_generator->setDefaultGridDistanceTolerance( grid_distance_tol );
-        
+        if( !linlinlog_interpolation_mode_on )
+          raw_generator->setElectronLinLinLogInterpolationModeOff();
+
         epr_generator.reset( raw_generator );
       }
       EXCEPTION_CATCH_AND_EXIT( std::exception,
