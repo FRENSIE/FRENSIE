@@ -47,8 +47,8 @@ AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::AdjointElectronCros
   // Make sure the primary_energy_grid is valid
   testPrecondition( primary_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						primary_energy_grid.begin(),
-						primary_energy_grid.end() ) );
+                                                primary_energy_grid.begin(),
+                                                primary_energy_grid.end() ) );
 
   // Make sure the min, max and nudge energies are valid
   testPrecondition( min_energy > 0.0 );
@@ -219,8 +219,8 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
 }
 
 // Return the adjoint cross section value at a given energy
-/* \details This function requires the differential cross section to be in a 
- * specific format. The integrator has been known to fail f the
+/* \details This function requires the differential cross section to be in a
+ * specific format. The integrator has been known to fail if the
  * max_energy_nudged_value and energy_to_outgoing_energy_nudge_value are zero,
  * therefore it automatically changes the energy_to_outgoing_energy_nudge_value
  * if needed.
@@ -307,7 +307,7 @@ double AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::evaluateAdjo
 
 // Return the adjoint cross section value at a given energy
 /* \details This function requires the differential cross section to be in a 
- * specific format. The integrator has been known to fail f the
+ * specific format. The integrator has been known to fail if the
  * max_energy_nudged_value and energy_to_outgoing_energy_nudge_value are zero,
  * therefore it automatically changes the energy_to_outgoing_energy_nudge_value
  * if needed.
@@ -403,7 +403,8 @@ void AdjointElectronCrossSectionEvaluator<ElectroatomicReaction>::getDifferentia
         const double incoming_adjoint_energy ) const
 {
   differential_cross_section[0] =
-    d_electroatomic_reaction->getDifferentialCrossSection( outgoing_adjoint_energy, incoming_adjoint_energy );
+    d_electroatomic_reaction->getDifferentialCrossSection(
+                            outgoing_adjoint_energy, incoming_adjoint_energy );
 }
 
 // Observer, prints time and state when called (during integration)
