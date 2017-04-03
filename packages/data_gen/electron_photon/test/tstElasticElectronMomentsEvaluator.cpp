@@ -1204,32 +1204,24 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
   std::string test_native_pb_file_name, test_native_al_file_name;
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_native_pb_file",
+                   &test_native_pb_file_name,
+                   "Test Native Pb file name" );
+  clp().setOption( "test_native_al_file",
+                   &test_native_al_file_name,
+                   "Test Native Al file name" );
+}
 
-  clp.setOption( "test_native_pb_file",
-                 &test_native_pb_file_name,
-                 "Test Native Pb file name" );
-  clp.setOption( "test_native_al_file",
-                 &test_native_al_file_name,
-                 "Test Native Al file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   double cutoff_angle_cosine = 0.9;
   double tabular_evaluation_tol = 1e-15;
 
@@ -1313,21 +1305,9 @@ int main( int argc, char** argv )
                                                   tabular_evaluation_tol,
                                                   linlinlog_interpolation_mode_on ) );
   }
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElasticElectronMomentsEvaluator.cpp

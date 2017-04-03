@@ -72,7 +72,7 @@ public:
   double getNudgedEnergy( const double energy ) const;
 
   //! Generate and evaluate the distribution grid in place
-  template< typename ElectroatomicReaction >
+  template<typename ElectroatomicReaction>
   void generateAndEvaluateDistribution(
     std::vector<double>& outgoing_energy_grid,
     std::vector<double>& evaluated_pdf,
@@ -82,7 +82,7 @@ public:
     const double adjoint_cross_section ) const;
 
   //! Generate and evaluate the distribution grid in place on a primary energy grid
-  template< typename ElectroatomicReaction >
+  template<typename ElectroatomicReaction>
   void generateAndEvaluateDistributionOnPrimaryEnergyGrid(
     std::map<double,std::vector<double> >& outgoing_energy_grid,
     std::map<double,std::vector<double> >& evaluated_pdf,

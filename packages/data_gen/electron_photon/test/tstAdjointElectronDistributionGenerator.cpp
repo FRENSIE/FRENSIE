@@ -155,127 +155,101 @@ TEUCHOS_UNIT_TEST( AdjointElectronDistributionGenerator,
           0 );
 
   // Check the generated outgoing energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 489 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 487 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
                                   0.01 + 2e-7,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.2, 1e-6 );
 
   // Check the evaluated pdf
-  TEST_EQUALITY_CONST( pdf[0.01].size(), 489 );
+  TEST_EQUALITY_CONST( pdf[0.01].size(), 487 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].front(),
-                                  18693.011406562847696,
+                                  1.84754215576060279272e+06,
                                   1e-6 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(), 
-                                  6.070850573859183565e-06,
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(),
+                                  6.07022103854779505606e-06,
                                   1e-6 );
 
   // Check the generated max energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 391 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 401 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
                                   1.0 + 2e-7,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.2, 1e-6 );
 
   // Check the evaluated cross section
-  TEST_EQUALITY_CONST( pdf[1.0].size(), 391 );
+  TEST_EQUALITY_CONST( pdf[1.0].size(), 401 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].front(),
-                                  233027.65888165618526,
+                                  2.08790758617580489954e+05,
                                   1e-6 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].back(),
-                                  2.4063406981884109793e-4,
+                                  2.55274262000830477661e-04,
                                   1e-6 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_h_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_h_file_name, test_native_pb_file_name;
-
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_h_file",
-		 &test_native_h_file_name,
-		 "Test Native H file name" );
-  clp.setOption( "test_native_pb_file",
-                 &test_native_pb_file_name,
-                 "Test Native Pb file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
-  {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  // Create the H distributions
-  {
-    // Create the native data file container
-    data_container_h.reset(
-      new Data::ElectronPhotonRelaxationDataContainer(
-        test_native_h_file_name ) );
-
-    // Extract the common electron energy grid
-    Teuchos::ArrayRCP<double> union_energy_grid;
-    union_energy_grid.assign(
-      data_container_h->getElectronEnergyGrid().begin(),
-      data_container_h->getElectronEnergyGrid().end() );
-
-    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-                union_energy_grid,
-                union_energy_grid[0],
-                union_energy_grid[union_energy_grid.size()-1],
-                union_energy_grid.size()/10 + 1 ) );
-
-    std::shared_ptr<BremsstrahlungReaction> bremsstrahlung_reaction;
-
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-      *data_container_h,
-      union_energy_grid,
-      grid_searcher,
-      bremsstrahlung_reaction,
-      MonteCarlo::DIPOLE_DISTRIBUTION );
-
-    bremsstrahlung_adjoint_cs.reset(
-      new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
-          bremsstrahlung_reaction,
-          data_container_h->getBremsstrahlungEnergyGrid() ) );
-  }
-
-  // Create the Pb distributions
-  {
-    // Create the native data file container
-    data_container_pb.reset(
-    new Data::ElectronPhotonRelaxationDataContainer(
-      test_native_pb_file_name ) );
-
-
-  }
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);   
+  clp().setOption( "test_native_h_file",
+                   &test_native_h_file_name,
+                   "Test Native H file name" );
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  // Create the H distributions
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = true;
+  double evaluation_tol = 1e-7;
+
+  // Create the native data file container
+  data_container_h.reset(
+    new Data::ElectronPhotonRelaxationDataContainer( test_native_h_file_name ) );
+
+  // Extract the common electron energy grid
+  Teuchos::ArrayRCP<double> union_energy_grid;
+  union_energy_grid.assign(
+    data_container_h->getElectronEnergyGrid().begin(),
+    data_container_h->getElectronEnergyGrid().end() );
+
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+            union_energy_grid,
+            union_energy_grid[0],
+            union_energy_grid[union_energy_grid.size()-1],
+            union_energy_grid.size()/10 + 1 ) );
+
+  std::shared_ptr<BremsstrahlungReaction> bremsstrahlung_reaction;
+
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
+    *data_container_h,
+    union_energy_grid,
+    grid_searcher,
+    bremsstrahlung_reaction,
+    MonteCarlo::DIPOLE_DISTRIBUTION,
+    correlated_sampling_mode_on,
+    unit_based_interpolation_mode_on,
+    evaluation_tol );
+
+  bremsstrahlung_adjoint_cs.reset(
+    new DataGen::AdjointElectronCrossSectionEvaluator<BremsstrahlungReaction>(
+        bremsstrahlung_reaction,
+        data_container_h->getBremsstrahlungEnergyGrid(),
+        min_energy,
+        max_energy,
+        max_energy_nudge_value,
+        energy_to_outgoing_energy_nudge_value ) );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAdjointElectronDistributionGenerator.cpp

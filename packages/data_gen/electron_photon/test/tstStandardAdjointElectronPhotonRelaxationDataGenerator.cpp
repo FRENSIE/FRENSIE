@@ -1527,32 +1527,24 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 //}
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
   std::string test_h_native_file, test_c_native_file;
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_h_native_file",
+                   &test_h_native_file,
+                   "Test h native file name" );
+  clp().setOption( "test_c_native_file",
+                   &test_c_native_file,
+                   "Test c native file name" );
+}
 
-  clp.setOption( "test_h_native_file",
-                 &test_h_native_file,
-                 "Test h native file name" );
-  clp.setOption( "test_c_native_file",
-                 &test_c_native_file,
-                 "Test c native file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create the native data file container for h
   h_epr_data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
                                                         test_h_native_file ) );
@@ -1560,21 +1552,9 @@ int main( int argc, char** argv )
   // Create the native data file container for c
   c_epr_data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
                                                         test_c_native_file ) );
-  
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstStandardAdjointElectronPhotonRelaxationDataGenerator.cpp

@@ -14,17 +14,19 @@ ADD_TEST(OccupationNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ac
 SET_PROPERTY(TEST OccupationNumberEvaluator_test PROPERTY LABELS data_gen_electron_photon)
 
 ADD_EXECUTABLE(tstAdjointElectronCrossSectionEvaluator
-  tstAdjointElectronCrossSectionEvaluator.cpp)
+  tstAdjointElectronCrossSectionEvaluator.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointElectronCrossSectionEvaluator data_gen_electron_photon)
 ADD_TEST(AdjointElectronCrossSectionEvaluator_test tstAdjointElectronCrossSectionEvaluator --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
 SET_PROPERTY(TEST AdjointElectronCrossSectionEvaluator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
 
-#ADD_EXECUTABLE(tstAdjointElectronDistributionGenerator
-#  tstAdjointElectronDistributionGenerator.cpp)
-#TARGET_LINK_LIBRARIES(tstAdjointElectronDistributionGenerator data_gen_electron_photon)
-#ADD_TEST(AdjointElectronDistributionGenerator_test
-#  tstAdjointElectronDistributionGenerator  --test_native_h_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-#SET_PROPERTY(TEST AdjointElectronDistributionGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
+ADD_EXECUTABLE(tstAdjointElectronDistributionGenerator
+  tstAdjointElectronDistributionGenerator.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointElectronDistributionGenerator data_gen_electron_photon)
+ADD_TEST(AdjointElectronDistributionGenerator_test
+  tstAdjointElectronDistributionGenerator  --test_native_h_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
+SET_PROPERTY(TEST AdjointElectronDistributionGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
 
 #ADD_EXECUTABLE(tstAdjointElectronGridGenerator
 #  tstAdjointElectronGridGenerator.cpp)
@@ -55,25 +57,29 @@ ADD_TEST(AdjointIncoherentGridGenerator_test
 SET_PROPERTY(TEST AdjointIncoherentGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint photon)
 
 ADD_EXECUTABLE(tstElasticElectronMomentsEvaluator
-  tstElasticElectronMomentsEvaluator.cpp)
+  tstElasticElectronMomentsEvaluator.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElasticElectronMomentsEvaluator data_gen_electron_photon)
 ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_native_al_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
 SET_PROPERTY(TEST ElasticElectronMomentsEvaluator_test PROPERTY LABELS data_gen_electron_photon electron)
 
 ADD_EXECUTABLE(tstStandardMomentPreservingElectronDataGenerator
-  tstStandardMomentPreservingElectronDataGenerator.cpp)
+  tstStandardMomentPreservingElectronDataGenerator.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStandardMomentPreservingElectronDataGenerator data_gen_electron_photon)
 ADD_TEST(StandardMomentPreservingElectronDataGenerator_test tstStandardMomentPreservingElectronDataGenerator --test_h_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_pb_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_al_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
 SET_PROPERTY(TEST StandardMomentPreservingElectronDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron)
 
 ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator
-    tstStandardElectronPhotonRelaxationDataGenerator.cpp)
+    tstStandardElectronPhotonRelaxationDataGenerator.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
 ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml" --test_c_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml")
 SET_PROPERTY(TEST StandardElectronPhotonRelaxationDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron photon relaxation)
 
 ADD_EXECUTABLE(tstStandardAdjointElectronPhotonRelaxationDataGenerator
-    tstStandardAdjointElectronPhotonRelaxationDataGenerator.cpp)
+    tstStandardAdjointElectronPhotonRelaxationDataGenerator.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStandardAdjointElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
 ADD_TEST(StandardAdjointElectronPhotonRelaxationDataGenerator_test tstStandardAdjointElectronPhotonRelaxationDataGenerator --test_h_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_c_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_6_native.xml")
 SET_PROPERTY(TEST StandardAdjointElectronPhotonRelaxationDataGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron photon relaxation)
