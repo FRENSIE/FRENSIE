@@ -78,28 +78,28 @@ public:
   void setAdjointPairProductionEnergyDistNormConstEvaluationTolerance(
                                                  const double evaluation_tol );
 
-  //! Get the adjoint pair production energy dist. norm const. evaluation tol
+  //! Return the adjoint pair production energy dist. norm const. evaluation tol
   double getAdjointPairProductionEnergyDistNormConstEvaluationTolerance() const;
 
   //! Set the adjoint pair production energy dist. norm const. nudge value
   void setAdjointPairProductionEnergyDistNormConstNudgeValue(
                                                     const double nudge_value );
 
-  //! Get the adjoint pair production energy dist. norm const. nudge value
+  //! Return the adjoint pair production energy dist. norm const. nudge value
   double getAdjointPairProductionEnergyDistNormConstNudgeValue() const;
 
   //! Set the adjoint triplet production energy dist. norm const. evaluation tol.
   void setAdjointTripletProductionEnergyDistNormConstEvaluationTolerance(
                                                  const double evaluation_tol );
 
-  //! Get the adjoint triplet production energy dist. norm const. evaluation tol
+  //! Return the adjoint triplet production energy dist. norm const. evaluation tol
   double getAdjointTripletProductionEnergyDistNormConstEvaluationTolerance() const;
 
   //! Set the adjoint triplet production energy dist. norm const. nudge value
   void setAdjointTripletProductionEnergyDistNormConstNudgeValue(
                                                     const double nudge_value );
 
-  //! Get the adjoint triplet production energy dist. norm const. nudge value
+  //! Return the adjoint triplet production energy dist. norm const. nudge value
   double getAdjointTripletProductionEnergyDistNormConstNudgeValue() const;
 
   //! Set the adjoint incoherent max energy nudge value
@@ -133,66 +133,79 @@ public:
   void setAdjointIncoherentGridAbsoluteDifferenceTolerance(
                                               const double absolute_diff_tol );
 
-  //! Get the adjoint incoherent grid absolute difference tolerance
+  //! Return the adjoint incoherent grid absolute difference tolerance
   double getAdjointIncoherentGridAbsoluteDifferenceTolerance() const;
 
   //! Set the adjoint incoherent grid distance tolerance
   void setAdjointIncoherentGridDistanceTolerance( const double distance_tol );
 
-  //! Get the adjoint incoherent grid distance tolerance
+  //! Return the adjoint incoherent grid distance tolerance
   double getAdjointIncoherentGridDistanceTolerance() const;
 
   /////////////////////////
   // Electron Table Data //
   /////////////////////////
 
-  //! Get the cutoff angle cosine above which screened rutherford is used
+  //! Return the cutoff angle cosine above which screened rutherford is used
   double getCutoffAngleCosine() const;
 
-  //! Get the number of moment preserving angles
+  //! Return the number of moment preserving angles
   unsigned getNumberOfMomentPreservingAngles() const;
 
   //! Set the adjoint electron grid convergence tolerance
   void setAdjointElectronGridConvergenceTolerance(
                         const double adjoint_electron_grid_convergence_tol );
 
-  //! Get the adjoint electron grid convergence tolerance
+  //! Return the adjoint electron grid convergence tolerance
   double getAdjointElectronGridConvergenceTolerance() const;
 
   //! Set the adjoint electron absolute diff tolerance
   void setAdjointElectronAbsoluteDifferenceTolerance(
                         const double adjoint_electron_absolute_diff_tol );
 
-  //! Get the adjoint electron absolute diff tolerance
+  //! Return the adjoint electron absolute diff tolerance
   double getAdjointElectronAbsoluteDifferenceTolerance() const;
 
   //! Set the adjoint electron distance tolerance
   void setAdjointElectronDistanceTolerance(
                         const double adjoint_electron_distance_tol );
 
-  //! Get the adjoint electron distance tolerance
+  //! Return the adjoint electron distance tolerance
   double getAdjointElectronDistanceTolerance() const;
 
   //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
   void setTabularEvaluationTolerance(
                         const double tabular_evaluation_tol );
 
-  //! Get the electron FullyTabularTwoDDistribution evaluation tolerance
+  //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getTabularEvaluationTolerance() const;
 
-  //! Set the electron FullyTabularTwoDDistribution correlated sampling
-  void setElectronCorrelatedSampling(
-                        const bool electron_correlated_sampling );
+  //! Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode on (on by default)
+  void setElectronLinLinLogInterpolationModeOn();
 
-  //! Get the electron FullyTabularTwoDDistribution correlated sampling
-  bool getElectronCorrelatedSampling() const;
+  //! Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode off (on by default)
+  void setElectronLinLinLogInterpolationModeOff();
 
-  //! Set the electron FullyTabularTwoDDistribution unit based interpolation
-  void setElectronUnitBasedInterpolation(
-                        const bool electron_unit_based_interpolation );
+  //! Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
+  bool isElectronLinLinLogInterpolationModeOn() const;
 
-  //! Get the electron FullyTabularTwoDDistribution unit based interpolation
-  bool getElectronUnitBasedInterpolation() const;
+  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode on (on by default)
+  void setElectronCorrelatedSamplingModeOn();
+
+  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode off (on by default)
+  void setElectronCorrelatedSamplingModeOff();
+
+  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+  bool isElectronCorrelatedSamplingModeOn() const;
+
+  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode on (on by default)
+  void setElectronUnitBasedInterpolationModeOn();
+
+  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode off (on by default)
+  void setElectronUnitBasedInterpolationModeOff();
+
+  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+  bool isElectronUnitBasedInterpolationModeOn() const;
 
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
@@ -224,13 +237,13 @@ public:
   void setAdjointBremsstrahlungAbsoluteDifferenceTolerance(
                                               const double absolute_diff_tol );
 
-  //! Get the adjoint bremsstrahlung absolute difference tolerance
+  //! Return the adjoint bremsstrahlung absolute difference tolerance
   double getAdjointBremsstrahlungAbsoluteDifferenceTolerance() const;
 
   //! Set the adjoint bremsstrahlung distance tolerance
   void setAdjointBremsstrahlungDistanceTolerance( const double distance_tol );
 
-  //! Get the adjoint bremsstrahlung distance tolerance
+  //! Return the adjoint bremsstrahlung distance tolerance
   double getAdjointBremsstrahlungDistanceTolerance() const;
 
   //! Set the adjoint electroionization cross section evaluation tolerance
@@ -250,13 +263,13 @@ public:
   void setAdjointElectroionizationAbsoluteDifferenceTolerance(
                                               const double absolute_diff_tol );
 
-  //! Get the adjoint electroionization absolute difference tolerance
+  //! Return the adjoint electroionization absolute difference tolerance
   double getAdjointElectroionizationAbsoluteDifferenceTolerance() const;
 
   //! Set the adjoint electroionization distance tolerance
   void setAdjointElectroionizationDistanceTolerance( const double distance_tol );
 
-  //! Get the adjoint electroionization distance tolerance
+  //! Return the adjoint electroionization distance tolerance
   double getAdjointElectroionizationDistanceTolerance() const;
 
 
@@ -509,11 +522,14 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_tabular_evaluation_tol;
 
-  // The electron bool to use correlated sampling
-  bool d_electron_correlated_sampling;
+  // The electron FullyTabularTwoDDistribution LinLinLog interpolation mode
+  bool d_electron_linlinlog_interpolation_mode;
 
-  // The electron bool to use unit based interpolation
-  bool d_electron_unit_based_interpolation;
+  // The electron FullyTabularTwoDDistribution correlated sampling mode
+  bool d_electron_correlated_sampling_mode;
+
+  // The electron FullyTabularTwoDDistribution unit based interpolation mode
+  bool d_electron_unit_based_interpolation_mode;
 
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;
@@ -549,7 +565,7 @@ private:
 // Test if a value is greater than or equal to one
 inline bool
 StandardAdjointElectronPhotonRelaxationDataGenerator::greaterThanOrEqualToOne(
-							   const double value )
+                                                           const double value )
 {
   return value >= 1.0;
 }
@@ -557,14 +573,14 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::greaterThanOrEqualToOne(
 // Test if a value is greater than one
 inline bool
 StandardAdjointElectronPhotonRelaxationDataGenerator::greaterThanOne(
-							   const double value )
+                                                           const double value )
 {
   return value > 1.0;
 }
 
 // The if a value is not equal to zero
 inline bool StandardAdjointElectronPhotonRelaxationDataGenerator::notEqualZero(
-							   const double value )
+                                                           const double value )
 {
   return value != 0.0;
 }

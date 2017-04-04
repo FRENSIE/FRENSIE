@@ -72,8 +72,9 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_adjoint_electron_absolute_diff_tol( 1e-16 ),
     d_adjoint_electron_distance_tol( 1e-8 ),
     d_tabular_evaluation_tol( 1e-8 ),
-    d_electron_correlated_sampling( true ),
-    d_electron_unit_based_interpolation( true ),
+    d_electron_linlinlog_interpolation_mode( true ),
+    d_electron_correlated_sampling_mode( true ),
+    d_electron_unit_based_interpolation_mode( true ),
     d_adjoint_bremsstrahlung_max_energy_nudge_value( 0.2 ),
     d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value( 1e-7 ),
     d_adjoint_bremsstrahlung_evaluation_tol( 1e-6 ),
@@ -506,9 +507,6 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroio
   return d_adjoint_electroionization_distance_tol;
 }
 
-
-
-
 // Set the electron FullyTabularTwoDDistribution evaluation tolerance
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setTabularEvaluationTolerance(
                         const double tabular_evaluation_tol )
@@ -526,30 +524,58 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getTabularEvaluatio
   return d_tabular_evaluation_tol;
 }
 
-// Set the electron FullyTabularTwoDDistribution correlated sampling
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronCorrelatedSampling(
-                        const bool electron_correlated_sampling )
+// Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode on (on by default)
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronLinLinLogInterpolationModeOn()
 {
-  d_electron_correlated_sampling = electron_correlated_sampling;
+  d_electron_linlinlog_interpolation_mode = true;
 }
 
-// Get the electron FullyTabularTwoDDistribution correlated sampling
-bool StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronCorrelatedSampling() const
+// Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode off (on by default)
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronLinLinLogInterpolationModeOff()
 {
-  return d_electron_correlated_sampling;
+  d_electron_linlinlog_interpolation_mode = false;
 }
 
-// Set the electron FullyTabularTwoDDistribution unit based interpolation
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronUnitBasedInterpolation(
-                        const bool electron_unit_based_interpolation )
+// Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
+bool StandardAdjointElectronPhotonRelaxationDataGenerator::isElectronLinLinLogInterpolationModeOn() const
 {
-  d_electron_unit_based_interpolation = electron_unit_based_interpolation;
+  return d_electron_linlinlog_interpolation_mode;
 }
 
-// Get the electron FullyTabularTwoDDistribution unit based interpolation
-bool StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronUnitBasedInterpolation() const
+// Set the electron FullyTabularTwoDDistribution correlated sampling mode on (on by default)
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronCorrelatedSamplingModeOn()
 {
-  return d_electron_unit_based_interpolation;
+  d_electron_correlated_sampling_mode = true;
+}
+
+// Set the electron FullyTabularTwoDDistribution correlated sampling mode on (off by default)
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronCorrelatedSamplingModeOff()
+{
+  d_electron_correlated_sampling_mode = false;
+}
+
+// Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+bool StandardAdjointElectronPhotonRelaxationDataGenerator::isElectronCorrelatedSamplingModeOn() const
+{
+  return d_electron_correlated_sampling_mode;
+}
+
+// Set the electron FullyTabularTwoDDistribution unit based interpolation mode on (on by default)
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronUnitBasedInterpolationModeOn()
+{
+  d_electron_unit_based_interpolation_mode = true;
+}
+
+// Set the electron FullyTabularTwoDDistribution unit based interpolation mode off (on by default)
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronUnitBasedInterpolationModeOff()
+{
+  d_electron_unit_based_interpolation_mode = false;
+}
+
+// Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+bool StandardAdjointElectronPhotonRelaxationDataGenerator::isElectronUnitBasedInterpolationModeOn() const
+{
+  return d_electron_unit_based_interpolation_mode;
 }
 
 // Set the adjoint electron grid convergence tolerance
@@ -685,12 +711,20 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
     d_adjoint_electroionization_absolute_diff_tol );
   data_container.setAdjointElectroionizationDistanceTolerance(
     d_adjoint_electroionization_distance_tol );
+  data_container.setElectronTabularEvaluationTolerance(
+    d_tabular_evaluation_tol );
+  data_container.setElectronLinLinLogInterpolationModeOnOff(
+    d_electron_linlinlog_interpolation_mode );
+  data_container.setElectronCorrelatedSamplingModeOnOff(
+    d_electron_correlated_sampling_mode );
+  data_container.setElectronUnitBasedInterpolationModeOnOff(
+    d_electron_unit_based_interpolation_mode );
 }
 
 // Set the relaxation data
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointRelaxationData(
-			   Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const
+                    Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
+                    data_container ) const
 {
   // Extract and set the subshells
   const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
@@ -801,8 +835,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomi
 
 // Set the photon data
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
-			   Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const
+                    Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
+                    data_container ) const
 {
   // Set the Compton profile data
   (*d_os_log) << " Setting the " << Utility::Italicized( "Compton profile" )
@@ -1812,7 +1846,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                  _1 );
 
   // Generate atomic excitation (don't generate new grid points above the last grid point)
-  union_energy_grid_generator.refineInPlace( 
+  union_energy_grid_generator.refineInPlace(
     union_energy_grid,
     atomic_excitation_grid_function,
     this->getMinElectronEnergy(),
@@ -2031,13 +2065,27 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     // Calcualte the reduced cutoff elastic cross section ratio
     std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
-    analog_distribution,
-    d_forward_epr_data->getCutoffElasticAngles(),
-    d_forward_epr_data->getCutoffElasticPDF(),
-    d_forward_epr_data->getElasticAngularEnergyGrid(),
-    d_forward_epr_data->getAtomicNumber(),
-    d_tabular_evaluation_tol );
+
+    if( d_electron_linlinlog_interpolation_mode )
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+        analog_distribution,
+        d_forward_epr_data->getCutoffElasticAngles(),
+        d_forward_epr_data->getCutoffElasticPDF(),
+        d_forward_epr_data->getElasticAngularEnergyGrid(),
+        d_forward_epr_data->getAtomicNumber(),
+        d_tabular_evaluation_tol );
+    }
+    else
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
+        analog_distribution,
+        d_forward_epr_data->getCutoffElasticAngles(),
+        d_forward_epr_data->getCutoffElasticPDF(),
+        d_forward_epr_data->getElasticAngularEnergyGrid(),
+        d_forward_epr_data->getAtomicNumber(),
+        d_tabular_evaluation_tol );
+    }
 
     std::vector<double> reduced_cutoff_cross_section_ratio( energy_grid.size() );
     for( unsigned i = 0; i < energy_grid.size(); i++ )
@@ -2047,18 +2095,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
             energy_grid[i],
             d_forward_epr_data->getCutoffAngleCosine() );
     }
-//    boost::function<double (double pz)> reduced_cutoff_cs_ratio_grid_function =
-//      boost::bind( &MonteCarlo::ElectronScatteringDistribution::evaluateCDF,
-//                   boost::cref( *analog_distribution ),
-//                   _1,
-//                   d_forward_epr_data->getCutoffAngleCosine() );
 
-//    std::vector<double> reduced_cutoff_cross_section_ratio;
-//    this->createCrossSectionOnUnionEnergyGrid(
-//        union_energy_grid,
-//        reduced_cutoff_cs_ratio_grid_function,
-//        reduced_cutoff_cross_section_ratio,
-//        threshold );
     data_container.setReducedCutoffCrossSectionRatios( reduced_cutoff_cross_section_ratio );
 
     (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
@@ -2392,7 +2429,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
 // Create the adjoint bremsstrahlung grid generator
 /*! \details This function uses the bremsstrahlung reaction and the primary
   * (incoming) energy grid of the pdf distribution to construct the adjoint
-  * electron grid generator for bremsstrahlung. 
+  * electron grid generator for bremsstrahlung.
   */
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstrahlungGridGenerator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
@@ -2402,15 +2439,30 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 {
   std::shared_ptr<BremsstrahlungReaction> bremsstrahlung_reaction;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-    *d_forward_epr_data,
-    forward_electron_energy_grid,
-    forward_grid_searcher,
-    bremsstrahlung_reaction,
-    MonteCarlo::DIPOLE_DISTRIBUTION,
-    d_electron_correlated_sampling,
-    d_electron_unit_based_interpolation,
-    d_tabular_evaluation_tol );
+  if( d_electron_linlinlog_interpolation_mode )
+  {
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLog>(
+        *d_forward_epr_data,
+        forward_electron_energy_grid,
+        forward_grid_searcher,
+        bremsstrahlung_reaction,
+        MonteCarlo::DIPOLE_DISTRIBUTION,
+        d_electron_correlated_sampling_mode,
+        d_electron_unit_based_interpolation_mode,
+        d_tabular_evaluation_tol );
+  }
+  else
+  {
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLin>(
+        *d_forward_epr_data,
+        forward_electron_energy_grid,
+        forward_grid_searcher,
+        bremsstrahlung_reaction,
+        MonteCarlo::DIPOLE_DISTRIBUTION,
+        d_electron_correlated_sampling_mode,
+        d_electron_unit_based_interpolation_mode,
+        d_tabular_evaluation_tol );
+  }
 
   brem_grid_generators.reset(
     new BremsstrahlungGridGenerator(
@@ -2427,9 +2479,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 
 // Create the adjoint electroionization subshell grid generator
 /*! \details This function uses the electroionization subshell reaction
-  * and the primary (incoming) energy grids of the pdf subshell distributions
-  * to construct the adjoint grid generator for the subshell. 
-  */
+ * and the primary (incoming) energy grids of the pdf subshell distributions
+ * to construct the adjoint grid generator for the subshell. 
+ */
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroionizationSubshellGridGenerator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& forward_grid_searcher,
@@ -2441,23 +2493,38 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   std::shared_ptr<ElectroionizationReaction>
     electroionization_subshell_reaction;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
-    *d_forward_epr_data,
-    forward_electron_energy_grid,
-    forward_grid_searcher,
-    shell,
-    electroionization_subshell_reaction,
-    d_electron_correlated_sampling,
-    d_electron_unit_based_interpolation,
-    d_tabular_evaluation_tol );
+  if( d_electron_linlinlog_interpolation_mode )
+  {
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLog>(
+        *d_forward_epr_data,
+        forward_electron_energy_grid,
+        forward_grid_searcher,
+        shell,
+        electroionization_subshell_reaction,
+        d_electron_correlated_sampling_mode,
+        d_electron_unit_based_interpolation_mode,
+        d_tabular_evaluation_tol );
+  }
+  else
+  {
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLin>(
+        *d_forward_epr_data,
+        forward_electron_energy_grid,
+        forward_grid_searcher,
+        shell,
+        electroionization_subshell_reaction,
+        d_electron_correlated_sampling_mode,
+        d_electron_unit_based_interpolation_mode,
+        d_tabular_evaluation_tol );
+  }
 
   /* The max energy nudge value should be greater than the binding energy (a
-    * factor of two is used to help with convergence). The energy to outgoing
-    * energy nudge value should be equal to or greater than the binding energy,
-    * by adding a factor of 1e-7 to the binding energy the integrated cross
-    * section assumes all knock-on electrons with an energy < 1e-7 have a pdf
-    * and cross section value of zero.
-    */
+   * factor of two is used to help with convergence). The energy to outgoing
+   * energy nudge value should be equal to or greater than the binding energy,
+   * by adding a factor of 1e-7 to the binding energy the integrated cross
+   * section assumes all knock-on electrons with an energy < 1e-7 have a pdf
+   * and cross section value of zero.
+   */
   adjoint_electroionization_grid_generator.reset(
     new ElectroionizationGridGenerator(
         electroionization_subshell_reaction,
