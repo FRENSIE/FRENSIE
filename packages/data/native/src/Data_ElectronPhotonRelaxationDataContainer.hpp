@@ -84,8 +84,17 @@ public:
   //! Return the number of discrete moment preserving angles
   unsigned getNumberOfMomentPreservingAngles() const;
 
-  //! Return if secondary electron LinLinLog interpolation mode is on
+  //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
+  double getElectronTabularEvaluationTolerance() const;
+
+  //! Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
   bool isElectronLinLinLogInterpolationModeOn() const;
+
+  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+  bool isElectronCorrelatedSamplingModeOn() const;
+
+  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+  bool isElectronUnitBasedInterpolationModeOn() const;
 
   //! Return the union energy grid convergence tolerance
   double getGridConvergenceTolerance() const;
@@ -426,9 +435,21 @@ protected:
   void setNumberOfMomentPreservingAngles(
     const unsigned number_of_moment_preserving_angles);
 
-  //! Set secondary electron LinLinLog interpolation mode
+  //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
+  void setElectronTabularEvaluationTolerance(
+    const double electron_tabular_evaluation_tol );
+
+  //! Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode
   void setElectronLinLinLogInterpolationModeOnOff(
-    const bool linlinlog_interpolation_mode_on);
+    const bool electron_linlinlog_interpolation_mode_on );
+
+  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode
+  void setElectronCorrelatedSamplingModeOnOff(
+    const bool electron_correlated_sampling_mode_on );
+
+  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode
+  void setElectronUnitBasedInterpolationModeOnOff(
+    const bool electron_unit_based_interpolation_mode_on );
 
   //! Set the union energy grid convergence tolerance
   void setGridConvergenceTolerance( const double grid_convergence_tol );
@@ -823,8 +844,17 @@ private:
   // The number of discrete moment preserving angles
   double d_number_of_moment_preserving_angles;
 
-  // The lin-lin-log interpolation mode for electron secondary distributions
-  bool d_linlinlog_interpolation_mode_on;
+  // The electron FullyTabularTwoDDistribution evaluation tolerance
+  double d_electron_tabular_evaluation_tol;
+
+  // The electron FullyTabularTwoDDistribution lin-lin-log interpolation mode
+  bool d_electron_linlinlog_interpolation_mode_on;
+
+  // The electron FullyTabularTwoDDistribution correlated sampling mode
+  bool d_electron_correlated_sampling_mode_on;
+
+  // The electron FullyTabularTwoDDistribution unit based interpolation mode
+  bool d_electron_unit_based_interpolation_mode_on;
 
   // The union energy grid convergence tolerance
   double d_grid_convergence_tol;

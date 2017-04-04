@@ -112,10 +112,28 @@ unsigned ElectronPhotonRelaxationDataContainer::getNumberOfMomentPreservingAngle
   return d_number_of_moment_preserving_angles;
 }
 
-// Return if the secondary electron LinLinLog interpolation mode to on
+// Return the electron FullyTabularTwoDDistribution evaluation tolerance
+double ElectronPhotonRelaxationDataContainer::getElectronTabularEvaluationTolerance() const
+{
+  return d_electron_tabular_evaluation_tol;
+}
+
+// Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
 bool ElectronPhotonRelaxationDataContainer::isElectronLinLinLogInterpolationModeOn() const
 {
-  return d_linlinlog_interpolation_mode_on;
+  return d_electron_linlinlog_interpolation_mode_on;
+}
+
+// Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+bool ElectronPhotonRelaxationDataContainer::isElectronCorrelatedSamplingModeOn() const
+{
+  return d_electron_correlated_sampling_mode_on;
+}
+
+// Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+bool ElectronPhotonRelaxationDataContainer::isElectronUnitBasedInterpolationModeOn() const
+{
+  return d_electron_unit_based_interpolation_mode_on;
 }
 
 // Return the union energy grid convergence tolerance
@@ -921,11 +939,38 @@ void ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles(
   d_number_of_moment_preserving_angles = number_of_moment_preserving_angles;
 }
 
-// Set electron secondary LinLinLog interpolation mode to on
-void ElectronPhotonRelaxationDataContainer::setElectronLinLinLogInterpolationModeOnOff(
-    const bool linlinlog_interpolation_mode_on )
+// Set the electron FullyTabularTwoDDistribution evaluation tolerance
+void ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationTolerance(
+    const double electron_tabular_evaluation_tol )
 {
-  d_linlinlog_interpolation_mode_on = linlinlog_interpolation_mode_on;
+  // Make sure the tolerance is valid
+  testPrecondition( electron_tabular_evaluation_tol < 1.0 );
+  testPrecondition( electron_tabular_evaluation_tol > 0.0 );
+
+  d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
+}
+
+// Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode
+void ElectronPhotonRelaxationDataContainer::setElectronLinLinLogInterpolationModeOnOff(
+    const bool electron_linlinlog_interpolation_mode_on )
+{
+  d_electron_linlinlog_interpolation_mode_on =
+                                    electron_linlinlog_interpolation_mode_on;
+}
+
+// Set the electron FullyTabularTwoDDistribution correlated sampling mode
+void ElectronPhotonRelaxationDataContainer::setElectronCorrelatedSamplingModeOnOff(
+    const bool electron_correlated_sampling_mode_on )
+{
+  d_electron_correlated_sampling_mode_on = electron_correlated_sampling_mode_on;
+}
+
+// Set the electron FullyTabularTwoDDistribution unit based interpolation mode
+void ElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationModeOnOff(
+    const bool electron_unit_based_interpolation_mode_on )
+{
+  d_electron_unit_based_interpolation_mode_on =
+                                    electron_unit_based_interpolation_mode_on;
 }
 
 // Set the union energy grid convergence tolerance

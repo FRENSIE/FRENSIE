@@ -201,6 +201,30 @@ double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectronDistanceT
   return d_adjoint_electron_distance_tol;
 }
 
+// Return the electron FullyTabularTwoDDistribution evaluation tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getElectronTabularEvaluationTolerance() const
+{
+  return d_electron_tabular_evaluation_tol;
+}
+
+// Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
+bool AdjointElectronPhotonRelaxationDataContainer::isElectronLinLinLogInterpolationModeOn() const
+{
+  return d_electron_linlinlog_interpolation_mode_on;
+}
+
+// Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+bool AdjointElectronPhotonRelaxationDataContainer::isElectronCorrelatedSamplingModeOn() const
+{
+  return d_electron_correlated_sampling_mode_on;
+}
+
+// Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+bool AdjointElectronPhotonRelaxationDataContainer::isElectronUnitBasedInterpolationModeOn() const
+{
+  return d_electron_unit_based_interpolation_mode_on;
+}
+
 // Return the adjoint bremsstrahlung max energy nudge value
 double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungMaxEnergyNudgeValue() const
 {
@@ -1216,6 +1240,40 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronDistanceTol
   testPrecondition( adjoint_electron_distance_tol > 0.0 );
 
   d_adjoint_electron_distance_tol = adjoint_electron_distance_tol;
+}
+
+// Set the electron FullyTabularTwoDDistribution evaluation tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationTolerance(
+    const double electron_tabular_evaluation_tol )
+{
+  // Make sure the tolerance is valid
+  testPrecondition( electron_tabular_evaluation_tol < 1.0 );
+  testPrecondition( electron_tabular_evaluation_tol > 0.0 );
+
+  d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
+}
+
+// Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode
+void AdjointElectronPhotonRelaxationDataContainer::setElectronLinLinLogInterpolationModeOnOff(
+    const bool electron_linlinlog_interpolation_mode_on )
+{
+  d_electron_linlinlog_interpolation_mode_on =
+                                    electron_linlinlog_interpolation_mode_on;
+}
+
+// Set the electron FullyTabularTwoDDistribution correlated sampling mode
+void AdjointElectronPhotonRelaxationDataContainer::setElectronCorrelatedSamplingModeOnOff(
+    const bool electron_correlated_sampling_mode_on )
+{
+  d_electron_correlated_sampling_mode_on = electron_correlated_sampling_mode_on;
+}
+
+// Set the electron FullyTabularTwoDDistribution unit based interpolation mode
+void AdjointElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationModeOnOff(
+    const bool electron_unit_based_interpolation_mode_on )
+{
+  d_electron_unit_based_interpolation_mode_on =
+                                    electron_unit_based_interpolation_mode_on;
 }
 
 // Set the adjoint bremsstrahlung max energy nudge value

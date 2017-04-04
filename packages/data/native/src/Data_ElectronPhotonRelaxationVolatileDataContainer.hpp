@@ -40,7 +40,10 @@ public:
   using ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor;
   using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles;
+  using ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationTolerance;
   using ElectronPhotonRelaxationDataContainer::setElectronLinLinLogInterpolationModeOnOff;
+  using ElectronPhotonRelaxationDataContainer::setElectronCorrelatedSamplingModeOnOff;
+  using ElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationModeOnOff;
   using ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;

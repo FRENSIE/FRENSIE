@@ -144,7 +144,18 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the secondary electron LinLinLog interpolation mode can be set
+// Check that the electron tabular tol can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronTabularEvaluationTolerance )
+{
+  epr_data_container.setElectronTabularEvaluationTolerance( 1e-3 );
+
+  TEST_EQUALITY_CONST( epr_data_container.getElectronTabularEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron LinLinLog interpolation mode can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectronLinLinLogInterpolationModeOnOff )
 {
@@ -153,6 +164,30 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   epr_data_container.setElectronLinLinLogInterpolationModeOnOff( true );
   TEST_ASSERT( epr_data_container.isElectronLinLinLogInterpolationModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron correlated sampling mode can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronCorrelatedSamplingModeOnOff )
+{
+  epr_data_container.setElectronCorrelatedSamplingModeOnOff( false );
+  TEST_ASSERT( !epr_data_container.isElectronCorrelatedSamplingModeOn() );
+
+  epr_data_container.setElectronCorrelatedSamplingModeOnOff( true );
+  TEST_ASSERT( epr_data_container.isElectronCorrelatedSamplingModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron unit based interpolation mode can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronUnitBasedInterpolationModeOnOff )
+{
+  epr_data_container.setElectronUnitBasedInterpolationModeOnOff( false );
+  TEST_ASSERT( !epr_data_container.isElectronUnitBasedInterpolationModeOn() );
+
+  epr_data_container.setElectronUnitBasedInterpolationModeOnOff( true );
+  TEST_ASSERT( epr_data_container.isElectronUnitBasedInterpolationModeOn() );
 }
 
 //---------------------------------------------------------------------------//

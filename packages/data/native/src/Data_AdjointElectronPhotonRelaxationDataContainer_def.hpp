@@ -24,7 +24,7 @@ namespace Data{
 // Save the data to an archive
 template<typename Archive>
 void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
-						  const unsigned version) const
+                                                   const unsigned version) const
 {
   // Notes
   DATA_MAKE_NVP_DEFAULT( ar, notes );
@@ -57,6 +57,10 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_grid_convergence_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_linlinlog_interpolation_mode_on );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_correlated_sampling_mode_on );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_unit_based_interpolation_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_evaluation_tolerance );
@@ -149,7 +153,7 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
 // Load the data from an archive
 template<typename Archive>
 void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
-						  const unsigned version )
+                                                        const unsigned version )
 {
   // Notes
   DATA_MAKE_NVP_DEFAULT( ar, notes );
@@ -182,6 +186,10 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_grid_convergence_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_linlinlog_interpolation_mode_on );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_correlated_sampling_mode_on );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_unit_based_interpolation_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_evaluation_tolerance );

@@ -35,9 +35,9 @@ public:
 
   //! Constructor (from saved archive)
   AdjointElectronPhotonRelaxationDataContainer(
-		  const std::string& archive_name,
+                  const std::string& archive_name,
                   const Utility::ArchivableObject::ArchiveType archive_type =
-		  Utility::ArchivableObject::XML_ARCHIVE );
+                  Utility::ArchivableObject::XML_ARCHIVE );
 
   //! Destructor
   virtual ~AdjointElectronPhotonRelaxationDataContainer()
@@ -130,6 +130,18 @@ public:
 
   //! Reutrn the adjoint electron distance tolerance
   double getAdjointElectronDistanceTolerance() const;
+
+  //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
+  double getElectronTabularEvaluationTolerance() const;
+
+  //! Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
+  bool isElectronLinLinLogInterpolationModeOn() const;
+
+  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+  bool isElectronCorrelatedSamplingModeOn() const;
+
+  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+  bool isElectronUnitBasedInterpolationModeOn() const;
 
   //! Return the adjoint bremsstrahlung max energy nudge value
   double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
@@ -559,6 +571,22 @@ protected:
   void setAdjointElectronDistanceTolerance(
     const double adjoint_electron_distance_tol );
 
+  //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
+  void setElectronTabularEvaluationTolerance(
+    const double electron_tabular_evaluation_tol );
+
+  //! Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode
+  void setElectronLinLinLogInterpolationModeOnOff(
+    const bool electron_linlinlog_interpolation_mode_on );
+
+  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode
+  void setElectronCorrelatedSamplingModeOnOff(
+    const bool electron_correlated_sampling_mode_on );
+
+  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode
+  void setElectronUnitBasedInterpolationModeOnOff(
+    const bool electron_unit_based_interpolation_mode_on );
+
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue(
     const double adjoint_bremsstrahlung_max_energy_nudge_value );
@@ -608,11 +636,11 @@ protected:
 
   //! Set the occupancy for a subshell
   void setSubshellOccupancy( const unsigned subshell,
-			     const double occupancy );
+                             const double occupancy );
 
   //! Set the binding energy for a subshell
   void setSubshellBindingEnergy( const unsigned subshell,
-				 const double binding_energy );
+                                 const double binding_energy );
 
 //---------------------------------------------------------------------------//
 // SET PHOTON DATA
@@ -789,7 +817,7 @@ protected:
 
   //! Set the bremsstrahlung photon cross section
   void setAdjointBremsstrahlungPhotonCrossSection(
-			 const std::vector<double>& adjoint_bremsstrahlung_cross_section );
+            const std::vector<double>& adjoint_bremsstrahlung_cross_section );
 
   //! Set the bremsstrahlung photon cross section threshold energy bin index
   void setAdjointBremsstrahlungPhotonCrossSectionThresholdEnergyIndex(
@@ -823,13 +851,13 @@ protected:
 
   //! Set the moment preserving elastic discrete angles for an incoming energy
   void setAdjointMomentPreservingElasticDiscreteAnglesAtEnergy(
-	const double incoming_adjoint_energy,
-	const std::vector<double>& adjoint_moment_preserving_elastic_discrete_angles );
+    const double incoming_adjoint_energy,
+    const std::vector<double>& adjoint_moment_preserving_elastic_discrete_angles );
 
   //! Set the moment preserving elastic weights for an incoming energy
   void setAdjointMomentPreservingElasticWeightsAtEnergy(
-	const double incoming_adjoint_energy,
-	const std::vector<double>& adjoint_moment_preserving_elastic_weights );
+    const double incoming_adjoint_energy,
+    const std::vector<double>& adjoint_moment_preserving_elastic_weights );
 
   //! Set the moment preserving elastic discrete angles
   void setAdjointMomentPreservingElasticDiscreteAngles(
@@ -938,20 +966,20 @@ protected:
 
   //! Set the MP moment preserving elastic cross section threshold energy bin index
   void setAdjointMomentPreservingCrossSectionThresholdEnergyIndex(
-						        const unsigned index );
+                                                        const unsigned index );
 
   //! Set the electroionization electron cross section for a subshell
   void setAdjointElectroionizationCrossSection( const unsigned subshell,
-			 const std::vector<double>& adjoint_electroionization_cross_section );
+        const std::vector<double>& adjoint_electroionization_cross_section );
 
   //! Set the electroionization cross section threshold energy bin index
   void setAdjointElectroionizationCrossSectionThresholdEnergyIndex(
-             const unsigned subshell,
-             const unsigned index );
+        const unsigned subshell,
+        const unsigned index );
 
   //! Set the bremsstrahlung electron cross section
   void setAdjointBremsstrahlungElectronCrossSection(
-			 const std::vector<double>& adjoint_bremsstrahlung_cross_section );
+        const std::vector<double>& adjoint_bremsstrahlung_cross_section );
 
   //! Set the bremsstrahlung electron cross section threshold energy bin index
   void setAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(
@@ -959,7 +987,7 @@ protected:
 
   //! Set the atomic excitation electron cross section
   void setAdjointAtomicExcitationCrossSection(
-           const std::vector<double>& adjoint_atomic_excitation_cross_section );
+        const std::vector<double>& adjoint_atomic_excitation_cross_section );
 
   //! Set the atomic excitation cross section threshold energy bin index
   void setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(
@@ -1075,6 +1103,18 @@ private:
 
   // The adjoint electron distance tolerance
   double d_adjoint_electron_distance_tol;
+
+  // The electron FullyTabularTwoDDistribution evaluation tolerance
+  double d_electron_tabular_evaluation_tol;
+
+  // The electron FullyTabularTwoDDistribution lin-lin-log interpolation mode
+  bool d_electron_linlinlog_interpolation_mode_on;
+
+  // The electron FullyTabularTwoDDistribution correlated sampling mode
+  bool d_electron_correlated_sampling_mode_on;
+
+  // The electron FullyTabularTwoDDistribution unit based interpolation mode
+  bool d_electron_unit_based_interpolation_mode_on;
 
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;
