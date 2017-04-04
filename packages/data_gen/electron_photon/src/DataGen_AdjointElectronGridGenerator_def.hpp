@@ -72,8 +72,8 @@ AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::AdjointEle
   // Make sure the primary_energy_grid is valid
   testPrecondition( primary_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						primary_energy_grid.begin(),
-						primary_energy_grid.end() ) );
+                                                primary_energy_grid.begin(),
+                                                primary_energy_grid.end() ) );
 
   // Make sure the min, max energies are valid
   testPrecondition( min_energy > 0.0 );
