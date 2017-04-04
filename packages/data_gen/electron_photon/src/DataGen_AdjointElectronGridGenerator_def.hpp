@@ -13,6 +13,7 @@
 #include <algorithm>
 
 // FRENSIE Includes
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
