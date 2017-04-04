@@ -54,12 +54,6 @@ public:
   ~StandardElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
-  //! Set the FullyTabularTwoDDistribution evaluation tolerance
-  void setTabularEvaluationTolerance( const double evaluation_tolerance );
-
-  //! Get the FullyTabularTwoDDistribution evaluation tolerance
-  double getTabularEvaluationTolerance() const;
-
   //! Set the occupation number evaluation tolerance
   void setOccupationNumberEvaluationTolerance(
                                            const double evaluation_tolerance );
@@ -92,14 +86,38 @@ public:
   //! Get the number of moment preserving angles
   double getNumberOfMomentPreservingAngles() const;
 
-  //! Set secondary electron LinLinLog interpolation mode to off (on by default)
+  //! Set the FullyTabularTwoDDistribution evaluation tolerance
+  void setTabularEvaluationTolerance( const double evaluation_tolerance );
+
+  //! Get the FullyTabularTwoDDistribution evaluation tolerance
+  double getTabularEvaluationTolerance() const;
+
+  //! Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode to off (on by default)
   void setElectronLinLinLogInterpolationModeOff();
 
-  //! Set secondary electron LinLinLog interpolation mode to on (on by default)
+  //! Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode to on (on by default)
   void setElectronLinLinLogInterpolationModeOn();
 
-  //! Return if secondary electron LinLinLog interpolation mode is on
+  //! Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
   bool isElectronLinLinLogInterpolationModeOn() const;
+
+  //! Set electron FullyTabularTwoDDistribution correlated sampling mode to off (on by default)
+  void setElectronCorrelatedSamplingModeOff();
+
+  //! Set electron FullyTabularTwoDDistribution correlated sampling mode to on (on by default)
+  void setElectronCorrelatedSamplingModeOn();
+
+  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+  bool isElectronCorrelatedSamplingModeOn() const;
+
+  //! Set electron FullyTabularTwoDDistribution unit based interpolation mode to off (on by default)
+  void setElectronUnitBasedInterpolationModeOff();
+
+  //! Set electron FullyTabularTwoDDistribution unit based interpolation mode to on (on by default)
+  void setElectronUnitBasedInterpolationModeOn();
+
+  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+  bool isElectronUnitBasedInterpolationModeOn() const;
 
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
@@ -337,9 +355,16 @@ private:
   // The number of moment preserving angles
   unsigned d_number_of_moment_preserving_angles;
 
-  /* The lin-lin-log interpolation mode for electron secondary distributions
+  /* The electron FullyTabularTwoDDistribution lin-lin-log interpolation mode
    * (true = on - default, false = off) */
   bool d_linlinlog_interpolation_mode_on;
+
+  // The electron FullyTabularTwoDDistribution correlated sampling mode
+  bool d_correlated_sampling_mode_on;
+
+  // The electron FullyTabularTwoDDistribution unit based interpolation mode
+  bool d_unit_based_interpolation_mode_on;
+
 };
 
 // The if a value is not equal to zero

@@ -49,13 +49,15 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
     d_ace_epr_data( ace_epr_data ),
     d_endl_data_container( endl_data_container ),
     d_os_log( os_log ),
-    d_tabular_evaluation_tol( 1e-7 ),
     d_occupation_number_evaluation_tolerance( 1e-3 ),
     d_subshell_incoherent_evaluation_tolerance( 1e-3 ),
     d_photon_threshold_energy_nudge_factor( 1.0001 ),
     d_cutoff_angle_cosine( 1.0 ),
     d_number_of_moment_preserving_angles( 0 ),
-    d_linlinlog_interpolation_mode_on( true )
+    d_tabular_evaluation_tol( 1e-7 ),
+    d_linlinlog_interpolation_mode_on( true ),
+    d_correlated_sampling_mode_on( true ),
+    d_unit_based_interpolation_mode_on( true )
 { 
   // Make sure the ace data is valid
   testPrecondition( ace_epr_data.get() );
@@ -152,23 +154,6 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
                         &std::cerr )
 { /* ... */ }
 
-// Set the FullyTabularTwoDDistribution evaluation tolerance
-void StandardElectronPhotonRelaxationDataGenerator::setTabularEvaluationTolerance(
-    const double evaluation_tolerance )
-{
-  // Make sure the evaluation tolerance is valid
-  testPrecondition( evaluation_tolerance > 0.0 );
-  testPrecondition( evaluation_tolerance < 1.0 );
-
-  d_tabular_evaluation_tol = evaluation_tolerance;
-}
-
-// Get the FullyTabularTwoDDistribution evaluation tolerance
-double StandardElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolerance() const
-{
-  return d_tabular_evaluation_tol;
-}
-
 // Set the occupation number evaluation tolerance
 void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberEvaluationTolerance(
                                             const double evaluation_tolerance )
@@ -249,22 +234,75 @@ double StandardElectronPhotonRelaxationDataGenerator::getNumberOfMomentPreservin
   return d_number_of_moment_preserving_angles;
 }
 
-// Set secondary electron LinLinLog interpolation mode to off (on by default)
+// Set the FullyTabularTwoDDistribution evaluation tolerance
+void StandardElectronPhotonRelaxationDataGenerator::setTabularEvaluationTolerance(
+    const double evaluation_tolerance )
+{
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tolerance > 0.0 );
+  testPrecondition( evaluation_tolerance < 1.0 );
+
+  d_tabular_evaluation_tol = evaluation_tolerance;
+}
+
+// Get the FullyTabularTwoDDistribution evaluation tolerance
+double StandardElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolerance() const
+{
+  return d_tabular_evaluation_tol;
+}
+
+// Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode to off (on by default)
 void StandardElectronPhotonRelaxationDataGenerator::setElectronLinLinLogInterpolationModeOff()
 {
   d_linlinlog_interpolation_mode_on = false;
 }
 
-// Set secondary electron LinLinLog interpolation mode to on (on by default)
+// Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode to on (on by default)
 void StandardElectronPhotonRelaxationDataGenerator::setElectronLinLinLogInterpolationModeOn()
 {
   d_linlinlog_interpolation_mode_on = true;
 }
 
-// Return if secondary electron LinLinLog interpolation mode is on
+// Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
 bool StandardElectronPhotonRelaxationDataGenerator::isElectronLinLinLogInterpolationModeOn() const
 {
   return d_linlinlog_interpolation_mode_on;
+}
+
+// Set electron FullyTabularTwoDDistribution correlated sampling mode to off (on by default)
+void StandardElectronPhotonRelaxationDataGenerator::setElectronCorrelatedSamplingModeOff()
+{
+  d_correlated_sampling_mode_on = false;
+}
+
+// Set electron FullyTabularTwoDDistribution correlated sampling mode to on (on by default)
+void StandardElectronPhotonRelaxationDataGenerator::setElectronCorrelatedSamplingModeOn()
+{
+  d_correlated_sampling_mode_on = true;
+}
+
+// Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+bool StandardElectronPhotonRelaxationDataGenerator::isElectronCorrelatedSamplingModeOn() const
+{
+  return d_correlated_sampling_mode_on;
+}
+
+// Set electron FullyTabularTwoDDistribution unit based interpolation mode to off (on by default)
+void StandardElectronPhotonRelaxationDataGenerator::setElectronUnitBasedInterpolationModeOff()
+{
+  d_unit_based_interpolation_mode_on = false;
+}
+
+// Set electron FullyTabularTwoDDistribution unit based interpolation mode to on (on by default)
+void StandardElectronPhotonRelaxationDataGenerator::setElectronUnitBasedInterpolationModeOn()
+{
+  d_unit_based_interpolation_mode_on = true;
+}
+
+// Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+bool StandardElectronPhotonRelaxationDataGenerator::isElectronUnitBasedInterpolationModeOn() const
+{
+  return d_unit_based_interpolation_mode_on;
 }
 
 // Populate the electron-photon-relaxation data container
@@ -283,8 +321,14 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
   data_container.setCutoffAngleCosine( d_cutoff_angle_cosine );
   data_container.setNumberOfMomentPreservingAngles(
     d_number_of_moment_preserving_angles );
+  data_container.setElectronTabularEvaluationTolerance(
+    d_tabular_evaluation_tol );
   data_container.setElectronLinLinLogInterpolationModeOnOff(
     d_linlinlog_interpolation_mode_on );
+  data_container.setElectronCorrelatedSamplingModeOnOff(
+    d_correlated_sampling_mode_on );
+  data_container.setElectronUnitBasedInterpolationModeOnOff(
+    d_unit_based_interpolation_mode_on );
 
   // Set the relaxation data
   (*d_os_log) << std::endl << Utility::Bold( "Setting the relaxation data" )

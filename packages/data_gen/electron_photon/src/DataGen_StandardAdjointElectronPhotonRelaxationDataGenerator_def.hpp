@@ -39,8 +39,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
 
    std::vector<double>::iterator start =
      std::find_if( raw_cross_section.begin(),
-         	  raw_cross_section.end(),
-         	  notEqualZero );
+                   raw_cross_section.end(),
+                   notEqualZero );
 
    cross_section.assign( start, raw_cross_section.end() );
 
@@ -91,8 +91,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateCrossSectionOnU
 
   std::vector<double>::iterator start =
     std::find_if( raw_cross_section.begin(),
-		  raw_cross_section.end(),
-		  notEqualZero );
+                  raw_cross_section.end(),
+                  notEqualZero );
 
   cross_section.assign( start, raw_cross_section.end() );
 
