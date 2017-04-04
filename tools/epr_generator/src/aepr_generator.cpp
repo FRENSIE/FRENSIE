@@ -66,6 +66,10 @@ int main( int argc, char** argv )
   // Adjoint electron options
   double cutoff_angle_cosine = 1.0;
   int number_of_moment_preserving_angles = 0;
+  double electron_tabular_evaluation_tol = 1e-8;
+  bool electron_linlinlog_interpolation_mode = true;
+  bool electron_correlated_sampling_mode = true;
+  bool electron_unit_based_interpolation_mode = true;
   double adjoint_electron_grid_convergence_tol = 0.001;
   double adjoint_electron_grid_absolute_diff_tol = 1e-16;
   double adjoint_electron_grid_distance_tol = 1e-8;
@@ -190,6 +194,22 @@ int main( int argc, char** argv )
                                 &number_of_moment_preserving_angles,
                                 "Number of moment preserving angles for table"
                                 "(angles>=0)" );
+  aepr_generator_clp.setOption( "electron_tabular_evaluation_tol",
+                                &electron_tabular_evaluation_tol,
+                                "Electron tabular evaluation tolerance "
+                                "(0.0<tol<1.0)" );
+  aepr_generator_clp.setOption( "electron_linlinlog_interp",
+                                "electron_linlinlin_interp",
+                                &electron_linlinlog_interpolation_mode,
+                                "Electron linlinlog/linlinlin interpolation mode" );
+  aepr_generator_clp.setOption( "electron_correlated_sampling",
+                                "electron_stochastic_sampling",
+                                &electron_correlated_sampling_mode,
+                                "Electron correlated/stochastic sampling mode" );
+  aepr_generator_clp.setOption( "electron_unit_based_interp",
+                                "electron_exact_interp",
+                                &electron_unit_based_interpolation_mode,
+                                "Electron unit based/exact interpolation mode" );
   aepr_generator_clp.setOption( "adjoint_electron_grid_convergence_tol",
                                 &adjoint_electron_grid_convergence_tol,
                                 "Adjoint electron grid convergence "
@@ -504,7 +524,20 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 18.) The adjoint electron grid convergence tolerance must be in the valid range
+  // 18.) The electron tabular evaluation tolerance must be in the valid range
+  if( electron_tabular_evaluation_tol <= 0.0 ||
+      electron_tabular_evaluation_tol >= 1.0 )
+  {
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the electron tabular evaluation tolerance is not valid!"
+              << std::endl;
+
+    aepr_generator_clp.printHelpMessage( argv[0], *out );
+
+    return 1;
+  }
+
+  // 19.) The adjoint electron grid convergence tolerance must be in the valid range
   if( adjoint_electron_grid_convergence_tol <= 0.0 ||
       adjoint_electron_grid_convergence_tol >= 1.0 )
   {
@@ -517,7 +550,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 19.) The adjoint electron grid absolute difference tolerance must be in the valid range
+  // 20.) The adjoint electron grid absolute difference tolerance must be in the valid range
   if( adjoint_electron_grid_absolute_diff_tol <= 0.0 ||
       adjoint_electron_grid_absolute_diff_tol >= 1.0 )
   {
@@ -530,7 +563,7 @@ int main( int argc, char** argv )
     return 1;
   }
   
-  // 20.) The adjoint electron grid distance tolerance must be in the valid range
+  // 21.) The adjoint electron grid distance tolerance must be in the valid range
   if( adjoint_electron_grid_distance_tol <= 0.0 ||
       adjoint_electron_grid_distance_tol >= 1.0 )
   {
@@ -543,7 +576,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 21.) The bremsstrahlung max energy nudge value must be > 0.0
+  // 22.) The bremsstrahlung max energy nudge value must be > 0.0
   if( adjoint_bremsstrahlung_max_energy_nudge_value <= 0.0 )
   {
     (*out) << Utility::BoldRed( "Error: " )
@@ -555,7 +588,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 22.) The bremsstrahlung energy to oloutgoing energy nudge value must be >= 0.0
+  // 23.) The bremsstrahlung energy to oloutgoing energy nudge value must be >= 0.0
   if( adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value < 0.0 )
   {
     (*out) << Utility::BoldRed( "Error: " )
@@ -568,7 +601,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 23.) The adjoint bremsstrahlung evaluation tolerance must be in the valid range
+  // 24.) The adjoint bremsstrahlung evaluation tolerance must be in the valid range
   if( adjoint_bremsstrahlung_evaluation_tol <= 0.0 ||
       adjoint_bremsstrahlung_evaluation_tol >= 1.0 )
   {
@@ -581,7 +614,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 24.) The adjoint bremsstrahlung grid convergence tolerance must be in the
+  // 25.) The adjoint bremsstrahlung grid convergence tolerance must be in the
   //     valid range
   if( adjoint_bremsstrahlung_grid_convergence_tol <= 0.0 ||
       adjoint_bremsstrahlung_grid_convergence_tol >= 1.0 )
@@ -595,7 +628,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 25.) The adjoint bremsstrahlung grid absolute difference tolerance must be
+  // 26.) The adjoint bremsstrahlung grid absolute difference tolerance must be
   //      in the valid range
   if( adjoint_bremsstrahlung_grid_absolute_diff_tol <= 0.0 ||
       adjoint_bremsstrahlung_grid_absolute_diff_tol >= 1.0 )
@@ -610,7 +643,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 26.) The adjoint bremsstrahlung grid distance tolerance must be in the
+  // 27.) The adjoint bremsstrahlung grid distance tolerance must be in the
   //      valid range
   if( adjoint_bremsstrahlung_grid_distance_tol <= 0.0 ||
       adjoint_bremsstrahlung_grid_distance_tol >= 1.0 )
@@ -624,7 +657,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 27.) The adjoint electroionization evaluation tolerance must be in the valid range
+  // 28.) The adjoint electroionization evaluation tolerance must be in the valid range
   if( adjoint_electroionization_evaluation_tol <= 0.0 ||
       adjoint_electroionization_evaluation_tol >= 1.0 )
   {
@@ -637,7 +670,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 28.) The adjoint electroionization grid convergence tolerance must be in the
+  // 29.) The adjoint electroionization grid convergence tolerance must be in the
   //     valid range
   if( adjoint_electroionization_grid_convergence_tol <= 0.0 ||
       adjoint_electroionization_grid_convergence_tol >= 1.0 )
@@ -651,7 +684,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 29.) The adjoint electroionization grid absolute difference tolerance must be
+  // 30.) The adjoint electroionization grid absolute difference tolerance must be
   //      in the valid range
   if( adjoint_electroionization_grid_absolute_diff_tol <= 0.0 ||
       adjoint_electroionization_grid_absolute_diff_tol >= 1.0 )
@@ -666,7 +699,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 30.) The adjoint electroionization grid distance tolerance must be in the
+  // 31.) The adjoint electroionization grid distance tolerance must be in the
   //      valid range
   if( adjoint_electroionization_grid_distance_tol <= 0.0 ||
       adjoint_electroionization_grid_distance_tol >= 1.0 )
@@ -680,7 +713,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 31.) The grid convergence tolerance must be in the valid range
+  // 32.) The grid convergence tolerance must be in the valid range
   if( grid_convergence_tol <= 0.0 || grid_convergence_tol >= 1.0 )
   {
     std::cerr << Utility::BoldRed( "Error: " )
@@ -692,7 +725,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 32.) The grid absolute difference tolerance must be in the valid range
+  // 33.) The grid absolute difference tolerance must be in the valid range
   if( grid_absolute_diff_tol <= 0.0 || grid_absolute_diff_tol >= 1.0 )
   {
     std::cerr << Utility::BoldRed( "Error: " )
@@ -704,7 +737,7 @@ int main( int argc, char** argv )
     return 1;
   }
   
-  // 33.) The grid distance tolerance must be in the valid range
+  // 34.) The grid distance tolerance must be in the valid range
   if( grid_distance_tol <= 0.0 || grid_distance_tol >= 1.0 )
   {
     std::cerr << Utility::BoldRed( "Error: " )
@@ -737,14 +770,14 @@ int main( int argc, char** argv )
 
     try{
       Data::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
-						    cross_section_directory,
-						    cross_section_alias,
-						    *cross_sections_table_info,
-						    data_file_path,
-						    data_file_type,
-						    data_table_name,
-						    data_file_start_line,
-						    atomic_weight );
+                                                    cross_section_directory,
+                                                    cross_section_alias,
+                                                    *cross_sections_table_info,
+                                                    data_file_path,
+                                                    data_file_type,
+                                                    data_table_name,
+                                                    data_file_start_line,
+                                                    atomic_weight );
     }
     EXCEPTION_CATCH_AND_EXIT( std::exception,
                               "Error: Unable to load the requested cross "
@@ -781,7 +814,9 @@ int main( int argc, char** argv )
           temp_data_container,
           max_electron_energy,
           cutoff_angle_cosine,
-          number_of_moment_preserving_angles );
+          electron_tabular_evaluation_tol,
+          number_of_moment_preserving_angles,
+          electron_linlinlog_interpolation_mode );
       }
       EXCEPTION_CATCH_AND_EXIT( std::exception,
                                 "Error: Unable to repopulate the elastic "
@@ -835,6 +870,19 @@ int main( int argc, char** argv )
     generator.setAdjointElectroionizationGridConvergenceTolerance( adjoint_electroionization_grid_convergence_tol );
     generator.setAdjointElectroionizationAbsoluteDifferenceTolerance( adjoint_electroionization_grid_absolute_diff_tol );
     generator.setAdjointElectroionizationDistanceTolerance( adjoint_electroionization_grid_distance_tol );
+    generator.setTabularEvaluationTolerance( electron_tabular_evaluation_tol );
+    if ( electron_linlinlog_interpolation_mode )
+      generator.setElectronLinLinLogInterpolationModeOn();
+    else
+      generator.setElectronLinLinLogInterpolationModeOff();
+    if( electron_correlated_sampling_mode )
+      generator.setElectronCorrelatedSamplingModeOn();
+    else
+      generator.setElectronCorrelatedSamplingModeOff();
+    if( electron_unit_based_interpolation_mode )
+      generator.setElectronUnitBasedInterpolationModeOn();
+    else
+      generator.setElectronUnitBasedInterpolationModeOff();
 
     // Populate the new data container
     try{
