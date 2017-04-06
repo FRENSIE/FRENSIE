@@ -425,6 +425,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaInelasticDis
     const Teuchos::ArrayView<const double>& inelastic_locations,
     const Teuchos::ArrayView<const double>& outgoing_energies,
 		const Teuchos::ArrayView<const double>& itxe_block_array,
+    const bool is_continuous_energy,
 		const std::string& table_name,
 		const unsigned reaction,
 		const bool is_cm_distribution,
@@ -447,101 +448,187 @@ void NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaInelasticDis
   AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
     energy_distribution( num_incoming_energies ); 
     
-  // Construct equiprobable distribution
-  Teuchos::Array<double> equiprobable_pdf;
-  for( int eq = 0; eq < 20; ++eq )
+  if( is_continuous_energy )
   {
-    equiprobable_pdf.push_back( 1.0 );
-  }
-
-  // Initialize the Angle distribution array
-  typename AceLaw61NuclearScatteringDistributionCM::AngleDistributions 
-    angle_distribution( num_incoming_energies );
-    
-  for( int i = 0; i < num_incoming_energies; ++i )
-  {
-    energy_distribution[i].first = incoming_energies[i];
-  
-    int location = inelastic_locations[i] - inelastic_locations[0];
-    int num_energies = outgoing_energies[i];
-    
-    Teuchos::Array<double> energy_grid;
-    Teuchos::Array<double> energy_pdf;
-    
-    // Array of angular distributions
-	  Teuchos::Array< Teuchos::RCP<Utility::OneDDistribution> > 
-	    cosine_arrays( num_energies );
-    
-    for( int j = 0; j < num_energies; ++j )
+    // Construct equiprobable distribution
+    Teuchos::Array<double> equiprobable_pdf;
+    for( int eq = 0; eq < 20; ++eq )
     {
-      // Grab the outgoing energy point and associated pdf point
-      energy_grid.push_back( itxe_block_array[location] );
-      energy_pdf.push_back( itxe_block_array[location + 1] );
-
-      // Found situation in lwtr.20t -> line 131677 where there are nonphysical
-      //  cosines (i.e. cosines > 1 and out of order...). How is this possible?
-      //  Reaching out to J. Conlin to attempt to find more information...
-      Teuchos::Array<double> cosines = itxe_block_array( location + 3, 20 );
-      
-      if( itxe_block_array[location + 1] <= 1e-12 )
-      {
-        // Construct a false outgoing bin for incredibly unlikely result...
-        for( int c = 0; c < 20; ++c )
-        {
-          cosines[c] = c*(2.0/19.0) - 1;
-        }
-      }
-      
-      if( cosines[19] > 1.0 )
-      {
-        cosines[19] = 1.0;
-      }
-      
-      if( !Utility::Sort::isSortedAscending( cosines.begin(), cosines.end() ) )
-      {
-        std::sort( cosines.begin(), cosines.end() );
-      }
-
-      location += 23;
-
-      // Construct the equiprobable angular distribution
-      cosine_arrays[j].reset( 
-        new Utility::DiscreteDistribution( cosines, equiprobable_pdf ) );
+      equiprobable_pdf.push_back( 1.0 );
     }
 
-  energy_distribution[i].second.reset( 
-    new Utility::TabularDistribution<Utility::LinLin>( 
-                                                   energy_grid,
-                                                   energy_pdf ) );
+    // Initialize the Angle distribution array
+    typename AceLaw61NuclearScatteringDistributionCM::AngleDistributions 
+      angle_distribution( num_incoming_energies );
+      
+    for( int i = 0; i < num_incoming_energies; ++i )
+    {
+      energy_distribution[i].first = incoming_energies[i];
+    
+      int location = inelastic_locations[i] - inelastic_locations[0];
+      int num_energies = outgoing_energies[i];
+      
+      Teuchos::Array<double> energy_grid;
+      Teuchos::Array<double> energy_pdf;
+      
+      // Array of angular distributions
+      Teuchos::Array< Teuchos::RCP<Utility::OneDDistribution> > 
+        cosine_arrays( num_energies );
+      
+      for( int j = 0; j < num_energies; ++j )
+      {
+        // Grab the outgoing energy point and associated pdf point
+        energy_grid.push_back( itxe_block_array[location] );
+        energy_pdf.push_back( itxe_block_array[location + 1] );
 
-  angle_distribution[i].reset( 
-    new StandardAceLaw61AngleDistribution<AceLaw61LinLinInterpolationPolicy>(
+        // Found situation in lwtr.20t -> line 131677 where there are nonphysical
+        //  cosines (i.e. cosines > 1 and out of order...). How is this possible?
+        //  Reaching out to J. Conlin to attempt to find more information...
+        Teuchos::Array<double> cosines = itxe_block_array( location + 3, 20 );
+        
+        if( itxe_block_array[location + 1] <= 1e-12 )
+        {
+          // Construct a false outgoing bin for incredibly unlikely result...
+          for( int c = 0; c < 20; ++c )
+          {
+            cosines[c] = c*(2.0/19.0) - 1;
+          }
+        }
+        
+        if( cosines[19] > 1.0 )
+        {
+          cosines[19] = 1.0;
+        }
+        
+        if( !Utility::Sort::isSortedAscending( cosines.begin(), cosines.end() ) )
+        {
+          std::sort( cosines.begin(), cosines.end() );
+        }
+
+        location += 23;
+
+        // Construct the equiprobable angular distribution
+        cosine_arrays[j].reset( 
+          new Utility::DiscreteDistribution( cosines, equiprobable_pdf ) );
+      }
+
+    energy_distribution[i].second.reset( 
+      new Utility::TabularDistribution<Utility::LinLin>( 
                                                     energy_grid,
-                                                    cosine_arrays ) );
+                                                    energy_pdf ) );
 
-  }
+    angle_distribution[i].reset( 
+      new StandardAceLaw61AngleDistribution<AceLaw61LinLinInterpolationPolicy>(
+                                                      energy_grid,
+                                                      cosine_arrays ) );
 
-  Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_out_distribution; 
+    }
 
-  energy_out_distribution.reset( 
-      new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
+    Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_out_distribution; 
 
-  if( is_cm_distribution )
-  {
-    distribution.reset( 
-	  new AceLaw61NuclearScatteringDistributionCM(
-						       atomic_weight_ratio,
-						       energy_out_distribution,
-						       angle_distribution ) );
+    energy_out_distribution.reset( 
+        new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
+
+    if( is_cm_distribution )
+    {
+      distribution.reset( 
+      new AceLaw61NuclearScatteringDistributionCM(
+                    atomic_weight_ratio,
+                    energy_out_distribution,
+                    angle_distribution ) );
+    }
+    else
+    {
+      distribution.reset( 
+      new AceLaw61NuclearScatteringDistributionLab(
+                    atomic_weight_ratio,
+                    energy_out_distribution,
+                    angle_distribution ) );
+    } 
+
   }
   else
   {
-    distribution.reset( 
-	  new AceLaw61NuclearScatteringDistributionLab(
-						       atomic_weight_ratio,
-						       energy_out_distribution,
-						       angle_distribution ) );
-  }   
+    // Construct equiprobable distributions
+    Teuchos::Array<double> equiprobable_pdf_energy;
+    for( int eq = 0; eq < 64; ++eq )
+    {
+      equiprobable_pdf_energy.push_back( 1.0 );
+    }
+    Teuchos::Array<double> equiprobable_pdf_angle;
+    for( int eq = 0; eq < 16; ++eq )
+    {
+      equiprobable_pdf_angle.push_back( 1.0 );
+    }
+
+    // Initialize the Angle distribution array
+    typename AceLaw61NuclearScatteringDistributionCM::AngleDistributions 
+      angle_distribution( num_incoming_energies );
+      
+    int location = 0;
+    int num_energies = 64;
+
+    for( int i = 0; i < num_incoming_energies; ++i )
+    {
+      energy_distribution[i].first = incoming_energies[i];
+    
+      Teuchos::Array<double> energy_grid;
+    
+      // Array of angular distributions
+      Teuchos::Array< Teuchos::RCP<Utility::OneDDistribution> > 
+        cosine_arrays( num_energies );
+      
+      for( int j = 0; j < num_energies; ++j )
+      {
+        // Grab the outgoing energy point and associated pdf point
+        energy_grid.push_back( itxe_block_array[location] );
+
+        Teuchos::Array<double> cosines = itxe_block_array( location + 1, 16 );
+
+        if( !Utility::Sort::isSortedAscending( cosines.begin(), cosines.end() ) )
+        {
+          std::sort( cosines.begin(), cosines.end() );
+        }
+
+        location += 17;
+
+        // Construct the equiprobable angular distribution
+        cosine_arrays[j].reset( 
+          new Utility::DiscreteDistribution( cosines, equiprobable_pdf_angle ) );
+      }
+
+    energy_distribution[i].second.reset( 
+      new Utility::DiscreteDistribution( energy_grid,
+                                         equiprobable_pdf_energy ) );
+
+    angle_distribution[i].reset( 
+      new StandardAceLaw61AngleDistribution<AceLaw61DiscreteInterpolationPolicy>(
+                                                      energy_grid,
+                                                      cosine_arrays ) );
+    }
+
+    Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_out_distribution; 
+
+    energy_out_distribution.reset( 
+        new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
+
+    if( is_cm_distribution )
+    {
+      distribution.reset( 
+      new AceLaw61NuclearScatteringDistributionCM(
+                    atomic_weight_ratio,
+                    energy_out_distribution,
+                    angle_distribution ) );
+    }
+    else
+    {
+      distribution.reset( 
+      new AceLaw61NuclearScatteringDistributionLab(
+                    atomic_weight_ratio,
+                    energy_out_distribution,
+                    angle_distribution ) );
+    } 
+  }  
 }
 
 } // end MonteCarlo namespace

@@ -72,6 +72,7 @@ public:
 
   //! Return if elastic scattering angular distribution data is present
   bool hasElasticScatteringAngularDistributionData() const;
+  
 
   //! Return the elastic scattering mode
   SabElasticMode getElasticScatteringMode() const;
@@ -105,6 +106,9 @@ public:
 
   //! Extract the ITCA block from the XSS array
   Teuchos::ArrayView<const double> extractITCABlock() const;
+  
+  //! Determine if the data is continuous energy or discrete
+  bool isDataContinuousEnergy() const;
 
 private:
 
@@ -113,6 +117,9 @@ private:
 
   // The jxs array (a copy will be stored)
   Teuchos::Array<int> d_jxs;
+  
+  // Discrete or Continuous
+  bool d_continuous_energy_data;
 
   // The xss array (data in this array should never be directly modified)
   Teuchos::ArrayRCP<const double> d_xss;

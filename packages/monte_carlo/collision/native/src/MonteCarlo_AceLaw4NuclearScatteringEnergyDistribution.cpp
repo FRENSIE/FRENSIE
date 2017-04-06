@@ -78,7 +78,7 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
 
     double random_num = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
-
+      
     if( random_num < interpolation_fraction )
     {
       energy_prime = 
@@ -152,6 +152,7 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
     incoming_index = d_energy_distribution.size() - 1; 
   }
 
+  std::cout << outgoing_energy << std::endl;
   return outgoing_energy;
   
 }

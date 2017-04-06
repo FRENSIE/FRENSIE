@@ -46,6 +46,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
     d_norm_constant( DNQT::zero() )
 {
   // Make sure there is at lease one bin
+
   testPrecondition( independent_values.size() > 1 );
   testPrecondition( dependent_values.size() == independent_values.size() );
   // Make sure that the bins are sorted

@@ -153,6 +153,9 @@ protected:
 	// Implicity Elastic check
 	bool d_is_implicit_elastic;
 
+	// Continuous Energy Check
+	bool d_is_continuous_energy;
+
   // S(alpha,beta) data extractor
   Data::XSSSabDataExtractor d_sab_nuclide_data;
 		   

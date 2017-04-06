@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Data_XSSSabDataExtractor.cpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  XSS array (from ace table) S(a,b) data extractor class def.
 //!
 //---------------------------------------------------------------------------//
@@ -37,39 +37,88 @@ XSSSabDataExtractor::XSSSabDataExtractor(
     {
       d_jxs[i] -= 1;
     }
-  
-  // Extract and cache the ITIE block
-  d_itie_block = d_xss( d_jxs[0], (int)d_xss[d_jxs[0]]*4 + 1 );
-  
-  // Find appropriate data for ITXE block
-  int last_energies = d_xss[ (int)d_xss[d_jxs[0]]*4 ];
-  int last_position = d_xss[ (int)d_xss[d_jxs[0]]*3 ];
-  int number_angles = d_nxs[2];
-  int distance      = last_position + last_energies*(number_angles + 2) - 
-                        ((int)d_xss[d_jxs[0]]*4 + 1);
-
-  // Extract and cache the ITXE block                     
-  d_itxe_block = d_xss( (int)d_xss[d_jxs[0]]*4 + 1, distance );
-
-  // Extract and cache the ITCE block
-  if( d_jxs[3] != 0 )
+    
+  // Determine whether this is a continuous energy or discrete energy 
+  //   S(alpha,beta) table
+  if( d_nxs[6] == 2 )
   {
-    d_itce_block = d_xss( d_jxs[3], (int)d_xss[d_jxs[3]]*2 + 1 );
+    d_continuous_energy_data = true;
   }
   else
   {
-    d_itce_block = Teuchos::ArrayView<const double>();
+    d_continuous_energy_data = false;
   }
+  
+  // Parse the data into the four blocks if we are using the continuous (2012) 
+  //   data tables
+  if ( this->isDataContinuousEnergy() )
+  {
+    // Extract and cache the ITIE block
+    d_itie_block = d_xss( d_jxs[0], (int)d_xss[d_jxs[0]]*4 + 1 );
     
-  // Extract and cache the ITCA block
-  if( d_jxs[3] != 0 && d_nxs[5] != -1 )
-  {
-    int elastic_energies = (int)d_xss[d_jxs[3]];
-    d_itca_block = d_xss( d_jxs[5], elastic_energies*(d_nxs[5] + 1) );
-  }
+    // Find appropriate data for ITXE block
+    int last_energies = d_xss[ (int)d_xss[d_jxs[0]]*4 ];
+    int last_position = d_xss[ (int)d_xss[d_jxs[0]]*3 ];
+    int number_angles = d_nxs[2];
+    int distance      = last_position + last_energies*(number_angles + 2) - 
+                          ((int)d_xss[d_jxs[0]]*4 + 1);
+
+    // Extract and cache the ITXE block                     
+    d_itxe_block = d_xss( (int)d_xss[d_jxs[0]]*4 + 1, distance );
+
+    // Extract and cache the ITCE block
+    if( d_jxs[3] != 0 )
+    {
+      d_itce_block = d_xss( d_jxs[3], (int)d_xss[d_jxs[3]]*2 + 1 );
+    }
     else
+    {
+      d_itce_block = Teuchos::ArrayView<const double>();
+    }
+      
+    // Extract and cache the ITCA block
+    if( d_jxs[3] != 0 && d_nxs[5] != -1 )
+    {
+      int elastic_energies = (int)d_xss[d_jxs[3]];
+      d_itca_block = d_xss( d_jxs[5], elastic_energies*(d_nxs[5] + 1) );
+    }
+      else
+    {
+      d_itca_block = Teuchos::ArrayView<const double>();
+    }
+  }
+  // Parse the data into the four separate blocks if we are using the (1999)
+  //   discrete data.
+  else
   {
-    d_itca_block = Teuchos::ArrayView<const double>();
+    d_itie_block = d_xss( d_jxs[0], (int)d_xss[d_jxs[0]]*2 + 1 );
+    
+    int num_out_energies = d_nxs[3] + 4;
+    int num_out_angles = d_nxs[2] + 1;
+    int distance = num_out_energies*num_out_angles;
+    
+    d_itxe_block = d_xss( (int)d_xss[d_jxs[0]]*2 + 1, distance*(int)d_xss[d_jxs[0]] );
+    
+    // Extract and cache the ITCE block
+    if( d_jxs[3] != 0 )
+    {
+      d_itce_block = d_xss( d_jxs[3], (int)d_xss[d_jxs[3]]*2 + 1 );
+    }
+    else
+    {
+      d_itce_block = Teuchos::ArrayView<const double>();
+    }
+    
+    // Extract and cache the ITCA block
+    if( d_jxs[3] != 0 && d_nxs[5] != -1 )
+    {
+      int elastic_energies = (int)d_xss[d_jxs[3]];
+      d_itca_block = d_xss( d_jxs[5], elastic_energies*(d_nxs[5] + 1) );
+    }
+      else
+    {
+      d_itca_block = Teuchos::ArrayView<const double>();
+    }
   }
 }
 
@@ -181,6 +230,12 @@ Teuchos::ArrayView<const double>
 XSSSabDataExtractor::extractITCABlock() const
 {
   return d_itca_block;
+}
+
+// Determine if the data is continuous energy
+bool XSSSabDataExtractor::isDataContinuousEnergy() const
+{
+  return d_continuous_energy_data;
 }
 
 } // end Data namespace

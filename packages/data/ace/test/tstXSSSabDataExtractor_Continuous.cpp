@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //! 
 //! \file   tstXSSSabDataExtractor.cpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  XSS neutron data extractor class unit test
 //!
 //---------------------------------------------------------------------------//

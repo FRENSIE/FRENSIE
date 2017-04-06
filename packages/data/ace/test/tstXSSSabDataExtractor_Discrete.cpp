@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //! 
 //! \file   tstXSSSabDataExtractor.cpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  XSS neutron data extractor class unit test
 //!
 //---------------------------------------------------------------------------//
@@ -89,9 +89,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_inelastic_only )
   Teuchos::ArrayView<const double> itie_block = 
     xss_data_extractor_inelastic_only->extractITIEBlock();
   
-  TEST_EQUALITY_CONST( itie_block.size(), 116*4+1 );
-  TEST_EQUALITY_CONST( itie_block.front(), 116 );
-  TEST_EQUALITY_CONST( itie_block.back(), 5.85000000000E+02 );
+  TEST_EQUALITY_CONST( itie_block.size(), 58*2+1 );
+  TEST_EQUALITY_CONST( itie_block.front(), 58 );
+  TEST_EQUALITY_CONST( itie_block.back(), 2.03743300000E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -103,9 +103,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
   Teuchos::ArrayView<const double> inelastic_energy_grid = 
     xss_data_extractor_inelastic_only->extractInelasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( inelastic_energy_grid.size(), 116 );
+  TEST_EQUALITY_CONST( inelastic_energy_grid.size(), 58 );
   TEST_EQUALITY_CONST( inelastic_energy_grid.front(), 1.00000000000e-11 );
-  TEST_EQUALITY_CONST( inelastic_energy_grid.back(), 9.15000000000e-06 );
+  TEST_EQUALITY_CONST( inelastic_energy_grid.back(), 4.46000000000E-06 );
 }
 
 //---------------------------------------------------------------------------//
@@ -117,9 +117,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
   Teuchos::ArrayView<const double> inelastic_cross_section = 
     xss_data_extractor_inelastic_only->extractInelasticCrossSection();
 
-  TEST_EQUALITY_CONST( inelastic_cross_section.size(), 116 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.front(), 8.20604100000e+02 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.back(), 2.05498356000E+01 );
+  TEST_EQUALITY_CONST( inelastic_cross_section.size(), 58 );
+  TEST_EQUALITY_CONST( inelastic_cross_section.front(), 1.07923800000E+03 );
+  TEST_EQUALITY_CONST( inelastic_cross_section.back(), 2.03743300000E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -166,9 +166,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
   Teuchos::ArrayView<const double> itxe_block = 
     xss_data_extractor_inelastic_only->extractITXEBlock();
 
-  TEST_EQUALITY_CONST( itxe_block.size(), 1228384 );
-  TEST_EQUALITY_CONST( itxe_block.front(), 5.37107000000E-14 );
-  TEST_EQUALITY_CONST( itxe_block.back(),  9.88396962963E-01 );
+  TEST_EQUALITY_CONST( itxe_block.size(), 63104 );
+  TEST_EQUALITY_CONST( itxe_block.front(), 7.42341363215E-12 );
+  TEST_EQUALITY_CONST( itxe_block.back(),  9.96505931866E-01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -231,9 +231,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_no_elastic_dist )
   Teuchos::ArrayView<const double> itie_block = 
     xss_data_extractor_no_elastic_dist->extractITIEBlock();
   
-  TEST_EQUALITY_CONST( itie_block.size(), 116*4+1 );
-  TEST_EQUALITY_CONST( itie_block.front(), 116 );
-  TEST_EQUALITY_CONST( itie_block.back(), 4.34000000000E+02 );
+  TEST_EQUALITY_CONST( itie_block.size(), 58*2+1 );
+  TEST_EQUALITY_CONST( itie_block.front(), 58 );
+  TEST_EQUALITY_CONST( itie_block.back(), 4.58635378012E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -245,9 +245,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
   Teuchos::ArrayView<const double> inelastic_energy_grid = 
     xss_data_extractor_no_elastic_dist->extractInelasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( inelastic_energy_grid.size(), 116 );
+  TEST_EQUALITY_CONST( inelastic_energy_grid.size(), 58 );
   TEST_EQUALITY_CONST( inelastic_energy_grid.front(), 1.00000000000e-11 );
-  TEST_EQUALITY_CONST( inelastic_energy_grid.back(), 9.15000000000e-06 );
+  TEST_EQUALITY_CONST( inelastic_energy_grid.back(), 4.46000000000E-06 );
 }
 
 //---------------------------------------------------------------------------//
@@ -259,9 +259,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
   Teuchos::ArrayView<const double> inelastic_cross_section = 
     xss_data_extractor_no_elastic_dist->extractInelasticCrossSection();
 
-  TEST_EQUALITY_CONST( inelastic_cross_section.size(), 116 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.front(), 2.52820200000E+00 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.back(), 4.65752074498E+00 );
+  TEST_EQUALITY_CONST( inelastic_cross_section.size(), 58 );
+  TEST_EQUALITY_CONST( inelastic_cross_section.front(), 2.52791900000E+00 );
+  TEST_EQUALITY_CONST( inelastic_cross_section.back(), 4.58635378012E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -313,9 +313,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITXEBlock_no_elastic_dist )
   Teuchos::ArrayView<const double> itxe_block = 
     xss_data_extractor_no_elastic_dist->extractITXEBlock();
 
-  TEST_EQUALITY_CONST( itxe_block.size(), 1194252 );
-  TEST_EQUALITY_CONST( itxe_block.front(), 1.09631000000E-10 );
-  TEST_EQUALITY_CONST( itxe_block.back(), 8.41618844000E-01 );
+  TEST_EQUALITY_CONST( itxe_block.size(), 63104 );
+  TEST_EQUALITY_CONST( itxe_block.front(), 1.61025581807E-09 );
+  TEST_EQUALITY_CONST( itxe_block.back(), 9.56408384461E-01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -376,9 +376,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_full )
   Teuchos::ArrayView<const double> itie_block = 
     xss_data_extractor_full->extractITIEBlock();
   
-  TEST_EQUALITY_CONST( itie_block.size(), 116*4+1 );
-  TEST_EQUALITY_CONST( itie_block.front(), 116 );
-  TEST_EQUALITY_CONST( itie_block.back(), 3.83000000000E+02 );
+  TEST_EQUALITY_CONST( itie_block.size(), 58*2+1 );
+  TEST_EQUALITY_CONST( itie_block.front(), 58 );
+  TEST_EQUALITY_CONST( itie_block.back(), 2.06047492000E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -389,9 +389,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractInelasticEnergyGrid_full )
   Teuchos::ArrayView<const double> inelastic_energy_grid = 
     xss_data_extractor_full->extractInelasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( inelastic_energy_grid.size(), 116 );
+  TEST_EQUALITY_CONST( inelastic_energy_grid.size(), 58 );
   TEST_EQUALITY_CONST( inelastic_energy_grid.front(), 1.00000000000e-11 );
-  TEST_EQUALITY_CONST( inelastic_energy_grid.back(), 9.15000000000e-06 );
+  TEST_EQUALITY_CONST( inelastic_energy_grid.back(), 4.46000000000E-06 );
 }
 
 //---------------------------------------------------------------------------//
@@ -402,9 +402,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractInelasticCrossSection_full )
   Teuchos::ArrayView<const double> inelastic_cross_section = 
     xss_data_extractor_full->extractInelasticCrossSection();
 
-  TEST_EQUALITY_CONST( inelastic_cross_section.size(), 116 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.front(), 3.46057700000E+02 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.back(), 2.05407024000E+01 );
+  TEST_EQUALITY_CONST( inelastic_cross_section.size(), 58 );
+  TEST_EQUALITY_CONST( inelastic_cross_section.front(), 3.45990500000E+02 );
+  TEST_EQUALITY_CONST( inelastic_cross_section.back(), 2.06047492000E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -415,9 +415,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITCEBlock_full )
   Teuchos::ArrayView<const double> itce_block =
     xss_data_extractor_full->extractITCEBlock();
 
-  TEST_EQUALITY_CONST( itce_block.size(), 375*2+1 );
-  TEST_EQUALITY_CONST( itce_block.front(), 375 );
-  TEST_EQUALITY_CONST( itce_block.back(), 6.25377800000E-02 );
+  TEST_EQUALITY_CONST( itce_block.size(), 364*2+1 );
+  TEST_EQUALITY_CONST( itce_block.front(), 364 );
+  TEST_EQUALITY_CONST( itce_block.back(), 1.37951000000E-01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -428,9 +428,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractElasticEnergyGrid_full )
   Teuchos::ArrayView<const double> elastic_energy_grid = 
     xss_data_extractor_full->extractElasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( elastic_energy_grid.size(), 375 );
+  TEST_EQUALITY_CONST( elastic_energy_grid.size(), 364 );
   TEST_EQUALITY_CONST( elastic_energy_grid.front(), 1.00000000000e-11 );
-  TEST_EQUALITY_CONST( elastic_energy_grid.back(), 9.37500000000e-06 );
+  TEST_EQUALITY_CONST( elastic_energy_grid.back(), 4.25000000000E-06 );
 }
 
 //---------------------------------------------------------------------------//
@@ -441,9 +441,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractElasticCrossSection_full )
   Teuchos::ArrayView<const double> elastic_cross_section = 
     xss_data_extractor_full->extractElasticCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cross_section.size(), 375 );
-  TEST_EQUALITY_CONST( elastic_cross_section.front(), 8.19227100000e+01 );
-  TEST_EQUALITY_CONST( elastic_cross_section.back(), 6.25377800000E-02 );
+  TEST_EQUALITY_CONST( elastic_cross_section.size(), 364 );
+  TEST_EQUALITY_CONST( elastic_cross_section.front(), 8.19227100000E+01 );
+  TEST_EQUALITY_CONST( elastic_cross_section.back(), 1.37951000000E-01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -454,9 +454,9 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITXEBlock_full )
   Teuchos::ArrayView<const double> itxe_block = 
     xss_data_extractor_full->extractITXEBlock();
 
-  TEST_EQUALITY_CONST( itxe_block.size(), 960894 );
-  TEST_EQUALITY_CONST( itxe_block.front(), 7.37621000000E-11 );
-  TEST_EQUALITY_CONST( itxe_block.back(), 9.86864771301E-01 );
+  TEST_EQUALITY_CONST( itxe_block.size(), 63104 );
+  TEST_EQUALITY_CONST( itxe_block.front(), 1.06498867488E-09 );
+  TEST_EQUALITY_CONST( itxe_block.back(), 9.93495780141E-01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -467,16 +467,16 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITCABlock_full )
   Teuchos::ArrayView<const double> itca_block = 
     xss_data_extractor_full->extractITCABlock();
 
-  TEST_EQUALITY_CONST( itca_block.size(), 7500 );
-  TEST_EQUALITY_CONST( itca_block.front(), -9.49966200000E-01 );
-  TEST_EQUALITY_CONST( itca_block.back(), 9.99961210000e-01 );
+  TEST_EQUALITY_CONST( itca_block.size(), 5824 );
+  TEST_EQUALITY_CONST( itca_block.front(), -9.37458100000E-01 );
+  TEST_EQUALITY_CONST( itca_block.back(), 9.99892600000E-01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the data is continuous in energy
 TEUCHOS_UNIT_TEST( XSSSabDataExtractor, test_continuous_energy )
 {
-  TEST_ASSERT(xss_data_extractor_full->isDataContinuousEnergy());
+  TEST_ASSERT(!xss_data_extractor_full->isDataContinuousEnergy());
 }
 
 //---------------------------------------------------------------------------//

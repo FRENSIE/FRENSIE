@@ -202,6 +202,8 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::initializeSAlphaBetaData
 			    const Teuchos::ArrayView<const double> itce_block,
 			    const Teuchos::ArrayView<const double> itca_block  )
 {
+  d_is_continuous_energy = d_sab_nuclide_data.isDataContinuousEnergy();
+
   // Initialize the inelastic data
   if( !itie_block.is_null() && !itxe_block.is_null() )
   {
@@ -292,6 +294,7 @@ void SAlphaBetaNuclearScatteringDistributionACEFactory::createSAlphaBetaScatteri
      	        d_inelastic_distribution_locators,
      	        d_inelastic_outgoing_energies,
      	        d_itxe_block,
+              d_is_continuous_energy,
      	        d_table_name,
      	        reaction_type,
      	        false,
