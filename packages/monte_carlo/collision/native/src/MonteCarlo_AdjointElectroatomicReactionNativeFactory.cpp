@@ -13,7 +13,6 @@
 #include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_VoidAbsorptionAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
 //#include "Utility_TabularDistribution.hpp"
 //#include "Utility_SortAlgorithms.hpp"

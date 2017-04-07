@@ -14,6 +14,7 @@
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_AdjointPhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
@@ -23,7 +24,7 @@ template<typename ParticleType>
 double SimulationProperties::getMinParticleEnergy() const
 {
   THROW_EXCEPTION( std::logic_error,
-		   "Error: the particle type is not supported!" );
+                   "Error: the particle type is not supported!" );
 }
 
 //! Return the min neutron energy
@@ -54,12 +55,19 @@ inline double SimulationProperties::getMinParticleEnergy<ElectronState>() const
   return this->getMinElectronEnergy();
 }
 
+//! Return the min adjoint electron energy
+template<>
+inline double SimulationProperties::getMinParticleEnergy<AdjointElectronState>() const
+{
+  return this->getMinAdjointElectronEnergy();
+}
+
 // Return the max particle energy
 template<typename ParticleType>
 double SimulationProperties::getMaxParticleEnergy() const
 {
   THROW_EXCEPTION( std::logic_error,
-		   "Error: the particle type is not supported!" );
+                   "Error: the particle type is not supported!" );
 }
 
 //! Return the max neutron energy
@@ -88,6 +96,13 @@ template<>
 inline double SimulationProperties::getMaxParticleEnergy<ElectronState>() const
 {
   return this->getMaxElectronEnergy();
+}
+
+//! Return the max adjoint electron energy
+template<>
+inline double SimulationProperties::getMaxParticleEnergy<AdjointElectronState>() const
+{
+  return this->getMaxAdjointElectronEnergy();
 }
 
 } // end MonteCarlo namespace

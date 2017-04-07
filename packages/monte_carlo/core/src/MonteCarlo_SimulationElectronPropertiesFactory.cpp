@@ -93,7 +93,7 @@ void SimulationElectronPropertiesFactory::initializeProperties(
       electron_properties.setAtomicExcitationModeOff();
   }
 
-  // Get the secondary electron LinLinLog interpolation mode - optional
+  // Get the secondary electron evaluation tolerance - optional
   if( properties.isParameter( "Electron Evaluation Tolerance" ) )
   {
     double evaluation_tol =

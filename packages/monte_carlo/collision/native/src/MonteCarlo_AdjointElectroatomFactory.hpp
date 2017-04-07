@@ -21,7 +21,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatom.hpp"
-#include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 

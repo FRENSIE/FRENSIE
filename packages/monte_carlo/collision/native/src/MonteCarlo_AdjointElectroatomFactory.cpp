@@ -105,10 +105,6 @@ void AdjointElectroatomFactory::createAdjointElectroatomFromNativeTable(
     Data::AdjointElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
 
-    // Create the atomic relaxation model
-    Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model(
-        new MonteCarlo::VoidAtomicRelaxationModel );;
-
     // Initialize the new adjoint electroatom
     Teuchos::RCP<AdjointElectroatom>& electroatom = d_electroatom_name_map[electroatom_alias];
 

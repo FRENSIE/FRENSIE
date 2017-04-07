@@ -51,4 +51,19 @@
     <Parameter name="Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
   </ParameterList>
 
+  <ParameterList name="Adjoint Electron Properties">
+    <Parameter name="Min Adjoint Electron Energy" type="double" value="1e-2"/>
+    <Parameter name="Max Adjoint Electron Energy" type="double" value="10.0"/>
+    <Parameter name="Adjoint Electron Hash Grid Bins" type="unsigned int" value="400"/>
+    <Parameter name="Adjoint Electron Elastic" type="bool" value="false"/>
+    <Parameter name="Adjoint Electron Electroionization" type="bool" value="false"/>
+    <Parameter name="Adjoint Electron Bremsstrahlung" type="bool" value="false"/>
+    <Parameter name="Adjoint Electron Atomic Excitation" type="bool" value="false"/>
+    <Parameter name="Adjoint Electron Evaluation Tolerance" type="double" value="1e-5"/>
+    <Parameter name="Adjoint Electron Correlated Sampling" type="bool" value="false"/>
+    <Parameter name="Adjoint Electron Unit Based Interpolation" type="bool" value="false"/>
+    <Parameter name="Adjoint Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+    <Parameter name="Adjoint Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
+  </ParameterList>
+
 </ParameterList>

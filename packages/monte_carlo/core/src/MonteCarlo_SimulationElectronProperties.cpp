@@ -264,7 +264,7 @@ void SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
   d_bremsstrahlung_angular_distribution_function = function;
 }
 
-// Return if detailed bremsstrahlung mode is on
+// Return the bremsstrahlung photon angular distribution function (2BS by default)
 BremsstrahlungAngularDistributionType
 SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction() const
 {

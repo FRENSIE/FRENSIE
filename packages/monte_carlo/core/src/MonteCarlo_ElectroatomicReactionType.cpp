@@ -124,14 +124,14 @@ std::string convertElectroatomicReactionEnumToString(
     return "Q3 Subshell Electroionization Electroatomic Reaction";
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: cannot convert the Electroatomic reaction type "
-		     "to a string!" );
+                     "Error: cannot convert the Electroatomic reaction type "
+                     "to a string!" );
   }
 }
 
 // Convert a Data::SubshellType enum to a ElectroatomicReactionType enum
-ElectroatomicReactionType convertSubshellEnumToElectroatomicReactionEnum(
-						  const Data::SubshellType subshell )
+ElectroatomicReactionType convertSubshellEnumToElectroionizationElectroatomicReactionEnum(
+                                            const Data::SubshellType subshell )
 {
   switch( subshell )
   {

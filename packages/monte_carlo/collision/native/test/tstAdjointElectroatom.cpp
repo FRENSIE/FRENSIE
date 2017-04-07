@@ -22,7 +22,6 @@
 #include "MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_VoidAbsorptionAdjointElectroatomicReaction.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -409,9 +408,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the total forward reaction
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_forward_reaction;
-
-    std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> void_reaction(
-        new MonteCarlo::VoidAbsorptionAdjointElectroatomicReaction() );
 
   MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
                                        data_container,

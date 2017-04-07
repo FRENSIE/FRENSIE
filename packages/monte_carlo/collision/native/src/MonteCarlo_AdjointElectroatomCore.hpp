@@ -112,7 +112,7 @@ inline auto AdjointElectroatomCore::getTotalForwardReaction() const -> const Ele
 }
 
 // Return the scattering reactions
-inline auto AdjointElectroatomCore::getScatteringReactions() const -> const ConstReactionMap& 
+inline auto AdjointElectroatomCore::getScatteringReactions() const -> const ConstReactionMap&
 {
   return d_scattering_reactions;
 }
