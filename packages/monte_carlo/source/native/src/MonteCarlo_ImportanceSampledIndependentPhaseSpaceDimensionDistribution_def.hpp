@@ -32,14 +32,15 @@ ImportanceSampledIndependentPhaseSpaceDimensionDistribution<dimension>::Importan
   testPrecondition( dimension_distribution.get() );
   // Make sure that the importance distribution is valid
   testPrecondition( importance_distribution.get() );
-  testPrecondition( importance_distribution->hasSameBounds( dimension_distribution ) );
+  testPrecondition( importance_distribution->hasSameBounds( *dimension_distribution ) );
 }
 
 // Sample a dimension value without a cascade to the dependent dists.
 /*! \details A phase space dimension value will be sampled from the importance
  * distribution. The weight of the dimension will be the ratio of the
  * dimension distribution PDF and the importance distribution PDF at the 
- * sampled dimension value.
+ * sampled dimension value. This preserves the expected value of the phase
+ * space dimension distribution.
  */
 template<PhaseSpaceDimension dimension>
 void ImportanceSampledIndependentPhaseSpaceDimensionDistribution<dimension>::sampleWithoutCascade(
@@ -81,9 +82,19 @@ double ImportanceSampledIndependentPhaseSpaceDimensionDistribution<dimension>::c
 
   double weight = 1.0;
 
-  // If both evaluate to 0, a weight of 1 is desired but nan will result
-  if( weight_numerator > 0.0 || weight_denominator > 0.0 )
+  if( weight_denominator > 0.0 )
     weight = weight_numerator/weight_denominator;
+  
+  // If we enter this block there is likely a problem with our distributions
+  else
+  {
+    if( weight_numerator > 0.0 )
+      weight = std::numeric_limits<double>::infinity();
+    
+    // If both evaluate to 0, a weight of 1 is desired but nan will result
+    else
+      weight = 1.0;
+  }
 
   // Make sure that the weight is valid
   testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( weight ) );
