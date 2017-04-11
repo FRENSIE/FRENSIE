@@ -33,7 +33,8 @@ public:
   AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
     const int atomic_number,
-    const bool linlinlog_interpolation_mode_on = true );
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on );
 
   //! Destructor
   virtual ~AnalogElasticElectronScatteringDistribution()
@@ -122,6 +123,27 @@ protected:
 
 private:
 
+  // Sample an outgoing direction from the distribution
+  double correlatedSample(
+            const double incoming_energy,
+            const double random_number,
+            const TwoDDist::DistributionType::const_iterator lower_bin,
+            const TwoDDist::DistributionType::const_iterator upper_bin ) const;
+
+  // Sample an outgoing direction from the distribution
+  double stochasticSample(
+            const double incoming_energy,
+            const double random_number,
+            const TwoDDist::DistributionType::const_iterator lower_bin,
+            const TwoDDist::DistributionType::const_iterator upper_bin ) const;
+
+  template<bool linlinlog_interpolation_mode_on>
+  inline double interpolate( const double lower_energy,
+                             const double upper_energy,
+                             const double incoming_energy,
+                             const double lower_angle,
+                             const double upper_angle ) const;
+
   // The change scattering angle cosine below which the screened Rutherford distribution is used
   static double s_cutoff_delta_mu;
 
@@ -148,9 +170,27 @@ private:
 
   // Cutoff elastic scattering distribution
   std::shared_ptr<TwoDDist> d_elastic_cutoff_distribution;
+
+  // The sample function pointer
+  std::function<double (
+            const double, const double,
+            const TwoDDist::DistributionType::const_iterator,
+            const TwoDDist::DistributionType::const_iterator)> d_sample_func;
+
+  // The interplation function pointer
+  std::function<double ( const double, const double, const double,
+                         const double, const double )> d_interpolation_func;
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_AnalogElasticElectronScatteringDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ANALOG_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 

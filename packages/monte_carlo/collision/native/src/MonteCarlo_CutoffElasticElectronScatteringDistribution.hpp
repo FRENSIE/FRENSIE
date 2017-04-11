@@ -34,7 +34,8 @@ public:
   CutoffElasticElectronScatteringDistribution(
         const std::shared_ptr<TwoDDist>& 
             scattering_distribution,
-        const double cutoff_angle_cosine = 1.0 );
+        const double cutoff_angle_cosine,
+        const bool correlated_sampling_mode_on );
 
   //! Destructor
   virtual ~CutoffElasticElectronScatteringDistribution()
@@ -102,6 +103,9 @@ private:
 
   // cutoff elastic scattering distribution (no screened Rutherford data)
   std::shared_ptr<TwoDDist> d_cutoff_distribution;
+
+  // The sample function pointer
+  std::function<double ( const double )> d_sample_func;
 };
 
 } // end MonteCarlo namespace

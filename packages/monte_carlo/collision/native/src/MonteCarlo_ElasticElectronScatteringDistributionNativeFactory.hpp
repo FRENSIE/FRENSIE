@@ -48,6 +48,7 @@ public:
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
@@ -61,6 +62,7 @@ public:
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
@@ -70,6 +72,7 @@ public:
         cutoff_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a moment preserving elastic distribution
@@ -79,6 +82,7 @@ public:
         moment_preserving_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
@@ -91,6 +95,7 @@ public:
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
@@ -104,6 +109,7 @@ public:
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
@@ -113,6 +119,7 @@ public:
         cutoff_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a moment preserving elastic distribution
@@ -122,6 +129,7 @@ public:
         moment_preserving_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
@@ -137,6 +145,7 @@ public:
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const unsigned atomic_number,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
@@ -154,6 +163,7 @@ public:
     const std::map<double,std::vector<double> >& moment_preserving_weights,
     const std::vector<double>& angular_energy_grid,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a cutoff elastic distribution
@@ -165,6 +175,7 @@ public:
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a screened Rutherford elastic distribution
@@ -184,6 +195,7 @@ public:
     const std::map<double,std::vector<double> >& discrete_angles,
     const std::map<double,std::vector<double> >& discrete_weights,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Return angle cosine grid with the evaluated pdf for the given cutoff angle

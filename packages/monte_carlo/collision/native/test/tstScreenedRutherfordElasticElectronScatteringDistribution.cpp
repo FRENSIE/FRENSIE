@@ -526,7 +526,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
     function_data[n].second.reset(
-	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
+      new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
   }
 
   // Create the scattering function
@@ -535,11 +535,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             function_data ) );
 
   // Create cutoff distributions
+  bool correlated_sampling_mode_on = true;
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 scattering_function,
-                mu_cutoff ) );
+                mu_cutoff,
+                correlated_sampling_mode_on ) );
 
   double atomic_number = data_container.getAtomicNumber();
 
@@ -583,7 +585,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
     function_data[n].second.reset(
-	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
+      new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
   }
 
   // Create the scattering function
@@ -591,11 +593,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
             function_data ) );
 
+  bool correlated_sampling_mode_on = true;
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 scattering_function,
-                mu_cutoff ) );
+                mu_cutoff,
+                correlated_sampling_mode_on ) );
 
   double atomic_number = data_container.getAtomicNumber();
 

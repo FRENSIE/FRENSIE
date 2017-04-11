@@ -232,6 +232,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
         cutoff_elastic_distribution,
         *data_container,
         1.0,
+        properties.isCorrelatedSamplingModeOn(),
         properties.getElectronEvaluationTolerance() );
 
   // Test the electroatom properties
@@ -412,6 +413,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_elastic )
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
   properties.setElasticCutoffAngleCosine( 0.9 );
   properties.setElectronEvaluationTolerance( 1e-7 );
+  properties.setCorrelatedSamplingModeOn();
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );
   properties.setElasticModeOff();
@@ -432,6 +434,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_elastic )
         cutoff_elastic_distribution,
         *data_container,
         1.0,
+        properties.isCorrelatedSamplingModeOn(),
         properties.getElectronEvaluationTolerance() );
 
   // Test the electroatom properties

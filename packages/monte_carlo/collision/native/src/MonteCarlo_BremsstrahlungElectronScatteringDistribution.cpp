@@ -80,16 +80,18 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
     {
       // Set the correlated unit based sample routine
       d_sample_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::correlatedSampleUnitBased,
-           std::cref( *this ),
+           &TwoDDist::correlatedSampleSecondaryConditional,
+           std::cref( *d_bremsstrahlung_scattering_distribution ),
+           std::placeholders::_1,
+           1e-7,
            std::placeholders::_1 );
     }
     else
     {
       // Set the stochastic unit based sample routine
       d_sample_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::sampleUnitBased,
-           std::cref( *this ),
+           &TwoDDist::sampleSecondaryConditional,
+           std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1 );
     }
   }
@@ -97,8 +99,8 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
   {
       // Set the correlated exact sample routine
     d_sample_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::correlatedSampleExact,
-           std::cref( *this ),
+           &TwoDDist::sampleSecondaryConditionalExact,
+           std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1 );
   }
 }
@@ -116,41 +118,47 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
   {
     // Set the correlated unit based evaluation routines
     d_evaluate_func = std::bind<double>(
-       &BremsstrahlungElectronScatteringDistribution::correlatedEvaluateUnitBased,
-       std::cref( *this ),
+       &TwoDDist::correlatedEvaluate,
+       std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
-       std::placeholders::_2 );
+       std::placeholders::_2,
+       1e-7,
+       std::placeholders::_1 );
 
     d_evaluate_pdf_func = std::bind<double>(
-       &BremsstrahlungElectronScatteringDistribution::correlatedEvaluatePDFUnitBased,
-       std::cref( *this ),
+       &TwoDDist::correlatedEvaluateSecondaryConditionalPDF,
+       std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
-       std::placeholders::_2 );
+       std::placeholders::_2,
+       1e-7,
+       std::placeholders::_1 );
 
     d_evaluate_cdf_func = std::bind<double>(
-       &BremsstrahlungElectronScatteringDistribution::correlatedEvaluateCDFUnitBased,
-       std::cref( *this ),
+       &TwoDDist::correlatedEvaluateSecondaryConditionalCDF,
+       std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
-       std::placeholders::_2 );
+       std::placeholders::_2,
+       1e-7,
+       std::placeholders::_1 );
   }
   else
   {
     // Set the correlated exact evaluation routines
     d_evaluate_func = std::bind<double>(
-       &BremsstrahlungElectronScatteringDistribution::correlatedEvaluateExact,
-       std::cref( *this ),
+       &TwoDDist::evaluateExact,
+       std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
     d_evaluate_pdf_func = std::bind<double>(
-       &BremsstrahlungElectronScatteringDistribution::correlatedEvaluatePDFExact,
-       std::cref( *this ),
+       &TwoDDist::evaluateSecondaryConditionalPDFExact,
+       std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
     d_evaluate_cdf_func = std::bind<double>(
-       &BremsstrahlungElectronScatteringDistribution::correlatedEvaluateCDFExact,
-       std::cref( *this ),
+       &TwoDDist::evaluateSecondaryConditionalCDFExact,
+       std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2 );
   }
@@ -278,101 +286,6 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );
-}
-
-// Evaluate the distribution for a given incoming and photon energy
-double BremsstrahlungElectronScatteringDistribution::correlatedEvaluateUnitBased(
-                                        const double incoming_energy,
-                                        const double photon_energy ) const
-{
-  return d_bremsstrahlung_scattering_distribution->correlatedEvaluate(
-            incoming_energy,
-            photon_energy,
-            1e-7,
-            incoming_energy );
-}
-
-// Evaluate the distribution for a given incoming and photon energy
-double BremsstrahlungElectronScatteringDistribution::correlatedEvaluateExact(
-                                        const double incoming_energy,
-                                        const double photon_energy ) const
-{
-  return d_bremsstrahlung_scattering_distribution->evaluateExact(
-            incoming_energy,
-            photon_energy );
-}
-
-// Evaluate the PDF value for a given incoming and photon energy
-double BremsstrahlungElectronScatteringDistribution::correlatedEvaluatePDFUnitBased(
-                                        const double incoming_energy,
-                                        const double photon_energy ) const
-{
-  return d_bremsstrahlung_scattering_distribution->correlatedEvaluateSecondaryConditionalPDF(
-            incoming_energy,
-            photon_energy,
-            1e-7,
-            incoming_energy );
-}
-
-// Evaluate the PDF value for a given incoming and photon energy
-double BremsstrahlungElectronScatteringDistribution::correlatedEvaluatePDFExact(
-                                        const double incoming_energy,
-                                        const double photon_energy ) const
-{
-  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDFExact(
-            incoming_energy,
-            photon_energy );
-}
-
-// Evaluate the CDF value for a given incoming and photon energy
-double BremsstrahlungElectronScatteringDistribution::correlatedEvaluateCDFUnitBased(
-                                        const double incoming_energy,
-                                        const double photon_energy ) const
-{
-  return d_bremsstrahlung_scattering_distribution->correlatedEvaluateSecondaryConditionalCDF(
-            incoming_energy,
-            photon_energy,
-            1e-7,
-            incoming_energy );
-}
-
-// Evaluate the CDF value for a given incoming and photon energy
-double BremsstrahlungElectronScatteringDistribution::correlatedEvaluateCDFExact(
-                                        const double incoming_energy,
-                                        const double photon_energy ) const
-{
-  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDFExact(
-            incoming_energy,
-            photon_energy );
-}
-
-// Sample a secondary energy from the distribution
-double BremsstrahlungElectronScatteringDistribution::sampleUnitBased(
-            const double incoming_energy ) const
-{
-  // Sample the photon energy
-  return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditional(
-            incoming_energy );
-}
-
-// Sample a secondary energy from the distribution
-double BremsstrahlungElectronScatteringDistribution::correlatedSampleUnitBased(
-             const double incoming_energy ) const
-{
-  // Sample the photon energy
-  return d_bremsstrahlung_scattering_distribution->correlatedSampleSecondaryConditional(
-            incoming_energy,
-            1e-7,
-            incoming_energy );
-}
-
-// Sample a secondary energy from the distribution
-double BremsstrahlungElectronScatteringDistribution::correlatedSampleExact(
-             const double incoming_energy ) const
-{
-  // Sample the photon energy
-  return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalExact(
-            incoming_energy );
 }
 
 // Sample the outgoing photon direction from the analytical function

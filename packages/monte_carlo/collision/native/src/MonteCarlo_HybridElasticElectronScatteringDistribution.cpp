@@ -22,6 +22,7 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
     const std::shared_ptr<TwoDDist>& discrete_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
   : d_continuous_distribution( continuous_distribution ),
     d_discrete_distribution( discrete_distribution ),
@@ -39,6 +40,40 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
   // Make sure the evaluation tolerance is valid
   testPrecondition( d_evaluation_tol > 0.0 );
   testPrecondition( d_evaluation_tol < 1.0 );
+
+  if( correlated_sampling_mode_on )
+  {
+    // Set the correlated unit based sample routine
+    d_sample_discrete_func = std::bind<double>(
+         &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
+         std::cref( *d_discrete_distribution ),
+         std::placeholders::_1,
+         std::placeholders::_2 );
+
+    d_sample_continuous_func = std::bind<double>(
+         &TwoDDist::sampleSecondaryConditionalExactWithRandomNumberInSubrange,
+         std::cref( *d_continuous_distribution ),
+         std::placeholders::_1,
+         std::placeholders::_2,
+         d_cutoff_angle_cosine );
+  }
+  else
+  {
+    // Set the stochastic unit based sample routine
+    d_sample_discrete_func = std::bind<double>(
+         &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
+         std::cref( *d_discrete_distribution ),
+         std::placeholders::_1,
+         std::placeholders::_2 );
+
+    d_sample_continuous_func = std::bind<double>(
+         &TwoDDist::sampleSecondaryConditionalWithRandomNumberInSubrange,
+         std::cref( *d_continuous_distribution ),
+         std::placeholders::_1,
+         std::placeholders::_2,
+         d_cutoff_angle_cosine );
+  }
+
 }
 
 // Return the cutoff to moment preserving cross section ratio
@@ -257,16 +292,14 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
       scaled_random_number /= cross_section_ratio;
 
       scattering_angle_cosine =
-        d_continuous_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange(
-            incoming_energy, scaled_random_number, d_cutoff_angle_cosine );
+        d_sample_continuous_func( incoming_energy, scaled_random_number );
     }
     else
     {
       scaled_random_number -= cross_section_ratio;
 
       scattering_angle_cosine =
-        d_discrete_distribution->sampleSecondaryConditionalExactWithRandomNumber(
-            incoming_energy, scaled_random_number );
+        d_sample_discrete_func( incoming_energy, scaled_random_number );
     }
   }
 

@@ -29,6 +29,9 @@ class ElectroionizationSubshellElectronScatteringDistribution : public ElectronS
 
 public:
 
+  //! Typedef for this type
+  typedef ElectroionizationSubshellElectronScatteringDistribution ThisType;
+
   //! Typedef for the two d distributions
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
@@ -96,39 +99,6 @@ public:
                         Data::SubshellType& shell_of_interaction ) const;
 
 private:
-
-  //! Evaluate the distribution for a given incoming and outgoing energy
-  double correlatedEvaluateUnitBased( const double incoming_energy,
-                                      const double outgoing_energy ) const;
-
-  //! Evaluate the distribution for a given incoming and outgoing energy
-  double correlatedEvaluateExact( const double incoming_energy,
-                                  const double outgoing_energy ) const;
-
-  //! Evaluate the PDF value for a given incoming and outgoing energy
-  double correlatedEvaluatePDFUnitBased( const double incoming_energy,
-                                         const double outgoing_energy ) const;
-
-  //! Evaluate the PDF value for a given incoming and outgoing energy
-  double correlatedEvaluatePDFExact( const double incoming_energy,
-                                     const double outgoing_energy ) const;
-
-  //! Evaluate the CDF value for a given incoming and outgoing energy
-  double correlatedEvaluateCDFUnitBased( const double incoming_energy,
-                                         const double outgoing_energy ) const;
-
-  //! Evaluate the CDF value for a given incoming and outgoing energy
-  double correlatedEvaluateCDFExact( const double incoming_energy,
-                                     const double outgoing_energy ) const;
-
-  //! Sample a secondary energy from the distribution
-  double sampleUnitBased( const double incoming_energy ) const;
-
-  //! Sample a secondary energy from the distribution
-  double correlatedSampleUnitBased( const double incoming_energy ) const;
-
-  //! Sample a secondary energy from the distribution
-  double correlatedSampleExact( const double incoming_energy ) const;
 
   // Calculate the outgoing angle cosine
   double outgoingAngle( const double incoming_energy,

@@ -36,6 +36,7 @@ Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::ArrayRCP<double> elastic_cross_section;
 unsigned elastic_threshold_index;
 double upper_cutoff_angle_cosine;
+bool correlated_sampling_mode_on = true;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -109,7 +110,8 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
   elastic_scattering_distribution.reset(
           new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 elastic_scattering_function,
-                cutoff_angle_cosine ) );
+                cutoff_angle_cosine,
+                correlated_sampling_mode_on ) );
 
   test_elastic_reaction.reset(
     new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
@@ -253,7 +255,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   elastic_scattering_distribution.reset(
           new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 elastic_scattering_function,
-                upper_cutoff_angle_cosine ) );
+                upper_cutoff_angle_cosine,
+                correlated_sampling_mode_on ) );
 
   // Create the reaction
   ace_elastic_reaction.reset(

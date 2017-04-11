@@ -35,6 +35,7 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering electroatomic reaction
@@ -45,6 +46,7 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering electroatomic reaction
@@ -55,6 +57,7 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
@@ -65,6 +68,7 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create the moment preserving elastic scattering electroatomic reaction
@@ -75,6 +79,7 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine ,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create an atomic excitation scattering electroatomic reaction

@@ -216,6 +216,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
+  bool correlated_sampling_mode_on = true;
+
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         hybrid_elastic_distribution,
         grid_searcher,
@@ -224,6 +226,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         mp_cross_section,
         data_container,
         data_container.getCutoffAngleCosine(),
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Create the reaction

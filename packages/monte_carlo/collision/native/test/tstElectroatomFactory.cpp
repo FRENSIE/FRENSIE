@@ -228,6 +228,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
         elastic_distribution,
         *data_container,
         1.0,
+        true,
         1e-15 );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >

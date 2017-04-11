@@ -19,7 +19,8 @@ namespace MonteCarlo{
 // Constructor
 CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& scattering_distribution,
-    const double cutoff_angle_cosine )
+    const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on )
   : d_cutoff_distribution( scattering_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
@@ -28,6 +29,25 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   // Make sure the cutoff_angle_cosine is valid
   testPrecondition( cutoff_angle_cosine >= -1.0 );
   testPrecondition( cutoff_angle_cosine <= 1.0 );
+
+  if( correlated_sampling_mode_on )
+  {
+    // Set the correlated unit based sample routine
+    d_sample_func = std::bind<double>(
+         &TwoDDist::sampleSecondaryConditionalExactInSubrange,
+         std::cref( *d_cutoff_distribution ),
+         std::placeholders::_1,
+         d_cutoff_angle_cosine );
+  }
+  else
+  {
+    // Set the stochastic unit based sample routine
+    d_sample_func = std::bind<double>(
+         &TwoDDist::sampleSecondaryConditionalInSubrange,
+         std::cref( *d_cutoff_distribution ),
+         std::placeholders::_1,
+         d_cutoff_angle_cosine );
+  }
 }
 
 // Evaluate the distribution
@@ -168,10 +188,10 @@ void CutoffElasticElectronScatteringDistribution::sample(
 
 // Sample an outgoing energy and direction and record the number of trials
 void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrials(
-					    const double incoming_energy,
-					    double& outgoing_energy,
-					    double& scattering_angle_cosine,
-					    unsigned& trials ) const
+                        const double incoming_energy,
+                        double& outgoing_energy,
+                        double& scattering_angle_cosine,
+                        unsigned& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -184,9 +204,9 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the electron
 void CutoffElasticElectronScatteringDistribution::scatterElectron(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+                     ElectronState& electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -194,21 +214,21 @@ void CutoffElasticElectronScatteringDistribution::scatterElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   electron.rotateDirection( scattering_angle_cosine,
-			  this->sampleAzimuthalAngle() );
+              this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron
 void CutoffElasticElectronScatteringDistribution::scatterAdjointElectron(
-				     AdjointElectronState& adjoint_electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+                     AdjointElectronState& adjoint_electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -216,14 +236,14 @@ void CutoffElasticElectronScatteringDistribution::scatterAdjointElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   adjoint_electron.rotateDirection( scattering_angle_cosine,
-				                    this->sampleAzimuthalAngle() );
+                                    this->sampleAzimuthalAngle() );
 }
 
 // Sample an outgoing direction from the distribution
@@ -239,10 +259,7 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   ++trials;
 
   // sample the scattering angle cosine
-  scattering_angle_cosine =
-    d_cutoff_distribution->sampleSecondaryConditionalExactInSubrange(
-                                                        incoming_energy,
-                                                        d_cutoff_angle_cosine );
+  scattering_angle_cosine = d_sample_func( incoming_energy );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );

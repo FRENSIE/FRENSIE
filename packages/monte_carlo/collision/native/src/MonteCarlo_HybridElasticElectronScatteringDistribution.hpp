@@ -40,6 +40,7 @@ public:
     const std::shared_ptr<TwoDDist>& discrete_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Destructor
@@ -85,10 +86,6 @@ public:
                                MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
-//  double oldSampleImpl( const double incoming_energy ) const;
-//  double newSampleImpl( const double incoming_energy ) const;
-//  double newSampleImpl2( const double incoming_energy ) const;
-
 protected:
 
    //! Sample an outgoing direction from the distribution
@@ -117,6 +114,11 @@ private:
   // The ratios of the cutoff to the moment preserving cross section
   std::shared_ptr<const Utility::OneDDistribution> d_cross_section_ratios;
 
+  // The sample discrete function pointer
+  std::function<double ( const double, const double )> d_sample_discrete_func;
+
+  // The sample continuous function pointer
+  std::function<double ( const double, const double )> d_sample_continuous_func;
 };
 
 } // end MonteCarlo namespace

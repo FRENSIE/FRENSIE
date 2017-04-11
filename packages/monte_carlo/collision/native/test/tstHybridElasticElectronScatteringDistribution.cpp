@@ -39,12 +39,14 @@ public:
     const std::shared_ptr<TwoDDist>& discrete_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
     : MonteCarlo::HybridElasticElectronScatteringDistribution(
                             continuous_distribution,
                             discrete_distribution,
                             cross_section_ratios,
                             cutoff_angle_cosine,
+                            correlated_sampling_mode_on,
                             evaluation_tol )
   { /* ... */ }
 
@@ -66,6 +68,7 @@ std::shared_ptr<TestHybridElasticElectronScatteringDistribution>
     test_hybrid_distribution, test_lin_hybrid_distribution;
 
 double angle_cosine_cutoff = 0.9;
+bool correlated_sampling_mode_on = true;
 
 //---------------------------------------------------------------------------//
 // LinLinLog Tests
@@ -1204,6 +1207,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             discrete_function,
             cross_section_ratios,
             angle_cosine_cutoff,
+            correlated_sampling_mode_on,
             evaluation_tol ) );
 
     test_hybrid_distribution.reset(
@@ -1212,6 +1216,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             discrete_function,
             cross_section_ratios,
             angle_cosine_cutoff,
+            correlated_sampling_mode_on,
             evaluation_tol ) );
     }
 
@@ -1257,6 +1262,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             discrete_function,
             cross_section_ratios,
             angle_cosine_cutoff,
+            correlated_sampling_mode_on,
             evaluation_tol ) );
 
     test_lin_hybrid_distribution.reset(
@@ -1265,6 +1271,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             discrete_function,
             cross_section_ratios,
             angle_cosine_cutoff,
+            correlated_sampling_mode_on,
             evaluation_tol ) );
     }
   }

@@ -186,10 +186,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
         function_data ) );
 
+    bool correlated_sampling_mode_on = true;
+
     discrete_elastic_distribution.reset(
         new MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
                 scattering_function,
-                cutoff_angle_cosine ) );
+                cutoff_angle_cosine,
+                correlated_sampling_mode_on ) );
 
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.assign(

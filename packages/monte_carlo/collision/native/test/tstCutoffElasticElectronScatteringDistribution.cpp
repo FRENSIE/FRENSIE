@@ -37,10 +37,12 @@ public:
   TestCutoffElasticElectronScatteringDistribution(
         const std::shared_ptr<Utility::FullyTabularTwoDDistribution>& 
         cutoff_elastic_scattering_distribution,
-        const double cutoff_angle_cosine )
+        const double cutoff_angle_cosine,
+        const bool correlated_sampling_mode_on )
     : MonteCarlo::CutoffElasticElectronScatteringDistribution(
         cutoff_elastic_scattering_distribution,
-        cutoff_angle_cosine )
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on )
   { /* ... */ }
 
   ~TestCutoffElasticElectronScatteringDistribution()
@@ -359,12 +361,15 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   double energy = 1.0e-3;
   double cutoff_angle_cosine = 0.0;
 
+  bool correlated_sampling_mode_on = true;
+
   // Create the distribution
   std::shared_ptr<MonteCarlo::CutoffElasticElectronScatteringDistribution> 
     elastic_distribution(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
         native_scattering_distribution,
-        cutoff_angle_cosine ) );
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on ) );
 
   // Calculate the cdf
   cdf_value = elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
@@ -376,7 +381,8 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   elastic_distribution.reset(
     new MonteCarlo::CutoffElasticElectronScatteringDistribution(
         native_scattering_distribution,
-        cutoff_angle_cosine ) );
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on ) );
   cdf_value = elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
   // test 2
   TEST_FLOATING_EQUALITY( cdf_value, 4.21233559928108E-01, 1e-12 );
@@ -389,7 +395,8 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   elastic_distribution.reset(
     new MonteCarlo::CutoffElasticElectronScatteringDistribution(
         native_scattering_distribution,
-        cutoff_angle_cosine ) );
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on ) );
   cdf_value = elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
   // test 2
   TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-15 );
@@ -399,7 +406,8 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   elastic_distribution.reset(
     new MonteCarlo::CutoffElasticElectronScatteringDistribution(
         native_scattering_distribution,
-        cutoff_angle_cosine ) );
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on ) );
   cdf_value = elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
   // test 2
   TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-15 );
@@ -413,13 +421,15 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   // Set energy in MeV and angle cosine
   double energy = 1.0e-3;
   double cutoff_angle_cosine = 0.0;
+  bool correlated_sampling_mode_on = true;
 
   // Create the distribution
   std::shared_ptr<MonteCarlo::CutoffElasticElectronScatteringDistribution> 
     elastic_distribution(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
         ace_scattering_distribution,
-        cutoff_angle_cosine ) );
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on ) );
 
   // Calculate the cdf
   double cdf_value =
@@ -434,7 +444,8 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   elastic_distribution.reset(
     new MonteCarlo::CutoffElasticElectronScatteringDistribution(
         ace_scattering_distribution,
-        cutoff_angle_cosine ) );
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on ) );
 
   cdf_value =
     elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
@@ -450,7 +461,8 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   elastic_distribution.reset(
     new MonteCarlo::CutoffElasticElectronScatteringDistribution(
         ace_scattering_distribution,
-        cutoff_angle_cosine ) );
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on ) );
   cdf_value =
     elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
 
@@ -462,7 +474,8 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   elastic_distribution.reset(
     new MonteCarlo::CutoffElasticElectronScatteringDistribution(
         ace_scattering_distribution,
-        cutoff_angle_cosine ) );
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on ) );
   cdf_value =
     elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
 
@@ -775,6 +788,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
+  bool correlated_sampling_mode_on = true;
+
   // Create ACE distribution
   {
     // Create a file handler and data extractor
@@ -834,12 +849,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     ace_elastic_distribution.reset(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 ace_scattering_distribution,
-                angle_cosine_cutoff ) );
+                angle_cosine_cutoff,
+                correlated_sampling_mode_on ) );
 
     test_ace_elastic_distribution.reset(
         new TestCutoffElasticElectronScatteringDistribution(
                 ace_scattering_distribution,
-                angle_cosine_cutoff ) );
+                angle_cosine_cutoff,
+                correlated_sampling_mode_on ) );
 
     // Clear setup data
     ace_file_handler.reset();
@@ -887,12 +904,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   native_elastic_distribution.reset(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 native_scattering_distribution,
-                0.9 ) );
+                0.9,
+                correlated_sampling_mode_on ) );
 
   test_native_elastic_distribution.reset(
         new TestCutoffElasticElectronScatteringDistribution(
                 native_scattering_distribution,
-                0.9 ) );
+                0.9,
+                correlated_sampling_mode_on ) );
   }
 
   // Initialize the random number generator

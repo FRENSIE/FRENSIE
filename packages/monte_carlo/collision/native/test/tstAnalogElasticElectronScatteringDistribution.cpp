@@ -32,11 +32,13 @@ public:
         const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
             elastic_cutoff_distribution,
         const int atomic_number,
-        const bool linlinlog_interpolation_mode_on )
+        const bool linlinlog_interpolation_mode_on,
+        const bool correlated_sampling_mode_on )
     : MonteCarlo::AnalogElasticElectronScatteringDistribution(
         elastic_cutoff_distribution,
         atomic_number,
-        linlinlog_interpolation_mode_on )
+        linlinlog_interpolation_mode_on,
+        correlated_sampling_mode_on )
   { /* ... */ }
 
   ~TestAnalogElasticElectronScatteringDistribution()
@@ -1325,19 +1327,24 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             1e-6,
             1e-7 ) );
 
+    bool linlinlog_interpolation_mode_on = true;
+    bool correlated_sampling_mode_on = true;
+
     // Create the distribution
     distribution.reset(
         new MonteCarlo::AnalogElasticElectronScatteringDistribution(
                 scattering_function,
                 atomic_number,
-                true  ) );
+                linlinlog_interpolation_mode_on,
+                correlated_sampling_mode_on ) );
 
     // Create the test distribution
     test_distribution.reset(
         new TestAnalogElasticElectronScatteringDistribution(
                 scattering_function,
                 atomic_number,
-                true  ) );
+                linlinlog_interpolation_mode_on,
+                correlated_sampling_mode_on ) );
     }
     // Create the distributions unsing LinLinLin interpolation
     {
@@ -1348,19 +1355,24 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             1e-6,
             1e-7 ) );
 
+    bool linlinlog_interpolation_mode_on = false;
+    bool correlated_sampling_mode_on = true;
+
     // Create the distribution
     lin_distribution.reset(
         new MonteCarlo::AnalogElasticElectronScatteringDistribution(
                 scattering_function,
                 atomic_number,
-                false  ) );
+                linlinlog_interpolation_mode_on,
+                correlated_sampling_mode_on ) );
 
     // Create the test distribution
     test_lin_distribution.reset(
         new TestAnalogElasticElectronScatteringDistribution(
                 scattering_function,
                 atomic_number,
-                false  ) );
+                linlinlog_interpolation_mode_on,
+                correlated_sampling_mode_on ) );
     }
   }
 

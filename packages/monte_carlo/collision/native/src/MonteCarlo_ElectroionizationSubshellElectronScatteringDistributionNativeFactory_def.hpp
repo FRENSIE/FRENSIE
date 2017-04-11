@@ -52,7 +52,7 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
 }
 
 // Create the subshell recoil distribution
-template <typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy>
 void
 ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,

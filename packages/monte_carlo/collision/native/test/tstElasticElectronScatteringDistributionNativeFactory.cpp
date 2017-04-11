@@ -50,6 +50,8 @@ std::shared_ptr< const MonteCarlo::MomentPreservingElasticElectronScatteringDist
 std::shared_ptr< const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   native_analog_elastic_distribution;
 
+  bool correlated_sampling_mode_on = true;
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -297,6 +299,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -348,6 +351,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -399,6 +403,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -444,6 +449,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -489,6 +495,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
@@ -548,6 +555,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
@@ -607,6 +615,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_mp_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -653,6 +662,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_mp_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -699,6 +709,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_mp_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -745,6 +756,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_mp_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -792,6 +804,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         data_container->getCutoffElasticPDF(),
         data_container->getElasticAngularEnergyGrid(),
         data_container->getAtomicNumber(),
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -882,6 +895,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         data_container->getCutoffElasticPDF(),
         data_container->getElasticAngularEnergyGrid(),
         data_container->getAtomicNumber(),
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -972,6 +986,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         adjoint_data_container->getAdjointCutoffElasticPDF(),
         adjoint_data_container->getAdjointElasticAngularEnergyGrid(),
         adjoint_data_container->getAtomicNumber(),
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -1064,6 +1079,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         adjoint_data_container->getAdjointCutoffElasticPDF(),
         adjoint_data_container->getAdjointElasticAngularEnergyGrid(),
         adjoint_data_container->getAtomicNumber(),
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -1185,6 +1201,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         mp_cross_section,
         *data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   double incoming_energy = 1.0e-3;
@@ -1320,6 +1337,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         mp_cross_section,
         *data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -1452,6 +1470,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         mp_cross_section,
         *adjoint_data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream

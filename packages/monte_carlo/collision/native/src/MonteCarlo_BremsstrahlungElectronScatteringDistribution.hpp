@@ -91,39 +91,6 @@ public:
 
 private:
 
-  //! Evaluate the distribution for a given incoming and photon energy
-  double correlatedEvaluateUnitBased( const double incoming_energy,
-                                      const double photon_energy ) const;
-
-  //! Evaluate the distribution for a given incoming and photon energy
-  double correlatedEvaluateExact( const double incoming_energy,
-                                  const double photon_energy ) const;
-
-  //! Evaluate the PDF value for a given incoming and photon energy
-  double correlatedEvaluatePDFUnitBased( const double incoming_energy,
-                                         const double photon_energy ) const;
-
-  //! Evaluate the PDF value for a given incoming and photon energy
-  double correlatedEvaluatePDFExact( const double incoming_energy,
-                                     const double photon_energy ) const;
-
-  //! Evaluate the CDF value for a given incoming and photon energy
-  double correlatedEvaluateCDFUnitBased( const double incoming_energy,
-                                         const double photon_energy ) const;
-
-  //! Evaluate the CDF value for a given incoming and photon energy
-  double correlatedEvaluateCDFExact( const double incoming_energy,
-                                     const double photon_energy ) const;
-
-  //! Sample a secondary energy from the distribution
-  double sampleUnitBased( const double incoming_energy ) const;
-
-  //! Sample a secondary energy from the distribution
-  double correlatedSampleUnitBased( const double incoming_energy ) const;
-
-  //! Sample a secondary energy from the distribution
-  double correlatedSampleExact( const double incoming_energy ) const;
-
   // Sample the outgoing photon angle from a dipole distribution
   double SampleDipoleAngle(  const double incoming_electron_energy,
                              const double photon_energy ) const ;

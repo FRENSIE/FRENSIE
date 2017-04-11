@@ -27,12 +27,14 @@ namespace MonteCarlo{
 std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 
@@ -41,6 +43,7 @@ std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> c
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
@@ -48,6 +51,7 @@ std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> c
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 
@@ -56,6 +60,7 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> c
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create a cutoff elastic distribution
@@ -63,6 +68,7 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> c
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 
@@ -71,6 +77,7 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create a moment preserving elastic distribution
@@ -78,6 +85,7 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//

@@ -64,11 +64,12 @@ void ElectroatomNativeFactory::createElectroatomCore(
         scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
 
       ElectroatomicReactionNativeFactory::createAnalogElasticReaction<TwoDInterpPolicy>(
-                       raw_electroatom_data,
-                       energy_grid,
-                       grid_searcher,
-                       reaction_pointer,
-                       properties.getElectronEvaluationTolerance() );
+                        raw_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        reaction_pointer,
+                        properties.isCorrelatedSamplingModeOn(),
+                        properties.getElectronEvaluationTolerance() );
     }
     // Create the moment preserving elastic scattering reaction (no analog elastic scattering)
     else if ( properties.getElasticCutoffAngleCosine() == -1.0 )
@@ -77,12 +78,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
         scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
 
       ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy>(
-                       raw_electroatom_data,
-                       energy_grid,
-                       grid_searcher,
-                       reaction_pointer,
-                       properties.getElasticCutoffAngleCosine(),
-                       properties.getElectronEvaluationTolerance() );
+                        raw_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        reaction_pointer,
+                        properties.getElasticCutoffAngleCosine(),
+                        properties.isCorrelatedSamplingModeOn(),
+                        properties.getElectronEvaluationTolerance() );
     }
     // Create the hybrid elastic scattering reaction (if cutoff is within range)
     else
@@ -91,12 +93,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
         scattering_reactions[HYBRID_ELASTIC_ELECTROATOMIC_REACTION];
 
       ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy>(
-                       raw_electroatom_data,
-                       energy_grid,
-                       grid_searcher,
-                       reaction_pointer,
-                       properties.getElasticCutoffAngleCosine(),
-                       properties.getElectronEvaluationTolerance() );
+                        raw_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        reaction_pointer,
+                        properties.getElasticCutoffAngleCosine(),
+                        properties.isCorrelatedSamplingModeOn(),
+                        properties.getElectronEvaluationTolerance() );
     }
   }
 

@@ -38,6 +38,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+            const bool correlated_sampling_mode_on,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -53,6 +54,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
   ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<TwoDInterpPolicy>(
     distribution,
     raw_electroatom_data,
+    correlated_sampling_mode_on,
     evaluation_tol );
 
   // Cutoff elastic cross section
@@ -128,6 +130,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -172,6 +175,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
             mp_cross_section,
             raw_electroatom_data,
             cutoff_angle_cosine,
+            correlated_sampling_mode_on,
             evaluation_tol );
 
   // Calculate the hybrid cross section
@@ -230,6 +234,7 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine,
+            const bool correlated_sampling_mode_on,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -245,6 +250,7 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
     distribution,
     raw_electroatom_data,
     cutoff_angle_cosine,
+    correlated_sampling_mode_on,
     evaluation_tol );
 
   // Cutoff elastic cross section
@@ -274,6 +280,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine,
+            const bool correlated_sampling_mode_on,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -290,6 +297,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
     cutoff_distribution,
     raw_electroatom_data,
     cutoff_angle_cosine,
+    correlated_sampling_mode_on,
     evaluation_tol );
 
 
@@ -330,6 +338,7 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine,
+            const bool correlated_sampling_mode_on,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -346,6 +355,7 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
     distribution,
     raw_electroatom_data,
     cutoff_angle_cosine,
+    correlated_sampling_mode_on,
     evaluation_tol );
 
   // Moment preserving elastic cross section

@@ -18,9 +18,9 @@ namespace MonteCarlo{
 
 // Create a cutoff elastic distribution
 void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
-	std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
+    std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const double upper_cutoff_angle_cosine )
 {
   // Create the scattering function
@@ -33,7 +33,8 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
   cutoff_elastic_distribution.reset(
         new CutoffElasticElectronScatteringDistribution(
                 scattering_function,
-                upper_cutoff_angle_cosine ) );
+                upper_cutoff_angle_cosine,
+                true ) );
 }
 
 // Create the scattering function
@@ -44,7 +45,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 {
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
-				     raw_electroatom_data.extractELASIBlock() );
+                     raw_electroatom_data.extractELASIBlock() );
 
   // Get the size of the angular energy grid
   int size = elasi_block.size()/3;
@@ -70,9 +71,9 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
     function_data[n].first = angular_energy_grid[n];
 
     function_data[n].second.reset(
-	  new const Utility::HistogramDistribution(
-		 elas_block( offset[n], table_length[n] ),
-		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
+      new const Utility::HistogramDistribution(
+         elas_block( offset[n], table_length[n] ),
+         elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
   }
 

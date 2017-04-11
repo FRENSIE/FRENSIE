@@ -32,10 +32,12 @@ class TestMomentPreservingElasticElectronScatteringDistribution : public MonteCa
 public:
   TestMomentPreservingElasticElectronScatteringDistribution(
         const std::shared_ptr<TwoDDist>& discrete_scattering_distribution,
-        const double cutoff_angle_cosine )
+        const double cutoff_angle_cosine,
+        const bool correlated_sampling_mode_on )
     : MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
         discrete_scattering_distribution,
-        cutoff_angle_cosine )
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on )
   { /* ... */ }
 
   ~TestMomentPreservingElasticElectronScatteringDistribution()
@@ -504,7 +506,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             angular_energy_grid[n] ) );
 
     function_data[n].second.reset(
-	  new const Utility::DiscreteDistribution(
+      new const Utility::DiscreteDistribution(
         discrete_angles,
         weights,
         false,
@@ -515,15 +517,19 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
         function_data ) );
 
+    bool correlated_sampling_mode_on = true;
+
     discrete_elastic_distribution.reset(
         new MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
                 scattering_function,
-                angle_cosine_cutoff ) );
+                angle_cosine_cutoff,
+                correlated_sampling_mode_on ) );
 
     test_discrete_elastic_distribution.reset(
         new TestMomentPreservingElasticElectronScatteringDistribution(
                 scattering_function,
-                angle_cosine_cutoff ) );
+                angle_cosine_cutoff,
+                correlated_sampling_mode_on ) );
   }
 
   // Initialize the random number generator

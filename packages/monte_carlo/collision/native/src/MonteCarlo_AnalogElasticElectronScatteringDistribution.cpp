@@ -39,7 +39,8 @@ double AnalogElasticElectronScatteringDistribution::s_screening_param1 =
 AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
     const int atomic_number,
-    const bool linlinlog_interpolation_mode_on )
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on )
   : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
     d_atomic_number( atomic_number ),
     d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on ),
@@ -52,6 +53,56 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
   // Make sure the atomic number is valid
   testPrecondition( d_atomic_number > 0 );
   testPrecondition( d_atomic_number <= 100u );
+
+  if ( linlinlog_interpolation_mode_on )
+  {
+    // The interplation function pointer
+    d_interpolation_func =
+        std::bind<double>(
+         &AnalogElasticElectronScatteringDistribution::interpolate<true>,
+         std::cref( *this ),
+         std::placeholders::_1,
+         std::placeholders::_2,
+         std::placeholders::_3,
+         std::placeholders::_4,
+         std::placeholders::_5 );
+  }
+  else
+  {
+    // The interplation function pointer
+    d_interpolation_func =
+        std::bind<double>(
+         &AnalogElasticElectronScatteringDistribution::interpolate<false>,
+         std::cref( *this ),
+         std::placeholders::_1,
+         std::placeholders::_2,
+         std::placeholders::_3,
+         std::placeholders::_4,
+         std::placeholders::_5 );
+  }
+
+  if( correlated_sampling_mode_on )
+  {
+    // Set the correlated unit based sample routine
+    d_sample_func = std::bind<double>(
+         &AnalogElasticElectronScatteringDistribution::correlatedSample,
+         std::cref( *this ),
+         std::placeholders::_1,
+         std::placeholders::_2,
+         std::placeholders::_3,
+         std::placeholders::_4 );
+  }
+  else
+  {
+    // Set the stochastic unit based sample routine
+    d_sample_func = std::bind<double>(
+         &AnalogElasticElectronScatteringDistribution::stochasticSample,
+         std::cref( *this ),
+         std::placeholders::_1,
+         std::placeholders::_2,
+         std::placeholders::_3,
+         std::placeholders::_4 );
+  }
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
@@ -386,42 +437,16 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
   if ( lower_bin->first == incoming_energy )
   {
-    sampleBin( lower_bin, random_number, scattering_angle_cosine );
+    this->sampleBin( lower_bin, random_number, scattering_angle_cosine );
   }  
   else if ( upper_bin->first == incoming_energy )
   {
-    sampleBin( upper_bin, random_number, scattering_angle_cosine );
+    this->sampleBin( upper_bin, random_number, scattering_angle_cosine );
   }
   else if ( lower_bin != upper_bin )
   {
-    // Sample lower bin
-    double lower_angle;
-    sampleBin( lower_bin, random_number, lower_angle );
-
-    // Sample upper bin
-    double upper_angle;
-    sampleBin( upper_bin, random_number, upper_angle );
-
-    if ( d_linlinlog_interpolation_mode_on )
-    {
-      // LinLinLog interpolation between energy bins
-      scattering_angle_cosine = Utility::LinLog::interpolate(
-                                  lower_bin->first,
-                                  upper_bin->first,
-                                  incoming_energy,
-                                  lower_angle,
-                                  upper_angle );
-    }
-    else
-    {
-      // LinLinLin interpolation between energy bins
-      scattering_angle_cosine = Utility::LinLin::interpolate(
-                                  lower_bin->first,
-                                  upper_bin->first,
-                                  incoming_energy,
-                                  lower_angle,
-                                  upper_angle );
-    }
+    scattering_angle_cosine =
+            d_sample_func(incoming_energy, random_number, lower_bin, upper_bin);
   }
   else
   {
@@ -431,6 +456,61 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
+}
+
+// Sample an outgoing direction from the distribution
+double AnalogElasticElectronScatteringDistribution::correlatedSample(
+        const double incoming_energy,
+        const double random_number,
+        const TwoDDist::DistributionType::const_iterator lower_bin,
+        const TwoDDist::DistributionType::const_iterator upper_bin ) const
+{
+    // Sample lower bin
+    double lower_angle;
+    this->sampleBin( lower_bin, random_number, lower_angle );
+
+    // Sample upper bin
+    double upper_angle;
+    this->sampleBin( upper_bin, random_number, upper_angle );
+
+    // LinLinLog interpolation between energy bins
+    return d_interpolation_func( lower_bin->first,
+                                 upper_bin->first,
+                                 incoming_energy,
+                                 lower_angle,
+                                 upper_angle );
+}
+
+// Sample an outgoing direction from the distribution
+double AnalogElasticElectronScatteringDistribution::stochasticSample(
+        const double incoming_energy,
+        const double random_number,
+        const TwoDDist::DistributionType::const_iterator lower_bin,
+        const TwoDDist::DistributionType::const_iterator upper_bin ) const
+{
+  double interpolation_fraction = (incoming_energy - lower_bin->first)/
+                                  (upper_bin->first - lower_bin->first);
+
+  // Sample to determine the distribution that will be used
+  TwoDDist::DistributionType::const_iterator sampled_bin;
+  if( random_number < interpolation_fraction )
+    sampled_bin = upper_bin;
+  else
+    sampled_bin = lower_bin;
+
+  double scattering_angle_cosine;
+
+  // Get a random number
+  double random_number_2 =
+            Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  // Sample the bin
+  sampleBin( sampled_bin, random_number_2, scattering_angle_cosine );
+
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
+
+  return scattering_angle_cosine;
 }
 
 // Sample an outgoing direction from the given distribution
