@@ -75,7 +75,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluate(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateInBoundaries(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
@@ -88,6 +88,35 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
                                           min_secondary_indep_var,
                                           max_secondary_indep_var,
                                           &BaseOneDDistributionType::evaluate );
+}
+
+// Correlated evaluate the distribution (unit based)
+/*! \details This method performs a type of binary search using a unit based
+ *  correlated sampling to estimate the CDF to a relative error tolerance in
+ *  order to find the proper interpolation. The result is consistent with the
+ *  correlatedSampleSecondaryConditional methods.
+ *  The lower and upper conditional boundaries will be use as the min and max
+ *  secondary independent variable values.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluate(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
+  -> DepQuantity
+{
+  // Get the min and max secondary independent variable values
+  SecondaryIndepQuantity min_secondary_indep_var =
+    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
+  SecondaryIndepQuantity max_secondary_indep_var =
+    this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value );
+
+  return this->correlatedEvaluateInBoundaries( primary_indep_var_value,
+                                               secondary_indep_var_value,
+                                               min_secondary_indep_var,
+                                               max_secondary_indep_var );
 }
 
 // Evaluate the distribution
@@ -111,22 +140,6 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
                                           &BaseOneDDistributionType::evaluate );
 }
 
-//// Evaluate the secondary conditional PDF
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
-//                 const PrimaryIndepQuantity primary_indep_var_value,
-//                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-//  -> InverseSecondaryIndepQuantity
-//{
-//  return this->template evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
-//                                      primary_indep_var_value,
-//                                      secondary_indep_var_value,
-//                                      &BaseOneDDistributionType::evaluatePDF );
-//}
-
 // Correlated evaluate the secondary conditional PDF
 /*! \details This method performs a type of binary search using a unit based
  *  correlated sampling to estimate the CDF to a relative error tolerance in
@@ -137,7 +150,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalPDF(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalPDFInBoundaries(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
@@ -150,6 +163,36 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
                                     min_secondary_indep_var,
                                     max_secondary_indep_var,
                                     &BaseOneDDistributionType::evaluatePDF );
+}
+
+// Correlated evaluate the secondary conditional PDF
+/*! \details This method performs a type of binary search using a unit based
+ *  correlated sampling to estimate the CDF to a relative error tolerance in
+ *  order to find the proper interpolation. The result is consistent with the
+ *  correlatedSampleSecondaryConditional methods.
+ *  The lower and upper conditional boundaries will be use as the min and max
+ *  secondary independent variable values.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalPDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
+  ->  InverseSecondaryIndepQuantity
+{
+  // Get the min and max secondary independent variable values
+  SecondaryIndepQuantity min_secondary_indep_var =
+    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
+  SecondaryIndepQuantity max_secondary_indep_var =
+    this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value );
+
+  return this->correlatedEvaluateSecondaryConditionalPDFInBoundaries(
+                                                    primary_indep_var_value,
+                                                    secondary_indep_var_value,
+                                                    min_secondary_indep_var,
+                                                    max_secondary_indep_var );
 }
 
 // Evaluate the secondary conditional PDF
@@ -199,7 +242,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDF(
+double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDFInBoundaries(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
@@ -213,6 +256,34 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,Primar
                                       &BaseOneDDistributionType::evaluateCDF,
                                       0.0,
                                       1.0 );
+}
+
+// Correlated evaluate the secondary conditional CDF
+/*! \details This method performs a type of binary search using a unit based
+ *  correlated sampling to estimate the CDF to a relative error tolerance. The
+ *  result is consistent with the correlatedSampleSecondaryConditional methods.
+ *  The lower and upper conditional boundaries will be use as the min and max
+ *  secondary independent variable values.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
+{
+  // Get the min and max secondary independent variable values
+  SecondaryIndepQuantity min_secondary_indep_var =
+    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
+  SecondaryIndepQuantity max_secondary_indep_var =
+    this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value );
+
+  return this->correlatedEvaluateSecondaryConditionalCDFInBoundaries(
+                                                    primary_indep_var_value,
+                                                    secondary_indep_var_value,
+                                                    min_secondary_indep_var,
+                                                    max_secondary_indep_var );
 }
 
 // Evaluate the secondary conditional CDF
@@ -692,7 +763,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditional(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalInBoundaries(
              const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity min_secondary_indep_var_value,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -706,7 +777,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   const double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  return this->correlatedSampleSecondaryConditionalWithRandomNumber(
+  return this->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
                                             primary_indep_var_value,
                                             random_number,
                                             min_secondary_indep_var_value,
@@ -732,7 +803,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   SecondaryIndepQuantity max_secondary_indep_var_value =
     this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value );
 
-  return this->correlatedSampleSecondaryConditional(
+  return this->correlatedSampleSecondaryConditionalInBoundaries(
                                             primary_indep_var_value,
                                             min_secondary_indep_var_value,
                                             max_secondary_indep_var_value );
@@ -789,7 +860,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumber(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
                     const PrimaryIndepQuantity primary_indep_var_value,
                     const double random_number,
                     const SecondaryIndepQuantity min_secondary_indep_var_value,
@@ -840,7 +911,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   SecondaryIndepQuantity max_secondary_indep_var_value =
     this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value );
 
-  return this->correlatedSampleSecondaryConditionalWithRandomNumber(
+  return this->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
                                     primary_indep_var_value,
                                     random_number,
                                     min_secondary_indep_var_value,
@@ -905,7 +976,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalInSubrange(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalInSubrangeInBoundaries(
              const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity min_secondary_indep_var_value,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -919,7 +990,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   const double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  return this->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange(
+  return this->correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
                                                 primary_indep_var_value,
                                                 random_number,
                                                 min_secondary_indep_var_value,
@@ -948,7 +1019,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   SecondaryIndepQuantity min_secondary_indep_var_value =
     this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
 
-  return this->correlatedSampleSecondaryConditionalInSubrange(
+  return this->correlatedSampleSecondaryConditionalInSubrangeInBoundaries(
                                                 primary_indep_var_value,
                                                 min_secondary_indep_var_value,
                                                 max_secondary_indep_var_value );
@@ -1072,7 +1143,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInSubrange(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity min_secondary_indep_var_value,
@@ -1258,7 +1329,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   SecondaryIndepQuantity min_secondary_indep_var_value =
     this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
 
-  return this->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange(
+  return this->correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
                                         primary_indep_var_value,
                                         random_number,
                                         min_secondary_indep_var_value,

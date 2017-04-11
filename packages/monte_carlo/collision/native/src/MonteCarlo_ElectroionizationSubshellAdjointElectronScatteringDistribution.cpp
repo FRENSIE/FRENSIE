@@ -49,15 +49,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::setSampling
       d_sample_func = std::bind<double>(
         &TwoDDist::correlatedSampleSecondaryConditional,
         std::cref( *d_ionization_subshell_dist ),
-        std::placeholders::_1,
-        std::bind<double>(
-          &TwoDDist::getLowerBoundOfConditionalIndepVar,
-          std::cref( *d_ionization_subshell_dist),
-          std::placeholders::_1 ),
-        std::bind<double>(
-          &TwoDDist::getUpperBoundOfConditionalIndepVar,
-          std::cref( *d_ionization_subshell_dist ),
-          std::placeholders::_1 ) );
+        std::placeholders::_1 );
     }
     else
     {
@@ -94,43 +86,19 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::setEvaluati
         &TwoDDist::correlatedEvaluate,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1,
-        std::placeholders::_2,
-        std::bind<double>(
-          &TwoDDist::getLowerBoundOfConditionalIndepVar,
-          std::cref( *d_ionization_subshell_dist),
-          std::placeholders::_1 ),
-        std::bind<double>(
-          &TwoDDist::getUpperBoundOfConditionalIndepVar,
-          std::cref( *d_ionization_subshell_dist ),
-          std::placeholders::_1 ) );
+        std::placeholders::_2 );
 
     d_evaluate_pdf_func = std::bind<double>(
         &TwoDDist::correlatedEvaluateSecondaryConditionalPDF,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1,
-        std::placeholders::_2,
-        std::bind<double>(
-          &TwoDDist::getLowerBoundOfConditionalIndepVar,
-          std::cref( *d_ionization_subshell_dist),
-          std::placeholders::_1 ),
-        std::bind<double>(
-          &TwoDDist::getUpperBoundOfConditionalIndepVar,
-          std::cref( *d_ionization_subshell_dist ),
-          std::placeholders::_1 ) );
+        std::placeholders::_2 );
 
     d_evaluate_cdf_func = std::bind<double>(
         &TwoDDist::correlatedEvaluateSecondaryConditionalCDF,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1,
-        std::placeholders::_2,
-        std::bind<double>(
-          &TwoDDist::getLowerBoundOfConditionalIndepVar,
-          std::cref( *d_ionization_subshell_dist),
-          std::placeholders::_1 ),
-        std::bind<double>(
-          &TwoDDist::getUpperBoundOfConditionalIndepVar,
-          std::cref( *d_ionization_subshell_dist ),
-          std::placeholders::_1 ) );
+        std::placeholders::_2 );
   }
   else
   {

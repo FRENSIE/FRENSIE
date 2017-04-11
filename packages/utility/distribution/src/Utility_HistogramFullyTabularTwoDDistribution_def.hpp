@@ -35,7 +35,7 @@ double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,Sec
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDF(
+inline double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDFInBoundaries(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value,
                  const SecondaryIndepQuantity min_secondary_indep_var,
@@ -45,6 +45,18 @@ inline double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentU
                                                 secondary_indep_var_value );
 }
 
+
+// Evaluate the secondary conditional CDF
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDF(
+                 const PrimaryIndepQuantity primary_indep_var_value,
+                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+{
+  return this->evaluateSecondaryConditionalCDF( primary_indep_var_value,
+                                                secondary_indep_var_value );
+}
 // Evaluate the secondary conditional CDF
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,

@@ -45,8 +45,6 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
       d_sample_func = std::bind<double>(
            &TwoDDist::correlatedSampleSecondaryConditional,
            std::cref( *d_brem_distribution ),
-           std::placeholders::_1,
-           1e-7,
            std::placeholders::_1 );
     }
     else
@@ -84,25 +82,19 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setEvaluationRoutines(
        &TwoDDist::correlatedEvaluate,
        std::cref( *d_brem_distribution ),
        std::placeholders::_1,
-       std::placeholders::_2,
-       1e-7,
-       std::placeholders::_1 );
+       std::placeholders::_2 );
 
     d_evaluate_pdf_func = std::bind<double>(
        &TwoDDist::correlatedEvaluateSecondaryConditionalPDF,
        std::cref( *d_brem_distribution ),
        std::placeholders::_1,
-       std::placeholders::_2,
-       1e-7,
-       std::placeholders::_1 );
+       std::placeholders::_2 );
 
     d_evaluate_cdf_func = std::bind<double>(
        &TwoDDist::correlatedEvaluateSecondaryConditionalCDF,
        std::cref( *d_brem_distribution ),
        std::placeholders::_1,
-       std::placeholders::_2,
-       1e-7,
-       std::placeholders::_1 );
+       std::placeholders::_2 );
   }
   else
   {

@@ -56,7 +56,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine
     {
       // Set the correlated unit based sample routine
       d_sample_func = std::bind<double>(
-        &TwoDDist::correlatedSampleSecondaryConditional,
+        &TwoDDist::correlatedSampleSecondaryConditionalInBoundaries,
         std::cref( *d_electroionization_subshell_scattering_distribution ),
         std::placeholders::_1,
         std::bind<double>(
@@ -100,7 +100,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setEvaluationRouti
   {
     // Set the correlated unit based evaluation routines
     d_evaluate_func = std::bind<double>(
-        &TwoDDist::correlatedEvaluate,
+        &TwoDDist::correlatedEvaluateInBoundaries,
         std::cref( *d_electroionization_subshell_scattering_distribution ),
         std::placeholders::_1,
         std::placeholders::_2,
@@ -114,7 +114,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setEvaluationRouti
           std::placeholders::_1 ) );
 
     d_evaluate_pdf_func = std::bind<double>(
-        &TwoDDist::correlatedEvaluateSecondaryConditionalPDF,
+        &TwoDDist::correlatedEvaluateSecondaryConditionalPDFInBoundaries,
         std::cref( *d_electroionization_subshell_scattering_distribution ),
         std::placeholders::_1,
         std::placeholders::_2,
@@ -128,7 +128,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setEvaluationRouti
           std::placeholders::_1 ) );
 
     d_evaluate_cdf_func = std::bind<double>(
-        &TwoDDist::correlatedEvaluateSecondaryConditionalCDF,
+        &TwoDDist::correlatedEvaluateSecondaryConditionalCDFInBoundaries,
         std::cref( *d_electroionization_subshell_scattering_distribution ),
         std::placeholders::_1,
         std::placeholders::_2,

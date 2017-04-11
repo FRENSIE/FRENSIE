@@ -80,7 +80,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
     {
       // Set the correlated unit based sample routine
       d_sample_func = std::bind<double>(
-           &TwoDDist::correlatedSampleSecondaryConditional,
+           &TwoDDist::correlatedSampleSecondaryConditionalInBoundaries,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1,
            1e-7,
@@ -118,7 +118,7 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
   {
     // Set the correlated unit based evaluation routines
     d_evaluate_func = std::bind<double>(
-       &TwoDDist::correlatedEvaluate,
+       &TwoDDist::correlatedEvaluateInBoundaries,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2,
@@ -126,7 +126,7 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
        std::placeholders::_1 );
 
     d_evaluate_pdf_func = std::bind<double>(
-       &TwoDDist::correlatedEvaluateSecondaryConditionalPDF,
+       &TwoDDist::correlatedEvaluateSecondaryConditionalPDFInBoundaries,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2,
@@ -134,7 +134,7 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
        std::placeholders::_1 );
 
     d_evaluate_cdf_func = std::bind<double>(
-       &TwoDDist::correlatedEvaluateSecondaryConditionalCDF,
+       &TwoDDist::correlatedEvaluateSecondaryConditionalCDFInBoundaries,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2,

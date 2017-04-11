@@ -88,11 +88,16 @@ public:
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional CDF
-  double correlatedEvaluateSecondaryConditionalCDF(
+  double correlatedEvaluateSecondaryConditionalCDFInBoundaries(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
                 const SecondaryIndepQuantity max_secondary_indep_var ) const;
+
+  //! Evaluate the secondary conditional CDF
+  double correlatedEvaluateSecondaryConditionalCDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDFExact(

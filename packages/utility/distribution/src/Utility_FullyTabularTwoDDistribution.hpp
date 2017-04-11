@@ -85,11 +85,16 @@ public:
   { /* ... */ }
 
  //! Correlated evaluate the distribution (Unit Based)
-  virtual DepQuantity correlatedEvaluate(
+  virtual DepQuantity correlatedEvaluateInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity secondary_indep_var_value,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
+
+ //! Correlated evaluate the distribution (Unit Based)
+  virtual DepQuantity correlatedEvaluate(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
   //! Evaluate the distribution
   virtual DepQuantity evaluateExact(
@@ -97,11 +102,16 @@ public:
         const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
   //! Correlated evaluate the secondary conditional PDF (Unit Based)
-  virtual InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDF(
+  virtual InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDFInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity secondary_indep_var_value,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
+
+  //! Correlated evaluate the secondary conditional PDF (Unit Based)
+  virtual InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDF(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
   //! Evaluate the secondary conditional PDF
   virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
@@ -114,11 +124,16 @@ public:
         const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
   //! Correlated evaluate the secondary conditional CDF
-  virtual double correlatedEvaluateSecondaryConditionalCDF(
+  virtual double correlatedEvaluateSecondaryConditionalCDFInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity secondary_indep_var_value,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
+
+  //! Correlated evaluate the secondary conditional CDF
+  virtual double correlatedEvaluateSecondaryConditionalCDF(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
   //! Evaluate the secondary conditional CDF
   virtual double evaluateSecondaryConditionalCDFExact(
@@ -126,7 +141,7 @@ public:
         const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
   //! Return a random correlated sample from the secondary conditional PDF
-  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditional(
+  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
@@ -145,7 +160,7 @@ public:
                     const double random_number ) const = 0;
 
   //! Return a random correlated sample from the secondary conditional PDF at the CDF val
-  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumber(
+  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
                     const PrimaryIndepQuantity primary_indep_var_value,
                     const double random_number,
                     const SecondaryIndepQuantity min_secondary_indep_var_value,
@@ -167,7 +182,7 @@ public:
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
 
   //! Return a random correlated sample from the secondary conditional PDF in the subrange
-  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalInSubrange(
+  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalInSubrangeInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
@@ -189,7 +204,7 @@ public:
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
 
   //! Return a random correlated sample from the secondary conditional PDF in the subrange
-  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInSubrange(
+  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const double random_number,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
@@ -235,7 +250,7 @@ protected:
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditional(
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -282,7 +297,7 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumber(
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const double random_number,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
@@ -335,7 +350,7 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalInSubrange(
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalInSubrangeInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -387,7 +402,7 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInSubrange(
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
         const double random_number,
         const SecondaryIndepQuantity min_secondary_indep_var_value,

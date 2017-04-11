@@ -27,11 +27,21 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
 
 // Evaluate the distribution
 template<typename Distribution>
-inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::correlatedEvaluate(
+inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::correlatedEvaluateInBoundaries(
   const PrimaryIndepQuantity primary_indep_var_value,
   const SecondaryIndepQuantity secondary_indep_var_value,
   const SecondaryIndepQuantity min_secondary_indep_var,
   const SecondaryIndepQuantity max_secondary_indep_var ) const -> DepQuantity
+{
+  return this->evaluate( primary_indep_var_value,
+                         secondary_indep_var_value );
+}
+
+// Evaluate the distribution
+template<typename Distribution>
+inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::correlatedEvaluate(
+  const PrimaryIndepQuantity primary_indep_var_value,
+  const SecondaryIndepQuantity secondary_indep_var_value ) const -> DepQuantity
 {
   return this->evaluate( primary_indep_var_value,
                          secondary_indep_var_value );
@@ -62,11 +72,21 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSe
 
 // Evaluate the secondary conditional PDF
 template<typename Distribution>
-inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::correlatedEvaluateSecondaryConditionalPDF(
+inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::correlatedEvaluateSecondaryConditionalPDFInBoundaries(
   const PrimaryIndepQuantity primary_indep_var_value,
   const SecondaryIndepQuantity secondary_indep_var_value,
   const SecondaryIndepQuantity min_secondary_indep_var,
   const SecondaryIndepQuantity max_secondary_indep_var ) const -> InverseSecondaryIndepQuantity
+{
+  return this->evaluateSecondaryConditionalPDF( primary_indep_var_value,
+                                                secondary_indep_var_value );
+}
+
+// Evaluate the secondary conditional PDF
+template<typename Distribution>
+inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::correlatedEvaluateSecondaryConditionalPDF(
+  const PrimaryIndepQuantity primary_indep_var_value,
+  const SecondaryIndepQuantity secondary_indep_var_value ) const -> InverseSecondaryIndepQuantity
 {
   return this->evaluateSecondaryConditionalPDF( primary_indep_var_value,
                                                 secondary_indep_var_value );
