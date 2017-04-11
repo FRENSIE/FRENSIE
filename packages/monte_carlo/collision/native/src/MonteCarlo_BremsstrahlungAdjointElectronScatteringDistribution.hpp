@@ -26,11 +26,20 @@ public:
 
   //! Constructor
   BremsstrahlungAdjointElectronScatteringDistribution(
-     const std::shared_ptr<TwoDDist>& brem_distribution );
+    const std::shared_ptr<TwoDDist>& brem_distribution,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on );
 
   //! Destructor
   virtual ~BremsstrahlungAdjointElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Set the sampling routine
+  void setSamplingRoutine( const bool correlated_sampling_mode_on,
+                           const bool unit_based_interpolation_mode_on );
+
+  //! Set the evaluation routines
+  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
 
   //! Return the min incoming energy
   double getMinEnergy() const;
@@ -70,6 +79,18 @@ private:
 
   // bremsstrahlung scattering distribution
   std::shared_ptr<TwoDDist> d_brem_distribution;
+
+  // The sample function pointer
+  std::function<double ( const double )> d_sample_func;
+
+  // The evaluate function pointer
+  std::function<double ( const double, const double )> d_evaluate_func;
+
+  // The evaluatePDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_pdf_func;
+
+  // The evaluateCDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_cdf_func;
 
 };
 

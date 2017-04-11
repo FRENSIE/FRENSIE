@@ -2074,6 +2074,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getAtomicNumber(),
+        d_electron_correlated_sampling_mode,
         d_tabular_evaluation_tol );
     }
     else
@@ -2084,6 +2085,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getAtomicNumber(),
+        d_electron_correlated_sampling_mode,
         d_tabular_evaluation_tol );
     }
 

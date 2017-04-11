@@ -262,17 +262,23 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                                pdf ) );
   }
 
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = true;
+  double evaluation_tol = 1e-7;
+
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
             function_data,
             1e-6,
-            1e-6 ) );
+            evaluation_tol ) );
 
   native_distribution.reset(
      new MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy ) );
+            binding_energy,
+            correlated_sampling_mode_on,
+            unit_based_interpolation_mode_on ) );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

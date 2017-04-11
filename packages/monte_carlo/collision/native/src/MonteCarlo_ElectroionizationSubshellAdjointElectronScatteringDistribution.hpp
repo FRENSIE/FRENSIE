@@ -26,6 +26,9 @@ class ElectroionizationSubshellAdjointElectronScatteringDistribution : public Ad
 
 public:
 
+  //! Typedef for this type
+  typedef ElectroionizationSubshellAdjointElectronScatteringDistribution ThisType;
+
   //! Typedef for the two d distributions
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
@@ -33,11 +36,20 @@ public:
   ElectroionizationSubshellAdjointElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double& binding_energy );
+    const double& binding_energy,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on );
 
   //! Destructor
   virtual ~ElectroionizationSubshellAdjointElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Set the sampling routine
+  void setSamplingRoutine( const bool correlated_sampling_mode_on,
+                           const bool unit_based_interpolation_mode_on );
+
+  //! Set the evaluation routines
+  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
 
   //! Return the binding energy
   double getBindingEnergy() const;
@@ -88,6 +100,18 @@ private:
   // Calculate the outgoing angle cosine
   double outgoingAngle( const double incoming_energy,
                         const double outgoing_energy ) const;
+
+  // The sample function pointer
+  std::function<double ( const double )> d_sample_func;
+
+  // The evaluate function pointer
+  std::function<double ( const double, const double )> d_evaluate_func;
+
+  // The evaluatePDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_pdf_func;
+
+  // The evaluateCDF function pointer
+  std::function<double ( const double, const double )> d_evaluate_cdf_func;
 
 };
 

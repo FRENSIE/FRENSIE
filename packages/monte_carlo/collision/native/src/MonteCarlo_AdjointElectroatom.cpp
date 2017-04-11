@@ -91,7 +91,15 @@ double AdjointElectroatom::getTotalCrossSection( const double energy ) const
   unsigned energy_grid_bin =
     d_core.getGridSearcher().findLowerBinIndex( energy );
 
-  return this->getScatteringCrossSection( energy, energy_grid_bin );
+  double cross_section =
+    this->getScatteringCrossSection( energy, energy_grid_bin );
+
+  cross_section +=
+    this->getAbsorptionCrossSection( energy, energy_grid_bin );
+
+  testPostcondition( cross_section >= 0.0 );
+
+  return cross_section;
 }
 
 // Return the total forward cross section
@@ -182,8 +190,6 @@ double AdjointElectroatom::getReactionCrossSection(
   {
   case TOTAL_ADJOINT_ELECTROATOMIC_REACTION:
     return this->getTotalCrossSection( energy );
-  case TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION:
-    return this->getAbsorptionCrossSection( energy );
   default:
     ConstReactionMap::const_iterator adjoint_electroatomic_reaction =
       d_core.getScatteringReactions().find( reaction );

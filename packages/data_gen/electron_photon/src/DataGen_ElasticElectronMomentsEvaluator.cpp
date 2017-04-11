@@ -48,12 +48,15 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   incoming_energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
                                data_container.getElectronEnergyGrid().end() );
 
+  bool correlated_sampling_mode_on = true;
+
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
   if ( linlinlog_interpolation_mode_on )
   {
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
     d_analog_distribution,
     data_container,
+    correlated_sampling_mode_on,
     tabular_evaluation_tol );
   }
   else
@@ -61,6 +64,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
     d_analog_distribution,
     data_container,
+    correlated_sampling_mode_on,
     tabular_evaluation_tol );
   }
 

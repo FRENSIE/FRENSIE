@@ -48,6 +48,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
 
   properties->setElasticCutoffAngleCosine( 0.9 );
   properties->setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
+  properties->setCorrelatedSamplingModeOn();
   properties->setElectronEvaluationTolerance( 1e-7 );
 
   std::shared_ptr<MonteCarlo::AdjointElectroatomFactory> electroatom_factory(
@@ -83,6 +84,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
         cutoff_elastic_distribution,
         *data_container,
         properties->getElasticCutoffAngleCosine(),
+        properties->isCorrelatedSamplingModeOn(),
         properties->getElectronEvaluationTolerance() );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointElectroatom> >

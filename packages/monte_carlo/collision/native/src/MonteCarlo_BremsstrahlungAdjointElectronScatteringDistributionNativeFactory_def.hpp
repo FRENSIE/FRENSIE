@@ -1,42 +1,60 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.cpp
+//! \file   MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory_def.hpp
 //! \author Luke Kersting
 //! \brief  The bremsstrahlung adjoint scattering distribution native factory definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Create a bremsstrahlung adjoint distribution
+template<typename TwoDInterpPolicy>
 void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungAdjointDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double>& adjoint_energy_grid,
     std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
-        scattering_distribution )
+        scattering_distribution,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol )
 {
+  // Make sure bool are valid
+  testPrecondition( correlated_sampling_mode_on == 0 ||
+                    correlated_sampling_mode_on == 1 );
+  testPrecondition( unit_based_interpolation_mode_on == 0 ||
+                    unit_based_interpolation_mode_on == 1 );
+  // Make sure the eval tol is valid
+  testPrecondition( evaluation_tol <= 1.0 );
+  testPrecondition( evaluation_tol > 0.0 );
+
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_gain_function;
 
-  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEnergyGainFunction(
+  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEnergyGainFunction<TwoDInterpPolicy>(
         raw_electroatom_data,
         adjoint_energy_grid,
-        energy_gain_function );
+        energy_gain_function,
+        evaluation_tol );
 
   scattering_distribution.reset(
-   new BremsstrahlungAdjointElectronScatteringDistribution( energy_gain_function ) );
+   new BremsstrahlungAdjointElectronScatteringDistribution(
+                                energy_gain_function,
+                                correlated_sampling_mode_on,
+                                unit_based_interpolation_mode_on ) );
 }
 
 // Create the energy gain function
+template<typename TwoDInterpPolicy>
 void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEnergyGainFunction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double> energy_grid,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>& energy_gain_function )
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution>& energy_gain_function,
+    const double evaluation_tol )
 {
   // Get the function data
   Utility::FullyTabularTwoDDistribution::DistributionType
@@ -61,13 +79,15 @@ void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEne
 
   // Create the scattering function
   energy_gain_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
-            function_data ) );
+    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy>(
+            function_data,
+            1e-6,
+            evaluation_tol ) );
 }
 
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.cpp
+// end MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory_def.hpp
 //---------------------------------------------------------------------------//
 

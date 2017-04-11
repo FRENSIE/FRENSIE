@@ -31,6 +31,9 @@ Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> reaction;
 
+bool correlated_sampling_mode_on = true;
+bool unit_based_interpolation_mode_on = true;
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -45,6 +48,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                 energy_grid,
                 grid_searcher,
                 reaction,
+                correlated_sampling_mode_on,
                 evaluation_tol );
 
   // Test reaction properties
@@ -83,6 +87,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                 grid_searcher,
                 reaction,
                 cutoff_angle_cosine,
+                correlated_sampling_mode_on,
                 evaluation_tol );
 
   // Test reaction properties
@@ -125,6 +130,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                 grid_searcher,
                 reaction,
                 cutoff_angle_cosine,
+                correlated_sampling_mode_on,
                 evaluation_tol );
 
   // Test reaction properties
@@ -167,6 +173,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                 grid_searcher,
                 reaction,
                 cutoff_angle_cosine,
+                correlated_sampling_mode_on,
                 evaluation_tol );
 
   // Test reaction properties
@@ -239,11 +246,13 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   std::vector<std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> > reactions;
 
   MonteCarlo::AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
-       *data_container,
-       energy_grid,
-       grid_searcher,
-       reactions,
-       evaluation_tol );
+        *data_container,
+        energy_grid,
+        grid_searcher,
+        reactions,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
   TEST_EQUALITY_CONST( reactions.size(), 1 );
 
@@ -278,11 +287,13 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   double evaluation_tol = 1e-7;
 
   MonteCarlo::AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-       *data_container,
-       energy_grid,
-       grid_searcher,
-       reaction,
-       evaluation_tol );
+        *data_container,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),

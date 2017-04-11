@@ -1240,6 +1240,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         al_data->getCutoffElasticPDF(),
         al_data->getElasticAngularEnergyGrid(),
         al_data->getAtomicNumber(),
+        true,
         tabular_evaluation_tol );
 
   // Construct the hash-based grid searcher for this atom

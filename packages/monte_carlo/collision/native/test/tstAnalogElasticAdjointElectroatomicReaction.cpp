@@ -169,12 +169,17 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             function_data,
             1e-6 ) );
 
+    bool linlinlog_interpolation_mode_on = true;
+    bool correlated_sampling_mode_on = true;
+
     // Create cutoff distribution
     std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_elastic_distribution(
             new MonteCarlo::AnalogElasticElectronScatteringDistribution(
                 scattering_function,
-                atomic_number ) );
+                atomic_number,
+                linlinlog_interpolation_mode_on,
+                correlated_sampling_mode_on ) );
 
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.assign(

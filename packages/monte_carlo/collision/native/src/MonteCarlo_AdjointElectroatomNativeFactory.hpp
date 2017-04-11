@@ -17,15 +17,13 @@
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatom.hpp"
 #include "MonteCarlo_AdjointElectroatomCore.hpp"
-#include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_AtomicRelaxationModel.hpp"
-#include "MonteCarlo_SimulationElectronProperties.hpp"
+#include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
 
 namespace MonteCarlo{
 
-//! The AdjointElectroatomic factory class that uses Native data
+//! The adjoint electroatom native factory class that uses Native data
 class AdjointElectroatomNativeFactory
 {
 
@@ -41,7 +39,7 @@ public:
   static void createAdjointElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
-        const SimulationElectronProperties& properties,
+        const SimulationAdjointElectronProperties& properties,
         Teuchos::RCP<AdjointElectroatomCore>& adjoint_electroatom_core );
 
   //! Create an adjoint  electroatom
@@ -50,7 +48,7 @@ public:
             raw_adjoint_electroatom_data,
         const std::string& adjoint_electroatom_name,
         const double atomic_weight,
-        const SimulationElectronProperties& properties,
+        const SimulationAdjointElectronProperties& properties,
         Teuchos::RCP<AdjointElectroatom>& adjoint_electroatom );
 };
 

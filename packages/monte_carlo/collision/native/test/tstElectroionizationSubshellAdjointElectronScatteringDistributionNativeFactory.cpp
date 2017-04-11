@@ -237,12 +237,19 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   std::set<unsigned> subshells = data_container->getSubshells();
 
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = true;
+  double evaluation_tol = 1e-7;
+
   // Create the electroionization subshell distribution
   IonizationNativeFactory::createAdjointElectroionizationSubshellDistribution(
     *data_container,
     1,
     binding_energy,
-    native_distribution );
+    native_distribution,
+    correlated_sampling_mode_on,
+    unit_based_interpolation_mode_on,
+    evaluation_tol );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

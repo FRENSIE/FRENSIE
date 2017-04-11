@@ -306,14 +306,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double upper_cutoff_angle_cosine = 1.0;
     unsigned hash_grid_bins = 100;
 
-    MonteCarlo::SimulationProperties properties;
+    MonteCarlo::SimulationAdjointElectronProperties properties;
 
-  properties.setBremsstrahlungAngularDistributionFunction(
+  properties.setAdjointBremsstrahlungAngularDistributionFunction(
                                              MonteCarlo::DIPOLE_DISTRIBUTION );
-  properties.setElasticCutoffAngleCosine( 1.0 );
-  properties.setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
-  properties.setNumberOfElectronHashGridBins( 100 );
-  properties.setElectronEvaluationTolerance( 1e-7 );
+  properties.setAdjointElasticCutoffAngleCosine( 1.0 );
+  properties.setNumberOfAdjointElectronHashGridBins( 100 );
+  properties.setAdjointElectronEvaluationTolerance( 1e-7 );
 
     // Create the factories
     MonteCarlo::AdjointElectroatomFactory factory(

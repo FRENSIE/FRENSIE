@@ -199,12 +199,19 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
+    bool correlated_sampling_mode_on = true;
+    bool unit_based_interpolation_mode_on = true;
+    double evaluation_tol = 1e-7;
+
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution(
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution<Utility::LinLinLog>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
-        electroionization_subshell_distribution );
+        electroionization_subshell_distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
 
     // Create the subshell electroelectric reaction
@@ -234,6 +241,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container->getAdjointElectroionizationCrossSection( *shell ).begin(),
         data_container->getAdjointElectroionizationCrossSection( *shell ).end() );
 
+    bool correlated_sampling_mode_on = true;
+    bool unit_based_interpolation_mode_on = true;
+    double evaluation_tol = 1e-7;
+
     // Electroionization cross section threshold energy bin index
     unsigned threshold_energy_index =
         data_container->getAdjointElectroionizationCrossSectionThresholdEnergyIndex(
@@ -241,12 +252,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // The electroionization subshell distribution
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
-        electroionization_subshell_distribution; MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution(
+        electroionization_subshell_distribution;
+
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution<Utility::LinLinLog>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
-        electroionization_subshell_distribution );
-
+        electroionization_subshell_distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
     // Create the subshell electroelectric reaction
     last_subshell_reaction.reset(

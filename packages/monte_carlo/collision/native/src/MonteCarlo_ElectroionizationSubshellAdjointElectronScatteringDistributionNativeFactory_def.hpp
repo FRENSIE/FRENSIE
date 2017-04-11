@@ -1,25 +1,28 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.cpp
+//! \file   MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory_def.hpp
 //! \author Luke Kersting
 //! \brief  The electroionization subshell scattering distribution Native factory definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Create a electroionization subshell distribution
+template<typename TwoDInterpPolicy>
 void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
-      electroionization_subshell_distribution )
+      electroionization_subshell_distribution,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
+    const double evaluation_tol )
 {
   // Get the energies for which knock-on sampling tables are given
   std::vector<double> energy_grid =
@@ -29,24 +32,30 @@ void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
 
   // Create the subshell distribution
-  createSubshellDistribution( raw_electroionization_data,
-                              energy_grid,
-                              subshell,
-                              subshell_distribution );
+  ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createSubshellDistribution<TwoDInterpPolicy>(
+                                raw_electroionization_data,
+                                energy_grid,
+                                subshell,
+                                subshell_distribution,
+                                evaluation_tol );
 
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellAdjointElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy ) );
+            binding_energy,
+            correlated_sampling_mode_on,
+            unit_based_interpolation_mode_on ) );
 }
 
 // Create the subshell recoil distribution
+template<typename TwoDInterpPolicy>
 void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid,
     const unsigned subshell,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-        subshell_distribution )
+        subshell_distribution,
+    const double evaluation_tol )
 {
   // Create the scattering function
   Utility::FullyTabularTwoDDistribution::DistributionType
@@ -75,13 +84,15 @@ void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
 
   // Create the scattering function
   subshell_distribution.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
-            function_data ) );
+    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy>(
+            function_data,
+            1e-6,
+            evaluation_tol ) );
 }
 
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.cpp
+// end MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory_def.hpp
 //---------------------------------------------------------------------------//
 

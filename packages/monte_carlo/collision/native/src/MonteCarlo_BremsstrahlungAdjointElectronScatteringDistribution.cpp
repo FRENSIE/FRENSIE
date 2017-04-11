@@ -15,11 +15,116 @@ namespace MonteCarlo{
 
 // Constructor
 BremsstrahlungAdjointElectronScatteringDistribution::BremsstrahlungAdjointElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& brem_distribution )
+    const std::shared_ptr<TwoDDist>& brem_distribution,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on )
   : d_brem_distribution( brem_distribution )
 {
   // Make sure the array is valid
   testPrecondition( d_brem_distribution.use_count() > 0 );
+
+  this->setSamplingRoutine( correlated_sampling_mode_on,
+                            unit_based_interpolation_mode_on );
+  this->setEvaluationRoutines( unit_based_interpolation_mode_on );
+}
+
+// Set the sampling routine
+/*! \details There are often multiple ways to sample from two-dimensional
+ * distributions (e.g. stochastic and correlated sampling). This function sets
+ * the sample function pointer to the desired sampling routine.
+ */
+void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
+                                    const bool correlated_sampling_mode_on,
+                                    const bool unit_based_interpolation_mode_on )
+{
+  if( unit_based_interpolation_mode_on )
+  {
+    if( correlated_sampling_mode_on )
+    {
+      // Set the correlated unit based sample routine
+      d_sample_func = std::bind<double>(
+           &TwoDDist::correlatedSampleSecondaryConditional,
+           std::cref( *d_brem_distribution ),
+           std::placeholders::_1,
+           1e-7,
+           std::placeholders::_1 );
+    }
+    else
+    {
+      // Set the stochastic unit based sample routine
+      d_sample_func = std::bind<double>(
+           &TwoDDist::sampleSecondaryConditional,
+           std::cref( *d_brem_distribution ),
+           std::placeholders::_1 );
+    }
+  }
+  else
+  {
+      // Set the correlated exact sample routine
+    d_sample_func = std::bind<double>(
+           &TwoDDist::sampleSecondaryConditionalExact,
+           std::cref( *d_brem_distribution ),
+           std::placeholders::_1 );
+  }
+}
+
+// Set the evaluation routines
+/*! \details This function sets the evalute, evaluatePDF and evaluateCDF
+ *  function pointers to either an exact or unit based routine. The exact and
+ *  unit based routines are consistent with the correlatedSampleExact and
+ *  correlatedSampleUnitBased respectively.
+ */
+void BremsstrahlungAdjointElectronScatteringDistribution::setEvaluationRoutines(
+                                    const bool unit_based_interpolation_mode_on )
+{
+  if( unit_based_interpolation_mode_on )
+  {
+    // Set the correlated unit based evaluation routines
+    d_evaluate_func = std::bind<double>(
+       &TwoDDist::correlatedEvaluate,
+       std::cref( *d_brem_distribution ),
+       std::placeholders::_1,
+       std::placeholders::_2,
+       1e-7,
+       std::placeholders::_1 );
+
+    d_evaluate_pdf_func = std::bind<double>(
+       &TwoDDist::correlatedEvaluateSecondaryConditionalPDF,
+       std::cref( *d_brem_distribution ),
+       std::placeholders::_1,
+       std::placeholders::_2,
+       1e-7,
+       std::placeholders::_1 );
+
+    d_evaluate_cdf_func = std::bind<double>(
+       &TwoDDist::correlatedEvaluateSecondaryConditionalCDF,
+       std::cref( *d_brem_distribution ),
+       std::placeholders::_1,
+       std::placeholders::_2,
+       1e-7,
+       std::placeholders::_1 );
+  }
+  else
+  {
+    // Set the correlated exact evaluation routines
+    d_evaluate_func = std::bind<double>(
+       &TwoDDist::evaluateExact,
+       std::cref( *d_brem_distribution ),
+       std::placeholders::_1,
+       std::placeholders::_2 );
+
+    d_evaluate_pdf_func = std::bind<double>(
+       &TwoDDist::evaluateSecondaryConditionalPDFExact,
+       std::cref( *d_brem_distribution ),
+       std::placeholders::_1,
+       std::placeholders::_2 );
+
+    d_evaluate_cdf_func = std::bind<double>(
+       &TwoDDist::evaluateSecondaryConditionalCDFExact,
+       std::cref( *d_brem_distribution ),
+       std::placeholders::_1,
+       std::placeholders::_2 );
+  }
 }
 
 // Return the min incoming energy
@@ -78,6 +183,12 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluateCDF(
 }
 
 // Sample an outgoing energy and direction from the distribution
+/*! \details In the forward case the scattering angle cosine of the incoming
+ *  electron is considered to be negligible. Similarly the scattering angle
+ *  cosine of the incoming adjoint electron will be considered negligible.
+ *  This is not the case for the creation of an adjoint electron by an
+ *  adjoint bremsstrahlung photon.
+ */
 void BremsstrahlungAdjointElectronScatteringDistribution::sample(
         const double incoming_energy,
         double& outgoing_energy,

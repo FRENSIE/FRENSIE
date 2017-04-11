@@ -21,6 +21,7 @@
 #include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
 #include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AdjointElectronState.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
@@ -171,6 +172,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the total forward reaction
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_forward_reaction;
 
+    // Get void reaction
+    Teuchos::ArrayRCP<double> void_cross_section( energy_grid.size() );
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> void_reaction(
+     new MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false>(
+                       energy_grid,
+                       void_cross_section,
+                       0u,
+                       grid_searcher,
+                       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION ) );
+
     MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
                                        data_container,
                                        energy_grid,
@@ -217,11 +228,18 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
         b_distribution;
 
+    bool correlated_sampling_mode_on = true;
+    bool unit_based_interpolation_mode_on = true;
+    double evaluation_tol = 1e-7;
+
     // Create the Bremsstrahlung distribution
-    BremsstrahlungNativeFactory::createBremsstrahlungAdjointDistribution(
+    BremsstrahlungNativeFactory::createBremsstrahlungAdjointDistribution<Utility::LinLinLog>(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
-        b_distribution );
+        b_distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> b_reaction(

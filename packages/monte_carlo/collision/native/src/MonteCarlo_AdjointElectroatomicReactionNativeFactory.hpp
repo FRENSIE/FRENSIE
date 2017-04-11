@@ -46,6 +46,7 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering adjoint electroatomic reaction
@@ -57,6 +58,7 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering adjoint electroatomic reaction
@@ -68,6 +70,7 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a screened Rutherford elastic scattering adjoint electroatomic reaction
@@ -79,6 +82,7 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create the moment preserving elastic scattering adjoint electroatomic reaction
@@ -90,6 +94,7 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create an atomic excitation scattering adjoint electroatomic reaction
@@ -109,6 +114,8 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<AdjointElectroatomicReaction>& electroionization_subshell_reaction,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
   //! Create the subshell electroionization adjoint electroatomic reactions
@@ -120,6 +127,8 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<AdjointElectroatomicReaction> >&
         electroionization_subshell_reactions,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
   //! Create the bremsstrahlung adjoint electroatomic reaction
@@ -130,15 +139,18 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
   //! Create the forward total reaction (only used to get the cross section)
+  template<typename ReactionType>
   static void createTotalForwardReaction(
       const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+      const std::shared_ptr<ReactionType>& elastic_reaction,
       std::shared_ptr<ElectroatomicReaction>& total_forward_reaction );
 };
 

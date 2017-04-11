@@ -178,6 +178,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
     double cutoff_angle_cosine = 1.0;
     double evaluation_tol = 1e-7;
+    bool correlated_sampling_mode_on = true;
 
     // Create the distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
@@ -187,6 +188,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         elastic_scattering_distribution,
         *data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
     // Create the reaction
@@ -201,6 +203,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
     double cutoff_angle_cosine = 0.9;
     double evaluation_tol = 1e-7;
+    bool correlated_sampling_mode_on = true;
 
     // Create the distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
@@ -210,6 +213,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         elastic_scattering_distribution,
         *data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
     // Create the reaction

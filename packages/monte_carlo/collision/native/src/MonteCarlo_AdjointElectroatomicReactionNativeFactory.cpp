@@ -525,44 +525,44 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 //                          bremsstrahlung_distribution ) );
 //}
 
-// Create the forward total reaction (only used to get the cross section)
-void AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
-      const Data::AdjointElectronPhotonRelaxationDataContainer&
-        raw_adjoint_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
-      std::shared_ptr<ElectroatomicReaction>& total_forward_reaction )
-{
-  // Make sure the elastic reaction is valid
-  testPrecondition( elastic_reaction.use_count() > 0 );
+//// Create the forward total reaction (only used to get the cross section)
+//void AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
+//      const Data::AdjointElectronPhotonRelaxationDataContainer&
+//        raw_adjoint_electroatom_data,
+//      const Teuchos::ArrayRCP<const double>& energy_grid,
+//      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+//      const std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+//      std::shared_ptr<ElectroatomicReaction>& total_forward_reaction )
+//{
+//  // Make sure the elastic reaction is valid
+//  testPrecondition( elastic_reaction.use_count() > 0 );
 
-  // Get the inelastic cross sections
-  std::vector<double> inelastic_cross_section =
-    raw_adjoint_electroatom_data.getForwardInelasticElectronCrossSection();
+//  // Get the inelastic cross sections
+//  std::vector<double> inelastic_cross_section =
+//    raw_adjoint_electroatom_data.getForwardInelasticElectronCrossSection();
 
-  // Add the inelastic and elastic cross section together
-  std::vector<double> total_forward_cross_section( energy_grid.size() );
-  for( size_t i = 0; i < energy_grid.size(); ++i )
-  {
-    total_forward_cross_section[i] = inelastic_cross_section[i] +
-        elastic_reaction->getCrossSection( energy_grid[i] );
-  }
+//  // Add the inelastic and elastic cross section together
+//  std::vector<double> total_forward_cross_section( energy_grid.size() );
+//  for( size_t i = 0; i < energy_grid.size(); ++i )
+//  {
+//    total_forward_cross_section[i] = inelastic_cross_section[i] +
+//        elastic_reaction->getCrossSection( energy_grid[i] );
+//  }
 
-  // Assign the total forward cross section
-  Teuchos::ArrayRCP<double> cross_section;
-  cross_section.assign( total_forward_cross_section.begin(),
-                        total_forward_cross_section.end() );
+//  // Assign the total forward cross section
+//  Teuchos::ArrayRCP<double> cross_section;
+//  cross_section.assign( total_forward_cross_section.begin(),
+//                        total_forward_cross_section.end() );
 
-  // Create the total forward reaction
-  total_forward_reaction.reset(
-     new AbsorptionElectroatomicReaction<Utility::LinLin,false>(
-                                               energy_grid,
-                                               cross_section,
-                                               0u,
-                                               grid_searcher,
-                                               TOTAL_ELECTROATOMIC_REACTION ) );
-}
+//  // Create the total forward reaction
+//  total_forward_reaction.reset(
+//     new AbsorptionElectroatomicReaction<Utility::LinLin,false>(
+//                                               energy_grid,
+//                                               cross_section,
+//                                               0u,
+//                                               grid_searcher,
+//                                               TOTAL_ELECTROATOMIC_REACTION ) );
+//}
 
 } // end MonteCarlo namespace
 

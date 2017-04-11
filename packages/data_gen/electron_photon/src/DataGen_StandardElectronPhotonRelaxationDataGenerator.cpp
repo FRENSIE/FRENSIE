@@ -1909,6 +1909,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution;
 
+  bool correlated_sampling_mode_on = true;
+
   if ( linlinlog_interpolation_mode_on )
   {
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
@@ -1917,6 +1919,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
+        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
   else
@@ -1927,6 +1930,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
+        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
 
