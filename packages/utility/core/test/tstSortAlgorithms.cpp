@@ -18,7 +18,6 @@
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -112,8 +111,7 @@ template<Utility::TupleMember member,
 	 template<typename> class Array>
 void fillSortedArray( Array<T> &array )
 {
-  typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
-    tupleMemberType;
+  typedef typename Utility::TupleElement<member,T>::type tupleMemberType;
 
   typename Array<T>::size_type size = Utility::getArraySize( array );
 
@@ -158,9 +156,6 @@ UNIT_TEST_INSTANTIATION_ARRAY( Sort,
 UNIT_TEST_INSTANTIATION_ARRAY( Sort,
 			       isSortedAscending,
 			       ArrayRCP );
-UNIT_TEST_INSTANTIATION_ARRAY( Sort,
-			       isSortedAscending,
-			       ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that a sorted array can be checked
@@ -193,9 +188,6 @@ UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Sort,
 UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Sort,
 				     isSortedAscending_tuple,
 				     ArrayRCP );
-UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Sort,
-				     isSortedAscending_tuple,
-				     ArrayView );
 
 //---------------------------------------------------------------------------//
 // end tstSortAlgorithms.cpp

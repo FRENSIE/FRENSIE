@@ -16,7 +16,6 @@
 
 // FRENSIE Includes
 #include "Utility_DataProcessor.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -373,8 +372,7 @@ const double ProcessingPolicyTestingTraits<Utility::SqrSqrDataProcessing>::refer
 template<Utility::TupleMember member, typename T, template<typename> class Array>
 void fillArrayOneTupleMemberData( Array<T> &array )
 {
-  typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
-    tupleMemberType;
+  typedef typename Utility::TupleElement<member,T>::type tupleMemberType;
 
   typename Array<T>::size_type size = Utility::getArraySize( array );
 
@@ -393,8 +391,8 @@ template<Utility::TupleMember indepMember,
 	 template<typename> class Array>
 void fillArrayTwoTupleMemberData( Array<T> &array )
 {
-  typedef typename Utility::TupleMemberTraits<T,indepMember>::tupleMemberType indepTupleMemberType;
-  typedef typename Utility::TupleMemberTraits<T,depMember>::tupleMemberType depTupleMemberType;
+  typedef typename Utility::TupleElement<indepMember,T>::type indepTupleMemberType;
+  typedef typename Utility::TupleElement<depMember,T>::type depTupleMemberType;
 
   typename Array<T>::size_type size = Utility::getArraySize( array );
 
@@ -444,13 +442,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( DataProcessor,
 
   // Load the array to be processed
   Tuple data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
+  Utility::get<0>( data_point ) = INDEP_VAR;
+  Utility::get<1>( data_point ) = DEP_VAR;
   Teuchos::Array<Tuple> processed_data( 10, data_point );
 
   // Load the reference array
-  data_point.first = ProcessingPolicyTestingTraits<Policy>::referenceIndepValue;
-  data_point.second = ProcessingPolicyTestingTraits<Policy>::referenceDepValue;
+  Utility::get<0>( data_point ) = ProcessingPolicyTestingTraits<Policy>::referenceIndepValue;
+  Utility::get<1>( data_point ) = ProcessingPolicyTestingTraits<Policy>::referenceDepValue;
   Teuchos::Array<Tuple> ref_data( 10, data_point );
 
   // Process the Array
@@ -581,13 +579,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
 
   // Load the array to be processed
   Tuple data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
+  Utility::get<0>( data_point ) = INDEP_VAR;
+  Utility::get<1>( data_point ) = DEP_VAR;
   Teuchos::Array<Tuple> coarsened_data( 10, data_point );
 
   // Load the reference array
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
+  Utility::get<0>( data_point ) = INDEP_VAR;
+  Utility::get<1>( data_point ) = DEP_VAR;
   Teuchos::Array<Tuple> reference_data( 2, data_point );
 
   // Coarsen the array
@@ -624,8 +622,8 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   {
     if( i != ref_data.size() - 1 )
     {
-      slope = (ref_data[i+1].second - ref_data[i].second)/
-	(ref_data[i+1].first - ref_data[i].first);
+      slope = (Utility::get<1>(ref_data[i+1]) - Utility::get<1>(ref_data[i]))/
+	(Utility::get<0>(ref_data[i+1]) - Utility::get<0>(ref_data[i]) );
       Utility::set<member>( ref_data[i], slope );
     }
     else
@@ -641,7 +639,6 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
 }
 
 UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateSlopes, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateSlopes, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can calculate a continuous cdf from an array
@@ -669,8 +666,8 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   {
     if( i != 0 )
     {
-      cdf_value += 0.5*(ref_data[i].first - ref_data[i-1].first)*
-	(ref_data[i].second + ref_data[i-1].second);
+      cdf_value += 0.5*(Utility::get<0>(ref_data[i]) - Utility::get<0>(ref_data[i-1]))*
+	(Utility::get<1>(ref_data[i]) + Utility::get<1>(ref_data[i-1]));
     }
     else
       cdf_value = 0.0;
@@ -681,9 +678,9 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   double norm_value = Utility::get<member>( ref_data.back() );
   for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
-    ref_data[i].second /= norm_value;
+    Utility::get<1>(ref_data[i]) /= norm_value;
     Utility::set<member>( ref_data[i],
-			 Utility::get<member>( ref_data[i] )/norm_value );
+                          Utility::get<member>( ref_data[i] )/norm_value );
   }
 
   // Processes the array
@@ -695,7 +692,6 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
 }
 
 UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousCDF, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousCDF, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can calculate a continuous pdf from an array
@@ -723,13 +719,13 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   {
     if( i != 0 )
     {
-      pdf_value = (ref_data[i].second - ref_data[i-1].second)/
-	(ref_data[i].first - ref_data[i-1].first);
+      pdf_value = (Utility::get<1>(ref_data[i]) - Utility::get<1>(ref_data[i-1]))/
+	(Utility::get<0>(ref_data[i]) - Utility::get<0>(ref_data[i-1]));
     }
     else
     {
-      pdf_value = (ref_data[i+1].second - ref_data[i].second)/
-	(ref_data[i+1].first - ref_data[i].second);
+      pdf_value = (Utility::get<1>(ref_data[i+1]) - Utility::get<1>(ref_data[i]))/
+	(Utility::get<0>(ref_data[i+1]) - Utility::get<0>(ref_data[i]));
     }
 
     Utility::set<member>( ref_data[i], pdf_value );
@@ -744,7 +740,6 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
 }
 
 UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousPDF, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousPDF, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can calculate a discrete cdf from an array
@@ -820,7 +815,6 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_DECL( DataProcessor,
 }
 
 UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( DataProcessor, copyTupleMemberData, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( DataProcessor, copyTupleMemberData, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can swap data in one member with data in
@@ -851,7 +845,6 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
 }
 
 UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_1_ARRAY( DataProcessor, swapTupleMemberData, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_1_ARRAY( DataProcessor, swapTupleMemberData, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can convert an unsigned int to a string

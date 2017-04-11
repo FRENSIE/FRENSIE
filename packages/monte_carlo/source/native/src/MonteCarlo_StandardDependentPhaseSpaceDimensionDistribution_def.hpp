@@ -11,9 +11,115 @@
 
 // FRENSIE Includes
 #include "Utility_FullyTabularTwoDDistribution.hpp"
+#include "Utility_PartiallyTabularTwoDDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+namespace Details{
+
+/*! The generic TwoDDistribution traits class
+ * \ingroup traits
+ */
+template<typename T>
+struct TwoDDistributionTraits
+{
+  //! Generate a sample from the TwoDDistribution object
+  static inline double sample( const T& distribution,
+                               const double indep_dimension_value )
+  {
+    return distribution.sampleSecondaryConditional( indep_dimension_value );
+  }
+
+  //! Generate a sample from the TwoDDistribution object
+  static inline double sampleAndRecordTrials(
+                                  const T& distribution,
+                                  const double indep_dimension_value,
+                                  ModuleTraits::InternalCounter& trials )
+  {
+    return distribution.sampleSecondaryConditionAndRecordTrials(
+                                               indep_dimension_value, trials );
+  }
+
+  //! Get the distribution type name
+  static inline std::string name()
+  {
+    return "TwoDDistribution";
+  }
+};
+
+/*! \brief The TwoDDistribution traits specialization for 
+ * the Utility::PartiallyTabularTwoDDistribution class
+ * \ingroup traits
+ */
+template<>
+struct TwoDDistributionTraits<Utility::PartiallyTabularTwoDDistribution>
+{
+  //! Generate a sample from the TwoDDistribution object
+  static inline double sample(
+                 const Utility::PartiallyTabularTwoDDistribution& distribution,
+                 const double indep_dimension_value )
+  {
+    return distribution.sampleSecondaryConditional( indep_dimension_value );
+  }
+
+  //! Generate a sample from the TwoDDistribution object
+  static inline double sampleAndRecordTrials(
+                 const Utility::PartiallyTabularTwoDDistribution& distribution,
+                 const double indep_dimension_value,
+                 ModuleTraits::InternalCounter& trials )
+  {
+    return distribution.sampleSecondaryConditionalAndRecordTrials(
+                                               indep_dimension_value, trials );
+  }
+
+  //! Get the distribution type name
+  static inline std::string name()
+  {
+    return "PartiallyTwoDDistribution";
+  }
+};
+
+/*! \brief The TwoDDistribution traits specialization for 
+ * the Utility::FullyTabularTwoDDistribution class
+ * \ingroup traits
+ */
+template<>
+struct TwoDDistributionTraits<Utility::FullyTabularTwoDDistribution>
+{
+  //! Generate a sample from the Utility::FullyTabularTwoDDistribution object
+  static inline double sample(
+                     const Utility::FullyTabularTwoDDistribution& distribution,
+                     const double indep_dimension_value )
+  {
+    return distribution.sampleSecondaryConditionalExact(
+                                                       indep_dimension_value );
+  }
+
+  //! Generate a sample from the Utility::FullyTabularTwoDDistribution object
+  static inline double sampleAndRecordTrials(
+                     const Utility::FullyTabularTwoDDistribution& distribution,
+                     const double indep_dimension_value,
+                     ModuleTraits::InternalCounter& trials )
+  {
+    // The number of trials can be tracked when we use exact sampling. We
+    // will simply increment the trials counter. Since the underlying
+    // conditional distributions are tabular the sampling efficiency should
+    // always be one anyway.
+    ++trials;
+    
+    return distribution.sampleSecondaryConditionalExact(
+                                                       indep_dimension_value );
+  }
+
+  //! Get the distribution type name
+  static inline std::string name()
+  {
+    return "FullyTabularTwoDDistribution";
+  }
+};
+  
+} // end Details namespace
 
 // Constructor
 template<PhaseSpaceDimension indep_dimension,
@@ -75,9 +181,18 @@ template<PhaseSpaceDimension indep_dimension,
          PhaseSpaceDimension dep_dimension,
          typename TwoDDistributionBaseType>
 bool StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::hasForm(
-                           const OneDDistributionType distribution_type ) const
+                  const Utility::OneDDistributionType distribution_type ) const
 {
   return false;
+}
+
+// Get the distribution type name
+template<PhaseSpaceDimension indep_dimension,
+         PhaseSpaceDimension dep_dimension,
+         typename TwoDDistributionBaseType>
+std::string StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::getDistributionTypeName() const
+{
+  return Details::TwoDDistributionTraits<TwoDDistributionBaseType>::name();
 }
 
 // Evaluate the dimension distribution without cascade to dependent dists.
@@ -100,7 +215,7 @@ void StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimens
                                     PhaseSpacePoint& phase_space_sample ) const
 {
   const double sample =
-    TwoDDistributionSamplingPolicy<TwoDDistributionBaseType>::sample(
+    Details::TwoDDistributionTraits<TwoDDistributionBaseType>::sample(
                         *d_dimension_distribution,
                         getCoordinate<indep_dimension>( phase_space_sample ) );
 
@@ -117,7 +232,7 @@ void StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimens
                                   ModuleTraits::InternalCounter& trials ) const
 {
   const double sample =
-    TwoDDistributionSamplingPolicy<TwoDDistributionBaseType>::sampleAndRecordTrials(
+    Details::TwoDDistributionTraits<TwoDDistributionBaseType>::sampleAndRecordTrials(
                         *d_dimension_distribution,
                         getCoordinate<indep_dimension>( phase_space_sample ),
                         trials );
@@ -149,7 +264,7 @@ void StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimens
 template<PhaseSpaceDimension indep_dimension,
          PhaseSpaceDimension dep_dimension,
          typename TwoDDistributionBaseType>
-double StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension>::evaluatePDFWithoutCascade(
+double StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::evaluatePDFWithoutCascade(
                                           const double indep_dimension_value,
                                           const double dimension_value ) const
 {

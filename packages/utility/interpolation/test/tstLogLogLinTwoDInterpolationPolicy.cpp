@@ -17,7 +17,6 @@
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//

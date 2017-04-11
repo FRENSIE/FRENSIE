@@ -42,7 +42,11 @@ public:
   bool isUniform() const;
 
   //! Check if the underlying distribution has the form of interest
-  bool hasForm( const OneDDistributionType distribution_type ) const override;
+  bool hasForm(
+        const Utility::OneDDistributionType distribution_type ) const override;
+
+  //! Get the distribution type name
+  std::string getDistributionTypeName() const override;
 
   //! Evaluate the dimension distribution without cascade to dependent dists.
   double evaluateWithoutCascade(
@@ -72,63 +76,6 @@ private:
 
   // The dimension distribution
   std::shared_ptr<const TwoDDistributionBaseType> d_dimension_distribution;
-};
-
-/*! The generic TwoDDistribution sampling policy class
- * \ingroup policy
- */
-template<typename T>
-struct TwoDDistributionSamplingPolicy
-{
-  //! Generate a sample from the TwoDDistribution object
-  static inline double sample( const T& distribution,
-                               const double indep_dimension_value )
-  {
-    return distribution->sampleSecondaryConditional( indep_dimension_value );
-  }
-
-  //! Generate a sample from the TwoDDistribution object
-  static inline double sampleAndRecordTrials(
-                                  const T& distribution,
-                                  const double indep_dimension_value,
-                                  ModuleTraits::InternalCounter& trials )
-  {
-    return distribution->sampleSecondaryConditionAndRecordTrials(
-                                               indep_dimension_value, trials );
-  }
-};
-
-/*! \brief The TwoDDistribution sampling policy specialization for 
- * the Utility::FullyTabularTwoDDistribution class
- * \ingroup policy
- */
-template<>
-struct TwoDDistributionSamplingPolicy<Utility::FullyTabularTwoDDistribution>
-{
-  //! Generate a sample from the Utility::FullyTabularTwoDDistribution object
-  static inline double sample(
-                     const Utility::FullyTabularTwoDDistribution& distribution,
-                     const double indep_dimension_value )
-  {
-    return distribution->sampleSecondaryConditionalExact(
-                                                       indep_dimension_value );
-  }
-
-  //! Generate a sample from the Utility::FullyTabularTwoDDistribution object
-  static inline double sampleAndRecordTrials(
-                     const Utility::FullyTabularTwoDDistribution& distribution,
-                     const double indep_dimension_value,
-                     ModuleTraits::InternalCounter& trials )
-  {
-    // The number of trials can be tracked when we use exact sampling. We
-    // will simply increment the trials counter. Since the underlying
-    // conditional distributions are tabular the sampling efficiency should
-    // always be one anyway.
-    ++trials;
-    
-    return distribution->sampleSecondaryConditionalExact(
-                                                       indep_dimension_value );
-  }
 };
   
 } // end MonteCarlo namespace

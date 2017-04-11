@@ -36,14 +36,14 @@ bool isSortedAscending( Iterator start, Iterator end, const bool verbose )
 
   while( element_b != end )
   {
-    if( get<member>( *element_a ) > get<member>( *element_b ) )
+    if( Utility::get<member>( *element_a ) > Utility::get<member>( *element_b ) )
     {
       is_sorted = false;
 
       if( verbose )
       {
-	std::cout << get<member>( *element_a ) << " "
-		  << get<member>( *element_b ) << std::endl;
+	std::cout << Utility::get<member>( *element_a ) << " "
+		  << Utility::get<member>( *element_b ) << std::endl;
       }
 
       break;
@@ -86,14 +86,14 @@ bool isSortedDescending( Iterator start, Iterator end, const bool verbose )
 
   while( element_b != end )
   {
-    if( get<member>( *element_a ) < get<member>( *element_b ) )
+    if( Utility::get<member>( *element_a ) < Utility::get<member>( *element_b ) )
     {
       is_sorted = false;
 
       if( verbose )
       {
-	std::cout << get<member>( *element_a ) << " "
-		  << get<member>( *element_b ) << std::endl;
+	std::cout << Utility::get<member>( *element_a ) << " "
+		  << Utility::get<member>( *element_b ) << std::endl;
       }
 
       break;

@@ -492,27 +492,6 @@ TARGET_LINK_LIBRARIES(tstMeasurement utility_core)
 ADD_TEST(Measurement_test tstMeasurement)
 SET_PROPERTY(TEST Measurement_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstActiveCounter
-  tstActiveCounter.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstActiveCounter utility_core)
-ADD_TEST(ActiveCounter_test tstActiveCounter)
-SET_PROPERTY(TEST ActiveCounter_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstInactiveCounter
-  tstInactiveCounter.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInactiveCounter utility_core)
-ADD_TEST(InactiveCounter_test tstInactiveCounter)
-SET_PROPERTY(TEST InactiveCounter_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstIncrementPolicy
-  tstIncrementPolicy.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstIncrementPolicy utility_core)
-ADD_TEST(IncrementPolicy_test tstIncrementPolicy)
-SET_PROPERTY(TEST IncrementPolicy_test PROPERTY LABELS utility_core)
-
 ADD_EXECUTABLE(tstStructuredHexMesh
   tstStructuredHexMesh.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

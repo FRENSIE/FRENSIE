@@ -15,7 +15,6 @@
 // FRENSIE Includes
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace Utility{

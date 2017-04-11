@@ -13,7 +13,7 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
-#include "Utility_ComparePolicy.hpp"
+#include "Utility_ComparisonTraits.hpp"
 
 /*! \defgroup two_d_distributions Two-Dimensinal Distributions
  */
@@ -130,11 +130,11 @@ template<typename PrimaryIndependentUnit,
 inline bool UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSamePrimaryBounds( const UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const
 {
   return
-    Policy::relError(
+    Utility::relError(
               getRawQuantity( this->getUpperBoundOfPrimaryIndepVar() ),
               getRawQuantity( distribution.getUpperBoundOfPrimaryIndepVar() ) )
     < 1e-9 &&
-    Policy::relError(
+    Utility::relError(
               getRawQuantity( this->getLowerBoundOfPrimaryIndepVar() ),
               getRawQuantity( distribution.getLowerBoundOfPrimaryIndepVar() ) )
     < 1e-9;

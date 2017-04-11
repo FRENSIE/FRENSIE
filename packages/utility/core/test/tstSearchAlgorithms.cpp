@@ -19,7 +19,6 @@
 // FRENSIE Includes
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_TupleMemberTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -118,8 +117,7 @@ template<Utility::TupleMember member,
 	 template<typename> class Array>
 void fillArrayTupleMembersContinuousData( Array<T> &array )
 {
-  typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
-    tupleMemberType;
+  typedef typename Utility::TupleElement<member,T>::type tupleMemberType;
 
   typename Array<T>::size_type size = Utility::getArraySize( array );
 
@@ -137,8 +135,7 @@ template<Utility::TupleMember member,
 	 template<typename> class Array>
 void fillArrayTupleMembersDiscreteData( Array<T> &array )
 {
-  typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
-    tupleMemberType;
+  typedef typename Utility::TupleElement<member,T>::type tupleMemberType;
 
   typename Array<T>::size_type size = Utility::getArraySize( array );
 
@@ -328,7 +325,6 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( Search,
 
 UNIT_TEST_INSTANTIATION_ARRAY( Search, binaryLowerBound, Array );
 UNIT_TEST_INSTANTIATION_ARRAY( Search, binaryLowerBound, ArrayRCP );
-UNIT_TEST_INSTANTIATION_ARRAY( Search, binaryLowerBound, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the binaryLowerBound function can search tuple elements
@@ -511,9 +507,6 @@ UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
 UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
 				     binaryLowerBound_tuple,
 				     ArrayRCP );
-UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
-				     binaryLowerBound_tuple,
-				     ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the binaryLowerBoundIndex function can search tuple elements
@@ -672,7 +665,6 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( Search,
 
 UNIT_TEST_INSTANTIATION_ARRAY( Search, binaryLowerBoundIndex, Array );
 UNIT_TEST_INSTANTIATION_ARRAY( Search, binaryLowerBoundIndex, ArrayRCP );
-UNIT_TEST_INSTANTIATION_ARRAY( Search, binaryLowerBoundIndex, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the binaryUpperBound function can search an array of
@@ -960,9 +952,6 @@ UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
 UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
 				     binaryUpperBound_tuple,
 				     ArrayRCP );
-UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search,
-				     binaryUpperBound_tuple,
-				     ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the binaryUpperBoundIndex function can search an array of

@@ -312,11 +312,11 @@ struct ComparisonTraits<Tuple<Types...> >
 };
 
 /*! \brief The partial specialization of the Utility::ComparisonTraits for
- * const boost::units::quantity.
+ * boost::units::quantity.
  * \ingroup comparison_traits
  */
 template<typename Unit, typename T>
-struct ComparisonTraits<const boost::units::quantity<Unit,T> >
+struct ComparisonTraits<boost::units::quantity<Unit,T> >
 {
   typedef const T scalarType;
 
@@ -401,34 +401,6 @@ struct ComparisonTraits<const boost::units::quantity<Unit,T> >
     }
 
     return success;
-  }
-};
-
-/*! \brief The partial specialization of the Utility::ComparisonTraits for
- * boost::units::quantity.
- * \ingroup comparison_traits
- */
-template<typename Unit, typename T>
-struct ComparisonTraits<boost::units::quantity<Unit,T> >
-{
-  typedef T scalarType;
-
-  static inline bool compare(const boost::units::quantity<Unit,T>& first_value,
-			     const std::string& first_name,
-			     const boost::units::quantity<Unit,T>& second_value,
-			     const std::string& second_name,
-			     Teuchos::FancyOStream &out,
-			     const int index = -1,
-			     const scalarType tol = 0.0 )
-  {
-    return ComparisonTraits<const boost::units::quantity<Unit,T> >::compare(
-							    first_value,
-							    first_name,
-							    second_value,
-							    second_name,
-							    out,
-							    index,
-							    tol );
   }
 };
 
