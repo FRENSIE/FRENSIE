@@ -158,6 +158,11 @@ public:
             const SecondaryIndepQuantity min_secondary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
+  //! Correlated evaluate the distribution (unit based)
+  DepQuantity correlatedEvaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
   //! Evaluate the distribution
   DepQuantity evaluateExact(
             const PrimaryIndepQuantity primary_indep_var_value,
@@ -169,6 +174,11 @@ public:
             const SecondaryIndepQuantity secondary_indep_var_value,
             const SecondaryIndepQuantity min_secondary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Correlated evaluate the secondary conditional PDF (unit based)
+  InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
@@ -187,16 +197,25 @@ public:
             const SecondaryIndepQuantity min_secondary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
+  //! Correlated evaluate the secondary conditional CDF (unit based)
+  double correlatedEvaluateSecondaryConditionalCDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDFExact(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-//  //! Return a random correlated sample from the secondary conditional PDF
-//  SecondaryIndepQuantity correlatedSampleSecondaryConditional(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const SecondaryIndepQuantity min_secondary_indep_var_value,
-//                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+  //! Return a random correlated sample from the secondary conditional PDF
+  SecondaryIndepQuantity correlatedSampleSecondaryConditional(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var_value,
+                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random correlated sample from the secondary conditional PDF
+  SecondaryIndepQuantity correlatedSampleSecondaryConditional(
+                const PrimaryIndepQuantity primary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditionalExact(
@@ -210,8 +229,13 @@ public:
   //! Return a random correlated sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumber(
                 const PrimaryIndepQuantity primary_indep_var_value,
+                const double random_number,
                 const SecondaryIndepQuantity min_secondary_indep_var_value,
-                const SecondaryIndepQuantity max_secondary_indep_var_value,
+                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random correlated sample from the secondary conditional PDF at the CDF val
+  SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumber(
+                const PrimaryIndepQuantity primary_indep_var_value,
                 const double random_number ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
@@ -224,11 +248,16 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
-//  //! Return a random correlated sample from the secondary conditional PDF in the subrange
-//  SecondaryIndepQuantity correlatedSampleSecondaryConditionalInSubrange(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const SecondaryIndepQuantity min_secondary_indep_var_value,
-//                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+  //! Return a random correlated sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity correlatedSampleSecondaryConditionalInSubrange(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity min_secondary_indep_var_value,
+                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random correlated sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity correlatedSampleSecondaryConditionalInSubrange(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalExactInSubrange(
@@ -246,6 +275,12 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
             const SecondaryIndepQuantity min_secondary_indep_var_value,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random correlated sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
@@ -312,6 +347,15 @@ private:
   SecondaryIndepQuantity sampleExactImpl(
                     const PrimaryIndepQuantity primary_indep_var_value,
                     SampleFunctor sample_functor ) const;
+
+  // Return the correlated sampling functor for the desired bin boundary
+  template<typename SampleFunctor>
+  void getCorrelatedSampleInSubrangeFunctor(
+                    typename DistributionType::const_iterator bin_boundary,
+                    const SecondaryIndepQuantity max_secondary_indep_var_value,
+                    const double random_number,
+                    SampleFunctor& sample_functor,
+                    SecondaryIndepQuantity& bin_boundary_max_value ) const;
 
   // The relative error tolerance for the evaluate impl schemes
   double d_relative_error_tol;

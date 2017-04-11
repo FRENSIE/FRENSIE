@@ -165,6 +165,7 @@ double AdjointElectroatom::getSurvivalProbability( const double energy ) const
   double survival_prob;
   double total_cross_section = this->getTotalCrossSection( energy );
 
+  // Find the energy bin index
   if( total_cross_section > 0.0 )
   {
     survival_prob = 1.0 -
@@ -243,10 +244,10 @@ void AdjointElectroatom::collideAnalogue( AdjointElectronState& adjoint_electron
   else
   {
     this->sampleScatteringReaction(
-            scaled_random_number - absorption_cross_section,
-            energy_grid_bin,
-            adjoint_electron,
-            bank );
+                                scaled_random_number - absorption_cross_section,
+                                energy_grid_bin,
+                                adjoint_electron,
+                                bank );
   }
 }
 

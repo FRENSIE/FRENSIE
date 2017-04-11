@@ -131,6 +131,10 @@ public:
         const SecondaryIndepQuantity min_secondary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
+  //! Return a random correlated sample from the secondary conditional PDF
+  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditional(
+        const PrimaryIndepQuantity primary_indep_var_value ) const;
+
   //! Return a random sample from the secondary conditional PDF
   virtual SecondaryIndepQuantity sampleSecondaryConditionalExact(
         const PrimaryIndepQuantity primary_indep_var_value ) const;
@@ -143,8 +147,13 @@ public:
   //! Return a random correlated sample from the secondary conditional PDF at the CDF val
   virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumber(
                     const PrimaryIndepQuantity primary_indep_var_value,
+                    const double random_number,
                     const SecondaryIndepQuantity min_secondary_indep_var_value,
-                    const SecondaryIndepQuantity max_secondary_indep_var_value,
+                    const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random correlated sample from the secondary conditional PDF at the CDF val
+  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumber(
+                    const PrimaryIndepQuantity primary_indep_var_value,
                     const double random_number ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
@@ -163,6 +172,11 @@ public:
         const SecondaryIndepQuantity min_secondary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
+  //! Return a random correlated sample from the secondary conditional PDF in the subrange
+  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalInSubrange(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
   //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalExactInSubrange(
         const PrimaryIndepQuantity primary_indep_var_value,
@@ -179,6 +193,12 @@ public:
         const PrimaryIndepQuantity primary_indep_var_value,
         const double random_number,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
+        const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random correlated sample from the secondary conditional PDF in the subrange
+  virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInSubrange(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const double random_number,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
@@ -209,8 +229,8 @@ protected:
 
 // Return a random correlated sample from the secondary conditional PDF
 /*! \details There are often multiple ways to sample from two-dimensional
- * distributions (e.g. stochastic and correlated sampling). A correlated unit
- * based sampling is performed.
+ * distributions (e.g. stochastic and correlated sampling). Ideally the
+ * "non-exact" method will be faster and stochastically correct.
  */
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
@@ -221,13 +241,22 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  return this->sampleSecondaryConditional( primary_indep_var_value );
+}
 
-  return this->correlatedSampleSecondaryConditionalWithRandomNumber(
-                                                primary_indep_var_value,
-                                                min_secondary_indep_var_value,
-                                                max_secondary_indep_var_value,
-                                                random_number );
+// Return a random correlated sample from the secondary conditional PDF
+/*! \details There are often multiple ways to sample from two-dimensional
+ * distributions (e.g. stochastic and correlated sampling). Ideally the
+ * "non-exact" method will be faster and stochastically correct.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditional(
+        const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  return this->correlatedSampleSecondaryConditional( primary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF
@@ -255,8 +284,25 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit>
 inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumber(
         const PrimaryIndepQuantity primary_indep_var_value,
+        const double random_number,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
-        const SecondaryIndepQuantity max_secondary_indep_var_value,
+        const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  return this->sampleSecondaryConditionalWithRandomNumber(
+                                      primary_indep_var_value, random_number );
+}
+
+// Return a random sample from the secondary conditional PDF at the CDF val
+/*! \details There are often multiple ways to sample from two-dimensional
+ * distributions (e.g. stochastic and correlated sampling). Ideally the
+ * "non-exact" method will be faster and stochastically correct.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumber(
+        const PrimaryIndepQuantity primary_indep_var_value,
         const double random_number ) const
   -> SecondaryIndepQuantity
 {
@@ -283,8 +329,8 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 
 // Return a random correlated sample from the secondary conditional PDF in the subrange
 /*! \details There are often multiple ways to sample from two-dimensional
- * distributions (e.g. stochastic and correlated sampling). A correlated unit
- * based sampling is performed in a subrange.
+ * distributions (e.g. stochastic and correlated sampling). Ideally the
+ * "non-exact" method will be faster and stochastically correct.
  */
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
@@ -295,13 +341,25 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  return this->sampleSecondaryConditionalInSubrange(
+                    primary_indep_var_value, max_secondary_indep_var_value );
+}
 
-  return this->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange(
-                                                primary_indep_var_value,
-                                                random_number,
-                                                min_secondary_indep_var_value,
-                                                max_secondary_indep_var_value );
+// Return a random correlated sample from the secondary conditional PDF in the subrange
+/*! \details There are often multiple ways to sample from two-dimensional
+ * distributions (e.g. stochastic and correlated sampling). Ideally the
+ * "non-exact" method will be faster and stochastically correct.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalInSubrange(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  return this->sampleSecondaryConditionalInSubrange(
+                    primary_indep_var_value, max_secondary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
@@ -318,8 +376,7 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
   -> SecondaryIndepQuantity
 {
   return this->sampleSecondaryConditionalInSubrange(
-                                               primary_indep_var_value,
-                                               max_secondary_indep_var_value );
+                    primary_indep_var_value, max_secondary_indep_var_value );
 }
 
 // Return a correlated random sample from the secondary conditional PDF in the subrange
@@ -334,6 +391,26 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
         const PrimaryIndepQuantity primary_indep_var_value,
         const double random_number,
         const SecondaryIndepQuantity min_secondary_indep_var_value,
+        const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  return this->sampleSecondaryConditionalWithRandomNumberInSubrange(
+                                               primary_indep_var_value,
+                                               random_number,
+                                               max_secondary_indep_var_value );
+}
+
+// Return a correlated random sample from the secondary conditional PDF in the subrange
+/*! \details There are often multiple ways to sample from two-dimensional
+ * distributions (e.g. stochastic and correlated sampling). Ideally the
+ * "non-exact" method will be faster and stochastically correct.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInSubrange(
+        const PrimaryIndepQuantity primary_indep_var_value,
+        const double random_number,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {

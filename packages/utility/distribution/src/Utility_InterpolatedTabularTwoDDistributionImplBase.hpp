@@ -94,39 +94,9 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-//  //! Evaluate the distribution
-//  DepQuantity evaluateExact(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-//  //! Evaluate the secondary conditional PDF
-//  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-//  //! Evaluate the distribution using normalized interpolation
-//  DepQuantity evaluateNormalized(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const double normalized_secondary_indep_var_value ) const;
-
-//  //! Evaluate the secondary conditional PDF using normalized interpolation
-//  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFNormalized(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const double normalized_secondary_indep_var_value ) const;
-
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
-
-//  //! Return a random sample from the secondary conditional PDF
-//  SecondaryIndepQuantity sampleSecondaryConditionalExact(
-//                    const PrimaryIndepQuantity primary_indep_var_value ) const;
-
-//  //! Return a random sample from the secondary conditional PDF using a normalized interpolation
-//  SecondaryIndepQuantity sampleSecondaryConditionalNormalized(
-//                const PrimaryIndepQuantity primary_indep_var_value,
-//                const SecondaryIndepQuantity min_secondary_indep_var_value,
-//                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
@@ -140,14 +110,6 @@ public:
   //! Return the lower bound of the conditional distribution
   SecondaryIndepQuantity getLowerBoundOfConditionalIndepVar(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
-
-//  //! Estimate the secondary conditional CDF
-//  void evaluateSecondaryConditionalCDFExactImpl(
-//        const PrimaryIndepQuantity primary_indep_var_value,
-//        const SecondaryIndepQuantity secondary_indep_var_value,
-//        const typename DistributionType::const_iterator lower_bin_boundary,
-//        const typename DistributionType::const_iterator upper_bin_boundary,
-//        double& evaluated_cdf ) const;
 
   //! Test if the distribution is continuous in the primary dimension
   bool isPrimaryDimensionContinuous() const;
@@ -171,34 +133,6 @@ protected:
                         const ReturnType above_upper_bound_return =
                         QuantityTraits<ReturnType>::zero() ) const;
 
-//  //! Evaluate the distribution using the desired evaluation method
-//  template<typename LocalTwoDInterpPolicy,
-//           typename ReturnType,
-//           typename EvaluationMethod>
-//  ReturnType evaluateExactImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        const SecondaryIndepQuantity secondary_indep_var_value,
-//                        EvaluationMethod evaluate,
-//                        const ReturnType below_lower_bound_return =
-//                        QuantityTraits<ReturnType>::zero(),
-//                        const ReturnType above_upper_bound_return =
-//                        QuantityTraits<ReturnType>::zero() ) const;
-
-//  //! Evaluate the distribution using the desired evaluation method
-//  template<typename LocalTwoDInterpPolicy,
-//           typename ReturnType,
-//           typename EvaluationMethod>
-//  ReturnType correlatedEvaluateImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        const SecondaryIndepQuantity secondary_indep_var_value,
-//                        const SecondaryIndepQuantity min_secondary_indep_var_value,
-//                        const SecondaryIndepQuantity max_secondary_indep_var_value,
-//                        EvaluationMethod evaluate,
-//                        const ReturnType below_lower_bound_return =
-//                        QuantityTraits<ReturnType>::zero(),
-//                        const ReturnType above_upper_bound_return =
-//                        QuantityTraits<ReturnType>::zero() ) const;
-
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
   SecondaryIndepQuantity sampleDetailedImpl(
@@ -207,33 +141,11 @@ protected:
                         SecondaryIndepQuantity& raw_sample,
                         unsigned& primary_bin_index ) const;
 
-//  //! Sample from the distribution using the desired sampling functor
-//  template<typename SampleFunctor>
-//  SecondaryIndepQuantity sampleExactDetailedImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        SampleFunctor sample_functor,
-//                        SecondaryIndepQuantity& raw_sample,
-//                        unsigned& primary_bin_index ) const;
-
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
   SecondaryIndepQuantity sampleImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         SampleFunctor sample_functor ) const;
-
-//  //! Correlated sample from the distribution using the desired sampling functor
-//  template<typename SampleFunctor>
-//  SecondaryIndepQuantity correlatedSampleImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        const SecondaryIndepQuantity min_secondary_indep_var_value,
-//                        const SecondaryIndepQuantity max_secondary_indep_var_value,
-//                        SampleFunctor sample_functor ) const;
-
-//  //! Sample from the distribution using the desired sampling functor
-//  template<typename SampleFunctor>
-//  SecondaryIndepQuantity sampleExactImpl(
-//                        const PrimaryIndepQuantity primary_indep_var_value,
-//                        SampleFunctor sample_functor ) const;
 
   //! Sample the bin boundary that will be used for stochastic sampling
   typename DistributionType::const_iterator
