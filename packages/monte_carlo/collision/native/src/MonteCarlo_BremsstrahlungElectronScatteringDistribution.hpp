@@ -9,15 +9,9 @@
 #ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_ElectronState.hpp"
-#include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{

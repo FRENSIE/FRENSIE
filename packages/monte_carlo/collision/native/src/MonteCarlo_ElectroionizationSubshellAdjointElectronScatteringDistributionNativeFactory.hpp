@@ -23,7 +23,7 @@ public:
 
   //! Create a electroionization subshell distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
-  static void createAdjointElectroionizationSubshellDistribution(
+  static void createElectroionizationSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,

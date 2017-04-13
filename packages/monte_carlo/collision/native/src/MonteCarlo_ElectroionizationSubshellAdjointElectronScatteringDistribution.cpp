@@ -139,9 +139,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluate(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the distribution
-  return d_ionization_subshell_dist->evaluateExact(
-            incoming_energy,
-            outgoing_energy );
+  return d_evaluate_func( incoming_energy, outgoing_energy );
 }
 
 // Evaluate the PDF value for a given incoming and outgoing energy
@@ -154,9 +152,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluateP
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the distribution
-  return d_ionization_subshell_dist->evaluateSecondaryConditionalPDFExact(
-            incoming_energy,
-            outgoing_energy );
+  return d_evaluate_pdf_func( incoming_energy, outgoing_energy );
 }
 
 // Evaluate the CDF value for a given incoming and outgoing energy
@@ -169,37 +165,33 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluateC
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the distribution
-  return d_ionization_subshell_dist->evaluateSecondaryConditionalCDFExact(
-            incoming_energy,
-            outgoing_energy );
+  return d_evaluate_cdf_func( incoming_energy, outgoing_energy );
 }
 
 
 // Sample an knock on energy and direction from the distribution
 void ElectroionizationSubshellAdjointElectronScatteringDistribution::sample(
                const double incoming_energy,
-               double& knock_on_energy,
-               double& knock_on_angle_cosine ) const
+               double& outgoing_energy,
+               double& outgoing_angle_cosine ) const
 {
   // Sample knock-on electron energy
-  knock_on_energy = d_ionization_subshell_dist->sampleSecondaryConditionalExact(
-      incoming_energy );
+  outgoing_energy = d_sample_func( incoming_energy );
 
   // Calculate the outgoing angle cosine for the knock on electron
-  knock_on_angle_cosine = outgoingAngle( incoming_energy,
-                                         knock_on_energy );
+  outgoing_angle_cosine = outgoingAngle( incoming_energy, outgoing_energy );
 }
 
 // Sample an knock on energy and direction and record the number of trials
 void ElectroionizationSubshellAdjointElectronScatteringDistribution::sampleAndRecordTrials(
                               const double incoming_energy,
-                              double& knock_on_energy,
-                              double& knock_on_angle_cosine,
+                              double& outgoing_energy,
+                              double& outgoing_angle_cosine,
                               unsigned& trials ) const
 {
   trials++;
 
-  sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
+  this->sample( incoming_energy, outgoing_energy, outgoing_angle_cosine );
 }
 
 // Randomly scatter the electron
@@ -212,7 +204,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::scatterAdjo
   double outgoing_energy, scattering_angle_cosine;
 
   // Sample the distribution
-  sample( electron.getEnergy(), outgoing_energy, scattering_angle_cosine );
+  this->sample( electron.getEnergy(), outgoing_energy, scattering_angle_cosine );
 
   // Set the outgoing electron energy
   electron.setEnergy( outgoing_energy );

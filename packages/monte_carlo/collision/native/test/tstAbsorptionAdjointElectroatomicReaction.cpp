@@ -127,7 +127,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getAdjointElectronEnergyGrid().begin(),
         data_container.getAdjointElectronEnergyGrid().end() );
 
-    // Get the cross section
+    // Get the cross section (use the brem cross sections as a filler)
     Teuchos::ArrayRCP<double> cross_section;
     cross_section.assign(
         data_container.getAdjointBremsstrahlungElectronCrossSection().begin(),

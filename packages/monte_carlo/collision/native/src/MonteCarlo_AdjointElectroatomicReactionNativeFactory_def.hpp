@@ -221,7 +221,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
 
   // Create the hybrid elastic reaction
   elastic_reaction.reset(
-    new HybridElasticAdjointElectroatomicReaction<TwoDInterpPolicy,Utility::LinLin>(
+    new HybridElasticAdjointElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,
@@ -423,7 +423,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
       electroionization_subshell_distribution;
 
   // Create the electroionization subshell distribution
-  ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution(
+  ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
         raw_adjoint_electroatom_data,
         subshell,
         raw_adjoint_electroatom_data.getSubshellBindingEnergy( subshell ),
@@ -516,7 +516,7 @@ void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
   std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>
     bremsstrahlung_distribution;
 
-  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungAdjointDistribution<TwoDInterpPolicy>(
+  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy>(
         raw_adjoint_electroatom_data,
         raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid(),
         bremsstrahlung_distribution,

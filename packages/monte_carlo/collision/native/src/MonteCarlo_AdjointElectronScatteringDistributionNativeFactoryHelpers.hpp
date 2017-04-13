@@ -1,20 +1,20 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectronScatteringDistributionNativeFactoryHelpers.hpp
+//! \file   MonteCarlo_AdjointElectronScatteringDistributionNativeFactoryHelpers.hpp
 //! \author Luke Kersting
-//! \brief  The electron scattering distribution native factory helpers declaration
+//! \brief  The adjoint electron scattering distribution native factory helpers declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HELPERS_HPP
-#define MONTE_CARLO_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HELPERS_HPP
+#ifndef MONTE_CARLO_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HELPERS_HPP
+#define MONTE_CARLO_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HELPERS_HPP
 
 // FRENSIE Includes
-#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_AtomicExcitationElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
 
 namespace MonteCarlo{
 
@@ -22,32 +22,32 @@ namespace MonteCarlo{
 //      ****ELASTIC DISTRIBUTIONS****
 //----------------------------------------------------------------------------//
 
-//! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+//! Create an adjoint analog elastic distribution ( combined Cutoff and Screened Rutherford )
 std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
-//! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+//! Create an adjoint hybrid elastic distribution ( combined Cutoff and Moment Preserving )
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
-//! Create a cutoff elastic distribution
+//! Create an adjoint cutoff elastic distribution
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
-//! Create a moment preserving elastic distribution
+//! Create an adjoint moment preserving elastic distribution
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
@@ -57,18 +57,9 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 //      ****BREMSSTRAHLUNG DISTRIBUTIONS****
 //----------------------------------------------------------------------------//
 
-//! Create a simple dipole bremsstrahlung distribution
-std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool linlinlog_interpolation_mode_on,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
-    const double evaluation_tol = 1e-7 );
-
-//! Create a detailed 2BS bremsstrahlung distribution
-std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const int atomic_number,
+//! Create an adjoint bremsstrahlung distribution
+std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution> createBremsstrahlungDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
@@ -78,9 +69,9 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> 
 //      ****ELECTROIONIZATION SUBSHELL DISTRIBUTIONS****
 //----------------------------------------------------------------------------//
 
-//! Create a electroionization subshell distribution
-std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> createElectroionizationSubshellDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+//! Create an adjoint electroionization subshell distribution
+std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution> createElectroionizationSubshellDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
     const double binding_energy,
     const bool linlinlog_interpolation_mode_on,
@@ -92,14 +83,14 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
 //      ****ATOMIC EXCITATION DISTRIBUTION****
 //----------------------------------------------------------------------------//
 
-//! Create a atomic excitation distribution
-std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution> createAtomicExcitationDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container );
+//! Create an adjoint atomic excitation distribution
+std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution> createAtomicExcitationDistribution(
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container );
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HELPERS_HPP
+#endif // end MONTE_CARLO_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectronScatteringDistributionNativeFactoryHelpers.hpp
+// end MonteCarlo_AdjointElectronScatteringDistributionNativeFactoryHelpers.hpp
 //---------------------------------------------------------------------------//

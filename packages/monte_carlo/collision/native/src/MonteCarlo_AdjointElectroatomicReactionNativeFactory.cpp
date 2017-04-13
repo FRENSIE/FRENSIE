@@ -390,7 +390,7 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
   std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>
     energy_loss_distribution;
 
-  AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationAdjointDistribution(
+  AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
                                                  raw_adjoint_electroatom_data,
                                                  energy_loss_distribution );
 

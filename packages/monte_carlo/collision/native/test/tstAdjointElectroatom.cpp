@@ -422,7 +422,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         ae_distribution;
 
     // Create the atomic excitation distribution
-    AtomicNativeFactory::createAtomicExcitationAdjointDistribution(
+    AtomicNativeFactory::createAtomicExcitationDistribution(
         data_container,
         ae_distribution );
 
@@ -453,7 +453,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-7;
 
      // Create the Bremsstrahlung distribution
-    BremsstrahlungNativeFactory::createBremsstrahlungAdjointDistribution(
+    BremsstrahlungNativeFactory::createBremsstrahlungDistribution(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
         b_distribution,

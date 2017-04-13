@@ -101,9 +101,9 @@ AdjointElectroatomicReactionType MomentPreservingElasticAdjointElectroatomicReac
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void MomentPreservingElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-         AdjointElectronState& electron,
-         ParticleBank& bank,
-         Data::SubshellType& shell_of_interaction ) const
+                AdjointElectronState& electron,
+                ParticleBank& bank,
+                Data::SubshellType& shell_of_interaction ) const
 {
   d_discrete_scattering_distribution->scatterAdjointElectron(
             electron,

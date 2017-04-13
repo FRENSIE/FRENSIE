@@ -26,7 +26,7 @@ public:
 
   //! Constructor
   BremsstrahlungAdjointElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& brem_distribution,
+    const std::shared_ptr<TwoDDist>& adjoint_brem_scatter_dist,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on );
 
@@ -78,7 +78,7 @@ public:
 private:
 
   // bremsstrahlung scattering distribution
-  std::shared_ptr<TwoDDist> d_brem_distribution;
+  std::shared_ptr<TwoDDist> d_adjoint_brem_scatter_dist;
 
   // The sample function pointer
   std::function<double ( const double )> d_sample_func;

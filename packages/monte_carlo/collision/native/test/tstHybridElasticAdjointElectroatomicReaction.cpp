@@ -28,7 +28,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLinLog,Utility::LinLin> >
+Teuchos::RCP<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLin> >
     hybrid_elastic_reaction;
 
 //---------------------------------------------------------------------------//
@@ -38,7 +38,7 @@ Teuchos::RCP<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinL
 TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction, getReactionType )
 {
   TEST_EQUALITY_CONST( hybrid_elastic_reaction->getReactionType(),
-		       MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+                       MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -77,23 +77,24 @@ TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction, getNumberOfEmitted
 TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
                    getCrossSection )
 {
-
+  // Cross section ratio for cutoff angle
+  double ratio = 9.5000047500023754e-01;
   double cross_section = hybrid_elastic_reaction->getCrossSection( 1e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.74896E+08*9.50000475000238E-01 + 1.22176061033364E+07,
+                          2.74896E+08*ratio + 1.221760610333641618e+07,
                           1e-12 );
 
+  ratio = 1.0895339416868782e-01;
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
-
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.9754757077506483e+06,
+                          1.975961316001743777e+06,
                           1e-12 );
 
+  ratio = 8.0232527373229803e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 20.0 );
-
   TEST_FLOATING_EQUALITY( cross_section,
-                          3.04727623729037E+02*8.2702774720157165e-06 + 2.0520968300008926,
+                          3.0472762372903748e+02*ratio + 2.083291935311420762,
                           1e-12 );
 }
 
@@ -228,7 +229,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the reaction
     hybrid_elastic_reaction.reset(
-      new MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLinLog,Utility::LinLin>(
+      new MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,

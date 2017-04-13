@@ -21,7 +21,7 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
+typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory
     NativeFactory;
 
 //---------------------------------------------------------------------------//
@@ -97,24 +97,24 @@ TEUCHOS_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction,
                    getCrossSection_cutoff )
 {
   // cross section ratio for cutoff angle
-  double ratio = 9.50000475000238E-01;
+  double ratio = 9.5000047500023754e-01;
 
   double cross_section =
     cutoff_elastic_reaction->getCrossSection( 1.0E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08*ratio, 1e-12 );
 
-  ratio = 1.08953394168692E-01;
+  ratio = 1.0895339416868782e-01;
   cross_section =
     cutoff_elastic_reaction->getCrossSection( 1.0E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.80490481543817E+06*ratio, 1e-12 );
 
-  ratio = 8.2702774720157165e-06;
+  ratio = 8.0232527373229803e-06;
   cross_section =
     cutoff_elastic_reaction->getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.04727623729037E+02*ratio, 1e-9 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.0472762372903748e+02*ratio, 1e-9 );
 }
 
 
@@ -209,10 +209,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         elastic_scattering_distribution;
 
-    NativeFactory::createCutoffElasticDistribution(
+    NativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
         elastic_scattering_distribution,
         *data_container,
-        cutoff_angle_cosine,
+        0.9,
         correlated_sampling_mode_on,
         evaluation_tol );
 

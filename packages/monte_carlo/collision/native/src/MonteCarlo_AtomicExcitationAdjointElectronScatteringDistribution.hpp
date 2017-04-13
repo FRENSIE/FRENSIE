@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{

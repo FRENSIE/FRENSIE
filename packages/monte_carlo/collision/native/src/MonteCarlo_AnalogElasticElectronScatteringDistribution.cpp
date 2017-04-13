@@ -54,7 +54,7 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
   testPrecondition( d_atomic_number > 0 );
   testPrecondition( d_atomic_number <= 100u );
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( d_linlinlog_interpolation_mode_on )
   {
     // The interplation function pointer
     d_interpolation_func =
@@ -473,6 +473,25 @@ double AnalogElasticElectronScatteringDistribution::correlatedSample(
     double upper_angle;
     this->sampleBin( upper_bin, random_number, upper_angle );
 
+//  if( d_linlinlog_interpolation_mode_on )
+//  {
+//    // LinLinLog interpolation between energy bins
+//    return Utility::LinLog::interpolate( lower_bin->first,
+//                                 upper_bin->first,
+//                                 incoming_energy,
+//                                 lower_angle,
+//                                 upper_angle );
+//  }
+//  else
+//  {
+//    // LinLinLin interpolation between energy bins
+//    return Utility::LinLin::interpolate( lower_bin->first,
+//                                 upper_bin->first,
+//                                 incoming_energy,
+//                                 lower_angle,
+//                                 upper_angle );
+//  }
+
     // LinLinLog interpolation between energy bins
     return d_interpolation_func( lower_bin->first,
                                  upper_bin->first,
@@ -529,11 +548,16 @@ void AnalogElasticElectronScatteringDistribution::sampleBin(
   double eta = evaluateMoliereScreeningConstant( energy );
   // Get maximum CDF at the bin energy
   double max_cdf = evaluateScreenedRutherfordCDF( energy, 1.0, eta );
+  // Scale the random number to the max_cdf value
+  double scaled_random_number = max_cdf*random_number;
 
-  if ( max_cdf*random_number > 1.0 ) // Sample screened Rutherford
+  if ( scaled_random_number > 1.0 ) // Sample screened Rutherford
   {
+    // Renormalize random number to 0 to 1
+    scaled_random_number = ( scaled_random_number - 1.0 )/( max_cdf - 1.0 );
+
     // calculated a reapeated variable
-    double var = s_cutoff_delta_mu*random_number;
+    double var = s_cutoff_delta_mu*scaled_random_number;
 
     // calculate the screened Rutherford scattering angle
     scattering_angle_cosine = std::min( 1.0,
@@ -547,12 +571,13 @@ void AnalogElasticElectronScatteringDistribution::sampleBin(
   {
     // calculate the cutoff distribution scattering angle
     scattering_angle_cosine =
-      distribution_bin->second->sampleWithRandomNumber( max_cdf*random_number );
+      distribution_bin->second->sampleWithRandomNumber( scaled_random_number );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine <= s_cutoff_mu );
   }
   // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 

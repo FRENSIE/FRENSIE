@@ -23,7 +23,7 @@ public:
 
   //! Create a bremsstrahlung adjoint distribution
   template <typename TwoDInterpPolicy = Utility::LinLinLog>
-  static void createBremsstrahlungAdjointDistribution(
+  static void createBremsstrahlungDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double>& adjoint_energy_grid,
     std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&

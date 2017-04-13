@@ -147,7 +147,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   bool correlated_sampling_mode_on = true;
   bool unit_based_interpolation_mode_on = true;
 
-  BremFactory::createBremsstrahlungAdjointDistribution<Utility::LinLinLog>(
+  BremFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
             *data_container,
             energy_grid,
             brem_distribution,

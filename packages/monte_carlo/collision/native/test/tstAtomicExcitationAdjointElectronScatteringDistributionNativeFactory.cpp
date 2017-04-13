@@ -126,7 +126,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       test_native_file_name ) );
 
   // Create the distribution
-  AtomicNativeFactory::createAtomicExcitationAdjointDistribution(
+  AtomicNativeFactory::createAtomicExcitationDistribution(
     *data_container,
     native_ae_distribution );
 

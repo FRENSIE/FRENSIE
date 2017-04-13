@@ -130,7 +130,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bool unit_based_interpolation_mode_on = true;
     double evaluation_tol = 1e-7;
 
-    MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungAdjointDistribution(
+    MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
         scattering_distribution,

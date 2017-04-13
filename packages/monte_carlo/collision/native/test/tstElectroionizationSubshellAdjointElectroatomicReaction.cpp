@@ -204,7 +204,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-7;
 
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
@@ -254,7 +254,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
-    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),

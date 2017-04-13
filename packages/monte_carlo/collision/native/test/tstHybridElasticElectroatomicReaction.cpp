@@ -35,7 +35,7 @@
   typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::TwoDDist
             TwoDDist;
 
-  Teuchos::RCP<MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLinLog,Utility::LinLin> >
+  Teuchos::RCP<MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLin> >
     hybrid_elastic_reaction;
 
 //---------------------------------------------------------------------------//
@@ -53,7 +53,7 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getReactionType )
 {
   TEST_EQUALITY_CONST( hybrid_elastic_reaction->getReactionType(),
-		       MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -69,10 +69,10 @@ TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getThresholdEnergy )
 TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getNumberOfEmittedElectrons )
 {
   TEST_EQUALITY_CONST( hybrid_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( hybrid_elastic_reaction->getNumberOfEmittedElectrons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -80,10 +80,10 @@ TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getNumberOfEmittedElectro
 TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction, getNumberOfEmittedPhotons )
 {
   TEST_EQUALITY_CONST( hybrid_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( hybrid_elastic_reaction->getNumberOfEmittedPhotons(20.0),
-		       0u );
+                       0u );
 }
 
 
@@ -231,7 +231,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the reaction
   hybrid_elastic_reaction.reset(
-    new MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLinLog,Utility::LinLin>(
+    new MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,

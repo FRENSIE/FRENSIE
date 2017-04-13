@@ -16,10 +16,9 @@
 namespace MonteCarlo{
 
 // Basic Constructor
-template<typename TwoDInterpPolicy,
-         typename InterpPolicy,
+template<typename InterpPolicy,
          bool processed_cross_section>
-HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
+HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
@@ -48,10 +47,9 @@ HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross
 }
 
 // Constructor
-template<typename TwoDInterpPolicy,
-         typename InterpPolicy,
+template<typename InterpPolicy,
          bool processed_cross_section>
-HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
+HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
@@ -86,37 +84,33 @@ HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross
 // Return the number of photons emitted from the rxn at the given energy
 /*! \details This does not include photons from atomic relaxation.
  */
-template<typename TwoDInterpPolicy,
-         typename InterpPolicy,
+template<typename InterpPolicy,
          bool processed_cross_section>
-unsigned HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
-template<typename TwoDInterpPolicy,
-         typename InterpPolicy,
+template<typename InterpPolicy,
          bool processed_cross_section>
-unsigned HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+unsigned HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the reaction type
-template<typename TwoDInterpPolicy,
-         typename InterpPolicy,
+template<typename InterpPolicy,
          bool processed_cross_section>
-ElectroatomicReactionType HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::getReactionType() const
+ElectroatomicReactionType HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
   return HYBRID_ELASTIC_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction
-template<typename TwoDInterpPolicy,
-         typename InterpPolicy,
+template<typename InterpPolicy,
          bool processed_cross_section>
-void HybridElasticElectroatomicReaction<TwoDInterpPolicy,InterpPolicy,processed_cross_section>::react(
+void HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
          ElectronState& electron,
          ParticleBank& bank,
          Data::SubshellType& shell_of_interaction ) const

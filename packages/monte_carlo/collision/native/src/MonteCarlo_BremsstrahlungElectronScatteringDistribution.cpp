@@ -8,14 +8,10 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
-#include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_SearchAlgorithms.hpp"
-#include "Utility_DirectionHelpers.hpp"
-#include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_TabularDistribution.hpp"
+#include "Utility_KinematicHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -182,9 +178,8 @@ double BremsstrahlungElectronScatteringDistribution::evaluate(
                      const double photon_energy ) const
 {
   // Make sure the energies are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
   return d_evaluate_func( incoming_energy, photon_energy );
@@ -196,9 +191,8 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
                      const double photon_energy ) const
 {
   // Make sure the energies are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
   return d_evaluate_pdf_func( incoming_energy, photon_energy );
@@ -210,9 +204,8 @@ double BremsstrahlungElectronScatteringDistribution::evaluateCDF(
                      const double photon_energy ) const
 {
   // Make sure the energies are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( photon_energy <= incoming_energy );
   testPrecondition( photon_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
   return d_evaluate_cdf_func( incoming_energy, photon_energy );
@@ -246,7 +239,7 @@ void BremsstrahlungElectronScatteringDistribution::sampleAndRecordTrials(
 {
   trials++;
 
-  sample( incoming_energy, photon_energy, photon_angle_cosine );
+  this->sample( incoming_energy, photon_energy, photon_angle_cosine );
 
 }
 // Randomly scatter the electron
@@ -265,7 +258,7 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   double photon_angle_cosine;
 
   // Sample bremsstrahlung photon energy and angle cosine
-  sample( incoming_energy, photon_energy, photon_angle_cosine );
+  this->sample( incoming_energy, photon_energy, photon_angle_cosine );
 
   // Set the new electron energy
   electron.setEnergy( incoming_energy - photon_energy );

@@ -14,7 +14,7 @@ namespace MonteCarlo{
 
 // Create a electroionization subshell distribution
 template<typename TwoDInterpPolicy>
-void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution(
+void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,

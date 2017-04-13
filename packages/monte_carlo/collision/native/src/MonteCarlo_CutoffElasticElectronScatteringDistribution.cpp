@@ -29,6 +29,9 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   // Make sure the cutoff_angle_cosine is valid
   testPrecondition( cutoff_angle_cosine >= -1.0 );
   testPrecondition( cutoff_angle_cosine <= 1.0 );
+  // Make sure the bool is valid
+  testPrecondition( correlated_sampling_mode_on == 0 ||
+                    correlated_sampling_mode_on == 1 );
 
   if( correlated_sampling_mode_on )
   {

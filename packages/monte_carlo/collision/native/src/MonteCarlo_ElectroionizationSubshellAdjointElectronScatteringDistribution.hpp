@@ -56,32 +56,25 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double scattering_angle ) const;
+                   const double outgoing_energy ) const;
 
   //! Evaluate the PDF value for a given incoming and outgoing energy
   double evaluatePDF( const double incoming_energy,
-                      const double outgoing_energy_1 ) const;
+                      const double outgoing_energy ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle ) const;
+                      const double outgoing_energy ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
-               double& knock_on_energy,
-               double& knock_on_angle_cosine  ) const;
-
-  // Sample the distribution
-  void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& knock_on_energy,
-               double& scattering_angle_cosine,
-               double& knock_on_angle_cosine ) const;
+               double& outgoing_angle_cosine  ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
-                              double& knock_on_energy,
-                              double& knock_on_angle_cosine,
+                              double& outgoing_energy,
+                              double& outgoing_angle_cosine,
                               unsigned& trials ) const;
 
   //! Randomly scatter the adjoint electron

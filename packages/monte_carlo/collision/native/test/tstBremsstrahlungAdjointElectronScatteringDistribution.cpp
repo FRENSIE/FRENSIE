@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
-		               evaluate )
+                   evaluate )
 {
   // LinLinLog interpoation used.
   double pdf;
@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   pdf = adjoint_brem_dist->evaluate( 1.0e-5, 20.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 8.08407884670422E-08, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 8.1940385156779312e-08, 1e-12 );
 
   // Check inbetween bins
   pdf = adjoint_brem_dist->evaluate( 1.1e-5, 1.0 );
@@ -68,7 +68,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on highest bin
   pdf = adjoint_brem_dist->evaluate( 20.0, 20.000000101 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.52812975046191, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.9674492828862328e+05, 1e-12 );
 
   // Check above highest bin
   pdf = adjoint_brem_dist->evaluate( 21.0, 22.0 );
@@ -267,12 +267,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                                pdf ) );
   }
 
+  double evaluation_tol = 1e-7;
+
   // Create the energy gain function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_gain_function(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
             function_data,
             1e-6,
-            1e-6 ) );
+            evaluation_tol ) );
 
   bool correlated_sampling_mode_on = true;
   bool unit_based_interpolation_mode_on = true;

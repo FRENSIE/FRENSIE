@@ -217,7 +217,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
 
   // Create the hybrid elastic reaction
   elastic_reaction.reset(
-    new HybridElasticElectroatomicReaction<TwoDInterpPolicy,Utility::LinLin>(
+    new HybridElasticElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,
