@@ -263,8 +263,11 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   }
 }
 
-// Evaluate the screened Rutherford CDF
-//! \details This CDF is normalize to the elastic cutoff cdf at s_cutoff_mu (0.999999)
+// Evaluate the total CDF within the screened Rutherford distribution
+/*! \details This CDF is normalize to the elastic cutoff cdf at
+ *  s_cutoff_mu (0.999999) and will return a value of 1 at s_cutoff_mu.
+ *  The value of this CDF should always be greater than or equal to 1.
+ */
 double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF(
         const double incoming_energy,
         const double scattering_angle_cosine,
@@ -289,7 +292,11 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCD
                                               cutoff_pdf );
 }
 
-// Evaluate the screened Rutherford CDF
+// Evaluate the CDF for only screened Rutherford
+/*! \details This CDF is the potion of the total CDF that is within the
+ *  screened Rutherford distribution or above s_cutoff_mu (0.999999).
+ *  The CDF is normalized to the elastic cutoff cdf at s_cutoff_mu (0.999999).
+ */
 double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF(
         const double incoming_energy,
         const double scattering_angle_cosine,
@@ -546,23 +553,36 @@ void AnalogElasticElectronScatteringDistribution::sampleBin(
   double energy = distribution_bin->first;
   // Get the scattering constant at the bin energy
   double eta = evaluateMoliereScreeningConstant( energy );
-  // Get maximum CDF at the bin energy
-  double max_cdf = evaluateScreenedRutherfordCDF( energy, 1.0, eta );
-  // Scale the random number to the max_cdf value
-  double scaled_random_number = max_cdf*random_number;
+  // Get the max cutoff pdf for the bin
+  double cuotff_pdf = distribution_bin->second->evaluatePDF( s_cutoff_mu );
+  // Get the max screened Rutherford CDF
+  double max_rutherford_cdf =
+                evaluateScreenedRutherfordCDF( cuotff_pdf, energy, 1.0, eta );
+  // Scale the random number to the max cdf value
+  double scaled_random_number = random_number( 1.0 + max_rutherford_cdf );
 
   if ( scaled_random_number > 1.0 ) // Sample screened Rutherford
   {
-    // Renormalize random number to 0 to 1
-    scaled_random_number = ( scaled_random_number - 1.0 )/( max_cdf - 1.0 );
-
+    // rescale the random number
+    scaled_random_number -= 1.0;
     // calculated a reapeated variable
-    double var = s_cutoff_delta_mu*scaled_random_number;
+    double var = cuotff_pdf*(s_cutoff_delta_mu + eta);
 
     // calculate the screened Rutherford scattering angle
     scattering_angle_cosine = std::min( 1.0,
-        ( var*( 1.0 + eta ) + eta*s_cutoff_mu )/
-        ( var + eta ) );
+        ( scaled_random_number*( 1.0 + eta ) + var*s_cutoff_mu )/
+        ( scaled_random_number+ var ) );
+
+//    // Renormalize random number to 0 to 1
+//    scaled_random_number = ( scaled_random_number - 1.0 )/( max_rutherford_cdf );
+
+//    // calculated a reapeated variable
+//    double var = s_cutoff_delta_mu*scaled_random_number;
+
+//    // calculate the screened Rutherford scattering angle
+//    scattering_angle_cosine = std::min( 1.0,
+//        ( var*( 1.0 + eta ) + eta*s_cutoff_mu )/
+//        ( var + eta ) );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine >= s_cutoff_mu );
