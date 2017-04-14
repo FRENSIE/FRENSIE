@@ -559,7 +559,7 @@ void AnalogElasticElectronScatteringDistribution::sampleBin(
   double max_rutherford_cdf =
                 evaluateScreenedRutherfordCDF( cuotff_pdf, energy, 1.0, eta );
   // Scale the random number to the max cdf value
-  double scaled_random_number = random_number( 1.0 + max_rutherford_cdf );
+  double scaled_random_number = random_number*( 1.0 + max_rutherford_cdf );
 
   if ( scaled_random_number > 1.0 ) // Sample screened Rutherford
   {
