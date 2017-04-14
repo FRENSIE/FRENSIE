@@ -543,26 +543,44 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                    sample )
 {
-  // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.5; // sample mu = 9.9999999775901926569E-01
-  fake_stream[1] = 0.5;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
+  // Set up the electron
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 6.625e1 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   double scattering_angle_cosine, outgoing_energy;
 
-  // sampleAndRecordTrialsImpl from distribution
+
+  // Get the max CDF
+  double max_cdf = distribution->evaluateCDF( electron.getEnergy(), 1.0 );
+
+  // Set fake random number stream
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 1.0/max_cdf; // sample mu = 0.999999
+  fake_stream[1] = 0.5; // sample mu = 9.9999999775901926569E-01
+  fake_stream[2] = 1.0 - 1e-15; // sample mu = 1.0
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
   distribution->sample( electron.getEnergy(),
                         outgoing_energy,
                         scattering_angle_cosine );
 
-  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 6.625E+01, 1e-12 );
+
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999775901926569E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 6.625E+01, 1e-12 );
+
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 6.625E+01, 1e-12 );
 
 
@@ -570,12 +588,32 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   electron.setEnergy( 1e-4 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
-  // sampleAndRecordTrialsImpl from distribution
-  distribution->sample( electron.getEnergy(),
-                                          outgoing_energy,       scattering_angle_cosine );
+  // Get the max CDF
+  max_cdf = distribution->evaluateCDF( electron.getEnergy(), 1.0 );
 
-  // Test
+  // Set fake random number stream
+  fake_stream[0] = 1.0/max_cdf; // sample mu = 0.999999
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-4, 1e-12 );
+
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 4.9274935694433192e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-4, 1e-12 );
+
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1e-4, 1e-12 );
 }
 
@@ -598,10 +636,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
-  distribution->sampleAndRecordTrials(
-                                          electron.getEnergy(),
-                                          outgoing_energy,       scattering_angle_cosine,
-                                          trials );
+  distribution->sampleAndRecordTrials( electron.getEnergy(),
+                                       outgoing_energy,
+                                       scattering_angle_cosine,
+                                       trials );
 
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999775901926569E-01, 1e-12 );
@@ -628,8 +666,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
   // Analytically scatter electron
   distribution->scatterElectron( electron,
-                                                   bank,
-                                                   shell_of_interaction );
+                                 bank,
+                                 shell_of_interaction );
 
   // Test
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.9999999775901926569E-01, 1e-12 );
