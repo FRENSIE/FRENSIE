@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_FullyTabularTwoDDistribution.hpp"
 #include "Utility_PartiallyTabularTwoDDistribution.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -76,7 +77,7 @@ struct TwoDDistributionTraits<Utility::PartiallyTabularTwoDDistribution>
   //! Get the distribution type name
   static inline std::string name()
   {
-    return "PartiallyTwoDDistribution";
+    return "PartiallyTabularTwoDDistribution";
   }
 };
 
@@ -122,10 +123,10 @@ struct TwoDDistributionTraits<Utility::FullyTabularTwoDDistribution>
 } // end Details namespace
 
 // Constructor
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::StandardDependentPhaseSpaceDimensionDistribution(
+StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::StandardDependentPhaseSpaceDimensionDistribution(
                          const std::shared_ptr<const TwoDDistributionBaseType>&
                          dimension_distribution )
   : d_dimension_distribution( dimension_distribution )
@@ -139,10 +140,10 @@ StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,T
  * the independent dimension. More information is needed to check if the
  * distribution is continuous w.r.t. the dependent dimension.
  */
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-bool StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::isContinuous() const
+bool StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::isContinuous() const
 {
   return d_dimension_distribution->isPrimaryDimensionContinuous();
 }
@@ -152,10 +153,10 @@ bool StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimens
  * the independent dimension. More information is needed to check if the 
  * distribution is tabular w.r.t. the dependent dimension.
  */
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-bool StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::isTabular() const
+bool StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::isTabular() const
 {
   return d_dimension_distribution->isPrimaryDimensionTabular();
 }
@@ -164,10 +165,10 @@ bool StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimens
 /*! \details This method will always return false since we cannot test
  * if the two-d distribution is constant everywhere that it is defined.
  */
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-bool StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::isUniform() const
+bool StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::isUniform() const
 {
   return false;
 }
@@ -177,99 +178,102 @@ bool StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimens
  * if the two-d distribution has the form of interest everywhere that it is 
  * defined.
  */
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-bool StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::hasForm(
+bool StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::hasForm(
                   const Utility::OneDDistributionType distribution_type ) const
 {
   return false;
 }
 
 // Get the distribution type name
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-std::string StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::getDistributionTypeName() const
+std::string StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::getDistributionTypeName() const
 {
   return Details::TwoDDistributionTraits<TwoDDistributionBaseType>::name();
 }
 
 // Evaluate the dimension distribution without cascade to dependent dists.
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-double StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::evaluateWithoutCascade(
+double StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::evaluateWithoutCascade(
                                const PhaseSpacePoint& phase_space_point ) const
 {
   return d_dimension_distribution->evaluate(
-                           getCoordinate<indep_dimension>( phase_space_point ),
-                           getCoordinate<dep_dimension>( phase_space_point ) );
+                          getCoordinate<parent_dimension>( phase_space_point ),
+                          getCoordinate<dimension>( phase_space_point ) );
 }
 
 // Sample a dimension value without a cascade to the dependent dists.
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-void StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::sampleWithoutCascade(
+void StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::sampleWithoutCascade(
                                     PhaseSpacePoint& phase_space_sample ) const
 {
   const double sample =
     Details::TwoDDistributionTraits<TwoDDistributionBaseType>::sample(
-                        *d_dimension_distribution,
-                        getCoordinate<indep_dimension>( phase_space_sample ) );
+                       *d_dimension_distribution,
+                       getCoordinate<parent_dimension>( phase_space_sample ) );
 
-  setCoordinate<dep_dimension>( phase_space_sample, sample );
-  setCoordinateWeight<dep_dimension>( phase_space_sample, 1.0 );
+  setCoordinate<dimension>( phase_space_sample, sample );
+  setCoordinateWeight<dimension>( phase_space_sample, 1.0 );
 }
 
 // Sample a dimension value without a cascade to the dependent dists.
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-void StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::sampleAndRecordTrialsWithoutCascade(
+void StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::sampleAndRecordTrialsWithoutCascade(
                                   PhaseSpacePoint& phase_space_sample,
                                   ModuleTraits::InternalCounter& trials ) const
 {
   const double sample =
     Details::TwoDDistributionTraits<TwoDDistributionBaseType>::sampleAndRecordTrials(
                         *d_dimension_distribution,
-                        getCoordinate<indep_dimension>( phase_space_sample ),
+                        getCoordinate<parent_dimension>( phase_space_sample ),
                         trials );
 
-  setCoordinate<dep_dimension>( phase_space_sample, sample );
-  setCoordinateWeight<dep_dimension>( phase_space_sample, 1.0 );
+  setCoordinate<dimension>( phase_space_sample, sample );
+  setCoordinateWeight<dimension>( phase_space_sample, 1.0 );
 }
 
 // Set the dimension value (weight appropriately)
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-void StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::setDimensionValueAndApplyWeight(
+void StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::setDimensionValueAndApplyWeight(
                                            PhaseSpacePoint& phase_space_sample,
                                            const double dimension_value ) const
 {
   const double weight = this->evaluatePDFWithoutCascade(
-                          getCoordinate<indep_dimension>( phase_space_sample ),
-                          dimension_value );
+                         getCoordinate<parent_dimension>( phase_space_sample ),
+                         dimension_value );
 
   // Make sure that the weight is valid
-  testPostcondition( weight > 0.0 );
+  TEST_FOR_EXCEPTION( weight <= 0.0,
+                      std::logic_error,
+                      "An invalid weight (" << weight << ") has been "
+                      "calculated for dimension " << dimension << "!" );
 
-  setCoordinate<dep_dimension>( phase_space_sample, dimension_value );
-  setCoordinateWeight<dep_dimension>( phase_space_sample, weight );
+  setCoordinate<dimension>( phase_space_sample, dimension_value );
+  setCoordinateWeight<dimension>( phase_space_sample, weight );
 }
 
 // Evaluate the PDF of this dimension distribution
-template<PhaseSpaceDimension indep_dimension,
-         PhaseSpaceDimension dep_dimension,
+template<PhaseSpaceDimension parent_dimension,
+         PhaseSpaceDimension dimension,
          typename TwoDDistributionBaseType>
-double StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,TwoDDistributionBaseType>::evaluatePDFWithoutCascade(
-                                          const double indep_dimension_value,
+double StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,TwoDDistributionBaseType>::evaluatePDFWithoutCascade(
+                                          const double parent_dimension_value,
                                           const double dimension_value ) const
 {
   return d_dimension_distribution->evaluateSecondaryConditionalPDF(
-                                      indep_dimension_value, dimension_value );
+                                     parent_dimension_value, dimension_value );
 }
   
 } // end MonteCarlo namespace

@@ -16,8 +16,8 @@
 namespace MonteCarlo{
 
 //! The fully-tabular dependent phase space dimension distribution
-template<PhaseSpaceDimension indep_dimension,PhaseSpaceDimension dep_dimension> using FullyTabularDependentPhaseSpaceDimensionDistribution =
-  StandardDependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension,Utility::FullyTabularTwoDDistribution>;
+template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension> using FullyTabularDependentPhaseSpaceDimensionDistribution =
+  StandardDependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,Utility::FullyTabularTwoDDistribution>;
   
 } // end MonteCarlo namespace
 

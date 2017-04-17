@@ -115,7 +115,7 @@ template<typename PrimaryIndependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
 auto UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::getUpperBoundOfPrimaryIndepVar() const -> PrimaryIndepQuantity
 {
-  return d_distribution.back().first;
+  return Utility::get<0>(d_distribution.back());
 }
 
 // Return the lower bound of the distribution primary independent variable
@@ -125,7 +125,7 @@ template<typename PrimaryIndependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
 auto UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::getLowerBoundOfPrimaryIndepVar() const -> PrimaryIndepQuantity
 {
-  return d_distribution.front().first;
+  return Utility::get<0>(d_distribution.front());
 }
 
 // Test if the distribution is tabular in the primary dimension
@@ -165,18 +165,18 @@ inline void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryInd
           typename DistributionType::const_iterator& lower_bin_boundary,
           typename DistributionType::const_iterator& upper_bin_boundary ) const
 {
-  if( primary_independent_var_value < d_distribution.front().first )
+  if( primary_independent_var_value < Utility::get<0>(d_distribution.front()) )
   {
     lower_bin_boundary = d_distribution.begin();
     upper_bin_boundary = lower_bin_boundary;
   }
-  else if( primary_independent_var_value > d_distribution.back().first )
+  else if( primary_independent_var_value > Utility::get<0>(d_distribution.back()) )
   {
     lower_bin_boundary = d_distribution.end();
     --lower_bin_boundary;
     upper_bin_boundary = lower_bin_boundary;
   }
-  else if( primary_independent_var_value == d_distribution.back().first )
+  else if( primary_independent_var_value == Utility::get<0>(d_distribution.back()) )
   {
     lower_bin_boundary = d_distribution.end();
     --lower_bin_boundary;
@@ -220,7 +220,7 @@ bool UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependen
   
   for( size_t i = 0; i < d_distribution.size(); ++i )
   {
-    if( !d_distribution[i].second->isContinuous() )
+    if( !Utility::get<1>(d_distribution[i])->isContinuous() )
     {
       all_continuous = false;
 

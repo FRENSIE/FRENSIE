@@ -56,12 +56,12 @@ inline ReturnType UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution
   if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
-      return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
+      return (*Utility::get<1>(*lower_bin_boundary).*evaluate)( secondary_indep_var_value );
     else
       return QuantityTraits<ReturnType>::zero();
   }
   else
-    return ((*lower_bin_boundary->second).*evaluate)( secondary_indep_var_value );
+    return (*Utility::get<1>(*lower_bin_boundary).*evaluate)( secondary_indep_var_value );
 }
 
 // Sample from the distribution using the desired sampling functor
@@ -84,11 +84,11 @@ inline auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sam
   primary_bin_index = this->calculateBinIndex( lower_bin_boundary );
 
   if( lower_bin_boundary != upper_bin_boundary )
-    return sample_functor( *lower_bin_boundary->second );
+    return sample_functor( *Utility::get<1>(*lower_bin_boundary) );
   else
   {
     if( this->arePrimaryLimitsExtended() )
-      return sample_functor( *lower_bin_boundary->second );
+      return sample_functor( *Utility::get<1>(*lower_bin_boundary) );
     else
     {
       THROW_EXCEPTION( std::logic_error,
@@ -160,7 +160,7 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getUpperBo
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->second->getUpperBoundOfIndepVar();
+  return Utility::get<1>(*lower_bin_boundary)->getUpperBoundOfIndepVar();
 }
 
 // Return the lower bound of the conditional distribution
@@ -175,7 +175,7 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getLowerBo
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->second->getLowerBoundOfIndepVar();
+  return Utility::get<1>(*lower_bin_boundary)->getLowerBoundOfIndepVar();
 }
 
 // Test if the distribution is continuous in the primary dimension

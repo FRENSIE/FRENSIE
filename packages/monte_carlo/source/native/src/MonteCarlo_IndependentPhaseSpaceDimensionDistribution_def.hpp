@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -141,7 +142,10 @@ void IndependentPhaseSpaceDimensionDistribution<dimension>::setDimensionValueAnd
   double weight = this->evaluatePDFWithoutCascade( dimension_value );
 
   // Make sure that the weight is valid
-  testPostcondition( weight > 0.0 );
+  TEST_FOR_EXCEPTION( weight <= 0.0,
+                      std::logic_error,
+                      "An invalid weight (" << weight << ") has been "
+                      "calculated for dimension " << dimension << "!" );
 
   setCoordinate<dimension>( phase_space_sample, dimension_value );
   setCoordinateWeight<dimension>( phase_space_sample, weight );

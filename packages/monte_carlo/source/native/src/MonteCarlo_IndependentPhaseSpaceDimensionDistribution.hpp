@@ -16,6 +16,7 @@
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -91,6 +92,18 @@ private:
   // The dimension distribution
   std::shared_ptr<const Utility::OneDDistribution> d_dimension_distribution;
 };
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION> );
+  
   
 } // end MonteCarlo namespace
 

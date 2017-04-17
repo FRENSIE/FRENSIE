@@ -113,10 +113,13 @@ public:
                                       PhaseSpacePoint& phase_space_sample,
                                       const double dimension_value ) const = 0;
 
+  //! Return the parent distribution
+  const PhaseSpaceDimensionDistribution* getParentDistribution() const;
+  
   //! Add a dependent dimension
   void addDependentDimension(
-                  const std::shared_ptr<const PhaseSpaceDimensionDistribution>&
-                  dependent_dimension );
+                        const std::shared_ptr<PhaseSpaceDimensionDistribution>&
+                        dependent_dimension );
 
 private:
 
@@ -145,6 +148,9 @@ private:
                                           DimensionCounterMap& trials,
                                           const PhaseSpaceDimension dimension,
                                           const double dimension_value ) const;
+
+  // The parent distribution
+  const PhaseSpaceDimensionDistribution* d_parent_distribution;
 
   // The dependent dimensions
   typedef std::map<PhaseSpaceDimension,std::shared_ptr<const PhaseSpaceDimensionDistribution> > DimensionDependentDistributionMap;

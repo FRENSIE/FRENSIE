@@ -15,46 +15,46 @@
 namespace MonteCarlo{
 
 // Return the phase space dimension
-template<PhaseSpaceDimension indep_dimension,PhaseSpaceDimension dep_dimension>
-PhaseSpaceDimension DependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension>::getDimension() const
+template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
+PhaseSpaceDimension DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::getDimension() const
 {
-  return dep_dimension;
+  return dimension;
 }
 
 // Return the phase space dimension class
-template<PhaseSpaceDimension indep_dimension,PhaseSpaceDimension dep_dimension>
-PhaseSpaceDimensionClass DependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension>::getDimensionClass() const
+template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
+PhaseSpaceDimensionClass DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::getDimensionClass() const
 {
-  return PhaseSpaceDimensionTraits<dep_dimension>::getClass();
+  return PhaseSpaceDimensionTraits<dimension>::getClass();
 }
 
 // Return the independent phase space dimension
-template<PhaseSpaceDimension indep_dimension,PhaseSpaceDimension dep_dimension>
-PhaseSpaceDimension DependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension>::getIndepDimension() const
+template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
+PhaseSpaceDimension DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::getParentDimension() const
 {
-  return indep_dimension;
+  return parent_dimension;
 }
 
 // Return the independent phase space dimension class
-template<PhaseSpaceDimension indep_dimension,PhaseSpaceDimension dep_dimension>
-PhaseSpaceDimensionClass DependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension>::getIndepDimensionClass() const
+template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
+PhaseSpaceDimensionClass DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::getParentDimensionClass() const
 {
-  return PhaseSpaceDimensionTraits<indep_dimension>::getClass();
+  return PhaseSpaceDimensionTraits<parent_dimension>::getClass();
 }
 
 // Check if the dimension distribution is independent
-template<PhaseSpaceDimension indep_dimension,PhaseSpaceDimension dep_dimension>
-bool DependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension>::isIndependent() const
+template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
+bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::isIndependent() const
 {
   return false;
 }
 
 // Check if the dimension is dependent on the dimension of interest
-template<PhaseSpaceDimension indep_dimension,PhaseSpaceDimension dep_dimension>
-bool DependentPhaseSpaceDimensionDistribution<indep_dimension,dep_dimension>::isDependentOnDimension(
-                                    const PhaseSpaceDimension dimension ) const
+template<PhaseSpaceDimension parent_dimension,PhaseSpaceDimension dimension>
+bool DependentPhaseSpaceDimensionDistribution<parent_dimension,dimension,typename std::enable_if<parent_dimension!=dimension>::type>::isDependentOnDimension(
+                              const PhaseSpaceDimension other_dimension ) const
 {
-  return indep_dimension == dimension;
+  return parent_dimension == other_dimension;
 }
   
 } // end MonteCarlo namespace

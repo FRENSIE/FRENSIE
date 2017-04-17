@@ -228,10 +228,20 @@ void PhaseSpaceDimensionDistribution::sampleFromDependentDistributionsAndRecordT
   }
 }
 
+// Return the parent distribution
+/*! \details If the distribution is independent or if the parent distribution
+ * has not been assigned yet, this method will return NULL.
+ */
+const PhaseSpaceDimensionDistribution*
+PhaseSpaceDimensionDistribution::getParentDistribution() const
+{
+  return d_parent_distribution;
+}
+
 // Add a dependent dimension
 void PhaseSpaceDimensionDistribution::addDependentDimension(
-                  const std::shared_ptr<const PhaseSpaceDimensionDistribution>&
-                  dependent_dimension )
+                       const std::shared_ptr<PhaseSpaceDimensionDistribution>&
+                       dependent_dimension )
 {
   // Make sure that the dependent dimension is actually dependent on this dim.
   testPrecondition( dependent_dimension->isDependentOnDimension( this->getDimension() ) );
@@ -242,6 +252,9 @@ void PhaseSpaceDimensionDistribution::addDependentDimension(
   // Add the dependent distribution to the map
   d_dependent_dimension_distributions[dependent_dimension->getDimension()] =
     dependent_dimension;
+
+  // Set this distribution as the parent of the dependent distribution
+  dependent_dimension->d_parent_distribution = this;
 }
   
 } // end MonteCarlo namespace

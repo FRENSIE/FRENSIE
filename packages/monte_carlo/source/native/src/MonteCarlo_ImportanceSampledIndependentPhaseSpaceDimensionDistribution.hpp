@@ -12,6 +12,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IndependentPhaseSpaceDimensionDistribution.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -51,6 +52,17 @@ private:
   std::shared_ptr<const Utility::OneDDistribution>
   d_dimension_importance_distribution;
 };
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ImportanceSampledIndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ImportanceSampledIndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ImportanceSampledIndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ImportanceSampledIndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ImportanceSampledIndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ImportanceSampledIndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ImportanceSampledIndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ImportanceSampledIndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ImportanceSampledIndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION> );
   
 } // end MonteCarlo namespace
 
