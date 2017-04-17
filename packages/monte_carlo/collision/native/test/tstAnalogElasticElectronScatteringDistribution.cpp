@@ -1041,7 +1041,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test 4 energy 3
   scattering_angle_cosine = 0.999999;
   value = lin_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( value, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 1.0, 1e-4 );
 
   // Test 5 energy 3
   scattering_angle_cosine = 1.0;
@@ -1355,6 +1355,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   }
 
   double atomic_number = data_container.getAtomicNumber();
+  double evaluation_tol = 1e-15;
 
     // Create the distributions unsing LinLinLog interpolation
     {
@@ -1363,7 +1364,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
             function_data,
             1e-6,
-            1e-7 ) );
+            evaluation_tol ) );
 
     bool linlinlog_interpolation_mode_on = true;
     bool correlated_sampling_mode_on = true;

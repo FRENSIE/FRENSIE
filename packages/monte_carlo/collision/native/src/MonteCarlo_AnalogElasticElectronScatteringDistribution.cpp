@@ -206,10 +206,10 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
             incoming_energy,
             s_cutoff_mu );
 
-  return evaluateScreenedRutherfordPDF( incoming_energy,
-                                        scattering_angle_cosine,
-                                        eta,
-                                        cutoff_pdf );
+  return this->evaluateScreenedRutherfordPDF( incoming_energy,
+                                              scattering_angle_cosine,
+                                              eta,
+                                              cutoff_pdf );
 }
 
 // Evaluate the screened Rutherford PDF at the given energy and scattering angle cosine
@@ -286,10 +286,10 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCD
             incoming_energy,
             s_cutoff_mu );
 
-  return 1.0 + evaluateScreenedRutherfordCDF( incoming_energy,
-                                              scattering_angle_cosine,
-                                              eta,
-                                              cutoff_pdf );
+  return 1.0 + this->evaluateScreenedRutherfordCDF( incoming_energy,
+                                                    scattering_angle_cosine,
+                                                    eta,
+                                                    cutoff_pdf );
 }
 
 // Evaluate the CDF for only screened Rutherford
