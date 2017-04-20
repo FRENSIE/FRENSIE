@@ -26,12 +26,17 @@ class AnalogElasticElectronScatteringDistribution : public ElectronScatteringDis
 
 public:
 
+  //! Typedef for the this type
+  typedef AnalogElasticElectronScatteringDistribution ThisType;
+
   //! Typedef for the two d distributions
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor
   AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
+    const std::vector<double> cutoff_cdfs,
+    const std::vector<double> etas,
     const int atomic_number,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on );
@@ -76,43 +81,37 @@ public:
   //! Evaluate Moliere's atomic screening constant at the given electron energy
   double evaluateMoliereScreeningConstant( const double energy ) const;
 
-  //! Evaluate the distribution
-  double evaluateScreenedRutherford(
-            const double incoming_energy,
-            const double scattering_angle_cosine,
-            const double eta ) const;
+  //! Evaluate Moliere's atomic screening constant at the given electron energy
+  /*! \details parameter_1 = (1/2*(fsc/0.885)**2),
+   *           parameter_2 = 3.76*fsc^2*Z^2
+   */
+  static double evaluateMoliereScreeningConstant( const double energy,
+                                                  const double Z_two_thirds_power,
+                                                  const double parameter_1,
+                                                  const double parameter_2 );
+
+  //! Evaluate the distribution at the cutoff angle cosine
+  double evaluateCutoff( const double incoming_energy ) const;
+
+  //! Evaluate the PDF at the cutoff angle cosine
+  double evaluateCutoffPDF( const double incoming_energy ) const;
+
+  //! Evaluate the CDF at the cutoff angle cosine
+  static double evaluateCutoffCDF( const double incoming_energy,
+                                   const double eta,
+                                   const double cutoff_pdf );
 
   //! Evaluate the PDF
-  double evaluateScreenedRutherfordPDF(
-            const double incoming_energy,
-            const double scattering_angle_cosine,
-            const double eta ) const;
-
-  //! Evaluate the PDF
-  double evaluateScreenedRutherfordPDF(
-            const double incoming_energy,
-            const double scattering_angle_cosine,
-            const double eta,
-            const double norm_factor ) const;
-
-  //! Evaluate the CDF
-  double evaluateScreenedRutherfordCDF(
-            const double incoming_energy,
-            const double scattering_angle_cosine,
-            const double eta ) const;
-
-  //! Evaluate the CDF
-  double evaluateScreenedRutherfordCDF(
-            const double incoming_energy,
-            const double scattering_angle_cosine,
-            const double eta,
-            const double norm_factor ) const;
+  double evaluateScreenedRutherfordPDF( const double incoming_energy,
+                                        const double scattering_angle_cosine,
+                                        const double eta ) const;
 
 protected:
 
    //! Sample an outgoing direction from the distribution
   void sampleBin(
             const TwoDDist::DistributionType::const_iterator& distribution_bin,
+            const unsigned bin_index,
             const double random_number,
             double& scattering_angle_cosine ) const;
 
@@ -121,6 +120,20 @@ protected:
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
 
+  //! Evaluate the PDF
+  double evaluateScreenedRutherfordPDF(
+            const double scattering_angle_cosine,
+            const double eta,
+            const double cutoff_pdf,
+            const double cutoff_cdf ) const;
+
+  //! Evaluate the CDF
+  double evaluateScreenedRutherfordCDF(
+            const double scattering_angle_cosine,
+            const double eta,
+            const double cutoff_pdf,
+            const double cutoff_cdf ) const;
+
 private:
 
   // Sample an outgoing direction from the distribution
@@ -128,14 +141,16 @@ private:
             const double incoming_energy,
             const double random_number,
             const TwoDDist::DistributionType::const_iterator lower_bin,
-            const TwoDDist::DistributionType::const_iterator upper_bin ) const;
+            const TwoDDist::DistributionType::const_iterator upper_bin,
+            const unsigned lower_bin_index ) const;
 
   // Sample an outgoing direction from the distribution
   double stochasticSample(
             const double incoming_energy,
             const double random_number,
             const TwoDDist::DistributionType::const_iterator lower_bin,
-            const TwoDDist::DistributionType::const_iterator upper_bin ) const;
+            const TwoDDist::DistributionType::const_iterator upper_bin,
+            const unsigned lower_bin_index ) const;
 
   template<bool linlinlog_interpolation_mode_on>
   inline double interpolate( const double lower_energy,
@@ -171,11 +186,18 @@ private:
   // Cutoff elastic scattering distribution
   std::shared_ptr<TwoDDist> d_elastic_cutoff_distribution;
 
+  // The cutoff cdf values at the tabulated energies
+  std::vector<double> d_cutoff_cdfs;
+
+  // The eta (screening parameter) values at the tabulated energies
+  std::vector<double> d_etas;
+
   // The sample function pointer
   std::function<double (
             const double, const double,
             const TwoDDist::DistributionType::const_iterator,
-            const TwoDDist::DistributionType::const_iterator)> d_sample_func;
+            const TwoDDist::DistributionType::const_iterator,
+            const unsigned)> d_sample_func;
 
   // The interplation function pointer
   std::function<double ( const double, const double, const double,

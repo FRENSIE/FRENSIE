@@ -251,17 +251,55 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
 
+  double Z_two_thirds = pow( atomic_number, 2.0/3.0 );
+  double fine_structure_const_squared =
+        Utility::PhysicalConstants::fine_structure_constant *
+        Utility::PhysicalConstants::fine_structure_constant;
+
+  double paramter_1 = fine_structure_const_squared/( 2.0*0.885*0.885 );
+  double paramter_2 = 3.76*fine_structure_const_squared*
+                                            atomic_number*atomic_number;
+
   // Create the scattering function
   std::shared_ptr<TwoDDist> scattering_function;
 
-  // Create the scattering function
-  ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<TwoDInterpPolicy>(
+  // Get the distribution data
+  TwoDDist::DistributionType function_data( angular_energy_grid.size() );
+  std::vector<double> cutoff_cdfs( angular_energy_grid.size() );
+  std::vector<double> etas( angular_energy_grid.size() );
+
+  for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
         cutoff_elastic_angles,
         cutoff_elastic_pdf,
-        angular_energy_grid,
-        scattering_function,
-        evaluation_tol,
+        angular_energy_grid[n],
+        function_data[n],
         false );
+
+    etas[n] =
+      AnalogElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant(
+        angular_energy_grid[n],
+        Z_two_thirds,
+        paramter_1,
+        paramter_2 );
+
+    double cutoff_pdf =
+            cutoff_elastic_pdf.find( angular_energy_grid[n] )->second.back();
+
+    cutoff_cdfs[n] =
+        AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
+                    angular_energy_grid[n],
+                    etas[n],
+                    cutoff_pdf );
+  }
+
+  // Set the scattering function
+  scattering_function.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy>(
+        function_data,
+        1e-6,
+        evaluation_tol ) );
 
   // Set the interpolation policy
   bool linlinlog_interpolation_mode_on = false;
@@ -272,6 +310,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
   analog_elastic_distribution.reset(
       new AnalogElasticElectronScatteringDistribution(
                 scattering_function,
+                cutoff_cdfs,
+                etas,
                 atomic_number,
                 linlinlog_interpolation_mode_on,
                 correlated_sampling_mode_on ) );

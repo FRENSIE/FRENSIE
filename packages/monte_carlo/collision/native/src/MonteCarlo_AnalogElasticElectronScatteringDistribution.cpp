@@ -38,10 +38,14 @@ double AnalogElasticElectronScatteringDistribution::s_screening_param1 =
 // Constructor
 AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
+    const std::vector<double> cutoff_cdfs,
+    const std::vector<double> etas,
     const int atomic_number,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on )
   : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
+    d_cutoff_cdfs( cutoff_cdfs ),
+    d_etas( etas ),
     d_atomic_number( atomic_number ),
     d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on ),
     d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
@@ -50,6 +54,10 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
 {
   // Make sure the array is valid
   testPrecondition( d_elastic_cutoff_distribution.use_count() > 0 );
+  // Make sure vectors are valid
+  testPrecondition( !d_cutoff_cdfs.empty() );
+  testPrecondition( !d_etas.empty() );
+  testPrecondition( d_cutoff_cdfs.size() == d_etas.size() );
   // Make sure the atomic number is valid
   testPrecondition( d_atomic_number > 0 );
   testPrecondition( d_atomic_number <= 100u );
@@ -90,7 +98,8 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
          std::placeholders::_1,
          std::placeholders::_2,
          std::placeholders::_3,
-         std::placeholders::_4 );
+         std::placeholders::_4,
+         std::placeholders::_5 );
   }
   else
   {
@@ -101,7 +110,8 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
          std::placeholders::_1,
          std::placeholders::_2,
          std::placeholders::_3,
-         std::placeholders::_4 );
+         std::placeholders::_4,
+         std::placeholders::_5 );
   }
 }
 
@@ -116,119 +126,118 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
+  double eta = evaluateMoliereScreeningConstant( incoming_energy );
+  double cutoff_pdf = this->evaluateCutoff( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCutoffCDF( incoming_energy,
+                                                   eta,
+                                                   cutoff_pdf );
+
+  testPostcondition( eta > 0.0 );
+  testPostcondition( cutoff_pdf > 0.0 );
+  testPostcondition( cutoff_cdf <= 1.0 );
+  testPostcondition( cutoff_cdf > 0.0 );
+
   if ( scattering_angle_cosine > s_cutoff_mu )
   {
-    double eta = evaluateMoliereScreeningConstant( incoming_energy );
-
     // evaluate on the screened Rutherford distribution
-    return this->evaluateScreenedRutherford( 
-                    incoming_energy,
-                    scattering_angle_cosine,
-                    eta );
+    return this->evaluateScreenedRutherfordPDF( scattering_angle_cosine,
+                                                eta,
+                                                cutoff_pdf,
+                                                cutoff_cdf );
   }
   else
   {
     // evaluate on the cutoff distribution
-    return d_elastic_cutoff_distribution->evaluateExact( incoming_energy,
-                                                         scattering_angle_cosine );
+    double pdf =
+        d_elastic_cutoff_distribution->evaluateExact( incoming_energy,
+                                                      scattering_angle_cosine );
+
+    testPostcondition( pdf >= 0.0 );
+
+    return pdf*cutoff_cdf;
   }
 }
 
-// Evaluate the screened Rutherford distribution given energy, eta, and scattering angle cosine
-//! \details Because the scattering angle cosine is very close to one, precision will be lost.
-double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherford(
-        const double incoming_energy,
-        const double scattering_angle_cosine,
-        const double eta ) const
-{
-  // Make sure the energy, eta and angle are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-  testPrecondition( eta > 0.0 );
-
-  double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluateExact( incoming_energy, s_cutoff_mu );
-
-  double pdf = evaluateScreenedRutherfordPDF( incoming_energy,
-                                              scattering_angle_cosine,
-                                              eta,
-                                              cutoff_pdf );
-
-  return pdf;
-}
-
 // Evaluate the PDF at the given energy and scattering angle cosine
-//! \details This PDF is normalize to equal 1 when integrated from mu = -1.0 to mu = s_cutoff_mu (0.999999)
 double AnalogElasticElectronScatteringDistribution::evaluatePDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
-  // Make sure the energy, eta and angle are valid
+  // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  double eta = evaluateMoliereScreeningConstant( incoming_energy );
+  double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCutoffCDF( incoming_energy,
+                                                   eta,
+                                                   cutoff_pdf );
+
+  testPostcondition( eta > 0.0 );
+  testPostcondition( cutoff_pdf > 0.0 );
+  testPostcondition( cutoff_cdf <= 1.0 );
+  testPostcondition( cutoff_cdf > 0.0 );
 
   if ( scattering_angle_cosine > s_cutoff_mu )
   {
-    double eta = evaluateMoliereScreeningConstant( incoming_energy );
-
-    // evaluate PDF on the screened Rutherford distribution
-    return this->evaluateScreenedRutherfordPDF(
-                    incoming_energy,
-                    scattering_angle_cosine,
-                    eta );
+    // evaluate on the screened Rutherford distribution
+    return this->evaluateScreenedRutherfordPDF( scattering_angle_cosine,
+                                                eta,
+                                                cutoff_pdf,
+                                                cutoff_cdf );
   }
   else
   {
-    // evaluate PDF on the cutoff distribution
-    return d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
-            incoming_energy,
-            scattering_angle_cosine );
+    // evaluate on the cutoff distribution
+    double pdf =
+        d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+                        incoming_energy,
+                        scattering_angle_cosine );
+
+    testPostcondition( pdf >= 0.0 );
+
+    return pdf*cutoff_cdf;
   }
 }
 
-// Evaluate the screened Rutherford PDF at the given energy and scattering angle cosine
-//! \details This screened Rutherford pdf uses the normalized cutoff pdf value at s_cutoff_mu (0.999999)
+// Evaluate the PDF
 double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
-        const double incoming_energy,
-        const double scattering_angle_cosine,
-        const double eta ) const
+                                        const double incoming_energy,
+                                        const double scattering_angle_cosine,
+                                        const double eta ) const
 {
-  // Make sure the energy, eta and angle are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-  testPrecondition( eta > 0.0 );
+  double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCutoffCDF( incoming_energy,
+                                                   eta,
+                                                   cutoff_pdf );
 
-  double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
-            incoming_energy,
-            s_cutoff_mu );
-
-  return this->evaluateScreenedRutherfordPDF( incoming_energy,
-                                              scattering_angle_cosine,
+  return this->evaluateScreenedRutherfordPDF( scattering_angle_cosine,
                                               eta,
-                                              cutoff_pdf );
+                                              cutoff_pdf,
+                                              cutoff_cdf );
+
 }
 
-// Evaluate the screened Rutherford PDF at the given energy and scattering angle cosine
+
+// Evaluate the PDF at the given energy and scattering angle cosine
 double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
-        const double incoming_energy,
         const double scattering_angle_cosine,
         const double eta,
-        const double norm_factor ) const
+        const double cutoff_pdf,
+        const double cutoff_cdf ) const
 {
   // Make sure the energy, eta and angle are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
-  testPrecondition( norm_factor > 0.0 );
+  testPrecondition( cutoff_pdf > 0.0 );
+  testPrecondition( cutoff_pdf > 0.0 );
+  testPrecondition( cutoff_cdf <= 1.0 );
 
   double delta_mu = 1.0 - scattering_angle_cosine;
 
-  return norm_factor*
+  return cutoff_cdf*cutoff_pdf*
             ( s_cutoff_delta_mu + eta )*( s_cutoff_delta_mu + eta )/(
             ( delta_mu + eta )*( delta_mu + eta ) );
 }
@@ -244,76 +253,62 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
+  double eta = evaluateMoliereScreeningConstant( incoming_energy );
+  double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCutoffCDF( incoming_energy,
+                                                   eta,
+                                                   cutoff_pdf );
+
+  testPostcondition( eta > 0.0 );
+  testPostcondition( cutoff_pdf > 0.0 );
+  testPostcondition( cutoff_cdf <= 1.0 );
+  testPostcondition( cutoff_cdf > 0.0 );
+
   if ( scattering_angle_cosine > s_cutoff_mu )
   {
-    double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
-
     // evaluate CDF on the screened Rutherford distribution
-    return this->evaluateScreenedRutherfordCDF(
-                    incoming_energy,
-                    scattering_angle_cosine,
-                    eta );
+    return this->evaluateScreenedRutherfordCDF( scattering_angle_cosine,
+                                                eta,
+                                                cutoff_pdf,
+                                                cutoff_cdf );
   }
   else
   {
     // evaluate CDF on the cutoff distribution
-    return d_elastic_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
-            incoming_energy,
-            scattering_angle_cosine );
+    double cdf =
+        d_elastic_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+                incoming_energy,
+                scattering_angle_cosine );
+
+    testPostcondition( cdf >= 0.0 );
+    testPostcondition( cdf <= 1.0 );
+
+    return cutoff_cdf*cdf;
   }
 }
 
-// Evaluate the total CDF within the screened Rutherford distribution
-/*! \details This CDF is normalize to the elastic cutoff cdf at
- *  s_cutoff_mu (0.999999) and will return a value of 1 at s_cutoff_mu.
- *  The value of this CDF should always be greater than or equal to 1.
- */
+// Evaluate the CDF for an angle cosine above the cutoff
 double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF(
-        const double incoming_energy,
-        const double scattering_angle_cosine,
-        const double eta ) const
-{
-  // Make sure the energy, eta and angle cosine are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-  testPrecondition( eta > 0.0 );
-
-  double delta_mu = 1.0 - scattering_angle_cosine;
-
-  double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
-            incoming_energy,
-            s_cutoff_mu );
-
-  return 1.0 + this->evaluateScreenedRutherfordCDF( incoming_energy,
-                                                    scattering_angle_cosine,
-                                                    eta,
-                                                    cutoff_pdf );
-}
-
-// Evaluate the CDF for only screened Rutherford
-/*! \details This CDF is the potion of the total CDF that is within the
- *  screened Rutherford distribution or above s_cutoff_mu (0.999999).
- *  The CDF is normalized to the elastic cutoff cdf at s_cutoff_mu (0.999999).
- */
-double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF(
-        const double incoming_energy,
         const double scattering_angle_cosine,
         const double eta,
-        const double norm_factor ) const
+        const double cutoff_pdf,
+        const double cutoff_cdf ) const
 {
   // Make sure the energy, eta and angle cosine are valid
-  testPrecondition( incoming_energy > 0.0 );
   testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
-  testPrecondition( norm_factor > 0.0 );
+  testPrecondition( cutoff_pdf > 0.0 );
+  testPrecondition( cutoff_cdf > 0.0 );
+  testPrecondition( cutoff_cdf <= 1.0 );
 
   double delta_mu = 1.0 - scattering_angle_cosine;
+  double numerator = 1e6*eta*( scattering_angle_cosine - s_cutoff_mu );
+  double denominator = eta + delta_mu;
 
-  return norm_factor*( scattering_angle_cosine - s_cutoff_mu )*
-                ( s_cutoff_delta_mu + eta )/( delta_mu + eta );
+
+  return std::min( 1.0,
+                   cutoff_cdf + (1.0-cutoff_cdf)*numerator/denominator );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -416,6 +411,58 @@ double AnalogElasticElectronScatteringDistribution::evaluateMoliereScreeningCons
         d_Z_two_thirds_power * ( 1.13 + d_screening_param2*screening_param3 );
 }
 
+// Evaluate Moliere's atomic screening constant (modified by Seltzer) at the given electron energy
+double AnalogElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant(
+                                              const double energy,
+                                              const double Z_two_thirds_power,
+                                              const double parameter_1,
+                                              const double parameter_2 )
+{
+  // get the energy-momentum**2 of the electron in units of electron_rest_mass_energy
+  double electron_energy_momentum_squared =
+           Utility::calculateDimensionlessRelativisticMomentumSquared(
+                          Utility::PhysicalConstants::electron_rest_mass_energy,
+                          energy );
+
+  // get the velocity of the electron divided by the speed of light beta = v/c
+  double beta_squared = Utility::calculateDimensionlessRelativisticSpeedSquared(
+           Utility::PhysicalConstants::electron_rest_mass_energy,
+           energy );
+
+  double parameter_3 = 1.0/beta_squared*sqrt( energy/
+            ( energy + Utility::PhysicalConstants::electron_rest_mass_energy) );
+
+ // Calculate Moliere's atomic screening constant
+ return parameter_1 * 1.0/electron_energy_momentum_squared *
+        Z_two_thirds_power * ( 1.13 + parameter_2*parameter_3 );
+}
+
+// Evaluate the distribution at the cutoff angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateCutoff(
+                    const double incoming_energy ) const
+{
+  return d_elastic_cutoff_distribution->evaluateExact( incoming_energy,
+                                                       s_cutoff_mu );
+}
+
+// Evaluate the PDF at the cutoff angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateCutoffPDF(
+                    const double incoming_energy ) const
+{
+  return d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+                        incoming_energy,
+                        s_cutoff_mu );
+}
+
+// Evaluate the CDF at the cutoff angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
+                    const double incoming_energy,
+                    const double eta,
+                    const double cutoff_pdf )
+{
+  return eta/(eta + cutoff_pdf*(eta*1e-6 + 1e-12) );
+}
+
 // Sample an outgoing direction from the distribution
 void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                 const double incoming_energy,
@@ -438,22 +485,26 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                     lower_bin,
                                                     upper_bin );
 
+  // Get the lower bin index
+  unsigned lower_index =
+                d_elastic_cutoff_distribution->calculateBinIndex( lower_bin );
+
   // Get a random number
   double random_number =
             Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   if ( lower_bin->first == incoming_energy )
   {
-    this->sampleBin( lower_bin, random_number, scattering_angle_cosine );
+    this->sampleBin( lower_bin, lower_index, random_number, scattering_angle_cosine );
   }  
   else if ( upper_bin->first == incoming_energy )
   {
-    this->sampleBin( upper_bin, random_number, scattering_angle_cosine );
+    this->sampleBin( upper_bin, lower_index+1, random_number, scattering_angle_cosine );
   }
   else if ( lower_bin != upper_bin )
   {
     scattering_angle_cosine =
-            d_sample_func(incoming_energy, random_number, lower_bin, upper_bin);
+            d_sample_func(incoming_energy, random_number, lower_bin, upper_bin, lower_index );
   }
   else
   {
@@ -470,15 +521,16 @@ double AnalogElasticElectronScatteringDistribution::correlatedSample(
         const double incoming_energy,
         const double random_number,
         const TwoDDist::DistributionType::const_iterator lower_bin,
-        const TwoDDist::DistributionType::const_iterator upper_bin ) const
+        const TwoDDist::DistributionType::const_iterator upper_bin,
+        const unsigned lower_bin_index ) const
 {
     // Sample lower bin
     double lower_angle;
-    this->sampleBin( lower_bin, random_number, lower_angle );
+    this->sampleBin( lower_bin, lower_bin_index, random_number, lower_angle );
 
     // Sample upper bin
     double upper_angle;
-    this->sampleBin( upper_bin, random_number, upper_angle );
+    this->sampleBin( upper_bin, lower_bin_index+1, random_number, upper_angle );
 
 //  if( d_linlinlog_interpolation_mode_on )
 //  {
@@ -512,17 +564,25 @@ double AnalogElasticElectronScatteringDistribution::stochasticSample(
         const double incoming_energy,
         const double random_number,
         const TwoDDist::DistributionType::const_iterator lower_bin,
-        const TwoDDist::DistributionType::const_iterator upper_bin ) const
+        const TwoDDist::DistributionType::const_iterator upper_bin,
+        const unsigned lower_bin_index ) const
 {
   double interpolation_fraction = (incoming_energy - lower_bin->first)/
                                   (upper_bin->first - lower_bin->first);
 
   // Sample to determine the distribution that will be used
   TwoDDist::DistributionType::const_iterator sampled_bin;
+  unsigned sampled_bin_index;
   if( random_number < interpolation_fraction )
+  {
     sampled_bin = upper_bin;
+    sampled_bin_index = lower_bin_index +1;
+  }
   else
+  {
     sampled_bin = lower_bin;
+    sampled_bin_index = lower_bin_index;
+  }
 
   double scattering_angle_cosine;
 
@@ -531,7 +591,7 @@ double AnalogElasticElectronScatteringDistribution::stochasticSample(
             Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   // Sample the bin
-  sampleBin( sampled_bin, random_number_2, scattering_angle_cosine );
+  sampleBin( sampled_bin, sampled_bin_index, random_number_2, scattering_angle_cosine );
 
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
@@ -546,49 +606,30 @@ double AnalogElasticElectronScatteringDistribution::stochasticSample(
  */
 void AnalogElasticElectronScatteringDistribution::sampleBin(
         const TwoDDist::DistributionType::const_iterator& distribution_bin,
+        const unsigned bin_index,
         const double random_number,
         double& scattering_angle_cosine ) const
 {
-  // Get the bin energy
-  double energy = distribution_bin->first;
-  // Get the scattering constant at the bin energy
-  double eta = evaluateMoliereScreeningConstant( energy );
-  // Get the max cutoff pdf for the bin
-  double cuotff_pdf = distribution_bin->second->evaluatePDF( s_cutoff_mu );
-  // Get the max screened Rutherford CDF
-  double max_rutherford_cdf =
-                evaluateScreenedRutherfordCDF( energy, 1.0, eta, cuotff_pdf );
-  // Scale the random number to the max cdf value
-  double scaled_random_number = random_number*( 1.0 + max_rutherford_cdf );
-
-  if ( scaled_random_number > 1.0 ) // Sample screened Rutherford
+  if ( random_number > d_cutoff_cdfs[bin_index] ) // Sample screened Rutherford
   {
-    // rescale the random number
-    scaled_random_number -= 1.0;
-    // calculated a reapeated variable
-    double var = cuotff_pdf*(s_cutoff_delta_mu + eta);
+    // Scale the random number
+    double scaled_random_number = s_cutoff_delta_mu*
+    ( random_number - d_cutoff_cdfs[bin_index] )/( 1.0 - d_cutoff_cdfs[bin_index] );
 
     // calculate the screened Rutherford scattering angle
     scattering_angle_cosine = std::min( 1.0,
-        ( scaled_random_number*( 1.0 + eta ) + var*s_cutoff_mu )/
-        ( scaled_random_number+ var ) );
-
-//    // Renormalize random number to 0 to 1
-//    scaled_random_number = ( scaled_random_number - 1.0 )/( max_rutherford_cdf );
-
-//    // calculated a reapeated variable
-//    double var = s_cutoff_delta_mu*scaled_random_number;
-
-//    // calculate the screened Rutherford scattering angle
-//    scattering_angle_cosine = std::min( 1.0,
-//        ( var*( 1.0 + eta ) + eta*s_cutoff_mu )/
-//        ( var + eta ) );
+        ( scaled_random_number*( 1.0 + d_etas[bin_index] )
+        + d_etas[bin_index]*s_cutoff_mu )/
+        ( scaled_random_number + d_etas[bin_index] ) );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine >= s_cutoff_mu );
   }
   else // Sample Cutoff
   {
+    // Scale the random number to the cutoff cdf
+    double scaled_random_number = random_number/d_cutoff_cdfs[bin_index];
+
     // calculate the cutoff distribution scattering angle
     scattering_angle_cosine =
       distribution_bin->second->sampleWithRandomNumber( scaled_random_number );

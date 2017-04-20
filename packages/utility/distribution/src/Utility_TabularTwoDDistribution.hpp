@@ -115,6 +115,10 @@ public:
          typename DistributionType::const_iterator& lower_bin_boundary,
          typename DistributionType::const_iterator& upper_bin_boundary ) const;
 
+  //! Calculate the index of the desired bin
+  size_t calculateBinIndex(
+               typename DistributionType::const_iterator& bin_boundary ) const;
+
 protected:
 
   //! Default constructor
@@ -123,10 +127,6 @@ protected:
 
   //! Set the distribution
   void setDistribution( const DistributionType distribution );
-
-  //! Calculate the index of the desired bin
-  size_t calculateBinIndex(
-               typename DistributionType::const_iterator& bin_boundary ) const;
 
   // Check that all secondary distributions are continuous
   bool areSecondaryDistributionsContinuous() const;

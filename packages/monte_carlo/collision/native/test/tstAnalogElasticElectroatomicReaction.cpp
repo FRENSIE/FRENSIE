@@ -19,6 +19,7 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -135,50 +136,17 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Data::ElectronPhotonRelaxationDataContainer data_container =
         Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-    // Get the energy grid
-    std::vector<double> angular_energy_grid =
-        data_container.getElasticAngularEnergyGrid();
-
-    // Get size of paramters
-    int size = angular_energy_grid.size();
-
-    // Create the scattering function
-    Utility::FullyTabularTwoDDistribution::DistributionType function_data( size );
-
-    for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
-    {
-    function_data[n].first = angular_energy_grid[n];
-
-    // Get the cutoff elastic scattering angles at the energy
-    Teuchos::Array<double> angles(
-        data_container.getCutoffElasticAngles( angular_energy_grid[n] ) );
-
-    // Get the cutoff elastic scatering pdf at the energy
-    Teuchos::Array<double> pdf(
-        data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
-
-    function_data[n].second.reset(
-      new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
-    }
-
-    double atomic_number = data_container.getAtomicNumber();
-
-    // Create the scattering function
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
-        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
-            function_data,
-            1e-6 ) );
-
-    // Create cutoff distribution
-    bool linlinlog_interpolation_mode_on = true;
     bool correlated_sampling_mode_on = true;
+    double evaluation_tol = 1e-7;
+
+    // Create analog distribution
     std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_elastic_distribution(
-            new MonteCarlo::AnalogElasticElectronScatteringDistribution(
-                scattering_function,
-                atomic_number,
-                linlinlog_interpolation_mode_on,
-                correlated_sampling_mode_on ) );
+        analog_elastic_distribution;
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+        analog_elastic_distribution,
+        data_container,
+        correlated_sampling_mode_on,
+        evaluation_tol );
 
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.assign(

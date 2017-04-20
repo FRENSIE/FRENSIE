@@ -107,6 +107,10 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 %electron_distribution_interface_setup( CutoffElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( MomentPreservingElasticElectronScatteringDistribution )
 
+%feature("autodoc",
+"s_cutoff_mu(DISTRIBUTION self ) -> double" )
+MonteCarlo::AnalogElasticElectronScatteringDistribution::s_cutoff_mu;
+
 //---------------------------------------------------------------------------//
 // Add support for the bremsstrahlung electron scattering distribution
 //---------------------------------------------------------------------------//
