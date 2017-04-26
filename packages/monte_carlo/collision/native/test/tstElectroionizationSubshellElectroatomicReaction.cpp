@@ -54,10 +54,10 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getReactionType_ace )
 {
   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getReactionType(),
-		       MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                       MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getReactionType(),
-		       MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                       MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -76,16 +76,16 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getThresholdE
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getNumberOfEmittedElectrons_ace )
 {
   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedElectrons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedElectrons(20.0),
-		       1u );
+                       1u );
 
   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedElectrons(1e-3),
-		       1u );
+                       1u );
 
   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedElectrons(20.0),
-		       1u );
+                       1u );
 }
 
 //---------------------------------------------------------------------------//
@@ -93,16 +93,16 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getNumberOfEm
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getNumberOfEmittedPhotons_ace )
 {
   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedPhotons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedPhotons(20.0),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedPhotons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedPhotons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -308,14 +308,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
   // Create a file handler and data extractor
   std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+                                 new Data::ACEFileHandler( test_ace_file_name,
+                                                           test_ace_table_name,
+                                                           1u ) );
   std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+                                      ace_file_handler->getTableNXSArray(),
+                                      ace_file_handler->getTableJXSArray(),
+                                      ace_file_handler->getTableXSSArray() ) );
 
   // Extract the energy grid and cross section
   Teuchos::ArrayRCP<double> energy_grid;

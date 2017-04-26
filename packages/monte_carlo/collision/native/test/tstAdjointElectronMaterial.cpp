@@ -49,13 +49,13 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, getNumberDensity )
 TEUCHOS_UNIT_TEST( AdjointElectronMaterial, getMacroscopicTotalCrossSection )
 {
   double cross_section = material->getMacroscopicTotalCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 8.12067117180962E+10*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1121357857282637e+11*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicTotalCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.60510755501202E+08*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.4996373619527727e+07*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicTotalCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.6012554582652E+05*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.9755225380801866e+05*num_density, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -63,13 +63,13 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, getMacroscopicTotalCrossSection )
 TEUCHOS_UNIT_TEST( AdjointElectronMaterial, getMacroscopicAbsorptionCrossSection )
 {
   double cross_section = material->getMacroscopicAbsorptionCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicAbsorptionCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicAbsorptionCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -91,64 +91,64 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
   double cross_section = material->getMacroscopicReactionCrossSection(
         1e-5,
         MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 6.12229969785753E+07*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.1222996978575356e+07*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-3,
         MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.05374826494071E+07*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0537482649407225e+07*num_density, 1e-12 );
 
 
   cross_section = material->getMacroscopicReactionCrossSection(
         20.0,
         MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 8.18292998537648E+04*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.1829299853764838e+04*num_density, 1e-12 );
 
 
   // Test that the bremsstrahlung cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-5,
         MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 6.48761655529424E+01*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.4004979588000410e+01*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-3,
         MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 2.84695186338680E+01*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.4938553344074585e+01*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         20.0,
         MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.52732920066756*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4390795879250147*num_density, 1e-12 );
 
 
   // Test that the K subshell electroionization cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-5,
         MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 8.08705926562415E+10*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1087745951184282e+11*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-3,
         MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.47168339566838E+08*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 7.1653961216128990e+07*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         20.0,
         MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 6.52725961285674E+04*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0269939235967887e+05*num_density, 1e-12 );
 
 
   // Test that there is L1 subshell electroionization cross section
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-5,
         MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         20.0,
         MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that the analog elastic cross section can be returned
@@ -172,48 +172,48 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-5,
         MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-11 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         20.0,
         MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that there is no cutoff elastic cross section
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-5,
          MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         20.0,
         MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that there is no screened Rutherford reaction
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-5,
         MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         20.0,
         MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that there is no moment preserving elastic cross section
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-5,
         MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         20.0,
         MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -231,7 +231,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideAnalogue )
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the H atom
-  fake_stream[1] = 9.1687525304643E-01; // select the elastic reaction
+  fake_stream[1] = 3.30002880828054e-02; // select the elastic reaction
   fake_stream[2] = 1.08953394168687E-01; // sample mu = 0.90000623580299476956
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -239,7 +239,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideAnalogue )
   material->collideAnalogue( electron, bank );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 1e-3 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.90000623580299476956, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.90000623580401506452, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -258,7 +258,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideSurvivalBias )
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the H atom
-  fake_stream[1] = 9.1687525304643E-01; // select the elastic reaction
+  fake_stream[1] = 3.30002880828054e-02; // select the elastic reaction
   fake_stream[2] = 1.08953394168687E-01; // sample mu = 0.90000623580299476956
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -266,7 +266,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideSurvivalBias )
   material->collideSurvivalBias( electron, bank );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 1e-3 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.90000623580299476956, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.90000623580401506452, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getWeight(), 1.0, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();

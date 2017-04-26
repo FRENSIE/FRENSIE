@@ -71,14 +71,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getNumberOfEmitte
 TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = bremsstrahlung_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 6.48761655529424E+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.4004979588000410e+01, 1e-12 );
 
-  cross_section =
-    bremsstrahlung_reaction->getCrossSection( 1.00182011325836E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.84496162149125E+01, 1e-12 );
+  cross_section = bremsstrahlung_reaction->getCrossSection( 2e-2 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.8074712176205256, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.52732920066756, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4390795879250147, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
