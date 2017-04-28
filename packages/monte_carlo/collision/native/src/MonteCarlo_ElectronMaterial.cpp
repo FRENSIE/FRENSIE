@@ -42,7 +42,7 @@ ElectronMaterial::ElectronMaterial(
   // Copy the electroatoms that make up this material
   for( unsigned i = 0u; i < electroatom_fractions.size(); ++i )
   {
-    d_atoms[i].first = electroatom_fractions[i];
+    Utility::get<0>( d_atoms[i] ) = electroatom_fractions[i];
 
     ElectroatomNameMap::const_iterator atom =
       electroatom_name_map.find( electroatom_names[i] );
@@ -52,11 +52,11 @@ ElectronMaterial::ElectronMaterial(
 			"Error: atom " << electroatom_names[i] <<
 			" has not been loaded!" );
 
-    d_atoms[i].second = atom->second;
+    Utility::get<1>( d_atoms[i] ) = atom->second;
   }
 
   // Convert weight fractions to atom fractions
-  if( d_atoms.front().first < 0.0 )
+  if( Utility::get<0>( d_atoms.front() ) < 0.0 )
   {
     convertWeightFractionsToAtomFractions<Utility::FIRST,Utility::SECOND>(
 					    d_atoms.begin(),
@@ -113,8 +113,8 @@ double ElectronMaterial::getMacroscopicTotalCrossSection(
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
-    cross_section +=
-      d_atoms[i].first*d_atoms[i].second->getTotalCrossSection( energy );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getTotalCrossSection( energy );
   }
 
   return cross_section;
@@ -132,8 +132,8 @@ double ElectronMaterial::getMacroscopicAbsorptionCrossSection(
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
-    cross_section +=
-      d_atoms[i].first*d_atoms[i].second->getAbsorptionCrossSection( energy );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getAbsorptionCrossSection( energy );
   }
 
   return cross_section;
@@ -178,8 +178,8 @@ double ElectronMaterial::getMacroscopicReactionCrossSection(
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
-    cross_section += d_atoms[i].first*
-      d_atoms[i].second->getReactionCrossSection( energy, reaction );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getReactionCrossSection( energy, reaction );
   }
 
   return cross_section;
@@ -192,7 +192,7 @@ void ElectronMaterial::collideAnalogue( ElectronState& electron,
 {
   unsigned atom_index = sampleCollisionAtom( electron.getEnergy() );
 
-  d_atoms[atom_index].second->collideAnalogue( electron, bank );
+  Utility::get<1>( d_atoms[atom_index] )->collideAnalogue( electron, bank );
 }
 
 // Collide with a electron and survival bias
@@ -210,14 +210,14 @@ void ElectronMaterial::collideSurvivalBias( ElectronState& electron,
 {
   unsigned atom_index = sampleCollisionAtom( electron.getEnergy() );
 
-  d_atoms[atom_index].second->collideSurvivalBias( electron, bank );
+  Utility::get<1>( d_atoms[atom_index] )->collideSurvivalBias( electron, bank );
 }
 
 // Get the atomic weight from an atom pointer
 double ElectronMaterial::getAtomicWeight(
 	     const Utility::Pair<double,Teuchos::RCP<const Electroatom> >& pair )
 {
-  return pair.second->getAtomicWeight();
+  return Utility::get<1>( pair )->getAtomicWeight();
 }
 
 // Sample the atom that is collided with
@@ -233,8 +233,8 @@ unsigned ElectronMaterial::sampleCollisionAtom( const double energy ) const
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
-    partial_total_cs +=
-      d_atoms[i].first*d_atoms[i].second->getTotalCrossSection( energy );
+    partial_total_cs += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getTotalCrossSection( energy );
 
     if( scaled_random_number < partial_total_cs )
     {

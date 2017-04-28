@@ -22,7 +22,7 @@
 // FRENSIE Includes
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ComparePolicy.hpp"
+#include "Utility_ComparisonTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -477,8 +477,7 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConverged(
 
   bool converged = true;
 
-  double distance =
-    Utility::Policy::relError( primary_value_0, primary_value_1 );
+  double distance = Utility::relError( primary_value_0, primary_value_1 );
 
   // Check if the distance tolerance was hit - dirty convergence
   if( distance <= d_distance_tol )
@@ -610,8 +609,8 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConvergedAtSecondaryPoint(
                                                   evaluated_function_1.end() );
 
   double relative_error =
-    Utility::Policy::relError( exact_function_value,
-                               interp_function_value );
+    Utility::relError( exact_function_value,
+                       interp_function_value );
   
   double abs_diff = Teuchos::ScalarTraits<double>::magnitude(
                                 exact_function_value - interp_function_value );

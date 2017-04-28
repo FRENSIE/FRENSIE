@@ -67,9 +67,9 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 
   for( unsigned n = 0; n < size; ++n )
   {
-    scattering_function[n].first = angular_energy_grid[n];
+    Utility::get<0>( scattering_function[n] ) = angular_energy_grid[n];
 
-    scattering_function[n].second.reset(
+    Utility::get<1>( scattering_function[n] ).reset(
 	  new const Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),

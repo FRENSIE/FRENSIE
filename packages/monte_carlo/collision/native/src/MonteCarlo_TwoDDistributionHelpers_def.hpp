@@ -24,7 +24,7 @@ void getPrimaryGrid(
 
   for ( unsigned i = 0; i < dependent_distribution.size(); ++i )
   {
-    primary_grid[i] = dependent_distribution[i].first;
+    primary_grid[i] = Utility::get<0>( dependent_distribution[i] );
   }
 }
 
@@ -36,12 +36,12 @@ void findLowerAndUpperBinIndex(
     unsigned& lower_bin_index,
     unsigned& upper_bin_index )
 {
-  if( independent_variable < dependent_distribution.front().first )
+  if( independent_variable < Utility::get<0>( dependent_distribution.front() ))
   {
     lower_bin_index = 0;
     upper_bin_index = lower_bin_index;
   }
-  else if( independent_variable >= dependent_distribution.back().first )
+  else if( independent_variable >= Utility::get<0>( dependent_distribution.back() ) )
   {
     lower_bin_index = dependent_distribution.size();
     --lower_bin_index;
@@ -60,7 +60,7 @@ void findLowerAndUpperBinIndex(
 							independent_variable );
     upper_bin_index = lower_bin_index;
     
-    if ( dependent_distribution[lower_bin_index].first != independent_variable )
+    if( Utility::get<0>( dependent_distribution[lower_bin_index] ) != independent_variable )
       ++upper_bin_index;
   }
 }
@@ -73,12 +73,12 @@ void findLowerAndUpperBinBoundary(
     typename DependentTwoDDistribution::const_iterator& lower_bin_boundary,
     typename DependentTwoDDistribution::const_iterator& upper_bin_boundary )
 {
-  if( independent_variable < dependent_distribution.front().first )
+  if( independent_variable < Utility::get<0>( dependent_distribution.front() ) )
   {
     lower_bin_boundary = dependent_distribution.begin();
     upper_bin_boundary = lower_bin_boundary;
   }
-  else if( independent_variable >= dependent_distribution.back().first )
+  else if( independent_variable >= Utility::get<0>( dependent_distribution.back() ) )
   {
     lower_bin_boundary = dependent_distribution.end();
     --lower_bin_boundary;
@@ -95,7 +95,7 @@ void findLowerAndUpperBinBoundary(
 							independent_variable );
     upper_bin_boundary = lower_bin_boundary;
     
-    if ( lower_bin_boundary->first != independent_variable )
+    if ( Utility::get<0>( *lower_bin_boundary ) != independent_variable )
       ++upper_bin_boundary;
   }
 }
@@ -110,17 +110,16 @@ void findLowerAndUpperBinBoundary(
     double& interpolation_fraction )
 {
 
-    findLowerAndUpperBinBoundary(
-        independent_variable,
-        dependent_distribution,
-        lower_bin_boundary,
-        upper_bin_boundary );
-
-  if( independent_variable < dependent_distribution.front().first )
+  findLowerAndUpperBinBoundary( independent_variable,
+                                dependent_distribution,
+                                lower_bin_boundary,
+                                upper_bin_boundary );
+  
+  if( independent_variable < Utility::get<0>( dependent_distribution.front() ) )
   {
     interpolation_fraction = 0.0;
   }
-  else if( independent_variable >= dependent_distribution.back().first )
+  else if( independent_variable >= Utility::get<0>( dependent_distribution.back() ) )
   {
     interpolation_fraction = 0.0;
   }
@@ -128,8 +127,8 @@ void findLowerAndUpperBinBoundary(
   {
     // Calculate the interpolation fraction
     interpolation_fraction =
-      (independent_variable - lower_bin_boundary->first)/
-      (upper_bin_boundary->first - lower_bin_boundary->first);
+      (independent_variable - Utility::get<0>( *lower_bin_boundary ))/
+      (Utility::get<0>( *upper_bin_boundary ) - Utility::get<0>( *lower_bin_boundary));
   }
 }
 
@@ -152,14 +151,14 @@ double sampleTwoDDistributionCorrelatedWithRandomNumber(
   if( lower_bin_boundary != upper_bin_boundary )
   {
     return InterpolationPolicy::interpolate(
-        lower_bin_boundary->first,
-        upper_bin_boundary->first,
+        Utility::get<0>( *lower_bin_boundary ),
+        Utility::get<0>( *upper_bin_boundary ),
         independent_variable,
-        lower_bin_boundary->second->sampleWithRandomNumber( random_number ),
-        upper_bin_boundary->second->sampleWithRandomNumber( random_number ) );
+        Utility::get<1>( *lower_bin_boundary )->sampleWithRandomNumber( random_number ),
+        Utility::get<1>( *upper_bin_boundary )->sampleWithRandomNumber( random_number ) );
   }
   else
-    return lower_bin_boundary->second->sampleWithRandomNumber( random_number );
+    return Utility::get<1>( *lower_bin_boundary )->sampleWithRandomNumber( random_number );
 }
 
 template<typename DependentTwoDDistribution, typename InterpolationPolicy>
@@ -182,16 +181,16 @@ double sampleTwoDDistributionCorrelatedInSubrange(
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-  return InterpolationPolicy::interpolate(
-    lower_bin_boundary->first,
-    upper_bin_boundary->first,
-    independent_variable,
-    lower_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_indep_var ),
-    upper_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_indep_var ) );
+    return InterpolationPolicy::interpolate(
+              Utility::get<0>( *lower_bin_boundary ),
+              Utility::get<0>( *upper_bin_boundary ),
+              independent_variable,
+              Utility::get<1>( *lower_bin_boundary )->sampleWithRandomNumberInSubrange( random_number, max_indep_var ),
+              Utility::get<1>( *upper_bin_boundary )->sampleWithRandomNumberInSubrange( random_number, max_indep_var ) );
   }
   else
   {
-    return upper_bin_boundary->second->sampleInSubrange( max_indep_var );
+    return Utility::get<1>( *upper_bin_boundary )->sampleInSubrange( max_indep_var );
   }
 }
 
@@ -234,10 +233,10 @@ double sampleTwoDDistributionIndependent(
 
   if( lower_bin_boundary != upper_bin_boundary && random_number < interpolation_fraction )
   {
-    return upper_bin_boundary->second->sample();
+    return Utility::get<1>( *upper_bin_boundary )->sample();
   }
   else
-    return lower_bin_boundary->second->sample();
+    return Utility::get<1>( *lower_bin_boundary )->sample();
 }
 
 //! Sample continuously across multiple two dimensional distribution bins
@@ -262,8 +261,8 @@ double sampleContinuouslyAcrossDistributions(
     scaled_random_number /= cross_section_a;
 
     scattering_angle_cosine =
-        distribution_a_bin->second->sampleWithRandomNumber(
-            scaled_random_number );
+      Utility::get<1>( *distribution_a_bin )->sampleWithRandomNumber(
+                                                        scaled_random_number );
   }
   else
   {
@@ -271,8 +270,8 @@ double sampleContinuouslyAcrossDistributions(
         ( scaled_random_number - cross_section_a )/cross_section_b;
 
     scattering_angle_cosine =
-        distribution_b_bin->second->sampleWithRandomNumber(
-            scaled_random_number );
+      Utility::get<1>( *distribution_b_bin )->sampleWithRandomNumber(
+                                                        scaled_random_number );
   }
 }
 
@@ -316,11 +315,11 @@ double sampleContinuouslyAcrossDistributions(
     upper_angle_cosine );
 
     return InterpolationPolicy::interpolate(
-            distribution_a_lower_bin->first,
-            distribution_a_upper_bin->first,
-            independent_variable,
-            lower_angle_cosine,
-            upper_angle_cosine );
+                                  Utility::get<0>( *distribution_a_lower_bin ),
+                                  Utility::get<0>( *distribution_a_upper_bin ),
+                                  independent_variable,
+                                  lower_angle_cosine,
+                                  upper_angle_cosine );
 
 }
 // Evaluate a correlated value from a two dimensional distribution
@@ -342,14 +341,14 @@ double evaluateTwoDDistributionCorrelated(
   if( lower_bin_boundary != upper_bin_boundary )
   {
     return InterpolationPolicy::interpolate(
-            lower_bin_boundary->first,
-            upper_bin_boundary->first,
-            independent_variable,
-            lower_bin_boundary->second->evaluate( dependent_variable ),
-            upper_bin_boundary->second->evaluate( dependent_variable ) );
+        Utility::get<0>( *lower_bin_boundary ),
+        Utility::get<0>( *upper_bin_boundary ),
+        independent_variable,
+        Utility::get<1>( *lower_bin_boundary )->evaluate( dependent_variable ),
+        Utility::get<1>( *upper_bin_boundary )->evaluate( dependent_variable ) );
   }
   else
-    return lower_bin_boundary->second->evaluate( dependent_variable );
+    return Utility::get<1>( *lower_bin_boundary )->evaluate( dependent_variable );
 }
 
 
@@ -372,14 +371,14 @@ double evaluateTwoDDistributionCorrelatedPDF(
   if( lower_bin_boundary != upper_bin_boundary )
   {
     return InterpolationPolicy::interpolate(
-            lower_bin_boundary->first,
-            upper_bin_boundary->first,
-            independent_variable,
-            lower_bin_boundary->second->evaluatePDF( dependent_variable ),
-            upper_bin_boundary->second->evaluatePDF( dependent_variable ) );
+     Utility::get<0>( *lower_bin_boundary ),
+     Utility::get<0>( *upper_bin_boundary ),
+     independent_variable,
+     Utility::get<1>( *lower_bin_boundary )->evaluatePDF( dependent_variable ),
+     Utility::get<1>( *upper_bin_boundary )->evaluatePDF( dependent_variable ) );
   }
   else
-    return lower_bin_boundary->second->evaluatePDF( dependent_variable );
+    return Utility::get<1>( *lower_bin_boundary )->evaluatePDF( dependent_variable );
 }
 
 // Evaluate a correlated PDF from a two dimensional distribution
@@ -394,17 +393,17 @@ double evaluateTwoDDistributionCorrelatedPDF(
   testPrecondition( lower_bin_index >= 0 );
   testPrecondition( lower_bin_index < dependent_distribution.size() );
 
-  if( dependent_distribution[lower_bin_index].first != independent_variable )
+  if( Utility::get<0>( dependent_distribution[lower_bin_index] ) != independent_variable )
   {
     return InterpolationPolicy::interpolate(
-            dependent_distribution[lower_bin_index].first,
-            dependent_distribution[lower_bin_index+1].first,
-            independent_variable,
-            dependent_distribution[lower_bin_index].second->evaluatePDF( dependent_variable ),
-            dependent_distribution[lower_bin_index+1].second->evaluatePDF( dependent_variable ) );
+              Utility::get<0>( dependent_distribution[lower_bin_index] ),
+              Utility::get<0>( dependent_distribution[lower_bin_index+1] ),
+              independent_variable,
+              Utility::get<1>( dependent_distribution[lower_bin_index] )->evaluatePDF( dependent_variable ),
+              Utility::get<1>( dependent_distribution[lower_bin_index+1] )->evaluatePDF( dependent_variable ) );
   }
   else
-    return dependent_distribution[lower_bin_index].second->evaluatePDF( dependent_variable );
+    return Utility::get<1>( dependent_distribution[lower_bin_index] )->evaluatePDF( dependent_variable );
 }
 
 
@@ -427,14 +426,14 @@ double evaluateTwoDDistributionCorrelatedCDF(
   if( lower_bin_boundary != upper_bin_boundary )
   {
     return InterpolationPolicy::interpolate(
-            lower_bin_boundary->first,
-            upper_bin_boundary->first,
-            independent_variable,
-            lower_bin_boundary->second->evaluateCDF( dependent_variable ),
-            upper_bin_boundary->second->evaluateCDF( dependent_variable ) );
+     Utility::get<0>( *lower_bin_boundary ),
+     Utility::get<0>( *upper_bin_boundary ),
+     independent_variable,
+     Utility::get<1>( *lower_bin_boundary )->evaluateCDF( dependent_variable ),
+     Utility::get<1>( *upper_bin_boundary )->evaluateCDF( dependent_variable ) );
   }
   else
-    return lower_bin_boundary->second->evaluateCDF( dependent_variable );
+    return Utility::get<1>( *lower_bin_boundary )->evaluateCDF( dependent_variable );
 }
 
 } // end MonteCarlo namespace

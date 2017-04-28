@@ -15,7 +15,7 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -56,9 +56,9 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
   // Store the transition vacancy shells
   for( unsigned i = 0; i < primary_transition_vacancy_shells.size(); ++i )
   {
-    d_transition_vacancy_shells[i].first =
+    Utility::get<0>( d_transition_vacancy_shells[i] ) =
       primary_transition_vacancy_shells[i];
-    d_transition_vacancy_shells[i].second =
+    Utility::get<1>( d_transition_vacancy_shells[i] ) =
       secondary_transition_vacancy_shells[i];
   }
 }
@@ -93,10 +93,10 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
 
   // Set the new vacancies shells
   new_primary_vacancy_shell =
-    d_transition_vacancy_shells[transition_index].first;
+    Utility::get<0>( d_transition_vacancy_shells[transition_index] );
 
   new_secondary_vacancy_shell =
-    d_transition_vacancy_shells[transition_index].second;
+    Utility::get<1>( d_transition_vacancy_shells[transition_index] );
 
   // A secondary transition will only occur with Auger electron emission
   if( new_secondary_vacancy_shell == Data::INVALID_SUBSHELL ||

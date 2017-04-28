@@ -70,9 +70,9 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
 
   for( unsigned n = 0; n < number_of_tables; ++n )
   {
-    subshell_distribution[n].first = table_energy_grid[n];
+    Utility::get<0>( subshell_distribution[n] ) = table_energy_grid[n];
 
-    subshell_distribution[n].second.reset(
+    Utility::get<1>( subshell_distribution[n] ).reset(
       new Utility::HistogramDistribution(
         raw_electroionization_data( table_location + table_offset[n], table_length[n] ),
         raw_electroionization_data( table_location + table_offset[n] + table_length[n] + 1,

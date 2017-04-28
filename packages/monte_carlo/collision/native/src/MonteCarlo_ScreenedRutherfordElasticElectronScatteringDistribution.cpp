@@ -17,7 +17,7 @@
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_TabularDistribution.hpp"

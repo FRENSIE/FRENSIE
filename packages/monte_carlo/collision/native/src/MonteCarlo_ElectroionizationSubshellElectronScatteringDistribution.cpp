@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElectronState.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
 
 namespace MonteCarlo{
@@ -78,11 +78,11 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
 
   // get the max physically allowed knock-on energy for the lower distribution
   double physical_max_knock_on_energy =
-    this->getMaxSecondaryEnergyAtIncomingEnergy( lower_distribution->first );
+    this->getMaxSecondaryEnergyAtIncomingEnergy( Utility::get<0>(*lower_distribution) );
 
   // get the max tabulated knock-on energy for the lower distribution
   double tabulated_max_knock_on_energy =
-    lower_distribution->second->sampleWithRandomNumber( 1.0 );
+    Utility::get<1>(*lower_distribution)->sampleWithRandomNumber( 1.0 );
 
   /* Due to roundoff errors in the tabulated data the physically allowable max
    * knock-on energy can be slightly higher than the max tabulated one. If the
@@ -97,18 +97,18 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
     lower_knock_on_energy = tabulated_max_knock_on_energy;
   }
 
-  if( lower_distribution->first != incoming_energy )
+  if( Utility::get<0>(*lower_distribution) != incoming_energy )
   {
     ElectroionizationSubshellDistribution::const_iterator upper_distribution = lower_distribution;
     ++upper_distribution;
 
     // get the max physically allowed knock-on energy for the upper distribution
     physical_max_knock_on_energy =
-      this->getMaxSecondaryEnergyAtIncomingEnergy( upper_distribution->first );
+      this->getMaxSecondaryEnergyAtIncomingEnergy( Utility::get<0>(*upper_distribution) );
 
     // get the max tabulated knock-on energy for the upper distribution
     tabulated_max_knock_on_energy =
-      upper_distribution->second->sampleWithRandomNumber( 1.0 );
+      Utility::get<1>(*upper_distribution)->sampleWithRandomNumber( 1.0 );
 
     double upper_knock_on_energy = knock_on_energy;
     if( knock_on_energy <= physical_max_knock_on_energy &&
@@ -118,14 +118,14 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
     }
 
     return InterpolationPolicy::interpolate(
-            lower_distribution->first,
-            upper_distribution->first,
-            incoming_energy,
-            lower_distribution->second->evaluatePDF( lower_knock_on_energy ),
-            upper_distribution->second->evaluatePDF( upper_knock_on_energy ) );
+      Utility::get<0>(*lower_distribution),
+      Utility::get<0>(*upper_distribution),
+      incoming_energy,
+      Utility::get<1>(*lower_distribution)->evaluatePDF(lower_knock_on_energy),
+      Utility::get<1>(*upper_distribution)->evaluatePDF(upper_knock_on_energy) );
   }
   else
-    return lower_distribution->second->evaluatePDF( lower_knock_on_energy );
+    return Utility::get<1>(*lower_distribution)->evaluatePDF( lower_knock_on_energy );
 }
 
 // Evaluate the PDF value for a given incoming and outgoing energy
@@ -165,11 +165,11 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
 
   // get the max physically allowed knock-on energy for the lower distribution
   double physical_max_knock_on_energy =
-    this->getMaxSecondaryEnergyAtIncomingEnergy( lower_distribution->first );
+    this->getMaxSecondaryEnergyAtIncomingEnergy( Utility::get<0>(*lower_distribution) );
 
   // get the max tabulated knock-on energy for the lower distribution
   double tabulated_max_knock_on_energy =
-    lower_distribution->second->sampleWithRandomNumber( 1.0 );
+    Utility::get<1>(*lower_distribution)->sampleWithRandomNumber( 1.0 );
 
   /* Due to roundoff errors in the tabulated data the physically allowable max
    * knock-on energy can be slightly higher than the max tabulated one. If the
@@ -188,11 +188,11 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   {
     // get the max physically allowed knock-on energy for the upper distribution
     physical_max_knock_on_energy =
-      this->getMaxSecondaryEnergyAtIncomingEnergy( upper_distribution->first );
+      this->getMaxSecondaryEnergyAtIncomingEnergy( Utility::get<0>(*upper_distribution) );
 
     // get the max tabulated knock-on energy for the upper distribution
     tabulated_max_knock_on_energy =
-      upper_distribution->second->sampleWithRandomNumber( 1.0 );
+      Utility::get<1>(*upper_distribution)->sampleWithRandomNumber( 1.0 );
 
     double upper_knock_on_energy = knock_on_energy;
     if( knock_on_energy <= physical_max_knock_on_energy &&
@@ -202,14 +202,14 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
     }
 
     return InterpolationPolicy::interpolate(
-            lower_distribution->first,
-            upper_distribution->first,
+            Utility::get<0>(*lower_distribution),
+            Utility::get<0>(*upper_distribution),
             incoming_energy,
-            lower_distribution->second->evaluatePDF( lower_knock_on_energy ),
-            upper_distribution->second->evaluatePDF( upper_knock_on_energy ) );
+            Utility::get<1>(*lower_distribution)->evaluatePDF( lower_knock_on_energy ),
+            Utility::get<1>(*upper_distribution)->evaluatePDF( upper_knock_on_energy ) );
   }
   else
-    return lower_distribution->second->evaluatePDF( lower_knock_on_energy );
+    return Utility::get<1>(*lower_distribution)->evaluatePDF( lower_knock_on_energy );
 
 }
 

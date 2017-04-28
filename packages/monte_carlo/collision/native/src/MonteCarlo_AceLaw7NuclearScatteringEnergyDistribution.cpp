@@ -45,8 +45,8 @@ double AceLaw7NuclearScatteringEnergyDistribution::sampleEnergy(
   double outgoing_energy;
 
   // Check if energy is outside the grid
-  if( energy >= d_energy_distribution.front().first and
-      energy <= d_energy_distribution.back().first )
+  if( energy >= Utility::get<0>( d_energy_distribution.front() ) &&
+      energy <= Utility::get<0>( d_energy_distribution.back() ) )
   {
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
@@ -62,22 +62,23 @@ double AceLaw7NuclearScatteringEnergyDistribution::sampleEnergy(
     ++upper_bin_boundary;
 
     // Calculate the interpolation fraction
-    double interpolation_fraction = (energy - lower_bin_boundary->first)/
-      (upper_bin_boundary->first - lower_bin_boundary->first);
+    double interpolation_fraction =
+      (energy - Utility::get<0>(*lower_bin_boundary))/
+      (Utility::get<0>(*upper_bin_boundary) - Utility::get<0>(*lower_bin_boundary));
 
-    double T = (upper_bin_boundary->second -
-                lower_bin_boundary->second)*interpolation_fraction +
-                lower_bin_boundary->second;
+    double T = interpolation_fraction*
+      (Utility::get<1>(*upper_bin_boundary) - Utility::get<1>(*lower_bin_boundary)) +
+      Utility::get<1>(*lower_bin_boundary);
 
     outgoing_energy = Utility::MaxwellFissionDistribution::sample(
                                               energy,
                                               T,
                                               d_restriction_energy );
   }
-  else if( energy < d_energy_distribution.front().first )
+  else if( energy < Utility::get<0>( d_energy_distribution.front() ) )
   {
     // If below the energy grid, use the lowest possible energy
-    double T = d_energy_distribution.front().second;
+    double T = Utility::get<1>( d_energy_distribution.front() );
 
     outgoing_energy = Utility::MaxwellFissionDistribution::sample(
                                               energy,
@@ -87,7 +88,7 @@ double AceLaw7NuclearScatteringEnergyDistribution::sampleEnergy(
   else
   {
     // If above the energy grid, use the highest possible energy
-    double T = d_energy_distribution.back().second;
+    double T = Utility::get<1>(d_energy_distribution.back());
 
     outgoing_energy = Utility::MaxwellFissionDistribution::sample(
                                               energy,

@@ -220,13 +220,14 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
     --lower_bin;
 
     // Use the angular grid for the energy bin closes to the energy
-    if ( energy - lower_bin->first <= upper_bin->first - energy )
+    if ( energy - Utility::get<0>( *lower_bin ) <=
+         Utility::get<0>( *upper_bin ) - energy )
     {
-      raw_grid = lower_bin->second;
+      raw_grid = Utility::get<1>( *lower_bin );
     }
     else
     {
-      raw_grid = upper_bin->second;
+      raw_grid = Utility::get<1>( *upper_bin );
     }
   }
 
@@ -298,7 +299,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
 
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
   {
-    scattering_function[n].first = angular_energy_grid[n];
+    Utility::get<0>( scattering_function[n] ) = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     std::vector<double> angles(
@@ -308,7 +309,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
     std::vector<double> pdf(
         cutoff_elastic_pdf.find( angular_energy_grid[n] )->second );
 
-    scattering_function[n].second.reset(
+    Utility::get<1>( scattering_function[n] ).reset(
 	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
   }
 }
@@ -321,7 +322,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingS
 {
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
   {
-    scattering_function[n].first = angular_energy_grid[n];
+    Utility::get<0>( scattering_function[n] ) = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     std::vector<double> angles(
@@ -333,7 +334,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingS
         data_container.getMomentPreservingElasticWeights(
             angular_energy_grid[n] ) );
 
-    scattering_function[n].second.reset(
+    Utility::get<1>( scattering_function[n] ).reset(
 	  new const Utility::DiscreteDistribution( angles, pdf ) );
   }
 }
@@ -353,7 +354,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
   {
     // Create the cutoff elastic scattering function
-    cutoff_function[n].first = angular_energy_grid[n];
+    Utility::get<0>( cutoff_function[n] ) = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     Teuchos::Array<double> angles(
@@ -363,12 +364,12 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
     Teuchos::Array<double> pdf(
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
-    cutoff_function[n].second.reset(
+    Utility::get<1>( cutoff_function[n] ).reset(
       new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
 
 
     // Create the moment preserving discrete elastic scattering function
-    moment_preserving_function[n].first = angular_energy_grid[n];
+    Utility::get<0>( moment_preserving_function[n] ) = angular_energy_grid[n];
 
     // Get the moment preserving elastic scattering angle cosines at the energy
     std::vector<double> discrete_angles(
@@ -380,7 +381,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
         data_container.getMomentPreservingElasticWeights(
             angular_energy_grid[n] ) );
 
-    moment_preserving_function[n].second.reset(
+    Utility::get<1>( moment_preserving_function[n] ).reset(
 	  new const Utility::DiscreteDistribution(
         discrete_angles,
         weights ) );
@@ -408,10 +409,11 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
-        cutoff_function[n].second->evaluateCDF( cutoff_angle_cosine );
+      Utility::get<1>( cutoff_function[n] )->evaluateCDF( cutoff_angle_cosine );
 
     // Get the ratio of the cutoff cross section to the moment preserving cross section
-    moment_preserving_function[n].third = cutoff_cross_section_i*cutoff_cdf/mp_cross_section_i;
+    Utility::get<2>( moment_preserving_function[n] ) =
+      cutoff_cross_section_i*cutoff_cdf/mp_cross_section_i;
   }
 }
 

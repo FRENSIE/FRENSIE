@@ -96,7 +96,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
   // Loop through the incoming energies
   for(int i = 0; i != incoming_energies; i++)
   {
-    energy_distribution[i].first = incoming_energies_array[i];
+    Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
 
     int distribution_index = static_cast<int>( distribution_locations[i] ) -
       dlw_block_array_start_index - 1;
@@ -131,7 +131,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
       pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
 			     number_points_distribution - 1 );
 
-      energy_distribution[i].second.reset(
+      Utility::get<1>( energy_distribution[i] ).reset(
 		      new Utility::HistogramDistribution( outgoing_energy_grid,
 							  pdf ) );
 
@@ -147,7 +147,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
       pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
 			     number_points_distribution );
 
-      energy_distribution[i].second.reset(
+      Utility::get<1>( energy_distribution[i] ).reset(
 			     new Utility::TabularDistribution<Utility::LinLin>(
 						 outgoing_energy_grid, pdf ) );
 
@@ -265,7 +265,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
   // Loop through the incoming energies
   for(int i = 0; i != incoming_energies; i++)
   {
-    energy_distribution[i].first = incoming_energies_array[i];
+    Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
 
     int distribution_index = static_cast<int>( distribution_locations[i] ) - 
       dlw_block_array_start_index - 1;
@@ -356,7 +356,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
       pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
 		       number_points_distribution - 1 );
 
-      energy_distribution[i].second.reset( 
+      Utility::get<1>( energy_distribution[i] ).reset( 
 	      new Utility::HistogramDistribution( outgoing_energy_grid, pdf ) );
 
       angle_distribution[i].reset( 
@@ -369,7 +369,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
       pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
 		       number_points_distribution );
 
-      energy_distribution[i].second.reset( 
+      Utility::get<1>( energy_distribution[i] ).reset( 
 	      new Utility::TabularDistribution<Utility::LinLin>( 
 	                                                     outgoing_energy_grid,
 	                                                     pdf ) );

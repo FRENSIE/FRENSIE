@@ -60,7 +60,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the distribution at the bin and scattering_angle_cosine
-  return d_discrete_scattering_distribution[incoming_energy_bin].second->evaluate(
+  return Utility::get<1>(d_discrete_scattering_distribution[incoming_energy_bin])->evaluate(
         scattering_angle_cosine );
 }
 
@@ -94,7 +94,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the PDF at the bin and scattering_angle_cosine
-  return d_discrete_scattering_distribution[incoming_energy_bin].second->evaluatePDF(
+  return Utility::get<1>(d_discrete_scattering_distribution[incoming_energy_bin])->evaluatePDF(
         scattering_angle_cosine );
 }
 

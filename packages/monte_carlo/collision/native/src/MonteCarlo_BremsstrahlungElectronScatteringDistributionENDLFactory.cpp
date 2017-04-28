@@ -67,7 +67,7 @@ void BremsstrahlungElectronScatteringDistributionENDLFactory::createEnergyLossFu
 
   for( unsigned n = 0; n < bremsstrahlung_energy_grid.size(); ++n )
   {
-    energy_loss_function[n].first = bremsstrahlung_energy_grid[n];
+    Utility::get<0>( energy_loss_function[n] ) = bremsstrahlung_energy_grid[n];
 
     // Get the energy of the bremsstrahlung photon at the incoming energy
     std::vector<double> photon_energy(
@@ -79,7 +79,7 @@ void BremsstrahlungElectronScatteringDistributionENDLFactory::createEnergyLossFu
         raw_electroatom_data.getBremsstrahlungPhotonPDFAtEnergy(
             bremsstrahlung_energy_grid[n] ) );
 
-    energy_loss_function[n].second.reset(
+    Utility::get<1>( energy_loss_function[n] ).reset(
 	  new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
                                                                pdf ) );
   }

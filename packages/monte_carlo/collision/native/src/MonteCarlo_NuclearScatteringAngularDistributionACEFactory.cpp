@@ -57,7 +57,7 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 
   for( unsigned i = 0u; i < energy_grid.size(); ++i )
   {
-    angular_distribution[i].first = energy_grid[i];
+    Utility::get<0>( angular_distribution[i] ) = energy_grid[i];
 
     int distribution_index =
       static_cast<int>( distribution_indices[i] );
@@ -76,7 +76,7 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 	  //std::cout << distribution_index << std::endl;
 	  //std::cout << bin_boundaries << std::endl;
 
-      angular_distribution[i].second.reset(
+      Utility::get<1>( angular_distribution[i] ).reset(
 	 new Utility::EquiprobableBinDistribution( bin_boundaries ) );
     }
 
@@ -108,7 +108,7 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 			     distribution_index + 2 + number_of_points_in_dist,
 			     number_of_points_in_dist - 1u );
 
-	angular_distribution[i].second.reset(
+        Utility::get<1>( angular_distribution[i] ).reset(
 	      new Utility::HistogramDistribution( scattering_angle_cosine_grid,
 						  pdf ) );
 	break;
@@ -118,7 +118,7 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 			     distribution_index + 2 + number_of_points_in_dist,
 			     number_of_points_in_dist );
 
-	angular_distribution[i].second.reset(
+        Utility::get<1>( angular_distribution[i] ).reset(
 	                 new Utility::TabularDistribution<Utility::LinLin>(
 						  scattering_angle_cosine_grid,
 						  pdf ) );
@@ -139,7 +139,7 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
     // Isotropic distribution
     else
     {
-      angular_distribution[i].second = isotropic_angle_cosine_dist;
+      Utility::get<1>( angular_distribution[i] ) = isotropic_angle_cosine_dist;
     }
   }
 
@@ -155,11 +155,12 @@ void NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution
   NuclearScatteringAngularDistribution::AngularDistribution
     angular_distribution( 2 );
 
-  angular_distribution[0].first = 0.0;
-  angular_distribution[0].second = isotropic_angle_cosine_dist;
+  Utility::get<0>( angular_distribution[0] ) = 0.0;
+  Utility::get<1>( angular_distribution[0] ) = isotropic_angle_cosine_dist;
 
-  angular_distribution[1].first = std::numeric_limits<double>::max();
-  angular_distribution[1].second = isotropic_angle_cosine_dist;
+  Utility::get<0>( angular_distribution[1] ) =
+    std::numeric_limits<double>::max();
+  Utility::get<1>( angular_distribution[1] ) = isotropic_angle_cosine_dist;
 
   distribution.reset(
 	   new NuclearScatteringAngularDistribution( angular_distribution ) );

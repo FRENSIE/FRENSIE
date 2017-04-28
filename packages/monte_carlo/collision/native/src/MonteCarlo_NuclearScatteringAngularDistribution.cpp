@@ -61,14 +61,14 @@ double NuclearScatteringAngularDistribution::evaluatePDF(
 {
   double pdf_value;
 
-  if( energy < d_angular_distribution.front().first )
+  if( energy < Utility::get<0>( d_angular_distribution.front() ) )
   {
-    pdf_value = d_angular_distribution.front().second->evaluatePDF(
+    pdf_value = Utility::get<1>( d_angular_distribution.front() )->evaluatePDF(
 						  scattering_angle_cosine );
   }
-  else if( energy >= d_angular_distribution.back().first )
+  else if( energy >= Utility::get<0>( d_angular_distribution.back() ) )
   {
-    pdf_value = d_angular_distribution.back().second->evaluatePDF(
+    pdf_value = Utility::get<1>( d_angular_distribution.back() )->evaluatePDF(
 						  scattering_angle_cosine );
   }
   else
@@ -87,15 +87,16 @@ double NuclearScatteringAngularDistribution::evaluatePDF(
     ++upper_bin_boundary;
 
     // Get the PDF value on the two grid points
-    double pdf_low = lower_bin_boundary->second->evaluatePDF(
+    double pdf_low = Utility::get<1>( *lower_bin_boundary )->evaluatePDF(
 						  scattering_angle_cosine );
-    double pdf_high = upper_bin_boundary->second->evaluatePDF(
+    double pdf_high = Utility::get<1>( *upper_bin_boundary )->evaluatePDF(
 						  scattering_angle_cosine );
 
     // Use linear interpolation to evaluate the PDF at the desired energy
     pdf_value = pdf_low +
-      (pdf_high-pdf_low)/(upper_bin_boundary->first-lower_bin_boundary->first)*
-      (energy - lower_bin_boundary->first);
+      (pdf_high-pdf_low)/
+      (Utility::get<0>(*upper_bin_boundary)-Utility::get<0>(*lower_bin_boundary)*
+       (energy - Utility::get<0>(*lower_bin_boundary));
   }
 
   // Make sure the PDF value is valid

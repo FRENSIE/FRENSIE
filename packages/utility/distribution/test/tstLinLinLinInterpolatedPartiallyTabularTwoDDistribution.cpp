@@ -332,12 +332,12 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
     
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 1.0;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
+    Utility::get<0>( distribution_data[1] ) = 1.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
     test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin>(
                                                          distribution_data ) );
@@ -351,12 +351,12 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 1.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    Utility::get<0>( distribution_data[0] ) = 1.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
     
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 2.0;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
+    Utility::get<0>( distribution_data[1] ) = 2.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
     test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin>(
                                                          distribution_data ) );
@@ -370,12 +370,12 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.5;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    Utility::get<0>( distribution_data[0] ) = 0.5;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
     
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 1.5;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
+    Utility::get<0>( distribution_data[1] ) = 1.5;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
     test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin>(
                                                          distribution_data ) );
@@ -1683,20 +1683,20 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       distribution_data( 4 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
     
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 0.0;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
+    Utility::get<0>( distribution_data[1] ) = 0.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
     
     // Create the secondary distribution in the third bin
-    distribution_data[2].first = 1.0;
-    distribution_data[2].second.reset( new Utility::UniformDistribution( 2.5, 7.5, 1.0 ) );
+    Utility::get<0>( distribution_data[2] ) = 1.0;
+    Utility::get<1>( distribution_data[2] ).reset( new Utility::UniformDistribution( 2.5, 7.5, 1.0 ) );
     
     // Create the secondary distribution beyond the third bin
-    distribution_data[3].first = 2.0;
-    distribution_data[3].second = distribution_data[0].second;
+    Utility::get<0>( distribution_data[3] ) = 2.0;
+    Utility::get<1>( distribution_data[3] ) = Utility::get<1>( distribution_data[0] );
     
     distribution.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin>(
                                                          distribution_data ) );

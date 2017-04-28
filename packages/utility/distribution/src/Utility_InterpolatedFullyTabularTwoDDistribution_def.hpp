@@ -45,8 +45,8 @@ UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndepe
   
   for( size_t i = 0; i < primary_indep_grid.size(); ++i )
   {
-    distribution[i].first = primary_indep_grid[i];
-    distribution[i].second.reset(
+    Utility::get<0>( distribution[i] ) = primary_indep_grid[i];
+    Utility::get<1>( distribution[i] ).reset(
           new UnitAwareTabularDistribution<typename TwoDInterpPolicy::SecondaryBasePolicy,SecondaryIndependentUnit,DependentUnit>(
                                                       secondary_indep_grids[i],
                                                       dependent_values[i] ) );
@@ -221,8 +221,8 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
     // Calculate the limit on the sampled bin boundary
     typename QuantityTraits<SecondaryIndepQuantity>::RawType grid_length =
       TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                     sampled_bin_boundary->second->getLowerBoundOfIndepVar(),
-                     sampled_bin_boundary->second->getUpperBoundOfIndepVar() );
+         Utility::get<1>( *sampled_bin_boundary )->getLowerBoundOfIndepVar(),
+         Utility::get<1>( *sampled_bin_boundary )->getUpperBoundOfIndepVar() );
 
     SecondaryIndepQuantity intermediate_grid_lower_bound =
     this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
@@ -241,21 +241,21 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
     
     SecondaryIndepQuantity max_secondary_indep_var_value_bin_bound =
       TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
-                       eta,
-                       sampled_bin_boundary->second->getLowerBoundOfIndepVar(),
-                       grid_length );
+           eta,
+           Utility::get<1>( *sampled_bin_boundary )->getLowerBoundOfIndepVar(),
+           grid_length );
 
     // Sample in the bin's subrange
     SecondaryIndepQuantity raw_sample =
-      sampled_bin_boundary->second->sampleWithRandomNumberInSubrange(
+      Utility::get<1>(*sampled_bin_boundary)->sampleWithRandomNumberInSubrange(
                                      random_number,
                                      max_secondary_indep_var_value_bin_bound );
 
     // Scale the sample
     eta = TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
-                       raw_sample,
-                       sampled_bin_boundary->second->getLowerBoundOfIndepVar(),
-                       grid_length );
+           raw_sample,
+           Utility::get<1>( *sampled_bin_boundary )->getLowerBoundOfIndepVar(),
+           grid_length );
 
     return TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
                                                  eta,
@@ -315,16 +315,16 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   if( lower_bin_boundary != upper_bin_boundary )
   {
     return TwoDInterpPolicy::calculateIntermediateGridLimit(
-         lower_bin_boundary->first,
-         upper_bin_boundary->first,
+         Utility::get<0>( *lower_bin_boundary ),
+         Utility::get<0>( *upper_bin_boundary ),
          primary_indep_var_value,
-         lower_bin_boundary->second->sampleWithRandomNumber( random_number ),
-         upper_bin_boundary->second->sampleWithRandomNumber( random_number ) );
+         Utility::get<1>( *lower_bin_boundary )->sampleWithRandomNumber( random_number ),
+         Utility::get<1>( *upper_bin_boundary )->sampleWithRandomNumber( random_number ) );
   }
   else
   {
     if( this->arePrimaryLimitsExtended() )
-      return lower_bin_boundary->second->sampleWithRandomNumber(random_number);
+      return Utility::get<1>( *lower_bin_boundary )->sampleWithRandomNumber(random_number);
     else
     {
       THROW_EXCEPTION( std::logic_error,
@@ -397,13 +397,13 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
       // Calculate the limits on the bin boundaries
       typename QuantityTraits<SecondaryIndepQuantity>::RawType L0 =
         TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                       lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                       lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+           Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar(),
+           Utility::get<1>( *lower_bin_boundary )->getUpperBoundOfIndepVar() );
 
       typename QuantityTraits<SecondaryIndepQuantity>::RawType L1 =
         TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                       upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                       upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+           Utility::get<1>( *upper_bin_boundary )->getLowerBoundOfIndepVar(),
+           Utility::get<1>( *upper_bin_boundary )->getUpperBoundOfIndepVar() );
 
       SecondaryIndepQuantity intermediate_grid_lower_bound =
         this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
@@ -422,27 +422,27 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
 
       SecondaryIndepQuantity max_secondary_indep_var_value_0 =
         TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
-                         eta,
-                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                         L0 );
+             eta,
+             Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar(),
+             L0 );
 
       SecondaryIndepQuantity max_secondary_indep_var_value_1 =
         TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
-                         eta,
-                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                         L1 );
+             eta,
+             Utility::get<1>( *upper_bin_boundary )->getLowerBoundOfIndepVar(),
+             L1 );
       
       return TwoDInterpPolicy::calculateIntermediateGridLimit(
-         lower_bin_boundary->first,
-         upper_bin_boundary->first,
+         Utility::get<0>( *lower_bin_boundary ),
+         Utility::get<0>( *upper_bin_boundary ),
          primary_indep_var_value,
-         lower_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value_0 ),
-         upper_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value_1 ) );
+         Utility::get<1>( *lower_bin_boundary )->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value_0 ),
+         Utility::get<1>( *upper_bin_boundary )->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value_1 ) );
     }
     else
     {
       if( this->arePrimaryLimitsExtended() )
-        return lower_bin_boundary->second->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value );
+        return Utility::get<1>( *lower_bin_boundary )->sampleWithRandomNumberInSubrange( random_number, max_secondary_indep_var_value );
       else
       {
         THROW_EXCEPTION( std::logic_error,

@@ -42,7 +42,7 @@ PhotonMaterial::PhotonMaterial(
   // Copy the photoatoms that make up this material
   for( unsigned i = 0u; i < photoatom_fractions.size(); ++i )
   {
-    d_atoms[i].first = photoatom_fractions[i];
+    Utility::get<0>( d_atoms[i] ) = photoatom_fractions[i];
 
     PhotoatomNameMap::const_iterator atom =
       photoatom_name_map.find( photoatom_names[i] );
@@ -52,11 +52,11 @@ PhotonMaterial::PhotonMaterial(
 			"Error: atom " << photoatom_names[i] <<
 			" has not been loaded!" );
 
-    d_atoms[i].second = atom->second;
+    Utility::get<1>( d_atoms[i] ) = atom->second;
   }
 
   // Convert weight fractions to atom fractions
-  if( d_atoms.front().first < 0.0 )
+  if( Utility::get<0>( d_atoms.front() ) < 0.0 )
   {
     convertWeightFractionsToAtomFractions<Utility::FIRST,Utility::SECOND>(
 					    d_atoms.begin(),
@@ -114,7 +114,7 @@ double PhotonMaterial::getMacroscopicTotalCrossSection(
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
     cross_section +=
-      d_atoms[i].first*d_atoms[i].second->getTotalCrossSection( energy );
+      Utility::get<0>( d_atoms[i] )*Utility::get<1>( d_atoms[i] )->getTotalCrossSection( energy );
   }
 
   return cross_section;
@@ -133,7 +133,7 @@ double PhotonMaterial::getMacroscopicAbsorptionCrossSection(
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
     cross_section +=
-      d_atoms[i].first*d_atoms[i].second->getAbsorptionCrossSection( energy );
+      Utility::get<0>( d_atoms[i] )*Utility::get<1>( d_atoms[i] )->getAbsorptionCrossSection( energy );
   }
 
   return cross_section;
@@ -178,8 +178,8 @@ double PhotonMaterial::getMacroscopicReactionCrossSection(
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
-    cross_section += d_atoms[i].first*
-      d_atoms[i].second->getReactionCrossSection( energy, reaction );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getReactionCrossSection( energy, reaction );
   }
 
   return cross_section;
@@ -198,8 +198,8 @@ double PhotonMaterial::getMacroscopicReactionCrossSection(
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
-    cross_section += d_atoms[i].first*
-      d_atoms[i].second->getReactionCrossSection( energy, reaction );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getReactionCrossSection( energy, reaction );
   }
 
   return cross_section;
@@ -212,7 +212,7 @@ void PhotonMaterial::collideAnalogue( PhotonState& photon,
 {
   unsigned atom_index = sampleCollisionAtom( photon.getEnergy() );
 
-  d_atoms[atom_index].second->collideAnalogue( photon, bank );
+  Utility::get<1>(d_atoms[atom_index])->collideAnalogue( photon, bank );
 }
 
 // Collide with a photon and survival bias
@@ -230,14 +230,14 @@ void PhotonMaterial::collideSurvivalBias( PhotonState& photon,
 {
   unsigned atom_index = sampleCollisionAtom( photon.getEnergy() );
 
-  d_atoms[atom_index].second->collideSurvivalBias( photon, bank );
+  Utility::get<1>(d_atoms[atom_index])->collideSurvivalBias( photon, bank );
 }
 
 // Get the atomic weight from an atom pointer
 double PhotonMaterial::getAtomicWeight(
 	     const Utility::Pair<double,Teuchos::RCP<const Photoatom> >& pair )
 {
-  return pair.second->getAtomicWeight();
+  return Utility::get<1>(pair)->getAtomicWeight();
 }
 
 // Sample the atom that is collided with
@@ -254,7 +254,7 @@ unsigned PhotonMaterial::sampleCollisionAtom( const double energy ) const
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
     partial_total_cs +=
-      d_atoms[i].first*d_atoms[i].second->getTotalCrossSection( energy );
+      Utility::get<0>( d_atoms[i] )*Utility::get<1>( d_atoms[i] )->getTotalCrossSection( energy );
 
     if( scaled_random_number < partial_total_cs )
     {

@@ -11,7 +11,7 @@
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -63,7 +63,7 @@ double CutoffElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the distribution at the bin and scattering_angle_cosine
-  return d_elastic_scattering_distribution[incoming_energy_bin].second->evaluate(
+  return Utility::get<1>( d_elastic_scattering_distribution[incoming_energy_bin] )->evaluate(
         scattering_angle_cosine );
 }
 
@@ -97,7 +97,7 @@ double CutoffElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the PDF at the bin and scattering_angle_cosine
-  return d_elastic_scattering_distribution[incoming_energy_bin].second->evaluatePDF(
+  return Utility::get<1>( d_elastic_scattering_distribution[incoming_energy_bin] )->evaluatePDF(
         scattering_angle_cosine );
 }
 
@@ -155,7 +155,7 @@ double CutoffElasticElectronScatteringDistribution::getEnergy(
   testPrecondition( energy_bin < d_elastic_scattering_distribution.size() );
   testPrecondition( energy_bin >= 0 );
 
-  return d_elastic_scattering_distribution[energy_bin].first;
+  return Utility::get<0>( d_elastic_scattering_distribution[energy_bin] );
 }
 
 // Sample an outgoing energy and direction from the distribution

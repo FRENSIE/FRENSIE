@@ -40,7 +40,7 @@ AdjointPhotonMaterial::AdjointPhotonMaterial(
   // Copy the photoatoms that make up this material
   for( unsigned i = 0u; i < adjoint_photoatom_fractions.size(); ++i )
   {
-    d_atoms[i].first = adjoint_photoatom_fractions[i];
+    Utility::get<0>( d_atoms[i] ) = adjoint_photoatom_fractions[i];
 
     AdjointPhotoatomNameMap::const_iterator atom =
       adjoint_photoatom_name_map.find( adjoint_photoatom_names[i] );
@@ -50,11 +50,11 @@ AdjointPhotonMaterial::AdjointPhotonMaterial(
 			"Error: atom " << adjoint_photoatom_names[i] <<
 			" has not been loaded!" );
 
-    d_atoms[i].second = atom->second;
+    Utility::get<1>( d_atoms[i] ) = atom->second;
   }
 
   // Convert weight fractions to atom fractions
-  if( d_atoms.front().first < 0.0 )
+  if( Utility::get<0>( d_atoms.front() ) < 0.0 )
   {
     convertWeightFractionsToAtomFractions<Utility::FIRST,Utility::SECOND>(
 				     d_atoms.begin(),
@@ -111,7 +111,7 @@ bool AdjointPhotonMaterial::doesEnergyHaveLineEnergyReaction(
 
   for( size_t i = 0; i < d_atoms.size(); ++i )
   {
-    if( d_atoms[i].second->doesEnergyHaveLineEnergyReaction( energy ) )
+    if( Utility::get<1>( d_atoms[i] )->doesEnergyHaveLineEnergyReaction( energy ) )
     {
       has_line_energy_reaction = true;
 
@@ -134,8 +134,8 @@ double AdjointPhotonMaterial::getMacroscopicTotalCrossSection(
 
   for( size_t i = 0; i < d_atoms.size(); ++i )
   {
-    cross_section +=
-      d_atoms[i].first*d_atoms[i].second->getTotalCrossSection( energy );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getTotalCrossSection( energy );
   }
 
   return cross_section;
@@ -153,8 +153,8 @@ double AdjointPhotonMaterial::getMacroscopicTotalLineEnergyCrossSection(
 
   for( size_t i = 0; i < d_atoms.size(); ++i )
   {
-    cross_section +=
-      d_atoms[i].first*d_atoms[i].second->getTotalLineEnergyCrossSection( energy );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getTotalLineEnergyCrossSection( energy );
   }
 
   return cross_section;
@@ -172,8 +172,8 @@ double AdjointPhotonMaterial::getMacroscopicTotalForwardCrossSection(
 
   for( size_t i = 0; i < d_atoms.size(); ++i )
   {
-    cross_section +=
-      d_atoms[i].first*d_atoms[i].second->getTotalForwardCrossSection( energy );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getTotalForwardCrossSection( energy );
   }
 
   return cross_section;
@@ -191,8 +191,8 @@ double AdjointPhotonMaterial::getMacroscopicAbsorptionCrossSection(
 
   for( size_t i = 0; i < d_atoms.size(); ++i )
   {
-    cross_section +=
-      d_atoms[i].first*d_atoms[i].second->getAbsorptionCrossSection( energy );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getAbsorptionCrossSection( energy );
   }
 
   return cross_section;
@@ -294,8 +294,8 @@ double AdjointPhotonMaterial::getMacroscopicReactionCrossSection(
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
-    cross_section += d_atoms[i].first*
-      d_atoms[i].second->getReactionCrossSection( energy, reaction );
+    cross_section += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getReactionCrossSection( energy, reaction );
   }
 
   return cross_section;
@@ -309,7 +309,7 @@ void AdjointPhotonMaterial::collideAnalogue(
   unsigned atom_index =
     this->sampleCollisionAtom( adjoint_photon.getEnergy() );
 
-  d_atoms[atom_index].second->collideAnalogue( adjoint_photon, bank );
+  Utility::get<1>( d_atoms[atom_index] )->collideAnalogue( adjoint_photon, bank );
 }
 
 // Collide with an adjoint photon and survival bias
@@ -320,7 +320,7 @@ void AdjointPhotonMaterial::collideSurvivalBias(
   unsigned atom_index =
     this->sampleCollisionAtom( adjoint_photon.getEnergy() );
 
-  d_atoms[atom_index].second->collideSurvivalBias( adjoint_photon, bank );
+  Utility::get<1>( d_atoms[atom_index] )->collideSurvivalBias( adjoint_photon, bank );
 }
 
 // Collide with an adjoint photon at a line energy
@@ -336,14 +336,14 @@ void AdjointPhotonMaterial::collideAtLineEnergy(
   unsigned atom_index =
     this->sampleCollisionAtomAtLineEnergy( adjoint_photon.getEnergy() );
 
-  d_atoms[atom_index].second->collideAtLineEnergy( adjoint_photon, bank );
+  Utility::get<1>( d_atoms[atom_index] )->collideAtLineEnergy( adjoint_photon, bank );
 }
 
 // Get the atomic weight from an atom pointer
 double AdjointPhotonMaterial::getAtomicWeight(
       const Utility::Pair<double,Teuchos::RCP<const AdjointPhotoatom> >& pair )
 {
-  return pair.second->getAtomicWeight();
+  return Utility::get<1>( pair )->getAtomicWeight();
 }
 
 // Sample the atom that is collided with
@@ -360,8 +360,8 @@ unsigned AdjointPhotonMaterial::sampleCollisionAtom(
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
-    partial_total_cs +=
-      d_atoms[i].first*d_atoms[i].second->getTotalCrossSection( energy );
+    partial_total_cs += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getTotalCrossSection( energy );
 
     if( scaled_random_number < partial_total_cs )
     {
@@ -392,8 +392,8 @@ unsigned AdjointPhotonMaterial::sampleCollisionAtomAtLineEnergy(
 
   for( unsigned i = 0u; i < d_atoms.size(); ++i )
   {
-    partial_total_cs +=
-      d_atoms[i].first*d_atoms[i].second->getTotalLineEnergyCrossSection( energy );
+    partial_total_cs += Utility::get<0>( d_atoms[i] )*
+      Utility::get<1>( d_atoms[i] )->getTotalLineEnergyCrossSection( energy );
 
     if( scaled_random_number < partial_total_cs )
     {

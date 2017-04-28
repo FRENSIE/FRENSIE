@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"

@@ -10,7 +10,7 @@
 #define MONTE_CARLO_INDEPENDENT_ENERGY_ANGLE_NUCLEAR_SCATTERING_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{

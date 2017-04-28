@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//

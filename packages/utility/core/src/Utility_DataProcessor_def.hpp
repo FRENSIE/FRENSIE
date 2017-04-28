@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -305,7 +306,8 @@ void DataProcessor::calculateSlopes( Array &data  )
        Utility::get<indepMember>( *data_point_1 ));
 
     set<slopeMember>( *data_point_1, slope );
-    set<slopeMember>( *data_point_2, 0 );
+    set<slopeMember>( *data_point_2,
+                      Utility::QuantityTraits<decltype(slope)>::zero() );
 
     ++data_point_1;
     ++data_point_2;

@@ -168,10 +168,10 @@ double ElasticElectronDistribution<InterpolationPolicy>::evaluatePDF(
             ( indep_var_value + d_moliere_screening_constant )*
             ( indep_var_value + d_moliere_screening_constant ) );
   }
-  else if( indep_var_value > d_distribution.back().first )
+  else if( indep_var_value > Utility::get<0>( d_distribution.back() ) )
     return 0.0;
-  else if( indep_var_value == d_distribution.back().first )
-    return d_distribution.back().third;
+  else if( indep_var_value == Utility::get<0>( d_distribution.back() ) )
+    return Utility::get<2>( d_distribution.back() );
   else
   {
     DistributionArray::const_iterator start, end, lower_bin_boundary,
@@ -186,10 +186,10 @@ double ElasticElectronDistribution<InterpolationPolicy>::evaluatePDF(
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
 
-    double lower_indep_value = lower_bin_boundary->first;
-    double lower_pdf_value = lower_bin_boundary->third;
-    double upper_indep_value = upper_bin_boundary->first;
-    double upper_pdf_value = upper_bin_boundary->third;
+    double lower_indep_value = Utility::get<0>( *lower_bin_boundary );
+    double lower_pdf_value = Utility::get<2>( *lower_bin_boundary );
+    double upper_indep_value = Utility::get<0>( *upper_bin_boundary );
+    double upper_pdf_value = Utility::get<2>( *upper_bin_boundary );
 
     return InterpolationPolicy::interpolate( lower_indep_value,
 					     upper_indep_value,
@@ -213,7 +213,7 @@ double ElasticElectronDistribution<InterpolationPolicy>::evaluateCDF(
             ( indep_var_value + d_moliere_screening_constant ) )*
             d_norm_constant;
   }
-  else if( indep_var_value > d_distribution.back().first )
+  else if( indep_var_value > Utility::get<0>( d_distribution.back() ) )
     return 1.0;
   else
   {
@@ -225,10 +225,12 @@ double ElasticElectronDistribution<InterpolationPolicy>::evaluateCDF(
 							  end,
 							  indep_var_value );
 
-    double indep_diff = indep_var_value - lower_bin_boundary->first;
+    double indep_diff =
+      indep_var_value - Utility::get<0>( *lower_bin_boundary );
 
-    return lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
-           indep_diff*indep_diff/2.0 * lower_bin_boundary->fourth;
+    return Utility::get<1>( *lower_bin_boundary ) +
+      indep_diff*Utility::get<2>( *lower_bin_boundary ) +
+      indep_diff*indep_diff/2.0 * Utility::get<3>( *lower_bin_boundary );
   }
 }
 
@@ -337,10 +339,10 @@ double ElasticElectronDistribution<InterpolationPolicy>::sampleImplementation(
     // Calculate the sampled bin index
     sampled_bin_index = std::distance(d_distribution.begin(),lower_bin_boundary);
 
-    double indep_value = lower_bin_boundary->first;
-    double cdf_diff = random_number - lower_bin_boundary->second;
-    double pdf_value = lower_bin_boundary->third;
-    double slope = lower_bin_boundary->fourth;
+    double indep_value = Utility::get<0>( *lower_bin_boundary );
+    double cdf_diff = random_number - Utility::get<1>( *lower_bin_boundary );
+    double pdf_value = Utility::get<2>( *lower_bin_boundary );
+    double slope = Utility::get<3>( *lower_bin_boundary );
 
     // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m
     if( slope != 0.0 )
@@ -380,7 +382,7 @@ template<typename InterpolationPolicy>
 double
 ElasticElectronDistribution<InterpolationPolicy>::getUpperBoundOfIndepVar() const
 {
-  return d_distribution.back().first;
+  return Utility::get<0>( d_distribution.back() );
 }
 
 // Return the lower bound of the distribution independent variable
@@ -416,8 +418,8 @@ void ElasticElectronDistribution<InterpolationPolicy>::toStream(
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    independent_values[i] = d_distribution[i].first;
-    dependent_values[i] = d_distribution[i].third;
+    independent_values[i] = Utility::get<0>( d_distribution[i] );
+    dependent_values[i] = Utility::get<2>( d_distribution[i] );
   }
 
   os << "{" << independent_values << "," << dependent_values << "}";
@@ -547,45 +549,46 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionACE
   d_distribution.resize( size );
 
   // Set the first two data bins
-  d_distribution[0].first = 1.0 - independent_values[size-1];
-  d_distribution[0].second = 1.0 - dependent_values[size-1];
-  d_distribution[1].first = 1.0 - independent_values[size-2];
-  d_distribution[1].second = 1.0 - dependent_values[size-2];
+  Utility::get<0>( d_distribution[0] ) = 1.0 - independent_values[size-1];
+  Utility::get<1>( d_distribution[0] ) = 1.0 - dependent_values[size-1];
+  Utility::get<0>( d_distribution[1] ) = 1.0 - independent_values[size-2];
+  Utility::get<1>( d_distribution[1] ) = 1.0 - dependent_values[size-2];
   setFirstTwoPDFs( 1.0-dependent_values[size-1],
                    1.0-dependent_values[size-2] );
 
-  d_screened_rutherford_cutoff_cdf = d_distribution[1].third;
+  d_screened_rutherford_cutoff_cdf =  Utility::get<2>( d_distribution[1] );
 
   // Assign the distribution
   for( int i = 2; i < size; ++i )
   {
-    d_distribution[i].first = 1.0 - independent_values[size-i-1];
-    d_distribution[i].second = 1.0 - dependent_values[size-i-1];
+    Utility::get<0>( d_distribution[i] ) = 1.0 - independent_values[size-i-1];
+    Utility::get<1>( d_distribution[i] ) = 1.0 - dependent_values[size-i-1];
 
     // Use Lin-Lin interpolation for the pdf and quadratic for the cdf
-    if ( d_distribution[i-1].second != d_distribution[i].second )
+    if( Utility::get<1>( d_distribution[i-1] ) != Utility::get<1>( d_distribution[i] ) )
     {
       // Calculate the pdf from the cdf
-      d_distribution[i].third = -d_distribution[i-1].third + 2.0 *
-        (d_distribution[i].second - d_distribution[i-1].second)/
-        (d_distribution[i].first - d_distribution[i-1].first);
+      Utility::get<2>( d_distribution[i] ) =
+        -Utility::get<2>( d_distribution[i-1] ) + 2.0 *
+        (Utility::get<1>( d_distribution[i] ) - Utility::get<1>( d_distribution[i-1] ))/
+        (Utility::get<0>( d_distribution[i] ) - Utility::get<0>( d_distribution[i-1] ));
     }
     else // If the cdf does not change inbetween angular bins, set the pdf to zero
     {
-       d_distribution[i].third = 0.0;
+      Utility::get<2>( d_distribution[i] ) = 0.0;
     }
   }
 
   // Set normalization constant
-  d_norm_constant = d_distribution.back().second;
+  d_norm_constant = Utility::get<1>( d_distribution.back() );
 
   // Verify that the CDF is normalized (in event of round-off errors)
   if( dependent_values.back() != 1.0 )
   {
     for( unsigned j = 0; j < d_distribution.size(); ++j )
     {
-      d_distribution[j].second /= d_norm_constant;
-      d_distribution[j].third /= d_norm_constant;
+      Utility::get<1>( d_distribution[j] ) /= d_norm_constant;
+      Utility::get<2>( d_distribution[j] ) /= d_norm_constant;
     }
   }
 
@@ -613,8 +616,8 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionEND
   // Assign the raw distribution data
   for( unsigned i = 0; i < independent_values.size(); ++i )
   {
-    d_distribution[i].first = independent_values[i];
-    d_distribution[i].third = dependent_values[i];
+    Utility::get<0>( d_distribution[i] ) = independent_values[i];
+    Utility::get<2>( d_distribution[i] ) = dependent_values[i];
   }
 
   // Create a CDF from the raw distribution data
@@ -634,7 +637,7 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionEND
   // Normalized the CDF to screened Rutherford peak
   for( unsigned j = 0; j < d_distribution.size(); ++j )
   {
-    d_distribution[j].second /= d_norm_constant;
+    Utility::get<1>( d_distribution[j] ) /= d_norm_constant;
   }
 
 
@@ -687,10 +690,11 @@ void ElasticElectronDistribution<InterpolationPolicy>::setFirstTwoPDFs(
             ( second_cdf -first_cdf )*
             d_moliere_screening_constant*var/s_sr_angle;
 
-  d_distribution[1].third = d_screened_rutherford_normalization_constant/
-            ( var*var );
-  d_distribution[0].third = d_screened_rutherford_normalization_constant/
-            ( d_moliere_screening_constant*d_moliere_screening_constant );
+  Utility::get<2>( d_distribution[1] ) =
+    d_screened_rutherford_normalization_constant/( var*var );
+  Utility::get<2>( d_distribution[0] ) =
+    d_screened_rutherford_normalization_constant/
+    ( d_moliere_screening_constant*d_moliere_screening_constant );
 /*
 std::cout << std::setprecision(20)<<"d_moliere_screening_constant =\t"<<d_moliere_screening_constant<<std::endl;
 std::cout << std::setprecision(20)<<"d_screened_rutherford_normalization_constant =\t"<<d_screened_rutherford_normalization_constant<<std::endl;*/
@@ -704,7 +708,7 @@ inline bool ElasticElectronDistribution<InterpolationPolicy>::canDepVarBeZeroInI
 
   for( size_t i = 0; i < d_distribution.size(); ++i )
   {
-    if( d_distribution[i].third == 0.0 )
+    if( Utility::get<2>( d_distribution[i] ) == 0.0 )
     {
       possible_zero = true;
 

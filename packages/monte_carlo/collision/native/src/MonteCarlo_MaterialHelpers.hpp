@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <iterator>
 
-// FRENSIE Includes
-#include "Utility_TupleMemberTraits.hpp"
-
 namespace MonteCarlo{
 
 //! Test if a set of fractional values are valid

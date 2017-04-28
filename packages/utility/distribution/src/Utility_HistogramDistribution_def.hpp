@@ -641,7 +641,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    bin_boundaries[i] = Utility::get<THIRD>(d_distribution[i]);
+    bin_boundaries[i] = Utility::get<FIRST>(d_distribution[i]);
 
     if( i < d_distribution.size() - 1 )
       bin_values[i] = Utility::get<SECOND>(d_distribution[i]);

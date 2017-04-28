@@ -12,7 +12,7 @@
 #include "MonteCarlo_PhotonState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -78,13 +78,13 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 // Return the min incoming energy
 double BremsstrahlungElectronScatteringDistribution::getMinEnergy() const
 {
-  return d_bremsstrahlung_scattering_distribution.front().first;
+  return Utility::get<0>( d_bremsstrahlung_scattering_distribution.front() );
 }
 
 // Return the Max incoming energy
 double BremsstrahlungElectronScatteringDistribution::getMaxEnergy() const
 {
-  return d_bremsstrahlung_scattering_distribution.back().first;
+  return Utility::get<0>( d_bremsstrahlung_scattering_distribution.back() );
 }
 
 // Return the max incoming electron energy for a given outgoing electron energy
@@ -102,23 +102,24 @@ double BremsstrahlungElectronScatteringDistribution::getMaxIncomingEnergyAtOutgo
   highest_energy_bin--;
 
   // Make sure the outgoing energy is possible
-  testPrecondition( energy < highest_energy_bin->first -
-                    highest_energy_bin->second->sampleWithRandomNumber( 0.0 ) );
+  testPrecondition( energy < Utility::get<0>( *highest_energy_bin ) -
+                    Utility::get<1>( *highest_energy_bin )->sampleWithRandomNumber( 0.0 ) );
 
   for ( highest_energy_bin; highest_energy_bin !=lowest_energy_bin; highest_energy_bin -- )
   {
     // Find the maximum photon energy for an electron at the grid_point energy
     double max_photon_energy =
-      highest_energy_bin->second->sampleWithRandomNumber( 1.0 );
+      Utility::get<1>( *highest_energy_bin )->sampleWithRandomNumber( 1.0 );
 
     // Calculate the corresponding minimum outgoing electron energy
-    double min_energy = highest_energy_bin->first - max_photon_energy;
+    double min_energy =
+      Utility::get<0>( *highest_energy_bin ) - max_photon_energy;
 
     /* If the minimum outgoing electron energy is at or below the given energy
        then return the grid_point energy */
     if ( min_energy <= energy )
     {
-      return highest_energy_bin->first;
+      return Utility::get<0>( *highest_energy_bin );
     }
   }
   return 0.0;

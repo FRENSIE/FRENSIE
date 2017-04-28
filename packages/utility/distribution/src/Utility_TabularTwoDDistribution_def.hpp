@@ -55,8 +55,8 @@ UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit
   // Set the distribution
   for( unsigned i = 0u; i < primary_indep_grid.size(); ++i )
   {
-    d_distribution[i].first = primary_indep_grid[i];
-    d_distribution[i].second = secondary_distributions[i];
+    Utility::get<0>( d_distribution[i] ) = primary_indep_grid[i];
+    Utility::get<1>( d_distribution[i] ) = secondary_distributions[i];
   }
 }
 

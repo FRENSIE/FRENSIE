@@ -48,7 +48,7 @@ void ElectroionizationSubshellElectronScatteringDistributionENDLFactory::createS
 {
   for( unsigned n = 0; n < recoil_energy_grid.size(); ++n )
   {
-    subshell_distribution[n].first = recoil_energy_grid[n];
+    Utility::get<0>( subshell_distribution[n] ) = recoil_energy_grid[n];
 
     // Get the recoil energy distribution at the incoming energy
     Teuchos::Array<double> recoil_energy(
@@ -62,7 +62,7 @@ void ElectroionizationSubshellElectronScatteringDistributionENDLFactory::createS
             subshell,
             recoil_energy_grid[n] ) );
 
-    subshell_distribution[n].second.reset(
+    Utility::get<1>( subshell_distribution[n] ).reset(
 	  new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy,
                                                                pdf ) );
   }

@@ -13,7 +13,7 @@
 #include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
 #include "Utility_KinematicHelpers.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_PhysicalConstants.hpp"

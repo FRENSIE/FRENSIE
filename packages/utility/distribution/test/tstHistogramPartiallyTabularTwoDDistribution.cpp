@@ -352,11 +352,11 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
     Utility::HistogramPartiallyTabularTwoDDistribution::DistributionType
       distribution_data( 2 );
     
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::DeltaDistribution( 0.0 ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::DeltaDistribution( 0.0 ) );
 
-    distribution_data[1].first = 2.0;
-    distribution_data[1].second.reset( new Utility::DeltaDistribution( 1.0 ) );
+    Utility::get<0>( distribution_data[1] ) = 2.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::DeltaDistribution( 1.0 ) );
 
     other_distribution.reset(
                        new Utility::HistogramPartiallyTabularTwoDDistribution(
@@ -369,28 +369,11 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
     Utility::HistogramPartiallyTabularTwoDDistribution::DistributionType
       distribution_data( 2 );
     
-    distribution_data[0].first = -1.0;
-    distribution_data[0].second.reset( new Utility::DeltaDistribution( 0.0 ) );
+    Utility::get<0>( distribution_data[0] ) = -1.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::DeltaDistribution( 0.0 ) );
 
-    distribution_data[1].first = 2.0;
-    distribution_data[1].second.reset( new Utility::DeltaDistribution( 1.0 ) );
-
-    other_distribution.reset(
-                       new Utility::HistogramPartiallyTabularTwoDDistribution(
-                                                         distribution_data ) );
-  }
-
-  TEST_ASSERT( !distribution->hasSamePrimaryBounds( *other_distribution ) );
-
-  {
-    Utility::HistogramPartiallyTabularTwoDDistribution::DistributionType
-      distribution_data( 2 );
-    
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::DeltaDistribution( 0.0 ) );
-
-    distribution_data[1].first = 3.0;
-    distribution_data[1].second.reset( new Utility::DeltaDistribution( 1.0 ) );
+    Utility::get<0>( distribution_data[1] ) = 2.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::DeltaDistribution( 1.0 ) );
 
     other_distribution.reset(
                        new Utility::HistogramPartiallyTabularTwoDDistribution(
@@ -403,11 +386,28 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
     Utility::HistogramPartiallyTabularTwoDDistribution::DistributionType
       distribution_data( 2 );
     
-    distribution_data[0].first = -1.0;
-    distribution_data[0].second.reset( new Utility::DeltaDistribution( 0.0 ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::DeltaDistribution( 0.0 ) );
 
-    distribution_data[1].first = 3.0;
-    distribution_data[1].second.reset( new Utility::DeltaDistribution( 1.0 ) );
+    Utility::get<0>( distribution_data[1] ) = 3.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::DeltaDistribution( 1.0 ) );
+
+    other_distribution.reset(
+                       new Utility::HistogramPartiallyTabularTwoDDistribution(
+                                                         distribution_data ) );
+  }
+
+  TEST_ASSERT( !distribution->hasSamePrimaryBounds( *other_distribution ) );
+
+  {
+    Utility::HistogramPartiallyTabularTwoDDistribution::DistributionType
+      distribution_data( 2 );
+    
+    Utility::get<0>( distribution_data[0] ) = -1.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::DeltaDistribution( 0.0 ) );
+
+    Utility::get<0>( distribution_data[1] ) = 3.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::DeltaDistribution( 1.0 ) );
 
     other_distribution.reset(
                        new Utility::HistogramPartiallyTabularTwoDDistribution(
@@ -429,11 +429,11 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
     Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType
       distribution_data( 2 );
     
-    distribution_data[0].first = 0.0*MeV;
-    distribution_data[0].second.reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 0.0*cgs::centimeter ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0*MeV;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 0.0*cgs::centimeter ) );
 
-    distribution_data[1].first = 2.0*MeV;
-    distribution_data[1].second.reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 1.0*cgs::centimeter ) );
+    Utility::get<0>( distribution_data[1] ) = 2.0*MeV;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 1.0*cgs::centimeter ) );
 
     other_distribution.reset(
                        new Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>(
@@ -446,28 +446,11 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
     Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType
       distribution_data( 2 );
     
-    distribution_data[0].first = -1.0*MeV;
-    distribution_data[0].second.reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 0.0*cgs::centimeter ) );
+    Utility::get<0>( distribution_data[0] ) = -1.0*MeV;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 0.0*cgs::centimeter ) );
 
-    distribution_data[1].first = 2.0*MeV;
-    distribution_data[1].second.reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 1.0*cgs::centimeter ) );
-
-    other_distribution.reset(
-                       new Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>(
-                                                         distribution_data ) );
-  }
-
-  TEST_ASSERT( !unit_aware_distribution->hasSamePrimaryBounds( *other_distribution ) );
-
-  {
-    Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType
-      distribution_data( 2 );
-    
-    distribution_data[0].first = 0.0*MeV;
-    distribution_data[0].second.reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 0.0*cgs::centimeter ) );
-
-    distribution_data[1].first = 3.0*MeV;
-    distribution_data[1].second.reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 1.0*cgs::centimeter ) );
+    Utility::get<0>( distribution_data[1] ) = 2.0*MeV;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 1.0*cgs::centimeter ) );
 
     other_distribution.reset(
                        new Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>(
@@ -480,11 +463,28 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
     Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType
       distribution_data( 2 );
     
-    distribution_data[0].first = -1.0*MeV;
-    distribution_data[0].second.reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 0.0*cgs::centimeter ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0*MeV;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 0.0*cgs::centimeter ) );
 
-    distribution_data[1].first = 3.0*MeV;
-    distribution_data[1].second.reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 1.0*cgs::centimeter ) );
+    Utility::get<0>( distribution_data[1] ) = 3.0*MeV;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 1.0*cgs::centimeter ) );
+
+    other_distribution.reset(
+                       new Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>(
+                                                         distribution_data ) );
+  }
+
+  TEST_ASSERT( !unit_aware_distribution->hasSamePrimaryBounds( *other_distribution ) );
+
+  {
+    Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType
+      distribution_data( 2 );
+    
+    Utility::get<0>( distribution_data[0] ) = -1.0*MeV;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 0.0*cgs::centimeter ) );
+
+    Utility::get<0>( distribution_data[1] ) = 3.0*MeV;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::UnitAwareDeltaDistribution<cgs::length,Barn>( 1.0*cgs::centimeter ) );
 
     other_distribution.reset(
                        new Utility::UnitAwareHistogramPartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>(
@@ -1210,21 +1210,21 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       distribution_data( 4 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::DeltaDistribution( 0.0 ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::DeltaDistribution( 0.0 ) );
     
 
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 0.0;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0 ) );
+    Utility::get<0>( distribution_data[1] ) = 0.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::ExponentialDistribution( 1.0, 1.0 ) );
 
     // Create the secondary distribution in the third bin
-    distribution_data[2].first = 1.0;
-    distribution_data[2].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
+    Utility::get<0>( distribution_data[2] ) = 1.0;
+    Utility::get<1>( distribution_data[2] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
 
     // Create the secondary distribution beyond the third bin
-    distribution_data[3].first = 2.0;
-    distribution_data[3].second = distribution_data[0].second;
+    Utility::get<0>( distribution_data[3] ) = 2.0;
+    Utility::get<1>( distribution_data[3] ) = Utility::get<1>( distribution_data[0] );
 
     distribution.reset( new Utility::HistogramPartiallyTabularTwoDDistribution(
                                                          distribution_data ) );

@@ -53,7 +53,7 @@ bool UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
   
   for( size_t i = 0; i < distribution.size(); ++i )
   {
-    if( !distribution[i].second->template isCompatibleWithInterpType<typename TwoDInterpPolicy::SecondaryBasePolicy>() )
+    if( !Utility::get<1>( distribution[i] )->template isCompatibleWithInterpType<typename TwoDInterpPolicy::SecondaryBasePolicy>() )
     {
       compatible = false;
 
@@ -135,7 +135,7 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
   if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
-      return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+      return ((*Utility::get<1>( *lower_bin_boundary )).*evaluate)(secondary_indep_var_value);
     else 
       return QuantityTraits<ReturnType>::zero();
   }
@@ -145,28 +145,28 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
     std::function<ReturnType(const SecondaryIndepQuantity)>
       evaluate_grid_0_functor =
       std::bind<ReturnType>( evaluate,
-                             std::cref( *lower_bin_boundary->second ),
+                             std::cref(Utility::get<1>( *lower_bin_boundary )),
                              std::placeholders::_1 );
   
     std::function<ReturnType(const SecondaryIndepQuantity)>
       evaluate_grid_1_functor =
       std::bind<ReturnType>( evaluate,
-                             std::cref( *upper_bin_boundary->second ),
+                             std::cref(Utility::get<1>( *upper_bin_boundary )),
                              std::placeholders::_1 );
   
     return LocalTwoDInterpPolicy::interpolateUnitBase(
-                         lower_bin_boundary->first,
-                         upper_bin_boundary->first,
-                         primary_indep_var_value,
-                         secondary_indep_var_value,
-                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                         lower_bin_boundary->second->getUpperBoundOfIndepVar(),
-                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                         upper_bin_boundary->second->getUpperBoundOfIndepVar(),
-                         evaluate_grid_0_functor,
-                         evaluate_grid_1_functor,
-                         below_lower_bound_return,
-                         above_upper_bound_return );
+             Utility::get<0>( *lower_bin_boundary ),
+             Utility::get<0>( *upper_bin_boundary ),
+             primary_indep_var_value,
+             secondary_indep_var_value,
+             Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar(),
+             Utility::get<1>( *lower_bin_boundary )->getUpperBoundOfIndepVar(),
+             Utility::get<1>( *upper_bin_boundary )->getLowerBoundOfIndepVar(),
+             Utility::get<1>( *upper_bin_boundary )->getUpperBoundOfIndepVar(),
+             evaluate_grid_0_functor,
+             evaluate_grid_1_functor,
+             below_lower_bound_return,
+             above_upper_bound_return );
   }
 }
 
@@ -243,7 +243,7 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
   primary_bin_index = this->calculateBinIndex( sampled_bin_boundary );
 
   // Create the raw sample
-  raw_sample = sample_functor( *sampled_bin_boundary->second );
+  raw_sample = sample_functor( *Utility::get<1>( *sampled_bin_boundary ) );
 
   // Calculate the intermediate grid limits
   SecondaryIndepQuantity y_x_min = this->getLowerBoundOfConditionalIndepVar(
@@ -264,13 +264,13 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
   {
     typename QuantityTraits<SecondaryIndepQuantity>::RawType grid_length =
       TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                      sampled_bin_boundary->second->getLowerBoundOfIndepVar(),
-                      sampled_bin_boundary->second->getUpperBoundOfIndepVar());
+          Utility::get<1>( *sampled_bin_boundary )->getLowerBoundOfIndepVar(),
+          Utility::get<1>( *sampled_bin_boundary )->getUpperBoundOfIndepVar());
     
     eta = TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
-                       raw_sample,
-                       sampled_bin_boundary->second->getLowerBoundOfIndepVar(),
-                       grid_length );
+           raw_sample,
+           Utility::get<1>( *sampled_bin_boundary )->getLowerBoundOfIndepVar(),
+           grid_length );
   }
   
   // Scale the sample so that it preserves the intermediate limits.
@@ -319,12 +319,12 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distributi
 
     {
       const double processed_lower_bin_boundary = 
-        TwoDInterpPolicy::processFirstIndepVar( lower_bin_boundary->first );
+        TwoDInterpPolicy::processFirstIndepVar( Utility::get<0>( *lower_bin_boundary ) );
 
       interpolation_fraction =
         (TwoDInterpPolicy::processFirstIndepVar( primary_indep_var_value ) -
          processed_lower_bin_boundary)/
-        (TwoDInterpPolicy::processFirstIndepVar( upper_bin_boundary->first ) -
+        (TwoDInterpPolicy::processFirstIndepVar( Utility::get<0>( *upper_bin_boundary ) ) -
          processed_lower_bin_boundary );
     }
 
@@ -369,18 +369,18 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
   if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
-      return lower_bin_boundary->second->getUpperBoundOfIndepVar();
+      return Utility::get<1>( *lower_bin_boundary )->getUpperBoundOfIndepVar();
     else
       return QuantityTraits<SecondaryIndepQuantity>::zero();
   }
   else
   {
     return TwoDInterpPolicy::calculateIntermediateGridLimit(
-                       lower_bin_boundary->first,
-                       upper_bin_boundary->first,
-                       primary_indep_var_value,
-                       lower_bin_boundary->second->getUpperBoundOfIndepVar(),
-                       upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+           Utility::get<0>( *lower_bin_boundary ),
+           Utility::get<0>( *upper_bin_boundary ),
+           primary_indep_var_value,
+           Utility::get<1>( *lower_bin_boundary )->getUpperBoundOfIndepVar(),
+           Utility::get<1>( *upper_bin_boundary )->getUpperBoundOfIndepVar() );
   }
 }
 
@@ -400,18 +400,18 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distr
   if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
-      return lower_bin_boundary->second->getLowerBoundOfIndepVar();
+      return Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar();
     else
       return QuantityTraits<SecondaryIndepQuantity>::zero();
   }
   else
   {
     return TwoDInterpPolicy::calculateIntermediateGridLimit(
-                       lower_bin_boundary->first,
-                       upper_bin_boundary->first,
-                       primary_indep_var_value,
-                       lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                       upper_bin_boundary->second->getLowerBoundOfIndepVar() );
+           Utility::get<0>( *lower_bin_boundary ),
+           Utility::get<0>( *upper_bin_boundary ),
+           primary_indep_var_value,
+           Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar(),
+           Utility::get<1>( *upper_bin_boundary )->getLowerBoundOfIndepVar() );
   }
 }
 

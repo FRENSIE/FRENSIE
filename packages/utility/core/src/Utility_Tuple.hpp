@@ -95,6 +95,22 @@ inline const typename TupleElement<I,Utility::Tuple<Types...> >::type&
 get( const Utility::Tuple<Types...>& tuple ) noexcept
 { return std::get<I>( tuple ); }
 
+/*! Return a reference to the desired tuple element (std::get)
+ * \ingroup tuple
+ */
+template<size_t I, typename T1, typename T2>
+inline typename TupleElement<I,std::pair<T1,T2> >::type&
+get( std::pair<T1,T2>& tuple ) noexcept
+{ return std::get<I>( tuple ); }
+
+/*! Return a const reference to the desired tuple element (std::get)
+ * \ingroup tuple
+ */
+template<size_t I, typename T1, typename T2>
+inline const typename TupleElement<I,std::pair<T1,T2> >::type&
+get( const std::pair<T1,T2>& tuple ) noexcept
+{ return std::get<I>( tuple ); }
+
 /*! Set the head tuple member value
  *
  * The ValueType must be implicitly convertable to the tuple member type.

@@ -50,8 +50,8 @@ double AceLaw11NuclearScatteringEnergyDistribution::sampleEnergy(
   double b_sampled;
 
   // Sample the distribution of a(E)
-  if( energy >= d_a_distribution.front().first and
-      energy <= d_a_distribution.back().first )
+  if( energy >= Utility::get<0>(d_a_distribution.front()) &&
+      energy <= Utility::get<0>(d_a_distribution.back()) )
   {
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
@@ -67,28 +67,29 @@ double AceLaw11NuclearScatteringEnergyDistribution::sampleEnergy(
     ++upper_bin_boundary;
 
     // Calculate the interpolation fraction
-    double interpolation_fraction = (energy - lower_bin_boundary->first)/
-      (upper_bin_boundary->first - lower_bin_boundary->first);
+    double interpolation_fraction =
+      (energy - Utility::get<0>(*lower_bin_boundary))/
+      (Utility::get<0>(*upper_bin_boundary) - Utility::get<0>(*lower_bin_boundary));
 
-    a_sampled = (upper_bin_boundary->second -
-                lower_bin_boundary->second)*interpolation_fraction +
-                lower_bin_boundary->second;
+    a_sampled = interpolation_fraction*
+      (Utility::get<1>(*upper_bin_boundary) - Utility::get<1>(*lower_bin_boundary)) +
+      Utility::get<1>(*lower_bin_boundary);
   }
-  else if( energy < d_a_distribution.front().first )
+  else if( energy < Utility::get<0>(d_a_distribution.front()) )
   {
     // If below the energy grid, use the lowest possible energy
-    a_sampled = d_a_distribution.front().second;
+    a_sampled = Utility::get<1>(d_a_distribution.front());
   }
   else
   {
     // If above the energy grid, use the highest possible energy
-    a_sampled = d_a_distribution.back().second;
+    a_sampled = Utility::get<1>(d_a_distribution.back());
   }
 
 
   // Sample the distribution of b(E)
-  if( energy >= d_b_distribution.front().first and
-      energy <= d_b_distribution.back().first )
+  if( energy >= Utility::get<0>(d_b_distribution.front()) &&
+      energy <= Utility::get<0>(d_b_distribution.back()) )
   {
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
@@ -104,22 +105,24 @@ double AceLaw11NuclearScatteringEnergyDistribution::sampleEnergy(
     ++upper_bin_boundary;
 
     // Calculate the interpolation fraction
-    double interpolation_fraction = (energy - lower_bin_boundary->first)/
-      (upper_bin_boundary->first - lower_bin_boundary->first);
+    double interpolation_fraction =
+      (energy - Utility::get<0>(*lower_bin_boundary))/
+      (Utility::get<0>(*upper_bin_boundary) -
+       Utility::get<0>(*lower_bin_boundary));
 
-    b_sampled = (upper_bin_boundary->second -
-                lower_bin_boundary->second)*interpolation_fraction +
-                lower_bin_boundary->second;
+    b_sampled = interpolation_fraction*
+      (Utility::get<1>(*upper_bin_boundary) - Utility::get<1>(*lower_bin_boundary)) +
+      Utility::get<1>(*lower_bin_boundary);
   }
-  else if( energy < d_b_distribution.front().first )
+  else if( energy < Utility::get<0>(d_b_distribution.front()) )
   {
     // If below the energy grid, use the lowest possible energy
-    b_sampled = d_b_distribution.front().second;
+    b_sampled = Utility::get<1>(d_b_distribution.front());
   }
   else
   {
     // If above the energy grid, use the highest possible energy
-    b_sampled = d_b_distribution.back().second;
+    b_sampled = Utility::get<1>(d_b_distribution.back());
   }
 
   outgoing_energy = Utility::WattDistribution::sample(

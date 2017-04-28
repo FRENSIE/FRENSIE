@@ -10,7 +10,7 @@
 #include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
@@ -360,11 +360,11 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
     // Interpolate
     scattering_angle_cosine = Utility::LinLog::interpolate(
-                                lower_bin->first,
-                                upper_bin->first,
-                                incoming_energy,
-                                lower_angle,
-                                upper_angle );
+                                                   Utility::get<0>(*lower_bin),
+                                                   Utility::get<0>(*upper_bin),
+                                                   incoming_energy,
+                                                   lower_angle,
+                                                   upper_angle );
   }
   else
   {
@@ -382,7 +382,7 @@ void AnalogElasticElectronScatteringDistribution::sampleIndependent(
         double& scattering_angle_cosine ) const
 {
   // Get the bin energy
-  double energy = distribution_bin->first;
+  double energy = Utility::get<0>(*distribution_bin);
   // Get the scattering constant at the bin energy
   double eta = evaluateMoliereScreeningConstant( energy );
   // Get maximum CDF at the bin energy
@@ -397,7 +397,8 @@ void AnalogElasticElectronScatteringDistribution::sampleIndependent(
     double scaled_random_number = ( max_cdf - 1.0 )*random_number;
 
     // Get the pdf value at s_cutoff_mu for the bin energy
-    double cutoff_pdf = distribution_bin->second->evaluatePDF( s_cutoff_mu );
+    double cutoff_pdf =
+      Utility::get<1>(*distribution_bin)->evaluatePDF( s_cutoff_mu );
 
     // calculated a reapeated variable
     double var = cutoff_pdf*( s_cutoff_delta_mu + eta );
@@ -414,7 +415,7 @@ void AnalogElasticElectronScatteringDistribution::sampleIndependent(
   {
     // calculate the cutoff distribution scattering angle
     scattering_angle_cosine =
-      distribution_bin->second->sampleWithRandomNumber( max_cdf*random_number );
+      Utility::get<1>(*distribution_bin)->sampleWithRandomNumber( max_cdf*random_number );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine <= s_cutoff_mu );

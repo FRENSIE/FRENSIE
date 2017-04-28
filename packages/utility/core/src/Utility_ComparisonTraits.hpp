@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <string>
+#include <utility>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
@@ -301,6 +302,33 @@ struct ComparisonTraits<Tuple<Types...> >
 			      const scalarType tol = 0.0 )
   {
     return Details::TupleMemberCompareHelper<0,Tuple<Types...> >::compareTupleMembers(
+                                                                 first_value,
+                                                                 first_name,
+                                                                 second_value,
+                                                                 second_name,
+                                                                 out,
+                                                                 index,
+                                                                 tol );
+  }
+};
+
+/*! \brief The partial specialization of the Utility::ComparisonTraits for
+ * const std::pair.
+ * \ingroup comparison_traits
+ */
+template<typename T1, typename T2>
+struct ComparisonTraits<std::pair<T1,T2> >
+{
+  typedef const double scalarType;
+  static inline bool compare( const std::pair<T1,T2>& first_value,
+			      const std::string& first_name,
+			      const std::pair<T1,T2>& second_value,
+			      const std::string& second_name,
+			      Teuchos::FancyOStream& out,
+			      const int index = -1,
+			      const scalarType tol = 0.0 )
+  {
+    return Details::TupleMemberCompareHelper<0,std::pair<T1,T2> >::compareTupleMembers(
                                                                  first_value,
                                                                  first_name,
                                                                  second_value,

@@ -37,13 +37,14 @@ NeutronMaterial::NeutronMaterial(
   // Copy the nuclides that make up this material
   for( unsigned i = 0u; i < nuclide_fractions.size(); ++i )
   {
-    d_nuclides[i].first = nuclide_fractions[i];
+    Utility::get<0>( d_nuclides[i] ) = nuclide_fractions[i];
 
-    d_nuclides[i].second = nuclide_name_map.find( nuclide_names[i] )->second;
+    Utility::get<1>( d_nuclides[i] ) =
+      nuclide_name_map.find( nuclide_names[i] )->second;
   }
 
   // Convert weight fractions to atom fractions
-  if( d_nuclides.front().first < 0.0 )
+  if( Utility::get<0>( d_nuclides.front() ) < 0.0 )
   {
     convertWeightFractionsToAtomFractions<Utility::FIRST,Utility::SECOND>(
 					     d_nuclides.begin(),
@@ -100,8 +101,8 @@ double NeutronMaterial::getMacroscopicTotalCrossSection(
 
   for( unsigned i = 0u; i < d_nuclides.size(); ++i )
   {
-    cross_section +=
-      d_nuclides[i].first*d_nuclides[i].second->getTotalCrossSection( energy );
+    cross_section += Utility::get<0>( d_nuclides[i] )*
+      Utility::get<1>( d_nuclides[i] )->getTotalCrossSection( energy );
   }
 
   return cross_section;
@@ -115,8 +116,8 @@ double NeutronMaterial::getMacroscopicAbsorptionCrossSection(
 
   for( unsigned i = 0u; i < d_nuclides.size(); ++i )
   {
-    cross_section += d_nuclides[i].first*
-      d_nuclides[i].second->getAbsorptionCrossSection( energy );
+    cross_section += Utility::get<0>( d_nuclides[i] )*
+      Utility::get<1>( d_nuclides[i] )->getAbsorptionCrossSection( energy );
   }
 
   return cross_section;
@@ -142,8 +143,8 @@ double NeutronMaterial::getMacroscopicReactionCrossSection(
 
   for( unsigned i = 0u; i < d_nuclides.size(); ++i )
   {
-    cross_section += d_nuclides[i].first*
-      d_nuclides[i].second->getReactionCrossSection( energy, reaction );
+    cross_section += Utility::get<0>( d_nuclides[i] )*
+      Utility::get<1>( d_nuclides[i] )->getReactionCrossSection( energy, reaction );
   }
 
   return cross_section;
@@ -155,7 +156,7 @@ void NeutronMaterial::collideAnalogue( NeutronState& neutron,
 {
   unsigned nuclide_index = sampleCollisionNuclide( neutron.getEnergy() );
 
-  d_nuclides[nuclide_index].second->collideAnalogue( neutron, bank );
+  Utility::get<1>( d_nuclides[nuclide_index] )->collideAnalogue( neutron, bank );
 }
 
 // Collide with a neutron and survival bias
@@ -173,7 +174,7 @@ void NeutronMaterial::collideSurvivalBias( NeutronState& neutron,
 {
   unsigned nuclide_index = sampleCollisionNuclide( neutron.getEnergy() );
 
-  d_nuclides[nuclide_index].second->collideSurvivalBias( neutron, bank );
+  Utility::get<1>( d_nuclides[nuclide_index] )->collideSurvivalBias( neutron, bank );
 }
 
 // Sample the nuclide that is collided with
@@ -189,8 +190,8 @@ unsigned NeutronMaterial::sampleCollisionNuclide( const double energy ) const
 
   for( unsigned i = 0u; i < d_nuclides.size(); ++i )
   {
-    partial_total_cs +=
-      d_nuclides[i].first*d_nuclides[i].second->getTotalCrossSection( energy );
+    partial_total_cs += Utility::get<0>( d_nuclides[i] )*
+      Utility::get<1>( d_nuclides[i] )->getTotalCrossSection( energy );
 
     if( scaled_random_number < partial_total_cs )
     {
@@ -211,7 +212,7 @@ unsigned NeutronMaterial::sampleCollisionNuclide( const double energy ) const
 double NeutronMaterial::getNuclideAWR(
 		     const Utility::Pair<double,Teuchos::RCP<Nuclide> >& pair )
 {
-  return pair.second->getAtomicWeightRatio();
+  return Utility::get<1>( pair )->getAtomicWeightRatio();
 }
 
 } // end MonteCarlo namespace

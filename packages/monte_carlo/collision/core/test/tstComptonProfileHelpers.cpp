@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//

@@ -145,7 +145,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
     // Loop through the incident energies
     for(int i = 0; i != incoming_energies; i++)
     {
-      energy_grid[i].first = dlw_block_array[ldat_start_index + 3 + i];
+      Utility::get<0>( energy_grid[i] ) =
+        dlw_block_array[ldat_start_index + 3 + i];
     }
 
     // Number of outgoing energies
@@ -154,13 +155,14 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
     // Loop through the incoming energies
     for(int i = 0; i != incoming_energies; i++)
     {
-      energy_grid[i].second.resize(outgoing_energies,0);
+      Utility::get<1>( energy_grid[i] ).resize(outgoing_energies,0);
 
       // Loop through the outgoing energies
       for(int j = 0; i != outgoing_energies; j++)
       {
-        energy_grid[i].second[j] = dlw_block_array[ldat_start_index + 4 + incoming_energies +
-                                        i * outgoing_energies + j];
+        Utility::get<1>( energy_grid[i] )[j] =
+          dlw_block_array[ldat_start_index + 4 + incoming_energies +
+                          i * outgoing_energies + j];
       }
     }
 
@@ -265,7 +267,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
      // Loop through the incoming energies
      for(int i = 0; i != incoming_energies; i++)
      {
-       energy_distribution[i].first = incoming_energies_array[i];
+       Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
 
        int distribution_index = static_cast<int>( distribution_locations[i] ) - dlw_block_array_start_index - 1;
 
@@ -291,7 +293,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
          pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
            		     number_points_distribution - 1 );
 
-         energy_distribution[i].second.reset(
+         Utility::get<1>( energy_distribution[i] ).reset(
            	      new Utility::HistogramDistribution( outgoing_energy_grid,
            						  pdf ) );
       }
@@ -300,7 +302,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
          pdf = dlw_block_array( distribution_index + 2 +
                    number_points_distribution, number_points_distribution );
 
-         energy_distribution[i].second.reset(
+         Utility::get<1>( energy_distribution[i] ).reset(
            		     new Utility::TabularDistribution<Utility::LinLin>(
            					 outgoing_energy_grid, pdf ) );
        }
@@ -308,7 +310,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
       {
         if ( number_points_distribution == 1 )
         {
-          energy_distribution[i].second.reset(
+          Utility::get<1>( energy_distribution[i] ).reset(
                    new Utility::DeltaDistribution( outgoing_energy_grid[0] ) );
         }
         else
@@ -335,7 +337,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
 
             Teuchos::ArrayView<const double> cdf_reverse( cdf_reverse_vector );
 
-            energy_distribution[i].second.reset(
+            Utility::get<1>( energy_distribution[i] ).reset(
                    new Utility::DiscreteDistribution(
                                                   outgoing_energy_grid_reverse,
                                                   cdf_reverse,
@@ -343,7 +345,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
           }
           else
           {
-            energy_distribution[i].second.reset(
+            Utility::get<1>( energy_distribution[i] ).reset(
                    new Utility::DiscreteDistribution( outgoing_energy_grid,
                                                       cdf,
                                                       true ) );
@@ -420,8 +422,9 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
   // Update random_variables_array
   for(int i = 0; i != prob_function_number; i++)
   {
-    probabilistic_distribution[i].first = prob_bin_width*i;
-    probabilistic_distribution[i].second = probabilistic_function_array[i];
+    Utility::get<0>( probabilistic_distribution[i] ) = prob_bin_width*i;
+    Utility::get<1>( probabilistic_distribution[i] ) =
+      probabilistic_function_array[i];
   }
 
   // Initialize the energy distribution array
@@ -431,8 +434,9 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
   // Loop through incoming energies
   for(int i = 0; i != incoming_energies; i++)
   {
-    energy_distribution[i].first = incoming_energies_array[i];
-    energy_distribution[i].second = tabulated_energy_function_array[i];
+    Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
+    Utility::get<1>( energy_distribution[i] ) =
+      tabulated_energy_function_array[i];
   }
 
   distribution.reset(
@@ -482,12 +486,14 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw7EnergyDistribut
   // Loop through incoming energies
   for(int i = 0; i != incoming_energies; i++)
   {
-    energy_distribution[i].first = incoming_energies_array[i];
-    energy_distribution[i].second = tabulated_energy_function_array[i];
+    Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
+    Utility::get<1>( energy_distribution[i] ) =
+      tabulated_energy_function_array[i];
   }
 
   // Restriction energy
-  double restriction_energy = dlw_block_array[ldat_start_index + 3 + incoming_energies*2];
+  double restriction_energy =
+    dlw_block_array[ldat_start_index + 3 + incoming_energies*2];
 
   distribution.reset(
     new AceLaw7NuclearScatteringEnergyDistribution( energy_distribution,
@@ -536,8 +542,9 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw9EnergyDistribut
   // Loop through incoming energies
   for(int i = 0; i != incoming_energies; i++)
   {
-    energy_distribution[i].first = incoming_energies_array[i];
-    energy_distribution[i].second = tabulated_energy_function_array[i];
+    Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
+    Utility::get<1>( energy_distribution[i] ) =
+      tabulated_energy_function_array[i];
   }
 
   // Restriction energy
@@ -604,8 +611,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribu
   // Loop through incoming energies (a)
   for(int i = 0; i != incoming_energies_a; i++)
   {
-    a_distribution[i].first = incoming_energies_array_a[i];
-    a_distribution[i].second = tabulated_a[i];
+    Utility::get<0>( a_distribution[i] ) = incoming_energies_array_a[i];
+    Utility::get<1>( a_distribution[i] ) = tabulated_a[i];
   }
 
   // Initialize the energy distribution array (b)
@@ -615,8 +622,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribu
   // Loop through incoming energies (b)
   for(int i = 0; i != incoming_energies_b; i++)
   {
-    b_distribution[i].first = incoming_energies_array_b[i];
-    b_distribution[i].second = tabulated_b[i];
+    Utility::get<0>( b_distribution[i] ) = incoming_energies_array_b[i];
+    Utility::get<1>( b_distribution[i] ) = tabulated_b[i];
   }
 
   distribution.reset(

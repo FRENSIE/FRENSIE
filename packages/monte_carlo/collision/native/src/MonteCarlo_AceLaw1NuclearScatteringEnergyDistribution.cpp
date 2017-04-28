@@ -38,23 +38,28 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
   testPrecondition( energy < std::numeric_limits<double>::infinity() );
 
   // Sample an energy bin
-  double bin_location = Utility::RandomNumberGenerator::getRandomNumber<double>() *
-                        (d_energy_grid.front().second.size() - 1);
+  double bin_location =
+    Utility::RandomNumberGenerator::getRandomNumber<double>() *
+    (Utility::get<1>(d_energy_grid.front()).size() - 1);
 
   int bin_index = (int)floor(bin_location);
 
   double outgoing_energy;
 
   // Check if energy is outside the grid
-  if( energy < d_energy_grid.front().first )
+  if( energy < Utility::get<0>( d_energy_grid.front() ) )
   {
-    outgoing_energy = d_energy_grid.front().second[bin_index] + (bin_location - bin_index) *
-                   (d_energy_grid.front().second[bin_index + 1] - d_energy_grid.front().second[bin_index]);
+    outgoing_energy = Utility::get<1>(d_energy_grid.front())[bin_index] +
+      (bin_location - bin_index) *
+      (Utility::get<1>(d_energy_grid.front())[bin_index + 1] -
+       Utility::get<1>(d_energy_grid.front())[bin_index]);
   }
-  else if( energy > d_energy_grid.back().first )
+  else if( energy > Utility::get<1>( d_energy_grid.back() ) )
   {
-    outgoing_energy = d_energy_grid.back().second[bin_index] + (bin_location - bin_index) *
-                   (d_energy_grid.back().second[bin_index + 1] - d_energy_grid.back().second[bin_index]);
+    outgoing_energy = Utility::get<1>(d_energy_grid.back())[bin_index] +
+      (bin_location - bin_index) *
+      (Utility::get<1>(d_energy_grid.back())[bin_index + 1] -
+       Utility::get<1>(d_energy_grid.back()[bin_index]));
   }
   else
   {
@@ -72,15 +77,20 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
     ++upper_bin_boundary;
 
     // Calculate the interpolation fraction
-    double interpolation_fraction = ( energy - lower_bin_boundary->first )/
-                                    ( upper_bin_boundary->first - lower_bin_boundary->first );
+    double interpolation_fraction =
+      (energy - Utility::get<0>(*lower_bin_boundary))/
+      (Utility::get<0>(*upper_bin_boundary) - Utility::get<0>(*lower_bin_boundary));
 
     // Calculate the energy bounds
-    double energy_lower = lower_bin_boundary->second.front() + interpolation_fraction *
-                   (upper_bin_boundary->second.front() - lower_bin_boundary->second.front());
+    double energy_lower = Utility::get<1>(*lower_bin_boundary).front() +
+      interpolation_fraction *
+      (Utility::get<1>(*upper_bin_boundary).front() -
+       Utility::get<1>(*lower_bin_boundary).front());
 
-    double energy_upper = lower_bin_boundary->second.back() + interpolation_fraction *
-                   (upper_bin_boundary->second.back() - lower_bin_boundary->second.back());
+    double energy_upper = Utility::get<1>(*lower_bin_boundary).back() +
+      interpolation_fraction *
+      (Utility::get<1>(*upper_bin_boundary).back() -
+       Utility::get<1>(*lower_bin_boundary).back());
 
     // Sample the energy grid
     EnergyDistArray::const_iterator sampled_energy_dist;
@@ -94,14 +104,17 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
     }
 
     // Sample the energy location
-    double energy_location = sampled_energy_dist->second[bin_index] +
-                    Utility::RandomNumberGenerator::getRandomNumber<double>() *
-                    (sampled_energy_dist->second[bin_index + 1] - sampled_energy_dist->second[bin_index]);
+    double energy_location = Utility::get<1>(*sampled_energy_dist)[bin_index] +
+      Utility::RandomNumberGenerator::getRandomNumber<double>() *
+      (Utility::get<1>(*sampled_energy_dist)[bin_index + 1] -
+       Utility::get<1>(*sampled_energy_dist)[bin_index]);
 
     // Calculate the outgoing energy
-    outgoing_energy = energy_lower + (energy_location - sampled_energy_dist->second.front()) *
-                    (energy_upper - energy_lower) /
-                    (sampled_energy_dist->second.back() - sampled_energy_dist->second.front());
+    outgoing_energy = energy_lower +
+      (energy_location - Utility::get<1>(*sampled_energy_dist).front()) *
+      (energy_upper - energy_lower) /
+      (Utility::get<1>(*sampled_energy_dist).back() -
+       Utility::get<1>(*sampled_energy_dist).front());
   }
 
   return outgoing_energy;

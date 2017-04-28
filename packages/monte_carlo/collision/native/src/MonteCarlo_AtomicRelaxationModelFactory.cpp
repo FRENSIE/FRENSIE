@@ -130,9 +130,9 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	  for( unsigned i = 0; i < transitions.size(); ++i )
 	  {
 	    primary_transitions[i] =Data::convertENDFDesignatorToSubshellEnum(
-							transitions[i].first );
+                                           Utility::get<0>( transitions[i] ) );
 	    secondary_transitions[i] =Data::convertENDFDesignatorToSubshellEnum(
-						       transitions[i].second );
+                                           Utility::get<1>( transitions[i] ) );
 	  }
 
 	  const std::vector<double>& relaxation_energies =
@@ -220,9 +220,9 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	  for( unsigned i = 0; i < transitions.size(); ++i )
 	  {
 	    primary_transitions[i] = Data::convertEADLDesignatorToSubshellEnum(
-							transitions[i].first );
+                                           Utility::get<0>( transitions[i] ) );
 	    secondary_transitions[i] = Data::convertEADLDesignatorToSubshellEnum(
-						       transitions[i].second );
+                                           Utility::get<0>( transitions[i] ) );
 	  }
 
 	  const std::vector<double>& relaxation_energies =

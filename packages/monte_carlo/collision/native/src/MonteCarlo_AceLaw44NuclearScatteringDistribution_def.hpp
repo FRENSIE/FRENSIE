@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_AceLaw44NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 

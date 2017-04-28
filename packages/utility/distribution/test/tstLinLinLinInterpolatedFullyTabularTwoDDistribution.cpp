@@ -338,12 +338,12 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
     
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 1.0;
-    distribution_data[1].second = distribution_data[0].second;
+    Utility::get<0>( distribution_data[1] ) = 1.0;
+    Utility::get<1>( distribution_data[1] ) = Utility::get<1>( distribution_data[0] );
 
     test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
                                                          distribution_data ) );
@@ -357,12 +357,12 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 1.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    Utility::get<0>( distribution_data[0] ) = 1.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
     
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 2.0;
-    distribution_data[1].second = distribution_data[0].second;
+    Utility::get<0>( distribution_data[1] ) = 2.0;
+    Utility::get<1>( distribution_data[1] ) = Utility::get<1>( distribution_data[0] );
 
     test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
                                                          distribution_data ) );
@@ -5244,12 +5244,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       distribution_data( 4 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
 
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 0.0;
-    distribution_data[1].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
+    Utility::get<0>( distribution_data[1] ) = 0.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
 
     // Create the secondary distribution in the third bin
     std::vector<double> bin_boundaries( 3 ), values( 3 );
@@ -5257,12 +5257,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[1] = 5.0; values[1] = 1.0;
     bin_boundaries[2] = 7.5; values[2] = 0.5;
     
-    distribution_data[2].first = 1.0;
-    distribution_data[2].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
+    Utility::get<0>( distribution_data[2] ) = 1.0;
+    Utility::get<1>( distribution_data[2] ).reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
 
     // Create the secondary distribution beyond the third bin
-    distribution_data[3].first = 2.0;
-    distribution_data[3].second = distribution_data[0].second;
+    Utility::get<0>( distribution_data[3] ) = 2.0;
+    Utility::get<1>( distribution_data[3] ) = Utility::get<1>( distribution_data[0] );
 
     tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
                                                          distribution_data ) );

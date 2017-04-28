@@ -10,7 +10,7 @@
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
@@ -239,11 +239,11 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   if ( lower_bin_index != upper_bin_index )
   {
     scattering_angle_cosine = Utility::LinLog::interpolate(
-        d_elastic_cutoff_distribution[lower_bin_index].first,
-        d_elastic_cutoff_distribution[upper_bin_index].first,
-        incoming_energy,
-        lower_angle,
-        upper_angle );
+             Utility::get<0>( d_elastic_cutoff_distribution[lower_bin_index] ),
+             Utility::get<0>( d_elastic_cutoff_distribution[upper_bin_index] ),
+             incoming_energy,
+             lower_angle,
+             upper_angle );
   }
   else
   {
@@ -263,7 +263,7 @@ void HybridElasticElectronScatteringDistribution::sampleIndependent(
 {
   // get the ratio of the cutoff cross section to the moment preserving cross section
   double cross_section_ratio =
-    d_elastic_discrete_distribution[energy_bin].third;
+    Utility::get<2>(d_elastic_discrete_distribution[energy_bin]);
 
   // calculate a sampling ratio
   double sampling_ratio =  cross_section_ratio/( 1.0 + cross_section_ratio );
@@ -276,7 +276,7 @@ void HybridElasticElectronScatteringDistribution::sampleIndependent(
     double scaled_random_number = random_number/sampling_ratio;
 
     scattering_angle_cosine =
-        d_elastic_cutoff_distribution[energy_bin].second->sampleWithRandomNumberInSubrange(
+      Utility::get<1>( d_elastic_cutoff_distribution[energy_bin] )->sampleWithRandomNumberInSubrange(
             scaled_random_number, d_cutoff_angle_cosine );
   }
   else
@@ -285,7 +285,7 @@ void HybridElasticElectronScatteringDistribution::sampleIndependent(
         random_number*( 1.0 + cross_section_ratio) - cross_section_ratio;
 
     scattering_angle_cosine =
-        d_elastic_discrete_distribution[energy_bin].second->sampleWithRandomNumber(
+      Utility::get<1>( d_elastic_discrete_distribution[energy_bin] )->sampleWithRandomNumber(
             scaled_random_number );
   }
 }

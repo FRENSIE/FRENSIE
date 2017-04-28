@@ -19,7 +19,7 @@
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_ComparePolicy.hpp"
+#include "Utility_ComparisonTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
@@ -486,13 +486,13 @@ bool GridGenerator<InterpPolicy>::hasGridConverged(
   bool converged = false;
 
   // Calculate the convergence parameters
-  double relative_error = Policy::relError( y_mid_exact, y_mid_estimated );
+  double relative_error = Utility::relError( y_mid_exact, y_mid_estimated );
 
   double absolute_difference =
       Teuchos::ScalarTraits<double>::magnitude( y_mid_exact - y_mid_estimated);
 
   double relative_distance =
-    Policy::relError( lower_grid_point, upper_grid_point );
+    Utility::relError( lower_grid_point, upper_grid_point );
 
   // Check if the distance tolerance was hit - dirty convergence
   if( relative_distance <= d_distance_tol &&

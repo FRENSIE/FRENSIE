@@ -56,8 +56,8 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
   double outgoing_energy;
 
   // Check if energy is outside the grid
-  if( energy >= d_energy_distribution.front().first and
-      energy < d_energy_distribution.back().first )
+  if( energy >= Utility::get<0>( d_energy_distribution.front() ) &&
+      energy < Utility::get<0>( d_energy_distribution.back() ) )
   {
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
@@ -73,8 +73,9 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
     ++upper_bin_boundary;
 
     // Calculate the interpolation fraction
-    double interpolation_fraction = (energy - lower_bin_boundary->first)/
-      (upper_bin_boundary->first - lower_bin_boundary->first);
+    double interpolation_fraction =
+      (energy - Utility::get<0>(*lower_bin_boundary))/
+      (Utility::get<0>(*upper_bin_boundary) - Utility::get<0>(*lower_bin_boundary));
 
     double random_num =
       Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -82,7 +83,7 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
     if( random_num < interpolation_fraction )
     {
       energy_prime =
-	upper_bin_boundary->second->sampleAndRecordBinIndex( outgoing_index );
+	Utility::get<1>(*upper_bin_boundary)->sampleAndRecordBinIndex( outgoing_index );
 
       incoming_index = std::distance( d_energy_distribution.begin(),
 				      upper_bin_boundary);
@@ -90,22 +91,22 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
     else
     {
       energy_prime =
-	lower_bin_boundary->second->sampleAndRecordBinIndex( outgoing_index );
+	Utility::get<1>(*lower_bin_boundary)->sampleAndRecordBinIndex( outgoing_index );
 
       incoming_index = std::distance( d_energy_distribution.begin(),
 				      lower_bin_boundary);
     }
 
     // Calculate the energy bounds
-    double energy_lower = lower_bin_boundary->second->getLowerBoundOfIndepVar()
+    double energy_lower = Utility::get<1>(*lower_bin_boundary)->getLowerBoundOfIndepVar()
       + interpolation_fraction*
-      (upper_bin_boundary->second->getLowerBoundOfIndepVar() -
-       lower_bin_boundary->second->getLowerBoundOfIndepVar());
+      (Utility::get<1>(*upper_bin_boundary)->getLowerBoundOfIndepVar() -
+       Utility::get<1>(*lower_bin_boundary)->getLowerBoundOfIndepVar());
 
-    double energy_upper = upper_bin_boundary->second->getUpperBoundOfIndepVar()
+    double energy_upper = Utility::get<1>(*upper_bin_boundary)->getUpperBoundOfIndepVar()
       + interpolation_fraction*
-      (upper_bin_boundary->second->getUpperBoundOfIndepVar() -
-       lower_bin_boundary->second->getUpperBoundOfIndepVar());
+      (Utility::get<1>(*upper_bin_boundary)->getUpperBoundOfIndepVar() -
+       Utility::get<1>(*lower_bin_boundary)->getUpperBoundOfIndepVar());
 
     // Calculate the outgoing energy
     if ( energy_upper == energy_lower )
@@ -119,24 +120,24 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
     else if( random_num < interpolation_fraction )
     {
       outgoing_energy = energy_lower +
-	(energy_prime - upper_bin_boundary->second->getLowerBoundOfIndepVar())*
+	(energy_prime - Utility::get<1>(*upper_bin_boundary)->getLowerBoundOfIndepVar())*
 	(energy_upper - energy_lower) /
-	(upper_bin_boundary->second->getUpperBoundOfIndepVar() -
-	 lower_bin_boundary->second->getLowerBoundOfIndepVar());
+	(Utility::get<1>(*upper_bin_boundary)->getUpperBoundOfIndepVar() -
+	 Utility::get<1>(*lower_bin_boundary)->getLowerBoundOfIndepVar());
     }
     else
     {
       outgoing_energy = energy_lower +
-	(energy_prime - lower_bin_boundary->second->getLowerBoundOfIndepVar())*
+	(energy_prime - Utility::get<1>(*lower_bin_boundary)->getLowerBoundOfIndepVar())*
 	(energy_upper - energy_lower) /
-	(upper_bin_boundary->second->getUpperBoundOfIndepVar() -
-	 lower_bin_boundary->second->getLowerBoundOfIndepVar());
+	(Utility::get<1>(*upper_bin_boundary)->getUpperBoundOfIndepVar() -
+	 Utility::get<1>(*lower_bin_boundary)->getLowerBoundOfIndepVar());
     }
   }
-  else if( energy < d_energy_distribution.front().first )
+  else if( energy < Utility::get<0>(d_energy_distribution.front() ) )
   {
     outgoing_energy =
-      d_energy_distribution.front().second->sampleAndRecordBinIndex(
+      Utility::get<1>(d_energy_distribution.front() )->sampleAndRecordBinIndex(
 							       outgoing_index);
 
     energy_prime = outgoing_energy;
@@ -145,7 +146,7 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
   else
   {
     outgoing_energy =
-      d_energy_distribution.back().second->sampleAndRecordBinIndex(
+      Utility::get<1>(d_energy_distribution.back())->sampleAndRecordBinIndex(
 							      outgoing_index );
 
     energy_prime = outgoing_energy;

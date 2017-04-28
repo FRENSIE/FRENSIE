@@ -116,9 +116,9 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
 
   for( unsigned n = 0; n < N; ++n )
   {
-    scattering_function[n].first = electron_energy_grid[n];
+    Utility::get<0>( scattering_function[n] ) = electron_energy_grid[n];
 
-    scattering_function[n].second.reset(
+    Utility::get<1>( scattering_function[n] ).reset(
 	  new Utility::HistogramDistribution(
 	      breme_block( offset[n], table_length[n] ),
 	      breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
