@@ -243,16 +243,6 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
 
-  // Create the cutoff elastic scattering distribution
-  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
-
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
-    distribution,
-    raw_electroatom_data,
-    cutoff_angle_cosine,
-    correlated_sampling_mode_on,
-    evaluation_tol );
-
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> elastic_cross_section;
   elastic_cross_section.assign(
@@ -262,6 +252,15 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   // Cutoff elastic cross section threshold energy bin index
   unsigned threshold_energy_index =
     raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
+
+  // Create the cutoff elastic scattering distribution using the cutoff angle cosine
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
+    distribution,
+    raw_electroatom_data,
+    cutoff_angle_cosine,
+    correlated_sampling_mode_on,
+    evaluation_tol );
 
   elastic_reaction.reset(
     new CutoffElasticElectroatomicReaction<Utility::LinLin>(

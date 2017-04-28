@@ -1051,7 +1051,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   moments[2] = 0.99996009701780611083L;
 
   std::vector<double> angular_grid =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
             al_data->getCutoffElasticAngles(),
             energy,
             -1.0 );
@@ -1110,7 +1110,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   moments[2] = 0.99996009701780611083L*cross_section;
 
   std::vector<double> angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
             al_data->getCutoffElasticAngles(),
             energy,
             -1.0 );

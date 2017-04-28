@@ -115,7 +115,6 @@ void CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_sect
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
-
 // Return the cross section at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(

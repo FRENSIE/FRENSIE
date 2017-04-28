@@ -271,8 +271,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
   {
     ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
-        cutoff_elastic_angles,
-        cutoff_elastic_pdf,
+        cutoff_elastic_angles.find( angular_energy_grid[n] )->second,
+        cutoff_elastic_pdf.find( angular_energy_grid[n] )->second,
         angular_energy_grid[n],
         function_data[n],
         false );
@@ -356,6 +356,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
                 moment_preserving_weights,
                 angular_energy_grid,
                 discrete_function,
+                1.0,
                 evaluation_tol,
                 true );
 
@@ -366,6 +367,18 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
                 cutoff_elastic_pdf,
                 angular_energy_grid,
                 continuous_function,
+                cutoff_angle_cosine,
+                evaluation_tol,
+                false );
+
+  // Create the full continuous scattering function
+  std::shared_ptr<TwoDDist> full_continuous_function;
+  ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<TwoDInterpPolicy>(
+                cutoff_elastic_angles,
+                cutoff_elastic_pdf,
+                angular_energy_grid,
+                full_continuous_function,
+                1.0,
                 evaluation_tol,
                 false );
 
@@ -375,7 +388,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
                 energy_grid,
                 cutoff_cross_section,
                 moment_preserving_cross_section,
-                continuous_function,
+                full_continuous_function,
                 cutoff_angle_cosine,
                 cross_section_ratios );
 
@@ -423,14 +436,37 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
         cutoff_elastic_pdf,
         angular_energy_grid,
         scattering_function,
+        cutoff_angle_cosine,
         evaluation_tol,
         false );
 
-  cutoff_elastic_distribution.reset(
+  if( cutoff_angle_cosine < 0.999999 )
+  {
+    // Create the full scattering function
+    std::shared_ptr<TwoDDist> full_scattering_function;
+    ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<TwoDInterpPolicy>(
+        cutoff_elastic_angles,
+        cutoff_elastic_pdf,
+        angular_energy_grid,
+        full_scattering_function,
+        1.0,
+        evaluation_tol,
+        false );
+
+    cutoff_elastic_distribution.reset(
         new CutoffElasticElectronScatteringDistribution(
+                full_scattering_function,
                 scattering_function,
                 cutoff_angle_cosine,
                 correlated_sampling_mode_on ) );
+  }
+  else
+  {
+    cutoff_elastic_distribution.reset(
+        new CutoffElasticElectronScatteringDistribution(
+                scattering_function,
+                correlated_sampling_mode_on ) );
+  }
 }
 
 // Create a moment preserving elastic distribution
@@ -466,6 +502,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
     discrete_weights,
     angular_energy_grid,
     scattering_function,
+    1.0,
     evaluation_tol,
     true );
 
@@ -563,6 +600,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,
     const double energy,
+    const double cutoff_angle_cosine,
     const double evaluation_tol )
 {
   // Make sure the maps are valid
@@ -576,8 +614,15 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
   // Get the angular grid
   if( angles.count( energy ) > 0 )
   {
-    angular_grid = angles.at( energy );
-    evaluated_pdf = pdf.at( energy );
+//    angular_grid = angles.at( energy );
+//    evaluated_pdf = pdf.at( energy );
+
+    ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+        angular_grid,
+        evaluated_pdf,
+        angles.at( energy ),
+        pdf.at( energy ),
+        cutoff_angle_cosine );
   }
   else
   {
@@ -610,11 +655,15 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     // Use the angular grid for the energy bin closes to the energy
     if ( energy - lower_bin->first <= upper_bin->first - energy )
     {
-      angular_grid = lower_bin->second;
+      angular_grid = ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+                            lower_bin->second,
+                            cutoff_angle_cosine );
     }
     else
     {
-      angular_grid = upper_bin->second;
+      angular_grid = ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+                            upper_bin->second,
+                            cutoff_angle_cosine );
     }
 
     // Evaluate the pdf on the angular grid
@@ -659,7 +708,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCrossSectionRatio
                                                         cutoff_angle_cosine );
 
     // Get the ratio of the cutoff to the moment preserving cross section
-    cross_section_ratio[n] = moment_preserving_cross_section[n]*cutoff_cdf/
+    cross_section_ratio[n] = cutoff_cross_section[n]*cutoff_cdf/
                                             moment_preserving_cross_section[n];
   }
     // Create cross section ratios
@@ -809,6 +858,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
         const std::map<double,std::vector<double> >& elastic_pdf,
         const std::vector<double>& energy_grid,
         std::shared_ptr<TwoDDist>& scattering_function,
+        const double cutoff_angle_cosine,
         const double evaluation_tol,
         const bool discrete_function )
 {
@@ -824,12 +874,27 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
 
   for( unsigned n = 0; n < energy_grid.size(); ++n )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
-        elastic_angles,
-        elastic_pdf,
+    if( cutoff_angle_cosine < elastic_angles.find( energy_grid[n] )->second.back() )
+    {
+      // Make sure the data is not discrete
+      testPrecondition( !discrete_function );
+
+      ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctionInSubrange(
+        elastic_angles.find( energy_grid[n] )->second,
+        elastic_pdf.find( energy_grid[n] )->second,
+        energy_grid[n],
+        cutoff_angle_cosine,
+        function_data[n] );
+    }
+    else
+    {
+      ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
+        elastic_angles.find( energy_grid[n] )->second,
+        elastic_pdf.find( energy_grid[n] )->second,
         energy_grid[n],
         function_data[n],
         discrete_function );
+    }
   }
 
   // Set the scattering function

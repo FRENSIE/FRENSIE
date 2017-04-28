@@ -28,8 +28,7 @@ public:
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-      const double lower_cutoff_angle_cosine = 1.0 );
+      std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(

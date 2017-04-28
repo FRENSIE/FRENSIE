@@ -20,8 +20,7 @@ namespace MonteCarlo{
 void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
-    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const double upper_cutoff_angle_cosine )
+    const Data::XSSEPRDataExtractor& raw_electroatom_data )
 {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
@@ -33,7 +32,6 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
   cutoff_elastic_distribution.reset(
         new CutoffElasticElectronScatteringDistribution(
                 scattering_function,
-                upper_cutoff_angle_cosine,
                 true ) );
 }
 

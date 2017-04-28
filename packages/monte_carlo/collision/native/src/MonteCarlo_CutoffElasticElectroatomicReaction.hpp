@@ -77,7 +77,6 @@ public:
 
 private:
 
-
   // The cutoff_elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     d_scattering_distribution;

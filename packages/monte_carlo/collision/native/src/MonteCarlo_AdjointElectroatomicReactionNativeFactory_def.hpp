@@ -250,7 +250,7 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
 
-  // Create the cutoff elastic scattering distribution
+  // Create the cutoff elastic scattering distribution using the cutoff angle cosine
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
   ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(

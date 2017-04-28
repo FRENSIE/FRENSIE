@@ -30,10 +30,15 @@ public:
 
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
+  //! Basic Constructor
+  CutoffElasticElectronScatteringDistribution(
+        const std::shared_ptr<TwoDDist>& scattering_distribution,
+        const bool correlated_sampling_mode_on );
+
   //! Constructor
   CutoffElasticElectronScatteringDistribution(
-        const std::shared_ptr<TwoDDist>& 
-            scattering_distribution,
+        const std::shared_ptr<TwoDDist>& full_scattering_distribution,
+        const std::shared_ptr<TwoDDist>& partial_scattering_distribution,
         const double cutoff_angle_cosine,
         const bool correlated_sampling_mode_on );
 
@@ -41,32 +46,20 @@ public:
   virtual ~CutoffElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the distribution
+  //! Evaluate the cutoff cross section ratio
+  double evaluateCutoffCrossSectionRatio( const double incoming_energy ) const;
+
+  //! Evaluate the partial cutoff distribution
   double evaluate( const double incoming_energy,
                    const double scattering_angle_cosine ) const;
 
-  //! Evaluate the PDF
+  //! Evaluate the partial cutoff PDF
   double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
 
-  //! Evaluate the CDF
+  //! Evaluate the partial cutoff CDF
   double evaluateCDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
-
-  //! Evaluate the unormalized distribution
-  double evaluateUnormalized( const double incoming_energy,
-                              const double scattering_angle_cosine ) const;
-
-  //! Evaluate the unormalized PDF
-  double evaluateUnormalizedPDF( const double incoming_energy,
-                                 const double scattering_angle_cosine ) const;
-
-  //! Evaluate the unormalized CDF
-  double evaluateUnormalizedCDF( const double incoming_energy,
-                                 const double scattering_angle_cosine ) const;
-
-  //! Evaluate the cross section ratio for the cutoff angle cosine
-  double evaluateCutoffCrossSectionRatio( const double incoming_energy ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -91,7 +84,7 @@ public:
 
 protected:
 
-   //! Sample an outgoing direction from the distribution
+  //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
@@ -101,8 +94,11 @@ private:
   // The cutoff scattering angle cosine (mu) below which the cutoff distribution is used
   double d_cutoff_angle_cosine;
 
-  // cutoff elastic scattering distribution (no screened Rutherford data)
-  std::shared_ptr<TwoDDist> d_cutoff_distribution;
+  // The full cutoff elastic scattering distribution (no screened Rutherford data)
+  std::shared_ptr<TwoDDist> d_full_cutoff_distribution;
+
+  // The cutoff elastic scattering distribution below cutoff_angle_cosine
+  std::shared_ptr<TwoDDist> d_partial_cutoff_distribution;
 
   // The sample function pointer
   std::function<double ( const double )> d_sample_func;

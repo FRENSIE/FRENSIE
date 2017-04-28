@@ -198,7 +198,7 @@ public:
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
-  //! Return angle cosine grid with the evaluated pdf for the given cutoff angle
+  //! Return angle cosine grid with the evaluated pdf for the given energy and cutoff angle
   template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void getAngularGridAndPDF(
     std::vector<double>& angular_grid,
@@ -206,17 +206,31 @@ public:
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,
     const double energy,
+    const double cutoff_angle_cosine,
     const double evaluation_tol );
 
-  //! Return angle cosine grid for the given cutoff angle
+  //! Return angle cosine grid with the evaluated pdf for the given cutoff angle
+  static void getAngularGridAndPDF(
+    std::vector<double>& angular_grid,
+    std::vector<double>& evaluated_pdf,
+    const std::vector<double>& raw_angular_grid,
+    const std::vector<double>& raw_pdf,
+    const double cutoff_angle_cosine );
+
+  //! Return angle cosine grid below the cutoff
   static std::vector<double> getAngularGrid(
-    const std::map<double, std::vector<double> >& raw_cutoff_elastic_angles,
+    const std::vector<double>& raw_angular_grid,
+    const double cutoff_angle_cosine );
+
+  //! Return angle cosine grid above the cutoff for the given energy
+  static std::vector<double> getAngularGridAboveCutoff(
+    const std::map<double, std::vector<double> >& raw_angular_grid,
     const double energy,
     const double cutoff_angle_cosine );
 
-  //! Return angle cosine grid for the given cutoff angle
-  static std::vector<double> getAngularGrid(
-    const std::vector<double>& raw_cutoff_elastic_angles,
+  //! Return angle cosine grid above the cutoff
+  static std::vector<double> getAngularGridAboveCutoff(
+    const std::vector<double>& raw_angular_grid,
     const double cutoff_angle_cosine );
 
 protected:
@@ -238,16 +252,25 @@ protected:
     const std::map<double,std::vector<double> >& pdf,
     const std::vector<double>& energy_grid,
     std::shared_ptr<TwoDDist>& scattering_function,
+    const double cutoff_angle_cosine,
     const double evaluation_tol,
     const bool discrete_function = false );
 
   //! Create the cutoff elastic scattering function
   static void createScatteringFunction(
-    const std::map<double,std::vector<double> >& angles,
-    const std::map<double,std::vector<double> >& pdf,
+    const std::vector<double>& angles,
+    const std::vector<double>& pdf,
     const double energy,
     TwoDFunction& scattering_function,
     const bool discrete_function = false );
+
+  //! Create the cutoff elastic scattering function in subrange
+  static void createScatteringFunctionInSubrange(
+    const std::vector<double>& angles,
+    const std::vector<double>& pdf,
+    const double energy,
+    const double cutoff_angle_cosine,
+    TwoDFunction& scattering_function );
 
 };
 

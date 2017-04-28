@@ -228,7 +228,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   if ( d_cutoff_angle_cosine < s_rutherford_cutoff_angle_cosine )
   {
     angular_grid =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
             d_cutoff_elastic_angles,
             energy,
             d_cutoff_angle_cosine );
@@ -560,7 +560,7 @@ void ElasticElectronMomentsEvaluator::getAngularIntegrationPoints(
   if( d_cutoff_elastic_angles.count( energy ) > 0 )
   {
     angular_integration_points =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
             d_cutoff_elastic_angles.find( energy )->second,
             d_cutoff_angle_cosine );
   }
@@ -574,14 +574,14 @@ void ElasticElectronMomentsEvaluator::getAngularIntegrationPoints(
     if ( energy - lower_bin->first <= upper_bin->first - energy )
     {
       angular_integration_points =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
             lower_bin->second,
             d_cutoff_angle_cosine );
     }
     else
     {
       angular_integration_points =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
             upper_bin->second,
             d_cutoff_angle_cosine );
     }

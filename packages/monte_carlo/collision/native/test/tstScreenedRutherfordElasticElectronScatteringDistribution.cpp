@@ -53,8 +53,6 @@ std::shared_ptr<MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribut
 std::shared_ptr<TestScreenedRutherfordElasticElectronScatteringDistribution>
   test_native_pb_elastic_distribution, test_native_al_elastic_distribution;
 
-double mu_cutoff = 1.0;
-
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -540,7 +538,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     cutoff_elastic_distribution(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 scattering_function,
-                mu_cutoff,
                 correlated_sampling_mode_on ) );
 
   double atomic_number = data_container.getAtomicNumber();
@@ -598,7 +595,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     cutoff_elastic_distribution(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 scattering_function,
-                mu_cutoff,
                 correlated_sampling_mode_on ) );
 
   double atomic_number = data_container.getAtomicNumber();

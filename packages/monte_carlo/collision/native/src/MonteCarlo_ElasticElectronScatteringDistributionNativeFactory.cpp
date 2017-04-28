@@ -144,25 +144,104 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
                 atomic_number ) );
 }
 
-// Return angle cosine grid for given grid energy bin
+// Return angle cosine grid with the evaluated pdf for the given energy
+void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+    std::vector<double>& angular_grid,
+    std::vector<double>& evaluated_pdf,
+    const std::vector<double>& raw_angular_grid,
+    const std::vector<double>& raw_pdf,
+    const double cutoff_angle_cosine )
+{
+  // Make sure the maps are valid
+  testPrecondition( raw_angular_grid.size() == raw_pdf.size() );
+  testPrecondition( !raw_angular_grid.empty() );
+
+  if ( cutoff_angle_cosine < raw_angular_grid.back() )
+  {
+    std::vector<double>::const_iterator end_angle, end_pdf;
+    for ( end_angle = raw_angular_grid.begin(); end_angle != raw_angular_grid.end(); end_angle++ )
+    {
+      if ( *end_angle > cutoff_angle_cosine )
+      {
+        break;
+      }
+    }
+
+    unsigned index = std::distance( raw_angular_grid.begin(), end_angle );
+
+    end_pdf = raw_pdf.begin();
+    std::advance( end_pdf, index );
+
+    angular_grid.assign( raw_angular_grid.begin(), end_angle );
+    evaluated_pdf.assign( raw_pdf.begin(), end_pdf );
+
+    if( angular_grid.back() != cutoff_angle_cosine )
+    {
+      double pdf_at_cutoff = raw_pdf[index] + (raw_pdf[index] - raw_pdf[index+1])*
+                         (cutoff_angle_cosine - raw_angular_grid[index] )/
+                         (raw_angular_grid[index+1] - raw_angular_grid[index] );
+
+
+      angular_grid.push_back( cutoff_angle_cosine );
+      evaluated_pdf.push_back( pdf_at_cutoff );
+    }
+  }
+  else
+  {
+    angular_grid = raw_angular_grid;
+    evaluated_pdf = raw_pdf;
+  }
+}
+
+// Return angle cosine grid below the cutoff
 std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-    const std::map<double, std::vector<double> >& raw_cutoff_elastic_angles,
+    const std::vector<double>& raw_angular_grid,
+    const double cutoff_angle_cosine )
+{
+  // Make sure the map is valid
+  testPrecondition( !raw_angular_grid.empty() );
+
+  if ( cutoff_angle_cosine < raw_angular_grid.back() )
+  {
+    std::vector<double>::const_iterator end_angle;
+    for ( end_angle = raw_angular_grid.begin(); end_angle != raw_angular_grid.end(); end_angle++ )
+    {
+      if ( *end_angle > cutoff_angle_cosine )
+      {
+        break;
+      }
+    }
+    std::vector<double> angular_grid;
+    angular_grid.assign( raw_angular_grid.begin(), end_angle );
+
+    if( angular_grid.back() != cutoff_angle_cosine )
+      angular_grid.push_back( cutoff_angle_cosine );
+
+    return angular_grid;
+  }
+  else
+    return raw_angular_grid;
+}
+
+// Return angle cosine grid above the cutoff for a given energy
+std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
+    const std::map<double, std::vector<double> >& raw_angular_grid,
     const double energy,
     const double cutoff_angle_cosine )
 {
-  testPrecondition( energy >= raw_cutoff_elastic_angles.begin()->first );
-  testPrecondition( energy <= raw_cutoff_elastic_angles.rbegin()->first );
+  testPrecondition( energy >= raw_angular_grid.begin()->first );
+  testPrecondition( energy <= raw_angular_grid.rbegin()->first );
 
   // Get the angular grid
   std::vector<double> raw_grid;
-  if( raw_cutoff_elastic_angles.count( energy ) > 0 )
+  if( raw_angular_grid.count( energy ) > 0 )
   {
-    raw_grid = raw_cutoff_elastic_angles.at( energy );
+    raw_grid = raw_angular_grid.at( energy );
   }
   else
   {
     std::map<double,std::vector<double>>::const_iterator lower_bin, upper_bin;
-    upper_bin = raw_cutoff_elastic_angles.upper_bound( energy );
+    upper_bin = raw_angular_grid.upper_bound( energy );
     lower_bin = upper_bin;
     --lower_bin;
 
@@ -177,19 +256,19 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
     }
   }
 
-  return ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+  return ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
             raw_grid,
             cutoff_angle_cosine );
 }
 
-// Return angle cosine grid for the given cutoff angle
-std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-    const std::vector<double>& raw_cutoff_elastic_angles,
+// Return angle cosine grid above the cutoff
+std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
+    const std::vector<double>& raw_angular_grid,
     const double cutoff_angle_cosine )
 {
   // Find the first angle cosine above the cutoff angle cosine
   std::vector<double>::const_iterator start;
-  for ( start = raw_cutoff_elastic_angles.begin(); start != raw_cutoff_elastic_angles.end(); start++ )
+  for ( start = raw_angular_grid.begin(); start != raw_angular_grid.end(); start++ )
   {
     if ( *start > cutoff_angle_cosine )
     {
@@ -197,9 +276,9 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
     }
   }
 
-  std::vector<double> grid( start, raw_cutoff_elastic_angles.end() );
+  std::vector<double> grid( start, raw_angular_grid.end() );
 
-   grid.insert( grid.begin(), cutoff_angle_cosine );
+  grid.insert( grid.begin(), cutoff_angle_cosine );
 
   return grid;
 }
@@ -301,14 +380,16 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
  *  native moment preserving data without first creating native data files.
  */
 void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
-        const std::map<double,std::vector<double> >& elastic_angles,
-        const std::map<double,std::vector<double> >& elastic_pdf,
+        const std::vector<double>& elastic_angles,
+        const std::vector<double>& elastic_pdf,
         const double energy,
         TwoDFunction& function_data,
         const bool discrete_function )
 {
   // Make sure the energy is valid
-  testPrecondition( elastic_angles.count( energy ) );
+  testPrecondition( !elastic_angles.empty() );
+  testPrecondition( !elastic_pdf.empty() );
+  testPrecondition( energy > 0.0 );
 
   // Get the incoming energy
   function_data.first = energy;
@@ -318,18 +399,45 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
   {
     // Create discrete distribution
     function_data.second.reset(
-      new const DiscreteDist( elastic_angles.find( energy )->second,
-                              elastic_pdf.find( energy )->second,
-                              false,
-                              true ) );
+        new const DiscreteDist( elastic_angles, elastic_pdf, false, true ) );
   }
   else
   {
     // Create tabular distribution
     function_data.second.reset(
-      new const TabularDist( elastic_angles.find( energy )->second,
-                             elastic_pdf.find( energy )->second ) );
+      new const TabularDist( elastic_angles, elastic_pdf ) );
   }
+}
+
+// Create the cutoff elastic scattering function in subrange
+void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctionInSubrange(
+    const std::vector<double>& raw_angles,
+    const std::vector<double>& raw_pdf,
+    const double energy,
+    const double cutoff_angle_cosine,
+    TwoDFunction& function_data )
+{
+  // Make sure the energy is valid
+  testPrecondition( !raw_angles.empty() );
+  testPrecondition( !raw_pdf.empty() );
+  testPrecondition( energy > 0.0 );
+  testPrecondition( cutoff_angle_cosine > -1.0 );
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+
+  // Get the incoming energy
+  function_data.first = energy;
+
+  // Get the angular grid and pdf below the cutoff
+  std::vector<double> angles, pdf;
+  ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+    angles,
+    pdf,
+    raw_angles,
+    raw_pdf,
+    cutoff_angle_cosine );
+
+  // Create tabular distribution
+  function_data.second.reset( new const TabularDist( angles, pdf ) );
 }
 
 } // end MonteCarlo namespace

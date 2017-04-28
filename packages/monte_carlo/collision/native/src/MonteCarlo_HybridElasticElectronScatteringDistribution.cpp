@@ -51,11 +51,10 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
          std::placeholders::_2 );
 
     d_sample_continuous_func = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalExactWithRandomNumberInSubrange,
+         &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
          std::cref( *d_continuous_distribution ),
          std::placeholders::_1,
-         std::placeholders::_2,
-         d_cutoff_angle_cosine );
+         std::placeholders::_2 );
   }
   else
   {
@@ -67,11 +66,10 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
          std::placeholders::_2 );
 
     d_sample_continuous_func = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalWithRandomNumberInSubrange,
+         &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
          std::cref( *d_continuous_distribution ),
          std::placeholders::_1,
-         std::placeholders::_2,
-         d_cutoff_angle_cosine );
+         std::placeholders::_2 );
   }
 
 }
@@ -313,19 +311,10 @@ inline double HybridElasticElectronScatteringDistribution::normalizeEvalution(
                             const double incoming_energy,
                             const double unormalized_eval ) const
 {
-  // The cdf of the cutoff distribution at the cutoff angle
-  double cutoff_cdf =
-        d_continuous_distribution->evaluateSecondaryConditionalCDFExact(
-                                    incoming_energy, d_cutoff_angle_cosine );
-
-  // Check to make sure the CDF > 0
-  if ( cutoff_cdf == 0.0 )
-      return 0.0;
-
   // Sampling ratio of the cutoff to the moment preserving distribution
   double sampling_ratio = this->getSamplingRatio( incoming_energy );
 
-  return unormalized_eval*sampling_ratio/cutoff_cdf;
+  return unormalized_eval*sampling_ratio;
 }
 
 } // end MonteCarlo namespace

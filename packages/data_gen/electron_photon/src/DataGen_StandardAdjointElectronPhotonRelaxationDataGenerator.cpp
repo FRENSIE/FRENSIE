@@ -2063,28 +2063,28 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getMomentPreservingElasticWeights() );
 
     // Calcualte the reduced cutoff elastic cross section ratio
-    std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_distribution;
+    std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution;
 
     if( d_electron_linlinlog_interpolation_mode )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
-        analog_distribution,
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+        cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
-        d_forward_epr_data->getAtomicNumber(),
+        d_forward_epr_data->getCutoffAngleCosine(),
         d_electron_correlated_sampling_mode,
         d_tabular_evaluation_tol );
     }
     else
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
-        analog_distribution,
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+        cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
-        d_forward_epr_data->getAtomicNumber(),
+        d_forward_epr_data->getCutoffAngleCosine(),
         d_electron_correlated_sampling_mode,
         d_tabular_evaluation_tol );
     }
@@ -2093,7 +2093,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     for( unsigned i = 0; i < energy_grid.size(); i++ )
     {
       reduced_cutoff_cross_section_ratio[i] =
-        analog_distribution->evaluateCDF(
+        cutoff_distribution->evaluateCDF(
             energy_grid[i],
             d_forward_epr_data->getCutoffAngleCosine() );
     }

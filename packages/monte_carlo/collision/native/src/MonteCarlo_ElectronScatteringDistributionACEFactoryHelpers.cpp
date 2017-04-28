@@ -17,14 +17,13 @@ namespace MonteCarlo{
 
 //! Create a cutoff elastic distribution
 std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
-    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const double cutoff_angle_cosine )
+    const Data::XSSEPRDataExtractor& raw_electroatom_data )
 {
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     distribution;
 
   ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
-    distribution, raw_electroatom_data, cutoff_angle_cosine );
+    distribution, raw_electroatom_data );
 
   return distribution;
 }

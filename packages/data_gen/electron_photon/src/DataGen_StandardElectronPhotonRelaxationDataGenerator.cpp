@@ -388,7 +388,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
     if( *energy_bin != max_electron_energy )
     {
       std::vector<double> angles, pdf;
-
+      double max_cutoff_angle_cosine = 1.0;
       // Get the angular grid and pdf at the max energy
       if ( linlinlog_interpolation_mode_on )
       {
@@ -398,6 +398,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
           elastic_angle,
           elastic_pdf,
           max_electron_energy,
+          max_cutoff_angle_cosine,
           tabular_evaluation_tol );
       }
       else
@@ -408,6 +409,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
           elastic_angle,
           elastic_pdf,
           max_electron_energy,
+          max_cutoff_angle_cosine,
           tabular_evaluation_tol );
       }
 
@@ -1414,6 +1416,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   end_energy--;
   if( *end_energy != this->getMaxElectronEnergy() )
   {
+    double max_cutoff_angle_cosine = 1.0;
     if ( d_linlinlog_interpolation_mode_on )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog>(
@@ -1422,6 +1425,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
         elastic_angle,
         elastic_pdf,
         this->getMaxElectronEnergy(),
+        max_cutoff_angle_cosine,
         d_tabular_evaluation_tol );
     }
     else
@@ -1432,6 +1436,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
         elastic_angle,
         elastic_pdf,
         this->getMaxElectronEnergy(),
+        max_cutoff_angle_cosine,
         d_tabular_evaluation_tol );
     }
 

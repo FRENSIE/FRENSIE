@@ -35,13 +35,25 @@ class TestCutoffElasticElectronScatteringDistribution : public MonteCarlo::Cutof
 {
 public:
   TestCutoffElasticElectronScatteringDistribution(
-        const std::shared_ptr<Utility::FullyTabularTwoDDistribution>& 
-        cutoff_elastic_scattering_distribution,
+        const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+        full_cutoff_elastic_distribution,
+        const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+        partial_cutoff_elastic_distribution,
         const double cutoff_angle_cosine,
         const bool correlated_sampling_mode_on )
     : MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        cutoff_elastic_scattering_distribution,
+        full_cutoff_elastic_distribution,
+        partial_cutoff_elastic_distribution,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on )
+  { /* ... */ }
+
+  TestCutoffElasticElectronScatteringDistribution(
+        const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+        full_cutoff_elastic_distribution,
+        const bool correlated_sampling_mode_on )
+    : MonteCarlo::CutoffElasticElectronScatteringDistribution(
+        full_cutoff_elastic_distribution,
         correlated_sampling_mode_on )
   { /* ... */ }
 
@@ -62,7 +74,8 @@ std::shared_ptr<TestCutoffElasticElectronScatteringDistribution>
   test_ace_elastic_distribution, test_native_elastic_distribution;
 
 std::shared_ptr<Utility::FullyTabularTwoDDistribution>
-  ace_scattering_distribution, native_scattering_distribution;
+  ace_scattering_distribution, native_scattering_distribution,
+  partial_native_scattering_distribution;
 
 double angle_cosine_cutoff = 1.0;
 
@@ -84,14 +97,14 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
     native_elastic_distribution->evaluate( energy,
                                            scattering_angle_cosine );
   // test 1 energy 1
-  TEST_FLOATING_EQUALITY( pdf_value, 0.11951733660954690086, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.029161, 1e-12 );
 
   scattering_angle_cosine = 0.9;
   pdf_value =
     native_elastic_distribution->evaluate( energy,
                                            scattering_angle_cosine );
   // test 2
-  TEST_FLOATING_EQUALITY( pdf_value, 2.9618462492457449109, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.72266, 1e-12 );
 
   scattering_angle_cosine = 0.9001;
   pdf_value =
@@ -108,14 +121,14 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
     native_elastic_distribution->evaluate( energy,
                                            scattering_angle_cosine );
   // test 1
-  TEST_FLOATING_EQUALITY( pdf_value, 0.13580555435132513065, 1e-15 );
+  TEST_FLOATING_EQUALITY( pdf_value, 1.9783647368421053e-06, 1e-15 );
 
   scattering_angle_cosine = 0.9;
   pdf_value =
     native_elastic_distribution->evaluate( energy,
                                            scattering_angle_cosine );
   // test 2
-  TEST_FLOATING_EQUALITY( pdf_value, 8.8625644703599792962, 1e-15 );
+  TEST_FLOATING_EQUALITY( pdf_value, 1.2910653846153849e-04, 1e-15 );
 
   scattering_angle_cosine = 0.90001;
   pdf_value =
@@ -346,138 +359,6 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   cdf_value =
     ace_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle_cosine );
-
-  // test 2
-  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-15 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the cross section ratio can be evaluated
-TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
-                   evaluateCutoffCrossSectionRatio_native )
-{
-  double cdf_value;
-  // Set energy in MeV and angle cosine
-  double energy = 1.0e-3;
-  double cutoff_angle_cosine = 0.0;
-
-  bool correlated_sampling_mode_on = true;
-
-  // Create the distribution
-  std::shared_ptr<MonteCarlo::CutoffElasticElectronScatteringDistribution> 
-    elastic_distribution(
-        new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        native_scattering_distribution,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on ) );
-
-  // Calculate the cdf
-  cdf_value = elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
-  // test 1 energy 1
-  TEST_FLOATING_EQUALITY( cdf_value, 9.66458297281658E-02, 1e-12 );
-
-  cutoff_angle_cosine = 0.98;
-  // Create the distribution
-  elastic_distribution.reset(
-    new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        native_scattering_distribution,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on ) );
-  cdf_value = elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
-  // test 2
-  TEST_FLOATING_EQUALITY( cdf_value, 4.21233559928108E-01, 1e-12 );
-
-  // test with a different energy
-  energy = 1.0e5;
-
-  cutoff_angle_cosine = 0.999999;
-  // Create the distribution
-  elastic_distribution.reset(
-    new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        native_scattering_distribution,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on ) );
-  cdf_value = elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
-  // test 2
-  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-15 );
-
-  cutoff_angle_cosine = 1.0;
-  // Create the distribution
-  elastic_distribution.reset(
-    new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        native_scattering_distribution,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on ) );
-  cdf_value = elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
-  // test 2
-  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-15 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the cross section ratio can be evaluated
-TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
-                   evaluateCutoffCrossSectionRatio_ace )
-{
-  // Set energy in MeV and angle cosine
-  double energy = 1.0e-3;
-  double cutoff_angle_cosine = 0.0;
-  bool correlated_sampling_mode_on = true;
-
-  // Create the distribution
-  std::shared_ptr<MonteCarlo::CutoffElasticElectronScatteringDistribution> 
-    elastic_distribution(
-        new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        ace_scattering_distribution,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on ) );
-
-  // Calculate the cdf
-  double cdf_value =
-    elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
-
-  // test 1 energy 1
-  TEST_FLOATING_EQUALITY( cdf_value, 9.663705658970E-02, 1e-12 );
-
-
-  cutoff_angle_cosine = 0.98;
-  // Create the distribution
-  elastic_distribution.reset(
-    new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        ace_scattering_distribution,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on ) );
-
-  cdf_value =
-    elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
-
-  // test 2
-  TEST_FLOATING_EQUALITY( cdf_value, 4.211953219580E-01, 1e-12 );
-
-  // test with a different energy
-  energy = 1.00E+05;
-
-  cutoff_angle_cosine = 0.999999; // delta_mu = delta_mu_cutoff;
-  // Create the distribution
-  elastic_distribution.reset(
-    new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        ace_scattering_distribution,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on ) );
-  cdf_value =
-    elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
-
-  // test 2
-  TEST_FLOATING_EQUALITY( cdf_value, 5.512132182210E-01, 1e-15 );
-
-  cutoff_angle_cosine = 1.0; // delta_mu = 2.0;
-  // Create the distribution
-  elastic_distribution.reset(
-    new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        ace_scattering_distribution,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on ) );
-  cdf_value =
-    elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
 
   // test 2
   TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-15 );
@@ -849,13 +730,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     ace_elastic_distribution.reset(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 ace_scattering_distribution,
-                angle_cosine_cutoff,
                 correlated_sampling_mode_on ) );
 
     test_ace_elastic_distribution.reset(
         new TestCutoffElasticElectronScatteringDistribution(
                 ace_scattering_distribution,
-                angle_cosine_cutoff,
                 correlated_sampling_mode_on ) );
 
     // Clear setup data
@@ -878,21 +757,49 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering function
   Utility::FullyTabularTwoDDistribution::DistributionType native_data( size );
+  Utility::FullyTabularTwoDDistribution::DistributionType partial_native_data( size );
 
   for( unsigned n = 0; n < size; ++n )
   {
     native_data[n].first = angular_energy_grid[n];
+    partial_native_data[n].first = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
     Teuchos::Array<double> angles(
         data_container.getCutoffElasticAngles( angular_energy_grid[n] ) );
 
     // Get the cutoff elastic scatering pdf at the energy
-    Teuchos::Array<double> pdf(
+    Teuchos::Array<double> pdfs(
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
     native_data[n].second.reset(
-      new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
+      new const Utility::TabularDistribution<Utility::LinLin>( angles, pdfs ) );
+
+    unsigned index = 0;
+    for( unsigned i = 0; i < angles.size(); ++i )
+    {
+      if( angles[i] <= 0.9 )
+      {
+        index = i;
+      }
+    }
+
+    Teuchos::Array<double> partial_angles(index+1), partial_pdfs(index+1);
+    for( unsigned i = 0; i <= index; ++i )
+    {
+      partial_angles[i] = angles[i];
+      partial_pdfs[i] = pdfs[i];
+    }
+
+    if( angles[index] != 0.9 )
+    {
+      partial_angles.push_back(0.9);
+      partial_pdfs.push_back(native_data[n].second->evaluate( 0.9 ) );
+
+    }
+
+    partial_native_data[n].second.reset(
+      new const Utility::TabularDistribution<Utility::LinLin>( partial_angles, partial_pdfs ) );
   }
 
   // Create the scattering distribution
@@ -900,16 +807,23 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
             native_data ) );
 
+  // Create the scattering distribution
+  partial_native_scattering_distribution.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+            partial_native_data ) );
+
   // Create cutoff distributions
   native_elastic_distribution.reset(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 native_scattering_distribution,
+                partial_native_scattering_distribution,
                 0.9,
                 correlated_sampling_mode_on ) );
 
   test_native_elastic_distribution.reset(
         new TestCutoffElasticElectronScatteringDistribution(
                 native_scattering_distribution,
+                partial_native_scattering_distribution,
                 0.9,
                 correlated_sampling_mode_on ) );
   }
