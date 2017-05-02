@@ -551,7 +551,7 @@ double AnalogElasticElectronScatteringDistribution::correlatedSample(
 //                                 upper_angle );
 //  }
 
-    // LinLinLog interpolation between energy bins
+    // Interpolation between energy bins
     return d_interpolation_func( lower_bin->first,
                                  upper_bin->first,
                                  incoming_energy,
