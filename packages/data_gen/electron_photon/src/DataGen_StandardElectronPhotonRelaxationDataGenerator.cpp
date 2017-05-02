@@ -1617,7 +1617,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
     raw_energy_grid =
         d_endl_data_container->getElectroionizationCrossSectionEnergyGrid( *shell );
 
-    /*! \details There is conflicting documentation on the proper interpolation_fraction
+    /*! \details There is conflicting documentation on the proper interpolation
      *  of the electroionization cross section data. The endl data file interp flag
      *  specifies lin-lin, but the documentation wrtie-up says to use log-log
      *  interpolation on all cross sections. It was decided to match MCNP which

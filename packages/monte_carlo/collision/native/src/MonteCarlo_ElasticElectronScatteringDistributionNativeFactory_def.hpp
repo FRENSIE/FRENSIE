@@ -289,7 +289,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
 
     cutoff_cdfs[n] =
         AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
-                    angular_energy_grid[n],
                     etas[n],
                     cutoff_pdf );
   }

@@ -126,11 +126,9 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double eta = evaluateMoliereScreeningConstant( incoming_energy );
+  double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
   double cutoff_pdf = this->evaluateCutoff( incoming_energy );
-  double cutoff_cdf = ThisType::evaluateCutoffCDF( incoming_energy,
-                                                   eta,
-                                                   cutoff_pdf );
+  double cutoff_cdf = ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
 
   testPostcondition( eta > 0.0 );
   testPostcondition( cutoff_pdf > 0.0 );
@@ -168,11 +166,9 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double eta = evaluateMoliereScreeningConstant( incoming_energy );
+  double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
   double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
-  double cutoff_cdf = ThisType::evaluateCutoffCDF( incoming_energy,
-                                                   eta,
-                                                   cutoff_pdf );
+  double cutoff_cdf = ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
 
   testPostcondition( eta > 0.0 );
   testPostcondition( cutoff_pdf > 0.0 );
@@ -208,9 +204,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
                                         const double eta ) const
 {
   double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
-  double cutoff_cdf = ThisType::evaluateCutoffCDF( incoming_energy,
-                                                   eta,
-                                                   cutoff_pdf );
+  double cutoff_cdf = ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
 
   return this->evaluateScreenedRutherfordPDF( scattering_angle_cosine,
                                               eta,
@@ -253,11 +247,9 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double eta = evaluateMoliereScreeningConstant( incoming_energy );
+  double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
   double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
-  double cutoff_cdf = ThisType::evaluateCutoffCDF( incoming_energy,
-                                                   eta,
-                                                   cutoff_pdf );
+  double cutoff_cdf = ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
 
   testPostcondition( eta > 0.0 );
   testPostcondition( cutoff_pdf > 0.0 );
@@ -464,12 +456,11 @@ double AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
   // Evaluate eta
   double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
 
-  return eta/(eta + cutoff_pdf*(eta*1e-6 + 1e-12) );
+  return ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
 }
 
 // Evaluate the CDF at the cutoff angle cosine
 double AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
-                    const double incoming_energy,
                     const double eta,
                     const double cutoff_pdf )
 {

@@ -96,6 +96,10 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 %apply double& OUTPUT { double& outgoing_energy };
 %apply double& OUTPUT { double& scattering_angle_cosine };
 
+%ignore *::evaluateMoliereScreeningConstant( const double, const double, const double, const double );
+
+%ignore *::evaluateCutoffCDF( const double, const double );
+
 %include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
 %include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 %include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
@@ -107,9 +111,25 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 %electron_distribution_interface_setup( CutoffElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( MomentPreservingElasticElectronScatteringDistribution )
 
+//---------------------------------------------------------------------------//
+// Add support for the extra analog electron scattering distribution functions
+//---------------------------------------------------------------------------//
+
 %feature("autodoc",
-"s_cutoff_mu(DISTRIBUTION self ) -> double" )
-MonteCarlo::AnalogElasticElectronScatteringDistribution::s_cutoff_mu;
+"evaluateMoliereScreeningConstant(DISTRIBUTION self, const double incoming_energy ) -> double" )
+MonteCarlo::DISTRIBUTION::evaluateMoliereScreeningConstant;
+
+%feature("autodoc",
+"evaluateCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )
+MonteCarlo::DISTRIBUTION::evaluateCutoff;
+
+%feature("autodoc",
+"evaluateCutoffPDF(DISTRIBUTION self, const double incoming_energy ) -> double" )
+MonteCarlo::DISTRIBUTION::evaluateCutoffPDF;
+
+%feature("autodoc",
+"evaluateCutoffCDF(DISTRIBUTION self, const double incoming_energy ) -> double" )
+MonteCarlo::DISTRIBUTION::evaluateCutoffCDF;
 
 //---------------------------------------------------------------------------//
 // Add support for the bremsstrahlung electron scattering distribution

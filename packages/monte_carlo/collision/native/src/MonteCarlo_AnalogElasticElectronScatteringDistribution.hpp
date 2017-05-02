@@ -100,8 +100,7 @@ public:
   double evaluateCutoffCDF( const double incoming_energy ) const;
 
   //! Evaluate the CDF at the cutoff angle cosine
-  static double evaluateCutoffCDF( const double incoming_energy,
-                                   const double eta,
+  static double evaluateCutoffCDF( const double eta,
                                    const double cutoff_pdf );
 
   //! Evaluate the PDF
