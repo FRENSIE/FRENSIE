@@ -456,6 +456,19 @@ double AnalogElasticElectronScatteringDistribution::evaluateCutoffPDF(
 
 // Evaluate the CDF at the cutoff angle cosine
 double AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
+                    const double incoming_energy ) const
+{
+  // Evaluate the cutoff pdf
+  double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
+
+  // Evaluate eta
+  double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
+
+  return eta/(eta + cutoff_pdf*(eta*1e-6 + 1e-12) );
+}
+
+// Evaluate the CDF at the cutoff angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
                     const double incoming_energy,
                     const double eta,
                     const double cutoff_pdf )

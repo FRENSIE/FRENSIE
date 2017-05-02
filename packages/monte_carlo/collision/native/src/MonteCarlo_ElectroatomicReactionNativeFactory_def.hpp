@@ -67,47 +67,66 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
   unsigned cutoff_threshold_energy_index =
     raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
-  // Screened Rutherford elastic cross section
-  Teuchos::ArrayRCP<double> sr_cross_section;
-  sr_cross_section.assign(
-    raw_electroatom_data.getScreenedRutherfordElasticCrossSection().begin(),
-    raw_electroatom_data.getScreenedRutherfordElasticCrossSection().end() );
-
-  // Screened Rutherford elastic cross section threshold energy bin index
-  unsigned sr_threshold_energy_index =
-    raw_electroatom_data.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
-
-  // Calculate the analog cross section
-  unsigned analog_threshold_energy_index =
-    std::min( sr_threshold_energy_index, cutoff_threshold_energy_index );
-
-  unsigned sr_threshold_diff =
-    sr_threshold_energy_index - analog_threshold_energy_index;
-  unsigned cutoff_threshold_diff =
-    cutoff_threshold_energy_index - analog_threshold_energy_index;
-
   std::vector<double> combined_cross_section(
-                           energy_grid.size() - analog_threshold_energy_index );
+                           energy_grid.size() - cutoff_threshold_energy_index );
 
   for (unsigned i = 0; i < combined_cross_section.size(); ++i )
   {
-    double energy = energy_grid[i + analog_threshold_energy_index];
+    // Get the incoming electron energy
+    double energy = energy_grid[i + cutoff_threshold_energy_index];
 
-    if ( i < sr_threshold_diff )
-    {
-      combined_cross_section[i] = cutoff_cross_section[i];
-    }
-    else if ( i < cutoff_threshold_diff )
-    {
-      combined_cross_section[i] = sr_cross_section[i];
-    }
-    else
-    {
-      combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff] +
-        sr_cross_section[i-sr_threshold_diff];
-    }
+    // Get the cutoff CDF value at the incoming energy_grid
+    double cutoff_cdf = distribution->evaluateCutoffCDF( energy );
+
+    // Evaluate the total analog cross section at the incoming energy
+    combined_cross_section[i] =
+            cutoff_cross_section[i-cutoff_threshold_energy_index]/cutoff_cdf;
   }
+
+  unsigned analog_threshold_energy_index =
+    raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
+
+//  // Screened Rutherford elastic cross section
+//  Teuchos::ArrayRCP<double> sr_cross_section;
+//  sr_cross_section.assign(
+//    raw_electroatom_data.getScreenedRutherfordElasticCrossSection().begin(),
+//    raw_electroatom_data.getScreenedRutherfordElasticCrossSection().end() );
+
+//  // Screened Rutherford elastic cross section threshold energy bin index
+//  unsigned sr_threshold_energy_index =
+//    raw_electroatom_data.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
+
+//  // Calculate the analog cross section
+//  unsigned analog_threshold_energy_index =
+//    std::min( sr_threshold_energy_index, cutoff_threshold_energy_index );
+
+//  unsigned sr_threshold_diff =
+//    sr_threshold_energy_index - analog_threshold_energy_index;
+//  unsigned cutoff_threshold_diff =
+//    cutoff_threshold_energy_index - analog_threshold_energy_index;
+
+//  std::vector<double> combined_cross_section(
+//                           energy_grid.size() - analog_threshold_energy_index );
+
+//  for (unsigned i = 0; i < combined_cross_section.size(); ++i )
+//  {
+//    double energy = energy_grid[i + analog_threshold_energy_index];
+
+//    if ( i < sr_threshold_diff )
+//    {
+//      combined_cross_section[i] = cutoff_cross_section[i];
+//    }
+//    else if ( i < cutoff_threshold_diff )
+//    {
+//      combined_cross_section[i] = sr_cross_section[i];
+//    }
+//    else
+//    {
+//      combined_cross_section[i] =
+//        cutoff_cross_section[i-cutoff_threshold_diff] +
+//        sr_cross_section[i-sr_threshold_diff];
+//    }
+//  }
 
   Teuchos::ArrayRCP<double> analog_cross_section;
   analog_cross_section.assign( combined_cross_section.begin(),
