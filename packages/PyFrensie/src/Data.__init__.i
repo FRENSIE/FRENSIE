@@ -20,7 +20,8 @@ PyFrensie.Data is the python interface to the FRENSIE data package.
 %pythoncode
 %{
 __all__ = ['ACE',
-           'Native'
+           'Native',
+           'ENDL'
            ]
 %}
 

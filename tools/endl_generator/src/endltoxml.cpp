@@ -41,9 +41,9 @@ int main( int argc, char** argv )
 
   endl_to_xml_clp.setDocString( "ENDL to XML Tool\n" );
   endl_to_xml_clp.setOption( "cross_sec_dir",
-			       &cross_section_directory,
-			       "Desired cross section directory",
-			       true );
+                             &cross_section_directory,
+                             "Desired cross section directory",
+                             true );
 
   endl_to_xml_clp.throwExceptions( false );
 
@@ -105,7 +105,7 @@ int main( int argc, char** argv )
     new_file_name += oss.str();
 
   data_container.exportData( new_file_name,
-			     Utility::ArchivableObject::XML_ARCHIVE );
+                             Utility::ArchivableObject::XML_ARCHIVE );
   }
 
   std::cout << "The ENDL Library has been processed!\n" <<

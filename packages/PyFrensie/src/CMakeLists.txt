@@ -40,8 +40,9 @@ SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Data)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ACE)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ENDL)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
-SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_native ${TEUCHOS_CORE} ${PYTRILINOS})
+SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_endl data_native ${TEUCHOS_CORE} ${PYTRILINOS})
 
 # Add the Geometry package
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
