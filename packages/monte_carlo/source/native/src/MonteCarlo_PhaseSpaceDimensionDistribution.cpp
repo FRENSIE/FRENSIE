@@ -14,7 +14,8 @@ namespace MonteCarlo{
 
 // Constructor
 PhaseSpaceDimensionDistribution::PhaseSpaceDimensionDistribution()
-  : d_dependent_dimension_distributions()
+  : d_parent_distribution( NULL ),
+    d_dependent_dimension_distributions()
 { /* ... */ }
 
 // Check if the dimension distribution is uniform (somewhere)
@@ -255,6 +256,21 @@ void PhaseSpaceDimensionDistribution::addDependentDimension(
 
   // Set this distribution as the parent of the dependent distribution
   dependent_dimension->d_parent_distribution = this;
+}
+
+// Get the dependent dimensions
+void PhaseSpaceDimensionDistribution::getDependentDimensions(
+                            DependentDimensionSet& dependent_dimensions ) const
+{
+  DimensionDependentDistributionMap::const_iterator it =
+    d_dependent_dimension_distributions.end();
+
+  while( it != d_dependent_dimension_distributions.end() )
+  {
+    dependent_dimensions.insert( it->first );
+
+    ++it;
+  }
 }
   
 } // end MonteCarlo namespace

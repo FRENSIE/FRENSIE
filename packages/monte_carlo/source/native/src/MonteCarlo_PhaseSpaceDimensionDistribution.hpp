@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <set>
 #include <unordered_map>
 
 // FRENSIE Includes
@@ -34,6 +35,9 @@ public:
   //! The dimension trial counter map
   typedef std::map<PhaseSpaceDimension,ModuleTraits::InternalCounter>
   DimensionCounterMap;
+
+  //! The dependent dimension set
+  typedef std::set<PhaseSpaceDimension> DependentDimensionSet;
 
   //! Constructor
   PhaseSpaceDimensionDistribution();
@@ -120,6 +124,9 @@ public:
   void addDependentDimension(
                         const std::shared_ptr<PhaseSpaceDimensionDistribution>&
                         dependent_dimension );
+
+  //! Get the dependent dimensions
+  void getDependentDimensions( DependentDimensionSet& dependent_dimensions ) const;
 
 private:
 
