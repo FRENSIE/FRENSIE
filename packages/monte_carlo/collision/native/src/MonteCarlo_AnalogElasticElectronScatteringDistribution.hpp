@@ -91,20 +91,42 @@ public:
                                                   const double parameter_2 );
 
   //! Evaluate the distribution at the cutoff angle cosine
-  double evaluateCutoff( const double incoming_energy ) const;
+  double evaluateAtCutoff( const double incoming_energy ) const;
 
   //! Evaluate the PDF at the cutoff angle cosine
-  double evaluateCutoffPDF( const double incoming_energy ) const;
+  double evaluatePDFAtCutoff( const double incoming_energy ) const;
 
   //! Evaluate the CDF at the cutoff angle cosine
-  double evaluateCutoffCDF( const double incoming_energy ) const;
+  double evaluateCDFAtCutoff( const double incoming_energy ) const;
 
   //! Evaluate the CDF at the cutoff angle cosine
-  static double evaluateCutoffCDF( const double eta,
-                                   const double cutoff_pdf );
+  static double evaluateCDFAtCutoff( const double eta,
+                                     const double cutoff_pdf );
 
-  //! Evaluate the PDF
+  //! Evaluate the cutoff distribution at the angle cosine and energy
+  double evaluateCutoff( const double incoming_energy,
+                         const double scattering_angle_cosine ) const;
+
+  //! Evaluate the cutoff PDF at the angle cosine and energy
+  double evaluateCutoffPDF( const double incoming_energy,
+                            const double scattering_angle_cosine ) const;
+
+  //! Evaluate the cutoff CDF at the angle cosine and energy
+  double evaluateCutoffCDF( const double incoming_energy,
+                            const double scattering_angle_cosine ) const;
+
+  //! Evaluate the screened Rutherford Distribution
+  double evaluateScreenedRutherford( const double incoming_energy,
+                                     const double scattering_angle_cosine,
+                                     const double eta ) const;
+
+  //! Evaluate the screened Rutherford PDF
   double evaluateScreenedRutherfordPDF( const double incoming_energy,
+                                        const double scattering_angle_cosine,
+                                        const double eta ) const;
+
+  //! Evaluate the screened Rutherford CDF
+  double evaluateScreenedRutherfordCDF( const double incoming_energy,
                                         const double scattering_angle_cosine,
                                         const double eta ) const;
 

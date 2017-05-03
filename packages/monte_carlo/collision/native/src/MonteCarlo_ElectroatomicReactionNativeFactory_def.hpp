@@ -76,7 +76,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
     double energy = energy_grid[i + cutoff_threshold_energy_index];
 
     // Get the cutoff CDF value at the incoming energy_grid
-    double cutoff_cdf = distribution->evaluateCutoffCDF( energy );
+    double cutoff_cdf = distribution->evaluateCDFAtCutoff( energy );
 
     // Evaluate the total analog cross section at the incoming energy
     combined_cross_section[i] =

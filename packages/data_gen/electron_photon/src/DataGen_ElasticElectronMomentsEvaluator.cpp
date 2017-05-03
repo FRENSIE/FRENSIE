@@ -184,8 +184,8 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value =
-            d_analog_distribution->evaluatePDF( incoming_energy,
-                                                scattering_angle_cosine );
+            d_analog_distribution->evaluateCutoffPDF( incoming_energy,
+                                                      scattering_angle_cosine );
 
   // Evaluate the Legendre Polynomial at the given angle and order
   double legendre_value =

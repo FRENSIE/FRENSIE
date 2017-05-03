@@ -1171,7 +1171,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         paramter_2 );
 
     cutoff_cdfs[n] =
-        MonteCarlo::AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
+        MonteCarlo::AnalogElasticElectronScatteringDistribution::evaluateCDFAtCutoff(
                         etas[n],
                         pdf.back() );
   }

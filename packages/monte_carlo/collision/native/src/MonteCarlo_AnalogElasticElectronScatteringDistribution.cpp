@@ -116,7 +116,7 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
-//! \details Because the scattering angle cosine is very close to one, precision will be lost.
+//! \details When the scattering angle cosine is very close to one, precision will be lost.
 double AnalogElasticElectronScatteringDistribution::evaluate(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
@@ -127,8 +127,8 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
-  double cutoff_pdf = this->evaluateCutoff( incoming_energy );
-  double cutoff_cdf = ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
+  double cutoff_pdf = this->evaluateAtCutoff( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCDFAtCutoff( eta, cutoff_pdf );
 
   testPostcondition( eta > 0.0 );
   testPostcondition( cutoff_pdf > 0.0 );
@@ -146,14 +146,48 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   else
   {
     // evaluate on the cutoff distribution
-    double pdf =
-        d_elastic_cutoff_distribution->evaluateExact( incoming_energy,
-                                                      scattering_angle_cosine );
+    double pdf = this->evaluateCutoff( incoming_energy, scattering_angle_cosine );
 
     testPostcondition( pdf >= 0.0 );
 
     return pdf*cutoff_cdf;
   }
+}
+
+// Evaluate the cutoff distribution at the given energy and scattering angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateCutoff(
+        const double incoming_energy,
+        const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // evaluate on the cutoff distribution
+  double pdf =
+        d_elastic_cutoff_distribution->evaluateExact( incoming_energy,
+                                                      scattering_angle_cosine );
+
+  testPostcondition( pdf >= 0.0 );
+
+  return pdf;
+}
+
+// Evaluate the screened Rutherford distribution at the given energy and scattering angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherford(
+                                        const double incoming_energy,
+                                        const double scattering_angle_cosine,
+                                        const double eta ) const
+{
+  double cutoff_pdf = this->evaluateAtCutoff( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCDFAtCutoff( eta, cutoff_pdf );
+
+  return this->evaluateScreenedRutherfordPDF( scattering_angle_cosine,
+                                              eta,
+                                              cutoff_pdf,
+                                              cutoff_cdf );
+
 }
 
 // Evaluate the PDF at the given energy and scattering angle cosine
@@ -167,8 +201,8 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
-  double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
-  double cutoff_cdf = ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
+  double cutoff_pdf = this->evaluatePDFAtCutoff( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCDFAtCutoff( eta, cutoff_pdf );
 
   testPostcondition( eta > 0.0 );
   testPostcondition( cutoff_pdf > 0.0 );
@@ -186,15 +220,33 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   else
   {
     // evaluate on the cutoff distribution
-    double pdf =
-        d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
-                        incoming_energy,
-                        scattering_angle_cosine );
+    double pdf = this->evaluateCutoffPDF( incoming_energy,
+                                          scattering_angle_cosine );
 
     testPostcondition( pdf >= 0.0 );
 
     return pdf*cutoff_cdf;
   }
+}
+
+// Evaluate the cutoff PDF at the given energy and scattering angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateCutoffPDF(
+        const double incoming_energy,
+        const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  double pdf =
+        d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+                        incoming_energy,
+                        scattering_angle_cosine );
+
+  testPostcondition( pdf >= 0.0 );
+
+  return pdf;
 }
 
 // Evaluate the PDF
@@ -203,8 +255,8 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
                                         const double scattering_angle_cosine,
                                         const double eta ) const
 {
-  double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
-  double cutoff_cdf = ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
+  double cutoff_pdf = this->evaluatePDFAtCutoff( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCDFAtCutoff( eta, cutoff_pdf );
 
   return this->evaluateScreenedRutherfordPDF( scattering_angle_cosine,
                                               eta,
@@ -237,7 +289,6 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
 }
 
 // Evaluate the CDF
-//! \details This CDF is normalize to 1 at s_cutoff_mu (0.999999)
 double AnalogElasticElectronScatteringDistribution::evaluateCDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
@@ -248,8 +299,8 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
-  double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
-  double cutoff_cdf = ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
+  double cutoff_pdf = this->evaluatePDFAtCutoff( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCDFAtCutoff( eta, cutoff_pdf );
 
   testPostcondition( eta > 0.0 );
   testPostcondition( cutoff_pdf > 0.0 );
@@ -267,16 +318,50 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   else
   {
     // evaluate CDF on the cutoff distribution
-    double cdf =
-        d_elastic_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
-                incoming_energy,
-                scattering_angle_cosine );
+    double cdf = this->evaluateCutoffCDF( incoming_energy,
+                                          scattering_angle_cosine );
 
     testPostcondition( cdf >= 0.0 );
     testPostcondition( cdf <= 1.0 );
 
     return cutoff_cdf*cdf;
   }
+}
+
+// Evaluate the cutoff CDF
+double AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
+        const double incoming_energy,
+        const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  double cdf = d_elastic_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+                    incoming_energy,
+                    scattering_angle_cosine );
+
+  testPostcondition( cdf >= 0.0 );
+  testPostcondition( cdf <= 1.0 );
+
+  return cdf;
+}
+
+// Evaluate the PDF
+double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF(
+                                        const double incoming_energy,
+                                        const double scattering_angle_cosine,
+                                        const double eta ) const
+{
+  double cutoff_pdf = this->evaluatePDFAtCutoff( incoming_energy );
+  double cutoff_cdf = ThisType::evaluateCDFAtCutoff( eta, cutoff_pdf );
+
+  return this->evaluateScreenedRutherfordPDF( scattering_angle_cosine,
+                                              eta,
+                                              cutoff_pdf,
+                                              cutoff_cdf );
+
 }
 
 // Evaluate the CDF for an angle cosine above the cutoff
@@ -430,7 +515,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateMoliereScreeningCons
 }
 
 // Evaluate the distribution at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluateCutoff(
+double AnalogElasticElectronScatteringDistribution::evaluateAtCutoff(
                     const double incoming_energy ) const
 {
   return d_elastic_cutoff_distribution->evaluateExact( incoming_energy,
@@ -438,7 +523,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCutoff(
 }
 
 // Evaluate the PDF at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluateCutoffPDF(
+double AnalogElasticElectronScatteringDistribution::evaluatePDFAtCutoff(
                     const double incoming_energy ) const
 {
   return d_elastic_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
@@ -447,20 +532,20 @@ double AnalogElasticElectronScatteringDistribution::evaluateCutoffPDF(
 }
 
 // Evaluate the CDF at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
+double AnalogElasticElectronScatteringDistribution::evaluateCDFAtCutoff(
                     const double incoming_energy ) const
 {
   // Evaluate the cutoff pdf
-  double cutoff_pdf = this->evaluateCutoffPDF( incoming_energy );
+  double cutoff_pdf = this->evaluatePDFAtCutoff( incoming_energy );
 
   // Evaluate eta
   double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
 
-  return ThisType::evaluateCutoffCDF( eta, cutoff_pdf );
+  return ThisType::evaluateCDFAtCutoff( eta, cutoff_pdf );
 }
 
 // Evaluate the CDF at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
+double AnalogElasticElectronScatteringDistribution::evaluateCDFAtCutoff(
                     const double eta,
                     const double cutoff_pdf )
 {

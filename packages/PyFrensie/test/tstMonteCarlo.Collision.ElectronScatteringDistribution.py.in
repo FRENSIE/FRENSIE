@@ -40,115 +40,120 @@ class AnalogElasticElectronScatteringDistributionTestCase(unittest.TestCase):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
         self.dist = Collision.createAnalogElasticDistribution( self.data, True, True, 1e-7 )
 
-    def testEvaluate(self):
-        "*Test MonteCarlo.Collision.createAnalogElasticDistribution evaluate method"
+    def testEvaluateCutoff(self):
+        "*Test MonteCarlo.Collision.createAnalogElasticDistribution evaluateCutoff method"
         energy = 1e5
-        self.assertTrue(self.dist.evaluate(energy, -0.01) == 4.83506E-7)
-        self.assertTrue(self.dist.evaluate(energy, 0.71) == 1.00972E-5)
-        self.assertTrue(self.dist.evaluate(energy, 0.999999) == 9.86945E+5)
-        self.assertAlmostEqual( self.dist.evaluate(energy, 1.0),
-                                9.80579728298825E+23,
-                                delta=1e-12*9.80579728298825E+23 )
+        self.assertTrue(self.dist.evaluateCutoff(energy, -0.01) == 4.83506E-7)
+        self.assertTrue(self.dist.evaluateCutoff(energy, 0.71) == 1.00972E-5)
+        self.assertTrue(self.dist.evaluateCutoff(energy, 0.999999) == 9.86945E+5)
+        self.assertTrue(self.dist.evaluateCutoff(energy, 1.0) == 0.0)
+#        self.assertAlmostEqual( self.dist.evaluateCutoff(energy, 1.0),
+#                                9.80579728298825E+23,
+#                                delta=1e-12*9.80579728298825E+23 )
         energy = 6.625E+01
-        self.assertTrue(self.dist.evaluate(energy, -0.01) == 4.84635E-7)
-        self.assertTrue(self.dist.evaluate(energy, 0.71) == 1.01203E-5)
-        self.assertTrue(self.dist.evaluate(energy, 0.999999) == 9.84753E+5)
-        self.assertAlmostEqual( self.dist.evaluate(energy, 1.0),
-                                1.952101737343830E+11,
-                                delta=1e-12*1.952101737343830E+11 )
+        self.assertTrue(self.dist.evaluateCutoff(energy, -0.01) == 4.84635E-7)
+        self.assertTrue(self.dist.evaluateCutoff(energy, 0.71) == 1.01203E-5)
+        self.assertTrue(self.dist.evaluateCutoff(energy, 0.999999) == 9.84753E+5)
+#        self.assertAlmostEqual( self.dist.evaluateCutoff(energy, 1.0),
+#                                1.952101737343830E+11,
+#                                delta=1e-12*1.952101737343830E+11 )
         energy = 200.0
-        self.assertAlmostEqual( self.dist.evaluate(energy, -0.01),
+        self.assertAlmostEqual( self.dist.evaluateCutoff(energy, -0.01),
                                 4.8452964167333881569e-07,
                                 delta=1e-6*4.8452964167333881569e-07 )
-        self.assertAlmostEqual( self.dist.evaluate(energy, 0.71),
+        self.assertAlmostEqual( self.dist.evaluateCutoff(energy, 0.71),
                                 1.0119114917618560241e-05,
                                 delta=1e-6*1.0119114917618560241e-05 )
-        self.assertAlmostEqual( self.dist.evaluate(energy, 0.999999),
+        self.assertAlmostEqual( self.dist.evaluateCutoff(energy, 0.999999),
                                 9.85083883863282E+05,
                                 delta=1e-9*9.85083883863282E+05 )
-        self.assertAlmostEqual( self.dist.evaluate(energy, 1.0),
-                                1.582772041017910E+13,
-                                delta=1e-9*1.582772041017910E+13 )
+        self.assertTrue(self.dist.evaluateCutoff(energy, 1.0) == 0.0)
+#        self.assertAlmostEqual( self.dist.evaluateCutoff(energy, 1.0),
+#                                1.582772041017910E+13,
+#                                delta=1e-9*1.582772041017910E+13 )
 
-    def testEvaluatePDF(self):
-        "*Test MonteCarlo.Collision.createAnalogElasticDistribution evaluatePDF method"
+    def testEvaluateCutoffPDF(self):
+        "*Test MonteCarlo.Collision.createAnalogElasticDistribution evaluateCutoffPDF method"
         energy = 1e5
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, -0.01),
+        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, -0.01),
                                 4.83505995466074E-07,
                                 delta=1e-12*4.83505995466074E-07 )
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.71),
+        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, 0.71),
                                 1.00971999053167E-05,
                                 delta=1e-12*1.00971999053167E-05 )
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.999999),
+        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, 0.999999),
                                 9.86944990745234E+05,
                                 delta=1e-12*9.86944990745234E+05 )
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1.0),
-                                9.80579719103748E+23,
-                                delta=1e-12*9.80579719103748E+23 )
+        self.assertTrue(self.dist.evaluateCutoffPDF(energy, 1.0) == 0.0)
+#        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, 1.0),
+#                                9.80579719103748E+23,
+#                                delta=1e-12*9.80579719103748E+23 )
         energy = 6.625E+01
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, -0.01),
+        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, -0.01),
                                 4.846347658089040E-07,
                                 delta=1e-12*4.846347658089040E-07 )
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.71),
+        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, 0.71),
                                 1.012029510954810E-05,
                                 delta=1e-12*1.012029510954810E-05 )
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.999999),
+        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, 0.999999),
                                 9.847525241359310E+05,
                                 delta=1e-12*9.847525241359310E+05 )
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1.0),
-                                1.952100794025980E+11,
-                                delta=1e-12*1.952100794025980E+11 )
+        self.assertTrue(self.dist.evaluateCutoffPDF(energy, 1.0) == 0.0)
+#        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, 1.0),
+#                                1.952100794025980E+11,
+#                                delta=1e-12*1.952100794025980E+11 )
         energy = 200.0
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, -0.01),
+        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, -0.01),
                                 4.8452944220121082286e-07,
                                 delta=1e-6*4.8452944220121082286e-07 )
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.71),
+        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, 0.71),
                                 1.0119110752696660311e-05,
                                 delta=1e-6*1.0119110752696660311e-05 )
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.999999),
+        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, 0.999999),
                                 9.85083478434198E+05,
                                 delta=1e-9*9.85083478434198E+05 )
-        self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1.0),
-                                1.582771389599460E+13,
-                                delta=1e-9*1.582771389599460E+13 )
+        self.assertTrue(self.dist.evaluateCutoffPDF(energy, 1.0) == 0.0)
+#        self.assertAlmostEqual( self.dist.evaluateCutoffPDF(energy, 1.0),
+#                                1.582771389599460E+13,
+#                                delta=1e-9*1.582771389599460E+13 )
 
-    def testEvaluateCDF(self):
-        "*Test MonteCarlo.Collision.createAnalogElasticDistribution evaluateCDF method"
+    def testEvaluateCutoffCDF(self):
+        "*Test MonteCarlo.Collision.createAnalogElasticDistribution evaluateCutoffCDF method"
         energy = 1e5
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, -0.01),
+        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, -0.01),
                                 1.50429930368274E-07,
                                 delta=1e-12*1.50429930368274E-07 )
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, 0.71),
+        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, 0.71),
                                 2.00273614049885E-06,
                                 delta=1e-12*2.00273614049885E-06 )
-        self.assertTrue(self.dist.evaluateCDF(energy, 0.999999) == 1.0)
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, 1.0),
-                                9.83757207759616E+08,
-                                delta=1e-12*9.83757207759616E+08 )
+        self.assertTrue(self.dist.evaluateCutoffCDF(energy, 0.999999) == 1.0)
+#        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, 1.0),
+#                                9.83757207759616E+08,
+#                                delta=1e-12*9.83757207759616E+08 )
         energy = 6.625E+01
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, -0.01),
+        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, -0.01),
                                 1.507919401217380E-07,
                                 delta=1e-12*1.507919401217380E-07 )
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, 0.71),
+        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, 0.71),
                                 2.007348937973720E-06,
                                 delta=1e-12*2.007348937973720E-06 )
-        self.assertTrue(self.dist.evaluateCDF(energy, 0.999999) == 1.0)
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, 1.0),
-                                4.39444544314946E+02,
-                                delta=1e-12*4.39444544314946E+02 )
+        self.assertTrue(self.dist.evaluateCutoffCDF(energy, 0.999999) == 1.0)
+#        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, 1.0),
+#                                4.39444544314946E+02,
+#                                delta=1e-12*4.39444544314946E+02 )
         energy = 200.0
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, -0.01),
+        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, -0.01),
                                 1.5073724854885435558e-07,
                                 delta=1e-6*1.5073724854885435558e-07 )
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, 0.71),
+        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, 0.71),
                                 2.0066525118587287668e-06,
                                 delta=1e-6*2.0066525118587287668e-06 )
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, 0.999999),
+        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, 0.999999),
                                 1.0,
                                 delta=1e-12*1.0 )
-        self.assertAlmostEqual( self.dist.evaluateCDF(energy, 1.0),
-                                3.94962247641177E+03,
-                                delta=1e-12*3.94962247641177E+03 )
+#        self.assertAlmostEqual( self.dist.evaluateCutoffCDF(energy, 1.0),
+#                                3.94962247641177E+03,
+#                                delta=1e-12*3.94962247641177E+03 )
 
     def testSample(self):
         "*Test MonteCarlo.Collision.createAnalogElasticDistribution sample method"
