@@ -1574,9 +1574,6 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
         bremsstrahlung_cross_section, atomic_excitation_cross_section,
         cutoff_elastic_cross_section, total_elastic_cross_section;
 
-  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >
-    electroionization_cross_section;
-
   // Initialize union energy grid
   std::list<double> union_energy_grid;
   this->initializeElectronUnionEnergyGrid( data_container, union_energy_grid );
@@ -1609,13 +1606,19 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
   std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
 
+  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >
+    electroionization_cross_section( data_container.getSubshells().size() );
+
+  unsigned i = 0;
   // Loop through electroionization data for every subshell
   for ( shell; shell != data_container.getSubshells().end(); shell++ )
   {
-    std::shared_ptr<const Utility::OneDDistribution> subshell_cross_section;
-
+    // Get the raw energy grid
     raw_energy_grid =
-        d_endl_data_container->getElectroionizationCrossSectionEnergyGrid( *shell );
+        d_endl_data_container->getElectroionizationCrossSectionEnergyGrid(*shell);
+
+    // merge raw energy grid with the union energy grid
+    mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
 
     /*! \details There is conflicting documentation on the proper interpolation
      *  of the electroionization cross section data. The endl data file interp flag
@@ -1623,16 +1626,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
      *  interpolation on all cross sections. It was decided to match MCNP which
      *  uses log-log interpolation for electroionization.
      */
-    subshell_cross_section.reset(
-      new Utility::TabularDistribution<Utility::LogLog>(
-      raw_energy_grid,
-      d_endl_data_container->getElectroionizationCrossSection( *shell ) ) );
+    this->extractElectronCrossSection<Utility::LogLog>(
+                raw_energy_grid,
+                d_endl_data_container->getElectroionizationCrossSection(*shell),
+                electroionization_cross_section[i].second );
 
-    // merge raw energy grid with the union energy grid
-    mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
-
-    electroionization_cross_section.push_back(
-        std::make_pair( *shell, subshell_cross_section ) );
+    // Set the shell indentifier
+    electroionization_cross_section[i].first = *shell;
+    i++;
   }
 
 //---------------------------------------------------------------------------//
