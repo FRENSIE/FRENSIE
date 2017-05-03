@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstFullyTabularDependentPhaseSpaceDimensionDistribution.cpp
+//! \file   tstPartiallyTabularDependentPhaseSpaceDimensionDistribution.cpp
 //! \author Alex Robinson
-//! \brief  Fully-tabular dependent phase space dimension dist. unit tests
+//! \brief  Partially-tabular dependent phase space dimension dist. unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -14,13 +14,14 @@
 #include <Teuchos_UnitTestHarness.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FullyTabularDependentPhaseSpaceDimensionDistribution.hpp"
+#include "MonteCarlo_PartiallyTabularDependentPhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_SourceUnitTestHarnessExtensions.hpp"
 #include "Utility_BasicCartesianCoordinateConversionPolicy.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
-#include "Utility_HistogramFullyTabularTwoDDistribution.hpp"
+#include "Utility_ExponentialDistribution.hpp"
+#include "Utility_HistogramPartiallyTabularTwoDDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -35,7 +36,7 @@ spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversion
 std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
 directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
 
-std::shared_ptr<const Utility::FullyTabularTwoDDistribution> raw_distribution;
+std::shared_ptr<const Utility::PartiallyTabularTwoDDistribution> raw_distribution;
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -115,7 +116,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_EQUALITY_CONST( dimension_distribution->getDimension(), Dimension );
 }
@@ -131,7 +132,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_EQUALITY_CONST( dimension_distribution->getDimensionClass(),
                        MonteCarlo::PhaseSpaceDimensionTraits<Dimension>::getClass() );
@@ -148,7 +149,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::DependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension> >
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_EQUALITY_CONST( dimension_distribution->getParentDimension(),
                        ParentDimension );
@@ -165,7 +166,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::DependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension> >
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_EQUALITY_CONST( dimension_distribution->getParentDimensionClass(),
                        MonteCarlo::PhaseSpaceDimensionTraits<ParentDimension>::getClass() );
@@ -182,10 +183,10 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_EQUALITY_CONST( dimension_distribution->getDistributionTypeName(),
-                       "FullyTabularTwoDDistribution" );
+                       "PartiallyTabularTwoDDistribution" );
 }
 
 UNIT_TEST_INSTANTIATION( DependentPhaseSpaceDimensionDistribution,
@@ -199,7 +200,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_ASSERT( !dimension_distribution->isIndependent() );
 }
@@ -215,7 +216,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_ASSERT( dimension_distribution->isDependentOnDimension( ParentDimension ) );
   TEST_ASSERT( !dimension_distribution->isDependentOnDimension( Dimension ) );
@@ -232,7 +233,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_ASSERT( dimension_distribution->isContinuous() );
 }
@@ -248,7 +249,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_ASSERT( dimension_distribution->isTabular() );
 }
@@ -264,7 +265,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_ASSERT( !dimension_distribution->isUniform() );
 }
@@ -280,7 +281,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   TEST_ASSERT( !dimension_distribution->hasForm( Utility::DELTA_DISTRIBUTION) );
   TEST_ASSERT( !dimension_distribution->hasForm( Utility::UNIFORM_DISTRIBUTION ) );
@@ -297,7 +298,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
                                      directional_coord_conversion_policy );
@@ -305,7 +306,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
   // Parent dimension value outside of distribution bounds
   setCoordinate<ParentDimension>( point, 0.05 );
   setCoordinate<Dimension>( point, 0.1 );
-
+  
   TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
                        0.0 );
 
@@ -373,12 +374,12 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
   setCoordinate<Dimension>( point, 0.6 );
 
   TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
-                       0.4 );
+                       exp(-0.6) );
 
   setCoordinate<Dimension>( point, 0.8 );
 
   TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
-                       0.4 );
+                       exp(-0.8) );
 
   setCoordinate<Dimension>( point, 1.0 );
 
@@ -395,12 +396,12 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
   setCoordinate<Dimension>( point, 0.6 );
 
   TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
-                       0.4 );
+                       exp(-0.6) );
 
   setCoordinate<Dimension>( point, 0.8 );
 
   TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
-                       0.4 );
+                       exp(-0.8) );
 
   setCoordinate<Dimension>( point, 1.0 );
 
@@ -417,12 +418,12 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
   setCoordinate<Dimension>( point, 0.6 );
 
   TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
-                       0.4 );
+                       exp(-0.6) );
 
   setCoordinate<Dimension>( point, 0.8 );
 
   TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
-                       0.4 );
+                       exp(-0.8) );
 
   setCoordinate<Dimension>( point, 1.0 );
 
@@ -458,7 +459,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
                                      directional_coord_conversion_policy );
@@ -511,11 +512,15 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
 
   dimension_distribution->sampleWithoutCascade( point );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.6 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6,
+                          1e-12 );
 
   dimension_distribution->sampleWithoutCascade( point );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.7 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6950083111783535,
+                          1e-12 );
 
   dimension_distribution->sampleWithoutCascade( point );
 
@@ -526,11 +531,15 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
 
   dimension_distribution->sampleWithoutCascade( point );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.6 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6,
+                          1e-12 );
 
   dimension_distribution->sampleWithoutCascade( point );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.7 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6950083111783535,
+                          1e-12 );
 
   dimension_distribution->sampleWithoutCascade( point );
 
@@ -541,11 +550,15 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
 
   dimension_distribution->sampleWithoutCascade( point );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.6 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6,
+                          1e-12 );
 
   dimension_distribution->sampleWithoutCascade( point );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.7 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6950083111783535,
+                          1e-12 );
 
   dimension_distribution->sampleWithoutCascade( point );
 
@@ -564,15 +577,14 @@ UNIT_TEST_INSTANTIATION( DependentPhaseSpaceDimensionDistribution,
                          sampleWithoutCascade );
 
 //---------------------------------------------------------------------------//
-// Test if the distribution can be sampled without a cascade and the trials
-// can be counted
+// Test if the distribution can be sampled without a cascade
 MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   sampleAndRecordTrialsWithoutCascade,
                                   ParentDimension,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
                                      directional_coord_conversion_policy );
@@ -635,12 +647,16 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.6 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6,
+                          1e-12 );
   TEST_EQUALITY_CONST( trials, 7 );
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.7 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6950083111783535,
+                          1e-12 );
   TEST_EQUALITY_CONST( trials, 8 );
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
@@ -653,12 +669,16 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.6 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6,
+                          1e-12 );
   TEST_EQUALITY_CONST( trials, 10 );
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.7 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6950083111783535,
+                          1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
@@ -671,12 +691,16 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.6 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6,
+                          1e-12 );
   TEST_EQUALITY_CONST( trials, 13 );
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.7 );
+  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ),
+                          0.6950083111783535,
+                          1e-12 );
   TEST_EQUALITY_CONST( trials, 14 );
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
@@ -704,7 +728,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
                                   Dimension )
 {
   std::unique_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-    dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
+    dimension_distribution( new MonteCarlo::PartiallyTabularDependentPhaseSpaceDimensionDistribution<ParentDimension,Dimension>( raw_distribution ) );
 
   MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
                                      directional_coord_conversion_policy );
@@ -739,17 +763,23 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
   dimension_distribution->setDimensionValueAndApplyWeight( point, 0.6 );
   
   TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.6 );
-  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ), 5.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ),
+                          5.516655566126995,
+                          1e-12 );
   
   dimension_distribution->setDimensionValueAndApplyWeight( point, 0.7 );
 
   TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.7 );
-  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ), 5.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ),
+                          4.991676378648056,
+                          1e-12 );
 
   dimension_distribution->setDimensionValueAndApplyWeight( point, 0.8 );
 
   TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.8 );
-  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ), 5.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ),
+                          4.516655566126995,
+                          1e-12 );
 
   // Parent dimension value on distribution upper bound
   setCoordinate<ParentDimension>( point, 0.9 );
@@ -757,17 +787,23 @@ MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( DependentPhaseSpaceDimensionDistribution,
   dimension_distribution->setDimensionValueAndApplyWeight( point, 0.6 );
   
   TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.6 );
-  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ), 5.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ),
+                          5.516655566126995,
+                          1e-12 );
   
   dimension_distribution->setDimensionValueAndApplyWeight( point, 0.7 );
 
   TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.7 );
-  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ), 5.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ),
+                          4.991676378648056,
+                          1e-12 );
 
   dimension_distribution->setDimensionValueAndApplyWeight( point, 0.8 );
 
   TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.8 );
-  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ), 5.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( getCoordinateWeight<Dimension>( point ),
+                          4.516655566126995,
+                          1e-12 );
 
   // Parent dimension value outside of distribution bounds
   setCoordinate<ParentDimension>( point, 1.0 );
@@ -786,8 +822,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  // Create the fully tabular distribution
-  Utility::HistogramFullyTabularTwoDDistribution::DistributionType
+  // Create the partially tabular distribution
+  Utility::HistogramPartiallyTabularTwoDDistribution::DistributionType
     distribution_data( 3 );
 
   // Create the secondary distribution in the first bin
@@ -797,15 +833,15 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       
   // Create the secondary distribution in the second bin
   Utility::get<0>( distribution_data[1] ) = 0.5;
-  Utility::get<1>( distribution_data[1] ).reset( new Utility::UniformDistribution( 0.6, 0.8, 0.4 ) );
+  Utility::get<1>( distribution_data[1] ).reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.6, 0.8 ) );
 
   // Create the secondary distribution in the third bin
   Utility::get<0>( distribution_data[2] ) = 0.9;
   Utility::get<1>( distribution_data[2] ) =
     Utility::get<1>( distribution_data[1] );
 
-  Utility::HistogramFullyTabularTwoDDistribution* local_raw_distribution =
-    new Utility::HistogramFullyTabularTwoDDistribution( distribution_data );
+  Utility::HistogramPartiallyTabularTwoDDistribution* local_raw_distribution =
+    new Utility::HistogramPartiallyTabularTwoDDistribution( distribution_data );
 
   local_raw_distribution->limitToPrimaryIndepLimits();
   
@@ -818,5 +854,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstFullyTabularDependentPhaseSpaceDimensionDistribution.cpp
+// end tstPartiallyTabularDependentPhaseSpaceDimensionDistribution.cpp
 //---------------------------------------------------------------------------//
