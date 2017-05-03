@@ -38,7 +38,7 @@ struct TwoDDistributionTraits
                                   const double indep_dimension_value,
                                   ModuleTraits::InternalCounter& trials )
   {
-    return distribution.sampleSecondaryConditionAndRecordTrials(
+    return distribution.sampleSecondaryConditionalAndRecordTrials(
                                                indep_dimension_value, trials );
   }
 

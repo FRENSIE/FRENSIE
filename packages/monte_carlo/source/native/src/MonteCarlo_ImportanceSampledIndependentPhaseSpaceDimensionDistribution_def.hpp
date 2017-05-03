@@ -14,6 +14,7 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -83,17 +84,44 @@ double ImportanceSampledIndependentPhaseSpaceDimensionDistribution<dimension>::c
   double weight = 1.0;
 
   if( weight_denominator > 0.0 )
+  {
     weight = weight_numerator/weight_denominator;
+
+    if( weight == 0.0 )
+    {
+      FRENSIE_LOG_WARNING( "Distribution evaluated to 0.0 for sample "
+                           << dimension_sample << " resulting in a 0.0 "
+                           "sample weight. Check that the distributions for "
+                           "dimension " << dimension << " have been set up "
+                           "correctly!" );
+    }
+  }
   
   // If we enter this block there is likely a problem with our distributions
   else
   {
     if( weight_numerator > 0.0 )
+    {
+      FRENSIE_LOG_WARNING( "Importance distribution evaluated to 0.0 for "
+                           "sample " << dimension_sample << " resulting in an "
+                           "infinite sample weight. Check that the "
+                           "importance distribution for dimension "
+                           << dimension << " has been set up correctly!" );
+      
       weight = std::numeric_limits<double>::infinity();
+    }
     
     // If both evaluate to 0, a weight of 1 is desired but nan will result
     else
+    {
+      FRENSIE_LOG_WARNING( "Both the distribution and the importance "
+                           "distribution evaluated to 0.0 for sample "
+                           << dimension_sample << ". The weight will be set "
+                           "to 1.0. Check that the distributions for "
+                           "dimension " << dimension << " have been set up "
+                           "correctly!" );
       weight = 1.0;
+    }
   }
 
   // Make sure that the weight is valid
