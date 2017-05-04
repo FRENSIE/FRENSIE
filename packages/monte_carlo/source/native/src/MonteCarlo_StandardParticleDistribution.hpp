@@ -38,6 +38,9 @@ private:
   // Typedef for scalar traits
   typedef Teuchos::ScalarTraits<double> ST;
 
+  //! Typedef for the phase space dimension distribution map
+  typedef std::map<PhaseSpaceDimension,std::shared_ptr<PhaseSpaceDimensionDistribution> > DimensionDistributionMap;
+
   // Typedef for the dimension sampling function
   typedef std::function<void(const PhaseSpaceDimensionDistribution&,PhaseSpacePoint&)> DimensionSamplingFunction;
 
@@ -46,15 +49,10 @@ public:
   //! Typedef for the phase space dimension set
   typedef std::set<PhaseSpaceDimension> DimensionSet;
 
-  //! Typedef for the phase space dimension distribution map
-  typedef std::map<PhaseSpaceDimension,std::shared_ptr<const PhaseSpaceDimensionDistribution> > DimensionDistributionMap;
-
   //! Constructor
   StandardParticleDistribution(
    const ModuleTraits::InternalROIHandle id,
    const std::string& name,
-   const DimensionSet& independent_dimensions,
-   const DimensionDistributionMap& dimension_distributions,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
    const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
@@ -64,13 +62,16 @@ public:
   ~StandardParticleDistribution()
   { /* ... */ }
 
-  //! Check if a dimension has a distribution defined
-  bool doesDimensionHaveDistributionDefined(
-                          const PhaseSpaceDimension dimension ) const override;
+  //! Set a dimension distribution
+  void setDimensionDistribution(
+                        const std::shared_ptr<PhaseSpaceDimensionDistribution>&
+                        dimension_distribution );
 
-  //! Return the dimensions with distributions defined
-  void getDimensionsWithDistributionsDefined(
-                                     DimensionSet& dimensions ) const override;
+  //! Construct the dimension distribution dependency tree
+  void constructDimensionDistributionDependencyTree();
+
+  //! Reset the distribution
+  void reset();
 
   //! Return the dimension distribution type name
   std::string getDimensionDistributionTypeName(
@@ -111,15 +112,6 @@ private:
   void sampleImpl( DimensionSamplingFunctor& dimension_sampling_function,
                    ParticleState& particle ) const;
 
-  // Check if the dimension data is valid
-  bool isDimensionDataValid() const;
-
-  // The independent particle source dimensions
-  DimensionSet d_independent_dimensions;
-
-  // The particle source dimensions
-  DimensionDistributionMap d_dimension_distributions;
-
   // The spatial coordinate conversion policy
   std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
   d_spatial_coord_conversion_policy;
@@ -127,6 +119,15 @@ private:
   // The directional coordinate conversion policy
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
   d_directional_coord_conversion_policy;
+
+  // The independent particle source dimensions
+  DimensionSet d_independent_dimensions;
+
+  // The particle source dimensions
+  DimensionDistributionMap d_dimension_distributions;
+
+  // Determines if the distribution is ready for use
+  bool d_ready;
 };
 
 // Sample the particle state using the desired dimension sampling functor

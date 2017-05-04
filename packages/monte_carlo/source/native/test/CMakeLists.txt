@@ -77,6 +77,13 @@ TARGET_LINK_LIBRARIES(tstPhaseSpaceDimensionDistribution monte_carlo_source_nati
 ADD_TEST(PhaseSpaceDimensionDistribution_test tstPhaseSpaceDimensionDistribution)
 SET_PROPERTY(TEST PhaseSpaceDimensionDistribution_test PROPERTY LABELS monte_carlo_source_native)
 
+ADD_EXECUTABLE(tstStandardParticleDistribution
+  tstStandardParticleDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardParticleDistribution monte_carlo_source_native)
+ADD_TEST(StandardParticleDistribution_test tstStandardParticleDistribution)
+SET_PROPERTY(TEST StandardParticleDistribution_test PROPERTY LABELS monte_carlo_source_native)
+
 ADD_EXECUTABLE(tstSourceHDF5FileHandler
   tstSourceHDF5FileHandler.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
