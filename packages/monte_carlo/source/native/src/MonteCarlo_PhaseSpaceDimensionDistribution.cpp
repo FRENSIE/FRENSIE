@@ -239,8 +239,8 @@ PhaseSpaceDimensionDistribution::getParentDistribution() const
   return d_parent_distribution;
 }
 
-// Add a dependent dimension
-void PhaseSpaceDimensionDistribution::addDependentDimension(
+// Add a dependent distribution
+void PhaseSpaceDimensionDistribution::addDependentDistribution(
                        const std::shared_ptr<PhaseSpaceDimensionDistribution>&
                        dependent_dimension )
 {
@@ -262,14 +262,17 @@ void PhaseSpaceDimensionDistribution::addDependentDimension(
 void PhaseSpaceDimensionDistribution::getDependentDimensions(
                             DependentDimensionSet& dependent_dimensions ) const
 {
-  DimensionDependentDistributionMap::const_iterator it =
+  DimensionDependentDistributionMap::const_iterator dimension_it =
+    d_dependent_dimension_distributions.begin();
+
+  DimensionDependentDistributionMap::const_iterator dimension_end =
     d_dependent_dimension_distributions.end();
 
-  while( it != d_dependent_dimension_distributions.end() )
+  while( dimension_it != dimension_end )
   {
-    dependent_dimensions.insert( it->first );
+    dependent_dimensions.insert( dimension_it->first );
 
-    ++it;
+    ++dimension_it;
   }
 }
   

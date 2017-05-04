@@ -120,8 +120,8 @@ public:
   //! Return the parent distribution
   const PhaseSpaceDimensionDistribution* getParentDistribution() const;
   
-  //! Add a dependent dimension
-  void addDependentDimension(
+  //! Add a dependent distribution
+  void addDependentDistribution(
                         const std::shared_ptr<PhaseSpaceDimensionDistribution>&
                         dependent_dimension );
 
