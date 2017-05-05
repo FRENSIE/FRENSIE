@@ -780,26 +780,16 @@ bool DagMCModel::isReflectingSurface(
     d_reflecting_surfaces->left.end();
 }
 
-// Create a DagMC navigator
-std::shared_ptr<DagMCNavigator> DagMCModel::createDagMCNavigator() const
+// Create a raw, heap-allocated navigator
+DagMCNavigator* DagMCModel::createNavigatorAdvanced() const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
   
-  return std::shared_ptr<DagMCNavigator>(
-                                 new DagMCNavigator( d_dagmc,
-                                                     d_cell_handler,
-                                                     d_surface_handler,
-                                                     d_reflecting_surfaces ) );
-}
-
-// Create a navigator
-std::shared_ptr<Navigator> DagMCModel::createNavigator() const
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( this->isInitialized() );
-  
-  return this->createDagMCNavigator();
+  return new DagMCNavigator( d_dagmc,
+                             d_cell_handler,
+                             d_surface_handler,
+                             d_reflecting_surfaces );
 }
 
 // Get the cells associated with a property name

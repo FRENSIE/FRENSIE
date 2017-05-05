@@ -119,6 +119,9 @@ public:
                                    const double y_direction,
                                    const double z_direction ) override;
 
+  //! Clone the navigator
+  DagMCNavigator* clone() const override;
+
 private:
 
   // Check if the surface handle is a reflecting surface

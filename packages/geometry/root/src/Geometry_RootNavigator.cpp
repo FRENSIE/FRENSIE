@@ -347,6 +347,20 @@ void RootNavigator::changeInternalRayDirection( const double x_direction,
 
   d_navigator->SetCurrentDirection( x_direction, y_direction, z_direction );
 }
+
+// Clone the navigator
+RootNavigator* RootNavigator::clone() const
+{
+  // Copy the geometry data
+  RootNavigator* clone = new RootNavigator( d_manager, d_get_volume_ptr );
+
+  // Copy the position, direction and cell
+  dynamic_cast<Navigator*>( clone )->setInternalRay(
+                                        this->getInternalRayPosition(),
+                                        this->getInternalRayDirection(),
+                                        this->getCellContainingInternalRay() );
+  return clone;
+}
   
 } // end Geometry namespace
 

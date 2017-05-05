@@ -112,6 +112,9 @@ public:
                                    const double y_direction,
                                    const double z_direction ) override;
 
+  //! Clone the navigator
+  RootNavigator* clone() const override;
+
 private:
 
   // Deep copy an array

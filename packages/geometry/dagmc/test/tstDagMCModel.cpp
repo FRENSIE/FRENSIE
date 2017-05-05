@@ -726,13 +726,13 @@ TEUCHOS_UNIT_TEST( DagMCModel, isReflectingSurface )
 
 //---------------------------------------------------------------------------//
 // Check that a DagMC navigator can be created
-TEUCHOS_UNIT_TEST( DagMCModel, createDagMCNavigator )
+TEUCHOS_UNIT_TEST( DagMCModel, createNavigatorAdvanced )
 {
   std::shared_ptr<Geometry::DagMCModel> model =
     Geometry::DagMCModel::getInstance();
 
-  std::shared_ptr<Geometry::DagMCNavigator> navigator =
-    model->createDagMCNavigator();
+  std::shared_ptr<Geometry::DagMCNavigator> navigator(
+                                            model->createNavigatorAdvanced() );
 
   TEST_ASSERT( navigator.get() != NULL );
 }

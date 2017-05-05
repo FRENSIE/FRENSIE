@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_PARTICLE_STATE_HPP
 #define MONTE_CARLO_PARTICLE_STATE_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
@@ -21,7 +24,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
-#include "Geometry_Ray.hpp"
+#include "Geometry_Navigator.hpp"
+#include "Geometry_Model.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_PrintableObject.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -113,9 +117,6 @@ public:
   //! Return the cell handle for the cell containing the particle
   Geometry::ModuleTraits::InternalCellHandle getCell() const;
 
-  //! Set the cell containing the particle
-  void setCell( const Geometry::ModuleTraits::InternalCellHandle cell );
-
   //! Return the x position of the particle
   double getXPosition() const;
 
@@ -161,7 +162,7 @@ public:
 			const double azimuthal_angle );
 
   //! Advance the particle along its direction by the requested distance
-  void advance( const double distance );
+  void advance( double distance );
 
   //! Return the source (starting) energy of the particle (history) (MeV)
   energyType getSourceEnergy() const;
@@ -232,8 +233,29 @@ public:
   //! Set the particle as gone
   void setAsGone();
 
-  //! Spawn a ray that can be used for ray tracing
-  const Geometry::Ray& ray() const;
+  //! Embed the particle in the desired model
+  void embed( const Geometry::Model& model );
+
+  //! Embed the particle in the desired model
+  void embed( const Geometry::Model& model,
+              const Geometry::ModuleTraits::InternalCellHandle cell );
+
+  //! Embed the particle in the desired model at the desired position
+  void embed( const Geometry::Model& model,
+              const double position[3],
+              const double direction[3] );
+
+  //! Embed the particle in the desired model at the desired position
+  void embed( const Geometry::Model& model,
+              const double position[3],
+              const double direction[3]
+              const Geometry::ModuleTraits::InternalCellHandle cell );
+
+  //! Get the navigator used by the particle
+  Geometry::Navigator& navigator();
+
+  //! Get the navigator used by the particle
+  const Geometry::Navigator& navigator() const;
 
 protected:
 
@@ -274,12 +296,6 @@ private:
   // The source id
   MonteCarlo::ModuleTraits::InternalROIHandle d_source_id;
 
-  // Position of the particle
-  positionType d_position[3];
-
-  // Direction of the particle
-  directionType d_direction[3];
-
   // Source (starting) energy of the particle (history) (MeV)
   energyType d_source_energy;
 
@@ -307,17 +323,14 @@ private:
   // The source (starting) cell of the particle (history)
   Geometry::ModuleTraits::InternalCellHandle d_source_cell;
 
-  // The current cell handle
-  Geometry::ModuleTraits::InternalCellHandle d_cell;
-
   // Lost particle boolean
   bool d_lost;
 
   // Finished history boolean
   bool d_gone;
 
-  // Ray for ray tracing
-  Geometry::Ray d_ray;
+  // The navigator used by the particle
+  std::unique_ptr<Geometry::Navigator> d_navigator;
 };
 
 // Set the position of the particle
@@ -344,10 +357,16 @@ inline ParticleState::energyType ParticleState::getEnergy() const
   return d_energy;
 }
 
-// Spawn a ray that can be used for ray tracing
-inline const Geometry::Ray& ParticleState::ray() const
+// the navigator used by the particle
+Geometry::Navigator& ParticleState::navigator()
 {
-  return d_ray;
+  return *d_navigator;
+}
+
+// Get the navigator used by the particle
+const Geometry::Navigator& ParticleState::navigator() const
+{
+  return *d_navigator;
 }
 
 } // end MonteCarlo namespace

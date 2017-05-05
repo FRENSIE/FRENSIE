@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
+#include "Utility_InfiniteMediumNavigator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 
@@ -21,8 +22,6 @@ ParticleState::ParticleState()
   : d_history_number( 0 ),
     d_particle_type(),
     d_source_id( MonteCarlo::ModuleTraits::reserved_internal_roi_handle ),
-    d_position(),
-    d_direction{0.0,0.0,1.0},
     d_source_energy( 0.0 ),
     d_energy( 0.0 ),
     d_source_time( 0.0 ),
@@ -32,10 +31,9 @@ ParticleState::ParticleState()
     d_source_weight( 1.0 ),
     d_weight( 1.0 ),
     d_source_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
-    d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
     d_lost( false ),
     d_gone( false ),
-    d_ray( d_position, d_direction, false )
+    d_navigator( new Geometry::InfiniteMediumNavigator( Geometry::ModuleTraits::invalid_internal_cell_handle ) )
 { /* ... */ }
 
 // Constructor
@@ -45,8 +43,6 @@ ParticleState::ParticleState(
   : d_history_number( history_number ),
     d_particle_type( type ),
     d_source_id( MonteCarlo::ModuleTraits::reserved_internal_roi_handle ),
-    d_position(),
-    d_direction(),
     d_source_energy( 0.0 ),
     d_energy( 0.0 ),
     d_source_time( 0.0 ),
@@ -56,10 +52,9 @@ ParticleState::ParticleState(
     d_source_weight( 1.0 ),
     d_weight( 1.0 ),
     d_source_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
-    d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
     d_lost( false ),
     d_gone( false ),
-    d_ray( d_position, d_direction, false )
+    d_navigator( new Geometry::InfiniteMediumNavigator( Geometry::ModuleTraits::invalid_internal_cell_handle ) )
 { /* ... */ }
 
 // Copy constructor
@@ -73,12 +68,6 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
   : d_history_number( existing_base_state.d_history_number ),
     d_particle_type( new_type ),
     d_source_id( existing_base_state.d_source_id ),
-    d_position{existing_base_state.d_position[0],
-               existing_base_state.d_position[1],
-               existing_base_state.d_position[2]},
-    d_direction{existing_base_state.d_direction[0],
-	        existing_base_state.d_direction[1],
-	        existing_base_state.d_direction[2]},
     d_source_energy( existing_base_state.d_source_energy ),
     d_energy( existing_base_state.d_energy ),
     d_source_time( existing_base_state.d_source_time ),
@@ -88,10 +77,9 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
     d_source_weight( existing_base_state.d_source_weight ),
     d_weight( existing_base_state.d_weight ),
     d_source_cell( existing_base_state.d_source_cell ),
-    d_cell( existing_base_state.d_cell ),
     d_lost( false ),
     d_gone( false ),
-    d_ray( d_position, d_direction, false )
+    d_navigator( existing_base_state.d_navigator()->clone() )
 {
   // Increment the generation number if requested
   if( increment_generation_number )
@@ -169,42 +157,31 @@ void ParticleState::setSourceCell(
 // Return the cell handle for the cell containing the particle
 Geometry::ModuleTraits::InternalCellHandle ParticleState::getCell() const
 {
-  return d_cell;
-}
-
-// Set the cell containing the particle
-void ParticleState::setCell(
-			const Geometry::ModuleTraits::InternalCellHandle cell )
-{
-  // Make sure the cell handle is valid
-  testPrecondition( cell !=
-		    Geometry::ModuleTraits::invalid_internal_cell_handle);
-
-  d_cell = cell;
+  return d_navigator->getCellContainingInternalRay();
 }
 
 // Return the x position of the particle
 double ParticleState::getXPosition() const
 {
-  return d_position[0];
+  return d_navigator->getInternalRayPosition()[0];
 }
 
 // Return the y position of the particle
 double ParticleState::getYPosition() const
 {
-  return d_position[1];
+  return d_navigator->getInternalRayPosition()[1];
 }
 
 // Return the z position of the particle
 double ParticleState::getZPosition() const
 {
-  return d_position[2];
+  return d_navigator->getInternalRayPosition()[2];
 }
 
 // Return the position of the particle
 const double* ParticleState::getPosition() const
 {
-  return d_position;
+  return d_navigator->getInternalRayPosition();
 }
 
 // Set the position of the particle
@@ -217,33 +194,38 @@ void ParticleState::setPosition( const double x_position,
   testPrecondition( !ST::isnaninf( y_position ) );
   testPrecondition( !ST::isnaninf( z_position ) );
 
-  d_position[0] = x_position;
-  d_position[1] = y_position;
-  d_position[2] = z_position;
+  double* current_direction = d_navigator->getInternalRayDirection();
+  
+  d_navigator->setInternalRay( x_position,
+                               y_position,
+                               z_position,
+                               current_direction[0],
+                               current_direction[1],
+                               current_direction[2] );
 }
 
 // Return the x direction of the particle
 double ParticleState::getXDirection() const
 {
-  return d_direction[0];
+  return d_navigator->getInternalRayDirection()[0];
 }
 
 // Return the y direction of the particle
 double ParticleState::getYDirection() const
 {
-  return d_direction[1];
+  return d_navigator->getInternalRayDirection()[1];
 }
 
 // Return the z direction of the particle
 double ParticleState::getZDirection() const
 {
-  return d_direction[2];
+  return d_navigator->getInternalRayDirection()[2];
 }
 
 // Return the direction of the particle
 const double* ParticleState::getDirection() const
 {
-  return d_direction;
+  return d_navigator->getInternalRayDirection();
 }
 
 // Set the direction of the particle
@@ -260,9 +242,9 @@ void ParticleState::setDirection( const double x_direction,
                                            y_direction,
                                            z_direction ) );
 
-  d_direction[0] = x_direction;
-  d_direction[1] = y_direction;
-  d_direction[2] = z_direction;
+  d_navigator->changeInternalRayDirection( x_direction,
+                                           y_direction,
+                                           z_direction );
 }
 
 // Rotate the direction of the particle using polar a. cosine and azimuthal a.
@@ -296,17 +278,44 @@ void ParticleState::rotateDirection( const double polar_angle_cosine,
 }
 
 // Advance the particle along its direction by the requested distance
-void ParticleState::advance( const double distance )
+void ParticleState::advance( double distance )
 {
   // Make sure the distance is valid
   testPrecondition( !ST::isnaninf( distance ) );
 
-  d_position[0] += d_direction[0]*distance;
-  d_position[1] += d_direction[1]*distance;
-  d_position[2] += d_direction[2]*distance;
+  double distance_to_surface = d_navigator->fireInternalRay();
+  
+  while( distance > distance_to_surface )
+  {
+    // Increase the particle time
+    d_time += this->calculateTraversalTime( distance_to_surface );
+    
+    // Try to advance the particle to the next cell boundary. If the
+    // advance fails, the particle is lost.
+    try{
+      d_navigator->advanceInternalRayToCellBoundary();
+    }
+    catch( const std::exception& exception )
+    {
+      d_lost = true;
+      return;
+    }
 
-  // Compute the time to traverse the distance
-  d_time += calculateTraversalTime( distance );
+    // Update the distance left to travel
+    distance -= distance_to_surface;
+
+    // Determine the distance to the next surface
+    distance_to_surface = d_navigator->fireInternalRay();
+  }
+
+  // Travel any remaining distance
+  if( distance > 0.0 )
+  {
+    d_navigator->advanceInternalRayBySubstep( distance );
+
+    // Compute the time to traverse the distance
+    d_time += this->calculateTraversalTime( distance );
+  }
 }
 
 // Set the source (starting) energy of the particle (history) (MeV)
@@ -459,6 +468,82 @@ bool ParticleState::isGone() const
 void ParticleState::setAsGone()
 {
   d_gone = true;
+}
+
+// Embed the particle in the desired model
+void ParticleState::embed( const Geometry::Model& model )
+{
+  // Cache the current particle position and direction
+  const double position[3] = {d_navigator->getInternalRayPosition()[0],
+                              d_navigator->getInternalRayPosition()[1],
+                              d_navigator->getInternalRayDirection()[2]};
+  
+  const double direction[3] = {d_navigator->getInternalRayDirection()[0],
+                               d_navigator->getInternalRayDirection()[1],
+                               d_navigator->getInternalRayDirection()[2]};
+  
+  this->embed( model, position, direction );
+}
+
+// Embed the particle in the desired model
+/*! \details The current particle position must be inside of the cell. If
+ * it is not, the particle will become lost.
+ */
+void ParticleState::embed(
+                        const Geometry::Model& model,
+                        const Geometry::ModuleTraits::InternalCellHandle cell )
+{
+  // Cache the current particle position and direction
+  const double position[3] = {d_navigator->getInternalRayPosition()[0],
+                              d_navigator->getInternalRayPosition()[1],
+                              d_navigator->getInternalRayDirection()[2]};
+  
+  const double direction[3] = {d_navigator->getInternalRayDirection()[0],
+                               d_navigator->getInternalRayDirection()[1],
+                               d_navigator->getInternalRayDirection()[2]};
+
+  this->embed( model, position, direction, cell );
+}
+
+// Embed the particle in the desired model at the desired position
+void ParticleState::embed( const Geometry::Model& model,
+                           const double position[3],
+                           const double direction[3] )
+{
+  d_navigator.reset( model->createNavigatorAdvanced() );
+
+  // Try to initialize the new navigator. If it fails to initialize, the
+  // particle is lost.
+  try{
+    d_navigator->setInternalRay( position, direction );
+  }
+  catch( const std::runtime_exception& exception )
+  {
+    d_lost = true;
+  }
+}
+
+// Embed the particle in the desired model at the desired position
+/*! \details The position must be inside of the cell. If it is not, the 
+ * particle will become lost.
+ */
+void ParticleState::embed(
+                        const Geometry::Model& model,
+                        const double position[3],
+                        const double direction[3]
+                        const Geometry::ModuleTraits::InternalCellHandle cell )
+{
+  d_navigator.reset( model->createNavigatorAdvanced() );
+
+  // Try to initialize the new navigator. If it fails to initialize, the
+  // particle is lost.
+  try{
+    d_navigator->setInternalRay( position, direction, cell );
+  }
+  catch( const std::runtime_exception& exception )
+  {
+    d_lost = true;
+  }
 }
 
 } // end MonteCarlo

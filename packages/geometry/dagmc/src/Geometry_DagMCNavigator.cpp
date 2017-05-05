@@ -668,6 +668,24 @@ void DagMCNavigator::setInternalRay(
   // Fire the ray so that the intersection data is set
   Navigator::fireInternalRay();
 }
+
+// Clone the navigator
+DagMCNavigator* DagMCNavigator::clone() const
+{
+  // Copy the geometry data
+  DagMCNavigator* clone = new DagMCNavigator( d_dagmc,
+                                              d_cell_handler,
+                                              d_surface_handler,
+                                              d_reflecting_surfaces );
+
+  // Copy the current position and direction
+  dynamic_cast<Navigator*>( clone )->setInternalRay(
+                                        this->getInternalRayPosition(),
+                                        this->getInternalRayDirection(),
+                                        this->getCellContainingInternalRay() );
+
+  return clone;
+}
   
 } // end Geometry namespace
 

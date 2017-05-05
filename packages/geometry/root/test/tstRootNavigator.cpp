@@ -404,6 +404,34 @@ TEUCHOS_UNIT_TEST( RootNavigator, ray_trace )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the ray can be cloned
+TEUCHOS_UNIT_TEST( RootNavigator, clone )
+{
+  std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
+
+  // Initialize the ray
+  navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+
+  // Clone the ray
+  std::shared_ptr<Geometry::Navigator> navigator_clone( navigator->clone() );
+
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[0],
+                       navigator->getInternalRayPosition()[0] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[1],
+                       navigator->getInternalRayPosition()[1] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[2],
+                       navigator->getInternalRayPosition()[2] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[0],
+                       navigator->getInternalRayDirection()[0] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[1],
+                       navigator->getInternalRayDirection()[1] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[2],
+                       navigator->getInternalRayDirection()[2] );
+  TEST_EQUALITY_CONST( navigator_clone->getCellContainingInternalRay(),
+                       navigator->getCellContainingInternalRay() );
+}
+
+//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();

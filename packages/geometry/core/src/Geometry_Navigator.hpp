@@ -236,8 +236,14 @@ public:
                                            const double y_direction,
                                            const double z_direction ) = 0;
 
-  // Change the internal ray direction
+  //! Change the internal ray direction
   void changeInternalRayDirection( const double direction[3] );
+
+  /*! Clone the navigator
+   *
+   * The returned pointer must be heap allocated.
+   */
+  virtual Navigator* clone() const = 0;
 
 protected:
 

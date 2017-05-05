@@ -99,11 +99,8 @@ public:
   //! Get the cell volume
   double getCellVolume( const ModuleTraits::InternalCellHandle cell_id ) const override;
 
-  //! Create a Root navigator
-  std::shared_ptr<RootNavigator> createRootNavigator() const;
-
-  //! Create a navigator
-  std::shared_ptr<Navigator> createNavigator() const override;
+  //! Create a raw, heap-allocated navigator
+  RootNavigator* createNavigatorAdvanced() const override;
 
 private:
 

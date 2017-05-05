@@ -113,11 +113,8 @@ public:
   //! Check if the surface is a reflecting surface
   bool isReflectingSurface( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
 
-  //! Create a DagMC navigator
-  std::shared_ptr<DagMCNavigator> createDagMCNavigator() const;
-
-  //! Create a ray tracer
-  std::shared_ptr<Navigator> createNavigator() const override;
+  //! Create a raw, heap-allocated navigator
+  DagMCNavigator* createNavigatorAdvanced() const override;
 
 private:
 

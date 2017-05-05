@@ -85,8 +85,8 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, getSurfaceNormal )
 // Check that the boundary cell can be found
 TEUCHOS_UNIT_TEST( DagMCNavigator, getBoundaryCell )
 {
-  std::shared_ptr<Geometry::DagMCNavigator> navigator =
-    model->createDagMCNavigator();
+  std::shared_ptr<Geometry::DagMCNavigator>
+    navigator( model->createNavigatorAdvanced() );
   
   TEST_EQUALITY_CONST( navigator->getBoundaryCell( 53, 242 ), 54 );
   TEST_EQUALITY_CONST( navigator->getBoundaryCell( 54, 248 ), 55 );
@@ -504,6 +504,34 @@ TEUCHOS_UNIT_TEST( DagMCNavigator, ray_trace_with_reflection )
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 17.526, 1e-6 );
   TEST_EQUALITY_CONST( surface_hit, 394 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the ray can be cloned
+TEUCHOS_UNIT_TEST( DagMCNavigator, clone )
+{
+  std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
+
+  // Initialize the ray
+  navigator->setInternalRay( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 );
+
+  // Clone the ray
+  std::shared_ptr<Geometry::Navigator> navigator_clone( navigator->clone() );
+
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[0],
+                       navigator->getInternalRayPosition()[0] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[1],
+                       navigator->getInternalRayPosition()[1] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[2],
+                       navigator->getInternalRayPosition()[2] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[0],
+                       navigator->getInternalRayDirection()[0] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[1],
+                       navigator->getInternalRayDirection()[1] );
+  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[2],
+                       navigator->getInternalRayDirection()[2] );
+  TEST_EQUALITY_CONST( navigator_clone->getCellContainingInternalRay(),
+                       navigator->getCellContainingInternalRay() );
 }
 
 //---------------------------------------------------------------------------//

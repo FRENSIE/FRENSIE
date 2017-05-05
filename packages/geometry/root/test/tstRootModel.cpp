@@ -251,10 +251,10 @@ TEUCHOS_UNIT_TEST( RootModel, getCellVolume )
 
 //---------------------------------------------------------------------------//
 // Check that a Root navigator can be created
-TEUCHOS_UNIT_TEST( RootModel, createRootNavigator )
+TEUCHOS_UNIT_TEST( RootModel, createNavigatorAdvanced )
 {
-  std::shared_ptr<Geometry::RootNavigator> navigator =
-    Geometry::RootModel::getInstance()->createRootNavigator();
+  std::shared_ptr<Geometry::RootNavigator> navigator(
+               Geometry::RootModel::getInstance()->createNavigatorAdvanced() );
 
   TEST_ASSERT( navigator.get() != NULL );
 }

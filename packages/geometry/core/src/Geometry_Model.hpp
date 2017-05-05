@@ -107,14 +107,24 @@ public:
   virtual double getCellVolume(
                        const ModuleTraits::InternalCellHandle cell ) const = 0;
 
+  //! Create a raw, heap-allocated navigator
+  virtual Geometry::Navigator* createNavigatorAdvanced() const = 0;
+  
   //! Create a navigator
-  virtual std::shared_ptr<Geometry::Navigator> createNavigator() const = 0;
+  std::shared_ptr<Geometry::Navigator> createNavigator() const;
 };
 
 // Check if this is an advanced model
 inline bool Model::isAdvanced() const
 {
   return false;
+}
+
+// Create a navigator
+inline std::shared_ptr<Geometry::Navigator> Model::createNavigator() const
+{
+  return std::shared_ptr<Geometry::Navigator>(
+                                             this->createNavigatorAdvanced() );
 }
   
 } // end Geometry namespace

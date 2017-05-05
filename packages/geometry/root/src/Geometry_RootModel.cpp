@@ -446,8 +446,8 @@ double RootModel::getCellVolume( const ModuleTraits::InternalCellHandle cell_id 
   return volume;
 }
 
-// Create a Root navigator
-std::shared_ptr<RootNavigator> RootModel::createRootNavigator() const
+// Create a raw, heap-allocated navigator
+RootNavigator* RootModel::createNavigatorAdvanced() const
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -457,18 +457,7 @@ std::shared_ptr<RootNavigator> RootModel::createRootNavigator() const
                             std::cref( *this ),
                             std::placeholders::_1 );
   
-  return std::shared_ptr<RootNavigator>(
-                                new RootNavigator( d_manager,
-                                                   cell_id_to_uid_function ) );
-}
-
-// Create a navigator
-std::shared_ptr<Navigator> RootModel::createNavigator() const
-{
-  // Make sure that root has been initialized
-  testPrecondition( this->isInitialized() );
-  
-  return this->createRootNavigator();
+  return new RootNavigator( d_manager, cell_id_to_uid_function );
 }
 
 // Get the cell
