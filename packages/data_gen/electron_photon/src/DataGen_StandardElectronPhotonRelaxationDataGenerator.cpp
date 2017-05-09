@@ -2743,8 +2743,8 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCros
   for( unsigned i = begin; i < cutoff_cross_sections.size(); i++ )
   {
     double cutoff_cdf =
-                analog_distribution->evaluateCDF( electron_energy_grid[i],
-                                                  cutoff_angle_cosine );
+                analog_distribution->evaluateCutoffCDF( electron_energy_grid[i],
+                                                        cutoff_angle_cosine );
 
     reduced_cutoff_cross_section_ratio[i] = cutoff_cdf;
 

@@ -140,7 +140,7 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
         d_continuous_distribution->evaluateSecondaryConditionalPDFExact(
                                     incoming_energy, scattering_angle_cosine);
 
-    return this->normalizeEvalution( incoming_energy,unormalized_eval );
+    return this->normalizeEvalution( incoming_energy, unormalized_eval );
   }
   else
     return 0.0;
@@ -167,7 +167,7 @@ double HybridElasticElectronScatteringDistribution::evaluateCDF(
         d_continuous_distribution->evaluateSecondaryConditionalCDFExact(
                                     incoming_energy, scattering_angle_cosine);
 
-    return this->normalizeEvalution( incoming_energy,unormalized_eval );
+    return this->normalizeEvalution( incoming_energy, unormalized_eval );
   }
   else if( incoming_energy <
                 d_continuous_distribution->getLowerBoundOfPrimaryIndepVar() ||

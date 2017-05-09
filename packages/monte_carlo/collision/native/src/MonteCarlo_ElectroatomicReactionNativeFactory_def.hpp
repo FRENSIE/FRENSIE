@@ -168,10 +168,6 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
   unsigned cutoff_threshold_energy_index =
     raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
-  // Reduced cutoff elastic cross section ratio
-  std::vector<double> reduced_cutoff_ratio =
-    raw_electroatom_data.getReducedCutoffCrossSectionRatios();
-
   // Moment preserving elastic cross section
   Teuchos::ArrayRCP<double> mp_cross_section;
   mp_cross_section.assign(
@@ -184,14 +180,23 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
 
   // Create the hybrid elastic scattering distribution
   std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> cutoff_distribution;
 
-  // Create the hybrid elastic scattering distribution that uses LinLinLog interpolation
+  // Create the hybrid elastic scattering distribution
   ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<TwoDInterpPolicy>(
             distribution,
             grid_searcher,
             energy_grid,
             cutoff_cross_section,
             mp_cross_section,
+            raw_electroatom_data,
+            cutoff_angle_cosine,
+            correlated_sampling_mode_on,
+            evaluation_tol );
+
+  // Create the cutoff elastic scattering distribution
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
+            cutoff_distribution,
             raw_electroatom_data,
             cutoff_angle_cosine,
             correlated_sampling_mode_on,
@@ -212,10 +217,12 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
   for (unsigned i = 0; i < combined_cross_section.size(); ++i )
   {
     double energy = energy_grid[i + hybrid_threshold_energy_index];
+    double reduced_cutoff_ratio =
+                cutoff_distribution->evaluateCutoffCrossSectionRatio( energy );
 
     if ( i < mp_threshold_diff )
     {
-      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio[i];
+      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio;
     }
     else if ( i < cutoff_threshold_diff )
     {
@@ -224,7 +231,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     else
     {
       combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio[i] +
+        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio +
         mp_cross_section[i-mp_threshold_diff];
     }
   }

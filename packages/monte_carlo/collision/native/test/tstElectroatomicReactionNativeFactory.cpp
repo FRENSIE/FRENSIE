@@ -56,20 +56,16 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double energy = 1.0e-5;
-  double cross_section =
-    reaction->getCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section, 2.48924e9 + 0.0, 1e-12 );
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.4892412446206226e+09, 1e-12 );
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e8 + 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.4369585366038626e+08, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2 + 2.1116099116949e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0994087355686440e+06, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -136,19 +132,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double energy = 1e1;
-  double cross_section =
-    reaction->getCrossSection( energy );
-
+  double cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 3.722e5, 1e-12 );
 
   energy = 1e2;
   cross_section = reaction->getCrossSection( energy );
-
   TEST_FLOATING_EQUALITY( cross_section, 2.0561378e6, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
-
   TEST_FLOATING_EQUALITY( cross_section, 2.1116099116949e6, 1e-12 );
 
   // Clear the reaction
@@ -178,20 +170,16 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double energy = 1e-5;
-  double cross_section =
-    reaction->getCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section, 1.10632944155859e8, 1e-12 );
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1063399517933960e+08, 1e-12 );
 
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.8943113497409716e+07, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section, 2.20377030499672E-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2037703049980670e-03, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -312,20 +300,16 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double cross_section =
-    reaction->getCrossSection( reaction->getThresholdEnergy() );
-
+            reaction->getCrossSection( reaction->getThresholdEnergy() );
   TEST_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e-3 );
-
   TEST_FLOATING_EQUALITY( cross_section, 9.528370e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 4.0e1 );
-
   TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-
   TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
 
   // Clear the reaction
@@ -360,20 +344,16 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double cross_section =
-    reaction->getCrossSection( reaction->getThresholdEnergy() );
-
+                reaction->getCrossSection( reaction->getThresholdEnergy() );
   TEST_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e-3 );
-
   TEST_FLOATING_EQUALITY( cross_section, 9.528370e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 4.0e1 );
-
   TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-
   TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
 
   // Clear the reaction
@@ -405,20 +385,16 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double energy = 1.0e-5;
-  double cross_section =
-    reaction->getCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section, 2.48924e9 + 0.0, 1e-12 );
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.4892412446206226e+09, 1e-12 );
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e8 + 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.4367954727727163e+08, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
-
-  TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2 + 2.1116099116949e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0994087355686440e+06, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -486,15 +462,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   // Test that the stored cross section is correct
   double energy = 1e-5;
   double cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 1.10632944155859e8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1063399517933960e+08, 1e-12 );
 
   energy = 4e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.8943113497409716e+07, 1e-12 );
 
   energy = 1e5;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.20377030499672E-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2037703049980670e-03, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

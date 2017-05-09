@@ -51,7 +51,7 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getReactionType )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getReactionType(),
-		       MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -67,10 +67,10 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getThresholdEne
 TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getNumberOfEmittedElectrons )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedElectrons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -78,10 +78,10 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getNumberOfEmit
 TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getNumberOfEmittedPhotons )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedPhotons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -93,17 +93,17 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction,
   double cross_section =
     mp_elastic_reaction->getCrossSection( 1.0E-05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.611494138359350E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6115094477074045e+08, 1e-12 );
 
   cross_section =
     mp_elastic_reaction->getCrossSection( 1.0E-03 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.730253976136980E+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.7303883565563820e+07, 1e-12 );
 
   cross_section =
     mp_elastic_reaction->getCrossSection( 1.0E+05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.808061009771560E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.8080610097719021e-05, 1e-12 );
 }
 
 

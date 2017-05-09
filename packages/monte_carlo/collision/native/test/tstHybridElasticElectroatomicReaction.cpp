@@ -93,14 +93,17 @@ TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction,
                    getCrossSection )
 {
 
+  double ratio = 9.500004750002375431e-01;
   double cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E-05 );
-  TEST_FLOATING_EQUALITY( cross_section, 3444568722.2843613625 + 1.611494138359350E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.62586e+09*ratio + 1.611509447707404494e+08, 1e-12 );
 
+  ratio = 1.500499711874552500e-01;
   cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 18557880.33652209118 + 5.730253976136980E+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.23678e+08*ratio + 5.730388356556382030e+07, 1e-12 );
 
+  ratio = 8.686817246673364594e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E+05 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.9264754607947520206e-08 + 6.808061009771560E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2177e-03*ratio + 6.808061009771902055e-05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -164,10 +167,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getCutoffElasticCrossSection().begin(),
         data_container.getCutoffElasticCrossSection().end() );
 
-  // Reduced cutoff elastic cross section ratio
-  std::vector<double> reduced_cutoff_ratio =
-    data_container.getReducedCutoffCrossSectionRatios();
-
   Teuchos::ArrayRCP<double> mp_cross_section;
   mp_cross_section.assign(
         data_container.getMomentPreservingCrossSection().begin(),
@@ -188,13 +187,28 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Teuchos::Array<double> combined_cross_section(
                            energy_grid.size() - hybrid_threshold_energy_index );
 
+
+  bool correlated_sampling_mode_on = true;
+
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_elastic_distribution;
+
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+        cutoff_elastic_distribution,
+        data_container,
+        data_container.getCutoffAngleCosine(),
+        correlated_sampling_mode_on,
+        evaluation_tol );
+
+
   for (unsigned i = 0; i < combined_cross_section.size(); ++i )
   {
     double energy = energy_grid[i + hybrid_threshold_energy_index];
-
+    double reduced_cutoff_ratio =
+        cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
     if ( i < mp_threshold_diff )
     {
-      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio[i];
+      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio;
     }
     else if ( i < cutoff_threshold_diff )
     {
@@ -203,7 +217,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     else
     {
       combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio[i] +
+        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio +
         mp_cross_section[i-mp_threshold_diff];
     }
   }
@@ -215,8 +229,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create hybrid distribution
   std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
-
-  bool correlated_sampling_mode_on = true;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         hybrid_elastic_distribution,

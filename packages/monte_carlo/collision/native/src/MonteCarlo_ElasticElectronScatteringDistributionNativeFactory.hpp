@@ -233,6 +233,17 @@ public:
     const std::vector<double>& raw_angular_grid,
     const double cutoff_angle_cosine );
 
+  //! Create the cutoff elastic scattering function
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
+  static void createScatteringFunction(
+    const std::map<double,std::vector<double> >& angles,
+    const std::map<double,std::vector<double> >& pdf,
+    const std::vector<double>& energy_grid,
+    std::shared_ptr<TwoDDist>& scattering_function,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol,
+    const bool discrete_function = false );
+
 protected:
 
   //! Create the cutoff to moment preserving cross section ratios
@@ -244,17 +255,6 @@ protected:
     const std::shared_ptr<TwoDDist>& cutoff_scattering_function,
     const double cutoff_angle_cosine,
     std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios );
-
-  //! Create the cutoff elastic scattering function
-  template<typename TwoDInterpPolicy = Utility::LinLinLog>
-  static void createScatteringFunction(
-    const std::map<double,std::vector<double> >& angles,
-    const std::map<double,std::vector<double> >& pdf,
-    const std::vector<double>& energy_grid,
-    std::shared_ptr<TwoDDist>& scattering_function,
-    const double cutoff_angle_cosine,
-    const double evaluation_tol,
-    const bool discrete_function = false );
 
   //! Create the cutoff elastic scattering function
   static void createScatteringFunction(
