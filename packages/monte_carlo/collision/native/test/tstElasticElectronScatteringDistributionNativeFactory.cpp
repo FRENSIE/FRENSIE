@@ -1285,11 +1285,11 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   std::vector<double> fake_stream( 6 );
-  fake_stream[0] = 1.5069386977544569e-01; // sample mu = 0.1 (cutoff)
-  fake_stream[1] = 3.6012504248238147e-01; // sample mu = 0.9 (cutoff)
-  fake_stream[2] = 3.6012504248239e-01; // sample mu = 9.2397850504508405e-01 (discrete)
-  fake_stream[3] = 4.5250715487188e-01; // sample mu = 9.2397850504508405e-01 (discrete)
-  fake_stream[4] = 4.5250715487190e-01; // sample mu = 9.8171108128432372e-01 (discrete)
+  fake_stream[0] = 1.5069669466805288e-01; // sample mu = 0.1 (cutoff)
+  fake_stream[1] = 3.6013179335135637e-01; // sample mu = 0.9 (cutoff)
+  fake_stream[2] = 3.6013179335136e-01; // sample mu = 9.2397850504508405e-01 (discrete)
+  fake_stream[3] = 4.5251293108241e-01; // sample mu = 9.2397850504508405e-01 (discrete)
+  fake_stream[4] = 4.5251293108242e-01; // sample mu = 9.8171108128432372e-01 (discrete)
   fake_stream[5] = 1.0-1e-15; // sample mu = 9.8171108128432372e-01 (discrete)
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -1344,13 +1344,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   fake_stream.resize( 8 );
-  fake_stream[0] = 4.5139696965230469e-01; // sample mu = 0.1 (cutoff)
-  fake_stream[1] = 9.2529732758527172e-01; // sample mu = 0.9 (cutoff)
-  fake_stream[2] = 9.2529732758528e-01; // sample mu = 9.197418038052812550e-01 (discrete)
-  fake_stream[3] = 9.3608254522464e-01; // sample mu = 9.197418038052812550e-01 (discrete)
-  fake_stream[4] = 9.3608254522465e-01; // sample mu = 9.486080919249011423e-01 (discrete)
-  fake_stream[5] = 9.569304316105e-01; // sample mu = 9.486080919249011423e-01 (discrete)
-  fake_stream[6] = 9.569304316106e-01; // sample mu = 9.731029893418076115e-01 (discrete)
+  fake_stream[0] = 4.5141090802130296e-01; // sample mu = 0.1 (cutoff)
+  fake_stream[1] = 9.2532589918954045e-01; // sample mu = 0.9 (cutoff)
+  fake_stream[2] = 9.2532589918955e-01; // sample mu = 9.197418038052812550e-01 (discrete)
+  fake_stream[3] = 9.3610699179616e-01; // sample mu = 9.197418038052812550e-01 (discrete)
+  fake_stream[4] = 9.3610699179617e-01; // sample mu = 9.486080919249011423e-01 (discrete)
+  fake_stream[5] = 9.5694690447057e-01; // sample mu = 9.486080919249011423e-01 (discrete)
+  fake_stream[6] = 9.5694690447058e-01; // sample mu = 9.731029893418076115e-01 (discrete)
   fake_stream[7] = 1.0-1e-15; // sample mu = 9.731029893418076115e-01 (discrete)
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -1460,11 +1460,11 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   std::vector<double> fake_stream( 6 );
-  fake_stream[0] = 1.5069386977544569e-01; // sample mu = 0.1 (cutoff)
-  fake_stream[1] = 3.6012504248238147e-01; // sample mu = 0.9 (cutoff)
-  fake_stream[2] = 3.6012504248239e-01; // sample mu = 9.2397850504508405e-01 (discrete)
-  fake_stream[3] = 4.5250715487189e-01; // sample mu = 9.2397850504508405e-01 (discrete)
-  fake_stream[4] = 4.5250715487190e-01; // sample mu = 9.8171108128432372e-01 (discrete)
+  fake_stream[0] = 1.5069669466805288e-01; // sample mu = 0.1 (cutoff)
+  fake_stream[1] = 3.6013179335135637e-01; // sample mu = 0.9 (cutoff)
+  fake_stream[2] = 3.6013179335136e-01; // sample mu = 9.2397850504508405e-01 (discrete)
+  fake_stream[3] = 4.5251293108241e-01; // sample mu = 9.2397850504508405e-01 (discrete)
+  fake_stream[4] = 4.5251293108242e-01; // sample mu = 9.8171108128432372e-01 (discrete)
   fake_stream[5] = 1.0-1e-15; // sample mu = 9.8171108128432372e-01 (discrete)
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -1519,13 +1519,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   fake_stream.resize( 8 );
-  fake_stream[0] = 5.1352561870741009e-01; // sample mu = 0.1 (cutoff)
-  fake_stream[1] = 9.2855880839343174e-01; // sample mu = 0.9 (cutoff)
-  fake_stream[2] = 9.2855880839344e-01; // sample mu = 9.162754118818062787e-01 (discrete)
-  fake_stream[3] = 9.3887314889808e-01; // sample mu = 9.162754118818062787e-01 (discrete)
-  fake_stream[4] = 9.3887314889809e-01; // sample mu = 9.215238279035552482e-01 (discrete)
-  fake_stream[5] = 9.5881082713294e-01; // sample mu = 9.215238279035552482e-01 (discrete)
-  fake_stream[6] = 9.5881082713295e-01; // sample mu = 9.660600050252035054e-01 (discrete)
+  fake_stream[0] = 5.1354078318308127e-01; // sample mu = 0.1 (cutoff)
+  fake_stream[1] = 9.2858622885104125e-01; // sample mu = 0.9 (cutoff)
+  fake_stream[2] = 9.2858622885105e-01; // sample mu = 9.162754118818062787e-01 (discrete)
+  fake_stream[3] = 9.3889661052004e-01; // sample mu = 9.162754118818062787e-01 (discrete)
+  fake_stream[4] = 9.3889661052005e-01; // sample mu = 9.215238279035552482e-01 (discrete)
+  fake_stream[5] = 9.5882663630330e-01; // sample mu = 9.215238279035552482e-01 (discrete)
+  fake_stream[6] = 9.5882663630331e-01; // sample mu = 9.660600050252035054e-01 (discrete)
   fake_stream[7] = 1.0-1e-15; // sample mu = 9.660600050252035054e-01 (discrete)
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );

@@ -325,8 +325,7 @@ private:
         analog_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
-    std::vector<double>& moment_preserving_cross_section,
-    std::vector<double>& reduced_cutoff_cross_section_ratio );
+    std::vector<double>& moment_preserving_cross_section );
 
   // The ACE data
   std::shared_ptr<const Data::XSSEPRDataExtractor> d_ace_epr_data;

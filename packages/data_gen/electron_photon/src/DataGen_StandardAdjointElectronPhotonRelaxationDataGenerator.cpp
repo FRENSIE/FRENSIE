@@ -2093,9 +2093,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     for( unsigned i = 0; i < energy_grid.size(); i++ )
     {
       reduced_cutoff_cross_section_ratio[i] =
-        cutoff_distribution->evaluateCDF(
-            energy_grid[i],
-            d_forward_epr_data->getCutoffAngleCosine() );
+        cutoff_distribution->evaluateCutoffCrossSectionRatio( energy_grid[i] );
     }
 
     data_container.setReducedCutoffCrossSectionRatios( reduced_cutoff_cross_section_ratio );

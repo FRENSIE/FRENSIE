@@ -148,6 +148,29 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
         const double scattering_angle_cosine,
         const double incoming_energy,
+        const int polynomial_order ) const
+{
+  // Make sure the energy and angle cosine are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= s_rutherford_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // Evaluate the elastic pdf value at a given energy and scattering angle cosine
+  double pdf_value = d_analog_distribution->evaluatePDF(
+                            incoming_energy,
+                            scattering_angle_cosine );
+
+  // Evaluate the Legendre Polynomial at the given angle and order
+  double legendre_value =
+    Utility::getLegendrePolynomial( scattering_angle_cosine, polynomial_order );
+
+  return pdf_value*legendre_value;
+}
+
+// Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
+        const double scattering_angle_cosine,
+        const double incoming_energy,
         const double eta,
         const int polynomial_order ) const
 {
@@ -407,7 +430,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
 
   // Create boost rapper function for the analog elastic differential cross section
   boost::function<double (double x)> distribution_wrapper =
-    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF,
+    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford,
                          boost::cref( *this ),
                          _1,
                          energy,
@@ -425,7 +448,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
 
   // Create boost rapper function for the analog elastic differential cross section
   distribution_wrapper =
-    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF,
+    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford,
                          boost::cref( *this ),
                          _1,
                          energy,

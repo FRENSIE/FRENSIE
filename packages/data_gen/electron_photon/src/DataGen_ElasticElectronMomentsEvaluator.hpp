@@ -63,6 +63,12 @@ public:
   double evaluateLegendreExpandedRutherford(
             const double scattering_angle_cosine,
             const double incoming_energy,
+            const int polynomial_order = 0 ) const;
+
+  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+  double evaluateLegendreExpandedRutherford(
+            const double scattering_angle_cosine,
+            const double incoming_energy,
             const double eta,
             const int polynomial_order = 0 ) const;
 

@@ -76,8 +76,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double eta = 2.51317958942017e3;
   double expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 0.999999, 1.0e-5, eta, n );
-  double pdf = 5.0e-1/9.999995e-1;
-  double legendre_expansion = 0.999990000022499982500004375;
+  double pdf = 4.9999999999999983e-01;
+  double legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   eta = 2.68213671998009;
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-4, eta, n );
-  pdf = 45.64224067252489192;
+  pdf = 45.640157554246108873;
   legendre_expansion = 1.0;
 
 
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 5.5e-4, eta, n );
-  pdf = 7.9063870925506194e+01;
+  pdf = 79.057620326347489481;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-3, eta, n );
-  pdf = 9.078446769559230e1/9.9999985651050e-1;
+  pdf = 90.776239651506159589;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
@@ -110,8 +110,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   eta = 4.14887699806239e-14;
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 0.999999, 1.0e5, eta, n );
-  pdf = 9.863740e5;
-  legendre_expansion = 0.9999900000225/9.99999722875817e-1;
+  pdf = 0.041488766511823843564;
+  legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
 
@@ -121,7 +121,7 @@ n = 2;
   eta = 2.51317958942017e3;
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-5, eta, n );
-  pdf = 5.00000000397902e-1/9.999995e-1;
+  pdf = 0.50000000039790215567;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
@@ -137,8 +137,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double eta = 2.51317958942017e3;
   double expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 0.999999, 1.0e-5, eta, n );
-  double pdf = 5.0e-1/9.999995e-1;
-  double legendre_expansion = 0.999990000022499982500004375;
+  double pdf = 0.49999999999999983347;
+  double legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
@@ -146,21 +146,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   eta = 2.68213671998009;
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-4, eta, n );
-  pdf = 8.7076806318715274102;
+  pdf =  8.7076048088580542128;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 1.0, 5.5e-4, eta, n );
-  pdf = 4.9746080677041910e+01;
+  pdf = 49.7436061285208595;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-3, eta, n );
-  pdf = 9.078446769559230e1/9.9999985651050e-1;
+  pdf = 90.776239651506159589;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
@@ -169,8 +169,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   eta = 4.14887699806239e-14;
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 0.999999, 1.0e5, eta, n );
-  pdf = 9.863740e5;
-  legendre_expansion = 0.9999900000225/9.99999722875817e-1;
+  pdf =  0.041488766511823843564;
+  legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
 
@@ -180,7 +180,7 @@ n = 2;
   eta = 2.51317958942017e3;
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-5, eta, n );
-  pdf = 5.00000000397902e-1/9.999995e-1;
+  pdf = 0.50000000039790215567;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
@@ -193,80 +193,52 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 {
   int n = 4;
 
-  double expanded_pdf =
-    pb_evaluator->evaluateLegendreExpandedPDF( 0.999999,
-                                               1.0e-5,
-                                               n );
-  double pdf = 5.0e-1/9.999995e-1;
-  double legendre_expansion = 0.999990000022499982500004375;
-
+  double expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-5, n );
+  double pdf = 0.50000025000012504606;
+  double legendre_expansion = 0.99999000002250015839;
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
-  expanded_pdf =
-    pb_evaluator->evaluateLegendreExpandedPDF( -1.0,
-                                               1.0e-4,
-                                               n );
-  pdf = 5.4842166782042134e-1L;
+  expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-4, n );
+  pdf = 0.54842166782042123252;
   legendre_expansion = 1.0;
-
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
-  expanded_pdf =
-    pb_evaluator->evaluateLegendreExpandedPDF( 1.0, 1.0e-4, n );
-  pdf = 4.5642207768801896e1L;
+  expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-4, n );
+  pdf = 45.642206638305196975;
+  legendre_expansion = 0.99999000002250015839;
+  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+
+  expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 5.5e-4, n );
+  pdf = 79.063811969654963718;
+  legendre_expansion = 0.99999000002250015839;
+  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
+
+  expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-3, n );
+  pdf = 0.59684308564071753;
   legendre_expansion = 1.0;
-
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
-  expanded_pdf =
-    pb_evaluator->evaluateLegendreExpandedPDF( 1.0, 5.5e-4, n );
-  pdf = 7.9063836463348039e+01L;
-  legendre_expansion = 1.0;
-
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
-
-  expanded_pdf =
-    pb_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-3, n );
-  pdf = 5.968430e-1/9.9999985651050e-1;
-  legendre_expansion = 1.0;
-
-  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
-
-  expanded_pdf =
-    pb_evaluator->evaluateLegendreExpandedPDF( 1.0, 1.0e-3, n );
-  pdf = 9.078446769559230e1/9.9999985651050e-1;
-  legendre_expansion = 1.0;
-
+  expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-3, n );
+  pdf = 90.784413026610266684;
+  legendre_expansion = 0.99999000002250015839;
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
 
-  expanded_pdf =
-    pb_evaluator->evaluateLegendreExpandedPDF( 0.9999979, 1.0e5, n );
-
-  pdf = 2.237270e5/9.99999722875817e-1;
-  legendre_expansion = 9.999790000992240e-1;
-
-  UTILITY_TEST_FLOATING_EQUALITY(
-                    expanded_pdf,
-                    pdf*legendre_expansion,
-                    1e-10 );
+  expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.9999979, 1.0e5, n );
+  pdf = 223727.0620065057301;
+  legendre_expansion = 0.99997900009922502385;
+  UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
 
 n = 2;
 
-  expanded_pdf =
-    pb_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-5, n );
-
-  pdf = 5.0e-1/9.999995e-1;
+  expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-5, n );
+  pdf = 0.50000025000012504606;
   legendre_expansion = 1.0;
-
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
-  expanded_pdf =
-    pb_evaluator->evaluateLegendreExpandedPDF( 1.0, 1.0e-5, n );
-
-  pdf = 5.00000000397902e-1/9.999995e-1;
-  legendre_expansion = 1.0;
-
+  expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-5, n );
+  pdf =  0.50000025000012504606;
+  legendre_expansion = 0.99999700000149993606;
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 }
 
@@ -280,45 +252,45 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
   double expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-5, n );
-  double pdf = 5.0e-1/9.999995e-1;
-  double legendre_expansion = 0.999990000022499982500004375;
+  double pdf = 0.50000025000012504606;
+  double legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-4, n );
-  pdf = 5.0880414414926978e-1;
+  pdf = 0.50880414414926977695;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
-    pb_lin_evaluator->evaluateLegendreExpandedPDF( 1.0, 1.0e-4, n );
-  pdf = 8.707674354460357;
-  legendre_expansion = 1.0;
+    pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-4, n );
+  pdf = 8.707674138782865114;
+  legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
-    pb_lin_evaluator->evaluateLegendreExpandedPDF( 1.0, 5.5e-4, n );
-  pdf = 4.9746058993847299e+01;
-  legendre_expansion = 1.0;
+    pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 5.5e-4, n );
+  pdf = 49.746043582696565011;
+  legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-3, n );
 
-  pdf = 5.968430e-1/9.9999985651050e-1;
+  pdf = 0.59684308564071753;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
-    pb_lin_evaluator->evaluateLegendreExpandedPDF( 1.0, 1.0e-3, n );
+    pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-3, n );
 
-  pdf = 9.078446769559230e1/9.9999985651050e-1;
-  legendre_expansion = 1.0;
+  pdf = 90.784413026610266684;
+  legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
@@ -326,8 +298,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.9999979, 1.0e5, n );
 
-  pdf = 2.237270e5/9.99999722875817e-1;
-  legendre_expansion = 9.999790000992240e-1;
+  pdf =  223727.0620065057301;
+  legendre_expansion = 0.99997900009922502385;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-10 );
 
@@ -336,16 +308,16 @@ n = 2;
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-5, n );
 
-  pdf = 5.0e-1/9.999995e-1;
+  pdf = 0.50000025000012504606;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
-    pb_lin_evaluator->evaluateLegendreExpandedPDF( 1.0, 1.0e-5, n );
+    pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-5, n );
 
-  pdf = 5.00000000397902e-1/9.999995e-1;
-  legendre_expansion = 1.0;
+  pdf = 0.50000025000012504606;
+  legendre_expansion = 0.99999700000149993606;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 }

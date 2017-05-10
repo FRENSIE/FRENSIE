@@ -98,7 +98,6 @@ public:
   using ElectronPhotonRelaxationDataContainer::clearMomentPreservingData;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights;
-  using ElectronPhotonRelaxationDataContainer::setReducedCutoffCrossSectionRatios;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;

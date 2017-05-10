@@ -259,7 +259,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
   double cross_section_ratio =
             elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
   double inelastic = 1.398201198e8;
-  double elastic = 2.48924e9*cross_section_ratio + 1.1063399517933960e+08;
+  double elastic = 2.48924e9*cross_section_ratio + 1.1063294415585944e+08;
 
   double cross_section = atom->getTotalCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
@@ -268,7 +268,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
   cross_section_ratio =
             elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
   inelastic = 6.4103437333324831e+06;
-  elastic = 1.6111881507138280e+07*cross_section_ratio + 1.8916778884883295e+06;
+  elastic = 1.6111881507138280e+07*cross_section_ratio + 1.8915579016892887e+06;
 
 
   cross_section = atom->getTotalCrossSection( energy );
@@ -278,7 +278,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
   cross_section_ratio =
             elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
   inelastic = 2.8454030479e+06;
-  elastic = 8.83051e-2*cross_section_ratio + 2.2037703049980670e-03;
+  elastic = 8.83051e-2*cross_section_ratio + 2.2037703049967248e-03;
   cross_section = atom->getTotalCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
 
@@ -355,28 +355,28 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
   cross_section_ratio =
             elastic_distribution->evaluateCutoffCrossSectionRatio( 1e5 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.83051e-2*cross_section_ratio + 2.2037703049980670e-03,
+                          8.83051e-2*cross_section_ratio + 2.2037703049967248e-03,
                           1e-11 );
 
   cross_section = atom->getReactionCrossSection( 1.0e-3, reaction );
   cross_section_ratio =
             elastic_distribution->evaluateCutoffCrossSectionRatio( 1.0e-3 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.90281E+8*cross_section_ratio + 1.2584382441689414e+08,
+                          2.90281E+8*cross_section_ratio + 1.2584013774057175e+08,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1.99526e-4, reaction );
   cross_section_ratio =
             elastic_distribution->evaluateCutoffCrossSectionRatio( 1.99526e-4 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.1309e8*cross_section_ratio + 5.9223055969764747e+07,
+                          6.1309e8*cross_section_ratio + 5.9201747603359349e+07,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   cross_section_ratio = 
             elastic_distribution->evaluateCutoffCrossSectionRatio( 1e-5 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.48924E+9*cross_section_ratio + 1.1063399517933960e+08,
+                          2.48924E+9*cross_section_ratio + 1.1063294415585944e+08,
                           1e-12 );
 
 

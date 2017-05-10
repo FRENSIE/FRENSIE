@@ -615,13 +615,6 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticWeights(
   return d_moment_preserving_elastic_weights.find( incoming_energy )->second;
 }
 
-// Return the ratio of the reduced cutoff cross section to the full cutoff
-const std::vector<double>&
-ElectronPhotonRelaxationDataContainer::getReducedCutoffCrossSectionRatios() const
-{
-  return d_reduced_cutoff_cross_section_ratios;
-}
-
 // Return the electroionization energy grid for a subshell
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
@@ -1603,7 +1596,6 @@ void ElectronPhotonRelaxationDataContainer::clearMomentPreservingData()
  d_moment_preserving_elastic_weights.clear();
  d_moment_preserving_elastic_cross_section.clear();
  d_moment_preserving_elastic_cross_section_threshold_index = 0;
- d_reduced_cutoff_cross_section_ratios.clear();
 }
 
 // Set the moment preserving elastic discrete angles for an incoming energy
@@ -1648,18 +1640,6 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights(
                     moment_preserving_elastic_weights.end() );
 
   d_moment_preserving_elastic_weights[incoming_energy] = moment_preserving_elastic_weights;
-}
-
-// Set the moment preserving elastic weights for an incoming energy
-void ElectronPhotonRelaxationDataContainer::setReducedCutoffCrossSectionRatios(
-            const std::vector<double>& reduced_cutoff_cross_section_ratios )
-{
-  // Make sure the ratios valid
-  testPrecondition( reduced_cutoff_cross_section_ratios.size() ==
-                    d_cutoff_elastic_cross_section.size() );
-  testPrecondition( ValuesLessThanOne( reduced_cutoff_cross_section_ratios ) );
-
-  d_reduced_cutoff_cross_section_ratios = reduced_cutoff_cross_section_ratios;
 }
 
 // Set the electroionization energy grid for a subshell

@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="11">
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Wed May  3 11:41:23 CDT 2017. It is for testing only!</notes>
+	<notes>This table was generated on Wed May 10 08:22:45 CDT 2017. It is for testing only!</notes>
 	<atomic_number>6</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -37488,10 +37488,6 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_elastic_weights>
-	<reduced_cutoff_cross_section_ratios>
-		<count>0</count>
-		<item_version>0</item_version>
-	</reduced_cutoff_cross_section_ratios>
 	<electroionization_energy_grid>
 		<count>4</count>
 		<item_version>0</item_version>

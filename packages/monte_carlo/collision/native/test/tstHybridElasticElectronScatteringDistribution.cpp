@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 7.0276642358874419e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 7.0279755045708758e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -117,7 +117,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 2.3656981290352608e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 2.3657400354083533e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -135,7 +135,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 4.9492001257783011e-08, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 4.9492001257785485e-08, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -187,7 +187,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 3.2118316210258651, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 3.2119738791882551, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -205,7 +205,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.5612124988582654, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 1.5612401544380923, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -223,7 +223,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 5.5792709911232372e-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 5.5792709911235165e-03, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -275,7 +275,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 9.2648431100233486e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 9.2652534676358189e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -293,7 +293,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 2.4462758815461472e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 2.4463192152870505e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -311,7 +311,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 2.8288972115914611e-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 2.8288972115916026e-04, 1e-12 );
 
   // Test 2: at 1st discrete angle
   scattering_angle_cosine = 0.9001;
@@ -344,10 +344,10 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 5.1896923114574292e-02; // sample mu = 0.1 (cutoff)
-  fake_stream[1] = 2.4462758815461472e-01; // sample mu = 0.9 (cutoff)
-  fake_stream[2] = 3.5159995563314e-01; // sample mu = 9.237831271699E-01 (discrete)
-  fake_stream[3] = 3.5159995563316e-01; // sample mu = 9.817731638374E-01 (discrete)
+  fake_stream[0] = 5.1897842425367033e-02; // sample mu = 0.1 (cutoff)
+  fake_stream[1] = 2.4463192152870505e-01; // sample mu = 0.9 (cutoff)
+  fake_stream[2] = 3.5160367533473e-01; // sample mu = 9.237831271699E-01 (discrete)
+  fake_stream[3] = 3.5160367533474e-01; // sample mu = 9.817731638374E-01 (discrete)
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -404,19 +404,19 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 
   fake_stream.resize( 8 );
   // Sample mu = 0.1 (cutoff)
-  fake_stream[0] = 3.3660937361881488e-01;
+  fake_stream[0] = 3.3662428269145145e-01;
   // Sample at sampling ratio (mu = 0.9)
-  fake_stream[1] = 9.2648431100233486e-01;
+  fake_stream[1] = 9.2652534676358189e-01;
   // Sample right above sampling ratio (mu = 9.196441148677001465e-01)
-  fake_stream[2] = 9.2648431100234e-01;
+  fake_stream[2] = 9.2652534676359e-01;
   // Sample right below discrete weight (mu = 9.196441148677001465e-01)
-  fake_stream[3] = 9.3689526482533e-01;
+  fake_stream[3] = 9.3693048929077e-01;
   // Sample right above discrete weight (mu = 9.486391332014612043e-01)
-  fake_stream[4] = 9.3689526482535e-01;
+  fake_stream[4] = 9.3693048929078e-01;
   // Sample right below discrete weight (mu = 9.486391332014612043e-01)
-  fake_stream[5] = 9.5761478280987e-01;
+  fake_stream[5] = 9.57638441836638e-01;
   // Sample right above discrete weight (mu = 9.731340306183677846e-01)
-  fake_stream[6] = 9.5761478280989e-01;
+  fake_stream[6] = 9.57638441836639e-01;
   // Sample at max (mu = 9.731340306183677846e-01)
   fake_stream[7] = 1.0-1e-12;
 
@@ -500,7 +500,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 2.4462758815461472e-01;
+  fake_stream[0] = 2.4463192152870505e-01;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -527,7 +527,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 2.4462758815461472e-01; // sample mu = 0.9
+  fake_stream[0] = 2.4463192152870505e-01; // sample mu = 0.9
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -557,7 +557,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 2.4462758815461472e-01; // sample mu = 0.9
+  fake_stream[0] = 2.4463192152870505e-01; // sample mu = 0.9
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -586,7 +586,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 2.4462758815461472e-01; // sample mu = 0.9
+  fake_stream[0] = 2.4463192152870505e-01; // sample mu = 0.9
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -637,7 +637,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 5.4659009014222104e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 5.4661323716681975e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -655,7 +655,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 2.3656981290352608e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 2.3657400354083533e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -673,7 +673,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 4.9492001257783011e-08, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 4.9492001257785485e-08, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -725,7 +725,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.0054210839437512, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 1.0054636615663277, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -743,7 +743,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.5612124988582654, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 1.5612401544380923, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -761,7 +761,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 5.5792709911232372e-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 5.5792709911235165e-03, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -813,7 +813,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 9.2971059440047854e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 9.2974996583144009e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -831,7 +831,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 2.4462758815461472e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 2.4463192152870505e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -849,7 +849,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 2.8288972115914611e-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 2.8288972115916026e-04, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = 0.9001;
@@ -882,10 +882,10 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 5.1896923114574292e-02; // sample mu = 0.1 (cutoff)
-  fake_stream[1] = 2.4462758815461472e-01; // sample mu = 0.9 (cutoff)
-  fake_stream[2] = 3.5159995563315e-01; // sample mu = 9.237831271699E-01 (discrete)
-  fake_stream[3] = 3.5159995563316e-01; // sample mu = 9.817731638374E-01 (discrete)
+  fake_stream[0] = 5.1897842425367033e-02; // sample mu = 0.1 (cutoff)
+  fake_stream[1] = 2.4463192152870505e-01; // sample mu = 0.9 (cutoff)
+  fake_stream[2] = 3.5160367533473e-01; // sample mu = 9.237831271699E-01 (discrete)
+  fake_stream[3] = 3.5160367533474e-01; // sample mu = 9.817731638374E-01 (discrete)
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -944,7 +944,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 2.4462758815461472e-01;
+  fake_stream[0] = 2.4463192152870505e-01;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -971,7 +971,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 2.4462758815461472e-01; // sample mu = 0.9
+  fake_stream[0] = 2.4463192152870505e-01; // sample mu = 0.9
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -1001,7 +1001,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 2.4462758815461472e-01; // sample mu = 0.9
+  fake_stream[0] = 2.4463192152870505e-01; // sample mu = 0.9
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -1029,7 +1029,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 2.4462758815461472e-01; // sample mu = 0.9
+  fake_stream[0] = 2.4463192152870505e-01; // sample mu = 0.9
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 

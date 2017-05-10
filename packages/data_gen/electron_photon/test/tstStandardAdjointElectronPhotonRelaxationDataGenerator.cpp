@@ -1147,7 +1147,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
      h_data_container.getForwardInelasticElectronCrossSection();
 
    TEST_EQUALITY_CONST( cross_section.front(), 2.97832e+01 );
-   TEST_EQUALITY_CONST( cross_section.back(), 1.64663279900628550e+05 );
+   TEST_EQUALITY_CONST( cross_section.back(), 1.64670355529995461e+05 );
    TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
 
 
@@ -1235,8 +1235,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    cross_section =
      h_data_container.getAdjointElectroionizationCrossSection( 1u );
 
-  TEST_EQUALITY_CONST( cross_section.front(), 1.10876743806283875e+11 );
-  TEST_EQUALITY_CONST( cross_section.back(), 1.02699306316895891e+05 );
+  TEST_EQUALITY_CONST( cross_section.front(), 1.10054522522014236e+11 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.02708078940733874e+05 );
   TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
 
   TEST_ASSERT( !h_data_container.seperateAdjointElectroionizationEnergyGrid() );
@@ -1263,15 +1263,15 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    std::vector<double> electroionization_recoil_pdf =
      h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 1e-5 );
 
-   TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.05620376702470685e+03 );
-   TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 4.95862604552322686e-02 );
+   TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(),1.06375815745516229e+03 );
+   TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 4.99609885137044032e-02 );
    TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 20 );
 
    electroionization_recoil_pdf =
      h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 20.0 );
 
-   TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.30914497365056042e+05 );
-   TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 4.08205599544531433e+04 );
+   TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.30914497362453796e+05 );
+   TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 4.08205599556502857e+04 );
    TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 2 );
 
   h_data_container.exportData( "test_h_aepr.xml",

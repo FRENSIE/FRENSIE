@@ -1321,22 +1321,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the reduced cutoff cross section ratios can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setReducedCutoffCrossSectionRatios )
-{
-  std::vector<double> ratios( 3 );
-  ratios[0] = 0.1;
-  ratios[1] = 0.2;
-  ratios[2] = 0.7;
-
-  epr_data_container.setReducedCutoffCrossSectionRatios( ratios );
-
-  TEST_COMPARE_ARRAYS( epr_data_container.getReducedCutoffCrossSectionRatios(),
-                       ratios );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the electroionization electron cross section can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectroionizationCrossSection )
@@ -1572,8 +1556,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
   TEST_EQUALITY_CONST(
-    epr_data_container_copy.getReducedCutoffCrossSectionRatios().size(), 3 );
-  TEST_EQUALITY_CONST(
     epr_data_container_copy.getElectroionizationEnergyGrid(1u).size(),
     2 );
   TEST_EQUALITY_CONST(
@@ -1798,8 +1780,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
   TEST_EQUALITY_CONST(
-    epr_data_container_copy.getReducedCutoffCrossSectionRatios().size(), 3 );
-  TEST_EQUALITY_CONST(
     epr_data_container_copy.getElectroionizationEnergyGrid(1u).size(),
     2 );
   TEST_EQUALITY_CONST(
@@ -2020,8 +2000,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
-  TEST_EQUALITY_CONST(
-    epr_data_container_copy.getReducedCutoffCrossSectionRatios().size(), 3 );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getElectroionizationEnergyGrid(1u).size(),
     2 );
