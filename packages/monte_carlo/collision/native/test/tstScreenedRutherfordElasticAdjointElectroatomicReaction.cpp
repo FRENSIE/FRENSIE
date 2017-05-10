@@ -50,7 +50,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getRea
 TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getThresholdEnergy )
 {
   TEST_EQUALITY_CONST( rutherford_elastic_reaction->getThresholdEnergy(),
-                       2.73447175839843681e-01 );
+                       3.12509629531249944e-01 );
 }
 
 //---------------------------------------------------------------------------//

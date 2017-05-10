@@ -126,6 +126,10 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
+  if ( incoming_energy > d_elastic_cutoff_distribution->getUpperBoundOfPrimaryIndepVar() ||
+       incoming_energy < d_elastic_cutoff_distribution->getLowerBoundOfPrimaryIndepVar() )
+    return 0.0;
+
   double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
   double cutoff_pdf = this->evaluateAtCutoff( incoming_energy );
   double cutoff_cdf = ThisType::evaluateCDFAtCutoff( eta, cutoff_pdf );
@@ -199,6 +203,10 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  if ( incoming_energy > d_elastic_cutoff_distribution->getUpperBoundOfPrimaryIndepVar() ||
+       incoming_energy < d_elastic_cutoff_distribution->getLowerBoundOfPrimaryIndepVar() )
+    return 0.0;
 
   double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
   double cutoff_pdf = this->evaluatePDFAtCutoff( incoming_energy );
@@ -297,6 +305,10 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  if ( incoming_energy > d_elastic_cutoff_distribution->getUpperBoundOfPrimaryIndepVar() ||
+       incoming_energy < d_elastic_cutoff_distribution->getLowerBoundOfPrimaryIndepVar() )
+    return 0.0;
 
   double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
   double cutoff_pdf = this->evaluatePDFAtCutoff( incoming_energy );

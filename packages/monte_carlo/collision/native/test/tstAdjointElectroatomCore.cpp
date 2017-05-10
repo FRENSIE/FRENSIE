@@ -59,10 +59,10 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
   TEST_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.0373590927063245326E+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0367499733585879e+07, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.64663279900629E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6467035552999546e+05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -84,21 +84,21 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                           b_reaction.getCrossSection( 1e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.4004979588000410e+01 + 6.1222996978575356e+07,
+                          5.9530537686269305e+01 + 6.1222996978575356e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.4938553344074585e+01 + 1.0537482649407225e+07,
+                          2.3378907585855153e+01 + 1.0537482649407225e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.4390795879250147 + 8.1829299853764838e+04,
+                          1.3930085615214982 + 8.1829299853764838e+04,
                           1e-12 );
 }
 
@@ -127,7 +127,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
   TEST_EQUALITY_CONST( grid_index, 48 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  TEST_EQUALITY_CONST( grid_index, 161 );
+  TEST_EQUALITY_CONST( grid_index, 158 );
 }
 
 //---------------------------------------------------------------------------//

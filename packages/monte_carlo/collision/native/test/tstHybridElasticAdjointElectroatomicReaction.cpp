@@ -78,23 +78,22 @@ TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
                    getCrossSection )
 {
   // Cross section ratio for cutoff angle
-  double ratio = 9.5000047500023754e-01;
+  double ratio = 9.500004750002375431e-01;
   double cross_section = hybrid_elastic_reaction->getCrossSection( 1e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
                           2.74896E+08*ratio + 1.221760610333641618e+07,
                           1e-12 );
 
-  ratio = 1.0895339416868782e-01;
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.975961316001743777e+06,
+                          1.975984692330761347e+06,
                           1e-12 );
 
-  ratio = 8.0232527373229803e-06;
+  ratio = 8.013333455269003181e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          3.0472762372903748e+02*ratio + 2.083291935311420762,
+                          3.047276237290374752e+02*ratio + 2.128471955127146487,
                           1e-12 );
 }
 

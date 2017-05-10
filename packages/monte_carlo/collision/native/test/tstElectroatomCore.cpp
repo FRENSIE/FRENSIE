@@ -54,27 +54,14 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getTotalReaction_ace )
   const MonteCarlo::ElectroatomicReaction& total_reaction =
     ace_electroatom_core->getTotalReaction();
 
-  double cross_section =
-    total_reaction.getCrossSection( 2.000000000000E-03 );
+  double cross_section = total_reaction.getCrossSection( 2e-3 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.258661418255E+03 + 1.96517E+08, 1e-12 );
 
+  cross_section = total_reaction.getCrossSection( 4e-4 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.914234996439E+03 + 6.22682E+08, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          9.258661418255E+03 + 1.965170000000E+08,
-                          1e-12 );
-
-  cross_section =
-    total_reaction.getCrossSection( 4.000000000000E-04 );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          8.914234996439E+03 + 6.226820000000E+08,
-                          1e-12 );
-
-  cross_section =
-    total_reaction.getCrossSection( 9.000000000000E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          7.249970966838E+03 + 1.160420000000E+09,
-                          1e-12 );
+  cross_section = total_reaction.getCrossSection( 9e-5 );
+  TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03 + 1.16042E+09, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -84,26 +71,14 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getTotalReaction_native )
   const MonteCarlo::ElectroatomicReaction& total_reaction =
     native_electroatom_core->getTotalReaction();
 
-  double cross_section =
-    total_reaction.getCrossSection( 2.000000000000E-03 );
+  double cross_section = total_reaction.getCrossSection( 2e-3 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.269564087122480E+03 + 1.96517E+08, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          9.269564087122480E+03 + 1.965170000000E+08,
-                          1e-12 );
+  cross_section = total_reaction.getCrossSection( 4e-4 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.908504720336720E+03 + 6.22682E+08, 1e-12 );
 
-  cross_section =
-    total_reaction.getCrossSection( 4.000000000000E-04 );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          8.908504720336720E+03 + 6.226820000000E+08,
-                          1e-12 );
-
-  cross_section =
-    total_reaction.getCrossSection( 9.000000000000E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          7.247161196055280E+03 + 1.160420000000E+09,
-                          1e-12 );
+  cross_section = total_reaction.getCrossSection( 9e-5 );
+  TEST_FLOATING_EQUALITY( cross_section, 7.247161196055280E+03 + 1.16042E+09, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -113,21 +88,17 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getTotalAbsorptionReaction_ace )
   const MonteCarlo::ElectroatomicReaction& absorption_reaction =
     ace_electroatom_core->getTotalAbsorptionReaction();
 
-  double cross_section = absorption_reaction.getCrossSection( 1.000000000E-02 );
+  double cross_section = absorption_reaction.getCrossSection( 1.e-2 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
+  cross_section = absorption_reaction.getCrossSection( 2e-3 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = absorption_reaction.getCrossSection( 2.000000000000E-03 );
+  cross_section = absorption_reaction.getCrossSection( 4e-4 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-
-  cross_section = absorption_reaction.getCrossSection( 4.000000000000E-04 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-
-  cross_section = absorption_reaction.getCrossSection( 9.000000000000E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
+  cross_section = absorption_reaction.getCrossSection( 9e-5 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -137,21 +108,17 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getTotalAbsorptionReaction_native )
   const MonteCarlo::ElectroatomicReaction& absorption_reaction =
     native_electroatom_core->getTotalAbsorptionReaction();
 
-  double cross_section = absorption_reaction.getCrossSection( 1.000000000E-02 );
+  double cross_section = absorption_reaction.getCrossSection( 1.e-2 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
+  cross_section = absorption_reaction.getCrossSection( 2e-3 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = absorption_reaction.getCrossSection( 2.000000000000E-03 );
+  cross_section = absorption_reaction.getCrossSection( 4e-4 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-
-  cross_section = absorption_reaction.getCrossSection( 4.000000000000E-04 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-
-  cross_section = absorption_reaction.getCrossSection( 9.000000000000E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
+  cross_section = absorption_reaction.getCrossSection( 9e-5 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -170,25 +137,25 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getScatteringReactions_ace )
     *(scattering_reactions.find(MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION)->second);
 
   double cross_section =
-    ae_reaction.getCrossSection( 2.000000000000E-03 ) +
-     b_reaction.getCrossSection( 2.000000000000E-03 );
+    ae_reaction.getCrossSection( 2e-3 ) +
+     b_reaction.getCrossSection( 2e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          9.258661418255E+03 + 1.965170000000E+08,
+                          9.258661418255E+03 + 1.96517E+08,
                           1e-12 );
 
-  cross_section = ae_reaction.getCrossSection( 4.000000000000E-04 ) +
-                   b_reaction.getCrossSection( 4.000000000000E-04 );
+  cross_section = ae_reaction.getCrossSection( 4e-4 ) +
+                   b_reaction.getCrossSection( 4e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.914234996439E+03 + 6.226820000000E+08,
+                          8.914234996439E+03 + 6.22682E+08,
                           1e-12 );
 
-  cross_section = ae_reaction.getCrossSection( 9.000000000000E-05 ) +
-                   b_reaction.getCrossSection( 9.000000000000E-05 );
+  cross_section = ae_reaction.getCrossSection( 9e-5 ) +
+                   b_reaction.getCrossSection( 9e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          7.249970966838E+03 + 1.160420000000E+09,
+                          7.249970966838E+03 + 1.16042E+09,
                           1e-12 );
 }
 
@@ -208,25 +175,25 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getScatteringReactions_native )
     *(scattering_reactions.find(MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION)->second);
 
   double cross_section =
-    ae_reaction.getCrossSection( 2.000000000000E-03 ) +
-     b_reaction.getCrossSection( 2.000000000000E-03 );
+    ae_reaction.getCrossSection( 2e-3 ) +
+     b_reaction.getCrossSection( 2e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          9.269564087122480E+03 + 1.965170000000E+08,
+                          9.269564087122480E+03 + 1.96517E+08,
                           1e-12 );
 
-  cross_section = ae_reaction.getCrossSection( 4.000000000000E-04 ) +
-                   b_reaction.getCrossSection( 4.000000000000E-04 );
+  cross_section = ae_reaction.getCrossSection( 4e-4 ) +
+                   b_reaction.getCrossSection( 4e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.908504720336720E+03 + 6.226820000000E+08,
+                          8.908504720336720E+03 + 6.22682E+08,
                           1e-12 );
 
-  cross_section = ae_reaction.getCrossSection( 9.000000000000E-05 ) +
-                   b_reaction.getCrossSection( 9.000000000000E-05 );
+  cross_section = ae_reaction.getCrossSection( 9e-5 ) +
+                   b_reaction.getCrossSection( 9e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          7.247161196055280E+03 + 1.160420000000E+09,
+                          7.247161196055280E+03 + 1.16042E+09,
                           1e-12 );
 }
 

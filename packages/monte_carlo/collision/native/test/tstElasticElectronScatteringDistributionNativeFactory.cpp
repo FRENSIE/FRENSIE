@@ -1634,11 +1634,11 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Set fake random number stream
   std::vector<double> fake_stream( 6 );
-  fake_stream[0] = 1.0239714312254854e-02; // sample mu = 0.1 (cutoff)
-  fake_stream[1] = 1.5586512928443413e-01; // sample mu = 0.9 (cutoff)
-  fake_stream[2] = 1.55865129284435e-01; // sample mu = 9.23986089002024E-01 (discrete)
-  fake_stream[3] = 2.9299931759660769e-01; // sample mu = 9.23986089002024E-01 (discrete)
-  fake_stream[4] = 2.92999317596608e-01; // sample mu = 9.78892622475528E-01 (discrete)
+  fake_stream[0] = 1.0239714515463915e-02; // sample mu = 0.1 (cutoff)
+  fake_stream[1] = 1.5586513237760702e-01; // sample mu = 0.9 (cutoff)
+  fake_stream[2] = 1.55865132377608e-01; // sample mu = 9.23986089002024E-01 (discrete)
+  fake_stream[3] = 2.92999320187278e-01; // sample mu = 9.23986089002024E-01 (discrete)
+  fake_stream[4] = 2.92999320187279e-01; // sample mu = 9.78892622475528E-01 (discrete)
   fake_stream[5] = 1.0-1e-15; // sample mu = 9.78892622475528E-01 (discrete)
 
 

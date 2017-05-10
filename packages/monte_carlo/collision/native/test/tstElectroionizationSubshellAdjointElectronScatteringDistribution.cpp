@@ -54,15 +54,15 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   pdf = native_distribution->evaluate( 1e-5, 2.3711E-5 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.0561968360367810e+03, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.0637606862955749e+03, 1e-12 );
 
   // Check between two bins
   pdf = native_distribution->evaluate( 1.1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 8.0664920862213038e-02, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 7.9896299596442094e-02, 1e-6 );
 
   // Check the last bin
   pdf = native_distribution->evaluate( 20.0, 20.00002722 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.0821467075973531e+04, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.0821580485910468e+04, 1e-12 );
 
   // Check above the last bin
   pdf = native_distribution->evaluate( 20.01, 22.1 );
@@ -82,15 +82,15 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   pdf = native_distribution->evaluatePDF( 1e-5, 2.3711E-5 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.0336865217485906e+03, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.0419516755800244e+03, 1e-12 );
 
   // Check between two bins
   pdf = native_distribution->evaluatePDF( 1.1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 8.0343972021858528e-02, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 7.9599841953255743e-02, 1e-6 );
 
   // Check the last bin
   pdf = native_distribution->evaluatePDF( 20.0, 20.00002722 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.5191227977700284e+04, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.5191434595055893e+04, 1e-12 );
 
   // Check above the last bin
   pdf = native_distribution->evaluatePDF( 20.01, 22.1 );
@@ -110,11 +110,11 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   cdf = native_distribution->evaluateCDF( 1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.2674806701795329e-02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.2311383784294807e-02, 1e-12 );
 
   // Check between two bins
   cdf = native_distribution->evaluateCDF( 1.1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9307212481753476e-02, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.8937161934677331e-02, 1e-6 );
 
   // Check the last bin
   cdf = native_distribution->evaluateCDF( 20.0, 20.00002722 );
@@ -144,8 +144,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                scattering_angle_cosine );
 
   // Test scattered electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 6.6208259921914274e-03, 1e-10 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 2.9367705325939764e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 6.5786100190860231e-03, 1e-10 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 2.9856292794486750e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -171,8 +171,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   TEST_EQUALITY_CONST( trials, 1.0 );
 
   // Test scattered electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 6.6208259921914274e-03, 1e-10 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 2.9367705325939764e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 6.5786100190860231e-03, 1e-10 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 2.9856292794486750e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -199,8 +199,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                                shell_of_interaction );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 6.6208259921914274e-03, 1e-10 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 2.9367705325939764e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 6.5786100190860231e-03, 1e-10 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 2.9856292794486750e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
