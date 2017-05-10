@@ -70,6 +70,10 @@ double NuclearReaction::getQValue() const
   return d_q_value;
 }
 
+// Set the S(alpha,beta) cutoff energy (if available)
+void NuclearReaction::setSABCutoffEnergy( double sab_cutoff_energy )
+{ /* ... */ }
+
 // Return the cross section value at a given energy
 double NuclearReaction::getCrossSection( const double energy ) const
 {
@@ -78,6 +82,8 @@ double NuclearReaction::getCrossSection( const double energy ) const
                           d_cross_section,
                           d_threshold_energy_index );
 }
+
+
 
 } // end MonteCarlo namespace
 

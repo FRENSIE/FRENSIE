@@ -53,8 +53,11 @@ public:
   //! Return the threshold energy
   double getThresholdEnergy() const;
 
+  //! Set the S(alpha,beta) cutoff energy if applicable
+  virtual void setSABCutoffEnergy( double sab_cutoff_energy );
+
   //! Return the cross section at a given energy
-  double getCrossSection( const double energy ) const;
+  virtual double getCrossSection( const double energy ) const;
   
   //! Return the number of neutrons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedNeutrons( const double energy ) const = 0;
@@ -74,6 +77,18 @@ protected:
   unsigned sampleNumberOfEmittedNeutrons( 
 				     const double average_multiplicity ) const;
   
+  // The reaction threshold energy grid index
+  unsigned d_threshold_energy_index;
+
+  // The S(a,b) cutoff energy
+  double d_sab_cutoff_energy;
+
+  // The incoming energy grid
+  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
+
+  // The cross section values evaluated on the incoming energy grid
+  Teuchos::ArrayRCP<const double> d_cross_section;
+
 private:
 
   // The nuclear reaction type
@@ -84,15 +99,6 @@ private:
 
   // The Q value for the reaction
   double d_q_value;
-
-  // The reaction threshold energy grid index
-  unsigned d_threshold_energy_index;
-
-  // The incoming energy grid
-  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
-
-  // The cross section values evaluated on the incoming energy grid
-  Teuchos::ArrayRCP<const double> d_cross_section;
 };
 
 // Return the temperature (in MeV) at which the reaction occurs

@@ -151,8 +151,7 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
     energy_prime = outgoing_energy;
     incoming_index = d_energy_distribution.size() - 1; 
   }
-
-  std::cout << outgoing_energy << std::endl;
+  
   return outgoing_energy;
   
 }

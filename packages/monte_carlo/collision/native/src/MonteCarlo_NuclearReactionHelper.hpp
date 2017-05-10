@@ -28,6 +28,9 @@ double getCrossSection(
               const Teuchos::ArrayRCP<const double>& cross_section,
               const unsigned threshold_energy_index );
 
+// Overloaded getCrossSection for S(a,b) 
+
+
 // Return the cross section at a given energy
 inline double getCrossSection( 
               const double energy,

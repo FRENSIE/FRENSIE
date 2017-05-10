@@ -36,7 +36,8 @@ public:
 	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
-		   scattering_distribution );
+		   scattering_distribution,
+       const double sab_cutoff_energy = 0.0 );
 
   //! Destructor
   ~NeutronScatteringReaction()
@@ -48,10 +49,18 @@ public:
   //! Simulate the reaction
   void react( NeutronState& neutron, ParticleBank& bank ) const;
 
+  //! Return the cross section at a given energy
+  double getCrossSection( const double energy ) const;
+
+  //! Set the S(a,b) cutoff energy
+  void setSABCutoffEnergy( double sab_cutoff_energy );
+
 private:
 
   // The neutron multiplicity
   unsigned d_multiplicity;
+
+  double d_sab_cutoff_energy;
 
   // The scattering distribution
   Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 

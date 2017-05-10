@@ -11,6 +11,7 @@
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
+#include "MonteCarlo_NuclearReactionHelper.hpp"
 
 namespace MonteCarlo{
 
@@ -21,10 +22,11 @@ NeutronScatteringReaction::NeutronScatteringReaction(
 		   const double q_value,
 		   const unsigned multiplicity,
 		   const unsigned threshold_energy_index,
-	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
-		   scattering_distribution )
+		   scattering_distribution,
+       double sab_cutoff_energy )
   : NuclearReaction( reaction_type, 
 		     temperature, 
 		     q_value,
@@ -32,7 +34,8 @@ NeutronScatteringReaction::NeutronScatteringReaction(
 		     incoming_energy_grid,
 		     cross_section ),
     d_multiplicity( multiplicity ),
-    d_scattering_distribution( scattering_distribution )
+    d_scattering_distribution( scattering_distribution ),
+    d_sab_cutoff_energy( sab_cutoff_energy )
 {
   // Make sure the multiplicity is valid
   testPrecondition( multiplicity > 0 );
@@ -45,6 +48,12 @@ unsigned NeutronScatteringReaction::getNumberOfEmittedNeutrons(
 						    const double energy ) const
 {
   return d_multiplicity;
+}
+
+// Set the S(alpha,beta) cutoff energy
+void NeutronScatteringReaction::setSABCutoffEnergy( double sab_cutoff_energy )
+{
+  d_sab_cutoff_energy = sab_cutoff_energy;
 }
 
 // Simulate the reaction
@@ -73,6 +82,22 @@ void NeutronScatteringReaction::react( NeutronState& neutron,
   // Scatter the "original" neutron
   d_scattering_distribution->scatterParticle( neutron,
 					      this->getTemperature() );
+}
+
+// Return the cross section value at a given energy
+double NeutronScatteringReaction::getCrossSection( const double energy ) const
+{
+  if( energy <= d_sab_cutoff_energy )
+  {
+    return 0.0;
+  }
+  else
+  {
+    return MonteCarlo::getCrossSection( energy,
+                            d_incoming_energy_grid,
+                            d_cross_section,
+                            d_threshold_energy_index );
+  }
 }
 
 } // end MonteCarlo namespace

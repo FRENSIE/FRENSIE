@@ -10,6 +10,7 @@
 #include "MonteCarlo_SAlphaBetaNuclearReactionACEFactory.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
+#include "MonteCarlo_NeutronScatteringReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -134,7 +135,8 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
     
     Teuchos::Array<double> sab_energy_grid_array;
     Teuchos::ArrayRCP<double> energy_grid;
-      
+
+    /*  
     if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION ||
         reaction_type == MonteCarlo::SALPHABETA_N__N_ELASTIC_REACTION )
     {
@@ -188,6 +190,44 @@ void SAlphaBetaNuclearReactionACEFactory::initializeSAlphaBetaReactions(
     {
       THROW_EXCEPTION( std::runtime_error, "Error: reaction type " << 
         reaction_type << " is not an acceptable S(a,b) reaction type." );
+    }
+    */
+
+    // Add the S(alpha,beta) cutoff energy to the elastic scattering reaction:
+    if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION ||
+        reaction_type == MonteCarlo::SALPHABETA_N__N_ELASTIC_REACTION )
+    {
+      Teuchos::ArrayView<const double> sab_energy_grid;
+      Teuchos::Array<double> sab_energy_grid_array;
+      
+      NuclearReactionType parent_reaction_type;
+
+      if( reaction_type == MonteCarlo::SALPHABETA_N__N_INELASTIC_REACTION )
+      {
+        parent_reaction_type = MonteCarlo::N__N_ELASTIC_REACTION;
+        sab_energy_grid = sab_nuclide_data.extractInelasticEnergyGrid();
+      }
+      else
+      {
+        parent_reaction_type = MonteCarlo::N__N_ELASTIC_REACTION;
+        sab_energy_grid = sab_nuclide_data.extractElasticEnergyGrid();
+      }
+
+      double sab_cutoff_energy = sab_energy_grid.back();
+
+      std::cout << "S(alpha,beta) Cutoff Energy in Factory: " << sab_cutoff_energy << std::endl;
+
+      if( d_scattering_reactions.find(parent_reaction_type) != d_scattering_reactions.end() )
+      {
+        d_scattering_reactions[parent_reaction_type]->setSABCutoffEnergy( sab_cutoff_energy );
+      }
+
+      Teuchos::Array<double> internal_grid( sab_energy_grid );
+
+      internal_grid.push_back( sab_cutoff_energy + 1.0e-9 );
+      reaction_cross_section_arrays[reaction_type].push_back( 0.0 );
+
+      energy_grid.deepCopy( internal_grid );
     }
     
     // Construct the reactions

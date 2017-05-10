@@ -73,9 +73,6 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
   
       Teuchos::ArrayView<const double> bin_boundaries = 
 	      and_block_array( distribution_index, 33 );
-	  
-	  //std::cout << distribution_index << std::endl;
-	  //std::cout << bin_boundaries << std::endl;
 
       angular_distribution[i].second.reset( 
 	 new Utility::EquiprobableBinDistribution( bin_boundaries ) );
