@@ -14,42 +14,42 @@ SET_PROPERTY(TEST ParticleState_test PROPERTY LABELS monte_carlo_core)
 
 ADD_EXECUTABLE(tstPhotonState
   tstPhotonState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPhotonState monte_carlo_core)
 ADD_TEST(PhotonState_test tstPhotonState)
 SET_PROPERTY(TEST PhotonState_test PROPERTY LABELS monte_carlo_core photon)
 
 ADD_EXECUTABLE(tstAdjointPhotonState
   tstAdjointPhotonState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointPhotonState monte_carlo_core)
 ADD_TEST(AdjointPhotonState_test tstAdjointPhotonState)
 SET_PROPERTY(TEST AdjointPhotonState_test PROPERTY LABELS monte_carlo_core photon adjoint)
 
 ADD_EXECUTABLE(tstAdjointPhotonProbeState
   tstAdjointPhotonProbeState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointPhotonProbeState monte_carlo_core)
 ADD_TEST(AdjointPhotonProbeState_test tstAdjointPhotonProbeState)
 SET_PROPERTY(TEST AdjointPhotonProbeState_test PROPERTY LABELS monte_carlo_core photon adjoint)
 
 ADD_EXECUTABLE(tstNeutronState
   tstNeutronState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstNeutronState monte_carlo_core)
 ADD_TEST(NeutronState_test tstNeutronState)
 SET_PROPERTY(TEST NeutronState_test PROPERTY LABELS monte_carlo_core neutron)
 
 ADD_EXECUTABLE(tstElectronState
   tstElectronState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectronState monte_carlo_core)
 ADD_TEST(ElectronState_test tstElectronState)
 SET_PROPERTY(TEST ElectronState_test PROPERTY LABELS monte_carlo_core electron)
 
 ADD_EXECUTABLE(tstAdjointElectronState
   tstAdjointElectronState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointElectronState monte_carlo_core)
 ADD_TEST(AdjointElectronState_test tstAdjointElectronState)
 
@@ -57,14 +57,14 @@ SET_PROPERTY(TEST AdjointElectronState_test PROPERTY LABELS monte_carlo_core ele
 
 ADD_EXECUTABLE(tstAdjointElectronProbeState
   tstAdjointElectronProbeState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointElectronProbeState monte_carlo_core)
 ADD_TEST(AdjointElectronProbeState_test tstAdjointElectronProbeState)
 SET_PROPERTY(TEST AdjointElectronProbeState_test PROPERTY LABELS monte_carlo_core electron adjoint)
 
 ADD_EXECUTABLE(tstParticleBank
   tstParticleBank.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)
 ADD_TEST(ParticleBank_test tstParticleBank)
 SET_PROPERTY(TEST ParticleBank_test PROPERTY LABELS monte_carlo_core)
