@@ -41,12 +41,6 @@ public:
   //! Typedef for history number type
   typedef unsigned long long historyNumberType;
 
-  //! Typedef for position type
-  typedef double positionType;
-
-  //! Typedef for direction type
-  typedef double directionType;
-
   //! Typedef for energy type
   typedef double energyType;
 
@@ -234,22 +228,25 @@ public:
   void setAsGone();
 
   //! Embed the particle in the desired model
-  void embed( const Geometry::Model& model );
+  void embedInModel( const std::shared_ptr<const Geometry::Model>& model );
 
   //! Embed the particle in the desired model
-  void embed( const Geometry::Model& model,
-              const Geometry::ModuleTraits::InternalCellHandle cell );
+  void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
+                     const Geometry::ModuleTraits::InternalCellHandle cell );
 
   //! Embed the particle in the desired model at the desired position
-  void embed( const Geometry::Model& model,
-              const double position[3],
-              const double direction[3] );
+  void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
+                     const double position[3],
+                     const double direction[3] );
 
   //! Embed the particle in the desired model at the desired position
-  void embed( const Geometry::Model& model,
-              const double position[3],
-              const double direction[3]
-              const Geometry::ModuleTraits::InternalCellHandle cell );
+  void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
+                     const double position[3],
+                     const double direction[3],
+                     const Geometry::ModuleTraits::InternalCellHandle cell );
+
+  //! Extract the particle from the model
+  void extractFromModel();
 
   //! Get the navigator used by the particle
   Geometry::Navigator& navigator();
@@ -329,6 +326,12 @@ private:
   // Finished history boolean
   bool d_gone;
 
+  // The model that the particle is embedded in
+  // Note: This must be stored to avoid persistence issues that could arrise
+  //       from the model being deleted while the particle is still embedded
+  //       in it.
+  std::shared_ptr<const Geometry::Model> d_model;
+  
   // The navigator used by the particle
   std::unique_ptr<Geometry::Navigator> d_navigator;
 };
@@ -358,13 +361,13 @@ inline ParticleState::energyType ParticleState::getEnergy() const
 }
 
 // the navigator used by the particle
-Geometry::Navigator& ParticleState::navigator()
+inline Geometry::Navigator& ParticleState::navigator()
 {
   return *d_navigator;
 }
 
 // Get the navigator used by the particle
-const Geometry::Navigator& ParticleState::navigator() const
+inline const Geometry::Navigator& ParticleState::navigator() const
 {
   return *d_navigator;
 }

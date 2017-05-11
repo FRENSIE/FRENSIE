@@ -51,7 +51,10 @@ void ParticleState::save( Archive& ar, const unsigned version ) const
   ar & boost::serialization::make_nvp( "d_x_direction", d_navigator->getInternalRayDirection()[0] );
   ar & boost::serialization::make_nvp( "d_y_direction", d_navigator->getInternalRayDirection()[1] );
   ar & boost::serialization::make_nvp( "d_z_direction", d_navigator->getInternalRayDirection()[2] );
-  ar & boost::serialization::make_nvp( "d_cell", d_navigator->getCellContainingInternalRay() );
+
+  // We will not use the cell when we set the internal ray because the
+  // particle may not be embeded in the same geometry as it was when it
+  // was archived.
 }
 
 // Load the data from an archive (the ray object is not archived)

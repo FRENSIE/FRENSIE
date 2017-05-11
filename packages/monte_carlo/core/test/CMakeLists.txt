@@ -7,7 +7,7 @@ SET_PROPERTY(TEST ParticleType_test PROPERTY LABELS monte_carlo_core)
 
 ADD_EXECUTABLE(tstParticleState
   tstParticleState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleState monte_carlo_core)
 ADD_TEST(ParticleState_test tstParticleState)
 SET_PROPERTY(TEST ParticleState_test PROPERTY LABELS monte_carlo_core)

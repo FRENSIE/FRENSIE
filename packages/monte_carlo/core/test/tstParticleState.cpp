@@ -19,6 +19,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
+#include "Geometry_InfiniteMediumModel.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
@@ -106,17 +107,6 @@ TEUCHOS_UNIT_TEST( ParticleState, setgetSourceCell )
   particle.setSourceCell( 1 );
 
   TEST_EQUALITY_CONST( particle.getSourceCell(), 1 );
-}
-
-//---------------------------------------------------------------------------//
-// Set/get the cell containing a particle
-TEUCHOS_UNIT_TEST( ParticleState, setgetCell )
-{
-  TestParticleState particle( 1ull );
-
-  particle.setCell( 1 );
-
-  TEST_EQUALITY_CONST( particle.getCell(), 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -441,19 +431,140 @@ TEUCHOS_UNIT_TEST( ParticleState, gone )
 }
 
 //---------------------------------------------------------------------------//
-// Get a ray object from the particle
-TEUCHOS_UNIT_TEST( ParticleState, ray )
+// Test if the navigator can be returned
+TEUCHOS_UNIT_TEST( ParticleState, navigator )
 {
   TestParticleState particle( 1ull );
-  particle.setPosition( 1.0, 1.0, -1.0 );
-  particle.setDirection( 0.0, 0.0, 1.0 );
 
-  TEST_EQUALITY_CONST( particle.ray().getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.ray().getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.ray().getZPosition(), -1.0 );
-  TEST_EQUALITY_CONST( particle.ray().getXDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle.ray().getYDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle.ray().getZDirection(), 1.0 );
+  particle.setPosition( 0.1, -10.0, sqrt(2.0) );
+  particle.setDirection( 0.0, -1.0/sqrt(2.0), 1.0/sqrt(2.0) );
+
+  // Get the particle location and direction from the navigator
+  const Geometry::Navigator& const_particle_navigator =
+    dynamic_cast<const MonteCarlo::ParticleState&>( particle ).navigator();
+
+  TEST_EQUALITY_CONST( const_particle_navigator.getInternalRayPosition()[0],
+                       0.1 );
+  TEST_EQUALITY_CONST( const_particle_navigator.getInternalRayPosition()[1],
+                       -10.0 );
+  TEST_EQUALITY_CONST( const_particle_navigator.getInternalRayPosition()[2],
+                       sqrt(2.0) );
+  TEST_EQUALITY_CONST( const_particle_navigator.getInternalRayDirection()[0],
+                       0.0 );
+  TEST_EQUALITY_CONST( const_particle_navigator.getInternalRayDirection()[1],
+                       -1.0/sqrt(2.0) );
+  TEST_EQUALITY_CONST( const_particle_navigator.getInternalRayDirection()[2],
+                       1.0/sqrt(2.0) );
+
+  // Change the particle location and direction from the navigator
+  Geometry::Navigator& particle_navigator = particle.navigator();
+
+  particle_navigator.advanceInternalRayBySubstep( 1.0 );
+
+  TEST_EQUALITY_CONST( particle.getXPosition(), 0.1 );
+  TEST_FLOATING_EQUALITY( particle.getYPosition(), -10.0-1.0/sqrt(2.0), 1e-15 );
+  TEST_FLOATING_EQUALITY( particle.getZPosition(), 3.0/sqrt(2.0), 1e-15 );
+
+  particle_navigator.changeInternalRayDirection( 1.0, 0.0, 0.0 );
+
+  TEST_EQUALITY_CONST( particle.getXDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle.getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getZDirection(), 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Test if the particle can be embeded inside of a geometry model
+TEUCHOS_UNIT_TEST( ParticleState, embed )
+{
+  TestParticleState particle( 1ull );
+
+  particle.setPosition( 0.1, -10.0, sqrt(2.0) );
+  particle.setDirection( 0.0, -1.0/sqrt(2.0), 1.0/sqrt(2.0) );
+
+  TEST_EQUALITY_CONST( particle.getCell(),
+                       Geometry::ModuleTraits::invalid_internal_cell_handle );
+
+  // Embed the particle in a model
+  std::shared_ptr<Geometry::InfiniteMediumModel>
+    model( new Geometry::InfiniteMediumModel( 2 ) );
+
+  particle.embedInModel( model );
+
+  // Verify that the particle position and direction are unchanged
+  TEST_EQUALITY_CONST( particle.getXPosition(), 0.1 );
+  TEST_EQUALITY_CONST( particle.getYPosition(), -10.0 );
+  TEST_EQUALITY_CONST( particle.getZPosition(), sqrt(2.0) );
+  TEST_EQUALITY_CONST( particle.getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getYDirection(), -1.0/sqrt(2.0) );
+  TEST_EQUALITY_CONST( particle.getZDirection(), 1.0/sqrt(2.0) );
+
+  // Verify that the particle is in the correct cell in the new model
+  TEST_EQUALITY_CONST( particle.getCell(), 2 );
+
+  // Extract the particle from the model
+  particle.extractFromModel();
+
+  TEST_EQUALITY_CONST( particle.getCell(),
+                       Geometry::ModuleTraits::invalid_internal_cell_handle );
+
+  // Embed the particle in a model with the cell specified
+  model.reset( new Geometry::InfiniteMediumModel( 3 ) );
+
+  particle.embedInModel( model, 3 );
+
+  // Verify that the particle position and direction are unchanged
+  TEST_EQUALITY_CONST( particle.getXPosition(), 0.1 );
+  TEST_EQUALITY_CONST( particle.getYPosition(), -10.0 );
+  TEST_EQUALITY_CONST( particle.getZPosition(), sqrt(2.0) );
+  TEST_EQUALITY_CONST( particle.getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getYDirection(), -1.0/sqrt(2.0) );
+  TEST_EQUALITY_CONST( particle.getZDirection(), 1.0/sqrt(2.0) );
+
+  // Verify that the particle is in the correct cell in the new model
+  TEST_EQUALITY_CONST( particle.getCell(), 3 );
+
+  // Extract the particle from the model
+  particle.extractFromModel();
+
+  // Embed the particle in a model at a new location and with a new direction
+  model.reset( new Geometry::InfiniteMediumModel( 4 ) );
+
+  particle.embedInModel( model,
+                         (const double[3]){-1.0, 2.0, -0.3},
+                         (const double[3]){1.0, 0.0, 0.0} );
+
+  // Verify that the particle position and direction are correct
+  TEST_EQUALITY_CONST( particle.getXPosition(), -1.0 );
+  TEST_EQUALITY_CONST( particle.getYPosition(), 2.0 );
+  TEST_EQUALITY_CONST( particle.getZPosition(), -0.3 );
+  TEST_EQUALITY_CONST( particle.getXDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle.getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getZDirection(), 0.0 );
+
+  // Verify that the particle is in the correct cell in the new model
+  TEST_EQUALITY_CONST( particle.getCell(), 4 );
+
+  // Extract the particle from the model
+  particle.extractFromModel();
+
+  // Embed the particle in a model at a new location and with a new direction
+  model.reset( new Geometry::InfiniteMediumModel( 5 ) );
+
+  particle.embedInModel( model,
+                         (const double[3]){1.0, -2.0, 0.3},
+                         (const double[3]){0.0, 0.0, 1.0},
+                         5 );
+
+  // Verify that the particle position and direction are correct
+  TEST_EQUALITY_CONST( particle.getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle.getYPosition(), -2.0 );
+  TEST_EQUALITY_CONST( particle.getZPosition(), 0.3 );
+  TEST_EQUALITY_CONST( particle.getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getZDirection(), 1.0 );
+
+  // Verify that the particle is in the correct cell in the new model
+  TEST_EQUALITY_CONST( particle.getCell(), 5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -465,8 +576,7 @@ TEUCHOS_UNIT_TEST( ParticleState, archive )
     TestParticleState particle( 1ull );
     particle.setSourceId( 10 );
     particle.setSourceCell( 1 );
-    particle.setCell( 2 );
-    particle.setPosition( 1.0, 1.0, 1.0 );
+     particle.setPosition( 1.0, 1.0, 1.0 );
     particle.setDirection( 0.0, 0.0, 1.0 );
     particle.setSourceEnergy( 2.0 );
     particle.setEnergy( 1.0 );
@@ -492,7 +602,8 @@ TEUCHOS_UNIT_TEST( ParticleState, archive )
 
   TEST_EQUALITY_CONST( loaded_particle.getSourceId(), 10 );
   TEST_EQUALITY_CONST( loaded_particle.getSourceCell(), 1 );
-  TEST_EQUALITY_CONST( loaded_particle.getCell(), 2 );
+  TEST_EQUALITY_CONST( loaded_particle.getCell(),
+                       Geometry::ModuleTraits::invalid_internal_cell_handle );
   TEST_EQUALITY_CONST( loaded_particle.getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getZPosition(), 1.0 );
@@ -517,9 +628,8 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
   TestParticleState particle_gen_a( 1ull );
   particle_gen_a.setSourceId( 10 );
   particle_gen_a.setSourceCell( 1 );
-  particle_gen_a.setCell( 2 );
   particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
-  particle_gen_a.setPosition( 0.0, 0.0, 1.0 );
+  particle_gen_a.setDirection( 0.0, 0.0, 1.0 );
   particle_gen_a.setSourceEnergy( 2.0 );
   particle_gen_a.setEnergy( 1.0 );
   particle_gen_a.setSourceTime( 0.0 );
