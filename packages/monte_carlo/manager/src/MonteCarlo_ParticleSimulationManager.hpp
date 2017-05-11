@@ -101,25 +101,21 @@ private:
 
   // Simulate an unresolved particle
   void simulateUnresolvedParticle( ParticleState& unresolved_particle,
-                                   ParticleBank& bank,
-                                   Geometry::Navigator& navigator ) const;
+                                   ParticleBank& bank ) const;
 
   // Simulate an individual particle
   template<typename State>
   void simulateParticle( ParticleState& unresolved_particle,
-                         ParticleBank& bank,
-                         Geometry::Navigator& navigator ) const;
+                         ParticleBank& bank ) const;
 
   // Simulate an individual particle track of the desired optical path length
   template<typename State>
   void simulateParticleTrack( State& particle,
-                              Geometry::Navigator& navigator,
                               const double optical_path ) const;
 
   // Advance a particle to the cell boundary
   template<typename State>
   void advanceParticleToCellBoundary( State& particle,
-                                      Geometry::Navigator& navigator,
                                       const double distance_to_surface,
                                       const double subtrack_start_time ) const;
 
@@ -127,7 +123,6 @@ private:
   template<typename State>
   void advanceParticleToCollisionSite(
                                   State& particle,
-                                  Geometry::Navigator& navigator,
                                   const double op_to_collision_site,
                                   const double cell_total_macro_cross_section,
                                   const double subtrack_start_time,

@@ -154,8 +154,8 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
     // Create a navigator for each thread
-    std::shared_ptr<Geometry::Navigator> navigator =
-      d_model->createNavigator();
+    std::unique_ptr<Geometry::Navigator>
+      navigator( d_model->createNavigatorAdvanced() );
 
     // Create a start cell cache for each thread
     std::set<Geometry::ModuleTraits::InternalCellHandle> start_cell_cache;
@@ -187,7 +187,7 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
 	  }
 	  CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
 
-	  bank.top().setCell( start_cell );
+	  bank.top().embedInModel( d_model, start_cell );
 
 	  EMI::updateObserversFromParticleEnteringCellEvent(
                                             bank.top(), bank.top().getCell() );
@@ -196,7 +196,7 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
 	{
-	  this->simulateUnresolvedParticle( bank.top(), bank, *navigator );
+	  this->simulateUnresolvedParticle( bank.top(), bank );
 
           bank.pop();
 	}
@@ -216,8 +216,7 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
 template<ParticleModeType mode>
 void ParticleSimulationManager<mode>::simulateUnresolvedParticle(
                                          ParticleState& unresolved_particle,
-                                         ParticleBank& bank,
-                                         Geometry::Navigator& navigator ) const
+                                         ParticleBank& bank ) const
 {
   SimulateParticleFunctionMap::const_iterator simulation_function_it =
     d_simulate_particle_function_map.find( unresolved_particle.getParticleType() );
@@ -225,7 +224,7 @@ void ParticleSimulationManager<mode>::simulateUnresolvedParticle(
   // Only simulate the particle if there is a simulation function associated
   // with the type
   if( simulation_function_it != d_simulate_particle_function_map.end() )
-    simulation_function_it->second( unresolved_particle, bank, navigator );
+    simulation_function_it->second( unresolved_particle, bank );
   else
     unresolved_particle.setAsGone();
 }
@@ -235,26 +234,19 @@ template<ParticleModeType mode>
 template<typename State>
 void ParticleSimulationManager<mode>::simulateParticle(
                                          ParticleState& unresolved_particle,
-                                         ParticleBank& bank,
-                                         Geometry::Navigator& navigator ) const
+                                         ParticleBank& bank ) const
 {
   // Resolve the particle state
   State& particle = dynamic_cast<State&>( unresolved_particle );
 
   // Check if the particle energy is below the cutoff
-  if( particle.getEnergy() <
-      d_properties->getMinParticleEnergy<ParticleStateType>() )
+  if( particle.getEnergy() < d_properties->getMinParticleEnergy<State>() )
     particle.setAsGone();
-
-  // Set the navigator ray
-  navigator.setInternalRay( particle.ray(), particle.getCell() );
 
   while( !particle.isLost() && !particle.isGone() )
   {
     // Simulate a particle track of random optical path length
-    this->simulateParticleTrack( particle,
-                                 navigator,
-                                 CMI::sampleOpticalPathLength() );
+    this->simulateParticleTrack( particle, CMI::sampleOpticalPathLength() );
   }
 }
 
@@ -263,7 +255,6 @@ template<ParticleModeType mode>
 template<typename State>
 void ParticleSimulateManager<mode>::simulateParticleTrack(
                                               State& particle,
-                                              Geometry::Navigator& navigator,
                                               const double optical_path ) const
 {
   // Particle tracking information (op = optical_path)
@@ -288,7 +279,8 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
     // Fire a ray at the cell currently containing the particle
     try
     {
-      distance_to_surface_hit = navigator.fireInternalRay( surface_hit );
+      distance_to_surface_hit =
+        particle.navigator().fireInternalRay( surface_hit );
     }
     CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
@@ -309,7 +301,6 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
     {
       try{
         this->advanceParticleToCellBoundary( particle,
-                                             navigator,
                                              distance_to_surface_hit,
                                              particle.getTime() );
       }
@@ -333,7 +324,6 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
     else
     {
       this->advanceParticleToCollisionSite( particle,
-                                            navigator,
                                             remaining_subtrack_op,
                                             cell_total_macro_cross_section,
                                             particle.getTime(),
@@ -344,20 +334,8 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
       CMI::collideWithCellMaterial( particle, bank );
       
       // Make sure that the energy is above the cutoff
-      if( particle.getEnergy() <
-          d_properties->getMinParticleEnergy<State>() )
+      if( particle.getEnergy() < d_properties->getMinParticleEnergy<State>() )
         particle.setAsGone();
-        
-      if( !particle.isGone() )
-      {
-        navigator.changeInternalRayDirection( particle.getDirection() );
-        
-        // Cache the current time and start position of the new track
-        track_start_time = particle.getTime();
-        track_start_point[0] = particle.getXPosition();
-        track_start_point[1] = particle.getYPosition();
-        track_start_point[2] = particle.getZPosition();
-      }
       
       // This track is finished
       break;
@@ -370,55 +348,39 @@ template<ParticleModeType mode>
 template<typename State>
 void ParticleSimulateManager<mode>::advanceParticleToCellBoundary(
                                        State& particle,
-                                       Geometry::Navigator& navigator,
                                        const double distance_to_surface,
                                        const double subtrack_start_time ) const
 {
   // Advance the particle to the cell boundary
-  particle.advance( distance_to_surface );
+  // Note: this will change the particle's cell
+  Geometry::ModuleTraits::InternalCellHandle start_cell = particle.getCell();
+  double surface_normal[3];
+  bool reflected =
+    particle.navigator().advanceInternalRayToCellBoundary( surface_normal );
 
   // Update the observers: particle subtrack ending in cell event
   EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
                                                          particle,
-                                                         particle.getCell(),
+                                                         start_cell,
                                                          distance_to_surface,
                                                          subtrack_start_time );
 
   // Update the observers: particle leaving cell event
-  EMI::updateObserversFromParticleLeavingCellEvent( particle,
-                                                    particle.getCell() );
-
-
-  // Advance the ray to the cell boundary
-  // Note: this is done after so that the particle direction is not
-  // altered before the estimators are updated
-  double surface_normal[3];
-  
-  bool reflected =
-    navigator.advanceInternalRayToCellBoundary( surface_normal );
+  EMI::updateObserversFromParticleLeavingCellEvent( particle, start_cell );
     
   // Update the observers: particle crossing surface event
-  EMI::updateObserversFromParticleCrossingSurfaceEvent(
-                                                  particle,
-                                                  surface_hit,
-                                                  surface_normal.getRawPtr() );
+  EMI::updateObserversFromParticleCrossingSurfaceEvent( particle,
+                                                        surface_hit,
+                                                        surface_normal );
   if( reflected )
   {
-    particle.setDirection( navigator.getInternalRayDirection() );
-
-    // Update the observers: particle crossing surface event
-    EMI::updateObserversFromParticleCrossingSurfaceEvent(
-                                                  particle,
-                                                  surface_hit,
-                                                  surface_normal.getRawPtr() );
+    EMI::updateObserversFromParticleCrossingSurfaceEvent( particle,
+                                                          surface_hit,
+                                                          surface_normal );
   }
 
-  // Get the cell on the other side of the surface hit
-  cell_entering = navigator.getCellContainingInternalRay();
-  particle.setCell( cell_entering );
-
   // Update the observers: particle entering cell event
-  EMI::updateObserversFromParticleEnteringCellEvent( particle, cell_entering );
+  EMI::updateObserversFromParticleEnteringCellEvent( particle, particle.getCell() );
 }
 
 // Advance a particle to a collision site
@@ -426,7 +388,6 @@ template<ParticleModeType mode>
 template<typename State>
 void ParticleSimulateManager<mode>::advanceParticleToCollisionSite(
                                    State& particle,
-                                   Geometry::Navigator& navigator,
                                    const double op_to_collision_site,
                                    const double cell_total_macro_cross_section,
                                    const double subtrack_start_time,
@@ -439,7 +400,6 @@ void ParticleSimulateManager<mode>::advanceParticleToCollisionSite(
 
   // Advance the particle and the navigator ray
   particle.advance( distance_to_collision );
-  navigator.advanceInternalRayBySubstep( distance_to_collision );
 
   // Update the observers: particle subtrack ending in cell event
   EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
