@@ -258,6 +258,26 @@ void PhaseSpaceDimensionDistribution::addDependentDistribution(
   dependent_dimension->d_parent_distribution = this;
 }
 
+// Remove dependent distributions
+void PhaseSpaceDimensionDistribution::removeDependentDistributions()
+{
+  DimensionDependentDistributionMap::iterator dep_dist_it =
+    d_dependent_dimension_distributions.begin();
+
+  DimensionDependentDistributionMap::iterator dep_dist_end =
+    d_dependent_dimension_distributions.end();
+
+  while( dep_dist_it != dep_dist_end )
+  {
+    // This distribution will no longer be the parent of the stored dists.
+    dep_dist_it->second->d_parent_distribution = NULL;
+    
+    ++dep_dist_it;
+  }
+
+  d_dependent_dimension_distributions.clear();
+}
+
 // Get the dependent dimensions
 void PhaseSpaceDimensionDistribution::getDependentDimensions(
                             DependentDimensionSet& dependent_dimensions ) const

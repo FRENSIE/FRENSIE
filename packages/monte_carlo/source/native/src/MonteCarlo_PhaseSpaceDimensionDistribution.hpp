@@ -125,6 +125,9 @@ public:
                         const std::shared_ptr<PhaseSpaceDimensionDistribution>&
                         dependent_dimension );
 
+  //! Remove dependent distributions
+  void removeDependentDistributions();
+
   //! Get the dependent dimensions
   void getDependentDimensions( DependentDimensionSet& dependent_dimensions ) const;
 
@@ -160,7 +163,7 @@ private:
   const PhaseSpaceDimensionDistribution* d_parent_distribution;
 
   // The dependent dimensions
-  typedef std::map<PhaseSpaceDimension,std::shared_ptr<const PhaseSpaceDimensionDistribution> > DimensionDependentDistributionMap;
+  typedef std::map<PhaseSpaceDimension,std::shared_ptr<PhaseSpaceDimensionDistribution> > DimensionDependentDistributionMap;
   DimensionDependentDistributionMap d_dependent_dimension_distributions;
 };
   

@@ -46,10 +46,6 @@ StandardParticleSource::StandardParticleSource(
                      std::placeholders::_1,
                      std::placeholders::_2 );
 
-  // Initialize the set of dimensions with distributions set
-  particle_distribution->getDimensionsWithDistributionsDefined(
-                                             d_dimensions_with_distributions );
-
   // Initialize the dimension trial counters
   this->initializeDimensionTrialCounters();
 
@@ -590,8 +586,8 @@ bool StandardParticleSource::isSampledParticlePositionValid(
   {
     for( unsigned i = 0; i < d_cell_rejection_functions.size(); ++i )
     {
-      Geometry::PointLocation location =
-        d_cell_rejection_functions[i]( particle.ray() );
+      Geometry::PointLocation location; // =
+        // d_cell_rejection_functions[i]( particle.ray() );
 
       if( location == Geometry::POINT_INSIDE_CELL )
       {

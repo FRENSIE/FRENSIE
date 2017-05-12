@@ -13,6 +13,8 @@
 #include "MonteCarlo_StandardParticleDistribution.hpp"
 #include "MonteCarlo_IndependentPhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_PhaseSpacePoint.hpp"
+#include "Utility_BasicCartesianCoordinateConversionPolicy.hpp"
+#include "Utility_BasicSphericalCoordinateConversionPolicy.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -23,25 +25,38 @@ namespace MonteCarlo{
 // Constructor
 StandardParticleDistribution::StandardParticleDistribution(
    const ModuleTraits::InternalROIHandle id,
-   const std::string& name,
-   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
-   spatial_coord_conversion_policy,
-   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
-   directional_coord_conversion_policy )
+   const std::string& name )
   : ParticleDistribution( id, name ),
-    d_spatial_coord_conversion_policy( spatial_coord_conversion_policy ),
-    d_directional_coord_conversion_policy( directional_coord_conversion_policy ),
+    d_spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy ),
+    d_directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy ),
     d_independent_dimensions(),
     d_dimension_distributions(),
     d_ready( false )
 {
-  // Make sure that the spatial coordinate conversion policy is valid
-  testPrecondition( spatial_coord_conversion_policy.get() );
-  // Make sure that the directional coordinate conversion policy is valid
-  testPrecondition( directional_coord_conversion_policy.get() );
-
   // Initialize the distribution
   this->reset();
+}
+
+// Set the spatial coordinate conversion policy
+void StandardParticleDistribution::setSpatialCoordinateConversionPolicy(
+       const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+       spatial_coord_conversion_policy )
+{
+  // Make sure that the policy is valid
+  testPrecondition( spatial_coord_conversion_policy.get() );
+
+  d_spatial_coord_conversion_policy = spatial_coord_conversion_policy;
+}
+
+// Set the directional coordinate conversion policy
+void StandardParticleDistribution::setDirectionalCoordinateConversionPolicy(
+   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+   directional_coord_conversion_policy )
+{
+  // Make sure that the policy is valid
+  testPrecondition( directional_coord_conversion_policy );
+
+  d_directional_coord_conversion_policy = directional_coord_conversion_policy;
 }
 
 // Set a dimension distribution
@@ -52,24 +67,17 @@ void StandardParticleDistribution::setDimensionDistribution(
   // Make sure that the distribution is valid
   testPrecondition( dimension_distribution.get() );
   
-  if( !d_ready )
-  {
-    // Add the distribution to the dimension distribution map
-    d_dimension_distributions[dimension_distribution->getDimension()] =
-      dimension_distribution;
+  // Add the distribution to the dimension distribution map
+  d_dimension_distributions[dimension_distribution->getDimension()] =
+    dimension_distribution;
     
-    // Check if the distribution is independent
-    if( dimension_distribution->isIndependent() )
-      d_independent_dimensions.insert( dimension_distribution->getDimension() );
-  }
-  else
-  {
-    FRENSIE_LOG_WARNING( "Unable to add distribution for "
-                         << dimension_distribution->getDimension() <<
-                         " because the particle distribution "
-                         << this->getName() << " has already been "
-                         "initialized!" );
-  }
+  // Check if the distribution is independent
+  if( dimension_distribution->isIndependent() )
+    d_independent_dimensions.insert( dimension_distribution->getDimension() );
+
+  // The dependency tree needs to be constructed again.
+  if( d_ready )
+    d_ready = false;
 }
 
 // Construct the dimension distribution dependency tree
@@ -86,6 +94,9 @@ void StandardParticleDistribution::constructDimensionDistributionDependencyTree(
     // Loop over all distributions and check for dependent distributions
     while( parent_distribution_it != parent_distribution_end )
     {
+      // Purge any dependendent distributions from the parent
+      parent_distribution_it->second->removeDependentDistributions();
+      
       DimensionDistributionMap::iterator potential_child_distribution_it,
       potential_child_distribution_end;
 
@@ -110,14 +121,50 @@ void StandardParticleDistribution::constructDimensionDistributionDependencyTree(
       ++parent_distribution_it;
     }
 
+    try{
+      this->checkDependencyTreeForOrphans();
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Invalid dependencies in particle distribution "
+                             "dimensions!" );
+
     // Indicate that the distribution is ready for use
     d_ready = true;
   }
   else
   {
-    FRENSIE_LOG_WARNING( "Unable to construct the dependency tree for "
-                         "particle distribution " << this->getName() <<
-                         " because it has already been constructed!" );
+    FRENSIE_LOG_WARNING( "The dependency tree for particle distribution "
+                         << this->getName() << "has already been "
+                         "constructed!" );
+  }
+}
+
+// Check the dependency tree for orphans
+void StandardParticleDistribution::checkDependencyTreeForOrphans()
+{
+  DimensionDistributionMap::iterator distribution_it,
+    distribution_end;
+
+  distribution_it = d_dimension_distributions.begin();
+  distribution_end = d_dimension_distributions.end();
+
+  // Loop over all distributions and check for orphans
+  while( distribution_it != distribution_end )
+  {
+    // Only dependent distributions can be orphans
+    if( !distribution_it->second->isIndependent() )
+    {
+      TEST_FOR_EXCEPTION(
+                   distribution_it->second->getParentDistribution() == NULL,
+                   std::runtime_error,
+                   "Invalid particle distribution! The dependent distribution "
+                   "defined for the "
+                   << distribution_it->second->getDimension() << " was "
+                   "not adopted by the required parent dimension "
+                   "distribution." );
+    }
+
+    ++distribution_it;
   }
 }
 
@@ -129,7 +176,7 @@ void StandardParticleDistribution::reset()
   d_dimension_distributions.clear();
 
   // Initialize the default dimension distributions
-  // The spatial distribution will be model a point at the origin by default
+  // The spatial distribution will model a point at the origin by default
   {
     std::shared_ptr<const Utility::OneDDistribution> raw_spatial_distribution( 
                                        new Utility::DeltaDistribution( 0.0 ) );
@@ -213,9 +260,6 @@ void StandardParticleDistribution::reset()
 std::string StandardParticleDistribution::getDimensionDistributionTypeName(
                                     const PhaseSpaceDimension dimension ) const
 {
-  // Make sure that the dimension has a distribution defined
-  testPrecondition( this->doesDimensionHaveDistributionDefined( dimension ) );
-
   return d_dimension_distributions.find(dimension)->second->getDistributionTypeName();
 }
 
@@ -332,9 +376,9 @@ void StandardParticleDistribution::sample( ParticleState& particle ) const
   }
   else
   {
-    FRENSIE_LOG_WARNING( "Unable to sample a particle state with particle "
-                         "distribution " << this->getName() << " becuase the "
-                         "distribution is not ready!" );
+    FRENSIE_LOG_ERROR( "Unable to sample a particle state with particle "
+                       "distribution " << this->getName() << " becuase the "
+                       "distribution is not ready!" );
   }
 }
 
@@ -357,9 +401,9 @@ void StandardParticleDistribution::sampleAndRecordTrials(
   }
   else
   {
-    FRENSIE_LOG_WARNING( "Unable to sample a particle state with particle "
-                         "distribution " << this->getName() << " becuase the "
-                         "distribution is not ready!" );
+    FRENSIE_LOG_ERROR( "Unable to sample a particle state with particle "
+                       "distribution " << this->getName() << " becuase the "
+                       "distribution is not ready!" );
   }
 }
 
@@ -384,9 +428,9 @@ void StandardParticleDistribution::sampleWithDimensionValue(
   }
   else
   {
-    FRENSIE_LOG_WARNING( "Unable to sample a particle state with particle "
-                         "distribution " << this->getName() << " becuase the "
-                         "distribution is not ready!" );
+    FRENSIE_LOG_ERROR( "Unable to sample a particle state with particle "
+                       "distribution " << this->getName() << " becuase the "
+                       "distribution is not ready!" );
   }
 }
 
@@ -413,9 +457,9 @@ void StandardParticleDistribution::sampleWithDimensionValueAndRecordTrials(
   }
   else
   {
-    FRENSIE_LOG_WARNING( "Unable to sample a particle state with particle "
-                         "distribution " << this->getName() << " becuase the "
-                         "distribution is not ready!" );
+    FRENSIE_LOG_ERROR( "Unable to sample a particle state with particle "
+                       "distribution " << this->getName() << " becuase the "
+                       "distribution is not ready!" );
   }
 }
 

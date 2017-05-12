@@ -53,14 +53,6 @@ public:
   //! Return the name of the region of interest
   const std::string& getName() const;
 
-  //! Check if a dimension has a distribution defined
-  virtual bool doesDimensionHaveDistributionDefined(
-                               const PhaseSpaceDimension dimension ) const = 0;
-
-  //! Return the dimensions with distributions defined
-  virtual void getDimensionsWithDistributionsDefined(
-                                          DimensionSet& dimensions ) const = 0;
-
   //! Return the dimension distribution type name
   virtual std::string getDimensionDistributionTypeName(
                                const PhaseSpaceDimension dimension ) const = 0;

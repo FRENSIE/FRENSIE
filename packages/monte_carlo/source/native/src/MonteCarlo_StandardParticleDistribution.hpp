@@ -50,17 +50,22 @@ public:
   typedef std::set<PhaseSpaceDimension> DimensionSet;
 
   //! Constructor
-  StandardParticleDistribution(
-   const ModuleTraits::InternalROIHandle id,
-   const std::string& name,
-   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
-   spatial_coord_conversion_policy,
-   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
-   directional_coord_conversion_policy );
+  StandardParticleDistribution( const ModuleTraits::InternalROIHandle id,
+                                const std::string& name );
 
   //! Destructor
   ~StandardParticleDistribution()
   { /* ... */ }
+
+  //! Set the spatial coordinate conversion policy
+  void setSpatialCoordinateConversionPolicy(
+       const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+       spatial_coord_conversion_policy );
+
+  //! Set the directional coordinate conversion policy
+  void setDirectionalCoordinateConversionPolicy(
+   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+   directional_coord_conversion_policy );
 
   //! Set a dimension distribution
   void setDimensionDistribution(
@@ -111,6 +116,9 @@ private:
   template<typename DimensionSamplingFunctor>
   void sampleImpl( DimensionSamplingFunctor& dimension_sampling_function,
                    ParticleState& particle ) const;
+
+  // Check the dependency tree for orphans
+  void checkDependencyTreeForOrphans();
 
   // The spatial coordinate conversion policy
   std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>

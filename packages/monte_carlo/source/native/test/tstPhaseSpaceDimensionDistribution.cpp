@@ -179,6 +179,45 @@ UNIT_TEST_INSTANTIATION( PhaseSpaceDimensionDistribution,
                          getDependentDimensions );
 
 //---------------------------------------------------------------------------//
+// Check that the dependent distributions can be returned
+MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( PhaseSpaceDimensionDistribution,
+                                  removeDependentDistributions,
+                                  IndepDimension,
+                                  DepDimension )
+{
+  // Create the distribution for the independent dimension
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    indep_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<IndepDimension>( raw_indep_distribution ) );
+
+  // Create the distribution for the dependent dimension
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    dep_dimension_distribution( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<IndepDimension,DepDimension>( raw_dep_distribution_a ) );
+
+  // Assign the dep dimension distribution to the indep dimension distribution
+  indep_dimension_distribution->addDependentDistribution(
+                                                  dep_dimension_distribution );
+
+  TEST_EQUALITY_CONST( dep_dimension_distribution->getParentDistribution(),
+                       indep_dimension_distribution.get() );
+
+  // Remove the dep dimension distribution from the indep dimension dist.
+  indep_dimension_distribution->removeDependentDistributions();
+
+  TEST_ASSERT( !dep_dimension_distribution->getParentDistribution() );
+
+  // Get the dimensions that are dependent on the independent dimension
+  MonteCarlo::PhaseSpaceDimensionDistribution::DependentDimensionSet
+    dependent_dimensions;
+
+  indep_dimension_distribution->getDependentDimensions( dependent_dimensions );
+
+  TEST_EQUALITY_CONST( dependent_dimensions.size(), 0 );
+}
+
+UNIT_TEST_INSTANTIATION( PhaseSpaceDimensionDistribution,
+                         removeDependentDistributions );
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated with a cascade to dependent
 // distributions
 MC_UNIT_TEST_PSD_TEMPLATE_2_DECL( PhaseSpaceDimensionDistribution,
