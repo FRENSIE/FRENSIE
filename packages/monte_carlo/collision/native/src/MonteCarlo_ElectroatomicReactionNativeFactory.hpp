@@ -78,7 +78,7 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine ,
+    const double cutoff_angle_cosine,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 

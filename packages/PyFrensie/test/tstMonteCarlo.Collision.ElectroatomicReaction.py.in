@@ -1,0 +1,91 @@
+#! /usr/bin/python2.7
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Collision photon kinematics helpers unit tests
+#  \file   tstMonteCarlo.Collision.ElectroatomicReaction.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Collision.ElectroatomicReaction helpers
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--nativefile", type="string", dest="nativefile",
+                  help="set the native file that the Electron ElectroatomicReactions will initialized with")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the analog electroatomic reaction
+class AnalogElasticReactionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Collision analog elastic electroatomic reaction"
+
+    def setUp(self):
+        self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
+        self.reaction = Collision.createAnalogElasticReaction( self.data, True, True, 1e-7 )
+
+    def testgetCrossSection(self):
+        "*Test MonteCarlo.Collision.createAnalogElasticReaction getCrossSection method"
+        energy = 1e5
+        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+                                12904.533548136458,
+                                delta=1e-12*12904.533548136458 )
+#        energy = 6.625E+01
+#        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+#                                1.952101737343830E+11,
+#                                delta=1e-12*1.952101737343830E+11 )
+#        energy = 200.0
+#        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+#                                1.582772041017910E+13,
+#                                delta=1e-9*1.582772041017910E+13 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Initialize the FRENSIE random number generator
+    Utility.initFrensiePrng()
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(AnalogElasticReactionTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************\n" + \
+        "Testing MonteCarlo.Collision.ElectroatomicReaction \n" + \
+        "**************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+    
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Collision.PhotonKinematics.py
+#-----------------------------------------------------------------------------#
