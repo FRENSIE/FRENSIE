@@ -89,6 +89,15 @@ unsigned AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_sect
   return 0u;
 }
 
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+double AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+                                const double incoming_energy,
+                                const double outgoing_energy ) const
+{
+  return this->getCrossSection( incoming_energy );
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroatomicReactionType AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const

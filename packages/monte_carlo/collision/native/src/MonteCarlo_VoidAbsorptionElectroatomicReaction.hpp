@@ -41,6 +41,10 @@ public:
   double getCrossSection( const double energy,
                           const unsigned bin_index ) const;
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double outgoing_energy ) const;
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
 
@@ -82,6 +86,14 @@ inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
 inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
     const double energy,
     const unsigned bin_index ) const
+{
+  return 0.0;
+}
+
+// Return the differential cross section
+inline double VoidAbsorptionElectroatomicReaction::getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy ) const
 {
   return 0.0;
 }

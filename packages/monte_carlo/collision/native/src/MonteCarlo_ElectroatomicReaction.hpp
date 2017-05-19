@@ -35,6 +35,10 @@ public:
   //! Return the reaction type
   virtual ElectroatomicReactionType getReactionType() const = 0;
 
+  //! Return the differential cross section
+  virtual double getDifferentialCrossSection( const double incoming_energy,
+                                              const double secondary_variable ) const = 0;
+
   //! Simulate the reaction
   virtual void react( ElectronState& electron,
                       ParticleBank& bank,

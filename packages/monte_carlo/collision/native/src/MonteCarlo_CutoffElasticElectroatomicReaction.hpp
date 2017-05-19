@@ -75,6 +75,10 @@ public:
   double getCrossSection( const double energy,
                           const unsigned bin_index ) const;
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double scattering_angle_cosine ) const;
+
 private:
 
   // The cutoff_elastic scattering distribution
