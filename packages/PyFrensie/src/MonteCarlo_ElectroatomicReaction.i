@@ -98,36 +98,27 @@ MonteCarlo::ElectroatomicReactionNativeFactoryHelpers
 //---------------------------------------------------------------------------//
 
 %include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+%include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
+//%include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
+//%include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
 
-// Electroatomic reaction interface setup
-%electroatomic_reaction_interface_setup( AnalogElasticElectroatomicReaction )
-/*%electroatomic_reaction_interface_setup( HybridElasticElectroatomicReaction )*/
-/*%electroatomic_reaction_interface_setup( CutoffElasticElectroatomicReaction )*/
-/*%electroatomic_reaction_interface_setup( MomentPreservingElectroatomicReaction )*/
+////---------------------------------------------------------------------------//
+//// Add support for the bremsstrahlung electroatomic reactions
+////---------------------------------------------------------------------------//
 
-/*//---------------------------------------------------------------------------//*/
-/*// Add support for the bremsstrahlung electroatomic reactions*/
-/*//---------------------------------------------------------------------------//*/
+//%include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 
-/*// Electron scattering distribution interface setup*/
-/*%electroatomic_reaction_interface_setup( BremsstrahlungElectroatomicReaction )*/
-/*%electroatomic_reaction_interface_setup( BremsstrahlungAdjointElectroatomicReaction )*/
+////---------------------------------------------------------------------------//
+//// Add support for the electroionization subshell electroatomic reactions*/
+////---------------------------------------------------------------------------//
 
-/*//---------------------------------------------------------------------------//*/
-/*// Add support for the electroionization subshell electroatomic reactions*/
-/*//---------------------------------------------------------------------------//*/
+//%include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 
-/*// Basic electron scattering distribution interface setup*/
-/*%electroatomic_reaction_interface_setup( ElectroionizationSubshellElectroatomicReaction )*/
-/*%electroatomic_reaction_interface_setup( ElectroionizationSubshellAdjointElectroatomicReaction )*/
+///*//---------------------------------------------------------------------------//*/
+///*// Add support for the atomic excitation electroatomic reactions*/
+///*//---------------------------------------------------------------------------//*/
 
-/*//---------------------------------------------------------------------------//*/
-/*// Add support for the atomic excitation electroatomic reactions*/
-/*//---------------------------------------------------------------------------//*/
-
-/*// Electron scattering distribution interface setup*/
-/*%electroatomic_reaction_interface_setup( AtomicExcitationElectroatomicReaction )*/
-/*%electroatomic_reaction_interface_setup( AtomicExcitationAdjointElectroatomicReaction )*/
+//%include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElectroatomicReaction.i

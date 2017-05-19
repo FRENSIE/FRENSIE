@@ -948,7 +948,7 @@ ADD_EXECUTABLE(tstElectroatomicReactionNativeFactoryHelpers
   tstElectroatomicReactionNativeFactoryHelpers.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionNativeFactoryHelpers monte_carlo_collision_native)
-ADD_TEST(ElectroatomicReactionNativeFactoryHelpers_test tstElectroatomicReactionNativeFactoryHelpers --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" )
+ADD_TEST(ElectroatomicReactionNativeFactoryHelpers_test tstElectroatomicReactionNativeFactoryHelpers --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
 SET_PROPERTY(TEST ElectroatomicReactionNativeFactoryHelpers_test PROPERTY LABELS electron native)
 
 ##      electroatom tests
