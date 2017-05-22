@@ -49,23 +49,22 @@ public:
   //! Typedef for the phase space dimension set
   typedef std::set<PhaseSpaceDimension> DimensionSet;
 
-  //! Constructor
+  //! Basic Constructor
   StandardParticleDistribution( const ModuleTraits::InternalROIHandle id,
                                 const std::string& name );
+  
+  //! Constructor
+  StandardParticleDistribution(
+   const ModuleTraits::InternalROIHandle id,
+   const std::string& name,
+   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+   spatial_coord_conversion_policy,
+   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+   directional_coord_conversion_policy );
 
   //! Destructor
   ~StandardParticleDistribution()
   { /* ... */ }
-
-  //! Set the spatial coordinate conversion policy
-  void setSpatialCoordinateConversionPolicy(
-       const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
-       spatial_coord_conversion_policy );
-
-  //! Set the directional coordinate conversion policy
-  void setDirectionalCoordinateConversionPolicy(
-   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
-   directional_coord_conversion_policy );
 
   //! Set a dimension distribution
   void setDimensionDistribution(
@@ -111,6 +110,12 @@ public:
                                  const double dimension_value ) const override;
 
 private:
+
+  // Reset the spatial distributions
+  void resetSpatialDistributions();
+  
+  // Reset the directional distributions
+  void resetDirectionalDistributions();
 
   // Sample the particle state using the desired sampling functor
   template<typename DimensionSamplingFunctor>

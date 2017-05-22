@@ -18,6 +18,7 @@
 #include "MonteCarlo_IndependentPhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_FullyTabularDependentPhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_PartiallyTabularDependentPhaseSpaceDimensionDistribution.hpp"
+#include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_SourceUnitTestHarnessExtensions.hpp"
 #include "Utility_BasicCartesianCoordinateConversionPolicy.hpp"
 #include "Utility_BasicSphericalCoordinateConversionPolicy.hpp"
@@ -36,10 +37,138 @@
 using namespace MonteCarlo;
 
 //---------------------------------------------------------------------------//
-// Testing Variables
+// Testing Functions
 //---------------------------------------------------------------------------//
+void initializeCartesianSpatialDimensionDists(
+         std::shared_ptr<StandardParticleDistribution>& particle_distribution )
+{
+  std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist_a(
+                          new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
-std::shared_ptr<const ParticleDistribution> particle_distribution;
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    x_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
+  particle_distribution->setDimensionDistribution( x_dimension_dist );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    y_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
+  particle_distribution->setDimensionDistribution( y_dimension_dist );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    z_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
+  particle_distribution->setDimensionDistribution( z_dimension_dist );
+}
+
+void initializeCartesianDirectionalDimensionDists(
+         std::shared_ptr<StandardParticleDistribution>& particle_distribution )
+{
+  std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist_a(
+                          new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    u_dimension_dist(new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist_a ) );
+  particle_distribution->setDimensionDistribution( u_dimension_dist );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    v_dimension_dist(new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist_a ) );
+  particle_distribution->setDimensionDistribution( v_dimension_dist );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    w_dimension_dist(new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist_a ) );
+  particle_distribution->setDimensionDistribution( w_dimension_dist );
+}
+
+void initializeMiscDimensionDists(
+         std::shared_ptr<StandardParticleDistribution>& particle_distribution )
+{
+  std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist_b(
+                           new Utility::UniformDistribution( 0.0, 1.0, 1.0 ) );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    time_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TIME_DIMENSION>( raw_uniform_dist_b ) );
+  particle_distribution->setDimensionDistribution( time_dimension_dist );
+  
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    energy_dimension_dist;
+  
+  {
+    // Create the fully tabular distribution
+    Utility::HistogramFullyTabularTwoDDistribution::DistributionType
+      distribution_data( 3 );
+
+    // Create the secondary distribution in the first bin
+    Utility::get<0>( distribution_data[0] ) = -1.0;
+    Utility::get<1>( distribution_data[0] ).reset( new Utility::UniformDistribution( 1e-3, 10.0, 0.5 ) );
+
+    
+    // Create the secondary distribution in the second bin
+    Utility::get<0>( distribution_data[1] ) = 0.0;
+    Utility::get<1>( distribution_data[1] ).reset( new Utility::UniformDistribution( 1e-3, 20.0, 0.25 ) );
+
+    // Create the secondary distribution in the third bin
+    Utility::get<0>( distribution_data[2] ) = 1.0;
+    Utility::get<1>( distribution_data[2] ) =
+      Utility::get<1>( distribution_data[1] );
+
+    std::shared_ptr<Utility::HistogramFullyTabularTwoDDistribution>
+      raw_dependent_distribution( new Utility::HistogramFullyTabularTwoDDistribution( distribution_data ) );
+
+    raw_dependent_distribution->limitToPrimaryIndepLimits();
+  
+    energy_dimension_dist.reset( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION,MonteCarlo::ENERGY_DIMENSION>( raw_dependent_distribution ) );
+  }
+  particle_distribution->setDimensionDistribution( energy_dimension_dist );
+}
+
+std::shared_ptr<const ParticleDistribution>
+createCartesianSpatialCartesianDirectionalDist()
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+  
+  std::shared_ptr<MonteCarlo::StandardParticleDistribution>
+    particle_distribution( new MonteCarlo::StandardParticleDistribution(
+                                       0,
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy ) );
+
+  // Create the dimension distributions
+  initializeCartesianSpatialDimensionDists( particle_distribution );
+  initializeCartesianDirectionalDimensionDists( particle_distribution );
+  initializeMiscDimensionDists( particle_distribution );
+
+  particle_distribution->constructDimensionDistributionDependencyTree();
+  
+  return particle_distribution;
+}
+
+std::shared_ptr<const ParticleDistribution>
+createCartesianSpatialSphericalDirectionalDist()
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+  
+  std::shared_ptr<MonteCarlo::StandardParticleDistribution>
+    particle_distribution( new MonteCarlo::StandardParticleDistribution(
+                                       0,
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy ) );
+
+  // Create the dimension distributions
+  initializeCartesianSpatialDimensionDists( particle_distribution );
+  initializeMiscDimensionDists( particle_distribution );
+
+  particle_distribution->constructDimensionDistributionDependencyTree();
+  
+  return particle_distribution;
+}
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -111,17 +240,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( y_dimension_dist );
   particle_distribution.setDimensionDistribution( z_dimension_dist );
 
-  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
-    spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
-
-  particle_distribution.setSpatialCoordinateConversionPolicy(
-                                             spatial_coord_conversion_policy );
+  particle_distribution.constructDimensionDistributionDependencyTree();
 
   TEST_ASSERT( particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform Cartesian spatial distribution
-  particle_distribution.reset();
-  
   x_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
   y_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
@@ -130,11 +253,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( y_dimension_dist );
   particle_distribution.setDimensionDistribution( z_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform Cartesian spatial distribution
-  particle_distribution.reset();
-  
   x_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   y_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
@@ -143,11 +266,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( y_dimension_dist );
   particle_distribution.setDimensionDistribution( z_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform Cartesian spatial distribution
-  particle_distribution.reset();
-  
   x_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   y_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
@@ -156,11 +279,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( y_dimension_dist );
   particle_distribution.setDimensionDistribution( z_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform Cartesian spatial distribution
-  particle_distribution.reset();
-  
   x_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
   y_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
@@ -169,11 +292,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( y_dimension_dist );
   particle_distribution.setDimensionDistribution( z_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform Cartesian spatial distribution
-  particle_distribution.reset();
-  
   x_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
   y_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
@@ -182,11 +305,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( y_dimension_dist );
   particle_distribution.setDimensionDistribution( z_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform Cartesian spatial distribution
-  particle_distribution.reset();
-  
   x_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist ) );
   y_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
@@ -195,11 +318,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( y_dimension_dist );
   particle_distribution.setDimensionDistribution( z_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform Cartesian spatial distribution
-  particle_distribution.reset();
-  
   x_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
   y_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
   z_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_delta_dist ) );
@@ -207,6 +330,8 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( x_dimension_dist );
   particle_distribution.setDimensionDistribution( y_dimension_dist );
   particle_distribution.setDimensionDistribution( z_dimension_dist );
+
+  particle_distribution.constructDimensionDistributionDependencyTree();
 
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 }
@@ -216,8 +341,17 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    isSpatiallyUniform_cylindrical )
 {
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+  
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0, "test dist" );
+    particle_distribution( 0,
+                           "test dist",
+                           spatial_coord_conversion_policy,
+                           directional_coord_conversion_policy );
 
   std::shared_ptr<const Utility::OneDDistribution> raw_power_dist(
                           new Utility::PowerDistribution<1>( 1.0, 0.0, 1.0 ) );
@@ -238,12 +372,6 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( r_dimension_dist );
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( z_dimension_dist );
-
-  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
-    spatial_coord_conversion_policy( new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
-
-  particle_distribution.setSpatialCoordinateConversionPolicy(
-                                             spatial_coord_conversion_policy );
 
   TEST_ASSERT( particle_distribution.isSpatiallyUniform() );
 
@@ -331,8 +459,17 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    isSpatiallyUniform_spherical )
 {
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+  
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0, "test dist" );
+    particle_distribution( 0,
+                           "test dist",
+                           spatial_coord_conversion_policy,
+                           directional_coord_conversion_policy );
 
   std::shared_ptr<const Utility::OneDDistribution> raw_power_dist(
                           new Utility::PowerDistribution<2>( 1.0, 0.0, 1.0 ) );
@@ -357,17 +494,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
-  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
-    spatial_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-
-  particle_distribution.setSpatialCoordinateConversionPolicy(
-                                             spatial_coord_conversion_policy );
+  particle_distribution.constructDimensionDistributionDependencyTree();
 
   TEST_ASSERT( particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform spherical spatial distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist_b ) );
@@ -376,11 +507,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform spherical spatial distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist_b ) );
@@ -389,11 +520,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform spherical spatial distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_power_dist ) );
@@ -402,11 +533,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform spherical spatial distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist_b ) );
@@ -415,11 +546,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform spherical spatial distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_power_dist ) );
@@ -428,11 +559,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform spherical spatial distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_power_dist ) );
@@ -441,11 +572,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 
   // Create a non-uniform spherical spatial distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_power_dist ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_power_dist ) );
@@ -453,6 +584,8 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( r_dimension_dist );
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
+
+  particle_distribution.constructDimensionDistributionDependencyTree();
 
   TEST_ASSERT( !particle_distribution.isSpatiallyUniform() );
 }
@@ -462,8 +595,17 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    isDirectionallyUniform_cartesian )
 {
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+  
   MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0, "test dist" );
+    particle_distribution( 0,
+                           "test dist",
+                           spatial_coord_conversion_policy,
+                           directional_coord_conversion_policy );
 
   std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist(
                           new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
@@ -485,17 +627,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( v_dimension_dist );
   particle_distribution.setDimensionDistribution( w_dimension_dist );
 
-  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
-    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
-
-  particle_distribution.setDirectionalCoordinateConversionPolicy(
-                                         directional_coord_conversion_policy );
+  particle_distribution.constructDimensionDistributionDependencyTree();
 
   TEST_ASSERT( !particle_distribution.isDirectionallyUniform() );
 
   // Create a non-uniform Cartesian directional distribution
-  particle_distribution.reset();
-  
   u_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
   v_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist ) );
   w_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist ) );
@@ -504,11 +640,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( v_dimension_dist );
   particle_distribution.setDimensionDistribution( w_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isDirectionallyUniform() );
 
   // Create a non-uniform Cartesian directional distribution
-  particle_distribution.reset();
-  
   u_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist ) );
   v_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
   w_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist ) );
@@ -517,11 +653,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( v_dimension_dist );
   particle_distribution.setDimensionDistribution( w_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isDirectionallyUniform() );
 
   // Create a non-uniform Cartesian directional distribution
-  particle_distribution.reset();
-  
   u_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist ) );
   v_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist ) );
   w_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
@@ -530,11 +666,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( v_dimension_dist );
   particle_distribution.setDimensionDistribution( w_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isDirectionallyUniform() );
 
   // Create a non-uniform Cartesian directional distribution
-  particle_distribution.reset();
-  
   u_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
   v_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
   w_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
@@ -542,6 +678,8 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( u_dimension_dist );
   particle_distribution.setDimensionDistribution( v_dimension_dist );
   particle_distribution.setDimensionDistribution( w_dimension_dist );
+
+  particle_distribution.constructDimensionDistributionDependencyTree();
 
   TEST_ASSERT( !particle_distribution.isDirectionallyUniform() );
 }
@@ -577,17 +715,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
-  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
-    directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
-
-  particle_distribution.setDirectionalCoordinateConversionPolicy(
-                                         directional_coord_conversion_policy );
+  particle_distribution.constructDimensionDistributionDependencyTree();
 
   TEST_ASSERT( particle_distribution.isDirectionallyUniform() );
 
   // Create a uniform spherical directional distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist_a ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist_a ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist_b ) );
@@ -596,11 +728,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( particle_distribution.isDirectionallyUniform() );
 
   // Create a non-uniform spherical directional distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist_b ) );
@@ -609,11 +741,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isDirectionallyUniform() );
 
   // Create a non-uniform spherical directional distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( raw_uniform_dist_a ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
@@ -622,11 +754,11 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isDirectionallyUniform() );
 
   // Create a non-uniform spherical directional distribution
-  particle_distribution.reset();
-  
   r_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
   theta_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
   mu_dimension_dist.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( raw_delta_dist ) );
@@ -635,7 +767,173 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
   particle_distribution.setDimensionDistribution( theta_dimension_dist );
   particle_distribution.setDimensionDistribution( mu_dimension_dist );
 
+  particle_distribution.constructDimensionDistributionDependencyTree();
+
   TEST_ASSERT( !particle_distribution.isDirectionallyUniform() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( StandardParticleDistribution,
+                   evaluate_cartesian_spatial_cartesian_directional )
+{
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createCartesianSpatialCartesianDirectionalDist();
+
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setPosition( -1.1, -0.5, -0.5 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+  
+  photon.setPosition( -1.0, -0.5, -0.5 );
+  photon.setDirection( 0.0, 1.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0078125 );
+  
+  photon.setPosition( -0.5, -0.5, -0.5 );
+  photon.setDirection( 0.0, 0.0, 1.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0078125 );
+
+  photon.setPosition( 0.0, -0.5, -0.5 );
+  photon.setDirection( -1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.00390625 );
+
+  photon.setPosition( 0.5, -0.5, -0.5 );
+  photon.setDirection( 0.0, -1.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.00390625 );
+
+  photon.setPosition( 1.0, -0.5, -0.5 );
+  photon.setDirection( 0.0, 0.0, -1.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.00390625 );
+
+  photon.setPosition( 1.1, -0.5, -0.5 );
+  photon.setDirection( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( StandardParticleDistribution,
+                   evaluate_cartesian_spatial_spherical_directional )
+{
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createCartesianSpatialSphericalDirectionalDist();
+
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setPosition( -1.1, -0.5, -0.5 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+  
+  photon.setPosition( -1.0, -0.5, -0.5 );
+  photon.setDirection( 0.0, 1.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0625 );
+  
+  photon.setPosition( -0.5, -0.5, -0.5 );
+  photon.setDirection( 0.0, 0.0, 1.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0625 );
+
+  photon.setPosition( 0.0, -0.5, -0.5 );
+  photon.setDirection( -1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.03125 );
+
+  photon.setPosition( 0.5, -0.5, -0.5 );
+  photon.setDirection( 0.0, -1.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.03125 );
+
+  photon.setPosition( 1.0, -0.5, -0.5 );
+  photon.setDirection( 0.0, 0.0, -1.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.03125 );
+
+  photon.setPosition( 1.1, -0.5, -0.5 );
+  photon.setDirection( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( StandardParticleDistribution,
+                   evaluate_cylindrical_spatial_cartesian_directional )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( StandardParticleDistribution,
+                   evaluate_cylindrical_spatial_spherical_directional )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( StandardParticleDistribution,
+                   evaluate_spherical_spatial_cartesian_directional )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( StandardParticleDistribution,
+                   evaluate_spherical_spatial_spherical_directional )
+{
+  
 }
 
 //---------------------------------------------------------------------------//
@@ -643,16 +941,37 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    default_dists_cartesian_spatial_cartesian_directional )
 {
-  MonteCarlo::StandardParticleDistribution
-    particle_distribution( 0, "test dist" );
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
   
-  particle_distribution.constructDimensionDistributionDependencyTree();
+  MonteCarlo::StandardParticleDistribution
+    particle_distribution( 0,
+                           "test dist",
+                           spatial_coord_conversion_policy,
+                           directional_coord_conversion_policy );
 
   TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ),
                        "Delta Distribution" );
   TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_SPATIAL_DIMENSION),
                        "Delta Distribution" );
   TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+  
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::ENERGY_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TIME_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::WEIGHT_DIMENSION),
                        "Delta Distribution" );
 }
 
@@ -661,11 +980,29 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    default_dists_cartesian_spatial_spherical_directional )
 {
-  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
-    spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+  MonteCarlo::StandardParticleDistribution
+    particle_distribution( 0, "test dist" );
 
-  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
-    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::ENERGY_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TIME_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::WEIGHT_DIMENSION),
+                       "Delta Distribution" );
 }
 
 //---------------------------------------------------------------------------//
@@ -673,7 +1010,38 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    default_dists_cylindrical_spatial_cartesian_directional )
 {
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
   
+  MonteCarlo::StandardParticleDistribution
+    particle_distribution( 0,
+                           "test dist",
+                           spatial_coord_conversion_policy,
+                           directional_coord_conversion_policy );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::ENERGY_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TIME_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::WEIGHT_DIMENSION),
+                       "Delta Distribution" );
 }
 
 //---------------------------------------------------------------------------//
@@ -681,7 +1049,38 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    default_dists_cylindrical_spatial_spherical_directional )
 {
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
   
+  MonteCarlo::StandardParticleDistribution
+    particle_distribution( 0,
+                           "test dist",
+                           spatial_coord_conversion_policy,
+                           directional_coord_conversion_policy );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::ENERGY_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TIME_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::WEIGHT_DIMENSION),
+                       "Delta Distribution" );
 }
 
 //---------------------------------------------------------------------------//
@@ -689,7 +1088,38 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    default_dists_spherical_spatial_cartesian_directional )
 {
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
   
+  MonteCarlo::StandardParticleDistribution
+    particle_distribution( 0,
+                           "test dist",
+                           spatial_coord_conversion_policy,
+                           directional_coord_conversion_policy );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::ENERGY_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TIME_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::WEIGHT_DIMENSION),
+                       "Delta Distribution" );
 }
 
 //---------------------------------------------------------------------------//
@@ -697,7 +1127,38 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    default_dists_spherical_spatial_spherical_directional )
 {
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
   
+  MonteCarlo::StandardParticleDistribution
+    particle_distribution( 0,
+                           "test dist",
+                           spatial_coord_conversion_policy,
+                           directional_coord_conversion_policy );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" );
+  
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" );
+
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::ENERGY_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::TIME_DIMENSION),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( particle_distribution.getDimensionDistributionTypeName( MonteCarlo::WEIGHT_DIMENSION),
+                       "Delta Distribution" );
 }
 
 //---------------------------------------------------------------------------//
@@ -708,29 +1169,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  // MonteCarlo::StandardParticleDistribution::DimensionDistributionMap
-  //   dimension_distributions;
-
-  // MonteCarlo::StandardParticleDistribution::DimensionSet indep_dimensions;
-  
-  // // Create the primary spatial dimension distribution
-  // {
-  //   std::shared_ptr<const Utility::OneDDistribution> raw_distribution(
-  //                         new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
-
-  //   dimension_distribution[MonteCarlo::PRIMARY_SPATIAL_DIMENSION].reset(
-  //     new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_distribution ) );
-  // }
-
-  // // Create the secondary spatial dimension distribution
-  // {
-  //   std::shared_ptr<const Utility::OneDDistribution> raw_distribution(
-  //                         new Utility::UniformDistribution( -2.0, 2.0, 1.0 ) );
-
-  //   dimension_distribution[MonteCarlo::SECONDARY_SPATIAL_DIMENSION].reset(
-  //      new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_distribution ) );  
-  // }
-  
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
