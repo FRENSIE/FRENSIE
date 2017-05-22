@@ -398,8 +398,15 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                         vov_tag.end() );
     output_tags.insert( output_tags.end(),
                         fom_tag.begin(),
-                        fom_tag.end() ); 
-    rval = moab_interface->write_file( d_output_mesh_file_name.c_str() );
+                        fom_tag.end() );
+    moab::EntityHandle mesh = box->box_set();
+    rval = moab_interface->write_file( d_output_mesh_file_name.c_str(),
+                                       NULL,
+                                       NULL,
+                                       &mesh,
+                                       1,
+                                       &(output_tags[0]),
+                                       output_tags.size() );
     TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                         Utility::MOABException,
                         moab::ErrorCodeStr[rval] ); 
