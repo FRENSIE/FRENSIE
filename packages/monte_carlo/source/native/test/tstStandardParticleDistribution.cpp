@@ -58,6 +58,56 @@ void initializeCartesianSpatialDimensionDists(
   particle_distribution->setDimensionDistribution( z_dimension_dist );
 }
 
+void initializeCylindricalSpatialDimensionDists(
+         std::shared_ptr<StandardParticleDistribution>& particle_distribution )
+{
+  std::shared_ptr<const Utility::OneDDistribution> raw_power_dist(
+                          new Utility::PowerDistribution<1>( 0.5, 0.0, 1.0 ) );
+
+  std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist_a(
+          new Utility::UniformDistribution( 0.0, 2*Utility::PhysicalConstants::pi, 0.1 ) );
+  
+  std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist_b(
+                          new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    r_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_power_dist ) );
+  particle_distribution->setDimensionDistribution( r_dimension_dist );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    theta_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
+  particle_distribution->setDimensionDistribution( theta_dimension_dist );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    z_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist_b ) );
+  particle_distribution->setDimensionDistribution( z_dimension_dist );
+}
+
+void initializeSphericalSpatialDimensionDists(
+         std::shared_ptr<StandardParticleDistribution>& particle_distribution )
+{
+  std::shared_ptr<const Utility::OneDDistribution> raw_power_dist(
+                          new Utility::PowerDistribution<2>( 0.5, 0.0, 1.0 ) );
+
+  std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist_a(
+          new Utility::UniformDistribution( 0.0, 2*Utility::PhysicalConstants::pi, 0.1 ) );
+  
+  std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist_b(
+                          new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    r_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_power_dist ) );
+  particle_distribution->setDimensionDistribution( r_dimension_dist );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    theta_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
+  particle_distribution->setDimensionDistribution( theta_dimension_dist );
+
+  std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+    mu_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist_b ) );
+  particle_distribution->setDimensionDistribution( mu_dimension_dist );
+}
+
 void initializeCartesianDirectionalDimensionDists(
          std::shared_ptr<StandardParticleDistribution>& particle_distribution )
 {
@@ -77,6 +127,7 @@ void initializeCartesianDirectionalDimensionDists(
   particle_distribution->setDimensionDistribution( w_dimension_dist );
 }
 
+template<MonteCarlo::PhaseSpaceDimension parent_energy_dimension>
 void initializeMiscDimensionDists(
          std::shared_ptr<StandardParticleDistribution>& particle_distribution )
 {
@@ -114,7 +165,7 @@ void initializeMiscDimensionDists(
 
     raw_dependent_distribution->limitToPrimaryIndepLimits();
   
-    energy_dimension_dist.reset( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION,MonteCarlo::ENERGY_DIMENSION>( raw_dependent_distribution ) );
+    energy_dimension_dist.reset( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<parent_energy_dimension,MonteCarlo::ENERGY_DIMENSION>( raw_dependent_distribution ) );
   }
   particle_distribution->setDimensionDistribution( energy_dimension_dist );
 }
@@ -138,7 +189,7 @@ createCartesianSpatialCartesianDirectionalDist()
   // Create the dimension distributions
   initializeCartesianSpatialDimensionDists( particle_distribution );
   initializeCartesianDirectionalDimensionDists( particle_distribution );
-  initializeMiscDimensionDists( particle_distribution );
+  initializeMiscDimensionDists<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( particle_distribution );
 
   particle_distribution->constructDimensionDistributionDependencyTree();
   
@@ -152,7 +203,7 @@ createCartesianSpatialSphericalDirectionalDist()
     spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
 
   std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
-    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+    directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
   
   std::shared_ptr<MonteCarlo::StandardParticleDistribution>
     particle_distribution( new MonteCarlo::StandardParticleDistribution(
@@ -163,7 +214,109 @@ createCartesianSpatialSphericalDirectionalDist()
 
   // Create the dimension distributions
   initializeCartesianSpatialDimensionDists( particle_distribution );
-  initializeMiscDimensionDists( particle_distribution );
+  initializeMiscDimensionDists<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( particle_distribution );
+
+  particle_distribution->constructDimensionDistributionDependencyTree();
+  
+  return particle_distribution;
+}
+
+std::shared_ptr<const ParticleDistribution>
+createCylindricalSpatialCartesianDirectionalDist()
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+  
+  std::shared_ptr<MonteCarlo::StandardParticleDistribution>
+    particle_distribution( new MonteCarlo::StandardParticleDistribution(
+                                       0,
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy ) );
+
+  // Create the dimension distributions
+  initializeCylindricalSpatialDimensionDists( particle_distribution );
+  initializeCartesianDirectionalDimensionDists( particle_distribution );
+  initializeMiscDimensionDists<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( particle_distribution );
+
+  particle_distribution->constructDimensionDistributionDependencyTree();
+  
+  return particle_distribution;
+}
+
+std::shared_ptr<const ParticleDistribution>
+createCylindricalSpatialSphericalDirectionalDist()
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCylindricalSpatialCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+  
+  std::shared_ptr<MonteCarlo::StandardParticleDistribution>
+    particle_distribution( new MonteCarlo::StandardParticleDistribution(
+                                       0,
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy ) );
+
+  // Create the dimension distributions
+  initializeCylindricalSpatialDimensionDists( particle_distribution );
+  initializeMiscDimensionDists<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( particle_distribution );
+
+  particle_distribution->constructDimensionDistributionDependencyTree();
+  
+  return particle_distribution;
+}
+
+std::shared_ptr<const ParticleDistribution>
+createSphericalSpatialCartesianDirectionalDist()
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+  
+  std::shared_ptr<MonteCarlo::StandardParticleDistribution>
+    particle_distribution( new MonteCarlo::StandardParticleDistribution(
+                                       0,
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy ) );
+
+  // Create the dimension distributions
+  initializeSphericalSpatialDimensionDists( particle_distribution );
+  initializeCartesianDirectionalDimensionDists( particle_distribution );
+  initializeMiscDimensionDists<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( particle_distribution );
+
+  particle_distribution->constructDimensionDistributionDependencyTree();
+  
+  return particle_distribution;
+}
+
+std::shared_ptr<const ParticleDistribution>
+createSphericalSpatialSphericalDirectionalDist()
+{
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+  
+  std::shared_ptr<MonteCarlo::StandardParticleDistribution>
+    particle_distribution( new MonteCarlo::StandardParticleDistribution(
+                                       0,
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy ) );
+
+  // Create the dimension distributions
+  initializeSphericalSpatialDimensionDists( particle_distribution );
+  initializeMiscDimensionDists<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( particle_distribution );
 
   particle_distribution->constructDimensionDistributionDependencyTree();
   
@@ -909,7 +1062,63 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    evaluate_cylindrical_spatial_cartesian_directional )
 {
-  
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createCylindricalSpatialCartesianDirectionalDist();
+
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setPosition( 0.0, 0.0, -1.1 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+
+  photon.setPosition( 0.0, 0.0, -1.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+
+  photon.setPosition( 0.1, 0.1, -1.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.0008838834764831846,
+                          1e-15 );
+
+  photon.setPosition( 0.1, -0.1, 0.0 );
+  photon.setDirection( 0.0, 1.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.0004419417382415923,
+                          1e-15 );
+
+  photon.setPosition( -0.1, 0.1, 1.0 );
+  photon.setDirection( 0.0, 0.0, 1.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.0004419417382415923,
+                          1e-15 );
+
+  photon.setPosition( 0.1, 0.1, 1.1 );
+  photon.setDirection( 0.0, 0.0, 1.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -917,7 +1126,63 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    evaluate_cylindrical_spatial_spherical_directional )
 {
-  
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createCylindricalSpatialSphericalDirectionalDist();
+
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setPosition( 0.0, 0.0, -1.1 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+
+  photon.setPosition( 0.0, 0.0, -1.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+
+  photon.setPosition( 0.1, 0.1, -1.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.007071067811865477,
+                          1e-15 );
+
+  photon.setPosition( 0.1, -0.1, 0.0 );
+  photon.setDirection( 0.0, 1.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.0035355339059327385,
+                          1e-15 );
+
+  photon.setPosition( -0.1, 0.1, 1.0 );
+  photon.setDirection( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.0035355339059327385,
+                          1e-15 );
+
+  photon.setPosition( 0.1, 0.1, 1.1 );
+  photon.setDirection( 0.0, 0.0, 1.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -925,7 +1190,79 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    evaluate_spherical_spatial_cartesian_directional )
 {
-  
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createSphericalSpatialCartesianDirectionalDist();
+
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setPosition( 0.0, 0.0, -1.1 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+
+  photon.setPosition( 0.0, 0.0, -1.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.00625 );
+
+  photon.setPosition( -1.0/sqrt(3.0), -1.0/sqrt(3.0), -1.0/sqrt(3.0) );
+  photon.setDirection( -1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.00625,
+                          1e-15 );
+
+  photon.setPosition( 0.0, 0.0, 0.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+
+  photon.setPosition( 0.1, 0.1, 0.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          6.25e-5,
+                          1e-15 );
+
+  photon.setPosition( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) );
+  photon.setDirection( 0.0, 1.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.003125,
+                          1e-15 );
+
+  photon.setPosition( 0.0, 0.0, 1.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.003125 );
+
+  photon.setPosition( 0.0, 0.0, 1.1 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -933,7 +1270,79 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    evaluate_spherical_spatial_spherical_directional )
 {
-  
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createSphericalSpatialSphericalDirectionalDist();
+
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setPosition( 0.0, 0.0, -1.1 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+
+  photon.setPosition( 0.0, 0.0, -1.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.05 );
+
+  photon.setPosition( -1.0/sqrt(3.0), -1.0/sqrt(3.0), -1.0/sqrt(3.0) );
+  photon.setDirection( -1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.05,
+                          1e-15 );
+
+  photon.setPosition( 0.0, 0.0, 0.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
+
+  photon.setPosition( 0.1, 0.1, 0.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          5.0e-4,
+                          1e-15 );
+
+  photon.setPosition( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) );
+  photon.setDirection( 0.0, 1.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_FLOATING_EQUALITY( particle_distribution->evaluate( photon ),
+                          0.025,
+                          1e-15 );
+
+  photon.setPosition( 0.0, 0.0, 1.0 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.025 );
+
+  photon.setPosition( 0.0, 0.0, 1.1 );
+  photon.setDirection( 1.0, 0.0, 0.0 );
+  photon.setEnergy( 1.0 );
+  photon.setTime( 1.0 );
+  photon.setWeight( 1.0 );
+
+  TEST_EQUALITY_CONST( particle_distribution->evaluate( photon ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//

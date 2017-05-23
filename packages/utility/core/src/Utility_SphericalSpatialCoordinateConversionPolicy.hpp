@@ -140,7 +140,10 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertFromCartesianPosi
     theta_spatial_coord += 2*Utility::PhysicalConstants::pi;
   
   // Compute the polar angle cosine
-  mu_spatial_coord = z_spatial_coord/r_spatial_coord;
+  if( r_spatial_coord > 0.0 )
+    mu_spatial_coord = z_spatial_coord/r_spatial_coord;
+  else
+    mu_spatial_coord = 0.0;
 
   // Check for round-off error
   if( Teuchos::ScalarTraits<double>::magnitude( mu_spatial_coord ) > 1.0 )
