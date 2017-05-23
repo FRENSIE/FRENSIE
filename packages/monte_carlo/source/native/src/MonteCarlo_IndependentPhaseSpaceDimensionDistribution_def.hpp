@@ -112,7 +112,7 @@ void IndependentPhaseSpaceDimensionDistribution<dimension>::sampleWithoutCascade
                                     PhaseSpacePoint& phase_space_sample ) const
 {
   const double sample = d_dimension_distribution->sample();
-
+  
   setCoordinate<dimension>( phase_space_sample, sample );
   setCoordinateWeight<dimension>( phase_space_sample, 1.0 );
 }
