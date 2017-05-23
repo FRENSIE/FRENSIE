@@ -225,9 +225,10 @@ TEUCHOS_UNIT_TEST( PhaseSpaceDimensionTraits, setCoordinateWeight )
 
   TEST_EQUALITY_CONST( point.getTimeCoordinateWeight(), 0.8 );
 
+  // The weight should be ignored with the weight dimension
   MonteCarlo::setCoordinateWeight<MonteCarlo::WEIGHT_DIMENSION>( point, 0.9 );
 
-  TEST_EQUALITY_CONST( point.getWeightCoordinate(), 0.9 );
+  TEST_EQUALITY_CONST( point.getWeightCoordinate(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//

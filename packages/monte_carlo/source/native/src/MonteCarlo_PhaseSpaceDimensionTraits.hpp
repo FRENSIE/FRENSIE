@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionTraitsDecl.hpp"
+#include "Utility_LoggingMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -329,9 +330,15 @@ struct PhaseSpaceDimensionTraits<WEIGHT_DIMENSION>
   { point.getWeightCoordinate(); }
 
   //! Set the coordinate weight
-  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+  static inline void setCoordinateWeight( PhaseSpacePoint&,
                                           const DimensionWeightType coord_weight )
-  { point.setWeightCoordinate( coord_weight ); }
+  {
+    if( coord_weight != 1.0 )
+    {
+      FRENSIE_LOG_WARNING( "The weight coordinate cannot have a weight "
+                           "applied!" );
+    }
+  }
 };
 
 } // end MonteCarlo namespace
