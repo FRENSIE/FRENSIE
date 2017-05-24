@@ -87,6 +87,9 @@ public:
   //! Check if the distribution is directionally uniform (isotropic)
   bool isDirectionallyUniform() const override;
 
+  //! Initialize dimension counter map
+  void initializeDimensionCounters( DimensionCounterMap& trials ) const override;
+
   //! Evaluate the distribution at the desired phase space point
   double evaluate( const ParticleState& particle ) const override;
 
@@ -167,7 +170,7 @@ inline void StandardParticleDistribution::sampleImpl(
 
     ++indep_dimension_it;
   }
-
+  
   // Convert the sampled phase space point to a particle state. This will
   // use the spatial and directional conversion policies
   phase_space_sample.setParticleState( particle );

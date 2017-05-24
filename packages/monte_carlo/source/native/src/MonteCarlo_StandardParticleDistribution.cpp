@@ -61,6 +61,12 @@ StandardParticleDistribution::StandardParticleDistribution(
 }
 
 // Set a dimension distribution
+/*! \details This will destroy the current dependency tree. You will not be 
+ * able to evaluate or sample from the particle distribution until the 
+ * dependency tree has been constructed again. If multiple dimension
+ * distributions must be set, construct the tree after setting all of them
+ * so that the tree isn't constructed multiple times.
+ */
 void StandardParticleDistribution::setDimensionDistribution(
                         const std::shared_ptr<PhaseSpaceDimensionDistribution>&
                         dimension_distribution )
@@ -78,6 +84,14 @@ void StandardParticleDistribution::setDimensionDistribution(
 }
 
 // Construct the dimension distribution dependency tree
+/*! \details This method assigns dependent dimension distributions to the
+ * required parent dimension distribution, which forms a tree. This tree is 
+ * primarily used for sampling from dimension distributions in the correct 
+ * order (parent first, then children i.e. top-down tree traversal). The 
+ * independent dimensions are also identified since they are considered the top
+ * of the tree. If the dependency tree has already been constructed this 
+ * method will do nothing.
+ */
 void StandardParticleDistribution::constructDimensionDistributionDependencyTree()
 {
   if( !d_ready )
@@ -177,6 +191,10 @@ void StandardParticleDistribution::checkDependencyTreeForOrphans()
 }
 
 // Reset the distribution
+/*! \details Each dimension will use its default distribution. The 
+ * default distribution for a dimension is dependent on the coordinate
+ * conversion policy that has been set for the particle distribution.
+ */
 void StandardParticleDistribution::reset()
 {
   // Clear the dimension distribution data
@@ -344,104 +362,117 @@ bool StandardParticleDistribution::isDirectionallyUniform() const
     return false;
 }
 
+// Initialize dimension counter map
+/*! \details A counter for each dimension will be created and set to 0.
+ */
+void StandardParticleDistribution::initializeDimensionCounters(
+                                            DimensionCounterMap& trials ) const
+{
+  trials[PRIMARY_SPATIAL_DIMENSION] = 0;
+  trials[SECONDARY_SPATIAL_DIMENSION] = 0;
+  trials[TERTIARY_SPATIAL_DIMENSION] = 0;
+  
+  trials[PRIMARY_DIRECTIONAL_DIMENSION] = 0;
+  trials[SECONDARY_DIRECTIONAL_DIMENSION] = 0;
+  trials[TERTIARY_DIRECTIONAL_DIMENSION] = 0;
+  
+  trials[ENERGY_DIMENSION] = 0;
+  trials[TIME_DIMENSION] = 0;
+  trials[WEIGHT_DIMENSION] = 0;
+}
+
 // Evaluate the distribution at the desired phase space point
-/*! \details All dimensions except the weight dimension will be used.
+/*! \details The dimension distribution dependency tree must be constructed 
+ * before the particle distribution can be evaluated. All dimensions except
+ * for the weight dimension will be used.
  */
 double StandardParticleDistribution::evaluate(
                                           const ParticleState& particle ) const
 {
-  if( d_ready )
+  // Make sure that the distribution is ready
+  testPrecondition( d_ready );
+
+  // Convert the particle to a phase space point
+  PhaseSpacePoint phase_space_point( particle,
+                                     d_spatial_coord_conversion_policy,
+                                     d_directional_coord_conversion_policy );
+
+  double distribution_value = 1.0;
+
+  // Evaluate the distribution at the phase space point
+  DimensionDistributionMap::const_iterator
+    dimension_dist_it = d_dimension_distributions.begin();
+  
+  // Each dimension distribution will be evaluated individually (without
+  // cascading to dependent distributions)
+  while( dimension_dist_it != d_dimension_distributions.end() )
   {
-    // Convert the particle to a phase space point
-    PhaseSpacePoint phase_space_point( particle,
-                                       d_spatial_coord_conversion_policy,
-                                       d_directional_coord_conversion_policy );
-
-    double distribution_value = 1.0;
-
-    // Evaluate the distribution at the phase space point
-    DimensionDistributionMap::const_iterator
-      dimension_dist_it = d_dimension_distributions.begin();
-    
-    // Each dimension distribution will be evaluated individually (without
-    // cascading to dependent distributions)
-    while( dimension_dist_it != d_dimension_distributions.end() )
+    if( dimension_dist_it->second->getDimension() != WEIGHT_DIMENSION )
     {
-      if( dimension_dist_it->second->getDimension() != WEIGHT_DIMENSION )
-      {
-        distribution_value *=
-          dimension_dist_it->second->evaluateWithoutCascade( phase_space_point );
-      }
-      
-      ++dimension_dist_it;
+      distribution_value *=
+        dimension_dist_it->second->evaluateWithoutCascade( phase_space_point );
     }
+    
+    ++dimension_dist_it;
+  }
 
-    return distribution_value;
-  }
-  else
-  {
-    FRENSIE_LOG_WARNING( "Unable to evaluate particle distribution "
-                         << this->getName() << " because it is not ready!" );
-    return 0.0;
-  }
+  return distribution_value;
 }
 
 // Sample a particle state from the distribution
+/*! \details The dimension distribution dependency tree must be constructed 
+ * before the particle distribution can be evaluated.
+ */
 void StandardParticleDistribution::sample( ParticleState& particle ) const
 {
-  if( d_ready )
-  {
-    // Create the dimension sampling functor
-    DimensionSamplingFunction dimension_sample_functor =
-      std::bind<void>( &PhaseSpaceDimensionDistribution::sampleWithCascade,
-                       std::placeholders::_1,
-                       std::placeholders::_2 );
+  // Make sure that the distribution is ready
+  testPrecondition( d_ready );
 
-    this->sampleImpl( dimension_sample_functor, particle );
-  }
-  else
-  {
-    FRENSIE_LOG_WARNING( "Unable to sample a particle state with particle "
-                         "distribution " << this->getName() << " becuase the "
-                         "distribution is not ready!" );
-  }
+  // Create the dimension sampling functor
+  DimensionSamplingFunction dimension_sample_functor =
+    std::bind<void>( &PhaseSpaceDimensionDistribution::sampleWithCascade,
+                     std::placeholders::_1,
+                     std::placeholders::_2 );
+  
+  this->sampleImpl( dimension_sample_functor, particle );
 }
 
 // Sample a particle state from the dist. and record the number of trials
+/*! \details The dimension distribution dependency tree must be constructed 
+ * before the particle distribution can be evaluated.
+ */
 void StandardParticleDistribution::sampleAndRecordTrials(
                                        ParticleState& particle,
                                        DimensionCounterMap& trials ) const
 {
-  if( d_ready )
-  {
-    // Create the dimension sampling functor
-    DimensionSamplingFunction dimension_sample_functor =
-      std::bind<void>(
+  // Make sure that the distribution is ready
+  testPrecondition( d_ready );
+
+  // Create the dimension sampling functor
+  DimensionSamplingFunction dimension_sample_functor =
+    std::bind<void>(
             &PhaseSpaceDimensionDistribution::sampleAndRecordTrialsWithCascade,
             std::placeholders::_1,
             std::placeholders::_2,
             std::ref( trials ) );
 
-    this->sampleImpl( dimension_sample_functor, particle );
-  }
-  else
-  {
-    FRENSIE_LOG_WARNING( "Unable to sample a particle state with particle "
-                         "distribution " << this->getName() << " becuase the "
-                         "distribution is not ready!" );
-  }
+  this->sampleImpl( dimension_sample_functor, particle );
 }
 
 // Sample a particle state with the desired dimension value
+/*! \details The dimension distribution dependency tree must be constructed 
+ * before the particle distribution can be evaluated.
+ */
 void StandardParticleDistribution::sampleWithDimensionValue(
                                            ParticleState& particle,
                                            const PhaseSpaceDimension dimension,
                                            const double dimension_value ) const
 {
-  if( d_ready )
-  {
-    // Create the dimension sampling functor
-    DimensionSamplingFunction dimension_sample_functor =
+  // Make sure that the distribution is ready
+  testPrecondition( d_ready );
+
+  // Create the dimension sampling functor
+  DimensionSamplingFunction dimension_sample_functor =
       std::bind<void>(
        &PhaseSpaceDimensionDistribution::sampleWithCascadeUsingDimensionValue,
        std::placeholders::_1,
@@ -449,27 +480,24 @@ void StandardParticleDistribution::sampleWithDimensionValue(
        dimension,
        dimension_value );
 
-    this->sampleImpl( dimension_sample_functor, particle );
-  }
-  else
-  {
-    FRENSIE_LOG_WARNING( "Unable to sample a particle state with particle "
-                         "distribution " << this->getName() << " becuase the "
-                         "distribution is not ready!" );
-  }
+  this->sampleImpl( dimension_sample_functor, particle );
 }
 
 // Sample a particle state with the desired dim. value and record trials
+/*! \details The dimension distribution dependency tree must be constructed 
+ * before the particle distribution can be evaluated.
+ */
 void StandardParticleDistribution::sampleWithDimensionValueAndRecordTrials(
                                            ParticleState& particle,
                                            DimensionCounterMap& trials,
                                            const PhaseSpaceDimension dimension,
                                            const double dimension_value ) const
 {
-  if( d_ready )
-  {
-    // Create the dimension sampling functor
-    DimensionSamplingFunction dimension_sample_functor =
+  // Make sure that the distribution is ready
+  testPrecondition( d_ready );
+
+  // Create the dimension sampling functor
+  DimensionSamplingFunction dimension_sample_functor =
       std::bind<void>(
        &PhaseSpaceDimensionDistribution::sampleAndRecordTrialsWithCascadeUsingDimensionValue,
        std::placeholders::_1,
@@ -478,14 +506,7 @@ void StandardParticleDistribution::sampleWithDimensionValueAndRecordTrials(
        dimension,
        dimension_value );
 
-    this->sampleImpl( dimension_sample_functor, particle );
-  }
-  else
-  {
-    FRENSIE_LOG_WARNING( "Unable to sample a particle state with particle "
-                         "distribution " << this->getName() << " becuase the "
-                         "distribution is not ready!" );
-  }
+  this->sampleImpl( dimension_sample_functor, particle );
 }
 
 } // end MonteCarlo namespace

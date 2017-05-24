@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -99,7 +100,7 @@ void PhaseSpaceDimensionDistribution::sampleAndRecordTrialsWithCascade(
                                            PhaseSpacePoint& phase_space_sample,
                                            DimensionCounterMap& trials ) const
 {
-  // Make sure the trial counter map is valid
+  // Make sure that the trials map is valid
   testPrecondition( trials.count( this->getDimension() ) );
   
   // Sample a value for this dimension only

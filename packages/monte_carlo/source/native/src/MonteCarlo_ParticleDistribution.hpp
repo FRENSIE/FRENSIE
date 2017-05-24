@@ -63,6 +63,9 @@ public:
   //! Check if the distribution is directionally uniform (isotropic)
   virtual bool isDirectionallyUniform() const = 0;
 
+  //! Initialize dimension counter map
+  virtual void initializeDimensionCounters( DimensionCounterMap& trials ) const = 0;
+
   //! Evaluate the distribution at the desired phase space point
   virtual double evaluate( const ParticleState& particle ) const = 0;
 
