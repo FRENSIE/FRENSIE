@@ -1639,7 +1639,91 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    sample_cylindrical_spatial_spherical_directional )
 {
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createCylindricalSpatialSphericalDirectionalDist();
+  
+  // Set the random number generator stream
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 0.0; // r
+  fake_stream[1] = 0.5; // theta
+  fake_stream[2] = 0.0; // z
+  fake_stream[3] = 0.5; // energy
+  fake_stream[4] = 0.0; // theta
+  fake_stream[5] = 0.0; // mu
+  fake_stream[6] = 0.0; // time
 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::PhotonState photon( 0 );
+
+  particle_distribution->sample( photon );
+
+  TEST_EQUALITY_CONST( photon.getXPosition(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getYPosition(), 0.0 );
+  TEST_FLOATING_EQUALITY( photon.getZPosition(), -1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZDirection(), -1.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getSourceTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 0.5; // r
+  fake_stream[1] = 0.5; // theta
+  fake_stream[2] = 0.5; // z
+  fake_stream[3] = 0.5; // energy
+  fake_stream[4] = 0.0; // theta
+  fake_stream[5] = 1.0-1e-15; // mu
+  fake_stream[6] = 0.5; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  TEST_FLOATING_EQUALITY( photon.getXPosition(), -0.7071067811865476, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYPosition(), 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getZPosition(), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZDirection(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( photon.getEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( photon.getSourceTime(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getTime(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 1.0-1e-15; // r
+  fake_stream[1] = 0.25; // theta
+  fake_stream[2] = 1.0-1e-15; // z
+  fake_stream[3] = 1.0-1e-15; // energy
+  fake_stream[4] = 1.0-1e-15; // theta
+  fake_stream[5] = 0.5; // mu
+  fake_stream[6] = 1.0-1e-15; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXPosition(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getYPosition(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZPosition(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getXDirection(), 1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYDirection(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getSourceEnergy(), 20.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 20.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getSourceTime(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getTime(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -1647,7 +1731,121 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    sample_spherical_spatial_cartesian_directional )
 {
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createSphericalSpatialCartesianDirectionalDist();
+  
+  // Set the random number generator stream
+  std::vector<double> fake_stream( 8 );
+  fake_stream[0] = 1.0-1e-12; // r
+  fake_stream[1] = 0.0; // theta
+  fake_stream[2] = 0.0; // mu
+  fake_stream[3] = 0.5; // energy
+  fake_stream[4] = 0.5; // u
+  fake_stream[5] = 0.5; // v
+  fake_stream[6] = 1.0-1e-15; // w
+  fake_stream[7] = 0.0; // time
 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::PhotonState photon( 0 );
+
+  particle_distribution->sample( photon );
+
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYPosition(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZPosition(), -1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZDirection(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getSourceTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 0.0; // r
+  fake_stream[1] = 0.0; // theta
+  fake_stream[2] = 0.0; // mu
+  fake_stream[3] = 0.5; // energy
+  fake_stream[4] = 0.5; // u
+  fake_stream[5] = 1.0-1e-15; // v
+  fake_stream[6] = 0.5; // w
+  fake_stream[7] = 0.0; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getSourceTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 1.0-1e-15; // r
+  fake_stream[1] = 0.5; // theta
+  fake_stream[2] = 0.5; // mu
+  fake_stream[3] = 0.5; // energy
+  fake_stream[4] = 1.0-1e-15; // u
+  fake_stream[5] = 0.5; // v
+  fake_stream[6] = 0.5; // w
+  fake_stream[7] = 0.5; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  TEST_FLOATING_EQUALITY( photon.getXPosition(), -1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZPosition(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getXDirection(), 1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYDirection(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( photon.getEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( photon.getSourceTime(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getTime(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 1.0-1e-15; // r
+  fake_stream[1] = 0.0; // theta
+  fake_stream[2] = 1.0-1e-15; // mu
+  fake_stream[3] = 1.0-1e-15; // energy
+  fake_stream[4] = 1.0-1e-15; // u
+  fake_stream[5] = 1.0-1e-15; // v
+  fake_stream[6] = 0.5; // w
+  fake_stream[7] = 1.0-1e-15; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXPosition(), 0.0, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYPosition(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZPosition(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getXDirection(), 1.0/sqrt(2.0), 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0/sqrt(2.0), 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getSourceEnergy(), 20.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 20.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getSourceTime(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getTime(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+  
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -1655,7 +1853,117 @@ TEUCHOS_UNIT_TEST( StandardParticleDistribution,
 TEUCHOS_UNIT_TEST( StandardParticleDistribution,
                    sample_spherical_spatial_spherical_directional )
 {
+  std::shared_ptr<const ParticleDistribution> particle_distribution =
+    createSphericalSpatialSphericalDirectionalDist();
+  
+  // Set the random number generator stream
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 1.0-1e-12; // r
+  fake_stream[1] = 0.0; // theta
+  fake_stream[2] = 0.0; // mu
+  fake_stream[3] = 0.5; // energy
+  fake_stream[4] = 0.0; // theta
+  fake_stream[5] = 0.0; // mu
+  fake_stream[6] = 0.0; // time
 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::PhotonState photon( 0 );
+
+  particle_distribution->sample( photon );
+
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYPosition(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZPosition(), -1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZDirection(), -1.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getSourceTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 0.0; // r
+  fake_stream[1] = 0.0; // theta
+  fake_stream[2] = 0.0; // mu
+  fake_stream[3] = 0.5; // energy
+  fake_stream[4] = 0.0; // theta
+  fake_stream[5] = 0.5; // mu
+  fake_stream[6] = 0.0; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZPosition(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getXDirection(), 1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYDirection(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( photon.getSourceTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getTime(), 0.0 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 1.0-1e-15; // r
+  fake_stream[1] = 0.5; // theta
+  fake_stream[2] = 0.5; // mu
+  fake_stream[3] = 0.5; // energy
+  fake_stream[4] = 0.75; // theta
+  fake_stream[5] = 0.5; // mu
+  fake_stream[6] = 0.5; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  TEST_FLOATING_EQUALITY( photon.getXPosition(), -1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZPosition(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( photon.getEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( photon.getSourceTime(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getTime(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+
+  // Set the random number generator stream
+  fake_stream[0] = 1.0-1e-15; // r
+  fake_stream[1] = 0.0; // theta
+  fake_stream[2] = 1.0-1e-15; // mu
+  fake_stream[3] = 1.0-1e-15; // energy
+  fake_stream[4] = 0.0; // theta
+  fake_stream[5] = 1.0-1e-15; // mu
+  fake_stream[6] = 1.0-1e-15; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  particle_distribution->sample( photon );
+
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXPosition(), 0.0, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYPosition(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZPosition(), 1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZDirection(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getSourceEnergy(), 20.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 20.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getSourceTime(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getTime(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( photon.getSourceWeight(), 0.5 );
+  TEST_EQUALITY_CONST( photon.getWeight(), 0.5 );
+  
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
