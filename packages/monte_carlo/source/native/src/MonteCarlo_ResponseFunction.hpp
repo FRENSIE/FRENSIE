@@ -25,10 +25,6 @@ class ResponseFunction
 
 public:
 
-  //! Constructor
-  ResponseFunction()
-  { /* ... */ }
-
   //! Destructor
   virtual ~ResponseFunction()
   { /* ... */ }
@@ -46,7 +42,13 @@ public:
   virtual bool isSpatiallyUniform() const;
 
   //! Default response function
-  static const std::shared_ptr<ResponseFunction> default_response_function;
+  static const std::shared_ptr<const ResponseFunction> default_response_function;
+
+protected:
+
+  //! Constructor
+  ResponseFunction()
+  { /* ... */ }
 };
 
 } // end MonteCarlo namespace

@@ -24,7 +24,7 @@
 // Check that the name of the response function can be returned
 TEUCHOS_UNIT_TEST( ResponseFunction, getName )
 {
-  std::shared_ptr<MonteCarlo::ResponseFunction> response_function=
+  std::shared_ptr<const MonteCarlo::ResponseFunction> response_function =
     MonteCarlo::ResponseFunction::default_response_function;
 
   TEST_EQUALITY( response_function->getName(), "default" );
@@ -34,7 +34,7 @@ TEUCHOS_UNIT_TEST( ResponseFunction, getName )
 // Check that the response function id can be returned
 TEUCHOS_UNIT_TEST( ResponseFunction, getId )
 {
-  std::shared_ptr<MonteCarlo::ResponseFunction> response_function=
+  std::shared_ptr<const MonteCarlo::ResponseFunction> response_function =
     MonteCarlo::ResponseFunction::default_response_function;
 
   TEST_EQUALITY_CONST( response_function->getId(),
@@ -45,7 +45,7 @@ TEUCHOS_UNIT_TEST( ResponseFunction, getId )
 // Check that the response function can be evaluated
 TEUCHOS_UNIT_TEST( ResponseFunction, evaluate )
 {
-  std::shared_ptr<MonteCarlo::ResponseFunction> response_function=
+  std::shared_ptr<const MonteCarlo::ResponseFunction> response_function =
     MonteCarlo::ResponseFunction::default_response_function;
 
   MonteCarlo::PhotonState particle( 0ull );
@@ -57,7 +57,7 @@ TEUCHOS_UNIT_TEST( ResponseFunction, evaluate )
 // Check if the response function is spatially uniform
 TEUCHOS_UNIT_TEST( ResponseFunction, isSpatiallyUniform )
 {
-  std::shared_ptr<MonteCarlo::ResponseFunction> response_function=
+  std::shared_ptr<const MonteCarlo::ResponseFunction> response_function =
     MonteCarlo::ResponseFunction::default_response_function;
 
   TEST_ASSERT( response_function->isSpatiallyUniform() );

@@ -16,8 +16,8 @@
 namespace MonteCarlo{
 
 // Initialize the default response function
-const std::shared_ptr<ResponseFunction>
-ResponseFunction::default_response_function;
+const std::shared_ptr<const ResponseFunction>
+ResponseFunction::default_response_function( new ResponseFunction );
 
 // Return the id
 ModuleTraits::InternalROIHandle ResponseFunction::getId() const
@@ -34,7 +34,7 @@ const std::string& ResponseFunction::getName() const
 }
 
 // Evaluate the response function at the desired phase space point
-double ResponseFunction::evaluate( const ParticleState& particle ) const
+double ResponseFunction::evaluate( const ParticleState& ) const
 {
   return 1.0;
 }

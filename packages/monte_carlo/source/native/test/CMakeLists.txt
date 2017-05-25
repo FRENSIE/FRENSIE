@@ -84,25 +84,32 @@ TARGET_LINK_LIBRARIES(tstStandardParticleDistribution monte_carlo_source_native)
 ADD_TEST(StandardParticleDistribution_test tstStandardParticleDistribution)
 SET_PROPERTY(TEST StandardParticleDistribution_test PROPERTY LABELS monte_carlo_source_native)
 
-ADD_EXECUTABLE(tstSourceHDF5FileHandler
-  tstSourceHDF5FileHandler.cpp
+ADD_EXECUTABLE(tstResponseFunction
+  tstResponseFunction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSourceHDF5FileHandler monte_carlo_source_native)
-ADD_TEST(SourceHDF5FileHandler_test tstSourceHDF5FileHandler)
-SET_PROPERTY(TEST SourceHDF5FileHandler_test PROPERTY LABELS monte_carlo_source_native)
+TARGET_LINK_LIBRARIES(tstResponseFunction monte_carlo_source_native)
+ADD_TEST(ResponseFunction_test tstResponseFunction)
+SET_PROPERTY(TEST ResponseFunction_test PROPERTY LABELS monte_carlo_source_native)
 
-# ADD_EXECUTABLE(tstResponseFunction
-#   tstResponseFunction.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstResponseFunction monte_carlo_estimator_native)
-# ADD_TEST(ResponseFunction_test tstResponseFunction)
-# SET_PROPERTY(TEST ResponseFunction_test PROPERTY LABELS monte_carlo_estimator_native)
+ADD_EXECUTABLE(tstStandardResponseFunction
+  tstStandardResponseFunction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardResponseFunction monte_carlo_source_native)
+ADD_TEST(StandardResponseFunction_test tstStandardResponseFunction)
+SET_PROPERTY(TEST StandardResponseFunction_test PROPERTY LABELS monte_carlo_source_native)
 
 # ADD_EXECUTABLE(tstResponseFunctionFactory
 #   tstResponseFunctionFactory.cpp)
 # TARGET_LINK_LIBRARIES(tstResponseFunctionFactory monte_carlo_estimator_native)
 # ADD_TEST(ResponseFunctionFactory_test tstResponseFunctionFactory --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml")
 # SET_PROPERTY(TEST ResponseFunctionFactory_test PROPERTY LABELS monte_carlo_estimator_native)
+
+ADD_EXECUTABLE(tstSourceHDF5FileHandler
+  tstSourceHDF5FileHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSourceHDF5FileHandler monte_carlo_source_native)
+ADD_TEST(SourceHDF5FileHandler_test tstSourceHDF5FileHandler)
+SET_PROPERTY(TEST SourceHDF5FileHandler_test PROPERTY LABELS monte_carlo_source_native)
 
 # ADD_EXECUTABLE(tstStandardParticleSource
 #   tstStandardParticleSource.cpp)
