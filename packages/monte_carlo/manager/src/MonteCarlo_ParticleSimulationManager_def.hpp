@@ -153,13 +153,6 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
 
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
-    // Create a navigator for each thread
-    std::unique_ptr<Geometry::Navigator>
-      navigator( d_model->createNavigatorAdvanced() );
-
-    // Create a start cell cache for each thread
-    std::set<Geometry::ModuleTraits::InternalCellHandle> start_cell_cache;
-
     // Create a bank for each thread
     ParticleBank bank;
 
@@ -174,28 +167,14 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
 	Utility::RandomNumberGenerator::initialize( history );
 
 	// Sample a particle state from the source
-	SMI::sampleParticleState( bank, history );
-
-	// Determine the starting cell of the particle
-	for( size_t i = 0; i < bank.size(); ++i )
-	{
-          Geometry::ModuleTraits::InternalCellHandle start_cell;
-
-	  try{
-	    start_cell = navigator->findCellContainingRay( bank.top().ray(),
-                                                           start_cell_cache );
-	  }
-	  CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
-
-	  bank.top().embedInModel( d_model, start_cell );
-
-	  EMI::updateObserversFromParticleEnteringCellEvent(
-                                            bank.top(), bank.top().getCell() );
-	}
+        try{
+          SMI::sampleParticleState( bank, history );
+        }
+        CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
 
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
-	{
+	{            
 	  this->simulateUnresolvedParticle( bank.top(), bank );
 
           bank.pop();
@@ -238,6 +217,14 @@ void ParticleSimulationManager<mode>::simulateParticle(
 {
   // Resolve the particle state
   State& particle = dynamic_cast<State&>( unresolved_particle );
+
+  // Account for particles that were created by the source
+  if( particle.getSourceEnergy() == particle.getEnergy() &&
+      particle.getSourceTime() == particle.getTime() )
+  {
+    EMI::updateObserversFromParticleEnteringCellEvent(
+                                            bank.top(), bank.top().getCell() );
+  }
 
   // Check if the particle energy is below the cutoff
   if( particle.getEnergy() < d_properties->getMinParticleEnergy<State>() )

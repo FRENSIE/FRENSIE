@@ -111,11 +111,11 @@ TARGET_LINK_LIBRARIES(tstSourceHDF5FileHandler monte_carlo_source_native)
 ADD_TEST(SourceHDF5FileHandler_test tstSourceHDF5FileHandler)
 SET_PROPERTY(TEST SourceHDF5FileHandler_test PROPERTY LABELS monte_carlo_source_native)
 
-# ADD_EXECUTABLE(tstStandardParticleSource
-#   tstStandardParticleSource.cpp)
-# TARGET_LINK_LIBRARIES(tstStandardParticleSource monte_carlo_source_native)
-# ADD_TEST(StandardParticleSource_test tstStandardParticleSource)
-# SET_PROPERTY(TEST StandardParticleSource_test PROPERTY LABELS monte_carlo_source_native)
+ADD_EXECUTABLE(tstStandardParticleSource
+  tstStandardParticleSource.cpp)
+TARGET_LINK_LIBRARIES(tstStandardParticleSource monte_carlo_source_native)
+ADD_TEST(StandardParticleSource_test tstStandardParticleSource)
+SET_PROPERTY(TEST StandardParticleSource_test PROPERTY LABELS monte_carlo_source_native)
 
 # IF(${FRENSIE_ENABLE_OPENMP})
 #   ADD_TEST(SharedParallelStandardParticleSource_2_test tstStandardParticleSource --threads=2)

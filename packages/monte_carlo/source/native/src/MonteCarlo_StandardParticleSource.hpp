@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <memory>
+#include <set>
 #include <functional>
 
 // Trilinos Includes
@@ -21,18 +22,20 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
 #include "MonteCarlo_ParticleDistribution.hpp"
-#include "Geometry_PointLocation.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 
 namespace MonteCarlo{
 
 /*! The standard particle source class
  * \details The standard particle source class simply wraps the
- * MonteCarlo::ParticleDistribution class and provides a geometry based
- * rejection capability. Since the MonteCarlo::ParticleDistribution class is 
- * geometry agnostic and because it is sometimes necessary to limit where a 
- * particle's spatial coordinates are sampled, this class allows the user to 
- * specify rejection cells. Any sampled particle states with spatial 
+ * MonteCarlo::ParticleDistribution class and provides some additional 
+ * capabilities for calculating sampling efficiencies, for generating
+ * probe particles (commonly needed in adjoint simulations) and for 
+ * adding geometry based rejection functions. Since the 
+ * MonteCarlo::ParticleDistribution class is geometry agnostic and 
+ * because it is sometimes necessary to limit where a particle's spatial 
+ * coordinates are sampled, this class allows the user to specify rejection 
+ * cells in the model of interest. Any sampled particle states with spatial 
  * coordinates that do not fall within one of the rejection cells will be 
  * discarded and a new state will be sampled. If no rejection cells are 
  * specified all sampled particle states will be used.
@@ -47,10 +50,6 @@ private:
 
   // Typedef for the dimension trial counter map
   typedef ParticleDistribution::DimensionCounterMap DimensionCounterMap;
-
-  // Typedef for the cell rejction function
-  typedef std::function<Geometry::PointLocation (const Geometry::Ray&)>
-  CellRejectionFunction;
 
   // Typedef for the particle state sampling function
   typedef std::function<void(ParticleState&,DimensionCounterMap&)>
@@ -96,9 +95,8 @@ public:
                const Teuchos::ArrayRCP<const double>& critical_line_energies );
 
   //! Set the rejection cell
-  template<typename PointLocationFunction>
-  void setRejectionCell(const Geometry::ModuleTraits::InternalCellHandle& cell,
-                        PointLocationFunction location_function );
+  void setRejectionCell(
+                       const Geometry::ModuleTraits::InternalCellHandle cell );
 
   //! Sample a particle state from the source
   void sampleParticleState( ParticleBank& bank,
@@ -125,6 +123,9 @@ public:
   double getDimensionSamplingEfficiency(
                           const PhaseSpaceDimension dimension ) const override;
 
+  //! Return the starting cells that have been cached
+  void getStaringCells( std::set<Geometry::ModuleTraits::InternalCellHandle>& starting_cells ) const override;
+
 private:
 
   // Check if the sampled particle position is valid
@@ -139,6 +140,25 @@ private:
                          ParticleStateSamplingFunction& sampling_function,
                          ParticleState& particle,
                          const bool ignore_energy_dimension_counters = false );
+
+  // Merge the starting cells on the comm
+  void mergeStartingCells(
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process );
+
+  // Merge the starting cells with the packaged data
+  void mergeStaringCellsWithPackagedData(
+          std::set<Geometry::ModuleTraits::InternalCellHandle>& starting_cells,
+          const std::string& packaged_data );
+
+  // Package the starting cell data
+  std::string packageStartingCellData(
+                    const std::set<Geometry::ModuleTraits::InternalCellHandle>&
+                    starting_cells ) const;
+
+  // Unpack the starting cell data
+  std::set<Geometry::ModuleTraits::InternalCellHandle>
+  unpackStartingCellData( const std::string& packaged_data ) const;
   
   // Reduce the sample counters on the comm
   void reduceSampleCounters(
@@ -172,6 +192,9 @@ private:
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process );
 
+  // Merge the local starting cells
+  void mergeLocalStartCellCaches( std::set<Geometry::ModuleTraits::InternalCellHandle>& starting_cells ) const;
+
   // Reduce the local samples counters
   ModuleTraits::InternalCounter reduceLocalSampleCounters() const;
 
@@ -204,6 +227,9 @@ private:
                const PhaseSpaceDimension dimension,
                const Teuchos::Array<DimensionCounterMap>& dimension_counters );
 
+  // Initialze the start cell caches
+  void initializeStartCellCaches();
+
   // Initialize the dimension sample counters
   void initializeDimensionSampleCounters();
 
@@ -211,8 +237,7 @@ private:
   void initializeDimensionTrialCounters();
 
   // Initialize the dimension counters
-  static void initializeDimensionCounters(
-                     const ParticleDistribution::DimensionSet& dimensions,
+  void initializeDimensionCounters(
                      Teuchos::Array<DimensionCounterMap>& dimension_counters );
 
   // Increment the dimension counters
@@ -229,14 +254,15 @@ private:
   // The default particle state sampling function
   ParticleStateSamplingFunction d_default_particle_state_sampling_function;
 
+  // The start cell cache
+  Teuchos::Array<std::set<Geometry::ModuleTraits::InternalCellHandle> >
+  d_start_cell_cache;
+
   // The number of trials
   Teuchos::Array<ModuleTraits::InternalCounter> d_number_of_trials;
 
   // The number of valid samples
   Teuchos::Array<ModuleTraits::InternalCounter> d_number_of_samples;
-
-  // The dimensions with distributions defined
-  ParticleDistribution::DimensionSet d_dimensions_with_distributions;
 
   // The dimension trial counters
   Teuchos::Array<DimensionCounterMap> d_dimension_trial_counters;
@@ -248,8 +274,8 @@ private:
   Teuchos::Array<Utility::Pair<double,ParticleStateSamplingFunction> >
   d_particle_state_critical_line_energy_sampling_functions;
 
-  // The cell rejection functions
-  Teuchos::Array<CellRejectionFunction> d_cell_rejection_functions;
+  // The rejection cells
+  std::set<Geometry::ModuleTraits::InternalCellHandle> d_rejection_cells;
 };
 
 // Set a rejection cell
@@ -259,23 +285,18 @@ private:
  * set multiple rejection cells. Only the master thread should call this
  * method.
  */
-template<typename PointLocationFunction>
 inline void StandardParticleSource::setRejectionCell(
-                        const Geometry::ModuleTraits::InternalCellHandle& cell,
-                        PointLocationFunction location_function )
+                        const Geometry::ModuleTraits::InternalCellHandle cell )
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure the cell is valid
-  testPrecondition( cell !=
-                    Geometry::ModuleTraits::invalid_internal_cell_handle );
+  testPrecondition( this->getModel().doesCellExist( cell ) );
 
-  CellRejectionFunction new_cell_rejection_function =
-    std::bind<Geometry::PointLocation>( location_function,
-                                        std::placeholders::_1,
-                                        cell );
+  d_rejection_cells.insert( cell );
 
-  d_cell_rejection_functions.push_back( new_cell_rejection_function );
+  for( int i = 0; i < d_start_cell_cache.size(); ++i )
+    d_start_cell_cache[i].insert( cell );
 }
 
 } // end MonteCarlo namespace
