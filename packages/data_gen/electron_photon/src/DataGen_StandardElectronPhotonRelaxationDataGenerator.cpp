@@ -1991,7 +1991,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   // iterate through all angular energy bins
   for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
   {
-    StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeights(
+    StandardElectronPhotonRelaxationDataGenerator::evaluateDiscreteAnglesAndWeights(
         moments_evaluator,
         angular_energy_grid[i],
         data_container.getNumberOfMomentPreservingAngles(),
@@ -2661,7 +2661,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
 }
 
 // Generate elastic moment preserving discrete angle cosines and weights
-void StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeights(
+void StandardElectronPhotonRelaxationDataGenerator::evaluateDiscreteAnglesAndWeights(
     const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_moment_preserving_angles,

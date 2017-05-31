@@ -14,7 +14,7 @@ namespace DataGen{
 
 // Constructor
 MomentPreservingElectronDataGenerator::MomentPreservingElectronDataGenerator(
-						 const unsigned atomic_number )
+                                                const unsigned atomic_number )
   : d_atomic_number( atomic_number )
 {
   // Make sure the atomic number is valid

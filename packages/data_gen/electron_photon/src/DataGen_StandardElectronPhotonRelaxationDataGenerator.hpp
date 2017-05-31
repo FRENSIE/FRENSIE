@@ -306,7 +306,7 @@ private:
     std::vector<double>& elastic_pdf ) const;
 
   // Generate elastic moment preserving discrete angle cosines and weights
-  static void evaluateDisceteAnglesAndWeights(
+  static void evaluateDiscreteAnglesAndWeights(
     const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_moment_preserving_angles,

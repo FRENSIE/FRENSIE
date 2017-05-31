@@ -6,9 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
-%define %data_native_docstring
+%define %data_endl_docstring
 "
-PyFrensie.Data.ENDL is the python interface to the FRENSIE data/native
+PyFrensie.Data.ENDL is the python interface to the FRENSIE data/endl
 subpackage.
 
 The purpose of ENDL is to provide tools for reading the data from a ENDL
@@ -18,7 +18,7 @@ FRENSIE format data file.
 
 %module(package   = "PyFrensie.Data",
         autodoc   = "1",
-        docstring = %data_native_docstring) ENDL
+        docstring = %data_endl_docstring) ENDL
 
 %{
 // Std Lib Includes
@@ -96,12 +96,12 @@ FRENSIE format data file.
 //---------------------------------------------------------------------------//
 // Use this general setup macro with all native tables
 //---------------------------------------------------------------------------//
-%define %standard_native_data_container_setup( NATIVE_DATA_CONTAINER_TYPE, SHORT_NAME )
+%define %standard_endl_data_container_setup( ENDL_DATA_CONTAINER_TYPE, SHORT_NAME )
 
 // Keep the Utility::ArchivableObject hidden and instead add static constants
-// to the ENDLDataContainer that can be used to read in data tables with the 
+// to the ENDLDataContainer that can be used to read in data tables with the
 // different archive formats. Also add some useful methods.
-%extend Data::NATIVE_DATA_CONTAINER
+%extend Data::ENDL_DATA_CONTAINER
 {
   static const Utility::ArchivableObject::ArchiveType ASCII =
     Utility::ArchivableObject::ASCII_ARCHIVE;
@@ -123,7 +123,7 @@ FRENSIE format data file.
   PyObject* __repr__() const
   {
     std::ostringstream oss;
-    oss << "NATIVE_DATA_CONTAINER(SHORT_NAME for Z="
+    oss << "ENDL_DATA_CONTAINER(SHORT_NAME for Z="
         << $self->getAtomicNumber() << ")";
 
     return PyString_FromString( oss.str().c_str() );
@@ -169,7 +169,7 @@ tutorial for this class is shown below:
   matplotlib.pyplot.show()
 "
 
-%standard_native_data_container_setup( ENDLDataContainer, EPR )
+%standard_endl_data_container_setup( ENDLDataContainer, EPR )
 
 // Include the ENDLDataContainer
 %include "Data_ENDLDataContainer.hpp"
