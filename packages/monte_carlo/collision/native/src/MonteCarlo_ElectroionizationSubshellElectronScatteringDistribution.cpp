@@ -306,8 +306,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   // Sample knock-on electron energy and outgoing angle
   this->sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
-  outgoing_energy =
-        std::max( 1e-15, incoming_energy - knock_on_energy - d_binding_energy );
+  outgoing_energy = incoming_energy - knock_on_energy - d_binding_energy;
 
   // Calculate the outgoing angle cosine for the primary electron
   scattering_angle_cosine = outgoingAngle( incoming_energy,
@@ -389,10 +388,10 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
 
   // The normalized incoming electron energy
   double normalized_incoming_energy =
-          incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
+          (incoming_energy + d_binding_energy)/Utility::PhysicalConstants::electron_rest_mass_energy;
 
   // The ratio of incoming to outgoing energy
-  double energy_ratio = outgoing_energy/incoming_energy;
+  double energy_ratio = (outgoing_energy + d_binding_energy)/incoming_energy;
 
   // Randomly select the plane of scattering
   double angle_cosine =
